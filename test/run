@@ -1,0 +1,35 @@
+#!/bin/sh
+
+export NODE_ENV=test
+
+echo
+for file in $@; do
+  printf "\033[90m   ${file#test/}\033[0m "
+
+  # support files
+  args=${file/.js/.args}
+  out=${file/.js/.out}
+
+  # exec
+  ./$file $(cat $args) 2> /tmp/stderr > /tmp/stdout && echo "\033[36m✓\033[0m"
+
+  # exit
+  code=$?
+  if test $code -ne 0; then
+    echo "\033[31m✖\033[0m"
+    cat /tmp/stderr >&2
+    exit $code
+  fi
+
+  # diff
+  stdout=$(cat /tmp/stdout)
+  out=$(cat $out)
+  test "$out" = "$stdout"
+  if test $? -ne 0; then
+    echo
+    diff -u $out /tmp/stdout
+    echo
+    exit 1
+  fi
+done
+echo
