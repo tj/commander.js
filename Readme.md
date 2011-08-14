@@ -3,6 +3,38 @@
 
   The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/visionmedia/commander).
 
+## Installation
+
+    $ npm install commander
+
+## Option parsing
+
+ Options with commander are defined with the `.option()` method, also serving as documentation for the options. The example below parses args and options from `process.argv`, leaving remaining options as the `program.args` array which were not consumed by options.
+
+```js
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var program = require('../');
+
+program
+  .version('0.0.1')
+  .option('-p, --peppers', 'Add peppers')
+  .option('-P, --pineapple', 'Add pineappe')
+  .option('-b, --bbq', 'Add bbq sauce')
+  .option('-c, --cheese <type>', 'Add the specified type of cheese [marble]')
+  .parse(process.argv);
+
+console.log('you ordered a pizza with:');
+if (program.peppers) console.log('  - peppers');
+if (program.pineappe) console.log('  - pineappe');
+if (program.bbq) console.log('  - bbq');
+console.log('  - %s cheese', program.cheese || 'marble');
+```
+
 ## License 
 
 (The MIT License)
