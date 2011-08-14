@@ -6,63 +6,6 @@
 
 var program = require('../');
 
-// ask('bool?')
-// ask('Username: ')
-// ask('Password: ')
-// ask('Description:')
-// ask('Birthday: ', Date)
-// ask('Age: ', Number)
-// ask('Fav colors: ', Array)
-// askForArray('Fav colors: ')
-// choose(options)
-
-program.askForNumber = function(str, fn){
-  this.askSingleLine(str, function(val){
-    val = Number(val);
-    if (isNaN(val)) return program.askForNumber(str + '(must be a number) ', fn);
-    fn(val);
-  });
-};
-
-program.askForDate = function(str, fn){
-  this.askSingleLine(str, function(val){
-    val = new Date(val);
-    if (isNaN(val.getTime())) return program.askForDate(str + '(must be a date) ', fn);
-    fn(val);
-  });
-};
-
-program.askSingleLine = function(str, fn){
-  if ('function' == typeof arguments[2]) {
-    return this['askFor' + (fn.name || fn)](str, arguments[2]);
-  }
-
-  process.stdout.write(str);
-  process.stdin.setEncoding('utf8');
-  process.stdin.once('data', function(val){
-    fn(val);
-  }).resume();
-};
-
-program.askMultiLine = function(str, fn){
-  var buf = '';
-  console.log(str);
-  process.stdin.setEncoding('utf8');
-  process.stdin.on('data', function(val){
-    if ('\n' == val) {
-      process.stdin.removeAllListeners('data');
-      fn(buf);
-    } else {
-      buf += val;
-    }
-  }).resume();
-};
-
-program.ask = function(str, fn){
-  if (/ $/.test(str)) return this.askSingleLine.apply(this, arguments);
-  this.askMultiLine(str, fn);
-};
-
 program.ask('Username: ', function(name){
   console.log('hi %s', name);
 
