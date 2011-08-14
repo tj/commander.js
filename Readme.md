@@ -9,7 +9,7 @@
 
 ## Option parsing
 
- Options with commander are defined with the `.option()` method, also serving as documentation for the options. The example below parses args and options from `process.argv`, leaving remaining options as the `program.args` array which were not consumed by options.
+ Options with commander are defined with the `.option()` method, also serving as documentation for the options. The example below parses args and options from `process.argv`, leaving remaining args as the `program.args` array which were not consumed by options.
 
 ```js
 #!/usr/bin/env node
