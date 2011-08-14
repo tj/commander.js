@@ -1,0 +1,12 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var program = require('../');
+
+program.confirm('continue? ', function(ok){
+  console.log(' got %j', ok);
+  process.stdin.destroy();
+});
