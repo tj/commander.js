@@ -8,7 +8,6 @@ var program = require('../');
 
 program
   .version('0.0.1')
-  .description('Pizza configurator')
   .option('-p, --peppers', 'Add peppers')
   .option('-P, --pineapple', 'Add pineappe')
   .option('-b, --bbq', 'Add bbq sauce')

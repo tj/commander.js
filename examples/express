@@ -8,7 +8,6 @@ var program = require('../');
 
 program
   .version('0.0.1')
-  .description('Express application generator')
   .option('-s, --sessions', 'add session support')
   .option('-t, --template <engine>', 'specify template engine (jade|ejs) [jade]')
   .option('-c, --css <engine>', 'specify stylesheet engine (stylus|sass|less) [css]')
