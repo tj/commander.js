@@ -13,7 +13,7 @@ program
   .option('-T, --no-tests', 'ignore test hook')
 
 program
-  .command('setup [env]')
+  .command('setup')
   .description('run remote setup commands')
   .action(function(){
     console.log('setup');
