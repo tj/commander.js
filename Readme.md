@@ -118,7 +118,6 @@ program.prompt('Birthdate: ', Date, function(date){
 ```js
 program.confirm('continue? ', function(ok){
   console.log(' got %j', ok);
-  process.stdin.destroy();
 });
 ```
 
@@ -130,7 +129,6 @@ var list = ['tobi', 'loki', 'jane', 'manny', 'luna'];
 console.log('Choose the coolest pet:');
 program.choose(list, function(i){
   console.log('you chose %d "%s"', i, list[i]);
-  process.stdin.destroy();
 });
 ```
 
