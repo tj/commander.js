@@ -1,7 +1,7 @@
 
-# commander
+# Commander.js
 
-  the complete solution for node.js command-line programs
+  The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/visionmedia/commander).
 
 ## License 
 
