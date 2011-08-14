@@ -6,9 +6,6 @@
 
 var program = require('../');
 
-program
-  .parse(process.argv);
-
 program.confirm('continue? ', function(ok){
   console.log(' got %j', ok);
   process.stdin.destroy();
