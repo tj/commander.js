@@ -6,16 +6,16 @@
 
 var program = require('../');
 
-program.ask('Username: ', function(name){
+program.prompt('Username: ', function(name){
   console.log('hi %s', name);
 
-  program.ask('Description:', function(desc){
+  program.prompt('Description:', function(desc){
     console.log('description was "%s"', desc.trim());
 
-    program.ask('Age: ', Number, function(age){
+    program.prompt('Age: ', Number, function(age){
       console.log('age: %j', age);
 
-      program.ask('Birthdate: ', Date, function(date){
+      program.prompt('Birthdate: ', Date, function(date){
         console.log('date: %s', date);
         process.stdin.destroy();
       });
