@@ -81,7 +81,7 @@ console.log(' list: %j', program.list);
 console.log(' args: %j', program.args);
 ```
 
-## .prompt(str, fn)
+## .prompt(msg, fn)
 
  Single-line prompt:
 
@@ -113,7 +113,9 @@ program.prompt('Birthdate: ', Date, function(date){
 });
 ```
 
-## .confirm(str, fn)
+## .confirm(msg, fn)
+
+ Confirm with the given `msg`:
 
 ```js
 program.confirm('continue? ', function(ok){
@@ -122,6 +124,8 @@ program.confirm('continue? ', function(ok){
 ```
 
 ## .choose(list, fn)
+
+ Let the user choose from a `list`:
 
 ```js
 var list = ['tobi', 'loki', 'jane', 'manny', 'luna'];
