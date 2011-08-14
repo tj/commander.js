@@ -9,7 +9,7 @@ var program = require('../');
 program
   .version('0.0.1')
   .option('-p, --peppers', 'Add peppers')
-  .option('-P, --pineapple', 'Add pineappe')
+  .option('-P, --pineapple', 'Add pineapple')
   .option('-b, --bbq', 'Add bbq sauce')
   .option('-c, --cheese <type>', 'Add the specified type of cheese [cheddar]')
   .option('-C, --no-cheese', 'You do not want any cheese')
@@ -17,7 +17,7 @@ program
 
 console.log('you ordered a pizza with:');
 if (program.peppers) console.log('  - peppers');
-if (program.pineappe) console.log('  - pineappe');
+if (program.pineappe) console.log('  - pineapple');
 if (program.bbq) console.log('  - bbq');
 
 var cheese = true === program.cheese
