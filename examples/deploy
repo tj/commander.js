@@ -13,13 +13,16 @@ program
   .option('-T, --no-tests', 'ignore test hook')
 
 program
-  .command('setup')
-  .action(function(){
-    console.log('setup');
+  .command('setup [env]')
+  .description('run setup commands for all envs')
+  .action(function(env){
+    env = env || 'all';
+    console.log('setup for %s env(s)', env);
   });
 
 program
   .command('exec <cmd>')
+  .description('execute the given remote cmd')
   .action(function(cmd){
     console.log('exec "%s"', cmd);
   });
