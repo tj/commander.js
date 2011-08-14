@@ -14,21 +14,18 @@ program
 
 program
   .command('setup')
-  .description('run remote setup commands')
   .action(function(){
     console.log('setup');
   });
 
 program
   .command('exec <cmd>')
-  .description('run the given remote command')
   .action(function(cmd){
     console.log('exec "%s"', cmd);
   });
 
 program
   .command('*')
-  .description('deploy the given env')
   .action(function(env){
     console.log('deploying "%s"', env);
   });
