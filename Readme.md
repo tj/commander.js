@@ -35,6 +35,8 @@ if (program.bbq) console.log('  - bbq');
 console.log('  - %s cheese', program.cheese || 'marble');
 ```
 
+ Small flags may be passed as a single arg, for example `-abc` is equivalent to `-a -b -c`.
+
 ## Automated --help
 
  The help information is auto-generated based on the information commander already knows about your program, so the following `--help` info is for free:
