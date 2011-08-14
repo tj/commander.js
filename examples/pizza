@@ -21,8 +21,8 @@ if (program.peppers) console.log('  - peppers');
 if (program.pineappe) console.log('  - pineappe');
 if (program.bbq) console.log('  - bbq');
 
-var cheese = false === program.cheese
-  ? 'no'
-  : program.cheese || 'cheddar';
+var cheese = true === program.cheese
+  ? 'cheddar'
+  : program.cheese || 'no';
 
 console.log('  - %s cheese', cheese);
