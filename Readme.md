@@ -30,7 +30,7 @@ program
 
 console.log('you ordered a pizza with:');
 if (program.peppers) console.log('  - peppers');
-if (program.pineappe) console.log('  - pineappe');
+if (program.pineapple) console.log('  - pineappe');
 if (program.bbq) console.log('  - bbq');
 console.log('  - %s cheese', program.cheese || 'marble');
 ```
