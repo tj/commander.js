@@ -52,6 +52,87 @@ console.log('  - %s cheese', program.cheese || 'marble');
          -c, --cheese <type>  Add the specified type of cheese [marble]
          -h, --help           output usage information
 
+## Coercion
+
+```js
+function range(val) {
+  return val.split('..').map(Number);
+}
+
+function list(val) {
+  return val.split(',');
+}
+
+program
+  .version('0.0.1')
+  .option('-i, --integer <n>', 'An integer argument', parseInt)
+  .option('-f, --float <n>', 'A float argument', parseFloat)
+  .option('-r, --range <a>..<b>', 'A range', range)
+  .option('-l, --list <items>', 'A list', list)
+  .option('-o, --optional [value]', 'An optional value')
+  .parse(process.argv);
+
+console.log(' int: %j', program.integer);
+console.log(' float: %j', program.float);
+console.log(' optional: %j', program.optional);
+program.range = program.range || [];
+console.log(' range: %j..%j', program.range[0], program.range[1]);
+console.log(' list: %j', program.list);
+console.log(' args: %j', program.args);
+```
+
+## .prompt(str, fn)
+
+ Single-line prompt:
+
+```js
+program.prompt('name: ', function(name){
+  console.log('hi %s', name);
+});
+```
+
+ Multi-line prompt:
+
+```js
+program.prompt('description:', function(name){
+  console.log('hi %s', name);
+});
+```
+
+ Coercion:
+
+```js
+program.prompt('Age: ', Number, function(age){
+  console.log('age: %j', age);
+});
+```
+
+```js
+program.prompt('Birthdate: ', Date, function(date){
+  console.log('date: %s', date);
+});
+```
+
+## .confirm(str, fn)
+
+```js
+program.confirm('continue? ', function(ok){
+  console.log(' got %j', ok);
+  process.stdin.destroy();
+});
+```
+
+## .choose(list, fn)
+
+```js
+var list = ['tobi', 'loki', 'jane', 'manny', 'luna'];
+
+console.log('Choose the coolest pet:');
+program.choose(list, function(i){
+  console.log('you chose %d "%s"', i, list[i]);
+  process.stdin.destroy();
+});
+```
 
 ## License 
 
