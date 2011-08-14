@@ -35,6 +35,24 @@ if (program.bbq) console.log('  - bbq');
 console.log('  - %s cheese', program.cheese || 'marble');
 ```
 
+## Automated --help
+
+ The help information is auto-generated based on the information commander already knows about your program, so the following `--help` info is for free:
+  
+     $ ./examples/pizza --help
+
+       Usage: pizza [options]
+
+       Options:
+
+         -v, --version        output the version number
+         -p, --peppers        Add peppers
+         -P, --pineapple      Add pineappe
+         -b, --bbq            Add bbq sauce
+         -c, --cheese <type>  Add the specified type of cheese [marble]
+         -h, --help           output usage information
+
+
 ## License 
 
 (The MIT License)
