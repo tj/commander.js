@@ -22,9 +22,7 @@ for file in $@; do
   fi
 
   # diff
-  stdout=$(cat /tmp/stdout)
-  out=$(cat $out)
-  test "$out" = "$stdout"
+  test "$(cat $out)" = "$(cat /tmp/stdout)"
   if test $? -ne 0; then
     echo
     diff -u $out /tmp/stdout

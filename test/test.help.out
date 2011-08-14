@@ -1,0 +1,8 @@
+
+  Usage: test.help.js [options]
+
+  Options:
+
+    -v, --version  output the version number
+    -h, --help     output usage information
+
