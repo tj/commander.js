@@ -25,3 +25,4 @@ var cheese = true === program.cheese
   : program.cheese || 'no';
 
 console.log('  - %s cheese', cheese);
+console.log(program.args);
