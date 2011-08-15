@@ -35,7 +35,7 @@ if (program.bbq) console.log('  - bbq');
 console.log('  - %s cheese', program.cheese || 'marble');
 ```
 
- Short flags may be passed as a single arg, for example `-abc` is equivalent to `-a -b -c`.
+ Short flags may be passed as a single arg, for example `-abc` is equivalent to `-a -b -c`. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc.
 
 ## Automated --help
 
