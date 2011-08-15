@@ -163,7 +163,7 @@ program.choose(list, function(i){
 
 ## Links
 
- - [terminal tables](https://github.com/LearnBoost/cli-table)
+ - [ascii tables](https://github.com/LearnBoost/cli-table)
  - [progress bars](https://github.com/visionmedia/node-progress)
  - [more progress bars](https://github.com/substack/node-multimeter)
  - [examples](https://github.com/visionmedia/commander.js/tree/master/examples)
