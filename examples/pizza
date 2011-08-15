@@ -11,7 +11,7 @@ program
   .option('-p, --peppers', 'Add peppers')
   .option('-P, --pineapple', 'Add pineapple')
   .option('-b, --bbq', 'Add bbq sauce')
-  .option('-c, --cheese <type>', 'Add the specified type of cheese [cheddar]')
+  .option('-c, --cheese <type>', 'Add the specified type of cheese [marble]')
   .option('-C, --no-cheese', 'You do not want any cheese')
   .parse(process.argv);
 
@@ -21,7 +21,7 @@ if (program.pineappe) console.log('  - pineapple');
 if (program.bbq) console.log('  - bbq');
 
 var cheese = true === program.cheese
-  ? 'cheddar'
+  ? 'marble'
   : program.cheese || 'no';
 
 console.log('  - %s cheese', cheese);
