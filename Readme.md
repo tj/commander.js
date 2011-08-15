@@ -118,6 +118,26 @@ program.prompt('Birthdate: ', Date, function(date){
 });
 ```
 
+## .password(msg[, mask], fn)
+
+Prompt for password without echoing:
+
+```js
+program.password('Password: ', function(pass){
+  console.log('got "%s"', pass);
+  process.stdin.destroy();
+});
+```
+
+Prompt for password with mask char "*":
+
+```js
+program.password('Password: ', '*', function(pass){
+  console.log('got "%s"', pass);
+  process.stdin.destroy();
+});
+```
+
 ## .confirm(msg, fn)
 
  Confirm with the given `msg`:
