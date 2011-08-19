@@ -1,4 +1,10 @@
 
+0.0.5 / 2011-08-18 
+==================
+
+  * Changed: when the user enters nothing prompt for password again
+  * Fixed issue with passwords beginning with numbers [NuckChorris]
+
 0.0.4 / 2011-08-15 
 ==================
 
