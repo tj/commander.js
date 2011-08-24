@@ -86,6 +86,71 @@ console.log(' list: %j', program.list);
 console.log(' args: %j', program.args);
 ```
 
+## Custom help
+
+ You can display arbitrary `-h, --help` information
+ by listening for "--help". Commander will automatically
+ exit once you are done so that the remainder of your program
+ does not execute causing undesired behaviours, for example
+ in the following executable "stuff" will not output when
+ `--help` is used.
+
+```js
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var program = require('../');
+
+function list(val) {
+  return val.split(',').map(Number);
+}
+
+program
+  .version('0.0.1')
+  .option('-f, --foo', 'enable some foo')
+  .option('-b, --bar', 'enable some bar')
+  .option('-B, --baz', 'enable some baz');
+
+// must be before .parse() since
+// node's emit() is immediate
+
+program.on('--help', function(){
+  console.log('  Examples:');
+  console.log('');
+  console.log('    $ custom-help --help');
+  console.log('    $ custom-help -h');
+  console.log('');
+});
+
+program.parse(process.argv);
+
+console.log('stuff');
+```
+
+yielding the following help output:
+
+```
+
+Usage: custom-help [options]
+
+Options:
+
+  -h, --help     output usage information
+  -v, --version  output the version number
+  -f, --foo      enable some foo
+  -b, --bar      enable some bar
+  -B, --baz      enable some baz
+
+Examples:
+
+  $ custom-help --help
+  $ custom-help -h
+
+```
+
 ## .prompt(msg, fn)
 
  Single-line prompt:
