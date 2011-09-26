@@ -1,4 +1,9 @@
 
+0.2.0 / 2011-09-26 
+==================
+
+  * Allow for defaults that are not just boolean. Default peassignment only occurs for --no-*, optional, and required arguments. [Jim Isaacs]
+
 0.1.0 / 2011-08-24 
 ==================
 
