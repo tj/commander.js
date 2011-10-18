@@ -1,0 +1,14 @@
+html
+  head
+    title Commander.js - nodejs cli framework
+    link(rel='stylesheet', href='docs.css')
+  body
+    h1 Commander.js
+    - each comment in comments
+      - if (comment.ignore || 'version' == comment.ctx.name)
+        - continue
+      .comment
+        h2= comment.ctx.value
+        .description!= comment.description.full
+        pre
+          code!= comment.code
