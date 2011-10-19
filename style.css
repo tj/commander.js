@@ -1,0 +1,19 @@
+body {
+  padding: 50px;
+  font: 14px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  text-align: center;
+}
+
+pre {
+  font: 12px monaco, monospace;
+  padding: 20px;
+  border: 1px solid #ddd;
+  -webkit-border-radius: 3px;
+  -webkit-box-shadow: inset 0 0 5px #ddd;
+}
+
+#content {
+  margin: 0 auto;
+  width: 600px;
+  text-align: left;
+}
