@@ -12,6 +12,14 @@ pre {
   -webkit-box-shadow: inset 0 0 5px #ddd;
 }
 
+p code {
+  display: inline-block;
+  padding: 1px 6px;
+  -webkit-border-radius: 3px;
+  background: -webkit-linear-gradient(top, #F5E42E, #E7D619);
+  border: 1px solid #DBCB1A;
+}
+
 #content {
   margin: 0 auto;
   width: 600px;
