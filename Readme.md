@@ -228,6 +228,7 @@ program.choose(list, function(i){
 
 ## Links
 
+ - [annotated source](http://visionmedia.github.com/commander.js/)
  - [ascii tables](https://github.com/LearnBoost/cli-table)
  - [progress bars](https://github.com/visionmedia/node-progress)
  - [more progress bars](https://github.com/substack/node-multimeter)
