@@ -11,11 +11,14 @@ html
       for comment in comments
         if comment.ignore || !comment.ctx || 'version' == comment.ctx.name
           - continue
+        if ~comment.description.full.indexOf('Module dependencies')
+          - continue
         .comment
           if ~comment.ctx.string.indexOf('prototype')
-            h2= comment.ctx.string.replace('.prototype.', '#')
+            h1= comment.ctx.string.replace('.prototype.', '#')
           else
-            h2= comment.ctx.string
+            h1= comment.ctx.string
           .description!= comment.description.full
+          h2 Implementation
           pre
             code!= comment.code
