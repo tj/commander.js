@@ -12,7 +12,10 @@ html
         if comment.ignore || !comment.ctx || 'version' == comment.ctx.name
           - continue
         .comment
-          h2= comment.ctx.value
+          if ~comment.ctx.string.indexOf('prototype')
+            h2= comment.ctx.string.replace('.prototype.', '#')
+          else
+            h2= comment.ctx.string
           .description!= comment.description.full
           pre
             code!= comment.code

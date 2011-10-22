@@ -1,9 +1,9 @@
 <html><head><title>Commander.js - nodejs cli framework</title><link rel="stylesheet" href="style.css"/></head><body><div id="content"><h1>Commander.js</h1><p>Commander is a light-weight, expressive, and powerful command-line
 framework for <a href="http://nodejs.org">node.js</a>.
-</p><div class="comment"><h2>require('events').EventEmitter</h2><div class="description"><p>Module dependencies.</p></div><pre><code>var EventEmitter = require('events').EventEmitter
+</p><div class="comment"><h2>EventEmitter</h2><div class="description"><p>Module dependencies.</p></div><pre><code>var EventEmitter = require('events').EventEmitter
   , path = require('path')
   , tty = require('tty')
-  , basename = path.basename;</code></pre></div><div class="comment"><h2>Command</h2><div class="description"><p>Expose <code>Command</code>.</p></div><pre><code>exports.Command = Command;</code></pre></div><div class="comment"><h2>Option</h2><div class="description"><p>Expose <code>Option</code>.</p></div><pre><code>exports.Option = Option;</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Initialize a new <code>Option</code> with the given <code>flags</code> and <code>description</code>.</p></div><pre><code>function Option(flags, description) {
+  , basename = path.basename;</code></pre></div><div class="comment"><h2>exports.Command</h2><div class="description"><p>Expose <code>Command</code>.</p></div><pre><code>exports.Command = Command;</code></pre></div><div class="comment"><h2>exports.Option</h2><div class="description"><p>Expose <code>Option</code>.</p></div><pre><code>exports.Option = Option;</code></pre></div><div class="comment"><h2>Option()</h2><div class="description"><p>Initialize a new <code>Option</code> with the given <code>flags</code> and <code>description</code>.</p></div><pre><code>function Option(flags, description) {
   this.flags = flags;
   this.required = ~flags.indexOf('<');
   this.optional = ~flags.indexOf('[');
@@ -12,19 +12,19 @@ framework for <a href="http://nodejs.org">node.js</a>.
   this.short = flags.shift();
   this.long = flags.shift();
   this.description = description;
-}</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Return option name.</p></div><pre><code>Option.prototype.name = function(){
+}</code></pre></div><div class="comment"><h2>Option#name()</h2><div class="description"><p>Return option name.</p></div><pre><code>Option.prototype.name = function(){
   return this.long
     .replace('--', '')
     .replace('no-', '');
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Check if <code>arg</code> matches the short or long flag.</p></div><pre><code>Option.prototype.is = function(arg){
+};</code></pre></div><div class="comment"><h2>Option#is()</h2><div class="description"><p>Check if <code>arg</code> matches the short or long flag.</p></div><pre><code>Option.prototype.is = function(arg){
   return arg == this.short
     || arg == this.long;
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Initialize a new <code>Command</code>.</p></div><pre><code>function Command(name) {
+};</code></pre></div><div class="comment"><h2>Command()</h2><div class="description"><p>Initialize a new <code>Command</code>.</p></div><pre><code>function Command(name) {
   this.commands = [];
   this.options = [];
   this.args = [];
   this.name = name;
-}</code></pre></div><div class="comment"><h2>EventEmitter.prototype</h2><div class="description"><p>Inherit from <code>EventEmitter.prototype</code>.</p></div><pre><code>Command.prototype.__proto__ = EventEmitter.prototype;</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Add command <code>name</code>.</p>
+}</code></pre></div><div class="comment"><h2>Command.prototype__proto__</h2><div class="description"><p>Inherit from <code>EventEmitter.prototype</code>.</p></div><pre><code>Command.prototype.__proto__ = EventEmitter.prototype;</code></pre></div><div class="comment"><h2>Command#command()</h2><div class="description"><p>Add command <code>name</code>.</p>
 
 <p>The <code>.action()</code> callback is invoked when the<br />command <code>name</code> is specified via <strong>ARGV</strong>,<br />and the remaining arguments are applied to the<br />function for access.</p>
 
@@ -67,7 +67,7 @@ framework for <a href="http://nodejs.org">node.js</a>.
   cmd.parseExpectedArgs(args);
   cmd.parent = this;
   return cmd;
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Parse expected <code>args</code>.</p>
+};</code></pre></div><div class="comment"><h2>Command#parseExpectedArgs()</h2><div class="description"><p>Parse expected <code>args</code>.</p>
 
 <p>For example <code>["[type]"]</code> becomes <code>[{ required: false, name: 'type' }]</code>.</p></div><pre><code>Command.prototype.parseExpectedArgs = function(args){
   if (!args.length) return;
@@ -83,7 +83,7 @@ framework for <a href="http://nodejs.org">node.js</a>.
     }
   });
   return this;
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Register callback <code>fn</code> for the command.</p>
+};</code></pre></div><div class="comment"><h2>Command#action()</h2><div class="description"><p>Register callback <code>fn</code> for the command.</p>
 
 <h2>Examples</h2>
 
@@ -104,7 +104,7 @@ framework for <a href="http://nodejs.org">node.js</a>.
     fn.apply(this, args);
   });
   return this;
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Define option with <code>flags</code>, <code>description</code> and optional<br />coercion <code>fn</code>. </p>
+};</code></pre></div><div class="comment"><h2>Command#option()</h2><div class="description"><p>Define option with <code>flags</code>, <code>description</code> and optional<br />coercion <code>fn</code>. </p>
 
 <p>The <code>flags</code> string should contain both the short and long flags,<br />separated by comma, a pipe or space. The following are all valid<br />all will output this way when <code>--help</code> is used.</p>
 
@@ -181,7 +181,7 @@ program.option('-c, --cheese [type]', 'add cheese [marble]');
   });
 
   return this;
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Parse <code>argv</code>, settings options and invoking commands when defined.</p></div><pre><code>Command.prototype.parse = function(argv){
+};</code></pre></div><div class="comment"><h2>Command#parse()</h2><div class="description"><p>Parse <code>argv</code>, settings options and invoking commands when defined.</p></div><pre><code>Command.prototype.parse = function(argv){
   // store raw args
   this.rawArgs = argv;
 
@@ -191,7 +191,7 @@ program.option('-c, --cheese [type]', 'add cheese [marble]');
   // process argv
   this.args = this.parseOptions(this.normalize(argv));
   return this.parseArgs(this.args);
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Normalize <code>args</code>, splitting joined short flags. For example<br />the arg "-abc" is equivalent to "-a -b -c".</p></div><pre><code>Command.prototype.normalize = function(args){
+};</code></pre></div><div class="comment"><h2>Command#normalize()</h2><div class="description"><p>Normalize <code>args</code>, splitting joined short flags. For example<br />the arg "-abc" is equivalent to "-a -b -c".</p></div><pre><code>Command.prototype.normalize = function(args){
   var ret = []
     , arg;
 
@@ -207,7 +207,7 @@ program.option('-c, --cheese [type]', 'add cheese [marble]');
   }
 
   return ret;
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Parse command <code>args</code>.</p>
+};</code></pre></div><div class="comment"><h2>Command#parseArgs()</h2><div class="description"><p>Parse command <code>args</code>.</p>
 
 <p>When listener(s) are available those<br />callbacks are invoked, otherwise the "*"<br />event is emitted and those actions are invoked.</p></div><pre><code>Command.prototype.parseArgs = function(args){
   var cmds = this.commands
@@ -224,13 +224,13 @@ program.option('-c, --cheese [type]', 'add cheese [marble]');
   }
 
   return this;
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Return an option matching <code>arg</code> if any.</p></div><pre><code>Command.prototype.optionFor = function(arg){
+};</code></pre></div><div class="comment"><h2>Command#optionFor()</h2><div class="description"><p>Return an option matching <code>arg</code> if any.</p></div><pre><code>Command.prototype.optionFor = function(arg){
   for (var i = 0, len = this.options.length; i < len; ++i) {
     if (this.options[i].is(arg)) {
       return this.options[i];
     }
   }
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Parse options from <code>argv</code> returning <code>argv</code><br />void of these options.</p></div><pre><code>Command.prototype.parseOptions = function(argv){
+};</code></pre></div><div class="comment"><h2>Command#parseOptions()</h2><div class="description"><p>Parse options from <code>argv</code> returning <code>argv</code><br />void of these options.</p></div><pre><code>Command.prototype.parseOptions = function(argv){
   var args = []
     , argv = argv.slice(2)
     , len = argv.length
@@ -276,12 +276,12 @@ program.option('-c, --cheese [type]', 'add cheese [marble]');
   }
 
   return args;
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Argument <code>name</code> is missing.</p></div><pre><code>Command.prototype.missingArgument = function(name){
+};</code></pre></div><div class="comment"><h2>Command#missingArgument()</h2><div class="description"><p>Argument <code>name</code> is missing.</p></div><pre><code>Command.prototype.missingArgument = function(name){
   console.error();
   console.error("  error: missing required argument `%s'", name);
   console.error();
   process.exit(1);
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p><code>Option</code> is missing an argument, but received <code>flag</code> or nothing.</p></div><pre><code>Command.prototype.optionMissingArgument = function(option, flag){
+};</code></pre></div><div class="comment"><h2>Command#optionMissingArgument()</h2><div class="description"><p><code>Option</code> is missing an argument, but received <code>flag</code> or nothing.</p></div><pre><code>Command.prototype.optionMissingArgument = function(option, flag){
   console.error();
   if (flag) {
     console.error("  error: option `%s' argument missing, got `%s'", option.flags, flag);
@@ -290,33 +290,33 @@ program.option('-c, --cheese [type]', 'add cheese [marble]');
   }
   console.error();
   process.exit(1);
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Unknown option <code>flag</code>.</p></div><pre><code>Command.prototype.unknownOption = function(flag){
+};</code></pre></div><div class="comment"><h2>Command#unknownOption()</h2><div class="description"><p>Unknown option <code>flag</code>.</p></div><pre><code>Command.prototype.unknownOption = function(flag){
   console.error();
   console.error("  error: unknown option `%s'", flag);
   console.error();
   process.exit(1);
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Set the description <code>str</code>.</p></div><pre><code>Command.prototype.description = function(str){
+};</code></pre></div><div class="comment"><h2>Command#description()</h2><div class="description"><p>Set the description <code>str</code>.</p></div><pre><code>Command.prototype.description = function(str){
   if (0 == arguments.length) return this._description;
   this._description = str;
   return this;
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Set / get the command usage <code>str</code>.</p></div><pre><code>Command.prototype.usage = function(str){
+};</code></pre></div><div class="comment"><h2>Command#usage()</h2><div class="description"><p>Set / get the command usage <code>str</code>.</p></div><pre><code>Command.prototype.usage = function(str){
   var usage = '[options'
     + (this.commands.length ? '] [command' : '')
     + ']';
   if (0 == arguments.length) return this._usage || usage;
   this._usage = str;
   return this;
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Return the largest option length.</p></div><pre><code>Command.prototype.largestOptionLength = function(){
+};</code></pre></div><div class="comment"><h2>Command#largestOptionLength()</h2><div class="description"><p>Return the largest option length.</p></div><pre><code>Command.prototype.largestOptionLength = function(){
   return this.options.reduce(function(max, option){
     return Math.max(max, option.flags.length);
   }, 0);
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Return help for options.</p></div><pre><code>Command.prototype.optionHelp = function(){
+};</code></pre></div><div class="comment"><h2>Command#optionHelp()</h2><div class="description"><p>Return help for options.</p></div><pre><code>Command.prototype.optionHelp = function(){
   var width = this.largestOptionLength();
   return this.options.map(function(option){
     return pad(option.flags, width)
       + '  ' + option.description;
   }).join('\n');
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Return command help documentation.</p></div><pre><code>Command.prototype.commandHelp = function(){
+};</code></pre></div><div class="comment"><h2>Command#commandHelp()</h2><div class="description"><p>Return command help documentation.</p></div><pre><code>Command.prototype.commandHelp = function(){
   if (!this.commands.length) return '';
   return [
       ''
@@ -335,7 +335,7 @@ program.option('-c, --cheese [type]', 'add cheese [marble]');
     }).join('\n\n').replace(/^/gm, '    ')
     , ''
   ].join('\n');
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Return program help documentation.</p></div><pre><code>Command.prototype.helpInformation = function(){
+};</code></pre></div><div class="comment"><h2>Command#helpInformation()</h2><div class="description"><p>Return program help documentation.</p></div><pre><code>Command.prototype.helpInformation = function(){
   return [
       ''
     , '  Usage: ' + this.name + ' ' + this.usage()
@@ -346,19 +346,19 @@ program.option('-c, --cheese [type]', 'add cheese [marble]');
     , ''
     , ''
   ].join('\n');
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Prompt for a <code>Number</code>.</p></div><pre><code>Command.prototype.promptForNumber = function(str, fn){
+};</code></pre></div><div class="comment"><h2>Command#promptForNumber()</h2><div class="description"><p>Prompt for a <code>Number</code>.</p></div><pre><code>Command.prototype.promptForNumber = function(str, fn){
   this.promptSingleLine(str, function(val){
     val = Number(val);
     if (isNaN(val)) return program.promptForNumber(str + '(must be a number) ', fn);
     fn(val);
   });
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Prompt for a <code>Date</code>.</p></div><pre><code>Command.prototype.promptForDate = function(str, fn){
+};</code></pre></div><div class="comment"><h2>Command#promptForDate()</h2><div class="description"><p>Prompt for a <code>Date</code>.</p></div><pre><code>Command.prototype.promptForDate = function(str, fn){
   this.promptSingleLine(str, function(val){
     val = new Date(val);
     if (isNaN(val.getTime())) return program.promptForDate(str + '(must be a date) ', fn);
     fn(val);
   });
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Single-line prompt.</p></div><pre><code>Command.prototype.promptSingleLine = function(str, fn){
+};</code></pre></div><div class="comment"><h2>Command#promptSingleLine()</h2><div class="description"><p>Single-line prompt.</p></div><pre><code>Command.prototype.promptSingleLine = function(str, fn){
   if ('function' == typeof arguments[2]) {
     return this['promptFor' + (fn.name || fn)](str, arguments[2]);
   }
@@ -368,7 +368,7 @@ program.option('-c, --cheese [type]', 'add cheese [marble]');
   process.stdin.once('data', function(val){
     fn(val);
   }).resume();
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Multi-line prompt.</p></div><pre><code>Command.prototype.promptMultiLine = function(str, fn){
+};</code></pre></div><div class="comment"><h2>Command#promptMultiLine()</h2><div class="description"><p>Multi-line prompt.</p></div><pre><code>Command.prototype.promptMultiLine = function(str, fn){
   var buf = '';
   console.log(str);
   process.stdin.setEncoding('utf8');
@@ -380,7 +380,7 @@ program.option('-c, --cheese [type]', 'add cheese [marble]');
       buf += val;
     }
   }).resume();
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Prompt <code>str</code> and callback <code>fn(val)</code></p>
+};</code></pre></div><div class="comment"><h2>Command#prompt()</h2><div class="description"><p>Prompt <code>str</code> and callback <code>fn(val)</code></p>
 
 <p>Commander supports single-line and multi-line prompts.<br />To issue a single-line prompt simply add white-space<br />to the end of <code>str</code>, something like "name: ", whereas<br />for a multi-line prompt omit this "description:".</p>
 
@@ -396,7 +396,7 @@ program.prompt('Description:', function(desc){
 </code></pre></div><pre><code>Command.prototype.prompt = function(str, fn){
   if (/ $/.test(str)) return this.promptSingleLine.apply(this, arguments);
   this.promptMultiLine(str, fn);
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Prompt for password with <code>str</code>, <code>mask</code> char and callback <code>fn(val)</code>.</p>
+};</code></pre></div><div class="comment"><h2>Command#password()</h2><div class="description"><p>Prompt for password with <code>str</code>, <code>mask</code> char and callback <code>fn(val)</code>.</p>
 
 <p>The mask string defaults to '', aka no output is<br />written while typing, you may want to use "*" etc.</p>
 
@@ -443,7 +443,7 @@ program.password('Password: ', '*', function(pass){
     process.stdout.write(mask);
     buf += c;
   }).resume();
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Confirmation prompt with <code>str</code> and callback <code>fn(bool)</code></p>
+};</code></pre></div><div class="comment"><h2>Command#confirm()</h2><div class="description"><p>Confirmation prompt with <code>str</code> and callback <code>fn(bool)</code></p>
 
 <h2>Examples</h2>
 
@@ -459,7 +459,7 @@ program.password('Password: ', '*', function(pass){
     }
     fn(parseBool(ok));
   });
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Choice prompt with <code>list</code> of items and callback <code>fn(index, item)</code></p>
+};</code></pre></div><div class="comment"><h2>Command#choose()</h2><div class="description"><p>Choice prompt with <code>list</code> of items and callback <code>fn(index, item)</code></p>
 
 <h2>Examples</h2>
 
@@ -489,13 +489,13 @@ program.password('Password: ', '*', function(pass){
   }
 
   again();
-};</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Camel-case the given <code>flag</code></p></div><pre><code>function camelcase(flag) {
+};</code></pre></div><div class="comment"><h2>camelcase()</h2><div class="description"><p>Camel-case the given <code>flag</code></p></div><pre><code>function camelcase(flag) {
   return flag.split('-').reduce(function(str, word){
     return str + word[0].toUpperCase() + word.slice(1);
   });
-}</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Parse a boolean <code>str</code>.</p></div><pre><code>function parseBool(str) {
+}</code></pre></div><div class="comment"><h2>parseBool()</h2><div class="description"><p>Parse a boolean <code>str</code>.</p></div><pre><code>function parseBool(str) {
   return /^y|yes|ok|true$/i.test(str);
-}</code></pre></div><div class="comment"><h2></h2><div class="description"><p>Pad <code>str</code> to <code>width</code>.</p></div><pre><code>function pad(str, width) {
+}</code></pre></div><div class="comment"><h2>pad()</h2><div class="description"><p>Pad <code>str</code> to <code>width</code>.</p></div><pre><code>function pad(str, width) {
   var len = Math.max(0, width - str.length);
   return str + Array(len + 1).join(' ');
 }</code></pre></div></div></body></html>

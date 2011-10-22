@@ -14,7 +14,7 @@ pre {
 
 p code {
   display: inline-block;
-  padding: 1px 6px;
+  padding: 0 4px;
   -webkit-border-radius: 3px;
   background: -webkit-linear-gradient(top, #F5E42E, #E7D619);
   border: 1px solid #DBCB1A;
