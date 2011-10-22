@@ -9,9 +9,7 @@ html
         Commander is a light-weight, expressive, and powerful command-line
         framework for <a href="http://nodejs.org">node.js</a>.
       for comment in comments
-        if comment.ignore || !comment.ctx || 'version' == comment.ctx.name
-          - continue
-        if ~comment.description.full.indexOf('Module dependencies')
+        if ignore(comment)
           - continue
         .comment
           if ~comment.ctx.string.indexOf('prototype')
@@ -25,9 +23,7 @@ html
     
     ul#menu
       for comment in comments
-        if comment.ignore || !comment.ctx || 'version' == comment.ctx.name
-          - continue
-        if ~comment.description.full.indexOf('Module dependencies')
+        if ignore(comment)
           - continue
         li
           if ~comment.ctx.string.indexOf('prototype')
