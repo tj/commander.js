@@ -1,7 +1,6 @@
 body {
   padding: 50px;
   font: 14px/1.5 "Helvetica Neue", Helvetica, Arial, sans-serif;
-  text-align: center;
   color: #1A1919;
 }
 
@@ -22,9 +21,8 @@ p code {
 }
 
 #content {
-  margin: 0 auto;
+  float: left;
   width: 550px;
-  text-align: left;
 }
 
 .comment {
@@ -42,15 +40,15 @@ h2 {
 #menu {
   position: fixed;
   top: 0;
-  left: 0;
-  text-align: left;
+  right: 0;
+  float: right;
   font-size: 13px;
   padding: 15px;
   margin: 0;
   height: 100%;
-  border-right: 1px solid #ddd;
+  border-left: 1px solid #ddd;
   background: white;
-  -webkit-box-shadow: 1px 0 5px #eee;
+  -webkit-box-shadow: -1px 0 5px #eee;
 }
 
 #menu li {
