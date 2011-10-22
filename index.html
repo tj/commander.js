@@ -1,5 +1,6 @@
 <html><head><title>Commander.js - nodejs cli framework</title><link rel="stylesheet" href="style.css"/></head><body><div id="content"><h1>Commander.js</h1><p>Commander is a light-weight, expressive, and powerful command-line
 framework for <a href="http://nodejs.org">node.js</a>.
+
 </p><div id="exports.Command" class="comment"><h1>exports.Command</h1><div class="description"><p>Expose <code>Command</code>.</p></div><h2>Implementation</h2><pre><code>exports.Command = Command;</code></pre></div><div id="exports.Option" class="comment"><h1>exports.Option</h1><div class="description"><p>Expose <code>Option</code>.</p></div><h2>Implementation</h2><pre><code>exports.Option = Option;</code></pre></div><div id="Option" class="comment"><h1>Option()</h1><div class="description"><p>Initialize a new <code>Option</code> with the given <code>flags</code> and <code>description</code>.</p></div><h2>Implementation</h2><pre><code>function Option(flags, description) {
   this.flags = flags;
   this.required = ~flags.indexOf('<');

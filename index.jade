@@ -8,14 +8,13 @@ html
       p.
         Commander is a light-weight, expressive, and powerful command-line
         framework for <a href="http://nodejs.org">node.js</a>.
+
       for comment in comments
         if ignore(comment)
           - continue
+
         .comment(id=id(comment))
-          if ~comment.ctx.string.indexOf('prototype')
-            h1= comment.ctx.string.replace('.prototype.', '#')
-          else
-            h1= comment.ctx.string
+          h1= title(comment)
           .description!= comment.description.full
           h2 Implementation
           pre
@@ -26,8 +25,5 @@ html
         if ignore(comment)
           - continue
         li
-          if ~comment.ctx.string.indexOf('prototype')
-            a(href='#' + id(comment))= comment.ctx.string.replace('.prototype.', '#')
-          else
-            a(href='#' + id(comment))= comment.ctx.string
+          a(href='#' + id(comment))= title(comment)
     
