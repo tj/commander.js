@@ -22,3 +22,16 @@ html
           h2 Implementation
           pre
             code!= comment.code
+    
+    ul#menu
+      for comment in comments
+        if comment.ignore || !comment.ctx || 'version' == comment.ctx.name
+          - continue
+        if ~comment.description.full.indexOf('Module dependencies')
+          - continue
+        li
+          if ~comment.ctx.string.indexOf('prototype')
+            a(href='#')= comment.ctx.string.replace('.prototype.', '#')
+          else
+            a(href='#')= comment.ctx.string
+    

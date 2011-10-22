@@ -22,7 +22,7 @@ p code {
 
 #content {
   margin: 0 auto;
-  width: 600px;
+  width: 550px;
   text-align: left;
 }
 
@@ -36,4 +36,27 @@ h1 {
 
 h2 {
   font-size: 16px;
+}
+
+#menu {
+  position: fixed;
+  top: 15px;
+  left: 15px;
+  text-align: left;
+  font-size: 13px;
+  padding: 0;
+  margin: 0;
+}
+
+#menu li {
+  list-style: none;
+}
+
+#menu li a {
+  color: inherit;
+  text-decoration: none;
+}
+
+#menu li a:hover {
+  text-decoration: underline;
 }
