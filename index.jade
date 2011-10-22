@@ -11,7 +11,7 @@ html
       for comment in comments
         if ignore(comment)
           - continue
-        .comment
+        .comment(id=id(comment))
           if ~comment.ctx.string.indexOf('prototype')
             h1= comment.ctx.string.replace('.prototype.', '#')
           else
@@ -27,7 +27,7 @@ html
           - continue
         li
           if ~comment.ctx.string.indexOf('prototype')
-            a(href='#')= comment.ctx.string.replace('.prototype.', '#')
+            a(href='#' + id(comment))= comment.ctx.string.replace('.prototype.', '#')
           else
-            a(href='#')= comment.ctx.string
+            a(href='#' + id(comment))= comment.ctx.string
     
