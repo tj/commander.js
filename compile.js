@@ -37,7 +37,9 @@ function id(comment) {
 
 function ignore(comment) {
   return comment.ignore
+    || comment.isPrivate
     || !comment.ctx
+    || ~comment.ctx.string.indexOf('__proto__')
     || 'version' == comment.ctx.name
     || ~comment.description.full.indexOf('Module dependencies');
 }
