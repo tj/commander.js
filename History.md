@@ -1,4 +1,10 @@
 
+0.3.1 / 2011-10-31 
+==================
+
+  * Changed `--version` short flag to `-V` from `-v`
+  * Changed `.version()` so it's configurable [felixge]
+
 0.3.0 / 2011-10-31 
 ==================
 
