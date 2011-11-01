@@ -1,4 +1,9 @@
 
+0.3.2 / 2011-11-01 
+==================
+
+  * Fixed long flag definitions with values [felixge]
+
 0.3.1 / 2011-10-31 
 ==================
 
