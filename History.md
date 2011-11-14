@@ -1,4 +1,9 @@
 
+0.3.3 / 2011-11-14 
+==================
+
+  * Fixed: wait for close event when writing help info [Jerry Hamlet]
+
 0.3.2 / 2011-11-01 
 ==================
 
