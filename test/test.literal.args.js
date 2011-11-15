@@ -12,4 +12,5 @@ program
 
 program.parse(['node', 'test', '--foo', '--', '--bar', 'baz']);
 program.foo.should.be.true;
+should.equal(undefined, program.bar);
 program.args.should.eql(['--bar', 'baz']);
