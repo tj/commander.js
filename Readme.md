@@ -70,6 +70,7 @@ function list(val) {
 
 program
   .version('0.0.1')
+  .usage('[options] <file ...>')
   .option('-i, --integer <n>', 'An integer argument', parseInt)
   .option('-f, --float <n>', 'A float argument', parseFloat)
   .option('-r, --range <a>..<b>', 'A range', range)
