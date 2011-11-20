@@ -11,6 +11,9 @@ program
   .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
   .option('-T, --no-tests', 'ignore test hook')
 
+var envValue = "";
+var cmdValue = "";
+
 program
   .command('setup [env]')
   .description('run setup commands for all envs')
@@ -20,7 +23,7 @@ program
     var mode = options.setup_mode || "normal";
     env = env || 'all';
     
-    env.should.equal('env1');
+    envValue = env;
   });
 
 program
@@ -29,7 +32,7 @@ program
   .option("-e, --exec_mode <mode>", "Which exec mode to use")
   .option("-t, --target [target]", "Target to use")
   .action(function(cmd, options){
-    cmd.should.equal('exec1');
+    cmdValue = cmd;
   });
 
 program
@@ -42,34 +45,42 @@ program.parse(['node', 'test', '--config', 'conf']);
 program.config.should.equal("conf");
 program.commands[0].should.not.have.property.setup_mode;
 program.commands[1].should.not.have.property.exec_mode;
+envValue.should.be.null;
+cmdValue.should.be.null;
 
-program.parse(['node', 'test', '--config', 'conf', 'setup', '--setup_mode', 'mode3', 'env1']);
-program.config.should.equal("conf");
+program.parse(['node', 'test', '--config', 'conf1', 'setup', '--setup_mode', 'mode3', 'env1']);
+program.config.should.equal("conf1");
 program.commands[0].setup_mode.should.equal("mode3");
 program.commands[0].should.not.have.property.host;
+envValue.should.equal("env1");
 
-program.parse(['node', 'test', '--config', 'conf', 'setup', '--setup_mode', 'mode3', '-o', 'host1', 'env1']);
-program.config.should.equal("conf");
+program.parse(['node', 'test', '--config', 'conf2', 'setup', '--setup_mode', 'mode3', '-o', 'host1', 'env2']);
+program.config.should.equal("conf2");
 program.commands[0].setup_mode.should.equal("mode3");
 program.commands[0].host.should.equal("host1");
+envValue.should.equal("env2");
 
-program.parse(['node', 'test', '--config', 'conf', 'setup', '-s', 'mode4', 'env1']);
-program.config.should.equal("conf");
+program.parse(['node', 'test', '--config', 'conf3', 'setup', '-s', 'mode4', 'env3']);
+program.config.should.equal("conf3");
 program.commands[0].setup_mode.should.equal("mode4");
+envValue.should.equal("env3");
 
-program.parse(['node', 'test', '--config', 'conf', 'exec', '--exec_mode', 'mode1', 'exec1']);
-program.config.should.equal("conf");
+program.parse(['node', 'test', '--config', 'conf4', 'exec', '--exec_mode', 'mode1', 'exec1']);
+program.config.should.equal("conf4");
 program.commands[1].exec_mode.should.equal("mode1");
 program.commands[1].should.not.have.property.target;
+cmdValue.should.equal("exec1");
 
-program.parse(['node', 'test', '--config', 'conf', 'exec', '-e', 'mode2', 'exec1']);
-program.config.should.equal("conf");
+program.parse(['node', 'test', '--config', 'conf5', 'exec', '-e', 'mode2', 'exec2']);
+program.config.should.equal("conf5");
 program.commands[1].exec_mode.should.equal("mode2");
+cmdValue.should.equal("exec2");
 
-program.parse(['node', 'test', '--config', 'conf', 'exec', '--target', 'target1', '-e', 'mode2', 'exec1']);
-program.config.should.equal("conf");
+program.parse(['node', 'test', '--config', 'conf6', 'exec', '--target', 'target1', '-e', 'mode2', 'exec3']);
+program.config.should.equal("conf6");
 program.commands[1].exec_mode.should.equal("mode2");
 program.commands[1].target.should.equal("target1");
+cmdValue.should.equal("exec3");
 
 // Make sure we still catch errors with required values for options
 var exceptionOccurred = false;
