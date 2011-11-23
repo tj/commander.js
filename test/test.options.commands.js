@@ -13,6 +13,7 @@ program
 
 var envValue = "";
 var cmdValue = "";
+var customHelp = false;
 
 program
   .command('setup [env]')
@@ -33,6 +34,8 @@ program
   .option("-t, --target [target]", "Target to use")
   .action(function(cmd, options){
     cmdValue = cmd;
+  }).on("--help", function() {
+    customHelp = true;
   });
 
 program
@@ -85,7 +88,15 @@ cmdValue.should.equal("exec3");
 // Make sure we still catch errors with required values for options
 var exceptionOccurred = false;
 var oldProcessExit = process.exit;
+var oldConsoleError = console.error;
 process.exit = function() { exceptionOccurred = true; throw new Error(); };
+console.error = function() {};
+
+try {
+  program.parse(['node', 'test', '--config', 'conf6', 'exec', '--help']);
+} catch(ex) {
+  program.config.should.equal("conf6");
+}
 
 try {
     program.parse(['node', 'test', '--config', 'conf', 'exec', '-t', 'target1', 'exec1', '-e']);
@@ -93,6 +104,7 @@ try {
 catch(ex) {
 }
 
-exceptionOccurred.should.be.true;
-
 process.exit = oldProcessExit;
+
+exceptionOccurred.should.be.true;
+customHelp.should.be.true;
