@@ -7,6 +7,7 @@
   , "repository": { "type": "git", "url": "https://github.com/visionmedia/commander.js.git" }  
   , "dependencies": {}
   , "devDependencies": { "should": ">= 0.0.1" }
+  , "scripts": { "test": "make test" }
   , "main": "index"
   , "engines": { "node": ">= 0.4.x < 0.7.0" }
 }
