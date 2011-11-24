@@ -1,4 +1,10 @@
 
+0.4.2 / 2011-11-24 
+==================
+
+  * Added travis support
+  * Fixed: line-buffered input automatically trimmed. Closes #31
+
 0.4.1 / 2011-11-18 
 ==================
 
