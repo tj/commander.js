@@ -7,16 +7,16 @@
 var program = require('../');
 
 program.prompt('Username: ', function(name){
-  console.log('hi %s', name);
+  console.log('hi %s\n', name);
 
   program.prompt('Description:', function(desc){
     console.log('description was "%s"', desc.trim());
 
     program.prompt('Age: ', Number, function(age){
-      console.log('age: %j', age);
+      console.log('age: %j\n', age);
 
       program.prompt('Birthdate: ', Date, function(date){
-        console.log('date: %s', date);
+        console.log('date: %s\n', date);
         process.stdin.destroy();
       });
     });
