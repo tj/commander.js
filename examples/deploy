@@ -15,16 +15,25 @@ program
 program
   .command('setup [env]')
   .description('run setup commands for all envs')
-  .action(function(env){
+  .option("-s, --setup_mode [mode]", "Which setup mode to use")
+  .action(function(env, options){
+    var mode = options.setup_mode || "normal";
     env = env || 'all';
-    console.log('setup for %s env(s)', env);
+    console.log('setup for %s env(s) with %s mode', env, mode);
   });
 
 program
   .command('exec <cmd>')
   .description('execute the given remote cmd')
-  .action(function(cmd){
-    console.log('exec "%s"', cmd);
+  .option("-e, --exec_mode <mode>", "Which exec mode to use")
+  .action(function(cmd, options){
+    console.log('exec "%s" using %s mode', cmd, options.exec_mode);
+  }).on('--help', function() {
+    console.log('  Examples:');
+    console.log();
+    console.log('    $ deploy exec sequential');
+    console.log('    $ deploy exec async');
+    console.log();
   });
 
 program
@@ -34,5 +43,3 @@ program
   });
 
 program.parse(process.argv);
-
-
