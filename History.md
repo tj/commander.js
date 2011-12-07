@@ -1,4 +1,14 @@
 
+0.5.0 / 2011-12-04 
+==================
+
+  * Added sub-command option support [itay]
+
+0.4.3 / 2011-12-04 
+==================
+
+  * Fixed custom help ordering. Closes #32
+
 0.4.2 / 2011-11-24 
 ==================
 
