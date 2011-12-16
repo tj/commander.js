@@ -11,3 +11,5 @@ program
 
 program.parse(['node', 'test', '--longflag', 'something']);
 program.longflag.should.equal('something');
+
+program.opts.longflag.should.equal('something');

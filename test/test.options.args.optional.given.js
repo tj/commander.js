@@ -11,3 +11,4 @@ program
 
 program.parse(['node', 'test', '--cheese', 'feta']);
 program.cheese.should.equal('feta');
+program.opts.cheese.should.equal('feta');

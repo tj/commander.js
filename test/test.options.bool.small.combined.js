@@ -13,3 +13,6 @@ program
 program.parse(['node', 'test', '-pc']);
 program.pepper.should.be.true;
 program.cheese.should.be.false;
+
+program.opts.pepper.should.be.true;
+program.opts.cheese.should.be.false;
