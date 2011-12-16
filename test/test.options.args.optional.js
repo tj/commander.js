@@ -11,4 +11,4 @@ program
 
 program.parse(['node', 'test', '--cheese']);
 program.cheese.should.be.true;
-program.opts.cheese.should.be.true;
+program.options.cheese.should.be.true;

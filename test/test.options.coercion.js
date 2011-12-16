@@ -22,7 +22,7 @@ program.num.should.equal(15.99);
 program.float.should.equal(5.5);
 program.range.should.eql([1,5]);
 
-program.opts.int.should.equal(5);
-program.opts.num.should.equal(15.99);
-program.opts.float.should.equal(5.5);
-program.opts.range.should.eql([1,5]);
+program.options.int.should.equal(5);
+program.options.num.should.equal(15.99);
+program.options.float.should.equal(5.5);
+program.options.range.should.eql([1,5]);

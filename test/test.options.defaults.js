@@ -22,9 +22,9 @@ program.should.have.property('sauce', true);
 program.should.have.property('crust', 'hand-tossed');
 program.should.have.property('cheese', 'mozzarella');
 
-program.opts.should.have.property('anchovies', false);
-program.opts.should.have.property('onions', false);
-program.opts.should.have.property('olives', false);
-program.opts.should.have.property('sauce', true);
-program.opts.should.have.property('crust', 'hand-tossed');
-program.opts.should.have.property('cheese', 'mozzarella');
+program.options.should.have.property('anchovies', false);
+program.options.should.have.property('onions', false);
+program.options.should.have.property('olives', false);
+program.options.should.have.property('sauce', true);
+program.options.should.have.property('crust', 'hand-tossed');
+program.options.should.have.property('cheese', 'mozzarella');

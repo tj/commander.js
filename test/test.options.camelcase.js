@@ -26,9 +26,9 @@ program.myVeryLongFloat.should.equal(6.5);
 program.myURLCount.should.equal(7.5);
 program.myLongRange.should.eql([1,5]);
 
-program.opts.myInt.should.equal(5);
-program.opts.myNum.should.equal(15.99);
-program.opts.myFLOAT.should.equal(5.5);
-program.opts.myVeryLongFloat.should.equal(6.5);
-program.opts.myURLCount.should.equal(7.5);
-program.opts.myLongRange.should.eql([1,5]);
+program.options.myInt.should.equal(5);
+program.options.myNum.should.equal(15.99);
+program.options.myFLOAT.should.equal(5.5);
+program.options.myVeryLongFloat.should.equal(6.5);
+program.options.myURLCount.should.equal(7.5);
+program.options.myLongRange.should.eql([1,5]);

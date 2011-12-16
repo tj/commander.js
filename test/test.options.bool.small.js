@@ -14,5 +14,5 @@ program.parse(['node', 'test', '-p', '-c']);
 program.pepper.should.be.true;
 program.cheese.should.be.false;
 
-program.opts.pepper.should.be.true;
-program.opts.cheese.should.be.false;
+program.options.pepper.should.be.true;
+program.options.cheese.should.be.false;
