@@ -10,11 +10,11 @@ var list = ['tobi', 'loki', 'jane', 'manny', 'luna'];
 
 console.log('Choose the coolest pet:');
 program.choose(list, function(i){
-  console.log('you chose %d "%s"', i, list[i]);
+  console.log('you chose %d "%s"', i+1, list[i]);
   console.log();
   console.log('Choose the coolest pet, defaulting to loki:');
-  program.choose(list, 2, function(i){
-    console.log('you chose %d "%s"', i, list[i]);
+  program.choose(list, 1, function(i){
+    console.log('you chose %d "%s"', i+1, list[i]);
     process.stdin.destroy();
   });
 });
