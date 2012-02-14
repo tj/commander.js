@@ -1,0 +1,51 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var program = require('../');
+
+function normalizeSex(sex) {
+    return sex.toLowerCase() == 'm' || sex.toLowerCase == 'male' ? 'male' : 'female';
+}
+
+program
+  .version('0.0.1')
+  .option('-n --nickname <name>', 'Your nickname.')
+  .option('-a --age <age>', 'Your age.')
+  .option('-s --sex <sex>', 'Your sex. [ male | female ]', normalizeSex, 'unknown')
+  .option('-f --favorite-song <song>', 'Your favorite <song>.')
+  .parse(process.argv);
+
+program
+  .fill({
+    'nickname': 'What is your nickname? '
+    , 'age': 'How old are your? '
+    , 'favorite-song': 'What is your favorite song? ' // option name can be camelCase as well
+  })
+
+// Filled arguments are available on 'filled' event.
+program.on('filled', function(program) {
+  console.log('  - name: %s', program.nickname);
+  console.log('  - age: %s', program.age);
+  console.log('  - sex: %s', program.sex);
+  console.log('  - favorite song: %s', program.favoriteSong);
+});
+
+
+
+/**
+ * Miscelenious
+ */
+
+/**
+ * .fill() method takes 2nd argument as a callback
+ */
+// These two lines are synonymous.
+// program.fill({'a', 'aaa: '}, main);
+// program.fill({'a': 'aaa: '}).on('filled', main);
+//
+// function main(program) {
+//     console.log(program);
+// }
