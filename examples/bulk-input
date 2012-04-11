@@ -1,0 +1,16 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var program = require('../');
+
+program.prompt({
+  name: 'Username: ',
+  desc: 'Description:',
+  age: 'Age: '
+}, function(obj){
+  console.log(obj);
+  process.stdin.destroy();
+});
