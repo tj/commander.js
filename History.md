@@ -1,4 +1,11 @@
 
+0.6.0 / 2012-04-10 
+==================
+
+  * Added `.prompt(obj, callback)` support. Closes #49
+  * Added default support to .choose(). Closes #41
+  * Fixed the choice example
+
 0.5.1 / 2011-12-20 
 ==================
 
