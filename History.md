@@ -1,4 +1,10 @@
 
+0.6.1 / 2012-06-01 
+==================
+
+  * Added: append (yes or no) on confirmation
+  * Added: allow node.js v0.7.x
+
 0.6.0 / 2012-04-10 
 ==================
 
