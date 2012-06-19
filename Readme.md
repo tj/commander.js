@@ -12,6 +12,11 @@
 
  Options with commander are defined with the `.option()` method, also serving as documentation for the options. The example below parses args and options from `process.argv`, leaving remaining args as the `program.args` array which were not consumed by options.
 
+In addition, since the program object has a number of other
+properties associated with it, the simple
+list of options that were parsed from the command line can
+be read from program.parsedOptions.
+
 ```js
 #!/usr/bin/env node
 
@@ -33,6 +38,8 @@ console.log('you ordered a pizza with:');
 if (program.peppers) console.log('  - peppers');
 if (program.pineapple) console.log('  - pineappe');
 if (program.bbq) console.log('  - bbq');
+//access via .parsedOptions
+if (program.parsedOptions['bbq']) console.log('  - bbq');
 console.log('  - %s cheese', program.cheese);
 ```
 
