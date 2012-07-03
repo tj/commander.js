@@ -1,4 +1,3 @@
-
 # Commander.js
 
   The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/visionmedia/commander).
@@ -50,7 +49,7 @@ console.log('  - %s cheese', program.cheese);
 
    Options:
 
-     -v, --version        output the version number
+     -V, --version        output the version number
      -p, --peppers        Add peppers
      -P, --pineapple      Add pineappe
      -b, --bbq            Add bbq sauce
@@ -142,7 +141,7 @@ Usage: custom-help [options]
 Options:
 
   -h, --help     output usage information
-  -v, --version  output the version number
+  -V, --version  output the version number
   -f, --foo      enable some foo
   -b, --bar      enable some bar
   -B, --baz      enable some baz
