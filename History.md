@@ -1,4 +1,10 @@
 
+1.0.0 / 2012-07-05 
+==================
+
+  * add support for optional option descriptions
+  * add defaulting of `.version()` to package.json's version
+
 0.6.1 / 2012-06-01 
 ==================
 
