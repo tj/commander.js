@@ -21,3 +21,10 @@ program.should.have.property('olives', 'black');
 program.should.have.property('sauce', false);
 program.should.have.property('crust', 'thin');
 program.should.have.property('cheese', 'wensleydale');
+
+program.options.should.have.property('anchovies', true);
+program.options.should.have.property('onions', true);
+program.options.should.have.property('olives', 'black');
+program.options.should.have.property('sauce', false);
+program.options.should.have.property('crust', 'thin');
+program.options.should.have.property('cheese', 'wensleydale');

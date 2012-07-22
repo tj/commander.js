@@ -21,3 +21,8 @@ program.int.should.equal(5);
 program.num.should.equal(15.99);
 program.float.should.equal(5.5);
 program.range.should.eql([1,5]);
+
+program.options.int.should.equal(5);
+program.options.num.should.equal(15.99);
+program.options.float.should.equal(5.5);
+program.options.range.should.eql([1,5]);
