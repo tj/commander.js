@@ -1,4 +1,10 @@
 
+1.0.1 / 2012-08-03 
+==================
+
+  * fix issue #56
+  * fix tty.setRawMode(mode) was moved to tty.ReadStream#setRawMode() (i.e. process.stdin.setRawMode())
+
 1.0.0 / 2012-07-05 
 ==================
 
