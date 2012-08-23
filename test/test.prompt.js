@@ -6,6 +6,8 @@ var events = require('events')
  ,  program = require('../')
  ,  should = require('should');
 
+// TODO: this is all super messy... rewrite
+
 //mock stdin on process
 var stdin = new events.EventEmitter();
 stdin.setEncoding = stdin.resume = function() {};
