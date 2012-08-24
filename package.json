@@ -5,7 +5,7 @@
   , "keywords": ["command", "option", "parser", "prompt", "stdin"]
   , "author": "TJ Holowaychuk <tj@vision-media.ca>"
   , "repository": { "type": "git", "url": "https://github.com/visionmedia/commander.js.git" }  
-  , "dependencies": {}
+  , "dependencies": { "keypress": "0.1.x"}
   , "devDependencies": { "should": ">= 0.0.1" }
   , "scripts": { "test": "make test" }
   , "main": "index"
