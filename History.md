@@ -1,4 +1,10 @@
 
+1.0.2 / 2012-08-24 
+==================
+
+  * add `--foo=bar` support [arv]
+  * fix password on node 0.8.8. Make backward compatible with 0.6 [focusaurus]
+
 1.0.1 / 2012-08-03 
 ==================
 
