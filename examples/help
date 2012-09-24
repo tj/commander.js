@@ -13,5 +13,5 @@ program
   .option('-B, --baz', 'enable some baz')
   .parse(process.argv);
 
-if (!process.argv.length) program.help();
+if (!program.args.length) program.help();
 
