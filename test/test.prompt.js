@@ -24,8 +24,8 @@ stdout.expect = function(expected, fn) {
   actual.should.equal(expected);
 }
 //var realOut = process.stdout;
-process.__defineGetter__('stdout', function() { return stdout });
-
+process.__defineGetter__('stdout', function() {return stdout });
+var date_start = new Date;
 var count = 0;
 var test = function(expected) {
   count++;
@@ -35,7 +35,8 @@ var test = function(expected) {
       //need something better :(
       //using `new Date(date.toString())` round trip
       //loosing some precision for .getTime()
-      actual.should.be.an.instanceof(Date);
+      var act = actual.toString();
+      act.should.equal(date_start.toString());
     } else {
       actual.should.equal(expected);
     }
@@ -78,8 +79,7 @@ stdout.expect(prompt + '\n', function() {
 
 /* Date Prompt Tests */
 var prompt = 'A date '
- ,  expected = new Date();
- 
+ ,  expected = new Date;
 // simple date
 stdout.expect(prompt, function(){
     program.prompt(prompt, Date, test(expected));
@@ -120,4 +120,3 @@ stdout.expect(prompt, function() {
   })
   stdin.write(expected.toString());    
 })
-
