@@ -10,9 +10,12 @@ program
   .option('-C, --chdir <path>', 'change the working directory')
   .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
   .option('-T, --no-tests', 'ignore test hook')
+  .option('-w, --words <words...>', 'variadic option')
 
 var envValue = "";
 var cmdValue = "";
+var filesValue = "";
+var dirValue = "";
 var customHelp = false;
 
 program
@@ -39,11 +42,21 @@ program
   });
 
 program
+  .command('cat <dir> <files...>')
+  .description('concat files')
+  .option('-s, --silent', 'some boolean flag')
+  .option('-t, --target [path]', 'some other option')
+  .action(function(dir, files){
+    filesValue = files;
+    dirValue = dir;
+  });
+
+program
   .command('*')
   .action(function(env){
     console.log('deploying "%s"', env);
   });
-  
+
 program.parse(['node', 'test', '--config', 'conf']);
 program.config.should.equal("conf");
 program.commands[0].should.not.have.property.setup_mode;
@@ -84,6 +97,13 @@ program.config.should.equal("conf6");
 program.commands[1].exec_mode.should.equal("mode2");
 program.commands[1].target.should.equal("target1");
 cmdValue.should.equal("exec3");
+
+program.parse(['node', 'test', 'cat', '--silent', '-t', 'target1', 'foo', 'lorem.js', 'ipsum.js', 'dolor.js']);
+dirValue.should.equal('foo');
+filesValue.should.eql(['lorem.js', 'ipsum.js', 'dolor.js']);
+program.commands[2].silent.should.be.true;
+program.commands[2].target.should.equal('target1');
+
 
 // Make sure we still catch errors with required values for options
 var exceptionOccurred = false;
