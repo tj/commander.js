@@ -32,13 +32,12 @@ var test = function(expected) {
   return function(actual) {
     count--;
     if(expected instanceof Date) {
-      //need something better :(
-      //using `new Date(date.toString())` round trip
-      //loosing some precision for .getTime()
-      actual.should.be.an.instanceof(Date);
-    } else {
-      actual.should.equal(expected);
+      // instanceOf check fails so we detect if constructor was Date
+      // (maybe because `Date` is a different object inside each module)
+      // so we use toString and also check if values match
+      Object.prototype.toString.call(actual).should.equal('[object Date]');
     }
+    actual.should.equal(expected);
   }
 }
 
@@ -78,7 +77,8 @@ stdout.expect(prompt + '\n', function() {
 
 /* Date Prompt Tests */
 var prompt = 'A date '
- ,  expected = new Date();
+  // we use a date that isn't so precise to avoid Date.toString() precision loss
+ ,  expected = new Date(2012, 10, 5);
  
 // simple date
 stdout.expect(prompt, function(){
