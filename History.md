@@ -1,4 +1,9 @@
 
+1.1.0 / 2012-11-16 
+==================
+
+  * add git-style executable subcommand support. Closes #94
+
 1.0.5 / 2012-10-09 
 ==================
 
