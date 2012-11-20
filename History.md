@@ -1,4 +1,10 @@
 
+1.1.1 / 2012-11-20 
+==================
+
+  * add more sub-command padding
+  * fix .usage() when args are present. Closes #106
+
 1.1.0 / 2012-11-16 
 ==================
 
