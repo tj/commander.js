@@ -748,7 +748,7 @@ Command.prototype.commandHelp = function(){
       return pad(cmd._name
         + (cmd.options.length 
           ? ' [options]'
-          : '') + ' ' + args, 18)
+          : '') + ' ' + args, 22)
         + (cmd.description()
           ? ' ' + cmd.description()
           : '');
