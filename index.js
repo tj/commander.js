@@ -91,7 +91,7 @@ Option.prototype.is = function(arg){
 function Command(name) {
   this.commands = [];
   this.options = [];
-  this.args = [];
+  this._args = [];
   this._name = name;
 }
 
@@ -189,10 +189,10 @@ Command.prototype.parseExpectedArgs = function(args){
   args.forEach(function(arg){
     switch (arg[0]) {
       case '<':
-        self.args.push({ required: true, name: arg.slice(1, -1) });
+        self._args.push({ required: true, name: arg.slice(1, -1) });
         break;
       case '[':
-        self.args.push({ required: false, name: arg.slice(1, -1) });
+        self._args.push({ required: false, name: arg.slice(1, -1) });
         break;
     }
   });
@@ -236,7 +236,7 @@ Command.prototype.action = function(fn){
     // Leftover arguments need to be pushed back. Fixes issue #56
     if (parsed.args.length) args = parsed.args.concat(args);
     
-    self.args.forEach(function(arg, i){
+    self._args.forEach(function(arg, i){
       if (arg.required && null == args[i]) {
         self.missingArgument(arg.name);
       }
@@ -245,8 +245,8 @@ Command.prototype.action = function(fn){
     // Always append ourselves to the end of the arguments,
     // to make sure we match the number of arguments the user
     // expects
-    if (self.args.length) {
-      args[self.args.length] = self;
+    if (self._args.length) {
+      args[self._args.length] = self;
     } else {
       args.push(self);
     }
@@ -676,7 +676,7 @@ Command.prototype.description = function(str){
  */
 
 Command.prototype.usage = function(str){
-  var args = this.args.map(function(arg){
+  var args = this._args.map(function(arg){
     return arg.required
       ? '<' + arg.name + '>'
       : '[' + arg.name + ']';
@@ -685,7 +685,8 @@ Command.prototype.usage = function(str){
   var usage = '[options'
     + (this.commands.length ? '] [command' : '')
     + ']'
-    + (this.args.length ? ' ' + args : '');
+    + (this._args.length ? ' ' + args : '');
+
   if (0 == arguments.length) return this._usage || usage;
   this._usage = str;
 
@@ -738,7 +739,7 @@ Command.prototype.commandHelp = function(){
     , '  Commands:'
     , ''
     , this.commands.map(function(cmd){
-      var args = cmd.args.map(function(arg){
+      var args = cmd._args.map(function(arg){
         return arg.required
           ? '<' + arg.name + '>'
           : '[' + arg.name + ']';
