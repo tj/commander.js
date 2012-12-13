@@ -898,7 +898,14 @@ Command.prototype.commandHelp = function() {
  */
 
 Command.prototype.helpInformation = function() {
-  return [
+  var desc = [];
+  if (this._description) {
+    desc = [
+        ''
+      , '  Description: ' + this._description]
+  }
+
+  return desc.concat([
       ''
     , '  Usage: ' + this._name
         + (this._alias
@@ -911,7 +918,7 @@ Command.prototype.helpInformation = function() {
     , '' + this.optionHelp().replace(/^/gm, '    ')
     , ''
     , ''
-  ].join('\n');
+  ]).join('\n');
 };
 
 /**
