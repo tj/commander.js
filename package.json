@@ -9,5 +9,5 @@
   , "devDependencies": { "should": ">= 0.0.1" }
   , "scripts": { "test": "make test" }
   , "main": "index"
-  , "engines": { "node": ">= 0.6.x" }
+  , "engines": { "node": ">= 0.6.0" }
 }
