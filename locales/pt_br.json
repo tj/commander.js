@@ -1,0 +1,20 @@
+{
+	"usage": "Uso",
+	"helpCommand": "help [comando]",
+	"helpDesc": "mostra ajuda para [comando]",
+	"subCommandNotExistsError": "\n  %s(1) não existe\n",
+	"missingArgumentError": "  erro: faltando o argumento `%s'",
+	"optionMissingArgumentWithFlagError": "  erro: opção `%s' está sem o argumento necessário, recebido `%s'",
+	"optionMissingArgumentWihoutFlagError": "  erro: opção `%s' está sem o argumento necessário",
+	"unknownOptionError": "  erro: opção desconhecida `%s'",
+	"versionDesc": "mostra o número da versão",
+	"optionsLabel": "opções",
+	"commandLabel": "comando",
+	"optionHelpDesc": "mostra as instruções de uso",
+	"commandsLabel": "  Comandos:",
+	"helpUsageLabel": "  Uso: ",
+	"helpOptionsLabel": "  Opções:",
+	"mustBeANumberError": "(precisa ser um número) ",
+	"mustBeADateError": "(precisa ser uma data) ",
+	"yesOrNoPrompt": "(yes ou no) "
+}
