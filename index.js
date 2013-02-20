@@ -16,7 +16,8 @@ var EventEmitter = require('events').EventEmitter
   , path = require('path')
   , tty = require('tty')
   , dirname = path.dirname
-  , basename = path.basename;
+  , basename = path.basename
+  , defaultLocalePath = __dirname + "/locales/en.json";
 
 /**
  * Expose the root command.
@@ -93,6 +94,7 @@ function Command(name) {
   this.options = [];
   this._args = [];
   this._name = name;
+  this.locale = require(defaultLocalePath);
 }
 
 /**
@@ -163,6 +165,47 @@ Command.prototype.command = function(name, desc){
 };
 
 /**
+ * Check for localization use
+ *
+ * If true, localize the command line tool acording to the enviroment language.
+ *
+ * Otherwise just defaults to english.
+ * @param {Boolean} option
+ * @return {Command} for chaining
+ * @api public
+ */
+
+Command.prototype.localize = function(option) {
+
+  //Default locale path is set by the variable defaultLocalePath.
+
+  //Locales path
+  var localesPath = __dirname + "/locales/";
+
+  //Add new locale files created in locales folder here
+  var localeFiles = {
+    en: 'en.json'
+  }
+
+  if(option) {
+    var localCode = process.env.LANG;
+    localCode = localCode.split('.');
+    localCode = localCode[0].toLowerCase();
+    if(localeFiles[localCode]) {
+      this.locale = require(localesPath + localeFiles[localCode]);
+    }
+    else {
+      this.locale = require(defaultLocalePath);
+    }
+  }
+  else {
+    this.locale = require(defaultLocalePath);
+  }
+
+  return this;
+};
+
+/**
  * Add an implicit `help [cmd]` subcommand
  * which invokes `--help` for the given command.
  *
@@ -170,7 +213,7 @@ Command.prototype.command = function(name, desc){
  */
 
 Command.prototype.addImplicitHelpCommand = function() {
-  this.command('help [cmd]', 'display help for [cmd]');
+  this.command(this.locale.helpCommand, this.locale.helpDesc);
 };
 
 /**
@@ -412,7 +455,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   var proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
   proc.on('exit', function(code){
     if (code == 127) {
-      console.error('\n  %s(1) does not exist\n', bin);
+      console.error(this.locale.subCommandNotExistsError, bin);
     }
   });
 };
@@ -590,7 +633,7 @@ Command.prototype.parseOptions = function(argv){
 
 Command.prototype.missingArgument = function(name){
   console.error();
-  console.error("  error: missing required argument `%s'", name);
+  console.error(this.locale.missingArgumentError, name);
   console.error();
   process.exit(1);
 };
@@ -606,9 +649,9 @@ Command.prototype.missingArgument = function(name){
 Command.prototype.optionMissingArgument = function(option, flag){
   console.error();
   if (flag) {
-    console.error("  error: option `%s' argument missing, got `%s'", option.flags, flag);
+    console.error(this.locale.optionMissingArgumentWithFlagError, option.flags, flag);
   } else {
-    console.error("  error: option `%s' argument missing", option.flags);
+    console.error(this.locale.optionMissingArgumentWithoutFlagError, option.flags);
   }
   console.error();
   process.exit(1);
@@ -623,7 +666,7 @@ Command.prototype.optionMissingArgument = function(option, flag){
 
 Command.prototype.unknownOption = function(flag){
   console.error();
-  console.error("  error: unknown option `%s'", flag);
+  console.error(this.locale.unknownOptionError, flag);
   console.error();
   process.exit(1);
 };
@@ -645,7 +688,7 @@ Command.prototype.version = function(str, flags){
   if (0 == arguments.length) return this._version;
   this._version = str;
   flags = flags || '-V, --version';
-  this.option(flags, 'output the version number');
+  this.option(flags, this.locale.versionDesc);
   this.on('version', function(){
     console.log(str);
     process.exit(0);
@@ -682,8 +725,8 @@ Command.prototype.usage = function(str){
       : '[' + arg.name + ']';
   });
 
-  var usage = '[options'
-    + (this.commands.length ? '] [command' : '')
+  var usage = '[' + this.locale.optionsLabel
+    + (this.commands.length ? '] [' + this.locale.commandLabel : '')
     + ']'
     + (this._args.length ? ' ' + args : '');
 
@@ -717,7 +760,7 @@ Command.prototype.optionHelp = function(){
   var width = this.largestOptionLength();
   
   // Prepend the help information
-  return [pad('-h, --help', width) + '  ' + 'output usage information']
+  return [pad('-h, --help', width) + '  ' + this.locale.optionHelpDesc]
     .concat(this.options.map(function(option){
       return pad(option.flags, width)
         + '  ' + option.description;
@@ -736,7 +779,7 @@ Command.prototype.commandHelp = function(){
   if (!this.commands.length) return '';
   return [
       ''
-    , '  Commands:'
+    , this.locale.commandsLabel
     , ''
     , this.commands.map(function(cmd){
       var args = cmd._args.map(function(arg){
@@ -747,7 +790,7 @@ Command.prototype.commandHelp = function(){
 
       return pad(cmd._name
         + (cmd.options.length 
-          ? ' [options]'
+          ? ' ['+ this.locale.optionsLabel +']'
           : '') + ' ' + args, 22)
         + (cmd.description()
           ? ' ' + cmd.description()
@@ -767,9 +810,9 @@ Command.prototype.commandHelp = function(){
 Command.prototype.helpInformation = function(){
   return [
       ''
-    , '  Usage: ' + this._name + ' ' + this.usage()
+    , this.locale.helpUsageLabel + this._name + ' ' + this.usage()
     , '' + this.commandHelp()
-    , '  Options:'
+    , this.locale.helpOptionsLabel
     , ''
     , '' + this.optionHelp().replace(/^/gm, '    ')
     , ''
@@ -789,7 +832,7 @@ Command.prototype.promptForNumber = function(str, fn){
   var self = this;
   this.promptSingleLine(str, function parseNumber(val){
     val = Number(val);
-    if (isNaN(val)) return self.promptSingleLine(str + '(must be a number) ', parseNumber);
+    if (isNaN(val)) return self.promptSingleLine(str + this.locale.mustBeANumberError, parseNumber);
     fn(val);
   });
 };
@@ -806,7 +849,7 @@ Command.prototype.promptForDate = function(str, fn){
   var self = this;
   this.promptSingleLine(str, function parseDate(val){
     val = new Date(val);
-    if (isNaN(val.getTime())) return self.promptSingleLine(str + '(must be a date) ', parseDate);
+    if (isNaN(val.getTime())) return self.promptSingleLine(str + this.locale.mustBeADateError, parseDate);
     fn(val);
   });
 };
@@ -990,7 +1033,7 @@ Command.prototype.confirm = function(str, fn, verbose){
   var self = this;
   this.prompt(str, function(ok){
     if (!ok.trim()) {
-      if (!verbose) str += '(yes or no) ';
+      if (!verbose) str += this.locale.yesOrNoPrompt;
       return self.confirm(str, fn, true);
     }
     fn(parseBool(ok));

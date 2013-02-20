@@ -1,0 +1,20 @@
+{
+	"usage": "Usage",
+	"helpCommand": "help [cmd]",
+	"helpDesc": "display help for [cmd]",
+	"subCommandNotExistsError": "\n  %s(1) does not exist\n",
+	"missingArgumentError": "  error: missing required argument `%s'",
+	"optionMissingArgumentWithFlagError": "  error: option `%s' argument missing, got `%s'",
+	"optionMissingArgumentWihoutFlagError": "  error: option `%s' argument missing",
+	"unknownOptionError": "  error: unknown option `%s'",
+	"versionDesc": "output the version number",
+	"optionsLabel": "options",
+	"commandLabel": "command",
+	"optionHelpDesc": "output usage information",
+	"commandsLabel": "  Commands:",
+	"helpUsageLabel": "  Usage: ",
+	"helpOptionsLabel": "  Options:",
+	"mustBeANumberError": "(must be a number) ",
+	"mustBeADateError": "(must be a date) ",
+	"yesOrNoPrompt": "(yes or no) "
+}
