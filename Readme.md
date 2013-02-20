@@ -228,6 +228,12 @@ program.choose(list, function(i){
 });
 ```
 
+## .localize(option)
+
+  Set to true to automatic localize commander.js to the system language, if available.
+  Set to false to localize commander.js to the default language (english).
+  Not setting this option will default to english as well.
+
 ## .outputHelp()
 
   Output help information without exiting.
