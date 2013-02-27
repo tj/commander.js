@@ -827,6 +827,7 @@ Command.prototype.promptSingleLine = function(str, fn){
   process.stdout.write(str);
   process.stdin.setEncoding('utf8');
   process.stdin.once('data', function(val){
+    process.stdin.pause();
     fn(val.trim());
   }).resume();
 };
@@ -846,6 +847,7 @@ Command.prototype.promptMultiLine = function(str, fn){
   process.stdin.on('data', function(val){
     if ('\n' == val || '\r\n' == val) {
       process.stdin.removeAllListeners('data');
+      process.stdin.pause();
       fn(buf.join('\n'));
     } else {
       buf.push(val.trimRight());
