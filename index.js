@@ -434,7 +434,7 @@ Command.prototype.normalize = function(args){
 
   for (var i = 0, len = args.length; i < len; ++i) {
     arg = args[i];
-    if (arg.length > 1 && '-' == arg[0] && '-' != arg[1]) {
+    if (arg.length > 1 && '-' == arg[0] && '-' != arg[1] && !isNumber(arg) ) {
       arg.slice(1).split('').forEach(function(c){
         ret.push('-' + c);
       });
@@ -543,7 +543,7 @@ Command.prototype.parseOptions = function(argv){
       if (option.required) {
         arg = argv[++i];
         if (null == arg) return this.optionMissingArgument(option);
-        if ('-' == arg[0]) return this.optionMissingArgument(option, arg);
+        if ('-' == arg[0] && !isNumber(arg)) return this.optionMissingArgument(option, arg);
         this.emit(option.name(), arg);
       // optional arg
       } else if (option.optional) {
@@ -568,7 +568,7 @@ Command.prototype.parseOptions = function(argv){
       // If the next argument looks like it might be
       // an argument for this option, we pass it on.
       // If it isn't, then it'll simply be ignored
-      if (argv[i+1] && '-' != argv[i+1][0]) {
+      if (argv[i+1] && ('-' != argv[i+1][0] || isNumber(argv[i+1]))) {
         unknownOptions.push(argv[++i]);
       }
       continue;
@@ -1084,6 +1084,19 @@ function camelcase(flag) {
   return flag.split('-').reduce(function(str, word){
     return str + word[0].toUpperCase() + word.slice(1);
   });
+}
+
+/**
+ * Checkes if n is a number
+ *
+ * @see http://stackoverflow.com/questions/18082/validate-numbers-in-javascript-isnumeric
+ * @param {var} value
+ * @param return {Boolean}
+ * @api private
+ */
+ 
+function isNumber(n) {
+  return !isNaN(parseFloat(n)) && isFinite(n);
 }
 
 /**
