@@ -1,0 +1,18 @@
+var program = require('..');
+
+program
+  .version('0.0.1')
+  .option('-d, --directory <DIRNAME>', 'serve directory')
+  .parse(process.argv);
+
+
+if (process.argv.length < 3) {
+  program.outputHelp();
+} else {
+  console.log();
+  if (program.directory) console.log('serving directory: ', program.directory);
+  console.log();
+}
+
+
+

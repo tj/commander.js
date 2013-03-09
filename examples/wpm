@@ -1,0 +1,20 @@
+#!/usr/bin/env node
+
+var program = require('..');
+
+program
+  .version('0.0.1')
+  .extbang({'': 'node', '.js': 'node'})
+  .command('install [name]', 'install one or more packages')
+  .command('serve [directory]', 'serve a directory')
+  .parse(process.argv);
+
+// extbang tells commander to execute files with no extension and `.js`
+// files with `node`
+
+// Try the following:
+//   node ./examples/wpm
+//   node ./examples/wpm help install
+//   node ./examples/wpm install -h
+//   node ./examples/pm install foo bar baz
+//   ./examples/pm install foo bar baz --force
