@@ -399,7 +399,6 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     args[1] = '--help';
   }
 
-  var extbang = this._extbang;
   // executable
   var dir = dirname(argv[1]);
   var bin = basename(argv[1]) + '-' + args[0];
@@ -408,10 +407,11 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // check for ./<bin> first unless extbang specifies a executable
   // for the extension
   var local = path.join(dir, bin);
-  if (exists(local) && !extbang[extname]) {
+  var extbang = this._extbang;
+  if (exists(local) && (!extbang || !extbang[extname])) {
     bin = local;
     args = args.slice(1);
-  } else {
+  } else if (extbang) {
     for (extname in extbang) {
       // strip extname
       var script = basename(argv[1], path.extname(argv[1])) + '-' + args[0] + extname;
