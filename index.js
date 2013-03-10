@@ -399,7 +399,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     args[1] = '--help';
   }
 
-  // executable
+  // argv[1] = executable
   var dir = dirname(argv[1]);
   var bin = basename(argv[1]) + '-' + args[0];
   var extname = path.extname(argv[1]);
@@ -418,9 +418,9 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
       local = path.join(dir, script);
 
       if (exists(local)) {
-        // bin becomes something like `node` or `node_modules/.bin/coffee`
+        // use the user-defined executable like `node`
         bin = extbang[extname];
-        // the file found becomes the first argument
+        // execute local script by prepending it as first argument
         args = args.slice(1);
         args.unshift(local);
         break;
