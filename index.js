@@ -120,28 +120,28 @@ Command.prototype.__proto__ = EventEmitter.prototype;
  *        .option('-C, --chdir <path>', 'change the working directory')
  *        .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
  *        .option('-T, --no-tests', 'ignore test hook')
- *     
+ *
  *      program
  *        .command('setup')
  *        .description('run remote setup commands')
  *        .action(function(){
  *          console.log('setup');
  *        });
- *     
+ *
  *      program
  *        .command('exec <cmd>')
  *        .description('run the given remote command')
  *        .action(function(cmd){
  *          console.log('exec "%s"', cmd);
  *        });
- *     
+ *
  *      program
  *        .command('*')
  *        .description('deploy the given env')
  *        .action(function(env){
  *          console.log('deploying "%s"', env);
  *        });
- *     
+ *
  *      program.parse(process.argv);
   *
  * @param {String} name
@@ -150,7 +150,7 @@ Command.prototype.__proto__ = EventEmitter.prototype;
  * @api public
  */
 
-Command.prototype.command = function(name, desc){
+Command.prototype.command = function(name, desc) {
   var args = name.split(/ +/);
   var cmd = new Command(args.shift());
   if (desc) cmd.description(desc);
@@ -218,30 +218,30 @@ Command.prototype.parseExpectedArgs = function(args){
 
 Command.prototype.action = function(fn){
   var self = this;
-  this.parent.on(this._name, function(args, unknown){    
+  this.parent.on(this._name, function(args, unknown){
     // Parse any so-far unknown options
     unknown = unknown || [];
     var parsed = self.parseOptions(unknown);
-    
+
     // Output help if necessary
     outputHelpIfNecessary(self, parsed.unknown);
-    
-    // If there are still any unknown options, then we simply 
+
+    // If there are still any unknown options, then we simply
     // die, unless someone asked for help, in which case we give it
     // to them, and then we die.
-    if (parsed.unknown.length > 0) {      
+    if (parsed.unknown.length > 0) {
       self.unknownOption(parsed.unknown[0]);
     }
-    
+
     // Leftover arguments need to be pushed back. Fixes issue #56
     if (parsed.args.length) args = parsed.args.concat(args);
-    
+
     self._args.forEach(function(arg, i){
       if (arg.required && null == args[i]) {
         self.missingArgument(arg.name);
       }
     });
-    
+
     // Always append ourselves to the end of the arguments,
     // to make sure we match the number of arguments the user
     // expects
@@ -250,7 +250,7 @@ Command.prototype.action = function(fn){
     } else {
       args.push(self);
     }
-    
+
     fn.apply(this, args);
   });
   return this;
@@ -258,7 +258,7 @@ Command.prototype.action = function(fn){
 
 /**
  * Define option with `flags`, `description` and optional
- * coercion `fn`. 
+ * coercion `fn`.
  *
  * The `flags` string should contain both the short and long flags,
  * separated by comma, a pipe or space. The following are all valid
@@ -371,7 +371,7 @@ Command.prototype.parse = function(argv){
   // process argv
   var parsed = this.parseOptions(this.normalize(argv.slice(2)));
   var args = this.args = parsed.args;
- 
+
   // executable sub-commands, skip .parseArgs()
   if (this.executables) return this.executeSubCommand(argv, args, parsed.unknown);
 
@@ -399,16 +399,36 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     args[1] = '--help';
   }
 
-  // executable
+  // argv[1] = executable
   var dir = dirname(argv[1]);
   var bin = basename(argv[1]) + '-' + args[0];
+  var extname = path.extname(argv[1]);
 
-  // check for ./<bin> first
+  // check for ./<bin> first unless extbang specifies a executable
+  // for the extension
   var local = path.join(dir, bin);
-  if (exists(local)) bin = local;
+  var extbang = this._extbang;
+  if (exists(local) && (!extbang || !extbang[extname])) {
+    bin = local;
+    args = args.slice(1);
+  } else if (extbang) {
+    for (extname in extbang) {
+      // strip extname
+      var script = basename(argv[1], path.extname(argv[1])) + '-' + args[0] + extname;
+      local = path.join(dir, script);
+
+      if (exists(local)) {
+        // use the user-defined executable like `node`
+        bin = extbang[extname];
+        // execute local script by prepending it as first argument
+        args = args.slice(1);
+        args.unshift(local);
+        break;
+      }
+    }
+  }
 
   // run it
-  args = args.slice(1);
   var proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
   proc.on('exit', function(code){
     if (code == 127) {
@@ -474,10 +494,10 @@ Command.prototype.parseArgs = function(args, unknown){
     }
   } else {
     outputHelpIfNecessary(this, unknown);
-    
+
     // If there were no args and we have unknown options,
     // then they are extraneous and we need to error.
-    if (unknown.length > 0) {      
+    if (unknown.length > 0) {
       this.unknownOption(unknown[0]);
     }
   }
@@ -560,11 +580,11 @@ Command.prototype.parseOptions = function(argv){
       }
       continue;
     }
-    
+
     // looks like an option
     if (arg.length > 1 && '-' == arg[0]) {
       unknownOptions.push(arg);
-      
+
       // If the next argument looks like it might be
       // an argument for this option, we pass it on.
       // If it isn't, then it'll simply be ignored
@@ -573,11 +593,11 @@ Command.prototype.parseOptions = function(argv){
       }
       continue;
     }
-    
+
     // arg
     args.push(arg);
   }
-  
+
   return { args: args, unknown: unknownOptions };
 };
 
@@ -653,6 +673,25 @@ Command.prototype.version = function(str, flags){
   return this;
 };
 
+
+/**
+ * Map extensions to scripts.
+ *
+ * Windows cannot directly execute scripts as simply as *nix. This maps
+ * extensions to executables.
+ *
+ * @example
+ *  This will try to execute `pm-build` then `pm-build`.js
+ *  Program
+ *    .extbang({'.js': 'node'})
+ *    .command("build [task]", "Builds a task");
+ */
+Command.prototype.extbang = function(map) {
+  if (!map) return this;
+  this._extbang = map;
+  return this;
+};
+
 /**
  * Set the description `str`.
  *
@@ -715,7 +754,7 @@ Command.prototype.largestOptionLength = function(){
 
 Command.prototype.optionHelp = function(){
   var width = this.largestOptionLength();
-  
+
   // Prepend the help information
   return [pad('-h, --help', width) + '  ' + 'output usage information']
     .concat(this.options.map(function(option){
@@ -746,7 +785,7 @@ Command.prototype.commandHelp = function(){
       }).join(' ');
 
       return pad(cmd._name
-        + (cmd.options.length 
+        + (cmd.options.length
           ? ' [options]'
           : '') + ' ' + args, 22)
         + (cmd.description()
@@ -867,7 +906,7 @@ Command.prototype.promptMultiLine = function(str, fn){
  *     program.prompt('Username: ', function(name){
  *       console.log('hi %s', name);
  *     });
- *     
+ *
  *     program.prompt('Description:', function(desc){
  *       console.log('description was "%s"', desc.trim());
  *     });
@@ -1003,7 +1042,7 @@ Command.prototype.confirm = function(str, fn, verbose){
  * Examples:
  *
  *      var list = ['tobi', 'loki', 'jane', 'manny', 'luna'];
- *      
+ *
  *      console.log('Choose the coolest pet:');
  *      program.choose(list, function(i){
  *        console.log('you chose %d "%s"', i, list[i]);
