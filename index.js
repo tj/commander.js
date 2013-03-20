@@ -1073,6 +1073,16 @@ Command.prototype.help = function(){
 };
 
 /**
+ * For doing complicated things in the command chain.
+ *
+ * @api public
+ */
+Command.prototype.and = function (fn) {
+  fn.call(this, this);
+  return this;
+};
+
+/**
  * Camel-case the given `flag`
  *
  * @param {String} flag
