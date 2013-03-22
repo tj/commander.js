@@ -543,12 +543,12 @@ Command.prototype.parseOptions = function(argv){
       if (option.required) {
         arg = argv[++i];
         if (null == arg) return this.optionMissingArgument(option);
-        if ('-' == arg[0]) return this.optionMissingArgument(option, arg);
+        if ('-' == arg[0] && '-' != arg) return this.optionMissingArgument(option, arg);
         this.emit(option.name(), arg);
       // optional arg
       } else if (option.optional) {
         arg = argv[i+1];
-        if (null == arg || '-' == arg[0]) {
+        if (null == arg || ('-' == arg[0] && '-' != arg)) {
           arg = null;
         } else {
           ++i;
