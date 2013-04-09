@@ -92,7 +92,7 @@ function Command(name) {
   this.commands = [];
   this.options = [];
   this._args = [];
-  this._name = name;
+  this._name = name || '';
 }
 
 /**
