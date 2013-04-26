@@ -13,5 +13,10 @@ program
   .option('-B, --baz', 'enable some baz')
   .parse(process.argv);
 
-if (!program.args.length) program.help();
+/* User didn't provide any arguments */
+if(program.rawArgs.length<3){ 
+  program.help(); 
+} else { 
+  console.log("User provided some arguments");
+}
 
