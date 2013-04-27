@@ -399,22 +399,49 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     args[1] = '--help';
   }
 
+  // check to see if the executable path is a symbolic link
+  var stats = fs.lstatSync(argv[1]),
+      script = "";
+
+  if (stats.isSymbolicLink()) {
+    script = path.resolve(dirname(argv[1]), fs.readlinkSync(argv[1]));
+  } else {
+    script = argv[1];
+  }
+
   // executable
-  var dir = dirname(argv[1]);
-  var bin = basename(argv[1]) + '-' + args[0];
+  var dir = dirname(script);
+  var bin = basename(script, '.js') + '-' + args[0];
 
   // check for ./<bin> first
-  var local = path.join(dir, bin);
-  if (exists(local)) bin = local;
+  var cmdPath = path.join(dir, bin);
+
+  // check if the file exists, trying to add the .js extension on first
+  // failure, then exit with an error if not found.
+
+  if (!exists(cmdPath)) {
+    cmdPath += '.js';
+
+    if (!exists(cmdPath)) {
+      console.error('\n%s: %s is an unknown command.', this._name, args[0]);
+      this.help();
+    }
+  }
 
   // run it
   args = args.slice(1);
-  var proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
-  proc.on('exit', function(code){
-    if (code == 127) {
-      console.error('\n  %s(1) does not exist\n', bin);
-    }
-  });
+  var proc = spawn(cmdPath, args, { stdio: 'inherit' });
+
+  // check for failure on spawned process
+  try {
+    proc.stderr.setEncoding('utf8');
+    proc.stderr.on('data', function (data) {
+      if (/^execvp\(\)/.test(data)) {
+        console.error('Failed to start process.');
+      }
+    });
+  }
+  catch(e) {}
 };
 
 /**
