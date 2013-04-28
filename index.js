@@ -409,7 +409,9 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     script = argv[1];
   }
 
-  // executable
+  // Get executable path. The call to basename with the .js extension removes
+  // that extension if it is present
+
   var dir = dirname(script);
   var bin = basename(script, '.js') + '-' + args[0];
 
@@ -423,25 +425,35 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     cmdPath += '.js';
 
     if (!exists(cmdPath)) {
-      console.error('\n%s: %s is an unknown command.', this._name, args[0]);
+      console.error('%s: %s is an unknown command.', this._name, args[0]);
       this.help();
     }
   }
 
   // run it
   args = args.slice(1);
-  var proc = spawn(cmdPath, args, { stdio: 'inherit' });
+  var proc = spawn(cmdPath, args);//, { stdio: 'inherit' });
 
-  // check for failure on spawned process
-  try {
-    proc.stderr.setEncoding('utf8');
-    proc.stderr.on('data', function (data) {
-      if (/^execvp\(\)/.test(data)) {
-        console.error('Failed to start process.');
-      }
-    });
-  }
-  catch(e) {}
+  proc.on('error', function() {
+    console.error('There was an error spawning the command.');
+  });
+
+  proc.on('close', function(code) {
+    if (code != 0 )
+      console.error('Command %s exited with code: %d', args[0], code);
+  });
+
+  proc.stdout.setEncoding('utf8');
+  proc.stderr.setEncoding('utf8');
+
+  proc.stdout.on('data', function(data) {
+    console.log(data);
+  });
+
+  proc.stderr.on('data', function(data) {
+    console.error(data);
+  });
+
 };
 
 /**
@@ -785,6 +797,22 @@ Command.prototype.commandHelp = function(){
 };
 
 /**
+ * Return a pretty _name for Command#helpInformation. Removes any hyphens and
+ * the .js extension.
+ *
+ * @return {String}
+ * @api private
+ */
+
+Command.prototype.prettyName = function () {
+    var prettyName = '';
+    prettyName = this._name.replace(/\.js$/, '');
+    prettyName = prettyName.replace('-', ' ');
+
+    return prettyName;
+}
+
+/**
  * Return program help documentation.
  *
  * @return {String}
@@ -794,7 +822,7 @@ Command.prototype.commandHelp = function(){
 Command.prototype.helpInformation = function(){
   return [
       ''
-    , '  Usage: ' + this._name + ' ' + this.usage()
+    , '  Usage: ' + this.prettyName() + ' ' + this.usage()
     , '' + this.commandHelp()
     , '  Options:'
     , ''
