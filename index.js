@@ -360,7 +360,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue){
 
 Command.prototype.parse = function(argv){
   // implicit help
-  if (this.executables) this.addImplicitHelpCommand();
+  // if (this.executables) this.addImplicitHelpCommand();
 
   // store raw args
   this.rawArgs = argv;
@@ -371,9 +371,12 @@ Command.prototype.parse = function(argv){
   // process argv
   var parsed = this.parseOptions(this.normalize(argv.slice(2)));
   var args = this.args = parsed.args;
- 
+
   // executable sub-commands, skip .parseArgs()
-  if (this.executables) return this.executeSubCommand(argv, args, parsed.unknown);
+  if (this.executables) {
+    this.addImplicitHelpCommand();
+    return this.executeSubCommand(argv, args, parsed.unknown);
+  }
 
   return this.parseArgs(this.args, parsed.unknown);
 };
@@ -739,10 +742,16 @@ Command.prototype.usage = function(str){
  * @api private
  */
 
-Command.prototype.largestOptionLength = function(){
-  return this.options.reduce(function(max, option){
+Command.prototype.getPaddingValue = function(){
+  var optlen =  this.options.reduce(function(max, option){
     return Math.max(max, option.flags.length);
   }, 0);
+
+  var cmdlen = this.commands.reduce(function(max, command){
+    return Math.max(max, command._name.length);
+  }, 0);
+
+  return Math.max(optlen, cmdlen) + 2;
 };
 
 /**
@@ -753,15 +762,14 @@ Command.prototype.largestOptionLength = function(){
  */
 
 Command.prototype.optionHelp = function(){
-  var width = this.largestOptionLength();
-  
-  // Prepend the help information
-  return [pad('-h, --help', width) + '  ' + 'output usage information']
-    .concat(this.options.map(function(option){
-      return pad(option.flags, width)
-        + '  ' + option.description;
-      }))
-    .join('\n');
+  var width = this.getPaddingValue();
+
+  // Append the help information
+  var padded_options = this.options.map(function(option){
+    return pad(option.flags, width) + option.description;
+  }).join('\n');
+
+  return padded_options + '\n' + pad('-h, --help', width) + 'output usage information';
 };
 
 /**
@@ -773,24 +781,19 @@ Command.prototype.optionHelp = function(){
 
 Command.prototype.commandHelp = function(){
   if (!this.commands.length) return '';
+
+  var width = this.getPaddingValue();
+
   return [
       ''
     , '  Commands:'
     , ''
-    , this.commands.map(function(cmd){
-      var args = cmd._args.map(function(arg){
-        return arg.required
-          ? '<' + arg.name + '>'
-          : '[' + arg.name + ']';
-      }).join(' ');
+    , this.commands.map(function(cmd) {
+        var args = cmd._args.map(function(arg) {
+          return arg.required ? '<' + arg.name + '>' : '[' + arg.name + ']';
+        }).join(' ');
 
-      return pad(cmd._name
-        + (cmd.options.length 
-          ? ' [options]'
-          : '') + ' ' + args, 22)
-        + (cmd.description()
-          ? ' ' + cmd.description()
-          : '');
+        return pad(cmd._name + (cmd.options.length ? ' [options]' : '') + args, width) + (cmd.description() ? cmd.description() : '');
     }).join('\n').replace(/^/gm, '    ')
     , ''
   ].join('\n');
