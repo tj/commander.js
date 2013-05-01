@@ -360,7 +360,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue){
 
 Command.prototype.parse = function(argv){
   // implicit help
-  if (this.executables) this.addImplicitHelpCommand();
+  // if (this.executables) this.addImplicitHelpCommand();
 
   // store raw args
   this.rawArgs = argv;
@@ -371,9 +371,12 @@ Command.prototype.parse = function(argv){
   // process argv
   var parsed = this.parseOptions(this.normalize(argv.slice(2)));
   var args = this.args = parsed.args;
- 
+
   // executable sub-commands, skip .parseArgs()
-  if (this.executables) return this.executeSubCommand(argv, args, parsed.unknown);
+  if (this.executables) {
+    this.addImplicitHelpCommand();
+    return this.executeSubCommand(argv, args, parsed.unknown);
+  }
 
   return this.parseArgs(this.args, parsed.unknown);
 };
@@ -399,22 +402,61 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     args[1] = '--help';
   }
 
-  // executable
-  var dir = dirname(argv[1]);
-  var bin = basename(argv[1]) + '-' + args[0];
+  // check to see if the executable path is a symbolic link
+  var stats = fs.lstatSync(argv[1]),
+      script = "";
+
+  if (stats.isSymbolicLink()) {
+    script = path.resolve(dirname(argv[1]), fs.readlinkSync(argv[1]));
+  } else {
+    script = argv[1];
+  }
+
+  // Get executable path. The call to basename with the .js extension removes
+  // that extension if it is present
+
+  var dir = dirname(script);
+  var bin = basename(script, '.js') + '-' + args[0];
 
   // check for ./<bin> first
-  var local = path.join(dir, bin);
-  if (exists(local)) bin = local;
+  var cmdPath = path.join(dir, bin);
+
+  // check if the file exists, trying to add the .js extension on first
+  // failure, then exit with an error if not found.
+
+  if (!exists(cmdPath)) {
+    cmdPath += '.js';
+
+    if (!exists(cmdPath)) {
+      console.error('%s: %s is an unknown command.', this._name, args[0]);
+      this.help();
+    }
+  }
 
   // run it
   args = args.slice(1);
-  var proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
-  proc.on('exit', function(code){
-    if (code == 127) {
-      console.error('\n  %s(1) does not exist\n', bin);
-    }
+  var proc = spawn(cmdPath, args);//, { stdio: 'inherit' });
+
+  proc.on('error', function() {
+    console.error('There was an error spawning the command.');
   });
+
+  proc.on('close', function(code) {
+    if (code != 0 )
+      console.error('Command %s exited with code: %d', args[0], code);
+  });
+
+  proc.stdout.setEncoding('utf8');
+  proc.stderr.setEncoding('utf8');
+
+  proc.stdout.on('data', function(data) {
+    console.log(data);
+  });
+
+  proc.stderr.on('data', function(data) {
+    console.error(data);
+  });
+
 };
 
 /**
@@ -700,10 +742,16 @@ Command.prototype.usage = function(str){
  * @api private
  */
 
-Command.prototype.largestOptionLength = function(){
-  return this.options.reduce(function(max, option){
+Command.prototype.getPaddingValue = function(){
+  var optlen =  this.options.reduce(function(max, option){
     return Math.max(max, option.flags.length);
   }, 0);
+
+  var cmdlen = this.commands.reduce(function(max, command){
+    return Math.max(max, command._name.length);
+  }, 0);
+
+  return Math.max(optlen, cmdlen) + 2;
 };
 
 /**
@@ -714,15 +762,14 @@ Command.prototype.largestOptionLength = function(){
  */
 
 Command.prototype.optionHelp = function(){
-  var width = this.largestOptionLength();
-  
-  // Prepend the help information
-  return [pad('-h, --help', width) + '  ' + 'output usage information']
-    .concat(this.options.map(function(option){
-      return pad(option.flags, width)
-        + '  ' + option.description;
-      }))
-    .join('\n');
+  var width = this.getPaddingValue();
+
+  // Append the help information
+  var padded_options = this.options.map(function(option){
+    return pad(option.flags, width) + option.description;
+  }).join('\n');
+
+  return padded_options + '\n' + pad('-h, --help', width) + 'output usage information';
 };
 
 /**
@@ -734,28 +781,39 @@ Command.prototype.optionHelp = function(){
 
 Command.prototype.commandHelp = function(){
   if (!this.commands.length) return '';
+
+  var width = this.getPaddingValue();
+
   return [
       ''
     , '  Commands:'
     , ''
-    , this.commands.map(function(cmd){
-      var args = cmd._args.map(function(arg){
-        return arg.required
-          ? '<' + arg.name + '>'
-          : '[' + arg.name + ']';
-      }).join(' ');
+    , this.commands.map(function(cmd) {
+        var args = cmd._args.map(function(arg) {
+          return arg.required ? '<' + arg.name + '>' : '[' + arg.name + ']';
+        }).join(' ');
 
-      return pad(cmd._name
-        + (cmd.options.length 
-          ? ' [options]'
-          : '') + ' ' + args, 22)
-        + (cmd.description()
-          ? ' ' + cmd.description()
-          : '');
+        return pad(cmd._name + (cmd.options.length ? ' [options]' : '') + args, width) + (cmd.description() ? cmd.description() : '');
     }).join('\n').replace(/^/gm, '    ')
     , ''
   ].join('\n');
 };
+
+/**
+ * Return a pretty _name for Command#helpInformation. Removes any hyphens and
+ * the .js extension.
+ *
+ * @return {String}
+ * @api private
+ */
+
+Command.prototype.prettyName = function () {
+    var prettyName = '';
+    prettyName = this._name.replace(/\.js$/, '');
+    prettyName = prettyName.replace('-', ' ');
+
+    return prettyName;
+}
 
 /**
  * Return program help documentation.
@@ -767,7 +825,7 @@ Command.prototype.commandHelp = function(){
 Command.prototype.helpInformation = function(){
   return [
       ''
-    , '  Usage: ' + this._name + ' ' + this.usage()
+    , '  Usage: ' + this.prettyName() + ' ' + this.usage()
     , '' + this.commandHelp()
     , '  Options:'
     , ''
