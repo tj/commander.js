@@ -1010,13 +1010,14 @@ Command.prototype.confirm = function(str, fn, verbose){
  *        process.stdin.destroy();
  *      });
  *
+ * @param {String} str
  * @param {Array} list
  * @param {Number|Function} index or fn
  * @param {Function} fn
  * @api public
  */
 
-Command.prototype.choose = function(list, index, fn){
+Command.prototype.choose = function(str, list, index, fn){
   var self = this
     , hasDefault = 'number' == typeof index;
 
@@ -1024,6 +1025,8 @@ Command.prototype.choose = function(list, index, fn){
     fn = index;
     index = null;
   }
+
+  console.log(str);
 
   list.forEach(function(item, i){
     if (hasDefault && i == index) {
