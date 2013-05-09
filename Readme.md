@@ -163,7 +163,7 @@ program.prompt('name: ', function(name){
 });
 ```
 
- Multi-line prompt:
+ Multi-line prompt(press enter twice to complete prompt):
 
 ```js
 program.prompt('description:', function(name){
