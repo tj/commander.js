@@ -434,7 +434,10 @@ Command.prototype.normalize = function(args){
 
   for (var i = 0, len = args.length; i < len; ++i) {
     arg = args[i];
-    if (arg.length > 1 && '-' == arg[0] && '-' != arg[1]) {
+    if ('--' == arg) {
+      ret.push.apply(ret, args.slice(i));
+      break;
+    } else if (arg.length > 1 && '-' == arg[0] && '-' != arg[1]) {
       arg.slice(1).split('').forEach(function(c){
         ret.push('-' + c);
       });
