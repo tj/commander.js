@@ -8,7 +8,7 @@ var program = require('../');
 
 program
   .version('0.0.1')
-  .description('application simple description ')
+  .description('Application simple description')
   .option('-f, --foo', 'enable some foo')
   .option('-b, --bar', 'enable some bar')
   .option('-B, --baz', 'enable some baz')

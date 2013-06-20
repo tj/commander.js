@@ -901,24 +901,37 @@ Command.prototype.helpInformation = function() {
   var desc = [];
   if (this._description) {
     desc = [
-        ''
-      , '  Description: ' + this._description]
+      '  ' + this._description
+      , ''];
   }
 
-  return desc.concat([
-      ''
-    , '  Usage: ' + this._name
-        + (this._alias
-          ? '|' + this._alias
-          : '')
-        + ' ' + this.usage()
-    , '' + this.commandHelp()
-    , '  Options:'
+  var cmdName = this._name;
+  if(this._alias) {
+    cmdName = cmdName + '|' + this._alias;
+  }
+  var usage = [
+    ''
+    ,'  Usage: ' + cmdName + ' ' + this.usage()
+    , ''
+  ];
+
+  var cmds = [];
+  var commandHelp = this.commandHelp();
+  if (commandHelp) cmds = [commandHelp];
+
+  var options = [
+    '  Options:'
     , ''
     , '' + this.optionHelp().replace(/^/gm, '    ')
     , ''
     , ''
-  ]).join('\n');
+  ];
+
+  return usage
+    .concat(cmds)
+    .concat(desc)
+    .concat(options)
+    .join('\n');
 };
 
 /**
