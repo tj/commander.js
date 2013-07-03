@@ -985,10 +985,20 @@ Command.prototype.password = function(str, mask, fn){
         if(mask)
         {
           // Erase last mask character using ANSI escapes CUB (Cursor Back)
-          // and EL (Erase in Line)
+          // and EL (Erase in Line).
           // See also: http://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes
           process.stdout.write('\x1B[D\x1B[K');
         }
+      }
+    } else if (key && key.ctrl && 'u' == key.name) {
+      if(buf.length > 0)
+      {
+        if(mask)
+        {
+          // Erase all mask characters.
+          process.stdout.write(buf.replace(/./g, '\x1B[D\x1B[K'));
+        }
+        buf = '';
       }
     } else if (key && key.ctrl && 'c' == key.name) {
       console.log('%s', buf);
