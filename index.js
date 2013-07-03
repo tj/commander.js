@@ -996,7 +996,8 @@ Command.prototype.password = function(str, mask, fn){
         if(mask)
         {
           // Erase all mask characters.
-          process.stdout.write(buf.replace(/./g, '\x1B[D\x1B[K'));
+          process.stdout.write(buf.replace(/./g, '\x1B[D'));
+          process.stdout.write('\x1B[K');
         }
         buf = '';
       }
