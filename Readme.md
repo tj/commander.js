@@ -31,7 +31,7 @@ program
 
 console.log('you ordered a pizza with:');
 if (program.peppers) console.log('  - peppers');
-if (program.pineapple) console.log('  - pineappe');
+if (program.pineapple) console.log('  - pineapple');
 if (program.bbq) console.log('  - bbq');
 console.log('  - %s cheese', program.cheese);
 ```
@@ -51,7 +51,7 @@ console.log('  - %s cheese', program.cheese);
 
      -V, --version        output the version number
      -p, --peppers        Add peppers
-     -P, --pineapple      Add pineappe
+     -P, --pineapple      Add pineapple
      -b, --bbq            Add bbq sauce
      -c, --cheese <type>  Add the specified type of cheese [marble]
      -h, --help           output usage information
