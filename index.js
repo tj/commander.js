@@ -372,10 +372,12 @@ Command.prototype.parse = function(argv){
   var parsed = this.parseOptions(this.normalize(argv.slice(2)));
   var args = this.args = parsed.args;
  
+  var result = this.parseArgs(this.args, parsed.unknown);
+
   // executable sub-commands, skip .parseArgs()
   if (this.executables) return this.executeSubCommand(argv, args, parsed.unknown);
 
-  return this.parseArgs(this.args, parsed.unknown);
+  return result;
 };
 
 /**
