@@ -755,21 +755,27 @@ Command.prototype.commandHelp = function(){
     , '  Commands:'
     , ''
     , (function(self) {
-        return self.commands.map(function(cmd){
+        var commands = [];
+
+        self.commands.forEach(function(cmd){
+          if (cmd.hidden === true) return;
+
           var args = cmd._args.map(function(arg){
             return arg.required
               ? '<' + arg.name + '>'
               : '[' + arg.name + ']';
           }).join(' ');
 
-          return pad(cmd._name
+          commands.push(pad(cmd._name
             + (cmd.options.length 
               ? ' [options]'
               : '') + ' ' + args, 22)
             + (cmd.description()
               ? ' ' + cmd.description()
-              : '');
-        }).join('\n').replace(/^/gm, '    ')
+              : ''));
+        });
+        
+        return commands.join('\n').replace(/^/gm, '    ');
       })(this)
     , ''
   ].join('\n');
