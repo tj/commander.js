@@ -489,6 +489,19 @@ Command.prototype.parseArgs = function(args, unknown){
 };
 
 /**
+ * Hide the command from help output.
+ *
+ * @return {String|Command}
+ * @api public
+ *
+ */
+
+Command.prototype.hidden = function(){
+  this.hidden = true;
+  return this;
+};
+
+/**
  * Return an option matching `arg` if any.
  *
  * @param {String} arg
