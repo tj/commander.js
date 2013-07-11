@@ -741,21 +741,23 @@ Command.prototype.commandHelp = function(){
       ''
     , '  Commands:'
     , ''
-    , this.commands.map(function(cmd){
-      var args = cmd._args.map(function(arg){
-        return arg.required
-          ? '<' + arg.name + '>'
-          : '[' + arg.name + ']';
-      }).join(' ');
+    , (function(self) {
+        return self.commands.map(function(cmd){
+          var args = cmd._args.map(function(arg){
+            return arg.required
+              ? '<' + arg.name + '>'
+              : '[' + arg.name + ']';
+          }).join(' ');
 
-      return pad(cmd._name
-        + (cmd.options.length 
-          ? ' [options]'
-          : '') + ' ' + args, 22)
-        + (cmd.description()
-          ? ' ' + cmd.description()
-          : '');
-    }).join('\n').replace(/^/gm, '    ')
+          return pad(cmd._name
+            + (cmd.options.length 
+              ? ' [options]'
+              : '') + ' ' + args, 22)
+            + (cmd.description()
+              ? ' ' + cmd.description()
+              : '');
+        }).join('\n').replace(/^/gm, '    ')
+      })(this)
     , ''
   ].join('\n');
 };
