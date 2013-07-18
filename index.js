@@ -91,6 +91,7 @@ Option.prototype.is = function(arg){
 function Command(name) {
   this.commands = [];
   this.options = [];
+  this._execs = [];
   this._args = [];
   this._name = name;
 }
@@ -155,6 +156,7 @@ Command.prototype.command = function(name, desc){
   var cmd = new Command(args.shift());
   if (desc) cmd.description(desc);
   if (desc) this.executables = true;
+  if (desc) this._execs[cmd._name] = true;
   this.commands.push(cmd);
   cmd.parseExpectedArgs(args);
   cmd.parent = this;
@@ -374,8 +376,9 @@ Command.prototype.parse = function(argv){
  
   var result = this.parseArgs(this.args, parsed.unknown);
 
-  // executable sub-commands, skip .parseArgs()
-  if (this.executables) return this.executeSubCommand(argv, args, parsed.unknown);
+  // executable sub-commands
+  var name = result.args[0];
+  if (this._execs[name]) return this.executeSubCommand(argv, args, parsed.unknown);
 
   return result;
 };
