@@ -1,4 +1,9 @@
 
+1.3.2 / 2013-07-18 
+==================
+
+ * add support for sub-commands to co-exist with the original command
+
 1.3.1 / 2013-07-18 
 ==================
 
