@@ -1,4 +1,9 @@
 
+1.3.1 / 2013-07-18 
+==================
+
+ * add quick .runningCommand hack so you can opt-out of other logic when running a sub command
+
 1.3.0 / 2013-07-09 
 ==================
 
