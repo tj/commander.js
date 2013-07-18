@@ -418,6 +418,8 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
       console.error('\n  %s(1) not executable. try chmod or run with root\n', bin);
     }
   });
+
+  this.runningCommand = proc;
 };
 
 /**
