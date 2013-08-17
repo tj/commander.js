@@ -421,6 +421,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 /**
  * Normalize `args`, splitting joined short flags. For example
  * the arg "-abc" is equivalent to "-a -b -c".
+ * and the arg "-abc='def'" can be "--abc def".
  * This also normalizes equal sign and splits "--abc=def" into "--abc def".
  *
  * @param {Array} args
@@ -436,9 +437,13 @@ Command.prototype.normalize = function(args){
   for (var i = 0, len = args.length; i < len; ++i) {
     arg = args[i];
     if (arg.length > 1 && '-' == arg[0] && '-' != arg[1]) {
-      arg.slice(1).split('').forEach(function(c){
-        ret.push('-' + c);
-      });
+	    if (~(index = arg.indexOf('='))) {
+		    ret.push('-' + arg.slice(0, index), arg.slice(index + 1));
+	    }else{
+		    arg.slice(1).split('').forEach(function(c){
+			    ret.push('-' + c);
+		    });
+	    }
     } else if (/^--/.test(arg) && ~(index = arg.indexOf('='))) {
       ret.push(arg.slice(0, index), arg.slice(index + 1));
     } else {
