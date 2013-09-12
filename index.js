@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -544,7 +543,7 @@ Command.prototype.parseOptions = function(argv){
       if (option.required) {
         arg = argv[++i];
         if (null == arg) return this.optionMissingArgument(option);
-        if ('-' == arg[0] && '-' != arg) return this.optionMissingArgument(option, arg);
+        if ('-' == arg[0] && '-' != arg && '---' != arg.substr(0, 3)) return this.optionMissingArgument(option, arg);
         this.emit(option.name(), arg);
       // optional arg
       } else if (option.optional) {
