@@ -734,6 +734,7 @@ Command.prototype.optionHelp = function(){
  */
 
 Command.prototype.commandHelp = function(){
+  var self = this;
   if (!this.commands.length) return '';
   return [
       ''
@@ -749,7 +750,7 @@ Command.prototype.commandHelp = function(){
       return pad(cmd._name
         + (cmd.options.length 
           ? ' [options]'
-          : '') + ' ' + args, 22)
+          : '') + ' ' + args, self.largestOptionLength() + 1)
         + (cmd.description()
           ? ' ' + cmd.description()
           : '');
