@@ -42,6 +42,7 @@ function Option(flags, description) {
   this.required = ~flags.indexOf('<');
   this.optional = ~flags.indexOf('[');
   this.bool = !~flags.indexOf('-no-');
+  this.mulitAry = ~flags.indexOf('<{') || ~flags.indexOf('[{');
   flags = flags.split(/[ ,|]+/);
   if (flags.length > 1 && !/^[[<]/.test(flags[1])) this.short = flags.shift();
   this.long = flags.shift();
@@ -516,7 +517,8 @@ Command.prototype.parseOptions = function(argv){
     , len = argv.length
     , literal
     , option
-    , arg;
+    , arg
+    , argArray;
 
   var unknownOptions = [];
 
@@ -545,7 +547,22 @@ Command.prototype.parseOptions = function(argv){
         arg = argv[++i];
         if (null == arg) return this.optionMissingArgument(option);
         if ('-' == arg[0] && '-' != arg) return this.optionMissingArgument(option, arg);
-        this.emit(option.name(), arg);
+        // mulit argv support
+        if(option.mulitAry) {
+          argArray = [];
+          argArray.push(arg);
+          for(var j = i; j < len; j++) {
+            arg = argv[j+1];
+            if(null == arg || ('-' == arg[0] && '-' != arg)) {
+              i = j;
+              break;
+            }
+            argArray.push(arg);
+          }
+          this.emit(option.name(), argArray);
+        } else {
+          this.emit(option.name(), arg);
+        }
       // optional arg
       } else if (option.optional) {
         arg = argv[i+1];
@@ -554,7 +571,21 @@ Command.prototype.parseOptions = function(argv){
         } else {
           ++i;
         }
-        this.emit(option.name(), arg);
+        if(arg && option.mulitAry) {
+          argArray = [];
+          argArray.push(arg);
+          for(var j = i; j < len; j++) {
+            arg = argv[j+1];
+            if(null == arg || ('-' == arg[0] && '-' != arg)) {
+              i = j;
+              break;
+            }
+            argArray.push(arg);
+          }
+          this.emit(option.name(), argArray);
+        } else {
+          this.emit(option.name(), arg);
+        }
       // bool
       } else {
         this.emit(option.name());
