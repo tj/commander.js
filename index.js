@@ -246,7 +246,7 @@ Command.prototype.action = function(fn){
       args.push(self);
     }
     
-    fn.apply(this, args);
+    fn.apply(self, args);
   });
   return this;
 };
