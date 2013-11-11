@@ -163,7 +163,11 @@ Examples:
 
 ## Links
 
+<<<<<<< HEAD
  - [API documentation](http://visionmedia.github.com/commander.js/)
+=======
+ - [annotated source](http://visionmedia.github.com/commander.js/)
+>>>>>>> 3bd6bbcdab1876f2ffe76c03224c3ba1431d9a1f
  - [ascii tables](https://github.com/LearnBoost/cli-table)
  - [progress bars](https://github.com/visionmedia/node-progress)
  - [more progress bars](https://github.com/substack/node-multimeter)

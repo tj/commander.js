@@ -1,0 +1,29 @@
+html
+  head
+    title Commander.js - nodejs cli framework
+    link(rel='stylesheet', href='style.css')
+  body
+    #content
+      h1 Commander.js
+      p.
+        Commander is a light-weight, expressive, and powerful command-line
+        framework for <a href="http://nodejs.org">node.js</a>.
+
+      for comment in comments
+        if ignore(comment)
+          - continue
+
+        .comment(id=id(comment))
+          h1= title(comment)
+          .description!= comment.description.full
+          h2 Source
+          pre
+            code!= comment.code
+    
+    ul#menu
+      for comment in comments
+        if ignore(comment)
+          - continue
+        li
+          a(href='#' + id(comment))= title(comment)
+    
