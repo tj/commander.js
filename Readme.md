@@ -1,7 +1,8 @@
-
 # Commander.js
 
   The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/visionmedia/commander).
+
+ [![Build Status](https://secure.travis-ci.org/visionmedia/commander.js.png)](http://travis-ci.org/visionmedia/commander.js)
 
 ## Installation
 
@@ -30,7 +31,7 @@ program
 
 console.log('you ordered a pizza with:');
 if (program.peppers) console.log('  - peppers');
-if (program.pineapple) console.log('  - pineappe');
+if (program.pineapple) console.log('  - pineapple');
 if (program.bbq) console.log('  - bbq');
 console.log('  - %s cheese', program.cheese);
 ```
@@ -48,9 +49,9 @@ console.log('  - %s cheese', program.cheese);
 
    Options:
 
-     -v, --version        output the version number
+     -V, --version        output the version number
      -p, --peppers        Add peppers
-     -P, --pineapple      Add pineappe
+     -P, --pineapple      Add pineapple
      -b, --bbq            Add bbq sauce
      -c, --cheese <type>  Add the specified type of cheese [marble]
      -h, --help           output usage information
@@ -70,6 +71,7 @@ function list(val) {
 
 program
   .version('0.0.1')
+  .usage('[options] <file ...>')
   .option('-i, --integer <n>', 'An integer argument', parseInt)
   .option('-f, --float <n>', 'A float argument', parseFloat)
   .option('-r, --range <a>..<b>', 'A range', range)
@@ -139,7 +141,7 @@ Usage: custom-help [options]
 Options:
 
   -h, --help     output usage information
-  -v, --version  output the version number
+  -V, --version  output the version number
   -f, --foo      enable some foo
   -b, --bar      enable some bar
   -B, --baz      enable some baz
@@ -151,84 +153,21 @@ Examples:
 
 ```
 
-## .prompt(msg, fn)
+## .outputHelp()
 
- Single-line prompt:
+  Output help information without exiting.
 
-```js
-program.prompt('name: ', function(name){
-  console.log('hi %s', name);
-});
-```
+## .help()
 
- Multi-line prompt:
-
-```js
-program.prompt('description:', function(name){
-  console.log('hi %s', name);
-});
-```
-
- Coercion:
-
-```js
-program.prompt('Age: ', Number, function(age){
-  console.log('age: %j', age);
-});
-```
-
-```js
-program.prompt('Birthdate: ', Date, function(date){
-  console.log('date: %s', date);
-});
-```
-
-## .password(msg[, mask], fn)
-
-Prompt for password without echoing:
-
-```js
-program.password('Password: ', function(pass){
-  console.log('got "%s"', pass);
-  process.stdin.destroy();
-});
-```
-
-Prompt for password with mask char "*":
-
-```js
-program.password('Password: ', '*', function(pass){
-  console.log('got "%s"', pass);
-  process.stdin.destroy();
-});
-```
-
-## .confirm(msg, fn)
-
- Confirm with the given `msg`:
-
-```js
-program.confirm('continue? ', function(ok){
-  console.log(' got %j', ok);
-});
-```
-
-## .choose(list, fn)
-
- Let the user choose from a `list`:
-
-```js
-var list = ['tobi', 'loki', 'jane', 'manny', 'luna'];
-
-console.log('Choose the coolest pet:');
-program.choose(list, function(i){
-  console.log('you chose %d "%s"', i, list[i]);
-});
-```
+  Output help information and exit immediately.
 
 ## Links
 
+<<<<<<< HEAD
+ - [API documentation](http://visionmedia.github.com/commander.js/)
+=======
  - [annotated source](http://visionmedia.github.com/commander.js/)
+>>>>>>> 3bd6bbcdab1876f2ffe76c03224c3ba1431d9a1f
  - [ascii tables](https://github.com/LearnBoost/cli-table)
  - [progress bars](https://github.com/visionmedia/node-progress)
  - [more progress bars](https://github.com/substack/node-multimeter)
