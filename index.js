@@ -431,11 +431,16 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 Command.prototype.normalize = function(args){
   var ret = []
     , arg
+    , lastOpt
     , index;
 
   for (var i = 0, len = args.length; i < len; ++i) {
     arg = args[i];
-    if (arg.length > 1 && '-' == arg[0] && '-' != arg[1]) {
+    i > 0 && (lastOpt = this.optionFor(args[i-1]));
+    
+    if (lastOpt && lastOpt.required) {
+     	ret.push(arg);
+    } else if (arg.length > 1 && '-' == arg[0] && '-' != arg[1]) {
       arg.slice(1).split('').forEach(function(c){
         ret.push('-' + c);
       });
@@ -544,7 +549,6 @@ Command.prototype.parseOptions = function(argv){
       if (option.required) {
         arg = argv[++i];
         if (null == arg) return this.optionMissingArgument(option);
-        if ('-' == arg[0] && '-' != arg) return this.optionMissingArgument(option, arg);
         this.emit(option.name(), arg);
       // optional arg
       } else if (option.optional) {
