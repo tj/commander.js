@@ -1,4 +1,9 @@
 
+2.1.0 / 2013-11-21
+==================
+
+ * add: allow cflag style option params, unit test, fixes #174
+
 2.0.0 / 2013-07-18 
 ==================
 
