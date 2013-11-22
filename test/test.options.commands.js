@@ -90,7 +90,7 @@ var exceptionOccurred = false;
 var oldProcessExit = process.exit;
 var oldConsoleError = console.error;
 process.exit = function() { exceptionOccurred = true; throw new Error(); };
-console.error = function() {};
+console.error = process.stdout.write = function() {};
 
 try {
   program.parse(['node', 'test', '--config', 'conf6', 'exec', '--help']);
