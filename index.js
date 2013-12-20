@@ -86,6 +86,7 @@ function Command(name) {
   this.options = [];
   this._execs = [];
   this._args = [];
+  this._actions = {};
   this._name = name;
 }
 
@@ -213,6 +214,7 @@ Command.prototype.parseExpectedArgs = function(args){
 
 Command.prototype.action = function(fn){
   var self = this;
+  this.parent._actions[this._name] = true;
   this.parent.on(this._name, function(args, unknown){    
     // Parse any so-far unknown options
     unknown = unknown || [];
@@ -439,7 +441,7 @@ Command.prototype.normalize = function(args){
     i > 0 && (lastOpt = this.optionFor(args[i-1]));
     
     if (lastOpt && lastOpt.required) {
-     	ret.push(arg);
+      ret.push(arg);
     } else if (arg.length > 1 && '-' == arg[0] && '-' != arg[1]) {
       arg.slice(1).split('').forEach(function(c){
         ret.push('-' + c);
@@ -473,7 +475,7 @@ Command.prototype.parseArgs = function(args, unknown){
 
   if (args.length) {
     name = args[0];
-    if (this.listeners(name).length) {
+    if (this.listeners(name).length && this._actions[name]) {
       this.emit(args.shift(), args, unknown);
     } else {
       this.emit('*', args);
