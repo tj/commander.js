@@ -119,10 +119,6 @@ console.log(' args: %j', program.args);
 
 var program = require('../');
 
-function list(val) {
-  return val.split(',').map(Number);
-}
-
 program
   .version('0.0.1')
   .option('-f, --foo', 'enable some foo')
