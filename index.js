@@ -646,19 +646,19 @@ Command.prototype.unknownOption = function(flag){
  *
  * @param {String} str
  * @param {String} flags
- * @param {Function} listener
+ * @param {Function} callback
  * @return {Command} for chaining
  * @api public
  */
 
-Command.prototype.version = function(str, flags, listener){
+Command.prototype.version = function(str, flags, callback){
   if (0 == arguments.length) return this._version;
   this._version = str;
   flags = flags || '-V, --version';
   this.option(flags, 'output the version number');
   this.on('version', function(){
-    if(typeof listener == 'function') {
-      return listener(this._version, this._name, this);
+    if(typeof callback == 'function') {
+      return callback(this._version, this._name, this);
     }
     console.log(str);
     process.exit(0);
