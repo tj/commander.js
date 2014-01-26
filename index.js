@@ -415,7 +415,12 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     }
   });
 
-  proc.on('close', function (code) {
+  proc.on('close', function (code, signal) {
+    // NOTE: workaround for https://github.com/joyent/node/issues/3222
+    // NOTE: assume child process exited gracefully on SIGINT
+    if(signal == 'SIGINT') {
+      process.exit(0);
+    }
     process.exit(code);
   });
 
