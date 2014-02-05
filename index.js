@@ -467,21 +467,26 @@ Command.prototype.normalize = function(args){
  */
 
 Command.prototype.parseArgs = function(args, unknown){
-  var cmds = this.commands
-    , len = cmds.length
+  var cmdTriggered = false
     , name;
 
+  // If there were a command named args[0],
+  // then we notify args and unknown options to it.
   if (args.length) {
     name = args[0];
     if (this.listeners(name).length) {
       this.emit(args.shift(), args, unknown);
-    } else {
-      this.emit('*', args);
+      cmdTriggered = true;
+    } else if (this.listeners('*').length) {
+      this.emit('*', args, unknown);
+      cmdTriggered = true;
     }
-  } else {
+  }
+
+  if (!cmdTriggered) {
     outputHelpIfNecessary(this, unknown);
-    
-    // If there were no args and we have unknown options,
+
+    // If we have unknown options,
     // then they are extraneous and we need to error.
     if (unknown.length > 0) {      
       this.unknownOption(unknown[0]);
