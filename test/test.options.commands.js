@@ -23,7 +23,7 @@ program
   .action(function(env, options){
     var mode = options.setup_mode || "normal";
     env = env || 'all';
-    
+
     envValue = env;
   });
 
@@ -43,13 +43,13 @@ program
   .action(function(env){
     console.log('deploying "%s"', env);
   });
-  
+
 program.parse(['node', 'test', '--config', 'conf']);
 program.config.should.equal("conf");
 program.commands[0].should.not.have.property.setup_mode;
 program.commands[1].should.not.have.property.exec_mode;
-envValue.should.be.null;
-cmdValue.should.be.null;
+envValue.should.equal('');
+cmdValue.should.equal('');
 
 program.parse(['node', 'test', '--config', 'conf1', 'setup', '--setup_mode', 'mode3', 'env1']);
 program.config.should.equal("conf1");
