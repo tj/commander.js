@@ -114,28 +114,28 @@ Command.prototype.__proto__ = EventEmitter.prototype;
  *        .option('-C, --chdir <path>', 'change the working directory')
  *        .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
  *        .option('-T, --no-tests', 'ignore test hook')
- *     
+ *
  *      program
  *        .command('setup')
  *        .description('run remote setup commands')
  *        .action(function(){
  *          console.log('setup');
  *        });
- *     
+ *
  *      program
  *        .command('exec <cmd>')
  *        .description('run the given remote command')
  *        .action(function(cmd){
  *          console.log('exec "%s"', cmd);
  *        });
- *     
+ *
  *      program
  *        .command('*')
  *        .description('deploy the given env')
  *        .action(function(env){
  *          console.log('deploying "%s"', env);
  *        });
- *     
+ *
  *      program.parse(process.argv);
   *
  * @param {String} name
@@ -213,30 +213,30 @@ Command.prototype.parseExpectedArgs = function(args){
 
 Command.prototype.action = function(fn){
   var self = this;
-  this.parent.on(this._name, function(args, unknown){    
+  this.parent.on(this._name, function(args, unknown){
     // Parse any so-far unknown options
     unknown = unknown || [];
     var parsed = self.parseOptions(unknown);
-    
+
     // Output help if necessary
     outputHelpIfNecessary(self, parsed.unknown);
-    
-    // If there are still any unknown options, then we simply 
+
+    // If there are still any unknown options, then we simply
     // die, unless someone asked for help, in which case we give it
     // to them, and then we die.
-    if (parsed.unknown.length > 0) {      
+    if (parsed.unknown.length > 0) {
       self.unknownOption(parsed.unknown[0]);
     }
-    
+
     // Leftover arguments need to be pushed back. Fixes issue #56
     if (parsed.args.length) args = parsed.args.concat(args);
-    
+
     self._args.forEach(function(arg, i){
       if (arg.required && null == args[i]) {
         self.missingArgument(arg.name);
       }
     });
-    
+
     // Always append ourselves to the end of the arguments,
     // to make sure we match the number of arguments the user
     // expects
@@ -245,7 +245,7 @@ Command.prototype.action = function(fn){
     } else {
       args.push(self);
     }
-    
+
     fn.apply(this, args);
   });
   return this;
@@ -253,7 +253,7 @@ Command.prototype.action = function(fn){
 
 /**
  * Define option with `flags`, `description` and optional
- * coercion `fn`. 
+ * coercion `fn`.
  *
  * The `flags` string should contain both the short and long flags,
  * separated by comma, a pipe or space. The following are all valid
@@ -366,7 +366,7 @@ Command.prototype.parse = function(argv){
   // process argv
   var parsed = this.parseOptions(this.normalize(argv.slice(2)));
   var args = this.args = parsed.args;
- 
+
   var result = this.parseArgs(this.args, parsed.unknown);
 
   // executable sub-commands
@@ -409,13 +409,30 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   var proc = spawn(local, args, { stdio: 'inherit', customFds: [0, 1, 2] });
   proc.on('error', function(err){
     if (err.code == "ENOENT") {
+      if (process.platform == 'win32') {
+        return _executeSubCommandInWin();
+      }
       console.error('\n  %s(1) does not exist, try --help\n', bin);
     } else if (err.code == "EACCES") {
       console.error('\n  %s(1) not executable. try chmod or run with root\n', bin);
     }
   });
-
   this.runningCommand = proc;
+
+  // try to excute sub command with node in windows
+  var self = this;
+  function _executeSubCommandInWin() {
+    args.unshift(local);
+    proc = spawn(process.execPath, args, { stdio: 'inherit', customFds: [0, 1, 2] });
+    proc.on('error', function () {
+      if (err.code == "ENOENT") {
+        console.error('\n  %s(1) does not exist, try --help\n', bin);
+      } else if (err.code == "EACCES") {
+        console.error('\n  %s(1) not executable. try chmod or run with root\n', bin);
+      }
+    });
+    self.runningCommand = proc;
+  }
 };
 
 /**
@@ -437,7 +454,7 @@ Command.prototype.normalize = function(args){
   for (var i = 0, len = args.length; i < len; ++i) {
     arg = args[i];
     i > 0 && (lastOpt = this.optionFor(args[i-1]));
-    
+
     if (lastOpt && lastOpt.required) {
      	ret.push(arg);
     } else if (arg.length > 1 && '-' == arg[0] && '-' != arg[1]) {
@@ -480,10 +497,10 @@ Command.prototype.parseArgs = function(args, unknown){
     }
   } else {
     outputHelpIfNecessary(this, unknown);
-    
+
     // If there were no args and we have unknown options,
     // then they are extraneous and we need to error.
-    if (unknown.length > 0) {      
+    if (unknown.length > 0) {
       this.unknownOption(unknown[0]);
     }
   }
@@ -565,11 +582,11 @@ Command.prototype.parseOptions = function(argv){
       }
       continue;
     }
-    
+
     // looks like an option
     if (arg.length > 1 && '-' == arg[0]) {
       unknownOptions.push(arg);
-      
+
       // If the next argument looks like it might be
       // an argument for this option, we pass it on.
       // If it isn't, then it'll simply be ignored
@@ -578,11 +595,11 @@ Command.prototype.parseOptions = function(argv){
       }
       continue;
     }
-    
+
     // arg
     args.push(arg);
   }
-  
+
   return { args: args, unknown: unknownOptions };
 };
 
@@ -720,7 +737,7 @@ Command.prototype.largestOptionLength = function(){
 
 Command.prototype.optionHelp = function(){
   var width = this.largestOptionLength();
-  
+
   // Prepend the help information
   return [pad('-h, --help', width) + '  ' + 'output usage information']
     .concat(this.options.map(function(option){
@@ -751,7 +768,7 @@ Command.prototype.commandHelp = function(){
       }).join(' ');
 
       return pad(cmd._name
-        + (cmd.options.length 
+        + (cmd.options.length
           ? ' [options]'
           : '') + ' ' + args, 22)
         + (cmd.description()
