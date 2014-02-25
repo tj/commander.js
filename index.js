@@ -361,7 +361,7 @@ Command.prototype.parse = function(argv){
   this.rawArgs = argv;
 
   // guess name
-  this._name = this._name || basename(argv[1]);
+  this._name = this._name || basename(argv[1], '.js');
 
   // process argv
   var parsed = this.parseOptions(this.normalize(argv.slice(2)));
@@ -399,14 +399,15 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   // executable
   var dir = dirname(argv[1]);
-  var bin = basename(argv[1]) + '-' + args[0];
+  var bin = basename(argv[1], '.js') + '-' + args[0];
 
   // check for ./<bin> first
   var local = path.join(dir, bin);
 
   // run it
   args = args.slice(1);
-  var proc = spawn(local, args, { stdio: 'inherit', customFds: [0, 1, 2] });
+  args.unshift(local);
+  var proc = spawn('node', args, { stdio: 'inherit', customFds: [0, 1, 2] });
   proc.on('error', function(err){
     if (err.code == "ENOENT") {
       console.error('\n  %s(1) does not exist, try --help\n', bin);
