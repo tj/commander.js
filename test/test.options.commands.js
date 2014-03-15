@@ -40,6 +40,7 @@ program
 
 program
   .command('*')
+  .hidden()
   .action(function(env){
     console.log('deploying "%s"', env);
   });
@@ -96,6 +97,7 @@ try {
   program.parse(['node', 'test', '--config', 'conf6', 'exec', '--help']);
 } catch(ex) {
   program.config.should.equal("conf6");
+  program.helpInformation().should.not.include("*");
 }
 
 try {

@@ -493,6 +493,19 @@ Command.prototype.parseArgs = function(args, unknown){
 };
 
 /**
+ * Hide the command from help output.
+ *
+ * @return {String|Command}
+ * @api public
+ *
+ */
+
+Command.prototype.hidden = function(){
+  this.hidden = true;
+  return this;
+};
+
+/**
  * Return an option matching `arg` if any.
  *
  * @param {String} arg
@@ -744,21 +757,29 @@ Command.prototype.commandHelp = function(){
       ''
     , '  Commands:'
     , ''
-    , this.commands.map(function(cmd){
-      var args = cmd._args.map(function(arg){
-        return arg.required
-          ? '<' + arg.name + '>'
-          : '[' + arg.name + ']';
-      }).join(' ');
+    , (function(self) {
+        var commands = [];
 
-      return pad(cmd._name
-        + (cmd.options.length 
-          ? ' [options]'
-          : '') + ' ' + args, 22)
-        + (cmd.description()
-          ? ' ' + cmd.description()
-          : '');
-    }).join('\n').replace(/^/gm, '    ')
+        self.commands.forEach(function(cmd){
+          if (cmd.hidden === true) return;
+
+          var args = cmd._args.map(function(arg){
+            return arg.required
+              ? '<' + arg.name + '>'
+              : '[' + arg.name + ']';
+          }).join(' ');
+
+          commands.push(pad(cmd._name
+            + (cmd.options.length 
+              ? ' [options]'
+              : '') + ' ' + args, 22)
+            + (cmd.description()
+              ? ' ' + cmd.description()
+              : ''));
+        });
+        
+        return commands.join('\n').replace(/^/gm, '    ');
+      })(this)
     , ''
   ].join('\n');
 };
