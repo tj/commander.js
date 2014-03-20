@@ -816,7 +816,7 @@ Command.prototype.outputHelpIfNecessary = function(options) {
   options = options || [];
   for (var i = 0; i < options.length; i++) {
     if (options[i] == '--help' || options[i] == '-h') {
-      cmd.outputHelp();
+      this.outputHelp();
       process.exit(0);
     }
   }
