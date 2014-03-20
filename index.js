@@ -219,7 +219,7 @@ Command.prototype.action = function(fn){
     var parsed = self.parseOptions(unknown);
     
     // Output help if necessary
-    outputHelpIfNecessary(self, parsed.unknown);
+    self.outputHelpIfNecessary(parsed.unknown);
     
     // If there are still any unknown options, then we simply 
     // die, unless someone asked for help, in which case we give it
@@ -480,7 +480,7 @@ Command.prototype.parseArgs = function(args, unknown){
       this.emit('*', args);
     }
   } else {
-    outputHelpIfNecessary(this, unknown);
+    this.outputHelpIfNecessary(unknown);
     
     // If there were no args and we have unknown options,
     // then they are extraneous and we need to error.
@@ -806,6 +806,23 @@ Command.prototype.help = function(){
 };
 
 /**
+ * Output help information if necessary
+ *
+ * @param {Array} array of options to search for -h or --help
+ * @api private
+ */
+
+Command.prototype.outputHelpIfNecessary = function(options) {
+  options = options || [];
+  for (var i = 0; i < options.length; i++) {
+    if (options[i] == '--help' || options[i] == '-h') {
+      this.outputHelp();
+      process.exit(0);
+    }
+  }
+};
+
+/**
  * Camel-case the given `flag`
  *
  * @param {String} flag
@@ -831,22 +848,4 @@ function camelcase(flag) {
 function pad(str, width) {
   var len = Math.max(0, width - str.length);
   return str + Array(len + 1).join(' ');
-}
-
-/**
- * Output help information if necessary
- *
- * @param {Command} command to output help for
- * @param {Array} array of options to search for -h or --help
- * @api private
- */
-
-function outputHelpIfNecessary(cmd, options) {
-  options = options || [];
-  for (var i = 0; i < options.length; i++) {
-    if (options[i] == '--help' || options[i] == '-h') {
-      cmd.outputHelp();
-      process.exit(0);
-    }
-  }
 }
