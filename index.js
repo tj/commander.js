@@ -721,12 +721,21 @@ Command.prototype.largestOptionLength = function(){
 
 Command.prototype.optionHelp = function(){
   var width = this.largestOptionLength();
+  var columns = this.columns;
   
   // Prepend the help information
   return [pad('-h, --help', width) + '  ' + 'output usage information']
     .concat(this.options.map(function(option){
+      var description = option.description;
+
+      if (columns) {
+        description = wrapText(description
+          , columns - width - 8 // - 8 to compensate for spaces later on
+          ).replace(/\n/gm, '\n' + pad('', width + 2)); // + 2 to compensate for space added with description
+      }
+
       return pad(option.flags, width)
-        + '  ' + option.description;
+        + '  ' + description;
       }))
     .join('\n');
 };
@@ -739,6 +748,8 @@ Command.prototype.optionHelp = function(){
  */
 
 Command.prototype.commandHelp = function(){
+  var padding = 22;
+  var columns = this.columns;
   if (!this.commands.length) return '';
   return [
       ''
@@ -751,12 +762,20 @@ Command.prototype.commandHelp = function(){
           : '[' + arg.name + ']';
       }).join(' ');
 
+      var description = cmd.description();
+
+      if (columns) {
+        description = wrapText(description
+          , columns - padding - 6 // - 6 to compensate for spaces added below
+          ).replace(/\n/gm, '\n' + pad('', padding + 1)); // + 1 to compensate for space added with description
+      }
+
       return pad(cmd._name
         + (cmd.options.length 
           ? ' [options]'
-          : '') + ' ' + args, 22)
-        + (cmd.description()
-          ? ' ' + cmd.description()
+          : '') + ' ' + args, padding)
+        + (description
+          ? ' ' + description
           : '');
     }).join('\n').replace(/^/gm, '    ')
     , ''
@@ -806,6 +825,26 @@ Command.prototype.help = function(){
 };
 
 /**
+ * Sets the number `columns` to use for wrapping of command and option descriptions
+ *
+ * `columns` must be greater than or less than 60 (for cosmetic reasons)
+ *
+ * If omitted, `columns` will default to `process.stdout.columns` provided this is also >= 60
+ *
+ * @param {Number} columns
+ * @api public
+ */
+
+Command.prototype.wrap = function(columns){
+  if (columns && columns < 60) throw new Error('`columns` must be greater than or equal to 60');
+  if (arguments.length == 0 && require('tty').isatty(process.stdout.fd) && process.stdout.columns >= 60) {
+    columns = process.stdout.columns;
+  }
+  this.columns = columns;
+  return this;
+};
+
+/**
  * Camel-case the given `flag`
  *
  * @param {String} flag
@@ -849,4 +888,68 @@ function outputHelpIfNecessary(cmd, options) {
       process.exit(0);
     }
   }
+}
+
+/**
+ * Wrap `str` breaking on whitespace to the number of `columns`.
+ *
+ * @param {String} str
+ * @param {Number} columns
+ * @return {String}
+ * @api private
+ */
+
+function wrapText(str, columns) {
+  if (!str) return str;
+
+  var lines = str.split('\n');
+  return lines.map(function (l) { return wrapLine(l, columns) }).join('\n');
+}
+
+/**
+ * Wrap `str` that (split by `\n`) breaking on whitespace to the number of `columns`. 
+ *
+ * Used by `wrapText`
+ *
+ * @param {String} str
+ * @param {Number} columns
+ * @return {String}
+ * @api private
+ */
+
+function wrapLine(str, columns) {
+  var wordExp = /([\S]+)(\s*)/g
+    , space = /\s*$/
+    , word
+    , currentLine = ''
+    , lines = [];
+
+  if (!str) return str;
+  if (str.length <= columns) return str.replace(space, '');
+
+  while (word = wordExp.exec(str)) {
+    if (word[1].length > columns) {
+      // word is too long to fit into current line
+      for (var i = 0; i < word[1].length; i += columns) {
+        currentLine = word[1].substring(i, i + columns);
+        lines.push(currentLine.replace(space, ''));
+        currentLine = '';
+      }
+    } else {
+      if (currentLine.length + word[1].length <= columns) {
+        // new word fits in with current line, also append whitespace
+        currentLine += word[1] + word[2];
+      } else {
+        lines.push(currentLine.replace(space, ''));
+        currentLine = word[1] + word[2];
+      }
+    }
+  }
+
+  if (currentLine) {
+    // add additional lines
+    lines.push(currentLine.replace(space, ''));
+    currentLine = '';
+  }
+  return lines.join('\n');
 }
