@@ -324,7 +324,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue){
   // and conditionally invoke the callback
   this.on(oname, function(val){
     // coercion
-    if (null != val && fn) val = fn(val);
+    if (null !== val && fn) val = fn(val, undefined !== self[name] ? self[name] : defaultValue);
 
     // unassigned or bool
     if ('boolean' == typeof self[name] || 'undefined' == typeof self[name]) {
