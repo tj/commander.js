@@ -86,7 +86,7 @@ program
   .option('-r, --range <a>..<b>', 'A range', range)
   .option('-l, --list <items>', 'A list', list)
   .option('-o, --optional [value]', 'An optional value')
-  .option('-c, --collect [value]', 'A repeatable value', [])
+  .option('-c, --collect [value]', 'A repeatable value', collect, [])
   .option('-v, --verbose', 'A value that can be increased', increaseVerbosity, 0)
   .parse(process.argv);
 
