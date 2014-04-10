@@ -167,7 +167,8 @@ The commander will try to find the executable script in __current directory__ wi
      -p, --peppers        Add peppers
      -P, --pineapple      Add pineapple
      -b, --bbq            Add bbq sauce
-     -c, --cheese <type>  Add the specified type of cheese [marble]
+     -c, --cheese <type>  Add the specified type
+                          of cheese [marble]
      -C, --no-cheese      You do not want any cheese
 
 ```
