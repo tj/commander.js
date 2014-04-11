@@ -29,6 +29,7 @@ program
 
 program
   .command('exec <cmd>')
+  .alias('ex')
   .description('execute the given remote cmd')
   .option("-e, --exec_mode <mode>", "Which exec mode to use")
   .option("-t, --target [target]", "Target to use")
@@ -84,6 +85,12 @@ program.config.should.equal("conf6");
 program.commands[1].exec_mode.should.equal("mode2");
 program.commands[1].target.should.equal("target1");
 cmdValue.should.equal("exec3");
+
+program.parse(['node', 'test', '--config', 'conf7', 'ex', '-e', 'mode3', 'exec4']);
+program.config.should.equal("conf7");
+program.commands[1].exec_mode.should.equal("mode3");
+program.commands[1].should.not.have.property.target;
+cmdValue.should.equal("exec4");
 
 // Make sure we still catch errors with required values for options
 var exceptionOccurred = false;
