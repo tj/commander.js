@@ -213,7 +213,7 @@ Command.prototype.parseExpectedArgs = function(args){
 
 Command.prototype.action = function(fn){
   var self = this;
-  this.parent.on(this._name, function(args, unknown){
+  var listener = function(args, unknown){
     // Parse any so-far unknown options
     unknown = unknown || [];
     var parsed = self.parseOptions(unknown);
@@ -247,7 +247,9 @@ Command.prototype.action = function(fn){
     }
 
     fn.apply(this, args);
-  });
+  };
+  this.parent.on(this._name, listener);
+  if (this._alias) this.parent.on(this._alias, listener);
   return this;
 };
 
@@ -674,6 +676,20 @@ Command.prototype.description = function(str){
 };
 
 /**
+ * Set an alias for the command
+ *
+ * @param {String} alias
+ * @return {String|Command}
+ * @api public
+ */
+
+Command.prototype.alias = function(alias){
+  if (0 == arguments.length) return this._alias;
+  this._alias = alias;
+  return this;
+};
+
+/**
  * Set / get the command usage `str`.
  *
  * @param {String} str
@@ -751,13 +767,18 @@ Command.prototype.commandHelp = function(){
           : '[' + arg.name + ']';
       }).join(' ');
 
-      return pad(cmd._name
+      return cmd._name
+        + (cmd._alias
+          ? '|' + cmd._alias
+          : '')
         + (cmd.options.length
           ? ' [options]'
-          : '') + ' ' + args, 22)
+          : '') + ' ' + args
+        + '\n'
         + (cmd.description()
-          ? ' ' + cmd.description()
-          : '');
+          ? '   ' + cmd.description()
+          : '')
+        + '\n';
     }).join('\n').replace(/^/gm, '    ')
     , ''
   ].join('\n');
