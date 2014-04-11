@@ -774,9 +774,8 @@ Command.prototype.commandHelp = function(){
         + (cmd.options.length
           ? ' [options]'
           : '') + ' ' + args
-        + '\n'
         + (cmd.description()
-          ? '   ' + cmd.description()
+          ? '\n   ' + cmd.description()
           : '')
         + '\n';
     }).join('\n').replace(/^/gm, '    ')
@@ -794,7 +793,11 @@ Command.prototype.commandHelp = function(){
 Command.prototype.helpInformation = function(){
   return [
       ''
-    , '  Usage: ' + this._name + ' ' + this.usage()
+    , '  Usage: ' + this._name
+        + (this._alias
+          ? '|' + this._alias
+          : '')
+        + ' ' + this.usage()
     , '' + this.commandHelp()
     , '  Options:'
     , ''
