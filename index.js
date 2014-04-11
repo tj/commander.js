@@ -215,7 +215,9 @@ Command.prototype.action = function(fn){
   var self = this;
   this.parent.on(this._name, function(args, unknown){
     // Parse any so-far unknown options
+    args = args || [];
     unknown = unknown || [];
+
     var parsed = self.parseOptions(unknown);
 
     // Output help if necessary
