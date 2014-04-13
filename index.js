@@ -713,6 +713,22 @@ Command.prototype.largestOptionLength = function(){
 };
 
 /**
+ * Return the largest command length.
+ *
+ * @return {Number}
+ * @api private
+ */
+Command.prototype.largestCommandLength = function(){
+  return this.commands.reduce(function(max, cmd){
+    return Math.max(max, (cmd.options.length ? [cmd._name, '[options]'] : [cmd._name]).concat(cmd._args.map(function(arg){
+      return arg.required
+          ? '<' + arg.name + '>'
+          : '[' + arg.name + ']';
+    })).join(' ').length);
+  }, 0);
+};
+
+/**
  * Return help for options.
  *
  * @return {String}
@@ -740,6 +756,7 @@ Command.prototype.optionHelp = function(){
 
 Command.prototype.commandHelp = function(){
   if (!this.commands.length) return '';
+  var width = this.largestCommandLength();
   return [
       ''
     , '  Commands:'
@@ -754,9 +771,9 @@ Command.prototype.commandHelp = function(){
       return pad(cmd._name
         + (cmd.options.length
           ? ' [options]'
-          : '') + ' ' + args, 22)
+          : '') + ' ' + args, width)
         + (cmd.description()
-          ? ' ' + cmd.description()
+          ? '  ' + cmd.description()
           : '');
     }).join('\n').replace(/^/gm, '    ')
     , ''
