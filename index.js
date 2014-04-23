@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -691,7 +690,7 @@ Command.prototype.usage = function(str){
   var usage = '[options'
     + (this.commands.length ? '] [command' : '')
     + ']'
-    + (this._args.length ? ' ' + args : '');
+    + (this._args.length ? ' ' + args.join(' ') : '');
 
   if (0 == arguments.length) return this._usage || usage;
   this._usage = str;
