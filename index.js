@@ -403,12 +403,18 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   var dir = dirname(argv[1]);
   var bin = basename(argv[1], '.js') + '-' + args[0];
 
-  // check for ./<bin> first
-  var local = path.join(dir, bin);
+  // check for global
+  var file = path.join(dir, bin);
+
+  if (!fs.existsSync(file)) {
+    // check for ./<bin> (local fallback)
+    file = fs.readlinkSync(argv[1]);
+    file = path.join(dirname(file), bin);
+  }
 
   // run it
   args = args.slice(1);
-  args.unshift(local);
+  args.unshift(file);
   var proc = spawn('node', args, { stdio: 'inherit', customFds: [0, 1, 2] });
   proc.on('error', function(err){
     if (err.code == "ENOENT") {
