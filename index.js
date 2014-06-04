@@ -408,8 +408,10 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   if (!fs.existsSync(file)) {
     // check for ./<bin> (local fallback)
-    file = fs.readlinkSync(argv[1]);
-    file = path.join(dirname(file), bin);
+    try {
+      file = fs.readlinkSync(argv[1]);
+      file = path.join(dirname(file), bin);
+    } catch(e) {}
   }
 
   // run it
