@@ -144,7 +144,7 @@ Command.prototype.__proto__ = EventEmitter.prototype;
  * @api public
  */
 
-Command.prototype.command = function(name, desc){
+Command.prototype.command = function(name, desc) {
   var args = name.split(/ +/);
   var cmd = new Command(args.shift());
   if (desc) cmd.description(desc);
@@ -274,7 +274,7 @@ Command.prototype.action = function(fn){
  *     program.pepper
  *     // => Boolean
  *
- *     // simple boolean defaulting to false
+ *     // simple boolean defaulting to true
  *     program.option('-C, --no-cheese', 'remove cheese');
  *
  *     program.cheese
@@ -282,7 +282,7 @@ Command.prototype.action = function(fn){
  *
  *     --no-cheese
  *     program.cheese
- *     // => true
+ *     // => false
  *
  *     // required argument
  *     program.option('-C, --chdir <path>', 'change the working directory');
