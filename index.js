@@ -5,8 +5,6 @@
 
 var EventEmitter = require('events').EventEmitter;
 var spawn = require('child_process').spawn;
-var fs = require('fs');
-var exists = fs.existsSync;
 var path = require('path');
 var dirname = path.dirname;
 var basename = path.basename;
