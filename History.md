@@ -1,3 +1,9 @@
+2.3.0 / 2014-07-16
+==================
+
+ * add command alias'. Closes PR #210
+ * fix: Typos. Closes #99
+ * fix: Unused fs module. Closes #217
 
 2.2.0 / 2014-03-29
 ==================
