@@ -738,13 +738,12 @@ Command.prototype.largestOptionLength = function(){
 Command.prototype.optionHelp = function(){
   var width = this.largestOptionLength();
 
-  // Prepend the help information
-  return [pad('-h, --help', width) + '  ' + 'output usage information']
-    .concat(this.options.map(function(option){
-      return pad(option.flags, width)
-        + '  ' + option.description;
-      }))
-    .join('\n');
+  // Append the help information
+  return this.options.map(function(option){
+    return pad(option.flags, width) + '  ' + option.description;
+  })
+  .concat([pad('-h, --help', width) + '  ' + 'output usage information'])
+  .join('\n');
 };
 
 /**
