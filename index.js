@@ -13,7 +13,7 @@ var basename = path.basename;
  * Expose the root command.
  */
 
-exports = module.exports = new Command;
+exports = module.exports = new Command();
 
 /**
  * Expose `Command`.
@@ -68,8 +68,7 @@ Option.prototype.name = function(){
  */
 
 Option.prototype.is = function(arg){
-  return arg == this.short
-    || arg == this.long;
+  return arg == this.short || arg == this.long;
 };
 
 /**
@@ -309,7 +308,10 @@ Command.prototype.option = function(flags, description, fn, defaultValue){
     , name = camelcase(oname);
 
   // default as 3rd arg
-  if ('function' != typeof fn) defaultValue = fn, fn = null;
+  if (typeof fn != 'function') {
+    defaultValue = fn;
+    fn = null;
+  }
 
   // preassign default value only for --no-*, [optional], or <required>
   if (false == option.bool || option.optional || option.required) {
@@ -326,7 +328,9 @@ Command.prototype.option = function(flags, description, fn, defaultValue){
   // and conditionally invoke the callback
   this.on(oname, function(val){
     // coercion
-    if (null !== val && fn) val = fn(val, undefined === self[name] ? defaultValue : self[name]);
+    if (null !== val && fn) val = fn(val, undefined === self[name]
+      ? defaultValue
+      : self[name]);
 
     // unassigned or bool
     if ('boolean' == typeof self[name] || 'undefined' == typeof self[name]) {
@@ -439,7 +443,9 @@ Command.prototype.normalize = function(args){
 
   for (var i = 0, len = args.length; i < len; ++i) {
     arg = args[i];
-    i > 0 && (lastOpt = this.optionFor(args[i-1]));
+    if (i > 0) {
+      lastOpt = this.optionFor(args[i-1]);
+    }
 
     if (lastOpt && lastOpt.required) {
      	ret.push(arg);
@@ -741,8 +747,7 @@ Command.prototype.optionHelp = function(){
   // Prepend the help information
   return [pad('-h, --help', width) + '  ' + 'output usage information']
     .concat(this.options.map(function(option){
-      return pad(option.flags, width)
-        + '  ' + option.description;
+      return pad(option.flags, width) + '  ' + option.description;
       }))
     .join('\n');
 };
