@@ -447,8 +447,8 @@ Command.prototype.normalize = function(args){
       lastOpt = this.optionFor(args[i-1]);
     }
 
-    if(arg==='--'){
-      // honor option terminator
+    if (arg === '--') {
+      // Honor option terminator
     	ret = ret.concat(args.slice(i));
     	break;
     } else if (lastOpt && lastOpt.required) {
