@@ -447,7 +447,11 @@ Command.prototype.normalize = function(args){
       lastOpt = this.optionFor(args[i-1]);
     }
 
-    if (lastOpt && lastOpt.required) {
+    if(arg==='--'){
+      // honor option terminator
+    	ret = ret.concat(args.slice(i));
+    	break;
+    } else if (lastOpt && lastOpt.required) {
      	ret.push(arg);
     } else if (arg.length > 1 && '-' == arg[0] && '-' != arg[1]) {
       arg.slice(1).split('').forEach(function(c){
