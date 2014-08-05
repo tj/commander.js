@@ -765,28 +765,37 @@ Command.prototype.optionHelp = function(){
 
 Command.prototype.commandHelp = function(){
   if (!this.commands.length) return '';
-  return [
-      ''
-    , '  Commands:'
-    , ''
-    , this.commands.map(function(cmd){
-      var args = cmd._args.map(function(arg){
-        return arg.required
-          ? '<' + arg.name + '>'
-          : '[' + arg.name + ']';
-      }).join(' ');
 
-      return cmd._name
+  var commands = this.commands.map(function(cmd) {
+    var args = cmd._args.map(function(arg){
+      return arg.required
+        ? '<' + arg.name + '>'
+        : '[' + arg.name + ']';
+    }).join(' ');
+
+    return [
+      cmd._name
         + (cmd._alias
           ? '|' + cmd._alias
           : '')
         + (cmd.options.length
           ? ' [options]'
-          : '') + ' ' + args
-        + (cmd.description()
-          ? '\n   ' + cmd.description()
           : '')
-        + '\n';
+        + ' ' + args
+    , cmd.description()
+    ];
+  });
+
+  var width = commands.reduce(function(max, command){
+    return Math.max(max, command[0].length);
+  }, 0);
+
+  return [
+      ''
+    , '  Commands:'
+    , ''
+    , commands.map(function(cmd){
+      return pad(cmd[0], width) + '  ' + cmd[1];
     }).join('\n').replace(/^/gm, '    ')
     , ''
   ].join('\n');
