@@ -215,37 +215,42 @@ Command.prototype.action = function(fn) {
     args = args || [];
     unknown = unknown || [];
 
-    var parsed = self.parseOptions(unknown);
+    var parsed = self.parseOptions(args.concat(unknown));
 
-    // Output help if necessary
-    outputHelpIfNecessary(self, parsed.unknown);
-
-    // If there are still any unknown options, then we simply
-    // die, unless someone asked for help, in which case we give it
-    // to them, and then we die.
-    if (parsed.unknown.length > 0) {
-      self.unknownOption(parsed.unknown[0]);
+    if (parsed.args.length && self.listeners(parsed.args[0]).length) {
+        for (var i = 0; i < parsed.args.length; i++) {
+            args.shift();
+        }
+        var result = self.parseArgs(parsed.args, parsed.unknown);
     }
+    else {
+        // If there are still any unknown options, then we simply
+        // die, unless someone asked for help, in which case we give it
+        // to them, and then we die.
+        if (parsed.unknown.length > 0) {
+            // Output help if necessary
+            outputHelpIfNecessary(self, parsed.unknown);
 
-    // Leftover arguments need to be pushed back. Fixes issue #56
-    if (parsed.args.length) args = parsed.args.concat(args);
+            self.unknownOption(parsed.unknown[0]);
+        }
 
-    self._args.forEach(function(arg, i) {
-      if (arg.required && null == args[i]) {
-        self.missingArgument(arg.name);
-      }
-    });
+        self._args.forEach(function(arg, i){
+          if (arg.required && null == parsed.args[i]) {
+            self.missingArgument(arg.name);
+          }
+        });
 
-    // Always append ourselves to the end of the arguments,
-    // to make sure we match the number of arguments the user
-    // expects
-    if (self._args.length) {
-      args[self._args.length] = self;
-    } else {
-      args.push(self);
+        // Always append ourselves to the end of the arguments,
+        // to make sure we match the number of arguments the user
+        // expects
+        if (self._args.length) {
+          parsed.args[self._args.length] = self;
+        } else {
+          parsed.args.push(self);
+        }
+
+        fn.apply(self, parsed.args);
     }
-
-    fn.apply(self, args);
   };
   this.parent.on(this._name, listener);
   if (this._alias) this.parent.on(this._alias, listener);
@@ -697,7 +702,7 @@ Command.prototype.version = function(str, flags) {
  */
 
 Command.prototype.description = function(str) {
-  if (0 == arguments.length) return this._description;
+  if (0 == arguments.length) return this._description || '';
   this._description = str;
   return this;
 };
