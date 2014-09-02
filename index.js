@@ -377,7 +377,7 @@ Command.prototype.parse = function(argv){
 
   // executable sub-commands
   var name = result.args[0];
-  if (typeof this._execs[name] != "function") {
+  if (this._execs[name] && typeof this._execs[name] != "function") {
     return this.executeSubCommand(argv, args, parsed.unknown);
   }
 
