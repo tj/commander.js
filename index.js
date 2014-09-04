@@ -667,7 +667,7 @@ Command.prototype.version = function(str, flags){
   flags = flags || '-V, --version';
   this.option(flags, 'output the version number');
   this.on('version', function(){
-    console.log(str);
+    process.stdout.write(str + '\n');
     process.exit(0);
   });
   return this;
