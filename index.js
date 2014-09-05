@@ -454,7 +454,9 @@ Command.prototype.normalize = function(args){
     	ret = ret.concat(args.slice(i));
     	break;
     } else if (lastOpt && lastOpt.required) {
-     	ret.push(arg);
+      ret.push(arg);
+    } else if (arg.match(/^['"].*['"]/)) {
+      ret.push(arg);
     } else if (arg.length > 1 && '-' == arg[0] && '-' != arg[1]) {
       arg.slice(1).split('').forEach(function(c){
         ret.push('-' + c);
@@ -568,9 +570,10 @@ Command.prototype.parseOptions = function(argv){
       // optional arg
       } else if (option.optional) {
         arg = argv[i+1];
-        if (null == arg || ('-' == arg[0] && '-' != arg)) {
+        if (null == arg || ('-' == arg[0] && '-' != arg && !arg.match(/^['"].*['"]/))) {
           arg = null;
         } else {
+          arg = arg.substr(1, arg.length-2);
           ++i;
         }
         this.emit(option.name(), arg);
