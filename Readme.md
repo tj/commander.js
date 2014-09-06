@@ -117,11 +117,7 @@ console.log(' args: %j', program.args);
  * Module dependencies.
  */
 
-var program = require('../');
-
-function list(val) {
-  return val.split(',').map(Number);
-}
+var program = require('commander');
 
 program
   .version('0.0.1')
