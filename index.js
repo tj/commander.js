@@ -570,10 +570,12 @@ Command.prototype.parseOptions = function(argv){
       // optional arg
       } else if (option.optional) {
         arg = argv[i+1];
-        if (null == arg || ('-' == arg[0] && '-' != arg && !arg.match(/^['"].*['"]/))) {
+        var hasQuotes = arg && arg.match(/^['"].*['"]/);
+        if (null == arg || ('-' == arg[0] && '-' != arg && !hasQuotes)) {
           arg = null;
+          ++i;
         } else {
-          arg = arg.substr(1, arg.length-2);
+          arg = hasQuotes ? arg.substr(1, arg.length-2) : arg;
           ++i;
         }
         this.emit(option.name(), arg);
