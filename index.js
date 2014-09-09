@@ -155,6 +155,16 @@ Command.prototype.command = function(name, desc) {
 };
 
 /**
+ * Define argument syntax for the top-level command.
+ *
+ * @api public
+ */
+
+Command.prototype.arguments = function (desc) {
+  return this.parseExpectedArgs(desc.split(/ +/));
+}
+
+/**
  * Add an implicit `help [cmd]` subcommand
  * which invokes `--help` for the given command.
  *
@@ -247,8 +257,10 @@ Command.prototype.action = function(fn){
 
     fn.apply(this, args);
   };
-  this.parent.on(this._name, listener);
-  if (this._alias) this.parent.on(this._alias, listener);
+  var parent = this.parent || this;
+  var name = parent === this ? '*' : this._name;
+  parent.on(name, listener);
+  if (this._alias) parent.on(this._alias, listener);
   return this;
 };
 
