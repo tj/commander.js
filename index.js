@@ -602,6 +602,23 @@ Command.prototype.parseOptions = function(argv){
 };
 
 /**
+ * Return an object containing options as key-value pairs
+ *
+ * @return {Object}
+ * @api public
+ */
+Command.prototype.opts = function() {
+  var result = {}
+    , len = this.options.length;
+
+  for (var i = 0 ; i < len; i++) {
+    var key = this.options[i].name();
+    result[key] = key === 'version' ? this._version : this[key];
+  }
+  return result;
+};
+
+/**
  * Argument `name` is missing.
  *
  * @param {String} name
