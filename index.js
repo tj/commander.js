@@ -744,6 +744,20 @@ Command.prototype.usage = function(str){
 };
 
 /**
+ * Set / get the name for the command
+ *
+ * @param {String} name
+ * @return {String|Command}
+ * @api public
+ */
+
+Command.prototype.name = function(name){
+  if (0 == arguments.length) return this._name;
+  this._name = name;
+  return this;
+};
+
+/**
  * Return the largest option length.
  *
  * @return {Number}
