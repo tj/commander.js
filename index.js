@@ -359,7 +359,9 @@ Command.prototype.option = function(flags, description, fn, defaultValue){
  * @api public
  */
 
-Command.prototype.parse = function(argv){
+Command.prototype.parse = function(argv, opts){
+  opts = opts || {};
+  var failOnUnknown = typeof opts.failOnUnknown !== 'undefined' ?  opts.failOnUnknown : true;
   // implicit help
   if (this.executables) this.addImplicitHelpCommand();
 
@@ -373,7 +375,7 @@ Command.prototype.parse = function(argv){
   var parsed = this.parseOptions(this.normalize(argv.slice(2)));
   var args = this.args = parsed.args;
 
-  var result = this.parseArgs(this.args, parsed.unknown);
+  var result = this.parseArgs(this.args, parsed.unknown, failOnUnknown);
 
   // executable sub-commands
   var name = result.args[0];
@@ -481,7 +483,7 @@ Command.prototype.normalize = function(args){
  * @api private
  */
 
-Command.prototype.parseArgs = function(args, unknown){
+Command.prototype.parseArgs = function(args, unknown, failOnUnknown){
   var cmds = this.commands
     , len = cmds.length
     , name;
@@ -498,7 +500,7 @@ Command.prototype.parseArgs = function(args, unknown){
 
     // If there were no args and we have unknown options,
     // then they are extraneous and we need to error.
-    if (unknown.length > 0) {
+    if (unknown.length > 0 && failOnUnknown) {
       this.unknownOption(unknown[0]);
     }
   }
