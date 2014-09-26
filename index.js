@@ -482,9 +482,7 @@ Command.prototype.normalize = function(args){
  */
 
 Command.prototype.parseArgs = function(args, unknown){
-  var cmds = this.commands
-    , len = cmds.length
-    , name;
+  var name;
 
   if (args.length) {
     name = args[0];
@@ -691,7 +689,7 @@ Command.prototype.version = function(str, flags){
 };
 
 /**
- * Set the description `str`.
+ * Set the description to `str`.
  *
  * @param {String} str
  * @return {String|Command}
