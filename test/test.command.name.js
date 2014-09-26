@@ -10,5 +10,3 @@ program.name.should.be.a.Function;
 program.name().should.equal('test');
 program.commands[0].name().should.equal('mycommand');
 program.commands[1].name().should.equal('help');
-program.commands[0].name('newcommand');
-program.commands[0].name().should.equal('newcommand');
