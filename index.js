@@ -245,7 +245,7 @@ Command.prototype.action = function(fn){
       args.push(self);
     }
 
-    fn.apply(this, args);
+    fn.apply(self, args);
   };
   this.parent.on(this._name, listener);
   if (this._alias) this.parent.on(this._alias, listener);
