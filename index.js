@@ -657,6 +657,9 @@ Command.prototype.optionMissingArgument = function(option, flag){
  */
 
 Command.prototype.unknownOption = function(flag){
+  if(this._allowUnknownOptions)
+    return;
+
   console.error();
   console.error("  error: unknown option `%s'", flag);
   console.error();
@@ -687,6 +690,21 @@ Command.prototype.version = function(str, flags){
   });
   return this;
 };
+
+
+/**
+ * Allows options not registered to be ignored.
+ *
+ * When an unknown option is detected the program does not print an error nor does it exit.
+ *
+ * @return {Command} for chaining
+ * @api public
+ */
+
+Command.prototype.allowUnknownOptions = function(){
+  this._allowUnknownOptions = true;
+  return this;
+}
 
 /**
  * Set the description to `str`.
