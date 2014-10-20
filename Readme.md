@@ -172,11 +172,11 @@ Examples:
 
 ## Links
 
- - [API documentation](http://visionmedia.github.com/commander.js/)
+ - [API documentation](http://tj.github.com/commander.js/)
  - [ascii tables](https://github.com/LearnBoost/cli-table)
- - [progress bars](https://github.com/visionmedia/node-progress)
+ - [progress bars](https://github.com/tj/node-progress)
  - [more progress bars](https://github.com/substack/node-multimeter)
- - [examples](https://github.com/visionmedia/commander.js/tree/master/examples)
+ - [examples](https://github.com/tj/commander.js/tree/master/examples)
 
 ## License 
 
