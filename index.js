@@ -127,6 +127,18 @@ Command.prototype.__proto__ = EventEmitter.prototype;
  *        });
  *
  *      program
+ *        .command('teardown <dir> [otherDirs...]')
+ *        .description('run teardown commands')
+ *        .action(function(dir, otherDirs) {
+ *          console.log('dir "%s"', dir);
+ *          if (otherDirs) {
+ *            otherDirs.forEach(function (oDir) {
+ *              console.log('dir "%s"', oDir);
+ *            });
+ *          }
+ *        });
+ *
+ *      program
  *        .command('*')
  *        .description('deploy the given env')
  *        .action(function(env) {
@@ -179,13 +191,29 @@ Command.prototype.parseExpectedArgs = function(args) {
   if (!args.length) return;
   var self = this;
   args.forEach(function(arg) {
+    var argDetails = {
+      required: false,
+      name: '',
+      variadic: false
+    };
+
     switch (arg[0]) {
       case '<':
-        self._args.push({ required: true, name: arg.slice(1, -1) });
+        argDetails.required = true;
+        argDetails.name = arg.slice(1, -1);
         break;
       case '[':
-        self._args.push({ required: false, name: arg.slice(1, -1) });
+        argDetails.name = arg.slice(1, -1);
         break;
+    }
+
+    if (argDetails.name.indexOf('...') === argDetails.name.length - 3) {
+      argDetails.variadic = true;
+      argDetails.name = argDetails.name.slice(0, -3);
+    }
+
+    if (argDetails.name) {
+      self._args.push(argDetails);
     }
   });
   return this;
@@ -233,6 +261,12 @@ Command.prototype.action = function(fn) {
     self._args.forEach(function(arg, i) {
       if (arg.required && null == args[i]) {
         self.missingArgument(arg.name);
+      } else if (arg.variadic) {
+        if (i !== self._args.length - 1) {
+          self.variadicArgNotLast(arg.name);
+        }
+
+        args[i] = args.slice(i);
       }
     });
 
@@ -663,6 +697,19 @@ Command.prototype.unknownOption = function(flag) {
   process.exit(1);
 };
 
+/**
+ * Variadic argument with `name` is not the last argument as required.
+ *
+ * @param {String} name
+ * @api private
+ */
+
+Command.prototype.variadicArgNotLast = function(name) {
+  console.error();
+  console.error("  error: variadic arguments must be last `%s'", name);
+  console.error();
+  process.exit(1);
+};
 
 /**
  * Set the program version to `str`.
@@ -726,9 +773,7 @@ Command.prototype.alias = function(alias) {
 
 Command.prototype.usage = function(str) {
   var args = this._args.map(function(arg) {
-    return arg.required
-      ? '<' + arg.name + '>'
-      : '[' + arg.name + ']';
+    return humanReadableArgName(arg);
   });
 
   var usage = '[options]'
@@ -796,9 +841,7 @@ Command.prototype.commandHelp = function() {
 
   var commands = this.commands.map(function(cmd) {
     var args = cmd._args.map(function(arg) {
-      return arg.required
-        ? '<' + arg.name + '>'
-        : '[' + arg.name + ']';
+      return humanReadableArgName(arg);
     }).join(' ');
 
     return [
@@ -919,4 +962,20 @@ function outputHelpIfNecessary(cmd, options) {
       process.exit(0);
     }
   }
+}
+
+/**
+ * Takes an argument an returns its human readable equivalent for help usage.
+ *
+ * @param {Object} arg
+ * @return {String}
+ * @api private
+ */
+
+function humanReadableArgName(arg) {
+  var nameOutput = arg.name + (arg.variadic === true ? '...' : '');
+
+  return arg.required
+    ? '<' + nameOutput + '>'
+    : '[' + nameOutput + ']'
 }
