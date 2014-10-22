@@ -65,8 +65,9 @@ program
         console.log('rmdir %s', oDir);
       });
     }
-  })
-  .parse(process.argv);
+  });
+
+program.parse(process.argv);
 ```
 
  An `Array` is used for the value of a variadic argument.  This applies to `program.args` as well as the argument passed
