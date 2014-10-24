@@ -1,10 +1,16 @@
+2.5.0 / 2014-10-24
+==================
+
+ * add support for variadic arguments. Closes #277 @whitlockjc
+
 2.4.0 / 2014-10-17
 ==================
-* Fixed a bug on executing the coercion function of subcommands option. Closes #270
-* added `Command.prototype.name` to retrieve command name. Closes #264 #266 @tonylukasavage
-* added `Command.prototype.opts` to retrieve all the options as a simple object of key-value pairs. Closes #262 @tonylukasavage
-* Fixed a bug on subcommand name. Closes #248 @jonathandelgado
-* Fixed function normalize doesn’t honor option terminator. Closes #216 @abbr
+
+ * fixed a bug on executing the coercion function of subcommands option. Closes #270
+ * added `Command.prototype.name` to retrieve command name. Closes #264 #266 @tonylukasavage
+ * added `Command.prototype.opts` to retrieve all the options as a simple object of key-value pairs. Closes #262 @tonylukasavage
+ * fixed a bug on subcommand name. Closes #248 @jonathandelgado
+ * fixed function normalize doesn’t honor option terminator. Closes #216 @abbr
 
 2.3.0 / 2014-07-16
 ==================
