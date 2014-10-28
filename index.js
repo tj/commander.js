@@ -162,7 +162,6 @@ Command.prototype.command = function(name, desc) {
   this.commands.push(cmd);
   cmd.parseExpectedArgs(args);
   cmd.parent = this;
-  if (desc) return this;
   return cmd;
 };
 
