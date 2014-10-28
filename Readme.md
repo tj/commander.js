@@ -152,7 +152,7 @@ console.log(' args: %j', program.args);
  * Module dependencies.
  */
 
-var program = require('../');
+var program = require('commander');
 
 program
   .version('0.0.1')
@@ -176,7 +176,7 @@ program.parse(process.argv);
 console.log('stuff');
 ```
 
-yielding the following help output:
+Yields the following help output when `node script-name.js -h` or `node script-name.js --help` are run:
 
 ```
 
