@@ -370,13 +370,17 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     if ('boolean' == typeof self[name] || 'undefined' == typeof self[name]) {
       // if no value, bool true, and we have a default, then use it!
       if (null == val) {
-        self[name] = option.bool
-          ? defaultValue || true
-          : false;
+        if (option.required) {
+            this.optionMissingArgument(option);
+        } else {
+            self[name] = option.bool
+              ? defaultValue || true
+              : false;
+        }
       } else {
         self[name] = val;
       }
-    } else if (null !== val) {
+    } else if (null !== val && undefined !== val) {
       // reassign
       self[name] = val;
     }
@@ -568,9 +572,11 @@ Command.prototype.parseOptions = function(argv) {
     , len = argv.length
     , literal
     , option
-    , arg;
+    , arg
+    , optionsAvailable;
 
-  var unknownOptions = [];
+  var unknownOptions = []
+      , optionsUsed = [];
 
   // parse options
   for (var i = 0; i < len; ++i) {
@@ -592,6 +598,8 @@ Command.prototype.parseOptions = function(argv) {
 
     // option is defined
     if (option) {
+      optionsUsed.push(option);
+
       // requires arg
       if (option.required) {
         arg = argv[++i];
@@ -628,6 +636,22 @@ Command.prototype.parseOptions = function(argv) {
 
     // arg
     args.push(arg);
+  }
+
+  if (!hasHelp(unknownOptions) && this.options.length !== optionsUsed.length) {
+    optionsAvailable = this.options.slice();
+    optionsUsed.forEach(function (usedOption) {
+      var index = optionsAvailable.indexOf(usedOption);
+      if (index > -1) {
+        optionsAvailable.splice(index, 1);
+      }
+    });
+
+    for (i = 0; i < optionsAvailable.length; i++) {
+      if (optionsAvailable[i].required) {
+        this.emit(optionsAvailable[i].name());
+      }
+    }
   }
 
   return { args: args, unknown: unknownOptions };
@@ -947,6 +971,23 @@ function pad(str, width) {
 }
 
 /**
+ * Check if help information is necessary
+ *
+ * @param {Array} array of options to search for -h or --help
+ * @api private
+ */
+
+function hasHelp(options) {
+  options = options || [];
+  for (var i = 0; i < options.length; i++) {
+    if (options[i] == '--help' || options[i] == '-h') {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
  * Output help information if necessary
  *
  * @param {Command} command to output help for
@@ -956,11 +997,9 @@ function pad(str, width) {
 
 function outputHelpIfNecessary(cmd, options) {
   options = options || [];
-  for (var i = 0; i < options.length; i++) {
-    if (options[i] == '--help' || options[i] == '-h') {
-      cmd.outputHelp();
-      process.exit(0);
-    }
+  if (hasHelp(options)) {
+    cmd.outputHelp();
+    process.exit(0);
   }
 }
 

@@ -7,7 +7,6 @@ var program = require('../')
 
 program
   .version('0.0.1')
-  .option('-C, --chdir <path>', 'change the working directory')
   .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
   .option('-T, --no-tests', 'ignore test hook')
 
@@ -97,7 +96,7 @@ var exceptionOccurred = false;
 var oldProcessExit = process.exit;
 var oldConsoleError = console.error;
 process.exit = function() { exceptionOccurred = true; throw new Error(); };
-console.error = function() {};
+//console.error = function() {};
 
 try {
   program.parse(['node', 'test', '--config', 'conf6', 'exec', '--help']);
