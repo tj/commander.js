@@ -266,7 +266,7 @@ Command.prototype.action = function(fn) {
           self.variadicArgNotLast(arg.name);
         }
 
-        args[i] = args.slice(i);
+        args[i] = args.splice(i);
       }
     });
 
