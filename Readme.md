@@ -74,7 +74,7 @@ program
 
 ## Git-style sub-commands
 
-```
+```js
 // file: ./examples/pm
 var program = require('..');
 
@@ -86,7 +86,7 @@ program
   .parse(process.argv);
 ```
 
-Here `.command()` is invoked with a description, and no `.action(callback)` calls to handle sub-commands. This tells commander that you're going to use separate executables for sub-commands, much like `git(1)` and other popular tools.
+When `.command()` is invoked with a description argument, no `.action(callback)` should be called to handle sub-commands, otherwise there will be an error. This tells commander that you're going to use separate executables for sub-commands, much like `git(1)` and other popular tools.  
 The commander will try to find the executable script in __current directory__ with the name `scriptBasename-subcommand`, like `pm-install`, `pm-search`.
 
 ## Automated --help
