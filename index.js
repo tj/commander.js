@@ -148,7 +148,7 @@ Command.prototype.__proto__ = EventEmitter.prototype;
  *      program.parse(process.argv);
   *
  * @param {String} name
- * @param {String} [desc]
+ * @param {String} [desc] for git-style sub-commands
  * @return {Command} the new command
  * @api public
  */
@@ -156,12 +156,18 @@ Command.prototype.__proto__ = EventEmitter.prototype;
 Command.prototype.command = function(name, desc) {
   var args = name.split(/ +/);
   var cmd = new Command(args.shift());
-  if (desc) cmd.description(desc);
-  if (desc) this.executables = true;
-  if (desc) this._execs[cmd._name] = true;
+
+  if (desc) {
+    cmd.description(desc);
+    this.executables = true;
+    this._execs[cmd._name] = true;
+
+  }
+
   this.commands.push(cmd);
   cmd.parseExpectedArgs(args);
   cmd.parent = this;
+
   if (desc) return this;
   return cmd;
 };
