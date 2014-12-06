@@ -73,6 +73,23 @@ program.parse(process.argv);
  An `Array` is used for the value of a variadic argument.  This applies to `program.args` as well as the argument passed
  to your action as demonstrated above.
 
+## Git-style sub-commands
+
+```js
+// file: ./examples/pm
+var program = require('..');
+
+program
+  .version('0.0.1')
+  .command('install [name]', 'install one or more packages')
+  .command('search [query]', 'search with optional query')
+  .command('list', 'list packages installed')
+  .parse(process.argv);
+```
+
+When `.command()` is invoked with a description argument, no `.action(callback)` should be called to handle sub-commands, otherwise there will be an error. This tells commander that you're going to use separate executables for sub-commands, much like `git(1)` and other popular tools.  
+The commander will try to find the executable script in __current directory__ with the name `scriptBasename-subcommand`, like `pm-install`, `pm-search`.
+
 ## Automated --help
 
  The help information is auto-generated based on the information commander already knows about your program, so the following `--help` info is for free:
