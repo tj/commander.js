@@ -793,7 +793,7 @@ Command.prototype.usage = function(str) {
 };
 
 /**
- * Get/set the name of the command
+ * Get the name of the command
  *
  * @param {String} name
  * @return {String|Command}
@@ -801,9 +801,7 @@ Command.prototype.usage = function(str) {
  */
 
 Command.prototype.name = function(name) {
-  if (0 == arguments.length) return this._name;
-  this._name = name;
-  return this;
+  return this._name;
 };
 
 /**
