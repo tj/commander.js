@@ -1,7 +1,11 @@
-
 # Commander.js
 
-  The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/visionmedia/commander).
+ [![Build Status](https://api.travis-ci.org/tj/commander.js.svg)](http://travis-ci.org/tj/commander.js)
+[![NPM Version](http://img.shields.io/npm/v/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
+[![NPM Downloads](https://img.shields.io/npm/dm/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
+
+  The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/tj/commander).
+
 
 ## Installation
 
@@ -30,12 +34,61 @@ program
 
 console.log('you ordered a pizza with:');
 if (program.peppers) console.log('  - peppers');
-if (program.pineapple) console.log('  - pineappe');
+if (program.pineapple) console.log('  - pineapple');
 if (program.bbq) console.log('  - bbq');
 console.log('  - %s cheese', program.cheese);
 ```
 
  Short flags may be passed as a single arg, for example `-abc` is equivalent to `-a -b -c`. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc.
+
+## Variadic arguments
+
+ The last argument of a command can be variadic, and only the last argument.  To make an argument variadic you have to
+ append `...` to the argument name.  Here is an example:
+
+```js
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var program = require('commander');
+
+program
+  .version('0.0.1')
+  .command('rmdir <dir> [otherDirs...]')
+  .action(function (dir, otherDirs) {
+    console.log('rmdir %s', dir);
+    if (otherDirs) {
+      otherDirs.forEach(function (oDir) {
+        console.log('rmdir %s', oDir);
+      });
+    }
+  });
+
+program.parse(process.argv);
+```
+
+ An `Array` is used for the value of a variadic argument.  This applies to `program.args` as well as the argument passed
+ to your action as demonstrated above.
+
+## Git-style sub-commands
+
+```js
+// file: ./examples/pm
+var program = require('..');
+
+program
+  .version('0.0.1')
+  .command('install [name]', 'install one or more packages')
+  .command('search [query]', 'search with optional query')
+  .command('list', 'list packages installed')
+  .parse(process.argv);
+```
+
+When `.command()` is invoked with a description argument, no `.action(callback)` should be called to handle sub-commands, otherwise there will be an error. This tells commander that you're going to use separate executables for sub-commands, much like `git(1)` and other popular tools.  
+The commander will try to find the executable script in __current directory__ with the name `scriptBasename-subcommand`, like `pm-install`, `pm-search`.
 
 ## Automated --help
 
@@ -48,9 +101,9 @@ console.log('  - %s cheese', program.cheese);
 
    Options:
 
-     -v, --version        output the version number
+     -V, --version        output the version number
      -p, --peppers        Add peppers
-     -P, --pineapple      Add pineappe
+     -P, --pineapple      Add pineapple
      -b, --bbq            Add bbq sauce
      -c, --cheese <type>  Add the specified type of cheese [marble]
      -h, --help           output usage information
@@ -68,13 +121,25 @@ function list(val) {
   return val.split(',');
 }
 
+function collect(val, memo) {
+  memo.push(val);
+  return memo;
+}
+
+function increaseVerbosity(v, total) {
+  return total + 1;
+}
+
 program
   .version('0.0.1')
+  .usage('[options] <file ...>')
   .option('-i, --integer <n>', 'An integer argument', parseInt)
   .option('-f, --float <n>', 'A float argument', parseFloat)
   .option('-r, --range <a>..<b>', 'A range', range)
   .option('-l, --list <items>', 'A list', list)
   .option('-o, --optional [value]', 'An optional value')
+  .option('-c, --collect [value]', 'A repeatable value', collect, [])
+  .option('-v, --verbose', 'A value that can be increased', increaseVerbosity, 0)
   .parse(process.argv);
 
 console.log(' int: %j', program.integer);
@@ -83,6 +148,8 @@ console.log(' optional: %j', program.optional);
 program.range = program.range || [];
 console.log(' range: %j..%j', program.range[0], program.range[1]);
 console.log(' list: %j', program.list);
+console.log(' collect: %j', program.collect);
+console.log(' verbosity: %j', program.verbose);
 console.log(' args: %j', program.args);
 ```
 
@@ -102,11 +169,7 @@ console.log(' args: %j', program.args);
  * Module dependencies.
  */
 
-var program = require('../');
-
-function list(val) {
-  return val.split(',').map(Number);
-}
+var program = require('commander');
 
 program
   .version('0.0.1')
@@ -130,7 +193,7 @@ program.parse(process.argv);
 console.log('stuff');
 ```
 
-yielding the following help output:
+Yields the following help output when `node script-name.js -h` or `node script-name.js --help` are run:
 
 ```
 
@@ -139,7 +202,7 @@ Usage: custom-help [options]
 Options:
 
   -h, --help     output usage information
-  -v, --version  output the version number
+  -V, --version  output the version number
   -f, --foo      enable some foo
   -b, --bar      enable some bar
   -B, --baz      enable some baz
@@ -151,90 +214,23 @@ Examples:
 
 ```
 
-## .prompt(msg, fn)
+## .outputHelp()
 
- Single-line prompt:
+  Output help information without exiting.
 
-```js
-program.prompt('name: ', function(name){
-  console.log('hi %s', name);
-});
-```
+## .help()
 
- Multi-line prompt:
-
-```js
-program.prompt('description:', function(name){
-  console.log('hi %s', name);
-});
-```
-
- Coercion:
-
-```js
-program.prompt('Age: ', Number, function(age){
-  console.log('age: %j', age);
-});
-```
-
-```js
-program.prompt('Birthdate: ', Date, function(date){
-  console.log('date: %s', date);
-});
-```
-
-## .password(msg[, mask], fn)
-
-Prompt for password without echoing:
-
-```js
-program.password('Password: ', function(pass){
-  console.log('got "%s"', pass);
-  process.stdin.destroy();
-});
-```
-
-Prompt for password with mask char "*":
-
-```js
-program.password('Password: ', '*', function(pass){
-  console.log('got "%s"', pass);
-  process.stdin.destroy();
-});
-```
-
-## .confirm(msg, fn)
-
- Confirm with the given `msg`:
-
-```js
-program.confirm('continue? ', function(ok){
-  console.log(' got %j', ok);
-});
-```
-
-## .choose(list, fn)
-
- Let the user choose from a `list`:
-
-```js
-var list = ['tobi', 'loki', 'jane', 'manny', 'luna'];
-
-console.log('Choose the coolest pet:');
-program.choose(list, function(i){
-  console.log('you chose %d "%s"', i, list[i]);
-});
-```
+  Output help information and exit immediately.
 
 ## Links
 
- - [annotated source](http://visionmedia.github.com/commander.js/)
+ - [API documentation](http://tj.github.com/commander.js/)
  - [ascii tables](https://github.com/LearnBoost/cli-table)
- - [progress bars](https://github.com/visionmedia/node-progress)
+ - [progress bars](https://github.com/tj/node-progress)
  - [more progress bars](https://github.com/substack/node-multimeter)
- - [examples](https://github.com/visionmedia/commander.js/tree/master/examples)
+ - [examples](https://github.com/tj/commander.js/tree/master/examples)
 
-## License 
+## License
 
 (The MIT License)
 

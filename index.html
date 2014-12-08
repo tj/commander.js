@@ -1,126 +1,198 @@
 <html><head><title>Commander.js - nodejs cli framework</title><link rel="stylesheet" href="style.css"/></head><body><div id="content"><h1>Commander.js</h1><p>Commander is a light-weight, expressive, and powerful command-line
 framework for <a href="http://nodejs.org">node.js</a>.
-
 </p><div id="exports.Command" class="comment"><h1>exports.Command</h1><div class="description"><p>Expose <code>Command</code>.</p></div><h2>Source</h2><pre><code>exports.Command = Command;</code></pre></div><div id="exports.Option" class="comment"><h1>exports.Option</h1><div class="description"><p>Expose <code>Option</code>.</p></div><h2>Source</h2><pre><code>exports.Option = Option;</code></pre></div><div id="Option" class="comment"><h1>Option()</h1><div class="description"><p>Initialize a new <code>Option</code> with the given <code>flags</code> and <code>description</code>.</p></div><h2>Source</h2><pre><code>function Option(flags, description) {
   this.flags = flags;
   this.required = ~flags.indexOf('<');
   this.optional = ~flags.indexOf('[');
   this.bool = !~flags.indexOf('-no-');
-  flags = flags.split(/[ ,|]+/)
-  this.short = flags.shift();
+  flags = flags.split(/[ ,|]+/);
+  if (flags.length > 1 && !/^[[<]/.test(flags[1])) this.short = flags.shift();
   this.long = flags.shift();
-  this.description = description;
+  this.description = description || '';
 }</code></pre></div><div id="Command" class="comment"><h1>Command()</h1><div class="description"><p>Initialize a new <code>Command</code>.</p></div><h2>Source</h2><pre><code>function Command(name) {
   this.commands = [];
   this.options = [];
-  this.args = [];
-  this.name = name;
-}</code></pre></div><div id="Command.prototype.command" class="comment"><h1>Command#command()</h1><div class="description"><p>Add command <code>name</code>.</p>
-
-<p>The <code>.action()</code> callback is invoked when the<br />command <code>name</code> is specified via <strong>ARGV</strong>,<br />and the remaining arguments are applied to the<br />function for access.</p>
-
-<p>When the <code>name</code> is "*" an un-matched command<br />will be passed as the first arg, followed by<br />the rest of <strong>ARGV</strong> remaining.</p>
-
-<h2>Examples</h2>
-
-<pre><code> program
-   .version('0.0.1')
-   .option('-C, --chdir &lt;path&gt;', 'change the working directory')
-   .option('-c, --config &lt;path&gt;', 'set config path. defaults to ./deploy.conf')
-   .option('-T, --no-tests', 'ignore test hook')
+  this._execs = [];
+  this._args = [];
+  this._name = name;
+}</code></pre></div><div id="Command.prototype.command" class="comment"><h1>Command#command()</h1><div class="description"><p>Add command <code>name</code>.</p><p>The <code>.action()</code> callback is invoked when the<br />command <code>name</code> is specified via <strong>ARGV</strong>,<br />and the remaining arguments are applied to the<br />function for access.</p><p>When the <code>name</code> is &quot;*&quot; an un-matched command<br />will be passed as the first arg, followed by<br />the rest of <strong>ARGV</strong> remaining.</p><p>Examples:</p><pre><code> program
+   .version(&#39;0.0.1&#39;)
+   .option(&#39;-C, --chdir &lt;path&gt;&#39;, &#39;change the working directory&#39;)
+   .option(&#39;-c, --config &lt;path&gt;&#39;, &#39;set config path. defaults to ./deploy.conf&#39;)
+   .option(&#39;-T, --no-tests&#39;, &#39;ignore test hook&#39;)
 
  program
-   .command('setup')
-   .description('run remote setup commands')
-   .action(function(){
-     console.log('setup');
+   .command(&#39;setup&#39;)
+   .description(&#39;run remote setup commands&#39;)
+   .action(function() {
+     console.log(&#39;setup&#39;);
    });
 
  program
-   .command('exec &lt;cmd&gt;')
-   .description('run the given remote command')
-   .action(function(cmd){
-     console.log('exec "%s"', cmd);
+   .command(&#39;exec &lt;cmd&gt;&#39;)
+   .description(&#39;run the given remote command&#39;)
+   .action(function(cmd) {
+     console.log(&#39;exec &quot;%s&quot;&#39;, cmd);
    });
 
  program
-   .command('*')
-   .description('deploy the given env')
-   .action(function(env){
-     console.log('deploying "%s"', env);
+   .command(&#39;teardown &lt;dir&gt; [otherDirs...]&#39;)
+   .description(&#39;run teardown commands&#39;)
+   .action(function(dir, otherDirs) {
+     console.log(&#39;dir &quot;%s&quot;&#39;, dir);
+     if (otherDirs) {
+       otherDirs.forEach(function (oDir) {
+         console.log(&#39;dir &quot;%s&quot;&#39;, oDir);
+       });
+     }
+   });
+
+ program
+   .command(&#39;*&#39;)
+   .description(&#39;deploy the given env&#39;)
+   .action(function(env) {
+     console.log(&#39;deploying &quot;%s&quot;&#39;, env);
    });
 
  program.parse(process.argv);
-</code></pre></div><h2>Source</h2><pre><code>Command.prototype.command = function(name){
+</code></pre></div><h2>Source</h2><pre><code>Command.prototype.command = function(name, desc) {
   var args = name.split(/ +/);
   var cmd = new Command(args.shift());
+
+  if (desc) {
+    cmd.description(desc);
+    this.executables = true;
+    this._execs[cmd._name] = true;
+
+  }
+
   this.commands.push(cmd);
   cmd.parseExpectedArgs(args);
   cmd.parent = this;
+
+  if (desc) return this;
   return cmd;
-};</code></pre></div><div id="Command.prototype.action" class="comment"><h1>Command#action()</h1><div class="description"><p>Register callback <code>fn</code> for the command.</p>
-
-<h2>Examples</h2>
-
-<pre><code> program
-   .command('help')
-   .description('display verbose help')
-   .action(function(){
-      // output help here
-   });
-</code></pre></div><h2>Source</h2><pre><code>Command.prototype.action = function(fn){
+};</code></pre></div><div id="Command.prototype.parseExpectedArgs" class="comment"><h1>Command#parseExpectedArgs()</h1><div class="description"><p>Parse expected <code>args</code>.</p><p>For example <code>[&quot;[type]&quot;]</code> becomes <code>[{ required: false, name: &#39;type&#39; }]</code>.</p></div><h2>Source</h2><pre><code>Command.prototype.parseExpectedArgs = function(args) {
+  if (!args.length) return;
   var self = this;
-  this.parent.on(this.name, function(args){
-    self.args.forEach(function(arg, i){
-      if (arg.required && null == args[i]) {
-        self.missingArgument(arg.name);
-      }
-    });
-    fn.apply(this, args);
+  args.forEach(function(arg) {
+    var argDetails = {
+      required: false,
+      name: '',
+      variadic: false
+    };
+
+    switch (arg[0]) {
+      case '<':
+        argDetails.required = true;
+        argDetails.name = arg.slice(1, -1);
+        break;
+      case '[':
+        argDetails.name = arg.slice(1, -1);
+        break;
+    }
+
+    if (argDetails.name.indexOf('...') === argDetails.name.length - 3) {
+      argDetails.variadic = true;
+      argDetails.name = argDetails.name.slice(0, -3);
+    }
+
+    if (argDetails.name) {
+      self._args.push(argDetails);
+    }
   });
   return this;
-};</code></pre></div><div id="Command.prototype.option" class="comment"><h1>Command#option()</h1><div class="description"><p>Define option with <code>flags</code>, <code>description</code> and optional<br />coercion <code>fn</code>. </p>
+};</code></pre></div><div id="Command.prototype.action" class="comment"><h1>Command#action()</h1><div class="description"><p>Register callback <code>fn</code> for the command.</p><p>Examples:</p><pre><code> program
+   .command(&#39;help&#39;)
+   .description(&#39;display verbose help&#39;)
+   .action(function() {
+      // output help here
+   });
+</code></pre></div><h2>Source</h2><pre><code>Command.prototype.action = function(fn) {
+  var self = this;
+  var listener = function(args, unknown) {
+    // Parse any so-far unknown options
+    args = args || [];
+    unknown = unknown || [];
 
-<p>The <code>flags</code> string should contain both the short and long flags,<br />separated by comma, a pipe or space. The following are all valid<br />all will output this way when <code>--help</code> is used.</p>
+    var parsed = self.parseOptions(unknown);
 
-<p>"-p, --pepper"<br />   "-p|--pepper"<br />   "-p --pepper"</p>
+    // Output help if necessary
+    outputHelpIfNecessary(self, parsed.unknown);
 
-<h2>Examples</h2>
+    // If there are still any unknown options, then we simply
+    // die, unless someone asked for help, in which case we give it
+    // to them, and then we die.
+    if (parsed.unknown.length > 0) {
+      self.unknownOption(parsed.unknown[0]);
+    }
 
-<pre><code>// simple boolean defaulting to false
-program.option('-p, --pepper', 'add pepper');
+    // Leftover arguments need to be pushed back. Fixes issue #56
+    if (parsed.args.length) args = parsed.args.concat(args);
+
+    self._args.forEach(function(arg, i) {
+      if (arg.required && null == args[i]) {
+        self.missingArgument(arg.name);
+      } else if (arg.variadic) {
+        if (i !== self._args.length - 1) {
+          self.variadicArgNotLast(arg.name);
+        }
+
+        args[i] = args.splice(i);
+      }
+    });
+
+    // Always append ourselves to the end of the arguments,
+    // to make sure we match the number of arguments the user
+    // expects
+    if (self._args.length) {
+      args[self._args.length] = self;
+    } else {
+      args.push(self);
+    }
+
+    fn.apply(self, args);
+  };
+  this.parent.on(this._name, listener);
+  if (this._alias) this.parent.on(this._alias, listener);
+  return this;
+};</code></pre></div><div id="Command.prototype.option" class="comment"><h1>Command#option()</h1><div class="description"><p>Define option with <code>flags</code>, <code>description</code> and optional<br />coercion <code>fn</code>.</p><p>The <code>flags</code> string should contain both the short and long flags,<br />separated by comma, a pipe or space. The following are all valid<br />all will output this way when <code>--help</code> is used.</p><p>   &quot;-p, --pepper&quot;<br />   &quot;-p|--pepper&quot;<br />   &quot;-p --pepper&quot;</p><p>Examples:</p><pre><code>// simple boolean defaulting to false
+program.option(&#39;-p, --pepper&#39;, &#39;add pepper&#39;);
 
 --pepper
 program.pepper
 // =&gt; Boolean
 
-// simple boolean defaulting to false
-program.option('-C, --no-cheese', 'remove cheese');
+// simple boolean defaulting to true
+program.option(&#39;-C, --no-cheese&#39;, &#39;remove cheese&#39;);
 
 program.cheese
 // =&gt; true
 
 --no-cheese
 program.cheese
-// =&gt; true
+// =&gt; false
 
 // required argument
-program.option('-C, --chdir &lt;path&gt;', 'change the working directory');
+program.option(&#39;-C, --chdir &lt;path&gt;&#39;, &#39;change the working directory&#39;);
 
 --chdir /tmp
 program.chdir
-// =&gt; "/tmp"
+// =&gt; &quot;/tmp&quot;
 
 // optional argument
-program.option('-c, --cheese [type]', 'add cheese [marble]');
-</code></pre></div><h2>Source</h2><pre><code>Command.prototype.option = function(flags, description, fn, defaultValue){
+program.option(&#39;-c, --cheese [type]&#39;, &#39;add cheese [marble]&#39;);
+</code></pre></div><h2>Source</h2><pre><code>Command.prototype.option = function(flags, description, fn, defaultValue) {
   var self = this
     , option = new Option(flags, description)
     , oname = option.name()
     , name = camelcase(oname);
 
   // default as 3rd arg
-  if ('function' != typeof fn) defaultValue = fn, fn = null;
+  if (typeof fn != 'function') {
+    defaultValue = fn;
+    fn = null;
+  }
 
   // preassign default value only for --no-*, [optional], or <required>
   if (false == option.bool || option.optional || option.required) {
@@ -135,9 +207,11 @@ program.option('-c, --cheese [type]', 'add cheese [marble]');
 
   // when it's passed assign the value
   // and conditionally invoke the callback
-  this.on(oname, function(val){
+  this.on(oname, function(val) {
     // coercion
-    if (null != val && fn) val = fn(val);
+    if (null !== val && fn) val = fn(val, undefined === self[name]
+      ? defaultValue
+      : self[name]);
 
     // unassigned or bool
     if ('boolean' == typeof self[name] || 'undefined' == typeof self[name]) {
@@ -156,134 +230,133 @@ program.option('-c, --cheese [type]', 'add cheese [marble]');
   });
 
   return this;
-};</code></pre></div><div id="Command.prototype.parse" class="comment"><h1>Command#parse()</h1><div class="description"><p>Parse <code>argv</code>, settings options and invoking commands when defined.</p></div><h2>Source</h2><pre><code>Command.prototype.parse = function(argv){
+};</code></pre></div><div id="Command.prototype.parse" class="comment"><h1>Command#parse()</h1><div class="description"><p>Parse <code>argv</code>, settings options and invoking commands when defined.</p></div><h2>Source</h2><pre><code>Command.prototype.parse = function(argv) {
+  // implicit help
+  if (this.executables) this.addImplicitHelpCommand();
+
   // store raw args
   this.rawArgs = argv;
 
   // guess name
-  if (!this.name) this.name = basename(argv[1]);
+  this._name = this._name || basename(argv[1], '.js');
 
   // process argv
-  this.args = this.parseOptions(this.normalize(argv));
-  return this.parseArgs(this.args);
-};</code></pre></div><div id="Command.prototype.description" class="comment"><h1>Command#description()</h1><div class="description"><p>Set the description <code>str</code>.</p></div><h2>Source</h2><pre><code>Command.prototype.description = function(str){
+  var parsed = this.parseOptions(this.normalize(argv.slice(2)));
+  var args = this.args = parsed.args;
+
+  var result = this.parseArgs(this.args, parsed.unknown);
+
+  // executable sub-commands
+  var name = result.args[0];
+  if (this._execs[name] && typeof this._execs[name] != "function") {
+    return this.executeSubCommand(argv, args, parsed.unknown);
+  }
+
+  return result;
+};</code></pre></div><div id="Command.prototype.parseOptions" class="comment"><h1>Command#parseOptions()</h1><div class="description"><p>Parse options from <code>argv</code> returning <code>argv</code><br />void of these options.</p></div><h2>Source</h2><pre><code>Command.prototype.parseOptions = function(argv) {
+  var args = []
+    , len = argv.length
+    , literal
+    , option
+    , arg;
+
+  var unknownOptions = [];
+
+  // parse options
+  for (var i = 0; i < len; ++i) {
+    arg = argv[i];
+
+    // literal args after --
+    if ('--' == arg) {
+      literal = true;
+      continue;
+    }
+
+    if (literal) {
+      args.push(arg);
+      continue;
+    }
+
+    // find matching Option
+    option = this.optionFor(arg);
+
+    // option is defined
+    if (option) {
+      // requires arg
+      if (option.required) {
+        arg = argv[++i];
+        if (null == arg) return this.optionMissingArgument(option);
+        this.emit(option.name(), arg);
+      // optional arg
+      } else if (option.optional) {
+        arg = argv[i+1];
+        if (null == arg || ('-' == arg[0] && '-' != arg)) {
+          arg = null;
+        } else {
+          ++i;
+        }
+        this.emit(option.name(), arg);
+      // bool
+      } else {
+        this.emit(option.name());
+      }
+      continue;
+    }
+
+    // looks like an option
+    if (arg.length > 1 && '-' == arg[0]) {
+      unknownOptions.push(arg);
+
+      // If the next argument looks like it might be
+      // an argument for this option, we pass it on.
+      // If it isn't, then it'll simply be ignored
+      if (argv[i+1] && '-' != argv[i+1][0]) {
+        unknownOptions.push(argv[++i]);
+      }
+      continue;
+    }
+
+    // arg
+    args.push(arg);
+  }
+
+  return { args: args, unknown: unknownOptions };
+};</code></pre></div><div id="Command.prototype.opts" class="comment"><h1>Command#opts()</h1><div class="description"><p>Return an object containing options as key-value pairs</p></div><h2>Source</h2><pre><code>Command.prototype.opts = function() {
+  var result = {}
+    , len = this.options.length;
+
+  for (var i = 0 ; i < len; i++) {
+    var key = this.options[i].name();
+    result[key] = key === 'version' ? this._version : this[key];
+  }
+  return result;
+};</code></pre></div><div id="Command.prototype.description" class="comment"><h1>Command#description()</h1><div class="description"><p>Set the description to <code>str</code>.</p></div><h2>Source</h2><pre><code>Command.prototype.description = function(str) {
   if (0 == arguments.length) return this._description;
   this._description = str;
   return this;
-};</code></pre></div><div id="Command.prototype.usage" class="comment"><h1>Command#usage()</h1><div class="description"><p>Set / get the command usage <code>str</code>.</p></div><h2>Source</h2><pre><code>Command.prototype.usage = function(str){
-  var usage = '[options'
-    + (this.commands.length ? '] [command' : '')
-    + ']';
+};</code></pre></div><div id="Command.prototype.alias" class="comment"><h1>Command#alias()</h1><div class="description"><p>Set an alias for the command</p></div><h2>Source</h2><pre><code>Command.prototype.alias = function(alias) {
+  if (0 == arguments.length) return this._alias;
+  this._alias = alias;
+  return this;
+};</code></pre></div><div id="Command.prototype.usage" class="comment"><h1>Command#usage()</h1><div class="description"><p>Set / get the command usage <code>str</code>.</p></div><h2>Source</h2><pre><code>Command.prototype.usage = function(str) {
+  var args = this._args.map(function(arg) {
+    return humanReadableArgName(arg);
+  });
+
+  var usage = '[options]'
+    + (this.commands.length ? ' [command]' : '')
+    + (this._args.length ? ' ' + args.join(' ') : '');
+
   if (0 == arguments.length) return this._usage || usage;
   this._usage = str;
+
   return this;
-};</code></pre></div><div id="Command.prototype.prompt" class="comment"><h1>Command#prompt()</h1><div class="description"><p>Prompt <code>str</code> and callback <code>fn(val)</code></p>
-
-<p>Commander supports single-line and multi-line prompts.<br />To issue a single-line prompt simply add white-space<br />to the end of <code>str</code>, something like "name: ", whereas<br />for a multi-line prompt omit this "description:".</p>
-
-<h2>Examples</h2>
-
-<pre><code>program.prompt('Username: ', function(name){
-  console.log('hi %s', name);
-});
-
-program.prompt('Description:', function(desc){
-  console.log('description was "%s"', desc.trim());
-});
-</code></pre></div><h2>Source</h2><pre><code>Command.prototype.prompt = function(str, fn){
-  if (/ $/.test(str)) return this.promptSingleLine.apply(this, arguments);
-  this.promptMultiLine(str, fn);
-};</code></pre></div><div id="Command.prototype.password" class="comment"><h1>Command#password()</h1><div class="description"><p>Prompt for password with <code>str</code>, <code>mask</code> char and callback <code>fn(val)</code>.</p>
-
-<p>The mask string defaults to '', aka no output is<br />written while typing, you may want to use "*" etc.</p>
-
-<h2>Examples</h2>
-
-<pre><code>program.password('Password: ', function(pass){
-  console.log('got "%s"', pass);
-  process.stdin.destroy();
-});
-
-program.password('Password: ', '*', function(pass){
-  console.log('got "%s"', pass);
-  process.stdin.destroy();
-});
-</code></pre></div><h2>Source</h2><pre><code>Command.prototype.password = function(str, mask, fn){
-  var self = this
-    , buf = '';
-
-  // default mask
-  if ('function' == typeof mask) {
-    fn = mask;
-    mask = '';
-  }
-
-  tty.setRawMode(true);
-  process.stdout.write(str);
-
-  // keypress
-  process.stdin.on('keypress', function(c, key){
-    if (key && 'enter' == key.name) {
-      console.log();
-      process.stdin.removeAllListeners('keypress');
-      tty.setRawMode(false);
-      if (!buf.trim().length) return self.password(str, mask, fn);
-      fn(buf);
-      return;
-    }
-
-    if (key && key.ctrl && 'c' == key.name) {
-      console.log('%s', buf);
-      process.exit();
-    }
-
-    process.stdout.write(mask);
-    buf += c;
-  }).resume();
-};</code></pre></div><div id="Command.prototype.confirm" class="comment"><h1>Command#confirm()</h1><div class="description"><p>Confirmation prompt with <code>str</code> and callback <code>fn(bool)</code></p>
-
-<h2>Examples</h2>
-
-<pre><code> program.confirm('continue? ', function(ok){
-   console.log(' got %j', ok);
-   process.stdin.destroy();
- });
-</code></pre></div><h2>Source</h2><pre><code>Command.prototype.confirm = function(str, fn){
-  var self = this;
-  this.prompt(str, function(ok){
-    if (!ok.trim()) {
-      return self.confirm(str, fn);
-    }
-    fn(parseBool(ok));
-  });
-};</code></pre></div><div id="Command.prototype.choose" class="comment"><h1>Command#choose()</h1><div class="description"><p>Choice prompt with <code>list</code> of items and callback <code>fn(index, item)</code></p>
-
-<h2>Examples</h2>
-
-<pre><code> var list = ['tobi', 'loki', 'jane', 'manny', 'luna'];
-
- console.log('Choose the coolest pet:');
- program.choose(list, function(i){
-   console.log('you chose %d "%s"', i, list[i]);
-   process.stdin.destroy();
- });
-</code></pre></div><h2>Source</h2><pre><code>Command.prototype.choose = function(list, fn){
-  var self = this;
-
-  list.forEach(function(item, i){
-    console.log('  %d) %s', i + 1, item);
-  });
-
-  function again() {
-    self.prompt('  : ', function(val){
-      val = parseInt(val, 10) - 1;
-      if (null == list[val]) {
-        again();
-      } else {
-        fn(val, list[val]);
-      }
-    });
-  }
-
-  again();
-};</code></pre></div></div><ul id="menu"><li><a href="#exports.Command">exports.Command</a></li><li><a href="#exports.Option">exports.Option</a></li><li><a href="#Option">Option()</a></li><li><a href="#Command">Command()</a></li><li><a href="#Command.prototype.command">Command#command()</a></li><li><a href="#Command.prototype.action">Command#action()</a></li><li><a href="#Command.prototype.option">Command#option()</a></li><li><a href="#Command.prototype.parse">Command#parse()</a></li><li><a href="#Command.prototype.description">Command#description()</a></li><li><a href="#Command.prototype.usage">Command#usage()</a></li><li><a href="#Command.prototype.prompt">Command#prompt()</a></li><li><a href="#Command.prototype.password">Command#password()</a></li><li><a href="#Command.prototype.confirm">Command#confirm()</a></li><li><a href="#Command.prototype.choose">Command#choose()</a></li></ul></body></html>
+};</code></pre></div><div id="Command.prototype.name" class="comment"><h1>Command#name()</h1><div class="description"><p>Get the name of the command</p></div><h2>Source</h2><pre><code>Command.prototype.name = function(name) {
+  return this._name;
+};</code></pre></div><div id="Command.prototype.outputHelp" class="comment"><h1>Command#outputHelp()</h1><div class="description"><p>Output help information for this command</p></div><h2>Source</h2><pre><code>Command.prototype.outputHelp = function() {
+  process.stdout.write(this.helpInformation());
+  this.emit('--help');
+};</code></pre></div><div id="Command.prototype.help" class="comment"><h1>Command#help()</h1><div class="description"><p>Output help information and exit.</p></div><h2>Source</h2><pre><code>Command.prototype.help = function() {
+  this.outputHelp();
+  process.exit();
+};</code></pre></div></div><ul id="menu"><li><a href="#exports.Command">exports.Command</a></li><li><a href="#exports.Option">exports.Option</a></li><li><a href="#Option">Option()</a></li><li><a href="#Command">Command()</a></li><li><a href="#Command.prototype.command">Command#command()</a></li><li><a href="#Command.prototype.parseExpectedArgs">Command#parseExpectedArgs()</a></li><li><a href="#Command.prototype.action">Command#action()</a></li><li><a href="#Command.prototype.option">Command#option()</a></li><li><a href="#Command.prototype.parse">Command#parse()</a></li><li><a href="#Command.prototype.parseOptions">Command#parseOptions()</a></li><li><a href="#Command.prototype.opts">Command#opts()</a></li><li><a href="#Command.prototype.description">Command#description()</a></li><li><a href="#Command.prototype.alias">Command#alias()</a></li><li><a href="#Command.prototype.usage">Command#usage()</a></li><li><a href="#Command.prototype.name">Command#name()</a></li><li><a href="#Command.prototype.outputHelp">Command#outputHelp()</a></li><li><a href="#Command.prototype.help">Command#help()</a></li></ul></body></html>

@@ -1,18 +1,19 @@
 
-TESTS = $(shell find test/test.*.js)
+BIN := node_modules/.bin
 
 docs: index.html
 
-docclean:
+clean:
 	rm -f index.{html,json}
 
-test:
-	@./test/run $(TESTS)
+index.html: node_modules index.json
+	node compile index.json > index.html
 
-index.html: index.json
-	node compile $< > $@
+index.json: node_modules index.js
+	$(BIN)/dox < index.js > index.json
 
-index.json: lib/commander.js
-	dox < $< > $@
+node_modules: package.json
+	@npm install
+	@touch node_modules
 
-.PHONY: test docs docclean
+.PHONY: docs clean

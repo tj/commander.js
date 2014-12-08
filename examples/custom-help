@@ -6,10 +6,6 @@
 
 var program = require('../');
 
-function list(val) {
-  return val.split(',').map(Number);
-}
-
 program
   .version('0.0.1')
   .option('-f, --foo', 'enable some foo')
@@ -29,4 +25,4 @@ program.on('--help', function(){
 
 program.parse(process.argv);
 
-console.log('stuff');
+program.help();
