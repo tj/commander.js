@@ -4,7 +4,8 @@
 [![NPM Version](http://img.shields.io/npm/v/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
 [![NPM Downloads](https://img.shields.io/npm/dm/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
 
-  The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/tj/commander).
+  The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/tj/commander).  
+  API documentation: [http://tj.github.com/commander.js/](http://tj.github.com/commander.js/)
 
 
 ## Installation
@@ -206,7 +207,6 @@ Examples:
 
 ## Links
 
- - [API documentation](http://tj.github.com/commander.js/)
  - [ascii tables](https://github.com/LearnBoost/cli-table)
  - [progress bars](https://github.com/tj/node-progress)
  - [more progress bars](https://github.com/substack/node-multimeter)
