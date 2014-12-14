@@ -457,9 +457,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   args.unshift(local);
 
   // add executable arguments to spawn
-  for (var i = 0; i < process.execArgv.length; i++) {
-    args.unshift(process.execArgv[i]);
-  }
+  args = process.execArgv.concat(args);
 
   // run it
   var proc = spawn('node', args, { stdio: 'inherit', customFds: [0, 1, 2] });
