@@ -11,7 +11,7 @@ var program = require('../')
 
 program
   .version('0.0.1')
-  .command('mycommand <requiredArg> [variadicArg...]')
+  .command('mycommand <id> [variadicArg...]')
   .action(function (arg0, arg1) {
     requiredArg = arg0;
     variadicArg = arg1;
