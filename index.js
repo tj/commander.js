@@ -161,7 +161,6 @@ Command.prototype.command = function(name, desc) {
     cmd.description(desc);
     this.executables = true;
     this._execs[cmd._name] = true;
-
   }
 
   this.commands.push(cmd);
@@ -213,11 +212,10 @@ Command.prototype.parseExpectedArgs = function(args) {
         break;
     }
 
-    if (argDetails.name.indexOf('...') === argDetails.name.length - 3) {
+    if (argDetails.name.length > 3 && argDetails.name.slice(-3) === '...') {
       argDetails.variadic = true;
       argDetails.name = argDetails.name.slice(0, -3);
     }
-
     if (argDetails.name) {
       self._args.push(argDetails);
     }
