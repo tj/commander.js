@@ -1,3 +1,8 @@
+2.5.1 / 2014-12-15
+==================
+
+  * fixed two bugs incurred by variadic arguments. Close #291 @Quentin01 #302 @zhiyelee
+
 2.5.0 / 2014-10-24
 ==================
 
@@ -24,6 +29,7 @@
 
  * add passing of previous option value
  * fix: support subcommands on windows. Closes #142
+ * Now the defaultValue passed as the second argument of the coercion function.
 
 2.1.0 / 2013-11-21
 ==================
