@@ -395,11 +395,12 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
 /**
  * Allow unknown options on the command line.
  *
- * @param {Boolean} arg
+ * @param {Boolean} arg if `true` or omitted, no error will be thrown
+ * for unknown options.
  * @api public
  */
 Command.prototype.allowUnknown = function(arg) {
-    this._allowUnknown = !!arg;
+    this._allowUnknown = arguments.length === 0 || arg;
     return this;
 }
 
