@@ -82,7 +82,7 @@ function Command(name) {
   this.commands = [];
   this.options = [];
   this._execs = [];
-  this._allow_unknown = false;
+  this._allowUnknown = false;
   this._args = [];
   this._name = name;
 }
@@ -395,11 +395,11 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
 /**
  * Allow unknown options on the command line.
  *
- * @param {Boolean} allow
+ * @param {Boolean} arg
  * @api public
  */
-Command.prototype.allowUnknown = function(allow) {
-    this._allow_unknown = allow === undefined ? false : allow;
+Command.prototype.allowUnknown = function(arg) {
+    this._allowUnknown = !!arg;
     return this;
 }
 
@@ -548,7 +548,7 @@ Command.prototype.parseArgs = function(args, unknown) {
 
     // If there were no args and we have unknown options,
     // then they are extraneous and we need to error.
-    if (!this._allow_unknown && unknown.length > 0) {
+    if (!this._allowUnknown && unknown.length > 0) {
       this.unknownOption(unknown[0]);
     }
   }
