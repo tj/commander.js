@@ -20,7 +20,7 @@ console.error = function() {
   consoleErrors.push(util.format.apply(util, arguments));
 };
 
-program.parse('node test -m'.split(' ')).should.throwError();
+program.parse('node test -m'.split(' '));
 consoleErrors.length.should.equal(3);
 
 consoleErrors = [];
