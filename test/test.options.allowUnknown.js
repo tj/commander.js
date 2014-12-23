@@ -23,6 +23,14 @@ console.error = function() {
 program.parse('node test -m'.split(' '));
 consoleErrors.length.should.equal(3);
 
+// test subcommand
+var consoleErrors = [];
+program
+    .command('sub')
+    .action(function () { });
+program.parse('node test sub -m'.split(' '));
+consoleErrors.length.should.equal(3);
+
 consoleErrors = [];
 program
   .version('0.0.1')
@@ -32,6 +40,15 @@ program
   .allowUnknown()
   .parse('node test -m'.split(' '));
 consoleErrors.length.should.equal(0);
+
+// test subcommand
+var consoleErrors = [];
+program
+    .command('sub')
+    .allowUnknown()
+    .action(function () { });
+program.parse('node test sub -m'.split(' '));
+consoleErrors.length.should.equal(3);
 
 process.exit = oldProcessExit;
 console.error = oldConsoleError;
