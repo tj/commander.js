@@ -97,7 +97,7 @@ var exceptionOccurred = false;
 var oldProcessExit = process.exit;
 var oldConsoleError = console.error;
 process.exit = function() { exceptionOccurred = true; throw new Error(); };
-console.error = function() {};
+console.error = process.stdout.write = function() {};
 
 var oldProcessStdoutWrite = process.stdout.write;
 process.stdout.write = function () {};

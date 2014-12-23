@@ -5,10 +5,10 @@ export NODE_ENV=test
 echo
 for file in $@; do
   printf "\033[90m   ${file#test/}\033[0m "
-  node $file 2> /tmp/stderr && echo "\033[36m✓\033[0m"
+  node $file 2> /tmp/stderr && printf "\033[36m✓\033[0m\n"
   code=$?
   if test $code -ne 0; then
-    echo "\033[31m✖\033[0m"
+    printf "\033[31m✖\033[0m\n"
     cat /tmp/stderr >&2
     exit $code
   fi
