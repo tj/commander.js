@@ -547,7 +547,7 @@ Command.prototype.parseArgs = function(args, unknown) {
 
     // If there were no args and we have unknown options,
     // then they are extraneous and we need to error.
-    if (!this._allowUnknown && unknown.length > 0) {
+    if (unknown.length > 0) {
       this.unknownOption(unknown[0]);
     }
   }
@@ -708,6 +708,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
  */
 
 Command.prototype.unknownOption = function(flag) {
+  if(this._allowUnknown) return;
   console.error();
   console.error("  error: unknown option `%s'", flag);
   console.error();
