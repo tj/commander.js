@@ -99,11 +99,14 @@ var oldConsoleError = console.error;
 process.exit = function() { exceptionOccurred = true; throw new Error(); };
 console.error = function() {};
 
+var oldProcessStdoutWrite = process.stdout.write;
+process.stdout.write = function () {};
 try {
   program.parse(['node', 'test', '--config', 'conf6', 'exec', '--help']);
 } catch(ex) {
   program.config.should.equal("conf6");
 }
+process.stdout.write = oldProcessStdoutWrite;
 
 try {
     program.parse(['node', 'test', '--config', 'conf', 'exec', '-t', 'target1', 'exec1', '-e']);
