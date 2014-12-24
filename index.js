@@ -468,7 +468,14 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // run it
   args = args.slice(1);
 
-  var proc = spawn(bin, args, { stdio: 'inherit'} );
+  var proc;
+  if (process.platform !== 'win32') {
+    proc = spawn(bin, args, { stdio: 'inherit'});
+  } else {
+    args.unshift(local);
+    proc = spawn('node', args, { stdio: 'inherit'});
+  }
+
   proc.on('error', function(err) {
     if (err.code == "ENOENT") {
       console.error('\n  %s(1) does not exist, try --help\n', bin);
