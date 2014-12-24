@@ -31,6 +31,6 @@ program.parse('node test -i 5.5 -f 5.5 -n 15.99 -r 1..5 -c foo -c bar -c baz -vv
 program.int.should.equal(5);
 program.num.should.equal(15.99);
 program.float.should.equal(5.5);
-program.range.should.eql([1,5]);
-program.collect.should.eql([ 'foo', 'bar', 'baz' ]);
+program.range.should.eql([1, 5]);
+program.collect.should.eql(['foo', 'bar', 'baz']);
 program.verbose.should.equal(5);
