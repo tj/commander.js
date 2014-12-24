@@ -83,6 +83,7 @@ function Command(name) {
   this.commands = [];
   this.options = [];
   this._execs = [];
+  this._allowUnknown = false;
   this._args = [];
   this._name = name;
 }
@@ -162,7 +163,6 @@ Command.prototype.command = function(name, desc) {
     cmd.description(desc);
     this.executables = true;
     this._execs[cmd._name] = true;
-
   }
 
   this.commands.push(cmd);
@@ -214,11 +214,10 @@ Command.prototype.parseExpectedArgs = function(args) {
         break;
     }
 
-    if (argDetails.name.indexOf('...') === argDetails.name.length - 3) {
+    if (argDetails.name.length > 3 && argDetails.name.slice(-3) === '...') {
       argDetails.variadic = true;
       argDetails.name = argDetails.name.slice(0, -3);
     }
-
     if (argDetails.name) {
       self._args.push(argDetails);
     }
@@ -391,6 +390,18 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
 
   return this;
 };
+
+/**
+ * Allow unknown options on the command line.
+ *
+ * @param {Boolean} arg if `true` or omitted, no error will be thrown
+ * for unknown options.
+ * @api public
+ */
+Command.prototype.allowUnknown = function(arg) {
+    this._allowUnknown = arguments.length === 0 || arg;
+    return this;
+}
 
 /**
  * Parse `argv`, settings options and invoking commands when defined.
@@ -699,6 +710,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
  */
 
 Command.prototype.unknownOption = function(flag) {
+  if(this._allowUnknown) return;
   console.error();
   console.error("  error: unknown option `%s'", flag);
   console.error();
