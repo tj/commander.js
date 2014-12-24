@@ -39,8 +39,10 @@ var oldProcessExit = process.exit;
 var oldConsoleError = console.error;
 var errorMessage;
 
-process.exit = function() { throw new Error(consoleErrors.join('\n')); };
-console.error = function() {
+process.exit = function () {
+  throw new Error(consoleErrors.join('\n'));
+};
+console.error = function () {
   consoleErrors.push(util.format.apply(util, arguments));
 };
 
