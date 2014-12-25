@@ -14,7 +14,7 @@ program.parse('node test exec a'.split(' '));
 
 process.nextTick(function () {
   err.should.equal('\n  test-exec(1) does not exist, try --help\n');
+  console.error = oldError;
 });
 
-console.error = oldError;
 
