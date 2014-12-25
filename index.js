@@ -473,7 +473,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     proc = spawn(bin, args, { stdio: 'inherit'});
   } else {
     args.unshift(local);
-    proc = spawn('node', args, { stdio: 'inherit'});
+    proc = spawn(process.execPath, args, { stdio: 'inherit'});
   }
 
   proc.on('error', function(err) {
