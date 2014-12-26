@@ -100,14 +100,17 @@ The commander will try to find the executable script in __current directory__ wi
 
    Usage: pizza [options]
 
+   An application for pizzas ordering
+
    Options:
 
+     -h, --help           output usage information
      -V, --version        output the version number
      -p, --peppers        Add peppers
      -P, --pineapple      Add pineapple
      -b, --bbq            Add bbq sauce
      -c, --cheese <type>  Add the specified type of cheese [marble]
-     -h, --help           output usage information
+     -C, --no-cheese      You do not want any cheese
 
 ```
 
