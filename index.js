@@ -902,7 +902,8 @@ Command.prototype.helpInformation = function() {
   if (this._description) {
     desc = [
       '  ' + this._description
-      , ''];
+      , ''
+    ];
   }
 
   var cmdName = this._name;
