@@ -82,7 +82,7 @@ function Command(name) {
   this.commands = [];
   this.options = [];
   this._execs = [];
-  this._allowUnknown = false;
+  this._allowUnknownOption = false;
   this._args = [];
   this._name = name;
 }
@@ -397,10 +397,10 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
  * for unknown options.
  * @api public
  */
-Command.prototype.allowUnknown = function(arg) {
-    this._allowUnknown = arguments.length === 0 || arg;
+Command.prototype.allowUnknownOption = function(arg) {
+    this._allowUnknownOption = arguments.length === 0 || arg;
     return this;
-}
+};
 
 /**
  * Parse `argv`, settings options and invoking commands when defined.
@@ -708,7 +708,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
  */
 
 Command.prototype.unknownOption = function(flag) {
-  if(this._allowUnknown) return;
+  if(this._allowUnknownOption) return;
   console.error();
   console.error("  error: unknown option `%s'", flag);
   console.error();
