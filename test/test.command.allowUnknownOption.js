@@ -38,7 +38,7 @@ program
   .option('-p, --pepper', 'add pepper');
 
 program
-  .allowUnknown()
+  .allowUnknownOption()
   .parse('node test -m'.split(' '));
 consoleErrors.length.should.equal(0);
 
@@ -46,7 +46,7 @@ consoleErrors.length.should.equal(0);
 var consoleErrors = [];
 program
   .command('sub')
-  .allowUnknown()
+  .allowUnknownOption()
   .action(function () {
   });
 program.parse('node test sub -m'.split(' '));
