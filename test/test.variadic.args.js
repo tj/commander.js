@@ -11,7 +11,7 @@ var program = require('../')
 
 program
   .version('0.0.1')
-  .command('mycommand <requiredArg> [variadicArg...]')
+  .command('mycommand <id> [variadicArg...]')
   .action(function (arg0, arg1) {
     requiredArg = arg0;
     variadicArg = arg1;
@@ -39,8 +39,10 @@ var oldProcessExit = process.exit;
 var oldConsoleError = console.error;
 var errorMessage;
 
-process.exit = function() { throw new Error(consoleErrors.join('\n')); };
-console.error = function() {
+process.exit = function () {
+  throw new Error(consoleErrors.join('\n'));
+};
+console.error = function () {
   consoleErrors.push(util.format.apply(util, arguments));
 };
 

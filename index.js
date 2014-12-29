@@ -82,6 +82,7 @@ function Command(name) {
   this.commands = [];
   this.options = [];
   this._execs = [];
+  this._allowUnknownOption = false;
   this._args = [];
   this._name = name;
 }
@@ -161,7 +162,6 @@ Command.prototype.command = function(name, desc) {
     cmd.description(desc);
     this.executables = true;
     this._execs[cmd._name] = true;
-
   }
 
   this.commands.push(cmd);
@@ -213,11 +213,10 @@ Command.prototype.parseExpectedArgs = function(args) {
         break;
     }
 
-    if (argDetails.name.indexOf('...') === argDetails.name.length - 3) {
+    if (argDetails.name.length > 3 && argDetails.name.slice(-3) === '...') {
       argDetails.variadic = true;
       argDetails.name = argDetails.name.slice(0, -3);
     }
-
     if (argDetails.name) {
       self._args.push(argDetails);
     }
@@ -389,6 +388,18 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   });
 
   return this;
+};
+
+/**
+ * Allow unknown options on the command line.
+ *
+ * @param {Boolean} arg if `true` or omitted, no error will be thrown
+ * for unknown options.
+ * @api public
+ */
+Command.prototype.allowUnknownOption = function(arg) {
+    this._allowUnknownOption = arguments.length === 0 || arg;
+    return this;
 };
 
 /**
@@ -697,6 +708,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
  */
 
 Command.prototype.unknownOption = function(flag) {
+  if(this._allowUnknownOption) return;
   console.error();
   console.error("  error: unknown option `%s'", flag);
   console.error();
@@ -886,20 +898,41 @@ Command.prototype.commandHelp = function() {
  */
 
 Command.prototype.helpInformation = function() {
-  return [
-      ''
-    , '  Usage: ' + this._name
-        + (this._alias
-          ? '|' + this._alias
-          : '')
-        + ' ' + this.usage()
-    , '' + this.commandHelp()
-    , '  Options:'
+  var desc = [];
+  if (this._description) {
+    desc = [
+      '  ' + this._description
+      , ''
+    ];
+  }
+
+  var cmdName = this._name;
+  if(this._alias) {
+    cmdName = cmdName + '|' + this._alias;
+  }
+  var usage = [
+    ''
+    ,'  Usage: ' + cmdName + ' ' + this.usage()
+    , ''
+  ];
+
+  var cmds = [];
+  var commandHelp = this.commandHelp();
+  if (commandHelp) cmds = [commandHelp];
+
+  var options = [
+    '  Options:'
     , ''
     , '' + this.optionHelp().replace(/^/gm, '    ')
     , ''
     , ''
-  ].join('\n');
+  ];
+
+  return usage
+    .concat(cmds)
+    .concat(desc)
+    .concat(options)
+    .join('\n');
 };
 
 /**

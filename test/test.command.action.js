@@ -4,10 +4,10 @@ var program = require('../')
 var val = false;
 program
   .command('info [options]')
-    .option('-C, --no-color', 'turn off color output')
-    .action(function (){
-       val = this.color;
-    });
+  .option('-C, --no-color', 'turn off color output')
+  .action(function () {
+    val = this.color;
+  });
 
 program.parse(['node', 'test', 'info']);
 
