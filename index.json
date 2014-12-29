@@ -252,7 +252,7 @@
     "ignore": false,
     "line": 74,
     "codeStart": 81,
-    "code": "function Command(name) {\n  this.commands = [];\n  this.options = [];\n  this._execs = [];\n  this._args = [];\n  this._name = name;\n}",
+    "code": "function Command(name) {\n  this.commands = [];\n  this.options = [];\n  this._execs = [];\n  this._allowUnknownOption = false;\n  this._args = [];\n  this._name = name;\n}",
     "ctx": {
       "type": "function",
       "name": "Command",
@@ -270,8 +270,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 89,
-    "codeStart": 93,
+    "line": 90,
+    "codeStart": 94,
     "code": "Command.prototype.__proto__ = EventEmitter.prototype;",
     "ctx": {
       "type": "property",
@@ -336,9 +336,9 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 95,
-    "codeStart": 156,
-    "code": "Command.prototype.command = function(name, desc) {\n  var args = name.split(/ +/);\n  var cmd = new Command(args.shift());\n\n  if (desc) {\n    cmd.description(desc);\n    this.executables = true;\n    this._execs[cmd._name] = true;\n\n  }\n\n  this.commands.push(cmd);\n  cmd.parseExpectedArgs(args);\n  cmd.parent = this;\n\n  if (desc) return this;\n  return cmd;\n};",
+    "line": 96,
+    "codeStart": 157,
+    "code": "Command.prototype.command = function(name, desc) {\n  var args = name.split(/ +/);\n  var cmd = new Command(args.shift());\n\n  if (desc) {\n    cmd.description(desc);\n    this.executables = true;\n    this._execs[cmd._name] = true;\n  }\n\n  this.commands.push(cmd);\n  cmd.parseExpectedArgs(args);\n  cmd.parent = this;\n\n  if (desc) return this;\n  return cmd;\n};",
     "ctx": {
       "type": "method",
       "constructor": "Command",
@@ -417,7 +417,7 @@
     "ignore": false,
     "line": 186,
     "codeStart": 196,
-    "code": "Command.prototype.parseExpectedArgs = function(args) {\n  if (!args.length) return;\n  var self = this;\n  args.forEach(function(arg) {\n    var argDetails = {\n      required: false,\n      name: '',\n      variadic: false\n    };\n\n    switch (arg[0]) {\n      case '<':\n        argDetails.required = true;\n        argDetails.name = arg.slice(1, -1);\n        break;\n      case '[':\n        argDetails.name = arg.slice(1, -1);\n        break;\n    }\n\n    if (argDetails.name.indexOf('...') === argDetails.name.length - 3) {\n      argDetails.variadic = true;\n      argDetails.name = argDetails.name.slice(0, -3);\n    }\n\n    if (argDetails.name) {\n      self._args.push(argDetails);\n    }\n  });\n  return this;\n};",
+    "code": "Command.prototype.parseExpectedArgs = function(args) {\n  if (!args.length) return;\n  var self = this;\n  args.forEach(function(arg) {\n    var argDetails = {\n      required: false,\n      name: '',\n      variadic: false\n    };\n\n    switch (arg[0]) {\n      case '<':\n        argDetails.required = true;\n        argDetails.name = arg.slice(1, -1);\n        break;\n      case '[':\n        argDetails.name = arg.slice(1, -1);\n        break;\n    }\n\n    if (argDetails.name.length > 3 && argDetails.name.slice(-3) === '...') {\n      argDetails.variadic = true;\n      argDetails.name = argDetails.name.slice(0, -3);\n    }\n    if (argDetails.name) {\n      self._args.push(argDetails);\n    }\n  });\n  return this;\n};",
     "ctx": {
       "type": "method",
       "constructor": "Command",
@@ -467,8 +467,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 228,
-    "codeStart": 245,
+    "line": 227,
+    "codeStart": 244,
     "code": "Command.prototype.action = function(fn) {\n  var self = this;\n  var listener = function(args, unknown) {\n    // Parse any so-far unknown options\n    args = args || [];\n    unknown = unknown || [];\n\n    var parsed = self.parseOptions(unknown);\n\n    // Output help if necessary\n    outputHelpIfNecessary(self, parsed.unknown);\n\n    // If there are still any unknown options, then we simply\n    // die, unless someone asked for help, in which case we give it\n    // to them, and then we die.\n    if (parsed.unknown.length > 0) {\n      self.unknownOption(parsed.unknown[0]);\n    }\n\n    // Leftover arguments need to be pushed back. Fixes issue #56\n    if (parsed.args.length) args = parsed.args.concat(args);\n\n    self._args.forEach(function(arg, i) {\n      if (arg.required && null == args[i]) {\n        self.missingArgument(arg.name);\n      } else if (arg.variadic) {\n        if (i !== self._args.length - 1) {\n          self.variadicArgNotLast(arg.name);\n        }\n\n        args[i] = args.splice(i);\n      }\n    });\n\n    // Always append ourselves to the end of the arguments,\n    // to make sure we match the number of arguments the user\n    // expects\n    if (self._args.length) {\n      args[self._args.length] = self;\n    } else {\n      args.push(self);\n    }\n\n    fn.apply(self, args);\n  };\n  this.parent.on(this._name, listener);\n  if (this._alias) this.parent.on(this._alias, listener);\n  return this;\n};",
     "ctx": {
       "type": "method",
@@ -559,8 +559,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 295,
-    "codeStart": 344,
+    "line": 294,
+    "codeStart": 343,
     "code": "Command.prototype.option = function(flags, description, fn, defaultValue) {\n  var self = this\n    , option = new Option(flags, description)\n    , oname = option.name()\n    , name = camelcase(oname);\n\n  // default as 3rd arg\n  if (typeof fn != 'function') {\n    defaultValue = fn;\n    fn = null;\n  }\n\n  // preassign default value only for --no-*, [optional], or <required>\n  if (false == option.bool || option.optional || option.required) {\n    // when --no-* we make sure default is true\n    if (false == option.bool) defaultValue = true;\n    // preassign only if we have a default\n    if (undefined !== defaultValue) self[name] = defaultValue;\n  }\n\n  // register the option\n  this.options.push(option);\n\n  // when it's passed assign the value\n  // and conditionally invoke the callback\n  this.on(oname, function(val) {\n    // coercion\n    if (null !== val && fn) val = fn(val, undefined === self[name]\n      ? defaultValue\n      : self[name]);\n\n    // unassigned or bool\n    if ('boolean' == typeof self[name] || 'undefined' == typeof self[name]) {\n      // if no value, bool true, and we have a default, then use it!\n      if (null == val) {\n        self[name] = option.bool\n          ? defaultValue || true\n          : false;\n      } else {\n        self[name] = val;\n      }\n    } else if (null !== val) {\n      // reassign\n      self[name] = val;\n    }\n  });\n\n  return this;\n};",
     "ctx": {
       "type": "method",
@@ -568,6 +568,46 @@
       "cons": "Command",
       "name": "option",
       "string": "Command.prototype.option()"
+    }
+  },
+  {
+    "tags": [
+      {
+        "type": "param",
+        "name": "arg",
+        "description": "<p>if <code>true</code> or omitted, no error will be thrown for unknown options.</p>",
+        "types": [
+          "Boolean"
+        ],
+        "typesDescription": "<code>Boolean</code>",
+        "optional": false,
+        "nullable": false,
+        "nonNullable": false,
+        "variable": false
+      },
+      {
+        "type": "api",
+        "visibility": "public"
+      }
+    ],
+    "description": {
+      "full": "<p>Allow unknown options on the command line.</p>",
+      "summary": "<p>Allow unknown options on the command line.</p>",
+      "body": ""
+    },
+    "isPrivate": false,
+    "isConstructor": false,
+    "isEvent": false,
+    "ignore": false,
+    "line": 393,
+    "codeStart": 400,
+    "code": "Command.prototype.allowUnknownOption = function(arg) {\n    this._allowUnknownOption = arguments.length === 0 || arg;\n    return this;\n};",
+    "ctx": {
+      "type": "method",
+      "constructor": "Command",
+      "cons": "Command",
+      "name": "allowUnknownOption",
+      "string": "Command.prototype.allowUnknownOption()"
     }
   },
   {
@@ -611,8 +651,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 394,
-    "codeStart": 402,
+    "line": 405,
+    "codeStart": 413,
     "code": "Command.prototype.parse = function(argv) {\n  // implicit help\n  if (this.executables) this.addImplicitHelpCommand();\n\n  // store raw args\n  this.rawArgs = argv;\n\n  // guess name\n  this._name = this._name || basename(argv[1], '.js');\n\n  // process argv\n  var parsed = this.parseOptions(this.normalize(argv.slice(2)));\n  var args = this.args = parsed.args;\n\n  var result = this.parseArgs(this.args, parsed.unknown);\n\n  // executable sub-commands\n  var name = result.args[0];\n  if (this._execs[name] && typeof this._execs[name] != \"function\") {\n    return this.executeSubCommand(argv, args, parsed.unknown);\n  }\n\n  return result;\n};",
     "ctx": {
       "type": "method",
@@ -677,8 +717,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 427,
-    "codeStart": 436,
+    "line": 438,
+    "codeStart": 447,
     "code": "Command.prototype.executeSubCommand = function(argv, args, unknown) {\n  args = args.concat(unknown);\n\n  if (!args.length) this.help();\n  if ('help' == args[0] && 1 == args.length) this.help();\n\n  // <cmd> --help\n  if ('help' == args[0]) {\n    args[0] = args[1];\n    args[1] = '--help';\n  }\n\n  // executable\n  var dir = dirname(argv[1]);\n  var bin = basename(argv[1], '.js') + '-' + args[0];\n\n  // check for ./<bin> first\n  var local = path.join(dir, bin);\n\n  // run it\n  args = args.slice(1);\n  args.unshift(local);\n  var proc = spawn('node', args, { stdio: 'inherit', customFds: [0, 1, 2] });\n  proc.on('error', function(err) {\n    if (err.code == \"ENOENT\") {\n      console.error('\\n  %s(1) does not exist, try --help\\n', bin);\n    } else if (err.code == \"EACCES\") {\n      console.error('\\n  %s(1) not executable. try chmod or run with root\\n', bin);\n    }\n  });\n\n  this.runningCommand = proc;\n};",
     "ctx": {
       "type": "method",
@@ -729,8 +769,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 470,
-    "codeStart": 480,
+    "line": 481,
+    "codeStart": 491,
     "code": "Command.prototype.normalize = function(args) {\n  var ret = []\n    , arg\n    , lastOpt\n    , index;\n\n  for (var i = 0, len = args.length; i < len; ++i) {\n    arg = args[i];\n    if (i > 0) {\n      lastOpt = this.optionFor(args[i-1]);\n    }\n\n    if (arg === '--') {\n      // Honor option terminator\n      ret = ret.concat(args.slice(i));\n      break;\n    } else if (lastOpt && lastOpt.required) {\n      ret.push(arg);\n    } else if (arg.length > 1 && '-' == arg[0] && '-' != arg[1]) {\n      arg.slice(1).split('').forEach(function(c) {\n        ret.push('-' + c);\n      });\n    } else if (/^--/.test(arg) && ~(index = arg.indexOf('='))) {\n      ret.push(arg.slice(0, index), arg.slice(index + 1));\n    } else {\n      ret.push(arg);\n    }\n  }\n\n  return ret;\n};",
     "ctx": {
       "type": "method",
@@ -781,8 +821,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 512,
-    "codeStart": 524,
+    "line": 523,
+    "codeStart": 535,
     "code": "Command.prototype.parseArgs = function(args, unknown) {\n  var name;\n\n  if (args.length) {\n    name = args[0];\n    if (this.listeners(name).length) {\n      this.emit(args.shift(), args, unknown);\n    } else {\n      this.emit('*', args);\n    }\n  } else {\n    outputHelpIfNecessary(this, unknown);\n\n    // If there were no args and we have unknown options,\n    // then they are extraneous and we need to error.\n    if (unknown.length > 0) {\n      this.unknownOption(unknown[0]);\n    }\n  }\n\n  return this;\n};",
     "ctx": {
       "type": "method",
@@ -833,8 +873,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 547,
-    "codeStart": 555,
+    "line": 558,
+    "codeStart": 566,
     "code": "Command.prototype.optionFor = function(arg) {\n  for (var i = 0, len = this.options.length; i < len; ++i) {\n    if (this.options[i].is(arg)) {\n      return this.options[i];\n    }\n  }\n};",
     "ctx": {
       "type": "method",
@@ -885,8 +925,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 563,
-    "codeStart": 572,
+    "line": 574,
+    "codeStart": 583,
     "code": "Command.prototype.parseOptions = function(argv) {\n  var args = []\n    , len = argv.length\n    , literal\n    , option\n    , arg;\n\n  var unknownOptions = [];\n\n  // parse options\n  for (var i = 0; i < len; ++i) {\n    arg = argv[i];\n\n    // literal args after --\n    if ('--' == arg) {\n      literal = true;\n      continue;\n    }\n\n    if (literal) {\n      args.push(arg);\n      continue;\n    }\n\n    // find matching Option\n    option = this.optionFor(arg);\n\n    // option is defined\n    if (option) {\n      // requires arg\n      if (option.required) {\n        arg = argv[++i];\n        if (null == arg) return this.optionMissingArgument(option);\n        this.emit(option.name(), arg);\n      // optional arg\n      } else if (option.optional) {\n        arg = argv[i+1];\n        if (null == arg || ('-' == arg[0] && '-' != arg)) {\n          arg = null;\n        } else {\n          ++i;\n        }\n        this.emit(option.name(), arg);\n      // bool\n      } else {\n        this.emit(option.name());\n      }\n      continue;\n    }\n\n    // looks like an option\n    if (arg.length > 1 && '-' == arg[0]) {\n      unknownOptions.push(arg);\n\n      // If the next argument looks like it might be\n      // an argument for this option, we pass it on.\n      // If it isn't, then it'll simply be ignored\n      if (argv[i+1] && '-' != argv[i+1][0]) {\n        unknownOptions.push(argv[++i]);\n      }\n      continue;\n    }\n\n    // arg\n    args.push(arg);\n  }\n\n  return { args: args, unknown: unknownOptions };\n};",
     "ctx": {
       "type": "method",
@@ -924,8 +964,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 642,
-    "codeStart": 648,
+    "line": 653,
+    "codeStart": 659,
     "code": "Command.prototype.opts = function() {\n  var result = {}\n    , len = this.options.length;\n\n  for (var i = 0 ; i < len; i++) {\n    var key = this.options[i].name();\n    result[key] = key === 'version' ? this._version : this[key];\n  }\n  return result;\n};",
     "ctx": {
       "type": "method",
@@ -964,8 +1004,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 659,
-    "codeStart": 666,
+    "line": 670,
+    "codeStart": 677,
     "code": "Command.prototype.missingArgument = function(name) {\n  console.error();\n  console.error(\"  error: missing required argument `%s'\", name);\n  console.error();\n  process.exit(1);\n};\n\n/**\n * `Option` is missing an argument, but received `flag` or nothing.\n *\n * @param {String} option\n * @param {String} flag\n * @api private\n */\n\nCommand.prototype.optionMissingArgument = function(option, flag) {\n  console.error();\n  if (flag) {\n    console.error(\"  error: option `%s' argument missing, got `%s'\", option.flags, flag);\n  } else {\n    console.error(\"  error: option `%s' argument missing\", option.flags);\n  }\n  console.error();\n  process.exit(1);\n};",
     "ctx": {
       "type": "method",
@@ -1004,9 +1044,9 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 692,
-    "codeStart": 699,
-    "code": "Command.prototype.unknownOption = function(flag) {\n  console.error();\n  console.error(\"  error: unknown option `%s'\", flag);\n  console.error();\n  process.exit(1);\n};\n\n/**\n * Variadic argument with `name` is not the last argument as required.\n *\n * @param {String} name\n * @api private\n */\n\nCommand.prototype.variadicArgNotLast = function(name) {\n  console.error();\n  console.error(\"  error: variadic arguments must be last `%s'\", name);\n  console.error();\n  process.exit(1);\n};",
+    "line": 703,
+    "codeStart": 710,
+    "code": "Command.prototype.unknownOption = function(flag) {\n  if(this._allowUnknownOption) return;\n  console.error();\n  console.error(\"  error: unknown option `%s'\", flag);\n  console.error();\n  process.exit(1);\n};\n\n/**\n * Variadic argument with `name` is not the last argument as required.\n *\n * @param {String} name\n * @api private\n */\n\nCommand.prototype.variadicArgNotLast = function(name) {\n  console.error();\n  console.error(\"  error: variadic arguments must be last `%s'\", name);\n  console.error();\n  process.exit(1);\n};",
     "ctx": {
       "type": "method",
       "constructor": "Command",
@@ -1069,8 +1109,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 720,
-    "codeStart": 732,
+    "line": 732,
+    "codeStart": 744,
     "code": "Command.prototype.version = function(str, flags) {\n  if (0 == arguments.length) return this._version;\n  this._version = str;\n  flags = flags || '-V, --version';\n  this.option(flags, 'output the version number');\n  this.on('version', function() {\n    process.stdout.write(str + '\\n');\n    process.exit(0);\n  });\n  return this;\n};",
     "ctx": {
       "type": "method",
@@ -1122,8 +1162,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 744,
-    "codeStart": 752,
+    "line": 756,
+    "codeStart": 764,
     "code": "Command.prototype.description = function(str) {\n  if (0 == arguments.length) return this._description;\n  this._description = str;\n  return this;\n};",
     "ctx": {
       "type": "method",
@@ -1175,8 +1215,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 758,
-    "codeStart": 766,
+    "line": 770,
+    "codeStart": 778,
     "code": "Command.prototype.alias = function(alias) {\n  if (0 == arguments.length) return this._alias;\n  this._alias = alias;\n  return this;\n};",
     "ctx": {
       "type": "method",
@@ -1228,8 +1268,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 772,
-    "codeStart": 780,
+    "line": 784,
+    "codeStart": 792,
     "code": "Command.prototype.usage = function(str) {\n  var args = this._args.map(function(arg) {\n    return humanReadableArgName(arg);\n  });\n\n  var usage = '[options]'\n    + (this.commands.length ? ' [command]' : '')\n    + (this._args.length ? ' ' + args.join(' ') : '');\n\n  if (0 == arguments.length) return this._usage || usage;\n  this._usage = str;\n\n  return this;\n};",
     "ctx": {
       "type": "method",
@@ -1281,8 +1321,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 795,
-    "codeStart": 803,
+    "line": 807,
+    "codeStart": 815,
     "code": "Command.prototype.name = function(name) {\n  return this._name;\n};",
     "ctx": {
       "type": "method",
@@ -1320,8 +1360,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 807,
-    "codeStart": 814,
+    "line": 819,
+    "codeStart": 826,
     "code": "Command.prototype.largestOptionLength = function() {\n  return this.options.reduce(function(max, option) {\n    return Math.max(max, option.flags.length);\n  }, 0);\n};",
     "ctx": {
       "type": "method",
@@ -1359,8 +1399,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 820,
-    "codeStart": 827,
+    "line": 832,
+    "codeStart": 839,
     "code": "Command.prototype.optionHelp = function() {\n  var width = this.largestOptionLength();\n\n  // Prepend the help information\n  return [pad('-h, --help', width) + '  ' + 'output usage information']\n    .concat(this.options.map(function(option) {\n      return pad(option.flags, width) + '  ' + option.description;\n      }))\n    .join('\\n');\n};",
     "ctx": {
       "type": "method",
@@ -1398,8 +1438,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 838,
-    "codeStart": 845,
+    "line": 850,
+    "codeStart": 857,
     "code": "Command.prototype.commandHelp = function() {\n  if (!this.commands.length) return '';\n\n  var commands = this.commands.map(function(cmd) {\n    var args = cmd._args.map(function(arg) {\n      return humanReadableArgName(arg);\n    }).join(' ');\n\n    return [\n      cmd._name\n        + (cmd._alias\n          ? '|' + cmd._alias\n          : '')\n        + (cmd.options.length\n          ? ' [options]'\n          : '')\n        + ' ' + args\n    , cmd.description()\n    ];\n  });\n\n  var width = commands.reduce(function(max, command) {\n    return Math.max(max, command[0].length);\n  }, 0);\n\n  return [\n      ''\n    , '  Commands:'\n    , ''\n    , commands.map(function(cmd) {\n      return pad(cmd[0], width) + '  ' + cmd[1];\n    }).join('\\n').replace(/^/gm, '    ')\n    , ''\n  ].join('\\n');\n};",
     "ctx": {
       "type": "method",
@@ -1437,9 +1477,9 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 881,
-    "codeStart": 888,
-    "code": "Command.prototype.helpInformation = function() {\n  return [\n      ''\n    , '  Usage: ' + this._name\n        + (this._alias\n          ? '|' + this._alias\n          : '')\n        + ' ' + this.usage()\n    , '' + this.commandHelp()\n    , '  Options:'\n    , ''\n    , '' + this.optionHelp().replace(/^/gm, '    ')\n    , ''\n    , ''\n  ].join('\\n');\n};",
+    "line": 893,
+    "codeStart": 900,
+    "code": "Command.prototype.helpInformation = function() {\n  var desc = [];\n  if (this._description) {\n    desc = [\n      '  ' + this._description\n      , ''\n    ];\n  }\n\n  var cmdName = this._name;\n  if(this._alias) {\n    cmdName = cmdName + '|' + this._alias;\n  }\n  var usage = [\n    ''\n    ,'  Usage: ' + cmdName + ' ' + this.usage()\n    , ''\n  ];\n\n  var cmds = [];\n  var commandHelp = this.commandHelp();\n  if (commandHelp) cmds = [commandHelp];\n\n  var options = [\n    '  Options:'\n    , ''\n    , '' + this.optionHelp().replace(/^/gm, '    ')\n    , ''\n    , ''\n  ];\n\n  return usage\n    .concat(cmds)\n    .concat(desc)\n    .concat(options)\n    .join('\\n');\n};",
     "ctx": {
       "type": "method",
       "constructor": "Command",
@@ -1464,8 +1504,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 905,
-    "codeStart": 911,
+    "line": 938,
+    "codeStart": 944,
     "code": "Command.prototype.outputHelp = function() {\n  process.stdout.write(this.helpInformation());\n  this.emit('--help');\n};",
     "ctx": {
       "type": "method",
@@ -1491,8 +1531,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 916,
-    "codeStart": 922,
+    "line": 949,
+    "codeStart": 955,
     "code": "Command.prototype.help = function() {\n  this.outputHelp();\n  process.exit();\n};",
     "ctx": {
       "type": "method",
@@ -1543,8 +1583,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 927,
-    "codeStart": 935,
+    "line": 960,
+    "codeStart": 968,
     "code": "function camelcase(flag) {\n  return flag.split('-').reduce(function(str, word) {\n    return str + word[0].toUpperCase() + word.slice(1);\n  });\n}",
     "ctx": {
       "type": "function",
@@ -1606,8 +1646,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 941,
-    "codeStart": 950,
+    "line": 974,
+    "codeStart": 983,
     "code": "function pad(str, width) {\n  var len = Math.max(0, width - str.length);\n  return str + Array(len + 1).join(' ');\n}",
     "ctx": {
       "type": "function",
@@ -1657,8 +1697,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 955,
-    "codeStart": 963,
+    "line": 988,
+    "codeStart": 996,
     "code": "function outputHelpIfNecessary(cmd, options) {\n  options = options || [];\n  for (var i = 0; i < options.length; i++) {\n    if (options[i] == '--help' || options[i] == '-h') {\n      cmd.outputHelp();\n      process.exit(0);\n    }\n  }\n}",
     "ctx": {
       "type": "function",
@@ -1707,8 +1747,8 @@
     "isConstructor": false,
     "isEvent": false,
     "ignore": false,
-    "line": 973,
-    "codeStart": 981,
+    "line": 1006,
+    "codeStart": 1014,
     "code": "function humanReadableArgName(arg) {\n  var nameOutput = arg.name + (arg.variadic === true ? '...' : '');\n\n  return arg.required\n    ? '<' + nameOutput + '>'\n    : '[' + nameOutput + ']'\n}",
     "ctx": {
       "type": "function",

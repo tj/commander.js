@@ -13,6 +13,7 @@ framework for <a href="http://nodejs.org">node.js</a>.
   this.commands = [];
   this.options = [];
   this._execs = [];
+  this._allowUnknownOption = false;
   this._args = [];
   this._name = name;
 }</code></pre></div><div id="Command.prototype.command" class="comment"><h1>Command#command()</h1><div class="description"><p>Add command <code>name</code>.</p><p>The <code>.action()</code> callback is invoked when the<br />command <code>name</code> is specified via <strong>ARGV</strong>,<br />and the remaining arguments are applied to the<br />function for access.</p><p>When the <code>name</code> is &quot;*&quot; an un-matched command<br />will be passed as the first arg, followed by<br />the rest of <strong>ARGV</strong> remaining.</p><p>Examples:</p><pre><code> program
@@ -63,7 +64,6 @@ framework for <a href="http://nodejs.org">node.js</a>.
     cmd.description(desc);
     this.executables = true;
     this._execs[cmd._name] = true;
-
   }
 
   this.commands.push(cmd);
@@ -92,11 +92,10 @@ framework for <a href="http://nodejs.org">node.js</a>.
         break;
     }
 
-    if (argDetails.name.indexOf('...') === argDetails.name.length - 3) {
+    if (argDetails.name.length > 3 && argDetails.name.slice(-3) === '...') {
       argDetails.variadic = true;
       argDetails.name = argDetails.name.slice(0, -3);
     }
-
     if (argDetails.name) {
       self._args.push(argDetails);
     }
@@ -230,6 +229,9 @@ program.option(&#39;-c, --cheese [type]&#39;, &#39;add cheese [marble]&#39;);
   });
 
   return this;
+};</code></pre></div><div id="Command.prototype.allowUnknownOption" class="comment"><h1>Command#allowUnknownOption()</h1><div class="description"><p>Allow unknown options on the command line.</p></div><h2>Source</h2><pre><code>Command.prototype.allowUnknownOption = function(arg) {
+    this._allowUnknownOption = arguments.length === 0 || arg;
+    return this;
 };</code></pre></div><div id="Command.prototype.parse" class="comment"><h1>Command#parse()</h1><div class="description"><p>Parse <code>argv</code>, settings options and invoking commands when defined.</p></div><h2>Source</h2><pre><code>Command.prototype.parse = function(argv) {
   // implicit help
   if (this.executables) this.addImplicitHelpCommand();
@@ -359,4 +361,4 @@ program.option(&#39;-c, --cheese [type]&#39;, &#39;add cheese [marble]&#39;);
 };</code></pre></div><div id="Command.prototype.help" class="comment"><h1>Command#help()</h1><div class="description"><p>Output help information and exit.</p></div><h2>Source</h2><pre><code>Command.prototype.help = function() {
   this.outputHelp();
   process.exit();
-};</code></pre></div></div><ul id="menu"><li><a href="#exports.Command">exports.Command</a></li><li><a href="#exports.Option">exports.Option</a></li><li><a href="#Option">Option()</a></li><li><a href="#Command">Command()</a></li><li><a href="#Command.prototype.command">Command#command()</a></li><li><a href="#Command.prototype.parseExpectedArgs">Command#parseExpectedArgs()</a></li><li><a href="#Command.prototype.action">Command#action()</a></li><li><a href="#Command.prototype.option">Command#option()</a></li><li><a href="#Command.prototype.parse">Command#parse()</a></li><li><a href="#Command.prototype.parseOptions">Command#parseOptions()</a></li><li><a href="#Command.prototype.opts">Command#opts()</a></li><li><a href="#Command.prototype.description">Command#description()</a></li><li><a href="#Command.prototype.alias">Command#alias()</a></li><li><a href="#Command.prototype.usage">Command#usage()</a></li><li><a href="#Command.prototype.name">Command#name()</a></li><li><a href="#Command.prototype.outputHelp">Command#outputHelp()</a></li><li><a href="#Command.prototype.help">Command#help()</a></li></ul></body></html>
+};</code></pre></div></div><ul id="menu"><li><a href="#exports.Command">exports.Command</a></li><li><a href="#exports.Option">exports.Option</a></li><li><a href="#Option">Option()</a></li><li><a href="#Command">Command()</a></li><li><a href="#Command.prototype.command">Command#command()</a></li><li><a href="#Command.prototype.parseExpectedArgs">Command#parseExpectedArgs()</a></li><li><a href="#Command.prototype.action">Command#action()</a></li><li><a href="#Command.prototype.option">Command#option()</a></li><li><a href="#Command.prototype.allowUnknownOption">Command#allowUnknownOption()</a></li><li><a href="#Command.prototype.parse">Command#parse()</a></li><li><a href="#Command.prototype.parseOptions">Command#parseOptions()</a></li><li><a href="#Command.prototype.opts">Command#opts()</a></li><li><a href="#Command.prototype.description">Command#description()</a></li><li><a href="#Command.prototype.alias">Command#alias()</a></li><li><a href="#Command.prototype.usage">Command#usage()</a></li><li><a href="#Command.prototype.name">Command#name()</a></li><li><a href="#Command.prototype.outputHelp">Command#outputHelp()</a></li><li><a href="#Command.prototype.help">Command#help()</a></li></ul></body></html>
