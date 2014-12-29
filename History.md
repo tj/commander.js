@@ -1,3 +1,9 @@
+2.6.0 / 2014-12-30
+==================
+
+  * added `Command#allowUnknownOption` method. Close #138 #318 @doozr @zhiyelee
+  * Add application description to the help msg. Close #112 @dalssoft
+
 2.5.1 / 2014-12-15
 ==================
 
