@@ -20,10 +20,10 @@ program
   .description('run setup commands for all envs')
   .option("-s, --setup_mode [mode]", "Which setup mode to use")
   .option("-o, --host [host]", "Host to use")
-  .action(function(env, options){
+  .action(function (env, options) {
     var mode = options.setup_mode || "normal";
     env = env || 'all';
-    
+
     envValue = env;
   });
 
@@ -33,18 +33,18 @@ program
   .description('execute the given remote cmd')
   .option("-e, --exec_mode <mode>", "Which exec mode to use")
   .option("-t, --target [target]", "Target to use")
-  .action(function(cmd, options){
+  .action(function (cmd, options) {
     cmdValue = cmd;
-  }).on("--help", function(){
+  }).on("--help", function () {
     customHelp = true;
   });
 
 program
   .command('*')
-  .action(function(env){
+  .action(function (env) {
     console.log('deploying "%s"', env);
   });
-  
+
 program.parse(['node', 'test', '--config', 'conf']);
 program.config.should.equal("conf");
 program.commands[0].should.not.have.property.setup_mode;
@@ -96,19 +96,27 @@ cmdValue.should.equal("exec4");
 var exceptionOccurred = false;
 var oldProcessExit = process.exit;
 var oldConsoleError = console.error;
-process.exit = function() { exceptionOccurred = true; throw new Error(); };
-console.error = function() {};
+process.exit = function () {
+  exceptionOccurred = true;
+  throw new Error();
+};
+console.error = function () {
+};
 
+var oldProcessStdoutWrite = process.stdout.write;
+process.stdout.write = function () {
+};
 try {
   program.parse(['node', 'test', '--config', 'conf6', 'exec', '--help']);
-} catch(ex) {
+} catch (ex) {
   program.config.should.equal("conf6");
 }
+process.stdout.write = oldProcessStdoutWrite;
 
 try {
-    program.parse(['node', 'test', '--config', 'conf', 'exec', '-t', 'target1', 'exec1', '-e']);
+  program.parse(['node', 'test', '--config', 'conf', 'exec', '-t', 'target1', 'exec1', '-e']);
 }
-catch(ex) {
+catch (ex) {
 }
 
 process.exit = oldProcessExit;
