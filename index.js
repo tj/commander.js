@@ -463,7 +463,12 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   // prefer local `./<bin>` to bin in the $PATH
   var local = path.join(dir, bin);
-  if (fs.existsSync(local)) bin = local;
+  try {
+    // for versions before node v0.8 when there weren't `fs.existsSync`
+    if (fs.statSync(local).isFile()) {
+      bin = local;
+    }
+  } catch (e) {}
 
   // run it
   args = args.slice(1);

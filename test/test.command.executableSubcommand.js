@@ -3,7 +3,7 @@ var program = require('../')
   , should = require('should');
 
 var oldError = console.error;
-var err;
+var err = '';
 console.error = function (tpl, s) {
   err = util.format(tpl, s);
 };
@@ -12,9 +12,9 @@ program
 
 program.parse('node test exec a'.split(' '));
 
-process.nextTick(function () {
+program.runningCommand.on('error', function() {
   err.should.equal('\n  test-exec(1) does not exist, try --help\n');
-  console.error = oldError;
 });
 
+// @todo test `EACCES` error
 
