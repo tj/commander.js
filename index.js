@@ -463,9 +463,14 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // check for ./<bin> first
   var local = path.join(dir, bin);
 
-  // run it
+  // arguments
   args = args.slice(1);
   args.unshift(local);
+
+  // add executable arguments to spawn
+  args = process.execArgv.concat(args);
+
+  // run it
   var proc = spawn('node', args, { stdio: 'inherit', customFds: [0, 1, 2] });
   proc.on('error', function(err) {
     if (err.code == "ENOENT") {
