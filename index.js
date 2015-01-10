@@ -8,6 +8,7 @@ var spawn = require('child_process').spawn;
 var path = require('path');
 var dirname = path.dirname;
 var basename = path.basename;
+var fs = require('fs');
 
 /**
  * Expose the root command.
@@ -460,13 +461,26 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   var dir = dirname(argv[1]);
   var bin = basename(argv[1], '.js') + '-' + args[0];
 
-  // check for ./<bin> first
+  // prefer local `./<bin>` to bin in the $PATH
   var local = path.join(dir, bin);
+  try {
+    // for versions before node v0.8 when there weren't `fs.existsSync`
+    if (fs.statSync(local).isFile()) {
+      bin = local;
+    }
+  } catch (e) {}
 
   // run it
   args = args.slice(1);
-  args.unshift(local);
-  var proc = spawn('node', args, { stdio: 'inherit', customFds: [0, 1, 2] });
+
+  var proc;
+  if (process.platform !== 'win32') {
+    proc = spawn(bin, args, { stdio: 'inherit'});
+  } else {
+    args.unshift(local);
+    proc = spawn(process.execPath, args, { stdio: 'inherit'});
+  }
+
   proc.on('error', function(err) {
     if (err.code == "ENOENT") {
       console.error('\n  %s(1) does not exist, try --help\n', bin);
