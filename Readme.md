@@ -158,25 +158,6 @@ The commander will try to find the executable script in __current directory__ wi
 
 ```
 
-## Help by default
-
-If you want to display help by default (e.g. if no command was provided), you can use something like;
-
-```
-
-var program = require('commander');
-
-program
-  .version('0.0.1')
-  .command('getstream [url]', 'get stream URL')
-  .parse(process.argv);
-
-  if (!process.argv.slice(2).length) {
-    program.outputHelp();
-    return;
-  }
-```
-
 ## Custom help
 
  You can display arbitrary `-h, --help` information
@@ -240,7 +221,22 @@ Examples:
 
 ## .outputHelp()
 
-  Output help information without exiting.
+Output help information without exiting.
+
+If you want to display help by default (e.g. if no command was provided), you can use something like:
+
+```js
+var program = require('commander');
+
+program
+  .version('0.0.1')
+  .command('getstream [url]', 'get stream URL')
+  .parse(process.argv);
+
+  if (!process.argv.slice(2).length) {
+    program.outputHelp();
+  }
+```
 
 ## .help()
 
