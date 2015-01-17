@@ -481,12 +481,14 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     proc = spawn(process.execPath, args, { stdio: 'inherit'});
   }
 
+  proc.on('close', process.exit.bind(process));
   proc.on('error', function(err) {
     if (err.code == "ENOENT") {
       console.error('\n  %s(1) does not exist, try --help\n', bin);
     } else if (err.code == "EACCES") {
       console.error('\n  %s(1) not executable. try chmod or run with root\n', bin);
     }
+    process.exit(1);
   });
 
   this.runningCommand = proc;
