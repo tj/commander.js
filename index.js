@@ -724,7 +724,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
  */
 
 Command.prototype.unknownOption = function(flag) {
-  if(this._allowUnknownOption) return;
+  if (this._allowUnknownOption) return;
   console.error();
   console.error("  error: unknown option `%s'", flag);
   console.error();
@@ -923,7 +923,7 @@ Command.prototype.helpInformation = function() {
   }
 
   var cmdName = this._name;
-  if(this._alias) {
+  if (this._alias) {
     cmdName = cmdName + '|' + this._alias;
   }
   var usage = [
