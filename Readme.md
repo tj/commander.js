@@ -86,6 +86,18 @@ console.log(' verbosity: %j', program.verbose);
 console.log(' args: %j', program.args);
 ```
 
+## Regular Expression
+```js
+program
+  .version('0.0.1')
+  .option('-s --size <size>', 'Pizza size', /^(large|medium|small)$/i, 'medium')
+  .option('-d --drink [drink]', 'Drink', /^(coke|pepsi|izze)$/i)
+  .parse(process.argv);
+  
+console.log(' size: %j', program.size);
+console.log(' drink: %j', program.drink);
+```
+
 ## Variadic arguments
 
  The last argument of a command can be variadic, and only the last argument.  To make an argument variadic you have to

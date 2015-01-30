@@ -349,8 +349,17 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
 
   // default as 3rd arg
   if (typeof fn != 'function') {
-    defaultValue = fn;
-    fn = null;
+    if (fn instanceof RegExp) {
+      var regex = fn;
+      fn = function(val, def) {
+        var m = regex.exec(val);
+        return m ? m[0] : def;
+      }
+    }
+    else {
+      defaultValue = fn;
+      fn = null;
+    }
   }
 
   // preassign default value only for --no-*, [optional], or <required>
