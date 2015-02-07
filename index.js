@@ -837,7 +837,7 @@ Command.prototype.usage = function(str) {
  * @api public
  */
 
-Command.prototype.name = function(name) {
+Command.prototype.name = function() {
   return this._name;
 };
 
