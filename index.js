@@ -905,8 +905,7 @@ Command.prototype.commandHelp = function() {
   }, 0);
 
   return [
-      ''
-    , '  Commands:'
+    '  Commands:'
     , ''
     , commands.map(function(cmd) {
       return pad(cmd[0], width) + '  ' + cmd[1];

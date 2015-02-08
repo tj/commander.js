@@ -45,6 +45,10 @@ program
     console.log('deploying "%s"', env);
   });
 
+program.helpInformation()
+  .indexOf('Usage: undefined [options] [command]\n\n  Commands:')
+  .should.equal(3);
+
 program.parse(['node', 'test', '--config', 'conf']);
 program.config.should.equal("conf");
 program.commands[0].should.not.have.property.setup_mode;
