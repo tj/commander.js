@@ -287,7 +287,6 @@ Command.prototype.action = function(fn) {
 
     fn.apply(self, args);
   };
-  this._hasAction = true;
   this.parent.on('action_' + this._name, listener);
   if (this._alias) this.parent.on('action_' + this._alias, listener);
   return this;
