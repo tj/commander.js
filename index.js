@@ -287,8 +287,9 @@ Command.prototype.action = function(fn) {
 
     fn.apply(self, args);
   };
-  this.parent.on(this._name, listener);
-  if (this._alias) this.parent.on(this._alias, listener);
+  this._hasAction = true;
+  this.parent.on('action_' + this._name, listener);
+  if (this._alias) this.parent.on('action_' + this._alias, listener);
   return this;
 };
 
@@ -562,8 +563,8 @@ Command.prototype.parseArgs = function(args, unknown) {
 
   if (args.length) {
     name = args[0];
-    if (this.listeners(name).length) {
-      this.emit(args.shift(), args, unknown);
+    if (this.listeners('action_' + name).length) {
+      this.emit('action_' + args.shift(), args, unknown);
     } else {
       this.emit('*', args);
     }
