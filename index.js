@@ -5,6 +5,7 @@
 
 var EventEmitter = require('events').EventEmitter;
 var spawn = require('child_process').spawn;
+var readlink = require('graceful-readlink').readlinkSync;
 var path = require('path');
 var dirname = path.dirname;
 var basename = path.basename;
@@ -467,8 +468,13 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   }
 
   // executable
-  var dir = dirname(argv[1]);
-  var bin = basename(argv[1], '.js') + '-' + args[0];
+  var f = argv[1];
+  var link = readlink(f);
+  if (link.indexOf('.') === 0) {
+    link = path.join(dirname(f), link)
+  }
+  var dir = dirname(link);
+  var bin = basename(f, '.js') + '-' + args[0];
 
   // prefer local `./<bin>` to bin in the $PATH
   var local = path.join(dir, bin);
