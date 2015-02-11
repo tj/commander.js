@@ -27,6 +27,6 @@
     "index.js"
   ],
   "dependencies": {
-    "graceful-readlink": "^1.0.0"
+    "graceful-readlink": ">= 1.0.0"
   }
 }
