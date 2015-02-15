@@ -388,7 +388,9 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
         self[name] = option.bool
           ? defaultValue || true
           : false;
-      } else if (option.flags.indexOf('boolean') === -1) {
+      } else if (option.flags.indexOf('<boolean>') > -1 || option.flags.indexOf('[boolean]') > -1) {
+        self[name] = (val === 'true');
+      } else {
         self[name] = val;
       }
     } else if (null !== val) {
