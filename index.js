@@ -688,7 +688,7 @@ Command.prototype.opts = function() {
     , len = this.options.length;
 
   for (var i = 0 ; i < len; i++) {
-    var key = this.options[i].name();
+    var key = camelcase(this.options[i].name());
     result[key] = key === 'version' ? this._version : this[key];
   }
   return result;
