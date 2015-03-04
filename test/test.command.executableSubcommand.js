@@ -1,26 +1,23 @@
 var program = require('../')
   , util = require('util')
+  , exec = require('child_process').exec
+  , path = require('path')
   , should = require('should');
 
-var oldError = console.error;
-var err = '';
-console.error = function (tpl, s) {
-  err = util.format(tpl, s);
-};
 
-var exitCode = 0;
-process.exit = function (code) {
-  exitCode = code;
-}
-program
-  .command('exec [options]', 'this is my command');
 
-program.parse('node test exec a'.split(' '));
-
-program.runningCommand.on('error', function() {
-  err.should.equal('\n  test-exec(1) does not exist, try --help\n');
-  exitCode.should.equal(1);
+var bin = path.join(__dirname, './fixtures/pm')
+// not exist
+exec(bin + ' list', function (error, stdout, stderr) {
+  stderr.should.equal('\n  pm-list(1) does not exist, try --help\n\n');
 });
 
-// @todo test `EACCES` error
+// success case
+exec(bin + ' install', function (error, stdout, stderr) {
+  stdout.should.equal('install\n');
+});
 
+// spawn EACCES
+exec(bin + ' search', function (error, stdout, stderr) {
+  should.notEqual(-1, stderr.indexOf('spawn EACCES'));
+});
