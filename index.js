@@ -288,8 +288,8 @@ Command.prototype.action = function(fn) {
 
     fn.apply(self, args);
   };
-  this.parent.on(this._name, listener);
-  if (this._alias) this.parent.on(this._alias, listener);
+  this.parent.on('action_' + this._name, listener);
+  if (this._alias) this.parent.on('action_' + this._alias, listener);
   return this;
 };
 
@@ -389,6 +389,8 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
         self[name] = option.bool
           ? defaultValue || true
           : false;
+      } else if (option.flags.indexOf('<boolean>') > -1 || option.flags.indexOf('[boolean]') > -1) {
+        self[name] = (val === 'true');
       } else {
         self[name] = val;
       }
@@ -568,8 +570,8 @@ Command.prototype.parseArgs = function(args, unknown) {
 
   if (args.length) {
     name = args[0];
-    if (this.listeners(name).length) {
-      this.emit(args.shift(), args, unknown);
+    if (this.listeners('action_' + name).length) {
+      this.emit('action_' + args.shift(), args, unknown);
     } else {
       this.emit('*', args);
     }
@@ -692,7 +694,7 @@ Command.prototype.opts = function() {
     , len = this.options.length;
 
   for (var i = 0 ; i < len; i++) {
-    var key = this.options[i].name();
+    var key = camelcase(this.options[i].name());
     result[key] = key === 'version' ? this._version : this[key];
   }
   return result;
