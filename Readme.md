@@ -3,6 +3,7 @@
  [![Build Status](https://api.travis-ci.org/tj/commander.js.svg)](http://travis-ci.org/tj/commander.js)
 [![NPM Version](http://img.shields.io/npm/v/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
 [![NPM Downloads](https://img.shields.io/npm/dm/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
+[![Inline docs](http://inch-ci.org/github/tj/commander.js.svg?branch=master)](http://inch-ci.org/github/tj/commander.js)
 
   The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/tj/commander).  
   [API documentation](http://tj.github.com/commander.js/)
