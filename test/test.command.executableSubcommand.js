@@ -1,6 +1,4 @@
-var program = require('../')
-  , util = require('util')
-  , exec = require('child_process').exec
+var exec = require('child_process').exec
   , path = require('path')
   , should = require('should');
 
