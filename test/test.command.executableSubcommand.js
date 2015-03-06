@@ -1,26 +1,31 @@
-var program = require('../')
-  , util = require('util')
+var exec = require('child_process').exec
+  , path = require('path')
   , should = require('should');
 
-var oldError = console.error;
-var err = '';
-console.error = function (tpl, s) {
-  err = util.format(tpl, s);
-};
 
-var exitCode = 0;
-process.exit = function (code) {
-  exitCode = code;
-}
-program
-  .command('exec [options]', 'this is my command');
 
-program.parse('node test exec a'.split(' '));
-
-program.runningCommand.on('error', function() {
-  err.should.equal('\n  test-exec(1) does not exist, try --help\n');
-  exitCode.should.equal(1);
+var bin = path.join(__dirname, './fixtures/pm')
+// not exist
+exec(bin + ' list', function (error, stdout, stderr) {
+  //stderr.should.equal('\n  pm-list(1) does not exist, try --help\n\n');
+  // TODO error info are not the same in between <=v0.8 and later version
+  should.notEqual(0, stderr.length);
 });
 
-// @todo test `EACCES` error
+// success case
+exec(bin + ' install', function (error, stdout, stderr) {
+  stdout.should.equal('install\n');
+});
 
+// spawn EACCES
+exec(bin + ' search', function (error, stdout, stderr) {
+  // TODO error info are not the same in between <v0.10 and v0.12
+  should.notEqual(0, stderr.length);
+});
+
+// when `bin` is a symbol link for mocking global install
+var bin = path.join(__dirname, './fixtures/pmlink')
+// success case
+exec(bin + ' install', function (error, stdout, stderr) {
+  stdout.should.equal('install\n');
+});
