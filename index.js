@@ -472,7 +472,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // executable
   var f = argv[1];
   var link = readlink(f);
-  if (link !== f) {
+  if (link !== f && link.charAt(0) !== '/') {
     link = path.join(dirname(f), link)
   }
   var dir = dirname(link);
