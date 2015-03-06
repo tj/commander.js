@@ -492,7 +492,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   var proc;
   if (process.platform !== 'win32') {
-    proc = spawn(bin, args, { stdio: 'inherit'});
+    proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
   } else {
     args.unshift(local);
     proc = spawn(process.execPath, args, { stdio: 'inherit'});
