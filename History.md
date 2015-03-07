@@ -1,3 +1,15 @@
+
+2.7.0 / 2015-03-07
+==================
+
+ * Fix git-style bug when installed globally. Close #335 #349 @zhiyelee
+ * Fix collisions when option and first arg have same name. Close #346 #347 @tonylukasavage
+ * Add support for camelCase on `opts()`. Close #353  @nkzawa
+ * Add node.js 0.12 and io.js to travis.yml
+ * Allow RegEx options. #337 @palanik
+ * Fixes exit code when sub-command failing.  Close #260 #332 @pirelenito
+ * git-style `bin` files in $PATH make sense. Close #196 #327  @zhiyelee
+
 2.6.0 / 2014-12-30
 ==================
 
