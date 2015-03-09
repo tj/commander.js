@@ -1047,6 +1047,9 @@ function outputHelpIfNecessary(cmd, options) {
     if (options[i] == '--help' || options[i] == '-h') {
       cmd.outputHelp();
       process.exit(0);
+
+      // used for test flow only
+      options.splice(i, 1);
     }
   }
 }
