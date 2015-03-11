@@ -1,5 +1,10 @@
 
-2.7.0 / 2015-03-07
+2.7.1 / 2015-03-11
+==================
+
+ * Revert #347 (fix collisions when option and first arg have same name) which causes a bug in #367.
+
+2.7.0 / 2015-03-09
 ==================
 
  * Fix git-style bug when installed globally. Close #335 #349 @zhiyelee
