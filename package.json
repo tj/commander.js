@@ -1,6 +1,6 @@
 {
   "name": "commander",
-  "version": "2.7.0",
+  "version": "2.7.1",
   "description": "the complete solution for node.js command-line programs",
   "keywords": [
     "command",
