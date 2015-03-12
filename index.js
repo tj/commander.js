@@ -873,7 +873,7 @@ Command.prototype.optionHelp = function() {
   // Prepend the help information
   return [pad('-h, --help', width) + '  ' + 'output usage information']
     .concat(this.options.map(function(option) {
-      return pad(option.flags, width) + '  ' + option.description;
+      return pad(option.flags, width) + '  ' + offset(option.description, width + 2);
       }))
     .join('\n');
 };
@@ -915,7 +915,7 @@ Command.prototype.commandHelp = function() {
     , '  Commands:'
     , ''
     , commands.map(function(cmd) {
-      return pad(cmd[0], width) + '  ' + cmd[1];
+      return pad(cmd[0], width) + '  ' + offset(cmd[1], width + 2);
     }).join('\n').replace(/^/gm, '    ')
     , ''
   ].join('\n');
@@ -943,7 +943,7 @@ Command.prototype.helpInformation = function() {
   }
   var usage = [
     ''
-    ,'  Usage: ' + cmdName + ' ' + this.usage()
+    ,'  Usage: ' + cmdName + ' ' + offset(this.usage(), 9)
     , ''
   ];
 
@@ -1017,6 +1017,23 @@ function pad(str, width) {
 }
 
 /**
+ * Prepend to each line of `str` spaced string of `offset` length.
+ *
+ * @param {String} str
+ * @param {Number} offset
+ * @param {Boolean} skipFirstLine
+ * @return {String}
+ * @api private
+ */
+function offset(str, offset, skipFirstLine) {
+  var res = String(str || '').replace(/^/gm, pad('', offset));
+  if (!skipFirstLine) {
+    res = res.replace(/^\s+/, '');
+  }
+  return res;
+}
+
+/**
  * Output help information if necessary
  *
  * @param {Command} command to output help for
@@ -1030,6 +1047,9 @@ function outputHelpIfNecessary(cmd, options) {
     if (options[i] == '--help' || options[i] == '-h') {
       cmd.outputHelp();
       process.exit(0);
+
+      // used for test flow only
+      options.splice(i, 1);
     }
   }
 }

@@ -169,7 +169,8 @@ If the program is designed to installed globally, make sure the executables have
      -p, --peppers        Add peppers
      -P, --pineapple      Add pineapple
      -b, --bbq            Add bbq sauce
-     -c, --cheese <type>  Add the specified type of cheese [marble]
+     -c, --cheese <type>  Add the specified type
+                          of cheese [marble]
      -C, --no-cheese      You do not want any cheese
 
 ```
