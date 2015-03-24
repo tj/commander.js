@@ -149,7 +149,7 @@ program
 When `.command()` is invoked with a description argument, no `.action(callback)` should be called to handle sub-commands, otherwise there will be an error. This tells commander that you're going to use separate executables for sub-commands, much like `git(1)` and other popular tools.  
 The commander will try to search the executables in the directory of the entry script (like `./examples/pm`) with the name `program-command`, like `pm-install`, `pm-search`.
 
-If the program is designed to installed globally, make sure the executables have proper modes, like `755`.
+If the program is designed to be installed globally, make sure the executables have proper modes, like `755`.
 
 ## Automated --help
 
