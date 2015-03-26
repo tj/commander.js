@@ -443,6 +443,12 @@ Command.prototype.parse = function(argv) {
   // guess name
   this._name = this._name || basename(argv[1], '.js');
 
+  // github-style sub-commands with no sub-command
+  if (this.executables && argv.length < 3) {
+    // this user needs help
+    argv.push('--help');
+  }
+
   // process argv
   var parsed = this.parseOptions(this.normalize(argv.slice(2)));
   var args = this.args = parsed.args;
