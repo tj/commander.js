@@ -156,7 +156,8 @@ Command.prototype.__proto__ = EventEmitter.prototype;
  * @api public
  */
 
-Command.prototype.command = function(name, desc) {
+Command.prototype.command = function(name, desc, opts) {
+  opts = opts || {};
   var args = name.split(/ +/);
   var cmd = new Command(args.shift());
 
@@ -166,6 +167,7 @@ Command.prototype.command = function(name, desc) {
     this._execs[cmd._name] = true;
   }
 
+  cmd._noHelp = !!opts.noHelp;
   this.commands.push(cmd);
   cmd.parseExpectedArgs(args);
   cmd.parent = this;
@@ -900,7 +902,9 @@ Command.prototype.optionHelp = function() {
 Command.prototype.commandHelp = function() {
   if (!this.commands.length) return '';
 
-  var commands = this.commands.map(function(cmd) {
+  var commands = this.commands.filter(function(cmd) {
+    return !cmd._noHelp;
+  }).map(function(cmd) {
     var args = cmd._args.map(function(arg) {
       return humanReadableArgName(arg);
     }).join(' ');
