@@ -515,7 +515,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     if (isExplicitJS) {
       args.unshift(localBin);
       // add executable arguments to spawn
-      args = process.execArgv.concat(args);
+      args = (process.execArgv || []).concat(args);
 
       proc = spawn('node', args, { stdio: 'inherit', customFds: [0, 1, 2] });
     } else {
