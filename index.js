@@ -481,30 +481,48 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   // executable
   var f = argv[1];
-  var link = readlink(f);
+  // name of the subcommand, link `pm-install`
+  var bin = basename(f, '.js') + '-' + args[0];
+
+
+  // In case of globally installed, get the base dir where executable
+  //  subcommand file should be located at
+  var baseDir
+    , link = readlink(f);
+
+  // when symbolink is relative path
   if (link !== f && link.charAt(0) !== '/') {
     link = path.join(dirname(f), link)
   }
-  var dir = dirname(link);
-  var bin = basename(f, '.js') + '-' + args[0];
+  baseDir = dirname(link);
 
   // prefer local `./<bin>` to bin in the $PATH
-  var local = path.join(dir, bin);
-  try {
-    // for versions before node v0.8 when there weren't `fs.existsSync`
-    if (fs.statSync(local).isFile()) {
-      bin = local;
-    }
-  } catch (e) {}
+  var localBin = path.join(baseDir, bin);
 
-  // run it
+  // whether bin file is a js script with explicit `.js` extension
+  var isExplicitJS = false;
+  if (exists(localBin + '.js')) {
+    bin = localBin + '.js';
+    isExplicitJS = true;
+  } else if (exists(localBin)) {
+    bin = localBin;
+  }
+
   args = args.slice(1);
 
   var proc;
   if (process.platform !== 'win32') {
-    proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
+    if (isExplicitJS) {
+      args.unshift(localBin);
+      // add executable arguments to spawn
+      args = process.execArgv.concat(args);
+
+      proc = spawn('node', args, { stdio: 'inherit', customFds: [0, 1, 2] });
+    } else {
+      proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
+    }
   } else {
-    args.unshift(local);
+    args.unshift(localBin);
     proc = spawn(process.execPath, args, { stdio: 'inherit'});
   }
 
@@ -1081,3 +1099,15 @@ function humanReadableArgName(arg) {
     ? '<' + nameOutput + '>'
     : '[' + nameOutput + ']'
 }
+
+// for versions before node v0.8 when there weren't `fs.existsSync`
+function exists(file) {
+  try {
+    if (fs.statSync(file).isFile()) {
+      return true;
+    }
+  } catch (e) {
+    return false;
+  }
+}
+

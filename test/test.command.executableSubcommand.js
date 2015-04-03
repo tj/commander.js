@@ -17,6 +17,11 @@ exec(bin + ' install', function (error, stdout, stderr) {
   stdout.should.equal('install\n');
 });
 
+// subcommand bin file with explicit extension
+exec(bin + ' publish', function (error, stdout, stderr) {
+  stdout.should.equal('publish\n');
+});
+
 // spawn EACCES
 exec(bin + ' search', function (error, stdout, stderr) {
   // TODO error info are not the same in between <v0.10 and v0.12
