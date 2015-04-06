@@ -507,11 +507,16 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // prefer local `./<bin>` to bin in the $PATH
   var localBin = path.join(baseDir, bin);
 
-  // whether bin file is a js script with explicit `.js` extension
+  // whether bin file is a js or coffee script
+  // with explicit `.js` or `.coffee` extension
   var isExplicitJS = false;
+  var isExplicitCoffee = false;
   if (exists(localBin + '.js')) {
     bin = localBin + '.js';
     isExplicitJS = true;
+  } else if (exists(localBin + '.coffee')) {
+    bin = localBin = localBin + '.coffee';
+    isExplicitCoffee = true;
   } else if (exists(localBin)) {
     bin = localBin;
   }
@@ -520,12 +525,12 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   var proc;
   if (process.platform !== 'win32') {
-    if (isExplicitJS) {
+    if (isExplicitJS || isExplicitCoffee) {
       args.unshift(localBin);
       // add executable arguments to spawn
       args = (process.execArgv || []).concat(args);
-
-      proc = spawn('node', args, { stdio: 'inherit', customFds: [0, 1, 2] });
+      var executer = isExplicitJS ? 'node' : 'coffee';
+      proc = spawn(executer, args, { stdio: 'inherit', customFds: [0, 1, 2] });
     } else {
       proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
     }
@@ -1120,4 +1125,3 @@ function exists(file) {
     return false;
   }
 }
-

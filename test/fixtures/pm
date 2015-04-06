@@ -5,6 +5,7 @@ var program = require('../../');
 program
   .version('0.0.1')
   .command('install [name]', 'install one or more packages')
+  .command('info [name]', 'show package information')
   .command('search [query]', 'search with optional query')
   .command('list', 'list packages installed')
   .command('publish', 'publish or update package')
