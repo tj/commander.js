@@ -289,15 +289,6 @@ Command.prototype.action = function(fn) {
       }
     });
 
-    // Always append ourselves to the end of the arguments,
-    // to make sure we match the number of arguments the user
-    // expects
-    if (self._args.length) {
-      args[self._args.length] = self;
-    } else {
-      args.push(self);
-    }
-
     fn.apply(self, args);
   };
   var parent = this.parent || this;

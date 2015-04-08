@@ -22,7 +22,7 @@ program.parse(programArgs);
 requiredArg.should.eql('arg0');
 variadicArg.should.eql(['arg1', 'arg2', 'arg3']);
 
-program.args.should.have.lengthOf(3);
+program.args.should.have.lengthOf(2);
 program.args[0].should.eql('arg0');
 program.args[1].should.eql(['arg1', 'arg2', 'arg3']);
 

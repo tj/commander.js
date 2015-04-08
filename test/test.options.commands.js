@@ -21,7 +21,7 @@ program
   .option("-s, --setup_mode [mode]", "Which setup mode to use")
   .option("-o, --host [host]", "Host to use")
   .action(function (env, options) {
-    var mode = options.setup_mode || "normal";
+    var mode = (options ? options.setup_mode : null) || "normal";
     env = env || 'all';
 
     envValue = env;
