@@ -6,6 +6,7 @@
   * Fix bug in Git-style sub-commands #372 @zhiyelee
   * Allow commands to be hidden from help #383 @tonylukasavage
   * When git-style sub-commands are in use, yet none are called, display help #382 @claylo
+  * Add ability to specify arguments syntax for top-level command #258 @rrthomas
   * Support multiline descriptions #208 @zxqfox
 
 2.7.1 / 2015-03-11

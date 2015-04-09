@@ -151,6 +151,12 @@ The commander will try to search the executables in the directory of the entry s
 
 If the program is designed to be installed globally, make sure the executables have proper modes, like `755`.
 
+### `--harmony`
+
+You can enable `--harmony` option in two ways:
+* Use `#! /usr/bin/env node --harmony` in the sub-commands scripts. Note some os version don’t support this pattern.
+* Use the `--harmony` option when call the command, like `node --harmony examples/pm publish`. The `--harmony` option will be preserved when spawning sub-command process.
+
 ## Automated --help
 
  The help information is auto-generated based on the information commander already knows about your program, so the following `--help` info is for free:
