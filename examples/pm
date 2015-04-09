@@ -7,6 +7,7 @@ program
   .command('install [name]', 'install one or more packages')
   .command('search [query]', 'search with optional query')
   .command('list', 'list packages installed')
+  .command('publish', 'publish the package')
   .parse(process.argv);
 
 // here .command() is invoked with a description,
