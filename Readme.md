@@ -200,8 +200,7 @@ You can enable `--harmony` option in two ways:
      -p, --peppers        Add peppers
      -P, --pineapple      Add pineapple
      -b, --bbq            Add bbq sauce
-     -c, --cheese <type>  Add the specified type
-                          of cheese [marble]
+     -c, --cheese <type>  Add the specified type of cheese [marble]
      -C, --no-cheese      You do not want any cheese
 
 ```
