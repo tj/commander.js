@@ -14,8 +14,7 @@
     "url": "https://github.com/tj/commander.js.git"
   },
   "devDependencies": {
-    "should": ">= 0.0.1",
-    "sinon": ">= 1.13.0"
+    "should": ">= 0.0.1"
   },
   "scripts": {
     "test": "make test"
