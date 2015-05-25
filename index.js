@@ -83,7 +83,7 @@ Option.prototype.is = function(arg) {
 function Command(name) {
   this.commands = [];
   this.options = [];
-  this._execs = [];
+  this._execs = {};
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name;
