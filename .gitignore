@@ -2,3 +2,5 @@
 node_modules
 *.sock
 .idea
+coverage
+nyc_output

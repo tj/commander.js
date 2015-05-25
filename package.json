@@ -14,11 +14,15 @@
     "url": "https://github.com/tj/commander.js.git"
   },
   "devDependencies": {
+    "coveralls": "^2.11.2",
+    "nyc": "^2.1.4",
     "should": ">= 0.0.1",
     "sinon": ">= 1.14.1"
   },
   "scripts": {
-    "test": "make test"
+    "test": "make test",
+    "coverage": "nyc npm test && nyc report",
+    "coveralls": "nyc npm test && nyc report --reporter=text-lcov | coveralls"
   },
   "main": "index",
   "engines": {
