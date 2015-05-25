@@ -6,3 +6,5 @@ node_js:
   - "0.12"
   - "io.js"
 after_success: npm run coveralls
+before_install:
+  - npm install -g npm@~1.4.28
