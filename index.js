@@ -534,7 +534,16 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     proc = spawn(process.execPath, args, { stdio: 'inherit'});
   }
 
-  proc.on('close', process.exit.bind(process));
+  //killing the child process if the main process is terminated
+  var processClosing = function(){
+    proc.kill('SIGHUP');
+  }
+  process.on('exit',processClosing );
+  process.on('SIGINT', processClosing );
+  process.on('SIGHUB', processClosing );
+  process.on('SIGTERM', processClosing );
+
+  proc.on('close', process.exit.bind(process) );
   proc.on('error', function(err) {
     if (err.code == "ENOENT") {
       console.error('\n  %s(1) does not exist, try --help\n', bin);
@@ -1100,4 +1109,3 @@ function exists(file) {
     return false;
   }
 }
-
