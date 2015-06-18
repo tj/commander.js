@@ -535,13 +535,12 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   }
 
   //killing the child process if the main process is terminated
-  var processClosing = function(){
+  process.on('SIGHUP', function(){
     proc.kill('SIGHUP');
-  }
-  process.on('exit',processClosing );
-  process.on('SIGINT', processClosing );
-  process.on('SIGHUB', processClosing );
-  process.on('SIGTERM', processClosing );
+  } );
+  process.on('SIGTERM', function(){
+    proc.kill('SIGTERM');
+  } );
 
   proc.on('close', process.exit.bind(process) );
   proc.on('error', function(err) {
@@ -1109,4 +1108,3 @@ function exists(file) {
     return false;
   }
 }
-
