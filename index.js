@@ -536,10 +536,19 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   //killing the child process if the main process is terminated
   process.on('SIGHUP', function(){
-    proc.kill('SIGHUP');
+    if (proc.exitCode===null){
+      proc.kill('SIGHUP');
+    }
   } );
   process.on('SIGTERM', function(){
-    proc.kill('SIGTERM');
+    if (proc.exitCode===null){
+      proc.kill('SIGTERM');
+    }
+  } );
+  process.on('SIGINT', function(){
+    if (proc.exitCode===null){
+      proc.kill('SIGINT');
+    }
   } );
 
   proc.on('close', process.exit.bind(process) );
