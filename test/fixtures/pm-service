@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 setInterval(function(){},5000);
 process.on('exit',function(){
-  console.log('received SIGHUP');
+  
 });
