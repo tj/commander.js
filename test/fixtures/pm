@@ -8,4 +8,5 @@ program
   .command('search [query]', 'search with optional query')
   .command('list', 'list packages installed')
   .command('publish', 'publish or update package')
+  .command('service', 'run the service')
   .parse(process.argv);
