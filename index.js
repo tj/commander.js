@@ -536,17 +536,17 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   //killing the child process if the main process is terminated
   process.on('SIGHUP', function(){
-    if (proc.exitCode===null){
+    if ((proc.killed===false) && (proc.exitCode===null)){
       proc.kill('SIGHUP');
     }
   } );
   process.on('SIGTERM', function(){
-    if (proc.exitCode===null){
+    if ((proc.killed===false) && (proc.exitCode===null)){
       proc.kill('SIGTERM');
     }
   } );
   process.on('SIGINT', function(){
-    if (proc.exitCode===null){
+    if ((proc.killed===false) && (proc.exitCode===null)){
       proc.kill('SIGINT');
     }
   } );

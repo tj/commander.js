@@ -5,12 +5,11 @@ var exec = require('child_process').exec
 var bin = path.join(__dirname, './fixtures/pm')
 
 var proc = exec(bin + ' service', function (error, stdout, stderr) {
-  
 });
 
 setTimeout(function(){
-  process.kill(proc.pid, 'SIGINT');
+  proc.kill('SIGINT');
   setTimeout(function(){
-    should.equal(0, proc.exitCode);
-  },100);
+    should.equal(true, proc.killed);
+  },500);
 },100);
