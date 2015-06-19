@@ -1,14 +1,14 @@
-var exec = require('child_process').exec
-  , path = require('path')
-  , should = require('should');
+var spawn = require('child_process').spawn ,
+    path = require('path') ,
+    should = require('should');
 
 var bin = path.join(__dirname, './fixtures/pm')
 
-var proc = exec(bin + ' service', function (error, stdout, stderr) {
-});
+
+var proc = spawn(bin,['service'], {});
 
 setTimeout(function(){
-  proc.kill('SIGTERM');
+  proc.kill('SIGHUP');
   setTimeout(function(){
     should.equal(true, proc.killed);
   },100);
