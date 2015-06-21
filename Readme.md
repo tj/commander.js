@@ -167,12 +167,14 @@ program
   .version('0.0.1')
   .command('install [name]', 'install one or more packages')
   .command('search [query]', 'search with optional query')
-  .command('list', 'list packages installed')
+  .command('list', 'list packages installed', {isDefault: true})
   .parse(process.argv);
 ```
 
 When `.command()` is invoked with a description argument, no `.action(callback)` should be called to handle sub-commands, otherwise there will be an error. This tells commander that you're going to use separate executables for sub-commands, much like `git(1)` and other popular tools.  
 The commander will try to search the executables in the directory of the entry script (like `./examples/pm`) with the name `program-command`, like `pm-install`, `pm-search`.
+
+Options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the option from the generated help output. Specifying `true` for `opts.isDefault` will run the subcommand if no other subcommand is specified.
 
 If the program is designed to be installed globally, make sure the executables have proper modes, like `755`.
 
