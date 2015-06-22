@@ -1,57 +1,58 @@
 /**
  * Module dependencies.
  */
-
-var util = require('util');
 var program = require('../')
-  , should = require('should');
+    , sinon = require('sinon').sandbox.create()
+    , should = require('should');
 
-var oldProcessExit = process.exit;
-var oldConsoleError = console.error;
+var stubError = sinon.stub(console, 'error');
+var stubExit = sinon.stub(process, 'exit');
 
 program
   .version('0.0.1')
   .option('-p, --pepper', 'add pepper');
-
-var consoleErrors = [];
-process.exit = function () {
-};
-console.error = function () {
-  consoleErrors.push(util.format.apply(util, arguments));
-};
-
 program.parse('node test -m'.split(' '));
-consoleErrors.length.should.equal(3);
+
+stubError.callCount.should.equal(3);
+
 
 // test subcommand
-var consoleErrors = [];
+resetStubStatus();
 program
   .command('sub')
   .action(function () {
   });
 program.parse('node test sub -m'.split(' '));
-consoleErrors.length.should.equal(3);
 
-consoleErrors = [];
+stubError.callCount.should.equal(3);
+stubExit.calledOnce.should.be.true();
+
+// command with `allowUnknownOption`
+resetStubStatus();
 program
   .version('0.0.1')
   .option('-p, --pepper', 'add pepper');
-
 program
   .allowUnknownOption()
   .parse('node test -m'.split(' '));
-consoleErrors.length.should.equal(0);
 
-// test subcommand
-var consoleErrors = [];
+stubError.callCount.should.equal(0);
+stubExit.calledOnce.should.be.false();
+
+// subcommand with `allowUnknownOption`
+resetStubStatus();
 program
-  .command('sub')
+  .command('sub2')
   .allowUnknownOption()
   .action(function () {
   });
-program.parse('node test sub -m'.split(' '));
-consoleErrors.length.should.equal(3);
+program.parse('node test sub2 -m'.split(' '));
 
-process.exit = oldProcessExit;
-console.error = oldConsoleError;
+stubError.callCount.should.equal(0);
+stubExit.calledOnce.should.be.false();
 
+
+function resetStubStatus() {
+  stubError.reset();
+  stubExit.reset();
+}
