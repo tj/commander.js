@@ -86,7 +86,7 @@ function Command(name) {
   this._execs = {};
   this._allowUnknownOption = false;
   this._args = [];
-  this._name = name;
+  this._name = name || '';
 }
 
 /**
