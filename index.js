@@ -184,7 +184,7 @@ Command.prototype.command = function(name, desc, opts) {
 
 Command.prototype.arguments = function (desc) {
   return this.parseExpectedArgs(desc.split(/ +/));
-}
+};
 
 /**
  * Add an implicit `help [cmd]` subcommand
@@ -445,7 +445,7 @@ Command.prototype.parse = function(argv) {
   // guess name
   this._name = this._name || basename(argv[1], '.js');
 
-  // github-style sub-commands with no sub-command
+  // git-style sub-commands with no sub-command
   if (this.executables && argv.length < 3) {
     // this user needs help
     argv.push('--help');
@@ -544,6 +544,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     process.exit(1);
   });
 
+  // Store the reference to the child process
   this.runningCommand = proc;
 };
 
@@ -831,7 +832,7 @@ Command.prototype.version = function(str, flags) {
  */
 
 Command.prototype.description = function(str) {
-  if (0 == arguments.length) return this._description;
+  if (0 === arguments.length) return this._description;
   this._description = str;
   return this;
 };
@@ -910,10 +911,10 @@ Command.prototype.optionHelp = function() {
 
   // Prepend the help information
   return [pad('-h, --help', width) + '  ' + 'output usage information']
-    .concat(this.options.map(function(option) {
-      return pad(option.flags, width) + '  ' + option.description;
+      .concat(this.options.map(function(option) {
+        return pad(option.flags, width) + '  ' + option.description;
       }))
-    .join('\n');
+      .join('\n');
 };
 
 /**
@@ -935,14 +936,10 @@ Command.prototype.commandHelp = function() {
 
     return [
       cmd._name
-        + (cmd._alias
-          ? '|' + cmd._alias
-          : '')
-        + (cmd.options.length
-          ? ' [options]'
-          : '')
+        + (cmd._alias ? '|' + cmd._alias : '')
+        + (cmd.options.length ? ' [options]' : '')
         + ' ' + args
-    , cmd.description()
+      , cmd.description()
     ];
   });
 
@@ -951,11 +948,12 @@ Command.prototype.commandHelp = function() {
   }, 0);
 
   return [
-      ''
+    ''
     , '  Commands:'
     , ''
     , commands.map(function(cmd) {
-      return pad(cmd[0], width) + '  ' + cmd[1];
+      var desc = cmd[1] ? '  ' + cmd[1] : '';
+      return pad(cmd[0], width) + desc;
     }).join('\n').replace(/^/gm, '    ')
     , ''
   ].join('\n');
