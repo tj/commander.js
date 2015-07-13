@@ -436,7 +436,7 @@ Command.prototype.allowUnknownOption = function(arg) {
  * @api public
  */
 
-Command.prototype.parse = function(argv) {
+Command.prototype.parse = function(argv, cb) {
   // implicit help
   if (this.executables) this.addImplicitHelpCommand();
 
@@ -468,7 +468,7 @@ Command.prototype.parse = function(argv) {
     return this.executeSubCommand(argv, args, parsed.unknown);
   }
 
-  return result;
+  return (cb) ? cb(result) : result;
 };
 
 /**
