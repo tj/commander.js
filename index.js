@@ -1005,8 +1005,8 @@ Command.prototype.helpInformation = function() {
   ];
 
   return usage
-    .concat(cmds)
     .concat(desc)
+    .concat(cmds)
     .concat(options)
     .join('\n');
 };
