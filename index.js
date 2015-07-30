@@ -975,9 +975,11 @@ Command.prototype.commandHelp = function() {
 
 Command.prototype.helpInformation = function() {
   var desc = [];
-  if (this._description) {
+  if (this.description) {
     desc = [
-      '  ' + this._description
+      '  Description:'
+      ,''
+      ,'    ' + this.description
       , ''
     ];
   }
