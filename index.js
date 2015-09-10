@@ -376,6 +376,10 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
       defaultValue = fn;
       fn = null;
     }
+  } else if (undefined !== defaultValue) {
+    // If the 3rd arg is a function and a default value is given preassign it so
+    // that the default value is available even if the option isn't passed
+    self[name] = defaultValue;
   }
 
   // preassign default value only for --no-*, [optional], or <required>
