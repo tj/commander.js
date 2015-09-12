@@ -268,14 +268,16 @@ Examples:
 
 ```
 
-## .outputHelp()
+## .outputHelp(cb)
 
 Output help information without exiting.
+Optional callback cb allows post-processing of help text before it is displayed.
 
 If you want to display help by default (e.g. if no command was provided), you can use something like:
 
 ```js
 var program = require('commander');
+var colors = require('colors');
 
 program
   .version('0.0.1')
@@ -283,13 +285,19 @@ program
   .parse(process.argv);
 
   if (!process.argv.slice(2).length) {
-    program.outputHelp();
+    program.outputHelp(make_red);
   }
+
+function make_red(txt)
+{
+  return colors.red(txt); //display the help text in red on the console
+}
 ```
 
-## .help()
+## .help(cb)
 
   Output help information and exit immediately.
+  Optional callback cb allows post-processing of help text before it is displayed.
 
 ## Examples
 
