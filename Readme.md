@@ -288,8 +288,7 @@ program
     program.outputHelp(make_red);
   }
 
-function make_red(txt)
-{
+function make_red(txt) {
   return colors.red(txt); //display the help text in red on the console
 }
 ```
