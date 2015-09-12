@@ -1017,8 +1017,9 @@ Command.prototype.helpInformation = function() {
  * @api public
  */
 
-Command.prototype.outputHelp = function() {
-  process.stdout.write(this.helpInformation());
+Command.prototype.outputHelp = function(cb) {
+  if (!cb) cb = function(passthru) { return passthru; } //supply benign callback if none specified
+  process.stdout.write(cb(this.helpInformation()));
   this.emit('--help');
 };
 
@@ -1028,8 +1029,8 @@ Command.prototype.outputHelp = function() {
  * @api public
  */
 
-Command.prototype.help = function() {
-  this.outputHelp();
+Command.prototype.help = function(cb) {
+  this.outputHelp(cb);
   process.exit();
 };
 
