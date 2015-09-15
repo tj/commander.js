@@ -13,7 +13,7 @@ console.error = function () {
 };
 
 process.on('exit', function (code) {
-  code.should.equal(1);
+  code.should.equal(64);
   info.length.should.equal(3);
   info[1].should.equal("  error: option `-c, --cheese <type>' argument missing");
   process.exit(0)

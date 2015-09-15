@@ -87,6 +87,7 @@ function Command(name) {
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
+  this._code = 64;
 }
 
 /**
@@ -266,7 +267,7 @@ Command.prototype.action = function(fn) {
     var parsed = self.parseOptions(unknown);
 
     // Output help if necessary
-    outputHelpIfNecessary(self, parsed.unknown);
+    outputHelpIfNecessary(self, parsed.unknown, this._code);
 
     // If there are still any unknown options, then we simply
     // die, unless someone asked for help, in which case we give it
@@ -617,7 +618,7 @@ Command.prototype.parseArgs = function(args, unknown) {
       this.emit('*', args);
     }
   } else {
-    outputHelpIfNecessary(this, unknown);
+    outputHelpIfNecessary(this, unknown, this._code);
 
     // If there were no args and we have unknown options,
     // then they are extraneous and we need to error.
@@ -752,7 +753,7 @@ Command.prototype.missingArgument = function(name) {
   console.error();
   console.error("  error: missing required argument `%s'", name);
   console.error();
-  process.exit(1);
+  process.exit(this._code);
 };
 
 /**
@@ -771,7 +772,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
     console.error("  error: option `%s' argument missing", option.flags);
   }
   console.error();
-  process.exit(1);
+  process.exit(this._code);
 };
 
 /**
@@ -786,7 +787,7 @@ Command.prototype.unknownOption = function(flag) {
   console.error();
   console.error("  error: unknown option `%s'", flag);
   console.error();
-  process.exit(1);
+  process.exit(this._code);
 };
 
 /**
@@ -824,6 +825,20 @@ Command.prototype.version = function(str, flags) {
     process.stdout.write(str + '\n');
     process.exit(0);
   });
+  return this;
+};
+
+/**
+ * Set the exit code used for option parsing problems.
+ *
+ * @param {Integer} code
+ * @return {Command} for chaining
+ * @api public
+ */
+
+Command.prototype.exitCode = function(code) {
+  if (0 == arguments.length) return this._code;
+  this._code = code;
   return this;
 };
 
@@ -1031,7 +1046,7 @@ Command.prototype.outputHelp = function(cb) {
 
 Command.prototype.help = function(cb) {
   this.outputHelp(cb);
-  process.exit();
+  process.exit(this._code);
 };
 
 /**
@@ -1070,12 +1085,12 @@ function pad(str, width) {
  * @api private
  */
 
-function outputHelpIfNecessary(cmd, options) {
+function outputHelpIfNecessary(cmd, options, code) {
   options = options || [];
   for (var i = 0; i < options.length; i++) {
     if (options[i] == '--help' || options[i] == '-h') {
       cmd.outputHelp();
-      process.exit(0);
+      process.exit(code);
     }
   }
 }
@@ -1106,4 +1121,3 @@ function exists(file) {
     return false;
   }
 }
-

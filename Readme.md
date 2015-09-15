@@ -95,7 +95,7 @@ program
   .option('-s --size <size>', 'Pizza size', /^(large|medium|small)$/i, 'medium')
   .option('-d --drink [drink]', 'Drink', /^(coke|pepsi|izze)$/i)
   .parse(process.argv);
-  
+
 console.log(' size: %j', program.size);
 console.log(' drink: %j', program.drink);
 ```
@@ -298,6 +298,10 @@ function make_red(txt) {
   Output help information and exit immediately.
   Optional callback cb allows post-processing of help text before it is displayed.
 
+## .exitCode(code)
+
+  Set the exit code for option parsing errors.  Defaults to `64`.
+
 ## Examples
 
 ```js
@@ -348,4 +352,3 @@ More Demos can be found in the [examples](https://github.com/tj/commander.js/tre
 ## License
 
 MIT
-
