@@ -2,6 +2,11 @@ var program = require('../')
 	, sinon = require('sinon').sandbox.create()
   , should = require('should');
 
+process.on('exit', function (code) {
+  code.should.equal(64);
+  process.exit(0)
+});
+
 program.command('mycommand [options]', 'this is my command');
 
 program
