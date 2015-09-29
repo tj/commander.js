@@ -667,16 +667,17 @@ Command.prototype.parseOptions = function(argv) {
   for (var i = 0; i < len; ++i) {
     arg = argv[i];
 
+    if (literal) {
+      args.push(arg);
+      continue;
+    }
+
     // literal args after --
     if ('--' == arg) {
       literal = true;
       continue;
     }
 
-    if (literal) {
-      args.push(arg);
-      continue;
-    }
 
     // find matching Option
     option = this.optionFor(arg);
