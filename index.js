@@ -264,6 +264,9 @@ Command.prototype.action = function(fn) {
     unknown = unknown || [];
 
     var parsed = self.parseOptions(unknown);
+    if(null == parsed) {
+      return;
+    }
 
     // Output help if necessary
     outputHelpIfNecessary(self, parsed.unknown);
@@ -272,23 +275,29 @@ Command.prototype.action = function(fn) {
     // die, unless someone asked for help, in which case we give it
     // to them, and then we die.
     if (parsed.unknown.length > 0) {
-      self.unknownOption(parsed.unknown[0]);
+      return self.unknownOption(parsed.unknown[0]);
     }
 
     // Leftover arguments need to be pushed back. Fixes issue #56
     if (parsed.args.length) args = parsed.args.concat(args);
 
-    self._args.forEach(function(arg, i) {
+    var hasError = self._args.some(function(arg, i) {
       if (arg.required && null == args[i]) {
         self.missingArgument(arg.name);
+        return true;
       } else if (arg.variadic) {
         if (i !== self._args.length - 1) {
           self.variadicArgNotLast(arg.name);
+          return true;
         }
 
         args[i] = args.splice(i);
       }
     });
+
+    if(hasError) {
+      return;
+    }
 
     // Always append ourselves to the end of the arguments,
     // to make sure we match the number of arguments the user
@@ -454,9 +463,15 @@ Command.prototype.parse = function(argv) {
 
   // process argv
   var parsed = this.parseOptions(this.normalize(argv.slice(2)));
+  if(null == parsed) {
+    return;
+  }
   var args = this.args = parsed.args;
 
   var result = this.parseArgs(this.args, parsed.unknown);
+  if(null == result) {
+    return;
+  }
 
   // executable sub-commands
   var name = result.args[0];
@@ -623,6 +638,7 @@ Command.prototype.parseArgs = function(args, unknown) {
     // then they are extraneous and we need to error.
     if (unknown.length > 0) {
       this.unknownOption(unknown[0]);
+      return null;
     }
   }
 
@@ -686,7 +702,10 @@ Command.prototype.parseOptions = function(argv) {
       // requires arg
       if (option.required) {
         arg = argv[++i];
-        if (null == arg) return this.optionMissingArgument(option);
+        if (null == arg) {
+          this.optionMissingArgument(option);
+          return null;
+        }
         this.emit(option.name(), arg);
       // optional arg
       } else if (option.optional) {
