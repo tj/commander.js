@@ -86,7 +86,7 @@ function Command(name) {
   this._execs = {};
   this._allowUnknownOption = false;
   this._args = [];
-  this._name = name;
+  this._name = name || '';
 }
 
 /**
@@ -165,6 +165,7 @@ Command.prototype.command = function(name, desc, opts) {
     cmd.description(desc);
     this.executables = true;
     this._execs[cmd._name] = true;
+    if (opts.isDefault) this.defaultExecutable = cmd._name;
   }
 
   cmd._noHelp = !!opts.noHelp;
@@ -445,8 +446,8 @@ Command.prototype.parse = function(argv) {
   // guess name
   this._name = this._name || basename(argv[1], '.js');
 
-  // git-style sub-commands with no sub-command
-  if (this.executables && argv.length < 3) {
+  // github-style sub-commands with no sub-command
+  if (this.executables && argv.length < 3 && !this.defaultExecutable) {
     // this user needs help
     argv.push('--help');
   }
@@ -460,6 +461,10 @@ Command.prototype.parse = function(argv) {
   // executable sub-commands
   var name = result.args[0];
   if (this._execs[name] && typeof this._execs[name] != "function") {
+    return this.executeSubCommand(argv, args, parsed.unknown);
+  } else if (this.defaultExecutable) {
+    // use the default subcommand
+    args.unshift(name = this.defaultExecutable);
     return this.executeSubCommand(argv, args, parsed.unknown);
   }
 
@@ -1010,8 +1015,9 @@ Command.prototype.helpInformation = function() {
  * @api public
  */
 
-Command.prototype.outputHelp = function() {
-  process.stdout.write(this.helpInformation());
+Command.prototype.outputHelp = function(cb) {
+  if (!cb) cb = function(passthru) { return passthru; } //supply benign callback if none specified
+  process.stdout.write(cb(this.helpInformation()));
   this.emit('--help');
 };
 
@@ -1021,8 +1027,8 @@ Command.prototype.outputHelp = function() {
  * @api public
  */
 
-Command.prototype.help = function() {
-  this.outputHelp();
+Command.prototype.help = function(cb) {
+  this.outputHelp(cb);
   process.exit();
 };
 
