@@ -1,9 +1,9 @@
 /**
  * Module dependencies.
  */
-var program = require('../')
-    , sinon = require('sinon').sandbox.create()
-    , should = require('should');
+var program = require('../'),
+  sinon = require('sinon').sandbox.create(),
+  should = require('should');
 
 var stubError = sinon.stub(console, 'error');
 var stubExit = sinon.stub(process, 'exit');
@@ -20,8 +20,7 @@ stubError.callCount.should.equal(3);
 resetStubStatus();
 program
   .command('sub')
-  .action(function () {
-  });
+  .action(function() {});
 program.parse('node test sub -m'.split(' '));
 
 stubError.callCount.should.equal(3);
@@ -44,8 +43,7 @@ resetStubStatus();
 program
   .command('sub2')
   .allowUnknownOption()
-  .action(function () {
-  });
+  .action(function() {});
 program.parse('node test sub2 -m'.split(' '));
 
 stubError.callCount.should.equal(0);
