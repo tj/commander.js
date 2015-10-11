@@ -1,18 +1,26 @@
-var program = require('../')
-	, sinon = require('sinon').sandbox.create()
-  , should = require('should');
+var program = require('../'),
+  sinon = require('sinon').sandbox.create(),
+  should = require('should');
 
 program.command('mycommand [options]', 'this is my command');
 
 program
-	.command('anothercommand [options]')
-  .action(function() { return; });
+  .command('anothercommand [options]')
+  .action(function() {
+    return;
+  });
 
-program.command('hiddencommand [options]', 'you won\'t see me', { noHelp: true });
+program.command('hiddencommand [options]', 'you won\'t see me', {
+  noHelp: true
+});
 
 program
-	.command('hideagain [options]', null, { noHelp: true })
-  .action(function() { return; });
+  .command('hideagain [options]', null, {
+    noHelp: true
+  })
+  .action(function() {
+    return;
+  });
 
 program.parse(['node', 'test']);
 
@@ -38,9 +46,9 @@ var output = process.stdout.write.args[0];
 sinon.restore();
 
 output[0].should.containEql([
-	'  Commands:',
-	'',
-	'    mycommand [options]       this is my command',
-	'    anothercommand [options]  ',
-	'    help [cmd]                display help for [cmd]'
+  '  Commands:',
+  '',
+  '    mycommand [options]       this is my command',
+  '    anothercommand [options]  ',
+  '    help [cmd]                display help for [cmd]'
 ].join('\n'));

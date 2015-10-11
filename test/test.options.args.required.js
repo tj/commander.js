@@ -2,21 +2,21 @@
  * Module dependencies.
  */
 
-var util = require('util')
-  , program = require('../')
-  , should = require('should');
+var util = require('util'),
+  program = require('../'),
+  should = require('should');
 
 var info = [];
 
-console.error = function () {
+console.error = function() {
   info.push(util.format.apply(util, arguments));
 };
 
-process.on('exit', function (code) {
+process.on('exit', function(code) {
   code.should.equal(1);
   info.length.should.equal(3);
   info[1].should.equal("  error: option `-c, --cheese <type>' argument missing");
-  process.exit(0)
+  process.exit(0);
 });
 
 program
