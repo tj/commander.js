@@ -1,4 +1,3 @@
-
 /**
  * Module dependencies.
  */
@@ -1016,7 +1015,11 @@ Command.prototype.helpInformation = function() {
  */
 
 Command.prototype.outputHelp = function(cb) {
-  if (!cb) cb = function(passthru) { return passthru; } //supply benign callback if none specified
+  if (!cb) {
+    cb = function(passthru) {
+      return passthru;
+    }
+  }
   process.stdout.write(cb(this.helpInformation()));
   this.emit('--help');
 };
