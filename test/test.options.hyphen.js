@@ -5,10 +5,6 @@
 var program = require('../')
   , should = require('should');
 
-function parseRange(str) {
-  return str.split('..').map(Number);
-}
-
 program
   .version('0.0.1')
   .option('-a, --alpha <a>', 'hyphen')

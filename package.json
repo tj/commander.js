@@ -1,6 +1,6 @@
 {
   "name": "commander",
-  "version": "2.8.1",
+  "version": "2.8.2",
   "description": "the complete solution for node.js command-line programs",
   "keywords": [
     "command",
@@ -15,7 +15,7 @@
   },
   "devDependencies": {
     "should": ">= 0.0.1",
-    "sinon": ">= 1.14.1"
+    "sinon": ">=1.17.1"
   },
   "scripts": {
     "test": "make test"
