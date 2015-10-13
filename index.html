@@ -12,10 +12,10 @@ framework for <a href="http://nodejs.org">node.js</a>.
 }</code></pre></div><div id="Command" class="comment"><h1>Command()</h1><div class="description"><p>Initialize a new <code>Command</code>.</p></div><h2>Source</h2><pre><code>function Command(name) {
   this.commands = [];
   this.options = [];
-  this._execs = [];
+  this._execs = {};
   this._allowUnknownOption = false;
   this._args = [];
-  this._name = name;
+  this._name = name || '';
 }</code></pre></div><div id="Command.prototype.command" class="comment"><h1>Command#command()</h1><div class="description"><p>Add command <code>name</code>.</p><p>The <code>.action()</code> callback is invoked when the<br />command <code>name</code> is specified via <strong>ARGV</strong>,<br />and the remaining arguments are applied to the<br />function for access.</p><p>When the <code>name</code> is &quot;*&quot; an un-matched command<br />will be passed as the first arg, followed by<br />the rest of <strong>ARGV</strong> remaining.</p><p>Examples:</p><pre><code> program
    .version(&#39;0.0.1&#39;)
    .option(&#39;-C, --chdir &lt;path&gt;&#39;, &#39;change the working directory&#39;)
@@ -56,7 +56,8 @@ framework for <a href="http://nodejs.org">node.js</a>.
    });
 
  program.parse(process.argv);
-</code></pre></div><h2>Source</h2><pre><code>Command.prototype.command = function(name, desc) {
+</code></pre></div><h2>Source</h2><pre><code>Command.prototype.command = function(name, desc, opts) {
+  opts = opts || {};
   var args = name.split(/ +/);
   var cmd = new Command(args.shift());
 
@@ -64,14 +65,18 @@ framework for <a href="http://nodejs.org">node.js</a>.
     cmd.description(desc);
     this.executables = true;
     this._execs[cmd._name] = true;
+    if (opts.isDefault) this.defaultExecutable = cmd._name;
   }
 
+  cmd._noHelp = !!opts.noHelp;
   this.commands.push(cmd);
   cmd.parseExpectedArgs(args);
   cmd.parent = this;
 
   if (desc) return this;
   return cmd;
+};</code></pre></div><div id="Command.prototype.arguments" class="comment"><h1>Command#arguments()</h1><div class="description"><p>Define argument syntax for the top-level command.</p></div><h2>Source</h2><pre><code>Command.prototype.arguments = function (desc) {
+  return this.parseExpectedArgs(desc.split(/ +/));
 };</code></pre></div><div id="Command.prototype.parseExpectedArgs" class="comment"><h1>Command#parseExpectedArgs()</h1><div class="description"><p>Parse expected <code>args</code>.</p><p>For example <code>[&quot;[type]&quot;]</code> becomes <code>[{ required: false, name: &#39;type&#39; }]</code>.</p></div><h2>Source</h2><pre><code>Command.prototype.parseExpectedArgs = function(args) {
   if (!args.length) return;
   var self = this;
@@ -152,8 +157,10 @@ framework for <a href="http://nodejs.org">node.js</a>.
 
     fn.apply(self, args);
   };
-  this.parent.on(this._name, listener);
-  if (this._alias) this.parent.on(this._alias, listener);
+  var parent = this.parent || this;
+  var name = parent === this ? '*' : this._name;
+  parent.on(name, listener);
+  if (this._alias) parent.on(this._alias, listener);
   return this;
 };</code></pre></div><div id="Command.prototype.option" class="comment"><h1>Command#option()</h1><div class="description"><p>Define option with <code>flags</code>, <code>description</code> and optional<br />coercion <code>fn</code>.</p><p>The <code>flags</code> string should contain both the short and long flags,<br />separated by comma, a pipe or space. The following are all valid<br />all will output this way when <code>--help</code> is used.</p><p>   &quot;-p, --pepper&quot;<br />   &quot;-p|--pepper&quot;<br />   &quot;-p --pepper&quot;</p><p>Examples:</p><pre><code>// simple boolean defaulting to false
 program.option(&#39;-p, --pepper&#39;, &#39;add pepper&#39;);
@@ -189,8 +196,17 @@ program.option(&#39;-c, --cheese [type]&#39;, &#39;add cheese [marble]&#39;);
 
   // default as 3rd arg
   if (typeof fn != 'function') {
-    defaultValue = fn;
-    fn = null;
+    if (fn instanceof RegExp) {
+      var regex = fn;
+      fn = function(val, def) {
+        var m = regex.exec(val);
+        return m ? m[0] : def;
+      }
+    }
+    else {
+      defaultValue = fn;
+      fn = null;
+    }
   }
 
   // preassign default value only for --no-*, [optional], or <required>
@@ -242,6 +258,12 @@ program.option(&#39;-c, --cheese [type]&#39;, &#39;add cheese [marble]&#39;);
   // guess name
   this._name = this._name || basename(argv[1], '.js');
 
+  // github-style sub-commands with no sub-command
+  if (this.executables && argv.length < 3 && !this.defaultExecutable) {
+    // this user needs help
+    argv.push('--help');
+  }
+
   // process argv
   var parsed = this.parseOptions(this.normalize(argv.slice(2)));
   var args = this.args = parsed.args;
@@ -251,6 +273,10 @@ program.option(&#39;-c, --cheese [type]&#39;, &#39;add cheese [marble]&#39;);
   // executable sub-commands
   var name = result.args[0];
   if (this._execs[name] && typeof this._execs[name] != "function") {
+    return this.executeSubCommand(argv, args, parsed.unknown);
+  } else if (this.defaultExecutable) {
+    // use the default subcommand
+    args.unshift(name = this.defaultExecutable);
     return this.executeSubCommand(argv, args, parsed.unknown);
   }
 
@@ -328,12 +354,12 @@ program.option(&#39;-c, --cheese [type]&#39;, &#39;add cheese [marble]&#39;);
     , len = this.options.length;
 
   for (var i = 0 ; i < len; i++) {
-    var key = this.options[i].name();
+    var key = camelcase(this.options[i].name());
     result[key] = key === 'version' ? this._version : this[key];
   }
   return result;
 };</code></pre></div><div id="Command.prototype.description" class="comment"><h1>Command#description()</h1><div class="description"><p>Set the description to <code>str</code>.</p></div><h2>Source</h2><pre><code>Command.prototype.description = function(str) {
-  if (0 == arguments.length) return this._description;
+  if (0 === arguments.length) return this._description;
   this._description = str;
   return this;
 };</code></pre></div><div id="Command.prototype.alias" class="comment"><h1>Command#alias()</h1><div class="description"><p>Set an alias for the command</p></div><h2>Source</h2><pre><code>Command.prototype.alias = function(alias) {
@@ -353,12 +379,17 @@ program.option(&#39;-c, --cheese [type]&#39;, &#39;add cheese [marble]&#39;);
   this._usage = str;
 
   return this;
-};</code></pre></div><div id="Command.prototype.name" class="comment"><h1>Command#name()</h1><div class="description"><p>Get the name of the command</p></div><h2>Source</h2><pre><code>Command.prototype.name = function(name) {
+};</code></pre></div><div id="Command.prototype.name" class="comment"><h1>Command#name()</h1><div class="description"><p>Get the name of the command</p></div><h2>Source</h2><pre><code>Command.prototype.name = function() {
   return this._name;
-};</code></pre></div><div id="Command.prototype.outputHelp" class="comment"><h1>Command#outputHelp()</h1><div class="description"><p>Output help information for this command</p></div><h2>Source</h2><pre><code>Command.prototype.outputHelp = function() {
-  process.stdout.write(this.helpInformation());
+};</code></pre></div><div id="Command.prototype.outputHelp" class="comment"><h1>Command#outputHelp()</h1><div class="description"><p>Output help information for this command</p></div><h2>Source</h2><pre><code>Command.prototype.outputHelp = function(cb) {
+  if (!cb) {
+    cb = function(passthru) {
+      return passthru;
+    }
+  }
+  process.stdout.write(cb(this.helpInformation()));
   this.emit('--help');
-};</code></pre></div><div id="Command.prototype.help" class="comment"><h1>Command#help()</h1><div class="description"><p>Output help information and exit.</p></div><h2>Source</h2><pre><code>Command.prototype.help = function() {
-  this.outputHelp();
+};</code></pre></div><div id="Command.prototype.help" class="comment"><h1>Command#help()</h1><div class="description"><p>Output help information and exit.</p></div><h2>Source</h2><pre><code>Command.prototype.help = function(cb) {
+  this.outputHelp(cb);
   process.exit();
-};</code></pre></div></div><ul id="menu"><li><a href="#exports.Command">exports.Command</a></li><li><a href="#exports.Option">exports.Option</a></li><li><a href="#Option">Option()</a></li><li><a href="#Command">Command()</a></li><li><a href="#Command.prototype.command">Command#command()</a></li><li><a href="#Command.prototype.parseExpectedArgs">Command#parseExpectedArgs()</a></li><li><a href="#Command.prototype.action">Command#action()</a></li><li><a href="#Command.prototype.option">Command#option()</a></li><li><a href="#Command.prototype.allowUnknownOption">Command#allowUnknownOption()</a></li><li><a href="#Command.prototype.parse">Command#parse()</a></li><li><a href="#Command.prototype.parseOptions">Command#parseOptions()</a></li><li><a href="#Command.prototype.opts">Command#opts()</a></li><li><a href="#Command.prototype.description">Command#description()</a></li><li><a href="#Command.prototype.alias">Command#alias()</a></li><li><a href="#Command.prototype.usage">Command#usage()</a></li><li><a href="#Command.prototype.name">Command#name()</a></li><li><a href="#Command.prototype.outputHelp">Command#outputHelp()</a></li><li><a href="#Command.prototype.help">Command#help()</a></li></ul></body></html>
+};</code></pre></div></div><ul id="menu"><li><a href="#exports.Command">exports.Command</a></li><li><a href="#exports.Option">exports.Option</a></li><li><a href="#Option">Option()</a></li><li><a href="#Command">Command()</a></li><li><a href="#Command.prototype.command">Command#command()</a></li><li><a href="#Command.prototype.arguments">Command#arguments()</a></li><li><a href="#Command.prototype.parseExpectedArgs">Command#parseExpectedArgs()</a></li><li><a href="#Command.prototype.action">Command#action()</a></li><li><a href="#Command.prototype.option">Command#option()</a></li><li><a href="#Command.prototype.allowUnknownOption">Command#allowUnknownOption()</a></li><li><a href="#Command.prototype.parse">Command#parse()</a></li><li><a href="#Command.prototype.parseOptions">Command#parseOptions()</a></li><li><a href="#Command.prototype.opts">Command#opts()</a></li><li><a href="#Command.prototype.description">Command#description()</a></li><li><a href="#Command.prototype.alias">Command#alias()</a></li><li><a href="#Command.prototype.usage">Command#usage()</a></li><li><a href="#Command.prototype.name">Command#name()</a></li><li><a href="#Command.prototype.outputHelp">Command#outputHelp()</a></li><li><a href="#Command.prototype.help">Command#help()</a></li></ul></body></html>
