@@ -1,8 +1,10 @@
 # Commander.js
 
- [![Build Status](https://api.travis-ci.org/tj/commander.js.svg)](http://travis-ci.org/tj/commander.js)
+
+[![Build Status](https://api.travis-ci.org/tj/commander.js.svg)](http://travis-ci.org/tj/commander.js)
 [![NPM Version](http://img.shields.io/npm/v/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
 [![NPM Downloads](https://img.shields.io/npm/dm/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
+[![Join the chat at https://gitter.im/tj/commander.js](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tj/commander.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
   The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/tj/commander).  
   [API documentation](http://tj.github.com/commander.js/)
@@ -29,14 +31,14 @@ program
   .version('0.0.1')
   .option('-p, --peppers', 'Add peppers')
   .option('-P, --pineapple', 'Add pineapple')
-  .option('-b, --bbq', 'Add bbq sauce')
+  .option('-b, --bbq-sauce', 'Add bbq sauce')
   .option('-c, --cheese [type]', 'Add the specified type of cheese [marble]', 'marble')
   .parse(process.argv);
 
 console.log('you ordered a pizza with:');
 if (program.peppers) console.log('  - peppers');
 if (program.pineapple) console.log('  - pineapple');
-if (program.bbq) console.log('  - bbq');
+if (program.bbqSauce) console.log('  - bbq');
 console.log('  - %s cheese', program.cheese);
 ```
 
@@ -86,6 +88,18 @@ console.log(' verbosity: %j', program.verbose);
 console.log(' args: %j', program.args);
 ```
 
+## Regular Expression
+```js
+program
+  .version('0.0.1')
+  .option('-s --size <size>', 'Pizza size', /^(large|medium|small)$/i, 'medium')
+  .option('-d --drink [drink]', 'Drink', /^(coke|pepsi|izze)$/i)
+  .parse(process.argv);
+  
+console.log(' size: %j', program.size);
+console.log(' drink: %j', program.drink);
+```
+
 ## Variadic arguments
 
  The last argument of a command can be variadic, and only the last argument.  To make an argument variadic you have to
@@ -118,6 +132,31 @@ program.parse(process.argv);
  An `Array` is used for the value of a variadic argument.  This applies to `program.args` as well as the argument passed
  to your action as demonstrated above.
 
+## Specify the argument syntax
+
+```js
+#!/usr/bin/env node
+
+var program = require('../');
+
+program
+  .version('0.0.1')
+  .arguments('<cmd> [env]')
+  .action(function (cmd, env) {
+     cmdValue = cmd;
+     envValue = env;
+  });
+
+program.parse(process.argv);
+
+if (typeof cmdValue === 'undefined') {
+   console.error('no command given!');
+   process.exit(1);
+}
+console.log('command:', cmdValue);
+console.log('environment:', envValue || "no environment given");
+```
+
 ## Git-style sub-commands
 
 ```js
@@ -128,12 +167,22 @@ program
   .version('0.0.1')
   .command('install [name]', 'install one or more packages')
   .command('search [query]', 'search with optional query')
-  .command('list', 'list packages installed')
+  .command('list', 'list packages installed', {isDefault: true})
   .parse(process.argv);
 ```
 
 When `.command()` is invoked with a description argument, no `.action(callback)` should be called to handle sub-commands, otherwise there will be an error. This tells commander that you're going to use separate executables for sub-commands, much like `git(1)` and other popular tools.  
-The commander will try to find the executable script in __current directory__ with the name `scriptBasename-subcommand`, like `pm-install`, `pm-search`.
+The commander will try to search the executables in the directory of the entry script (like `./examples/pm`) with the name `program-command`, like `pm-install`, `pm-search`.
+
+Options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the option from the generated help output. Specifying `true` for `opts.isDefault` will run the subcommand if no other subcommand is specified.
+
+If the program is designed to be installed globally, make sure the executables have proper modes, like `755`.
+
+### `--harmony`
+
+You can enable `--harmony` option in two ways:
+* Use `#! /usr/bin/env node --harmony` in the sub-commands scripts. Note some os version don’t support this pattern.
+* Use the `--harmony` option when call the command, like `node --harmony examples/pm publish`. The `--harmony` option will be preserved when spawning sub-command process.
 
 ## Automated --help
 
@@ -219,13 +268,35 @@ Examples:
 
 ```
 
-## .outputHelp()
+## .outputHelp(cb)
 
-  Output help information without exiting.
+Output help information without exiting.
+Optional callback cb allows post-processing of help text before it is displayed.
 
-## .help()
+If you want to display help by default (e.g. if no command was provided), you can use something like:
+
+```js
+var program = require('commander');
+var colors = require('colors');
+
+program
+  .version('0.0.1')
+  .command('getstream [url]', 'get stream URL')
+  .parse(process.argv);
+
+  if (!process.argv.slice(2).length) {
+    program.outputHelp(make_red);
+  }
+
+function make_red(txt) {
+  return colors.red(txt); //display the help text in red on the console
+}
+```
+
+## .help(cb)
 
   Output help information and exit immediately.
+  Optional callback cb allows post-processing of help text before it is displayed.
 
 ## Examples
 
@@ -272,29 +343,9 @@ program
 program.parse(process.argv);
 ```
 
-You can see more Demos in the [examples](https://github.com/tj/commander.js/tree/master/examples) directory.
+More Demos can be found in the [examples](https://github.com/tj/commander.js/tree/master/examples) directory.
 
 ## License
 
-(The MIT License)
+MIT
 
-Copyright (c) 2011 TJ Holowaychuk &lt;tj@vision-media.ca&gt;
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-'Software'), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
-IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
-CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
-TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
-SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

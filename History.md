@@ -1,3 +1,42 @@
+
+2.9.0 / 2015-10-13
+==================
+
+  * Add option `isDefault` to set default subcommand #415 @Qix-
+  * Add callback to allow filtering or post-processing of help text #434 @djulien
+  * Fix `undefined` text in help information close #414 #416 @zhiyelee
+
+2.8.1 / 2015-04-22
+==================
+
+ * Back out `support multiline description` Close #396 #397
+
+2.8.0 / 2015-04-07
+==================
+
+  * Add `process.execArg` support, execution args like `--harmony` will be passed to sub-commands #387 @DigitalIO @zhiyelee
+  * Fix bug in Git-style sub-commands #372 @zhiyelee
+  * Allow commands to be hidden from help #383 @tonylukasavage
+  * When git-style sub-commands are in use, yet none are called, display help #382 @claylo
+  * Add ability to specify arguments syntax for top-level command #258 @rrthomas
+  * Support multiline descriptions #208 @zxqfox
+
+2.7.1 / 2015-03-11
+==================
+
+ * Revert #347 (fix collisions when option and first arg have same name) which causes a bug in #367.
+
+2.7.0 / 2015-03-09
+==================
+
+ * Fix git-style bug when installed globally. Close #335 #349 @zhiyelee
+ * Fix collisions when option and first arg have same name. Close #346 #347 @tonylukasavage
+ * Add support for camelCase on `opts()`. Close #353  @nkzawa
+ * Add node.js 0.12 and io.js to travis.yml
+ * Allow RegEx options. #337 @palanik
+ * Fixes exit code when sub-command failing.  Close #260 #332 @pirelenito
+ * git-style `bin` files in $PATH make sense. Close #196 #327  @zhiyelee
+
 2.6.0 / 2014-12-30
 ==================
 

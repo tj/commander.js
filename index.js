@@ -1,13 +1,14 @@
-
 /**
  * Module dependencies.
  */
 
 var EventEmitter = require('events').EventEmitter;
 var spawn = require('child_process').spawn;
+var readlink = require('graceful-readlink').readlinkSync;
 var path = require('path');
 var dirname = path.dirname;
 var basename = path.basename;
+var fs = require('fs');
 
 /**
  * Expose the root command.
@@ -81,10 +82,10 @@ Option.prototype.is = function(arg) {
 function Command(name) {
   this.commands = [];
   this.options = [];
-  this._execs = [];
+  this._execs = {};
   this._allowUnknownOption = false;
   this._args = [];
-  this._name = name;
+  this._name = name || '';
 }
 
 /**
@@ -154,7 +155,8 @@ Command.prototype.__proto__ = EventEmitter.prototype;
  * @api public
  */
 
-Command.prototype.command = function(name, desc) {
+Command.prototype.command = function(name, desc, opts) {
+  opts = opts || {};
   var args = name.split(/ +/);
   var cmd = new Command(args.shift());
 
@@ -162,14 +164,26 @@ Command.prototype.command = function(name, desc) {
     cmd.description(desc);
     this.executables = true;
     this._execs[cmd._name] = true;
+    if (opts.isDefault) this.defaultExecutable = cmd._name;
   }
 
+  cmd._noHelp = !!opts.noHelp;
   this.commands.push(cmd);
   cmd.parseExpectedArgs(args);
   cmd.parent = this;
 
   if (desc) return this;
   return cmd;
+};
+
+/**
+ * Define argument syntax for the top-level command.
+ *
+ * @api public
+ */
+
+Command.prototype.arguments = function (desc) {
+  return this.parseExpectedArgs(desc.split(/ +/));
 };
 
 /**
@@ -286,8 +300,10 @@ Command.prototype.action = function(fn) {
 
     fn.apply(self, args);
   };
-  this.parent.on(this._name, listener);
-  if (this._alias) this.parent.on(this._alias, listener);
+  var parent = this.parent || this;
+  var name = parent === this ? '*' : this._name;
+  parent.on(name, listener);
+  if (this._alias) parent.on(this._alias, listener);
   return this;
 };
 
@@ -348,8 +364,17 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
 
   // default as 3rd arg
   if (typeof fn != 'function') {
-    defaultValue = fn;
-    fn = null;
+    if (fn instanceof RegExp) {
+      var regex = fn;
+      fn = function(val, def) {
+        var m = regex.exec(val);
+        return m ? m[0] : def;
+      }
+    }
+    else {
+      defaultValue = fn;
+      fn = null;
+    }
   }
 
   // preassign default value only for --no-*, [optional], or <required>
@@ -420,6 +445,12 @@ Command.prototype.parse = function(argv) {
   // guess name
   this._name = this._name || basename(argv[1], '.js');
 
+  // github-style sub-commands with no sub-command
+  if (this.executables && argv.length < 3 && !this.defaultExecutable) {
+    // this user needs help
+    argv.push('--help');
+  }
+
   // process argv
   var parsed = this.parseOptions(this.normalize(argv.slice(2)));
   var args = this.args = parsed.args;
@@ -429,6 +460,10 @@ Command.prototype.parse = function(argv) {
   // executable sub-commands
   var name = result.args[0];
   if (this._execs[name] && typeof this._execs[name] != "function") {
+    return this.executeSubCommand(argv, args, parsed.unknown);
+  } else if (this.defaultExecutable) {
+    // use the default subcommand
+    args.unshift(name = this.defaultExecutable);
     return this.executeSubCommand(argv, args, parsed.unknown);
   }
 
@@ -457,24 +492,63 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   }
 
   // executable
-  var dir = dirname(argv[1]);
-  var bin = basename(argv[1], '.js') + '-' + args[0];
+  var f = argv[1];
+  // name of the subcommand, link `pm-install`
+  var bin = basename(f, '.js') + '-' + args[0];
 
-  // check for ./<bin> first
-  var local = path.join(dir, bin);
 
-  // run it
+  // In case of globally installed, get the base dir where executable
+  //  subcommand file should be located at
+  var baseDir
+    , link = readlink(f);
+
+  // when symbolink is relative path
+  if (link !== f && link.charAt(0) !== '/') {
+    link = path.join(dirname(f), link)
+  }
+  baseDir = dirname(link);
+
+  // prefer local `./<bin>` to bin in the $PATH
+  var localBin = path.join(baseDir, bin);
+
+  // whether bin file is a js script with explicit `.js` extension
+  var isExplicitJS = false;
+  if (exists(localBin + '.js')) {
+    bin = localBin + '.js';
+    isExplicitJS = true;
+  } else if (exists(localBin)) {
+    bin = localBin;
+  }
+
   args = args.slice(1);
-  args.unshift(local);
-  var proc = spawn('node', args, { stdio: 'inherit', customFds: [0, 1, 2] });
+
+  var proc;
+  if (process.platform !== 'win32') {
+    if (isExplicitJS) {
+      args.unshift(localBin);
+      // add executable arguments to spawn
+      args = (process.execArgv || []).concat(args);
+
+      proc = spawn('node', args, { stdio: 'inherit', customFds: [0, 1, 2] });
+    } else {
+      proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
+    }
+  } else {
+    args.unshift(localBin);
+    proc = spawn(process.execPath, args, { stdio: 'inherit'});
+  }
+
+  proc.on('close', process.exit.bind(process));
   proc.on('error', function(err) {
     if (err.code == "ENOENT") {
       console.error('\n  %s(1) does not exist, try --help\n', bin);
     } else if (err.code == "EACCES") {
       console.error('\n  %s(1) not executable. try chmod or run with root\n', bin);
     }
+    process.exit(1);
   });
 
+  // Store the reference to the child process
   this.runningCommand = proc;
 };
 
@@ -661,7 +735,7 @@ Command.prototype.opts = function() {
     , len = this.options.length;
 
   for (var i = 0 ; i < len; i++) {
-    var key = this.options[i].name();
+    var key = camelcase(this.options[i].name());
     result[key] = key === 'version' ? this._version : this[key];
   }
   return result;
@@ -708,7 +782,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
  */
 
 Command.prototype.unknownOption = function(flag) {
-  if(this._allowUnknownOption) return;
+  if (this._allowUnknownOption) return;
   console.error();
   console.error("  error: unknown option `%s'", flag);
   console.error();
@@ -762,7 +836,7 @@ Command.prototype.version = function(str, flags) {
  */
 
 Command.prototype.description = function(str) {
-  if (0 == arguments.length) return this._description;
+  if (0 === arguments.length) return this._description;
   this._description = str;
   return this;
 };
@@ -812,7 +886,7 @@ Command.prototype.usage = function(str) {
  * @api public
  */
 
-Command.prototype.name = function(name) {
+Command.prototype.name = function() {
   return this._name;
 };
 
@@ -841,10 +915,10 @@ Command.prototype.optionHelp = function() {
 
   // Prepend the help information
   return [pad('-h, --help', width) + '  ' + 'output usage information']
-    .concat(this.options.map(function(option) {
-      return pad(option.flags, width) + '  ' + option.description;
+      .concat(this.options.map(function(option) {
+        return pad(option.flags, width) + '  ' + option.description;
       }))
-    .join('\n');
+      .join('\n');
 };
 
 /**
@@ -857,21 +931,19 @@ Command.prototype.optionHelp = function() {
 Command.prototype.commandHelp = function() {
   if (!this.commands.length) return '';
 
-  var commands = this.commands.map(function(cmd) {
+  var commands = this.commands.filter(function(cmd) {
+    return !cmd._noHelp;
+  }).map(function(cmd) {
     var args = cmd._args.map(function(arg) {
       return humanReadableArgName(arg);
     }).join(' ');
 
     return [
       cmd._name
-        + (cmd._alias
-          ? '|' + cmd._alias
-          : '')
-        + (cmd.options.length
-          ? ' [options]'
-          : '')
+        + (cmd._alias ? '|' + cmd._alias : '')
+        + (cmd.options.length ? ' [options]' : '')
         + ' ' + args
-    , cmd.description()
+      , cmd.description()
     ];
   });
 
@@ -880,11 +952,12 @@ Command.prototype.commandHelp = function() {
   }, 0);
 
   return [
-      ''
+    ''
     , '  Commands:'
     , ''
     , commands.map(function(cmd) {
-      return pad(cmd[0], width) + '  ' + cmd[1];
+      var desc = cmd[1] ? '  ' + cmd[1] : '';
+      return pad(cmd[0], width) + desc;
     }).join('\n').replace(/^/gm, '    ')
     , ''
   ].join('\n');
@@ -907,7 +980,7 @@ Command.prototype.helpInformation = function() {
   }
 
   var cmdName = this._name;
-  if(this._alias) {
+  if (this._alias) {
     cmdName = cmdName + '|' + this._alias;
   }
   var usage = [
@@ -941,8 +1014,13 @@ Command.prototype.helpInformation = function() {
  * @api public
  */
 
-Command.prototype.outputHelp = function() {
-  process.stdout.write(this.helpInformation());
+Command.prototype.outputHelp = function(cb) {
+  if (!cb) {
+    cb = function(passthru) {
+      return passthru;
+    }
+  }
+  process.stdout.write(cb(this.helpInformation()));
   this.emit('--help');
 };
 
@@ -952,8 +1030,8 @@ Command.prototype.outputHelp = function() {
  * @api public
  */
 
-Command.prototype.help = function() {
-  this.outputHelp();
+Command.prototype.help = function(cb) {
+  this.outputHelp(cb);
   process.exit();
 };
 
@@ -1018,3 +1096,15 @@ function humanReadableArgName(arg) {
     ? '<' + nameOutput + '>'
     : '[' + nameOutput + ']'
 }
+
+// for versions before node v0.8 when there weren't `fs.existsSync`
+function exists(file) {
+  try {
+    if (fs.statSync(file).isFile()) {
+      return true;
+    }
+  } catch (e) {
+    return false;
+  }
+}
+
