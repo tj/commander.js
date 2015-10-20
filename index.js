@@ -209,7 +209,6 @@ Command.prototype.addImplicitHelpCommand = function() {
 
 Command.prototype.parseExpectedArgs = function(args) {
   if (!args.length) return;
-  var self = this;
   args.forEach(function(arg) {
     var argDetails = {
       required: false,
@@ -232,9 +231,9 @@ Command.prototype.parseExpectedArgs = function(args) {
       argDetails.name = argDetails.name.slice(0, -3);
     }
     if (argDetails.name) {
-      self._args.push(argDetails);
+      this._args.push(argDetails);
     }
-  });
+  }.bind(this));
   return this;
 };
 
@@ -256,50 +255,49 @@ Command.prototype.parseExpectedArgs = function(args) {
  */
 
 Command.prototype.action = function(fn) {
-  var self = this;
   var listener = function(args, unknown) {
     // Parse any so-far unknown options
     args = args || [];
     unknown = unknown || [];
 
-    var parsed = self.parseOptions(unknown);
+    var parsed = this.parseOptions(unknown);
 
     // Output help if necessary
-    outputHelpIfNecessary(self, parsed.unknown);
+    outputHelpIfNecessary(this, parsed.unknown);
 
     // If there are still any unknown options, then we simply
     // die, unless someone asked for help, in which case we give it
     // to them, and then we die.
     if (parsed.unknown.length > 0) {
-      self.unknownOption(parsed.unknown[0]);
+      this.unknownOption(parsed.unknown[0]);
     }
 
     // Leftover arguments need to be pushed back. Fixes issue #56
     if (parsed.args.length) args = parsed.args.concat(args);
 
-    self._args.forEach(function(arg, i) {
+    this._args.forEach(function(arg, i) {
       if (arg.required && null == args[i]) {
-        self.missingArgument(arg.name);
+        this.missingArgument(arg.name);
       } else if (arg.variadic) {
-        if (i !== self._args.length - 1) {
-          self.variadicArgNotLast(arg.name);
+        if (i !== this._args.length - 1) {
+          this.variadicArgNotLast(arg.name);
         }
 
         args[i] = args.splice(i);
       }
-    });
+    }.bind(this));
 
     // Always append ourselves to the end of the arguments,
     // to make sure we match the number of arguments the user
     // expects
-    if (self._args.length) {
-      args[self._args.length] = self;
+    if (this._args.length) {
+      args[this._args.length] = this;
     } else {
-      args.push(self);
+      args.push(this);
     }
 
-    fn.apply(self, args);
-  };
+    fn.apply(this, args);
+  }.bind(this);
   var parent = this.parent || this;
   var name = parent === this ? '*' : this._name;
   parent.on(name, listener);
@@ -357,8 +355,7 @@ Command.prototype.action = function(fn) {
  */
 
 Command.prototype.option = function(flags, description, fn, defaultValue) {
-  var self = this
-    , option = new Option(flags, description)
+  var option = new Option(flags, description)
     , oname = option.name()
     , name = camelcase(oname);
 
@@ -382,7 +379,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     // when --no-* we make sure default is true
     if (false == option.bool) defaultValue = true;
     // preassign only if we have a default
-    if (undefined !== defaultValue) self[name] = defaultValue;
+    if (undefined !== defaultValue) this[name] = defaultValue;
   }
 
   // register the option
@@ -392,25 +389,25 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   // and conditionally invoke the callback
   this.on(oname, function(val) {
     // coercion
-    if (null !== val && fn) val = fn(val, undefined === self[name]
+    if (null !== val && fn) val = fn(val, undefined === this[name]
       ? defaultValue
-      : self[name]);
+      : this[name]);
 
     // unassigned or bool
-    if ('boolean' == typeof self[name] || 'undefined' == typeof self[name]) {
+    if ('boolean' == typeof this[name] || 'undefined' == typeof this[name]) {
       // if no value, bool true, and we have a default, then use it!
       if (null == val) {
-        self[name] = option.bool
+        this[name] = option.bool
           ? defaultValue || true
           : false;
       } else {
-        self[name] = val;
+        this[name] = val;
       }
     } else if (null !== val) {
       // reassign
-      self[name] = val;
+      this[name] = val;
     }
-  });
+  }.bind(this));
 
   return this;
 };
