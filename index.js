@@ -4,6 +4,7 @@
 
 var EventEmitter = require('events').EventEmitter;
 var spawn = require('child_process').spawn;
+var fork = require('child_process').fork;
 var readlink = require('graceful-readlink').readlinkSync;
 var path = require('path');
 var dirname = path.dirname;
@@ -523,16 +524,11 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   args = args.slice(1);
 
   var proc;
-  if (process.platform !== 'win32') {
-    if (isExplicitJS) {
-      args.unshift(localBin);
-      // add executable arguments to spawn
-      args = (process.execArgv || []).concat(args);
-
-      proc = spawn('node', args, { stdio: 'inherit', customFds: [0, 1, 2] });
-    } else {
+  
+  if (isExplicitJS) {
+    proc = fork(bin, args, { stdio: 'inherit' });
+  } else if (process.platform !== 'win32') {
       proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
-    }
   } else {
     args.unshift(localBin);
     proc = spawn(process.execPath, args, { stdio: 'inherit'});
