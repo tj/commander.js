@@ -525,10 +525,19 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   var proc;
   
-  if (isExplicitJS) {
+  // if it's explicit js file and child_process.fork work well in current node version.
+  if (isExplicitJS && /^v(?!0\.[0-8]\.)/.test(process.version)) {
     proc = fork(bin, args, { stdio: 'inherit' });
   } else if (process.platform !== 'win32') {
+    if (isExplicitJS) {
+      args.unshift(localBin);
+      // add executable arguments to spawn
+      args = (process.execArgv || []).concat(args);
+
+      proc = spawn('node', args, { stdio: 'inherit', customFds: [0, 1, 2] });
+    } else {
       proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
+    }
   } else {
     args.unshift(localBin);
     proc = spawn(process.execPath, args, { stdio: 'inherit'});
