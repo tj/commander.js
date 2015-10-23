@@ -519,6 +519,11 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     isExplicitJS = true;
   } else if (exists(localBin)) {
     bin = localBin;
+  } else if (__filename === 'nexe.js') {
+    // if it's in nexe.
+    // TODO: find a more elegant and general way.
+    bin = localBin + '.js';
+    isExplicitJS = true;
   }
 
   args = args.slice(1);
