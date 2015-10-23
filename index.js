@@ -501,7 +501,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // In case of globally installed, get the base dir where executable
   //  subcommand file should be located at
   var baseDir
-    , link = readlink(f);
+    , link = fs.existsSync(f) ? readlink(f) : f;
 
   // when symbolink is relative path
   if (link !== f && link.charAt(0) !== '/') {
