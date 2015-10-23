@@ -494,10 +494,16 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   // executable
   var f = argv[1];
-  var executableExists = fs.existsSync(f);
   // name of the subcommand, link `pm-install`
   var bin = basename(f, '.js') + '-' + args[0];
 
+  // harder path for compatibility to node 0.6.
+  var executableExists = true;
+  try {
+    fs.lstatSync(f);
+  } catch (e) {
+    executableExists = false;
+  }
 
   // In case of globally installed, get the base dir where executable
   //  subcommand file should be located at
