@@ -494,6 +494,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   // executable
   var f = argv[1];
+  var executableExists = fs.existsSync(f);
   // name of the subcommand, link `pm-install`
   var bin = basename(f, '.js') + '-' + args[0];
 
@@ -501,7 +502,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // In case of globally installed, get the base dir where executable
   //  subcommand file should be located at
   var baseDir
-    , link = fs.existsSync(f) ? readlink(f) : f;
+    , link = executableExists ? readlink(f) : f;
 
   // when symbolink is relative path
   if (link !== f && link.charAt(0) !== '/') {
@@ -514,16 +515,12 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   // whether bin file is a js script with explicit `.js` extension
   var isExplicitJS = false;
-  if (exists(localBin + '.js')) {
+  if (!executableExists || exists(localBin + '.js')) {
+    // if executable does not exist, it might be packed as exe.
     bin = localBin + '.js';
     isExplicitJS = true;
   } else if (exists(localBin)) {
     bin = localBin;
-  } else if (__filename === 'nexe.js') {
-    // if it's in nexe.
-    // TODO: find a more elegant and general way.
-    bin = localBin + '.js';
-    isExplicitJS = true;
   }
 
   args = args.slice(1);
