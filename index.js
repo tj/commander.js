@@ -84,6 +84,7 @@ function Command(name) {
   this.options = [];
   this._execs = {};
   this._allowUnknownOption = false;
+  this._autoCheckRequiredOptions = false;
   this._args = [];
   this._name = name || '';
 }
@@ -428,6 +429,23 @@ Command.prototype.allowUnknownOption = function(arg) {
 };
 
 /**
+ * Automatically check for missing required options.
+ *
+ * @param {Boolean} arg if `true` or omitted, an error will be thrown
+ * for missing required options.
+ * @api public
+ */
+Command.prototype.autoCheckRequiredOptions = function(arg) {
+    var autoCheck = this._autoCheckRequiredOptions = arguments.length === 0 || arg;
+  
+    for (var i = 0; i < this.commands.length; i++) {
+      this.commands[i].autoCheckRequiredOptions(autoCheck);
+    }
+  
+    return this;
+};
+
+/**
  * Parse `argv`, settings options and invoking commands when defined.
  *
  * @param {Array} argv
@@ -687,6 +705,7 @@ Command.prototype.parseOptions = function(argv) {
       if (option.required) {
         arg = argv[++i];
         if (null == arg) return this.optionMissingArgument(option);
+        option.supplied = true;
         this.emit(option.name(), arg);
       // optional arg
       } else if (option.optional) {
@@ -716,10 +735,13 @@ Command.prototype.parseOptions = function(argv) {
       }
       continue;
     }
+    
 
     // arg
     args.push(arg);
   }
+  
+  this.checkMissingRequiredOptions();
 
   return { args: args, unknown: unknownOptions };
 };
@@ -753,6 +775,34 @@ Command.prototype.missingArgument = function(name) {
   console.error("  error: missing required argument `%s'", name);
   console.error();
   process.exit(1);
+};
+
+/**
+ * Check for missing required options
+ *
+ * @api private
+ */
+
+Command.prototype.checkMissingRequiredOptions = function(name) {
+  if (!this._autoCheckRequiredOptions) return;
+  var missing = [];
+  
+  for (var i = 0, len = this.options.length; i < len; ++i) {
+    var option = this.options[i];
+    if (option.required && !option.supplied) {
+      missing.push(option);
+    }
+  }
+  
+  if (missing.length) {
+    console.error();
+    console.error("  error: missing required option" + (missing.length > 1 ? "s" : ""));
+    for (var i = 0, len = missing.length; i < len; ++i) {
+      console.error("    %s - %s", missing[i].flags, missing[i].description);
+    }
+    console.error();
+    process.exit(1);
+  }
 };
 
 /**
