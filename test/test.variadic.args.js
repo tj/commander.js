@@ -2,12 +2,12 @@
  * Module dependencies.
  */
 
-var program = require('../')
-  , should = require('should')
-  , util = require('util')
-  , programArgs = ['node', 'test', 'mycommand', 'arg0', 'arg1', 'arg2', 'arg3']
-  , requiredArg
-  , variadicArg;
+var program = require('../'),
+  should = require('should'),
+  util = require('util'),
+  programArgs = ['node', 'test', 'mycommand', 'arg0', 'arg1', 'arg2', 'arg3'],
+  requiredArg,
+  variadicArg;
 
 program
   .version('0.0.1')

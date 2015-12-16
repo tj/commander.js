@@ -1,6 +1,6 @@
-var exec = require('child_process').exec
-  , path = require('path')
-  , should = require('should');
+var exec = require('child_process').exec,
+  path = require('path'),
+  should = require('should');
 
 
 

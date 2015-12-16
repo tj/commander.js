@@ -1,5 +1,5 @@
-var program = require('../')
-  , should = require('should');
+var program = require('../'),
+  should = require('should');
 
 var val = false;
 program

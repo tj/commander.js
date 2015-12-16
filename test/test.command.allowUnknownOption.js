@@ -1,9 +1,9 @@
 /**
  * Module dependencies.
  */
-var program = require('../')
-    , sinon = require('sinon').sandbox.create()
-    , should = require('should');
+var program = require('../'),
+    sinon = require('sinon').sandbox.create(),
+    should = require('should');
 
 var stubError = sinon.stub(console, 'error');
 var stubExit = sinon.stub(process, 'exit');

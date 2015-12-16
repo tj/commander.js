@@ -2,9 +2,9 @@
  * Module dependencies.
  */
 
-var util = require('util')
-  , program = require('../')
-  , should = require('should');
+var util = require('util'),
+  program = require('../'),
+  should = require('should');
 
 var info = [];
 

@@ -2,8 +2,8 @@
  * Top-level command syntax.
  */
 
-var program = require('../')
-  , should = require('should');
+var program = require('../'),
+  should = require('should');
 
 var envValue = "";
 var cmdValue = "";
