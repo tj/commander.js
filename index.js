@@ -278,7 +278,7 @@ Command.prototype.action = function(fn) {
     if (parsed.args.length) args = parsed.args.concat(args);
 
     self._args.forEach(function(arg, i) {
-      if (arg.required && null == args[i]) {
+      if (arg.required && null === args[i]) {
         self.missingArgument(arg.name);
       } else if (arg.variadic) {
         if (i !== self._args.length - 1) {
@@ -369,7 +369,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
       fn = function(val, def) {
         var m = regex.exec(val);
         return m ? m[0] : def;
-      }
+      };
     }
     else {
       defaultValue = fn;
@@ -378,9 +378,9 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   }
 
   // preassign default value only for --no-*, [optional], or <required>
-  if (false == option.bool || option.optional || option.required) {
+  if (false === option.bool || option.optional || option.required) {
     // when --no-* we make sure default is true
-    if (false == option.bool) defaultValue = true;
+    if (false === option.bool) defaultValue = true;
     // preassign only if we have a default
     if (undefined !== defaultValue) self[name] = defaultValue;
   }
@@ -399,7 +399,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     // unassigned or bool
     if ('boolean' == typeof self[name] || 'undefined' == typeof self[name]) {
       // if no value, bool true, and we have a default, then use it!
-      if (null == val) {
+      if (null === val) {
         self[name] = option.bool
           ? defaultValue || true
           : false;
@@ -504,7 +504,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   // when symbolink is relative path
   if (link !== f && link.charAt(0) !== '/') {
-    link = path.join(dirname(f), link)
+    link = path.join(dirname(f), link);
   }
   baseDir = dirname(link);
 
@@ -686,12 +686,12 @@ Command.prototype.parseOptions = function(argv) {
       // requires arg
       if (option.required) {
         arg = argv[++i];
-        if (null == arg) return this.optionMissingArgument(option);
+        if (null === arg) return this.optionMissingArgument(option);
         this.emit(option.name(), arg);
       // optional arg
       } else if (option.optional) {
         arg = argv[i+1];
-        if (null == arg || ('-' == arg[0] && '-' != arg)) {
+        if (null === arg || ('-' == arg[0] && '-' != arg)) {
           arg = null;
         } else {
           ++i;
@@ -816,7 +816,7 @@ Command.prototype.variadicArgNotLast = function(name) {
  */
 
 Command.prototype.version = function(str, flags) {
-  if (0 == arguments.length) return this._version;
+  if (0 === arguments.length) return this._version;
   this._version = str;
   flags = flags || '-V, --version';
   this.option(flags, 'output the version number');
@@ -850,7 +850,7 @@ Command.prototype.description = function(str) {
  */
 
 Command.prototype.alias = function(alias) {
-  if (0 == arguments.length) return this._alias;
+  if (0 === arguments.length) return this._alias;
   this._alias = alias;
   return this;
 };
@@ -872,7 +872,7 @@ Command.prototype.usage = function(str) {
     + (this.commands.length ? ' [command]' : '')
     + (this._args.length ? ' ' + args.join(' ') : '');
 
-  if (0 == arguments.length) return this._usage || usage;
+  if (0 === arguments.length) return this._usage || usage;
   this._usage = str;
 
   return this;
@@ -1018,7 +1018,7 @@ Command.prototype.outputHelp = function(cb) {
   if (!cb) {
     cb = function(passthru) {
       return passthru;
-    }
+    };
   }
   process.stdout.write(cb(this.helpInformation()));
   this.emit('--help');
@@ -1094,7 +1094,7 @@ function humanReadableArgName(arg) {
 
   return arg.required
     ? '<' + nameOutput + '>'
-    : '[' + nameOutput + ']'
+    : '[' + nameOutput + ']';
 }
 
 // for versions before node v0.8 when there weren't `fs.existsSync`
@@ -1107,4 +1107,3 @@ function exists(file) {
     return false;
   }
 }
-

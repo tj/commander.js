@@ -9,7 +9,7 @@ program
   .version('0.0.1')
   .option('--string <n>', 'pass a string')
   .option('--string2 <n>', 'pass another string')
-  .option('--num <n>', 'pass a number', Number)
+  .option('--num <n>', 'pass a number', Number);
 
 program.parse('node test --string=Hello --string2 Hello=World --num=5.5'.split(' '));
 program.string.should.equal('Hello');

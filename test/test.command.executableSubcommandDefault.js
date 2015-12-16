@@ -4,7 +4,7 @@ var exec = require('child_process').exec
 
 
 
-var bin = path.join(__dirname, './fixtures/pm')
+var bin = path.join(__dirname, './fixtures/pm');
 // success case
 exec(bin + ' default', function(error, stdout, stderr) {
   stdout.should.equal('default\n');
@@ -39,7 +39,7 @@ exec(bin + ' search', function (error, stdout, stderr) {
 });
 
 // when `bin` is a symbol link for mocking global install
-var bin = path.join(__dirname, './fixtures/pmlink')
+var bin = path.join(__dirname, './fixtures/pmlink');
 // success case
 exec(bin + ' install', function (error, stdout, stderr) {
   stdout.should.equal('install\n');

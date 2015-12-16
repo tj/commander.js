@@ -16,7 +16,7 @@ process.on('exit', function (code) {
   code.should.equal(1);
   info.length.should.equal(3);
   info[1].should.equal("  error: option `-c, --cheese <type>' argument missing");
-  process.exit(0)
+  process.exit(0);
 });
 
 program
