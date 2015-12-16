@@ -1,6 +1,6 @@
-var program = require('../')
-  , sinon = require('sinon').sandbox.create()
-  , should = require('should');
+var program = require('../'),
+  sinon = require('sinon').sandbox.create(),
+  should = require('should');
 
 
 program.command('mycommand [options]');
