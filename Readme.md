@@ -156,6 +156,7 @@ if (typeof cmdValue === 'undefined') {
 console.log('command:', cmdValue);
 console.log('environment:', envValue || "no environment given");
 ```
+Angled brackets (e.g. `<cmd>`) indicate required input. Square brackets (e.g. `[env]`) indicate optional input.
 
 ## Git-style sub-commands
 
