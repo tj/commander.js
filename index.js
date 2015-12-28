@@ -436,7 +436,7 @@ Command.prototype.allowUnknownOption = function(arg) {
  * @api public
  */
 
-Command.prototype.parse = function(argv) {
+Command.prototype.parse = function(argv, commandName) {
   // implicit help
   if (this.executables) this.addImplicitHelpCommand();
 
@@ -444,7 +444,7 @@ Command.prototype.parse = function(argv) {
   this.rawArgs = argv;
 
   // guess name
-  this._name = this._name || basename(argv[1], '.js');
+  this._name = this._name || commandName || basename(argv[1], '.js');
 
   // github-style sub-commands with no sub-command
   if (this.executables && argv.length < 3 && !this.defaultExecutable) {
