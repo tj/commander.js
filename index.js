@@ -943,7 +943,7 @@ Command.prototype.commandHelp = function() {
         + (cmd._alias ? '|' + cmd._alias : '')
         + (cmd.options.length ? ' [options]' : '')
         + ' ' + args
-      , cmd.description()
+      , cmd._description
     ];
   });
 
