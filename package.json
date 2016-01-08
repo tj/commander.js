@@ -28,7 +28,6 @@
     "index.js"
   ],
   "dependencies": {
-    "colors": "^1.1.2",
     "graceful-readlink": ">= 1.0.0"
   }
 }

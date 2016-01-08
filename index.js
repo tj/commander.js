@@ -9,7 +9,6 @@ var path = require('path');
 var dirname = path.dirname;
 var basename = path.basename;
 var fs = require('fs');
-var colors  = require('colors/safe');
 
 /**
  * Expose the root command.
@@ -1077,6 +1076,34 @@ Command.prototype.help = function(cb) {
   this.outputHelp(cb);
   process.exit();
 };
+
+/**
+ * Add colors
+ * @param {Object}
+ */
+
+Command.prototype.colors = function(obj) {
+  for (var key in obj) {
+    if (typeof obj[key] == 'function') {
+      colors[key] = obj[key];
+    }
+  };
+};
+
+/**
+ * Colors
+ *
+ * @param {String} str
+ * @returns {String}
+ */
+
+function colors(str) {
+  return str;
+}
+colors.red = colors;
+colors.green = colors;
+colors.yellow = colors;
+colors.cyan = colors;
 
 /**
  * Add yours translations
