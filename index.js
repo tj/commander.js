@@ -880,6 +880,8 @@ Command.prototype.alias = function(alias) {
 
   if (arguments.length === 0) return command._alias;
 
+  if (alias === command._name) throw new Error('Command alias can\'t be the same as its name');
+
   command._alias = alias;
   return this;
 };
