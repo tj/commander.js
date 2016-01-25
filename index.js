@@ -44,6 +44,7 @@ function Option(flags, description) {
   flags = flags.split(/[ ,|]+/);
   if (flags.length > 1 && !/^[[<]/.test(flags[1])) this.short = flags.shift();
   this.long = flags.shift();
+  this.aliases = flags;
   this.description = description || '';
 }
 
@@ -69,7 +70,7 @@ Option.prototype.name = function() {
  */
 
 Option.prototype.is = function(arg) {
-  return arg == this.short || arg == this.long;
+  return arg == this.short || arg == this.long || this.aliases.indexOf(arg) !== -1;
 };
 
 /**
