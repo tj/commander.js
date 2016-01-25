@@ -1,0 +1,40 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var program = require('../');
+
+program
+  .version('0.0.1')
+  .description('A user manager tool');
+
+
+program
+  .command('users')
+  .description('show user list');
+
+program
+  .command('user <userId>')
+  .description('show user details')
+  .afterSeperator('-----------------------');
+
+
+program
+  .command('admins')
+  .description('show admin list')
+
+program
+  .command('admin <adminId>')
+  .description('show admin detail')
+
+
+program
+  .command('message')
+  .description('show message')
+  .preSeperator('-----------------------');
+
+program
+  .parse(process.argv);
+

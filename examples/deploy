@@ -25,6 +25,7 @@ program
 program
   .command('exec <cmd>')
   .alias('ex')
+  .alias('execute')
   .description('execute the given remote cmd')
   .option("-e, --exec_mode <mode>", "Which exec mode to use")
   .action(function(cmd, options){

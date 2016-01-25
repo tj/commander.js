@@ -56,8 +56,8 @@ function Option(flags, description) {
 
 Option.prototype.name = function() {
   return this.long
-    .replace('--', '')
-    .replace('no-', '');
+      .replace('--', '')
+      .replace('no-', '');
 };
 
 /**
@@ -148,7 +148,7 @@ Command.prototype.__proto__ = EventEmitter.prototype;
  *        });
  *
  *      program.parse(process.argv);
-  *
+ *
  * @param {String} name
  * @param {String} [desc] for git-style sub-commands
  * @return {Command} the new command
@@ -303,7 +303,11 @@ Command.prototype.action = function(fn) {
   var parent = this.parent || this;
   var name = parent === this ? '*' : this._name;
   parent.on(name, listener);
-  if (this._alias) parent.on(this._alias, listener);
+  if (this._aliases && this._aliases.length>0){
+    this._aliases.forEach(function(n){
+      parent.on(n, listener);
+    });
+  }
   return this;
 };
 
@@ -358,9 +362,9 @@ Command.prototype.action = function(fn) {
 
 Command.prototype.option = function(flags, description, fn, defaultValue) {
   var self = this
-    , option = new Option(flags, description)
-    , oname = option.name()
-    , name = camelcase(oname);
+      , option = new Option(flags, description)
+      , oname = option.name()
+      , name = camelcase(oname);
 
   // default as 3rd arg
   if (typeof fn != 'function') {
@@ -393,16 +397,16 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   this.on(oname, function(val) {
     // coercion
     if (null !== val && fn) val = fn(val, undefined === self[name]
-      ? defaultValue
-      : self[name]);
+        ? defaultValue
+        : self[name]);
 
     // unassigned or bool
     if ('boolean' == typeof self[name] || 'undefined' == typeof self[name]) {
       // if no value, bool true, and we have a default, then use it!
       if (null == val) {
         self[name] = option.bool
-          ? defaultValue || true
-          : false;
+            ? defaultValue || true
+            : false;
       } else {
         self[name] = val;
       }
@@ -423,8 +427,8 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
  * @api public
  */
 Command.prototype.allowUnknownOption = function(arg) {
-    this._allowUnknownOption = arguments.length === 0 || arg;
-    return this;
+  this._allowUnknownOption = arguments.length === 0 || arg;
+  return this;
 };
 
 /**
@@ -500,7 +504,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // In case of globally installed, get the base dir where executable
   //  subcommand file should be located at
   var baseDir
-    , link = readlink(f);
+      , link = readlink(f);
 
   // when symbolink is relative path
   if (link !== f && link.charAt(0) !== '/') {
@@ -564,9 +568,9 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
 Command.prototype.normalize = function(args) {
   var ret = []
-    , arg
-    , lastOpt
-    , index;
+      , arg
+      , lastOpt
+      , index;
 
   for (var i = 0, len = args.length; i < len; ++i) {
     arg = args[i];
@@ -656,10 +660,10 @@ Command.prototype.optionFor = function(arg) {
 
 Command.prototype.parseOptions = function(argv) {
   var args = []
-    , len = argv.length
-    , literal
-    , option
-    , arg;
+      , len = argv.length
+      , literal
+      , option
+      , arg;
 
   var unknownOptions = [];
 
@@ -688,7 +692,7 @@ Command.prototype.parseOptions = function(argv) {
         arg = argv[++i];
         if (null == arg) return this.optionMissingArgument(option);
         this.emit(option.name(), arg);
-      // optional arg
+        // optional arg
       } else if (option.optional) {
         arg = argv[i+1];
         if (null == arg || ('-' == arg[0] && '-' != arg)) {
@@ -697,7 +701,7 @@ Command.prototype.parseOptions = function(argv) {
           ++i;
         }
         this.emit(option.name(), arg);
-      // bool
+        // bool
       } else {
         this.emit(option.name());
       }
@@ -732,7 +736,7 @@ Command.prototype.parseOptions = function(argv) {
  */
 Command.prototype.opts = function() {
   var result = {}
-    , len = this.options.length;
+      , len = this.options.length;
 
   for (var i = 0 ; i < len; i++) {
     var key = camelcase(this.options[i].name());
@@ -850,10 +854,39 @@ Command.prototype.description = function(str) {
  */
 
 Command.prototype.alias = function(alias) {
-  if (0 == arguments.length) return this._alias;
-  this._alias = alias;
+  if (0 == arguments.length) return this._aliases;
+  if (!this._aliases) this._aliases = [];
+  this._aliases.push(alias);
   return this;
 };
+
+/**
+ * Set a pre-seperator for the command help
+ *
+ * @param {String} seperator
+ * @return {String|Command}
+ * @api public
+ */
+
+Command.prototype.preSeperator = function(seperator) {
+  if (0 == arguments.length) return this._pre_sep;
+  this._pre_sep = seperator || '';
+  return this;
+};
+/**
+ * Set an after-seperator for the command help
+ *
+ * @param {String} seperator
+ * @return {String|Command}
+ * @api public
+ */
+
+Command.prototype.afterSeperator = function(seperator) {
+  if (0 == arguments.length) return this._after_sep;
+  this._after_sep = seperator || '';
+  return this;
+};
+
 
 /**
  * Set / get the command usage `str`.
@@ -869,8 +902,8 @@ Command.prototype.usage = function(str) {
   });
 
   var usage = '[options]'
-    + (this.commands.length ? ' [command]' : '')
-    + (this._args.length ? ' ' + args.join(' ') : '');
+      + (this.commands.length ? ' [command]' : '')
+      + (this._args.length ? ' ' + args.join(' ') : '');
 
   if (0 == arguments.length) return this._usage || usage;
   this._usage = str;
@@ -939,11 +972,14 @@ Command.prototype.commandHelp = function() {
     }).join(' ');
 
     return [
-      cmd._name
-        + (cmd._alias ? '|' + cmd._alias : '')
-        + (cmd.options.length ? ' [options]' : '')
-        + ' ' + args
-      , cmd._description
+      (cmd._pre_sep ? (cmd._pre_sep+'\n') : '') +
+    cmd._name
+    + ((cmd._aliases && cmd._aliases.length>0) ? ('|' + cmd._aliases.join('|')) : '')
+    + (cmd.options.length ? ' [options]' : '')
+    + ' ' + args
+      ,
+      (cmd.description() || '')
+      + (cmd._after_sep ? ('\n'+cmd._after_sep) : '')
     ];
   });
 
@@ -980,8 +1016,8 @@ Command.prototype.helpInformation = function() {
   }
 
   var cmdName = this._name;
-  if (this._alias) {
-    cmdName = cmdName + '|' + this._alias;
+  if (this._aliases && this._aliases.length>0) {
+    cmdName = cmdName + '|' + this._aliases.join('|');
   }
   var usage = [
     ''
@@ -1002,10 +1038,10 @@ Command.prototype.helpInformation = function() {
   ];
 
   return usage
-    .concat(cmds)
-    .concat(desc)
-    .concat(options)
-    .join('\n');
+      .concat(cmds)
+      .concat(desc)
+      .concat(options)
+      .join('\n');
 };
 
 /**
@@ -1093,8 +1129,8 @@ function humanReadableArgName(arg) {
   var nameOutput = arg.name + (arg.variadic === true ? '...' : '');
 
   return arg.required
-    ? '<' + nameOutput + '>'
-    : '[' + nameOutput + ']'
+      ? '<' + nameOutput + '>'
+      : '[' + nameOutput + ']'
 }
 
 // for versions before node v0.8 when there weren't `fs.existsSync`
