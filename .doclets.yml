@@ -1,4 +1,5 @@
-dir: lib
+files:
+  - index.js
 flavor: jsdoc
 articles:
   - Readme: README.md
