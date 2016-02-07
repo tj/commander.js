@@ -28,9 +28,22 @@ exec(bin + ' search', function (error, stdout, stderr) {
   should.notEqual(0, stderr.length);
 });
 
+// subcommand bin file with explicit coffeescript extension
+// is executed only if coffee command is available
+exec('coffee -v', function (error, stdout, stderr) {
+  if (stdout) {
+    exec(bin + ' info', function (error, stdout, stderr) {
+      stdout.should.equal('info\n');
+    });
+  } else {
+    console.log("\n\nNOTE: test for subcommand bin file with explicit coffeescript\n"+
+                "extension was ignored because the coffee command was not found\n");
+  }
+});
+
 // when `bin` is a symbol link for mocking global install
-var bin = path.join(__dirname, './fixtures/pmlink')
+var symbolBin = path.join(__dirname, './fixtures/pmlink')
 // success case
-exec(bin + ' install', function (error, stdout, stderr) {
+exec(symbolBin + ' install', function (error, stdout, stderr) {
   stdout.should.equal('install\n');
 });
