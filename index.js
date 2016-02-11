@@ -525,7 +525,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   var proc;
   if (process.platform !== 'win32') {
     if (isExplicitJS) {
-      args.unshift(localBin);
+      args.unshift(bin);
       // add executable arguments to spawn
       args = (process.execArgv || []).concat(args);
 
@@ -534,7 +534,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
       proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
     }
   } else {
-    args.unshift(localBin);
+    args.unshift(bin);
     proc = spawn(process.execPath, args, { stdio: 'inherit'});
   }
 
