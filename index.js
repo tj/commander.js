@@ -376,6 +376,9 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
       fn = null;
     }
   }
+  
+  // set default value of the option
+  option.defaultValue = defaultValue;
 
   // preassign default value only for --no-*, [optional], or <required>
   if (false == option.bool || option.optional || option.required) {
@@ -660,6 +663,16 @@ Command.prototype.parseOptions = function(argv) {
     , literal
     , option
     , arg;
+  
+  // if no argv, then check if some required option
+  if (len === 0) {
+    for (var j = 0, optionLen = this.options.length; j < optionLen; ++j) {
+      option = this.options[j];
+      if (option.required && option.defaultValue === undefined) {
+        return this.optionMissingArgument(option);
+      }
+    }
+  }
 
   var unknownOptions = [];
 
