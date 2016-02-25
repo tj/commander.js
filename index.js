@@ -12,7 +12,8 @@ var basename = path.basename;
 var fs = require('fs');
 
 /**
- * Expose the root command. Requiring command returns a `Command` instance.
+ * The root `command` instance. 
+ * Requiring "commander" returns a default initialized `Command` instance.
  * @example
  * var program = require('commander')
  */
