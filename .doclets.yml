@@ -2,4 +2,4 @@ files:
   - index.js
 flavor: jsdoc
 articles:
-  - Readme: README.md
+  - Readme: Readme.md
