@@ -97,6 +97,7 @@ function Command(name) {
 
 /**
  * Inherit from `EventEmitter.prototype`.
+ * @private
  */
 
 Command.prototype.__proto__ = EventEmitter.prototype;
