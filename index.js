@@ -271,7 +271,7 @@ Command.prototype.action = function(fn) {
     // die, unless someone asked for help, in which case we give it
     // to them, and then we die.
     if (parsed.unknown.length > 0) {
-      self.unknownOption(parsed.unknown[0]);
+      self.unknownOption(parsed.unknown);
     }
 
     // Leftover arguments need to be pushed back. Fixes issue #56
@@ -622,7 +622,7 @@ Command.prototype.parseArgs = function(args, unknown) {
     // If there were no args and we have unknown options,
     // then they are extraneous and we need to error.
     if (unknown.length > 0) {
-      this.unknownOption(unknown[0]);
+      this.unknownOption(unknown);
     }
   }
 
@@ -781,10 +781,10 @@ Command.prototype.optionMissingArgument = function(option, flag) {
  * @api private
  */
 
-Command.prototype.unknownOption = function(flag) {
+Command.prototype.unknownOption = function(unknown) {
   if (this._allowUnknownOption) return;
   console.error();
-  console.error("  error: unknown option `%s'", flag);
+  console.error("  error: unknown option `%s'", unknown[0]);
   console.error();
   process.exit(1);
 };
