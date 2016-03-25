@@ -86,6 +86,7 @@ function Command(name) {
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
+  this._data = {};
 }
 
 /**
@@ -382,7 +383,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     // when --no-* we make sure default is true
     if (false == option.bool) defaultValue = true;
     // preassign only if we have a default
-    if (undefined !== defaultValue) self[name] = defaultValue;
+    if (undefined !== defaultValue) self._data[name] = defaultValue;
   }
 
   // register the option
@@ -392,28 +393,67 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   // and conditionally invoke the callback
   this.on(oname, function(val) {
     // coercion
-    if (null !== val && fn) val = fn(val, undefined === self[name]
+    if (null !== val && fn) val = fn(val, undefined === self._data[name]
       ? defaultValue
-      : self[name]);
+      : self._data[name]);
 
     // unassigned or bool
-    if ('boolean' == typeof self[name] || 'undefined' == typeof self[name]) {
+    if ('boolean' == typeof self._data[name] || 'undefined' == typeof self._data[name]) {
       // if no value, bool true, and we have a default, then use it!
       if (null == val) {
-        self[name] = option.bool
+        self._data[name] = option.bool
           ? defaultValue || true
           : false;
       } else {
-        self[name] = val;
+        self._data[name] = val;
       }
     } else if (null !== val) {
       // reassign
-      self[name] = val;
+      self._data[name] = val;
     }
   });
 
   return this;
 };
+
+/**
+ * Getter for parsed options
+ *
+ * @param {String} key if omitted, all parsed options will be returned,
+ * if option does not exist, will return false
+ * @api public
+ */
+Command.prototype.get = function(key){
+    if( typeof key == "undefined" ){
+        return this._data;
+    }
+
+    if( this.data.hasOwnProperty(key) ){
+        return this._data[key];
+    }
+
+    return false;
+};
+
+/**
+ * Has check for parsed options
+ *
+ * @param {String} key if omitted, will return false
+ * @param {Function} cb if omitted, no error will be thrown
+ * if added will return value in callback
+ * @api public
+ */
+Command.prototype.has = function(key, cb){
+    var exists = (typeof this._data[key] !== "undefined");
+    if( typeof cb !== "undefined" ){
+        if( exists ){
+            cb(this.get(key));
+        }
+    }
+
+    return exists;
+};
+ 
 
 /**
  * Allow unknown options on the command line.
@@ -454,6 +494,7 @@ Command.prototype.parse = function(argv) {
   // process argv
   var parsed = this.parseOptions(this.normalize(argv.slice(2)));
   var args = this.args = parsed.args;
+
 
   var result = this.parseArgs(this.args, parsed.unknown);
 
@@ -662,7 +703,7 @@ Command.prototype.parseOptions = function(argv) {
     , arg;
 
   var unknownOptions = [];
-
+  
   // parse options
   for (var i = 0; i < len; ++i) {
     arg = argv[i];
@@ -680,7 +721,7 @@ Command.prototype.parseOptions = function(argv) {
 
     // find matching Option
     option = this.optionFor(arg);
-
+    
     // option is defined
     if (option) {
       // requires arg
