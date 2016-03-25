@@ -428,7 +428,7 @@ Command.prototype.get = function(key){
         return this._data;
     }
 
-    if( this.data.hasOwnProperty(key) ){
+    if( this._data.hasOwnProperty(key) ){
         return this._data[key];
     }
 
@@ -453,7 +453,31 @@ Command.prototype.has = function(key, cb){
 
     return exists;
 };
- 
+
+/**
+ * Has all check for parsed options
+ *
+ * @param {Array} keys if omitted, will return false
+ * @param {Function} cb if omitted, no error will be thrown
+ * if added will return values in callback
+ * @api public
+ */
+Command.prototype.has_all = function(keys, cb){
+    var exists = false;
+    var vals = [];
+    var ret = (typeof cb !== "undefined");
+    for(var i=0; i<keys.length; i++){
+        var exists = this.has(keys[i], function(val){
+            if( ret ) vals.push(val);
+        });
+        
+        if( !exists ) return false;
+    }
+
+    if( ret ) cb.apply(cb, vals);
+
+    return exists;
+}; 
 
 /**
  * Allow unknown options on the command line.
