@@ -19,9 +19,9 @@ program
   .option('-r, --my-long-range <a..b>', 'pass a range', parseRange);
 
 program.parse('node test -i 5.5 -f 5.5 -m 6.5 -u 7.5 -n 15.99 -r 1..5'.split(' '));
-program.myInt.should.equal(5);
-program.myNum.should.equal(15.99);
-program.myFLOAT.should.equal(5.5);
-program.myVeryLongFloat.should.equal(6.5);
-program.myURLCount.should.equal(7.5);
-program.myLongRange.should.eql([1, 5]);
+program.get('myInt').should.equal(5);
+program.get('myNum').should.equal(15.99);
+program.get('myFLOAT').should.equal(5.5);
+program.get('myVeryLongFloat').should.equal(6.5);
+program.get('myURLCount').should.equal(7.5);
+program.get('myLongRange').should.eql([1, 5]);

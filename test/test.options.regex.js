@@ -12,5 +12,5 @@ program
   .option('-d, --drink [drink]', 'Drink', /^(Coke|Pepsi|Izze)$/i)
 
 program.parse('node test -s big -d coke'.split(' '));
-program.size.should.equal('medium');
-program.drink.should.equal('coke');
+program.get('size').should.equal('medium');
+program.get('drink').should.equal('coke');

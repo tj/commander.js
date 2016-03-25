@@ -18,9 +18,9 @@ program.should.have.property('_name', '');
 
 program.parse(['node', 'test']);
 program.should.have.property('_name', 'test');
-program.should.not.have.property('anchovies');
-program.should.not.have.property('onions');
-program.should.not.have.property('olives');
-program.should.have.property('sauce', true);
-program.should.have.property('crust', 'hand-tossed');
-program.should.have.property('cheese', 'mozzarella');
+program._data.should.not.have.property('anchovies');
+program._data.should.not.have.property('onions');
+program._data.should.not.have.property('olives');
+program._data.should.have.property('sauce', true);
+program._data.should.have.property('crust', 'hand-tossed');
+program._data.should.have.property('cheese', 'mozzarella');

@@ -11,6 +11,7 @@ program
   .option('-b, --bar', 'add some bar');
 
 program.parse(['node', 'test', '--foo', '--', '--bar', 'baz']);
-program.foo.should.be.true;
-should.equal(undefined, program.bar);
+program.get('foo').should.be.true;
+should.equal(undefined, program._data.bar);
+program.get('bar').should.be.false;
 program.args.should.eql(['--bar', 'baz']);

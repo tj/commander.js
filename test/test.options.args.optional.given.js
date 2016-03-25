@@ -10,4 +10,4 @@ program
   .option('-c, --cheese [type]', 'optionally specify the type of cheese');
 
 program.parse(['node', 'test', '--cheese', 'feta']);
-program.cheese.should.equal('feta');
+program.get('cheese').should.equal('feta');

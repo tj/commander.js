@@ -12,6 +12,6 @@ program
   .option('--num <n>', 'pass a number', Number)
 
 program.parse('node test --string=Hello --string2 Hello=World --num=5.5'.split(' '));
-program.string.should.equal('Hello');
-program.string2.should.equal('Hello=World');
-program.num.should.equal(5.5);
+program.get('string').should.equal('Hello');
+program.get('string2').should.equal('Hello=World');
+program.get('num').should.equal(5.5);

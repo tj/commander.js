@@ -20,11 +20,11 @@ program
   .option('-T, --no-tests', 'ignore test hook');
 
 program.parse(['node', 'test', '--config', 'conf']);
-program.config.should.equal("conf");
+program.get('config').should.equal("conf");
 cmdValue.should.equal("");
 envValue.should.equal("");
 
 program.parse(['node', 'test', '--config', 'conf1', 'setup', '--setup_mode', 'mode3', 'env1']);
-program.config.should.equal("conf1");
+program.get('config').should.equal("conf1");
 cmdValue.should.equal("setup");
 envValue.should.equal("env1");

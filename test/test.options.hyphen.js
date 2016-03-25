@@ -12,9 +12,9 @@ program
   .option('-c, --charlie <c>', 'hyphen')
 
 program.parse('node test -a - --bravo - --charlie=- - -- - -t1'.split(' '));
-program.alpha.should.equal('-');
-program.bravo.should.equal('-');
-program.charlie.should.equal('-');
+program.get('alpha').should.equal('-');
+program.get('bravo').should.equal('-');
+program.get('charlie').should.equal('-');
 program.args[0].should.equal('-');
 program.args[1].should.equal('-');
 program.args[2].should.equal('-t1');

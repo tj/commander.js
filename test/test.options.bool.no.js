@@ -11,5 +11,6 @@ program
   .option('-c|--no-cheese', 'remove cheese');
 
 program.parse(['node', 'test', '--no-cheese']);
-should.equal(undefined, program.pepper);
-program.cheese.should.be.false;
+should.equal(undefined, program._data.pepper);
+program.get('pepper').should.be.false;
+program.get('cheese').should.be.false;

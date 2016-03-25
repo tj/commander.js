@@ -28,9 +28,9 @@ program
   .option('-c, --collect <str>', 'add a string (can be used multiple times)', collectValues, []);
 
 program.parse('node test -i 5.5 -f 5.5 -n 15.99 -r 1..5 -c foo -c bar -c baz -vvvv --verbose'.split(' '));
-program.int.should.equal(5);
-program.num.should.equal(15.99);
-program.float.should.equal(5.5);
-program.range.should.eql([1, 5]);
-program.collect.should.eql(['foo', 'bar', 'baz']);
-program.verbose.should.equal(5);
+program.get('int').should.equal(5);
+program.get('num').should.equal(15.99);
+program.get('float').should.equal(5.5);
+program.get('range').should.eql([1, 5]);
+program.get('collect').should.eql(['foo', 'bar', 'baz']);
+program.get('verbose').should.equal(5);

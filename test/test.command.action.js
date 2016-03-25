@@ -6,9 +6,8 @@ program
   .command('info [options]')
   .option('-C, --no-color', 'turn off color output')
   .action(function () {
-    val = this.color;
+    val = this.get('color');
   });
 
 program.parse(['node', 'test', 'info']);
-
-program.commands[0].color.should.equal(val);
+program.commands[0].get('color').should.equal(val);

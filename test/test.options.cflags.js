@@ -15,8 +15,8 @@ program
 
 
 program.parse(['node', 'test', '--cflags', '-DDEBUG', '-o', '-xyz']);
-program.should.have.property('cflags', '-DDEBUG');
-program.should.have.property('other');
-program.should.have.property('xother');
-program.should.have.property('yother');
-program.should.have.property('zother');
+program._data.should.have.property('cflags', '-DDEBUG');
+program._data.should.have.property('other');
+program._data.should.have.property('xother');
+program._data.should.have.property('yother');
+program._data.should.have.property('zother');

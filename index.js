@@ -801,7 +801,7 @@ Command.prototype.opts = function() {
 
   for (var i = 0 ; i < len; i++) {
     var key = camelcase(this.options[i].name());
-    result[key] = key === 'version' ? this._version : this[key];
+    result[key] = key === 'version' ? this._version : this._data[key];
   }
   return result;
 };
