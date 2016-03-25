@@ -26,8 +26,5 @@
   },
   "files": [
     "index.js"
-  ],
-  "dependencies": {
-    "graceful-readlink": ">= 1.0.0"
-  }
+  ]
 }

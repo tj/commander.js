@@ -4,7 +4,6 @@
 
 var EventEmitter = require('events').EventEmitter;
 var spawn = require('child_process').spawn;
-var readlink = require('graceful-readlink').readlinkSync;
 var path = require('path');
 var dirname = path.dirname;
 var basename = path.basename;
@@ -500,7 +499,11 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // In case of globally installed, get the base dir where executable
   //  subcommand file should be located at
   var baseDir
-    , link = readlink(f);
+    , link = f;
+
+  if (fs.lstatSync(f).isSymbolicLink()) {
+      f = fs.readlinkSync(f);
+  }
 
   // when symbolink is relative path
   if (link !== f && link.charAt(0) !== '/') {
