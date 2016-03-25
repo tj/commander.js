@@ -502,7 +502,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     , link = f;
 
   if (fs.lstatSync(f).isSymbolicLink()) {
-      f = fs.readlinkSync(f);
+      link = fs.readlinkSync(f);
   }
 
   // when symbolink is relative path
