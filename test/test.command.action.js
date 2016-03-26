@@ -6,6 +6,7 @@ program
   .command('info [options]')
   .option('-C, --no-color', 'turn off color output')
   .action(function () {
+    console.log(this);
     val = this.color;
   });
 

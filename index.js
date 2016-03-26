@@ -667,10 +667,6 @@ Command.prototype.parseOptions = function(argv) {
   for (var i = 0; i < len; ++i) {
     arg = argv[i];
 
-    // make sure args match -
-    if( arg[0] != "-" ){
-        continue;
-    }
 
     // literal args after --
     if ('--' == arg) {
@@ -683,11 +679,13 @@ Command.prototype.parseOptions = function(argv) {
       continue;
     }
 
+    
+
     // find matching Option
     option = this.optionFor(arg);
 
     // option is defined
-    if (option) {
+    if (option && '-' == arg[0]) {
       // requires arg
       if (option.required) {
         arg = argv[++i];
