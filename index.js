@@ -667,6 +667,11 @@ Command.prototype.parseOptions = function(argv) {
   for (var i = 0; i < len; ++i) {
     arg = argv[i];
 
+    // make sure args match -
+    if( arg[0] != "-" ){
+        continue;
+    }
+
     // literal args after --
     if ('--' == arg) {
       literal = true;
