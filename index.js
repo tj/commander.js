@@ -675,7 +675,6 @@ Command.prototype.parseOptions = function(argv) {
   for (var i = 0; i < len; ++i) {
     arg = argv[i];
 
-
     // literal args after --
     if ('--' == arg) {
       literal = true;
@@ -691,7 +690,7 @@ Command.prototype.parseOptions = function(argv) {
     option = this.optionFor(arg);
 
     // option is defined
-    if (option && arg[0] == "-") {
+    if (option && '-' == arg[0]) {
       // requires arg
       if (option.required) {
         arg = argv[++i];
@@ -727,7 +726,7 @@ Command.prototype.parseOptions = function(argv) {
     }
     
     // arg
-    if( "-" !== arg[0] || this._tracking.indexOf(arg) > -1 ) args.push(arg);
+    if( "-" == arg[0] || this._tracking.indexOf(arg) > -1 ) args.push(arg);
   }
   return { args: args, unknown: unknownOptions };
 };
