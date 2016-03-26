@@ -2,6 +2,10 @@
  * Module dependencies.
  */
 
+Array.prototype.diff = function(a) {
+    return this.filter(function(i) {return a.indexOf(i) < 0;});
+};
+
 var EventEmitter = require('events').EventEmitter;
 var spawn = require('child_process').spawn;
 var readlink = require('graceful-readlink').readlinkSync;
@@ -86,6 +90,7 @@ function Command(name) {
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
+  this._tracking = [];
 }
 
 /**
@@ -172,6 +177,8 @@ Command.prototype.command = function(name, desc, opts) {
   cmd.parseExpectedArgs(args);
   cmd.parent = this;
 
+  this._tracking.push(cmd._name);
+
   if (desc) return this;
   return cmd;
 };
@@ -232,6 +239,7 @@ Command.prototype.parseExpectedArgs = function(args) {
       argDetails.name = argDetails.name.slice(0, -3);
     }
     if (argDetails.name) {
+      self._tracking.push(argDetails.name);
       self._args.push(argDetails);
     }
   });
@@ -679,13 +687,11 @@ Command.prototype.parseOptions = function(argv) {
       continue;
     }
 
-    
-
     // find matching Option
     option = this.optionFor(arg);
 
     // option is defined
-    if (option && '-' == arg[0]) {
+    if (option && arg[0] == "-") {
       // requires arg
       if (option.required) {
         arg = argv[++i];
@@ -719,11 +725,10 @@ Command.prototype.parseOptions = function(argv) {
       }
       continue;
     }
-
+    
     // arg
-    args.push(arg);
+    if( "-" !== arg[0] || this._tracking.indexOf(arg) > -1 ) args.push(arg);
   }
-
   return { args: args, unknown: unknownOptions };
 };
 
