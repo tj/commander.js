@@ -3,6 +3,7 @@
   "version": "2.9.0",
   "description": "the complete solution for node.js command-line programs",
   "keywords": [
+    "commander",
     "command",
     "option",
     "parser"
