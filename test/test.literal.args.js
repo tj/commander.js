@@ -14,3 +14,7 @@ program.parse(['node', 'test', '--foo', '--', '--bar', 'baz']);
 program.foo.should.be.true;
 should.equal(undefined, program.bar);
 program.args.should.eql(['--bar', 'baz']);
+
+// subsequent literals are passed-through as args
+program.parse(['node', 'test', '--', 'cmd', '--', '--arg']);
+program.args.should.eql(['cmd', '--', '--arg']);
