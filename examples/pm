@@ -4,6 +4,7 @@ var program = require('..');
 
 program
   .version('0.0.1')
+  .description('Fake package manager')
   .command('install [name]', 'install one or more packages')
   .command('search [query]', 'search with optional query')
   .command('list', 'list packages installed')

@@ -1002,9 +1002,9 @@ Command.prototype.helpInformation = function() {
   ];
 
   return usage
-    .concat(cmds)
     .concat(desc)
     .concat(options)
+    .concat(cmds)
     .join('\n');
 };
 
