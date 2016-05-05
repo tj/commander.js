@@ -994,10 +994,10 @@ Command.prototype.helpInformation = function() {
   if (commandHelp) cmds = [commandHelp];
 
   var options = [
-    '  Options:'
+    ''
+    , '  Options:'
     , ''
     , '' + this.optionHelp().replace(/^/gm, '    ')
-    , ''
     , ''
   ];
 
