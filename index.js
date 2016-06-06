@@ -459,7 +459,14 @@ Command.prototype.parse = function(argv) {
 
   // executable sub-commands
   var name = result.args[0];
+  var aliasCommand = this.commands.filter(function(command) {
+    var _alias = command.alias();
+    return _alias !== undefined && _alias === name;
+  })[0];
   if (this._execs[name] && typeof this._execs[name] != "function") {
+    return this.executeSubCommand(argv, args, parsed.unknown);
+  } else if (aliasCommand !== undefined) {
+    args[0] = aliasCommand._name;
     return this.executeSubCommand(argv, args, parsed.unknown);
   } else if (this.defaultExecutable) {
     // use the default subcommand
@@ -850,8 +857,14 @@ Command.prototype.description = function(str) {
  */
 
 Command.prototype.alias = function(alias) {
-  if (0 == arguments.length) return this._alias;
-  this._alias = alias;
+  var command = undefined;
+  if(this.commands.length == 0) {
+    command = this;
+  } else {
+    command = this.commands[this.commands.length - 1]
+  }
+  if (0 == arguments.length) return command._alias;
+  command._alias = alias;
   return this;
 };
 
