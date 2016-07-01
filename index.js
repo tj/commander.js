@@ -994,17 +994,17 @@ Command.prototype.helpInformation = function() {
   if (commandHelp) cmds = [commandHelp];
 
   var options = [
-    '  Options:'
+    ''
+    , '  Options:'
     , ''
     , '' + this.optionHelp().replace(/^/gm, '    ')
-    , ''
     , ''
   ];
 
   return usage
-    .concat(cmds)
     .concat(desc)
     .concat(options)
+    .concat(cmds)
     .join('\n');
 };
 
