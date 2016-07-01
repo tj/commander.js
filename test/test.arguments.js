@@ -5,23 +5,24 @@
 var program = require('../')
   , should = require('should');
 
-var envValue = "";
-var cmdValue = "";
+var envValue;
+var cmdValue;
 
 program
   .version('0.0.1')
   .arguments('<cmd> [env]')
   .action(function (cmd, env) {
-    cmdValue = cmd;
-    envValue = env;
+    cmdValue = cmd || "";
+    envValue = env || "";
   })
   .option('-C, --chdir <path>', 'change the working directory')
   .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
-  .option('-T, --no-tests', 'ignore test hook');
+  .option('-T, --no-tests', 'ignore test hook')
+  .allowUnknownOption(true);
 
-program.parse(['node', 'test', '--config', 'conf']);
+program.parse(['node', 'test', '--config', 'conf', 'cmd']);
 program.config.should.equal("conf");
-cmdValue.should.equal("");
+cmdValue.should.equal("cmd");
 envValue.should.equal("");
 
 program.parse(['node', 'test', '--config', 'conf1', 'setup', '--setup_mode', 'mode3', 'env1']);

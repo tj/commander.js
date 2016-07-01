@@ -26,7 +26,10 @@ program.args.should.have.lengthOf(3);
 program.args[0].should.eql('arg0');
 program.args[1].should.eql(['arg1', 'arg2', 'arg3']);
 
-program
+//Create fresh instance
+var program2 = new program.Command();
+
+program2
   .version('0.0.1')
   .command('mycommand <variadicArg...> [optionalArg]')
   .action(function (arg0, arg1) {
@@ -47,7 +50,7 @@ console.error = function () {
 };
 
 try {
-  program.parse(programArgs);
+  program2.parse(programArgs);
 
   should.fail(null, null, 'An Error should had been thrown above');
 } catch (err) {

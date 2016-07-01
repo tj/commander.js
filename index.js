@@ -257,53 +257,13 @@ Command.prototype.parseExpectedArgs = function(args) {
 
 Command.prototype.action = function(fn) {
   var self = this;
-  var listener = function(args, unknown) {
-    // Parse any so-far unknown options
-    args = args || [];
-    unknown = unknown || [];
-
-    var parsed = self.parseOptions(unknown);
-
-    // Output help if necessary
-    outputHelpIfNecessary(self, parsed.unknown);
-
-    // If there are still any unknown options, then we simply
-    // die, unless someone asked for help, in which case we give it
-    // to them, and then we die.
-    if (parsed.unknown.length > 0) {
-      self.unknownOption(parsed.unknown[0]);
-    }
-
-    // Leftover arguments need to be pushed back. Fixes issue #56
-    if (parsed.args.length) args = parsed.args.concat(args);
-
-    self._args.forEach(function(arg, i) {
-      if (arg.required && null == args[i]) {
-        self.missingArgument(arg.name);
-      } else if (arg.variadic) {
-        if (i !== self._args.length - 1) {
-          self.variadicArgNotLast(arg.name);
-        }
-
-        args[i] = args.splice(i);
-      }
-    });
-
-    // Always append ourselves to the end of the arguments,
-    // to make sure we match the number of arguments the user
-    // expects
-    if (self._args.length) {
-      args[self._args.length] = self;
-    } else {
-      args.push(self);
-    }
-
+  var listener = function(args) {
+    args.push(self);
     fn.apply(self, args);
   };
   var parent = this.parent || this;
   var name = parent === this ? '*' : this._name;
   parent.on(name, listener);
-  if (this._alias) parent.on(this._alias, listener);
   return this;
 };
 
@@ -455,10 +415,8 @@ Command.prototype.parse = function(argv) {
   var parsed = this.parseOptions(this.normalize(argv.slice(2)));
   var args = this.args = parsed.args;
 
-  var result = this.parseArgs(this.args, parsed.unknown);
-
   // executable sub-commands
-  var name = result.args[0];
+  var name = args[0];
   if (this._execs[name] && typeof this._execs[name] != "function") {
     return this.executeSubCommand(argv, args, parsed.unknown);
   } else if (this.defaultExecutable) {
@@ -467,7 +425,7 @@ Command.prototype.parse = function(argv) {
     return this.executeSubCommand(argv, args, parsed.unknown);
   }
 
-  return result;
+  return this.parseArgs(this.args, parsed.unknown);
 };
 
 /**
@@ -607,26 +565,57 @@ Command.prototype.normalize = function(args) {
  */
 
 Command.prototype.parseArgs = function(args, unknown) {
-  var name;
+  var self = this;
 
-  if (args.length) {
-    name = args[0];
-    if (this.listeners(name).length) {
-      this.emit(args.shift(), args, unknown);
-    } else {
-      this.emit('*', args);
-    }
-  } else {
-    outputHelpIfNecessary(this, unknown);
+  args = args || [];
+  unknown = unknown || [];
 
-    // If there were no args and we have unknown options,
-    // then they are extraneous and we need to error.
-    if (unknown.length > 0) {
-      this.unknownOption(unknown[0]);
+  var cmdName = args[0];
+  if (cmdName) {
+    for (var i = 0; i < self.commands.length; ++i) {
+      var cmd = self.commands[i];
+      if (cmd._name === cmdName || cmd._alias === cmdName) {
+        args.shift();
+        cmd.parseArgs(args, unknown);
+        return self;
+      }
     }
   }
 
-  return this;
+  var parsed = self.parseOptions(unknown);
+
+  // Output help if necessary
+  outputHelpIfNecessary(self, parsed.unknown);
+
+  // If there are still any unknown options, then we simply
+  // die, unless someone asked for help, in which case we give it
+  // to them, and then we die.
+  if (parsed.unknown.length > 0) {
+    self.unknownOption(parsed.unknown[0]);
+  }
+
+  // Leftover arguments need to be pushed back. Fixes issue #56
+  if (parsed.args.length) args = parsed.args.concat(args);
+
+  self._args.forEach(function(arg, i) {
+    if (arg.required && null == args[i]) {
+      self.missingArgument(arg.name);
+    } else if (arg.variadic) {
+      if (i !== self._args.length - 1) {
+        self.variadicArgNotLast(arg.name);
+      }
+
+      args[i] = args.splice(i);
+    }
+    args[i] = args[i] || undefined;
+  });
+
+  var parent = this.parent || this;
+  var name = parent === this ? '*' : this._name;
+
+  parent.emit(name, args);
+
+  return self;
 };
 
 /**
