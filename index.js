@@ -668,13 +668,13 @@ Command.prototype.parseOptions = function(argv) {
     arg = argv[i];
 
     // literal args after --
-    if ('--' == arg) {
-      literal = true;
+    if (literal) {
+      args.push(arg);
       continue;
     }
 
-    if (literal) {
-      args.push(arg);
+    if ('--' == arg) {
+      literal = true;
       continue;
     }
 
