@@ -459,11 +459,24 @@ Command.prototype.parse = function(argv) {
 
   // executable sub-commands
   var name = result.args[0];
+
+  var aliasCommand = null;
+  // check alias of sub commands
+  if (name) {
+    aliasCommand = this.commands.filter(function(command) {
+      return command.alias() === name;
+    })[0];
+  }
+
   if (this._execs[name] && typeof this._execs[name] != "function") {
+    return this.executeSubCommand(argv, args, parsed.unknown);
+  } else if (aliasCommand) {
+    // is alias of a subCommand
+    args[0] = aliasCommand._name;
     return this.executeSubCommand(argv, args, parsed.unknown);
   } else if (this.defaultExecutable) {
     // use the default subcommand
-    args.unshift(name = this.defaultExecutable);
+    args.unshift(this.defaultExecutable);
     return this.executeSubCommand(argv, args, parsed.unknown);
   }
 
@@ -850,8 +863,14 @@ Command.prototype.description = function(str) {
  */
 
 Command.prototype.alias = function(alias) {
-  if (0 == arguments.length) return this._alias;
-  this._alias = alias;
+  var command = this;
+  if(this.commands.length !== 0) {
+    command = this.commands[this.commands.length - 1]
+  }
+
+  if (arguments.length === 0) return command._alias;
+
+  command._alias = alias;
   return this;
 };
 
