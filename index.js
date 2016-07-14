@@ -391,7 +391,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
 
   // when it's passed assign the value
   // and conditionally invoke the callback
-  this.on(oname, function(val) {
+  this.on('--' + oname, function(val) {
     // coercion
     if (null !== val && fn) val = fn(val, undefined === self[name]
       ? defaultValue
@@ -532,7 +532,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   args = args.slice(1);
 
   var proc;
-  
+
   // if it's explicit js file and child_process.fork work well in current node version.
   if (isExplicitJS && /^v(?!0\.[0-8]\.)/.test(process.version)) {
     proc = fork(bin, args, { stdio: 'inherit' });
@@ -700,7 +700,7 @@ Command.prototype.parseOptions = function(argv) {
       if (option.required) {
         arg = argv[++i];
         if (null == arg) return this.optionMissingArgument(option);
-        this.emit(option.name(), arg);
+        this.emit('--' + option.name(), arg);
       // optional arg
       } else if (option.optional) {
         arg = argv[i+1];
@@ -709,10 +709,10 @@ Command.prototype.parseOptions = function(argv) {
         } else {
           ++i;
         }
-        this.emit(option.name(), arg);
+        this.emit('--' + option.name(), arg);
       // bool
       } else {
-        this.emit(option.name());
+        this.emit('--' + option.name());
       }
       continue;
     }
@@ -1120,4 +1120,3 @@ function exists(file) {
     return false;
   }
 }
-
