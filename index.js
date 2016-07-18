@@ -833,7 +833,7 @@ Command.prototype.version = function(str, flags) {
   this._version = str;
   flags = flags || '-V, --version';
   this.option(flags, 'output the version number');
-  this.on('version', function() {
+  this.on('--version', function() {
     process.stdout.write(str + '\n');
     process.exit(0);
   });
