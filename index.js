@@ -824,15 +824,17 @@ Command.prototype.variadicArgNotLast = function(name) {
  *
  * @param {String} str
  * @param {String} flags
+ * @param {String} desc
  * @return {Command} for chaining
  * @api public
  */
 
-Command.prototype.version = function(str, flags) {
+Command.prototype.version = function(str, flags, desc) {
   if (0 == arguments.length) return this._version;
   this._version = str;
   flags = flags || '-V, --version';
-  this.option(flags, 'output the version number');
+  desc = desc || 'output the version number';
+  this.option(flags, desc);
   this.on('version', function() {
     process.stdout.write(str + '\n');
     process.exit(0);
