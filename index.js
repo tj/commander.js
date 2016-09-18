@@ -1039,7 +1039,8 @@ Command.prototype.outputHelp = function(cb) {
       return passthru;
     }
   }
-  process.stdout.write(cb(this.helpInformation()));
+  fs.writeSync(1, cb(this.helpInformation()));
+  fs.fsyncSync(1);
   this.emit('--help');
 };
 
