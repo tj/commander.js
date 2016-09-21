@@ -190,6 +190,7 @@ Command.prototype.command = function(name, desc, opts) {
   opts = opts || {};
   var args = name.split(/ +/);
   var cmd = new Command(args.shift());
+  cmd._env = this._env; // Inherit the environment of your parent.
 
   if (desc) {
     cmd.description(desc);
