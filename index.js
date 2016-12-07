@@ -513,11 +513,12 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // In case of globally installed, get the base dir where executable
   //  subcommand file should be located at
   var baseDir
-    , link = readlink(f);
+    , linkdst
+    , link = f;
 
-  // when symbolink is relative path
-  if (link !== f && link.charAt(0) !== '/') {
-    link = path.join(dirname(f), link)
+  // resolve symlinks recursively
+  while ((linkdst = readlink(link)) !== link) {
+    link = path.resolve(link, '..', linkdst);
   }
   baseDir = dirname(link);
 
