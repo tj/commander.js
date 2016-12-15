@@ -6,6 +6,7 @@ var EventEmitter = require('events').EventEmitter;
 var spawn = require('child_process').spawn;
 var readlink = require('graceful-readlink').readlinkSync;
 var path = require('path');
+var findModuleBin = require('find-module-bin');
 var dirname = path.dirname;
 var basename = path.basename;
 var fs = require('fs');
@@ -532,9 +533,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   } else if (exists(localBin)) {
     bin = localBin;
   } else {
-    console.log('lets see', bin, localBin)
-    bin = require('find-module-bin')(bin)
-    console.log('and', bin, localBin)
+    bin = findModuleBin(bin)
   }
 
   args = args.slice(1);
