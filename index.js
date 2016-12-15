@@ -531,6 +531,10 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     isExplicitJS = true;
   } else if (exists(localBin)) {
     bin = localBin;
+  } else {
+    console.log('lets see', bin, localBin)
+    bin = require('find-module-bin')(bin)
+    console.log('and', bin, localBin)
   }
 
   args = args.slice(1);
