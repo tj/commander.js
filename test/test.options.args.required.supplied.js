@@ -21,6 +21,6 @@ process.on('exit', function (code) {
 
 program
   .version('0.0.1')
-  .option('-c, --cheese \<type\>', 'required to specify the type of cheese');
+  .option('-c, --cheese <type>', 'required to specify the type of cheese');
 
 program.parse(['node', 'test']);

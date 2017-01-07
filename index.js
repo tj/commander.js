@@ -680,6 +680,7 @@ Command.prototype.parseOptions = function(argv) {
     , option
     , searchOption
     , arg
+    , foundOptions = []
     , unspecifiedArgs = [];
 
   var unknownOptions = [];
@@ -700,15 +701,17 @@ Command.prototype.parseOptions = function(argv) {
       continue;
     }
     // find matching Option
+
     option = this.optionFor(arg);
     // option is defined
     if (option) {
       // requires arg
        if (option.required) {
         arg = argv[++i];
-        if (null == arg) {
+         if (null == arg) {
           return this.optionMissingArgument(option);
         }
+        foundOptions.push(option);
         this.emit(option.name(), arg);
         // optional arg
       } else if (option.optional) {
@@ -726,7 +729,6 @@ Command.prototype.parseOptions = function(argv) {
       continue;
 
     }
-    console.log(arg);
 
     // looks like an option
     if (arg.length > 1 && '-' == arg[0]) {
@@ -745,10 +747,9 @@ Command.prototype.parseOptions = function(argv) {
   }
 
   for (i = 0; i < this.options.length; i++) {
-    foundOption = false;
     searchOption = this.options[i];
-    for (j = 0; j < args.length; (j++ && !foundOption)) {
-      if (this.optionFor(args[1])) {
+    for (j = 0; j < foundOptions.length; (j++ && !foundOption)) {
+      if (foundOptions[j] == searchOption) {
         foundOption = true;
       }
     }
