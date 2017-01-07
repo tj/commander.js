@@ -686,7 +686,7 @@ Command.prototype.parseOptions = function(argv) {
   var unknownOptions = [];
 
   // parse options
-  for (var i = 0; i < len; ++i) {
+  for (i = 0; i < len; ++i) {
 
     arg = argv[i];
 
@@ -708,7 +708,7 @@ Command.prototype.parseOptions = function(argv) {
       // requires arg
        if (option.required) {
         arg = argv[++i];
-         if (null == arg) {
+         if ((null == arg) && (!option.defaultValue)){
           return this.optionMissingArgument(option);
         }
         foundOptions.push(option);
@@ -754,6 +754,7 @@ Command.prototype.parseOptions = function(argv) {
       }
     }
     if (!foundOption && (searchOption.required) && !searchOption.defaultValue) {
+      console.log(JSON.stringify(searchOption));
       return this.optionMissingArgument(searchOption);
     }
   }

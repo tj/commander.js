@@ -13,14 +13,12 @@ console.error = function () {
 };
 
 process.on('exit', function (code) {
-  code.should.equal(1);
-  info.length.should.equal(3);
-  info[1].should.equal("  error: option `-c, --cheese <type>' argument missing");
+  code.should.equal(0);
   process.exit(0)
 });
 
 program
   .version('0.0.1')
-  .option('-c, --cheese <type>', 'optionally specify the type of cheese');
+  .option('-c, --cheese <type>', 'optionally specify the type of cheese', 'feta');
 
 program.parse(['node', 'test', '--cheese']);
