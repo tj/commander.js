@@ -385,6 +385,9 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     // preassign only if we have a default
     if (undefined !== defaultValue) {
       self[name] = defaultValue;
+      // Setting default value in the options for required values.
+      // ie, if a value is required but has a default, the args are still
+      // valid even if the value is not specified.
       option.defaultValue= defaultValue;
     }
   }
@@ -458,6 +461,7 @@ Command.prototype.parse = function(argv) {
   // process argv
   var parsed = this.parseOptions(this.normalize(argv.slice(2)));
   var args = this.args = parsed.args;
+
   var result = this.parseArgs(this.args, parsed.unknown);
 
   // executable sub-commands
@@ -680,8 +684,7 @@ Command.prototype.parseOptions = function(argv) {
     , option
     , searchOption
     , arg
-    , foundOptions = []
-    , unspecifiedArgs = [];
+    , foundOptions = [];
 
   var unknownOptions = [];
 
@@ -701,19 +704,22 @@ Command.prototype.parseOptions = function(argv) {
       continue;
     }
     // find matching Option
-
     option = this.optionFor(arg);
+
     // option is defined
     if (option) {
       // requires arg
-       if (option.required) {
+      if (option.required) {
         arg = argv[++i];
+        // If default is specified, required option has been specified and this
+        // arg is valid.
          if ((null == arg) && (!option.defaultValue)){
           return this.optionMissingArgument(option);
         }
+        // Adding this option as an option that is valid, ie found.
         foundOptions.push(option);
         this.emit(option.name(), arg);
-        // optional arg
+      // optional arg
       } else if (option.optional) {
         arg = argv[i+1];
         if (null == arg || ('-' == arg[0] && '-' != arg)) {
@@ -746,15 +752,20 @@ Command.prototype.parseOptions = function(argv) {
     args.push(arg);
   }
 
+  // Go through all options, and check to make sure that the value is either set above
+  // for all required options
   for (i = 0; i < this.options.length; i++) {
+    // For each option that we parsed.
     searchOption = this.options[i];
+    // Go through each options we found a value for and try to match it up.
     for (j = 0; j < foundOptions.length; (j++ && !foundOption)) {
       if (foundOptions[j] == searchOption) {
         foundOption = true;
       }
     }
+    // If it's a required option, and you couldn't find the value associated with the option,
+    // and the option has no default value, throw an exception.
     if (!foundOption && (searchOption.required) && !searchOption.defaultValue) {
-      console.log(JSON.stringify(searchOption));
       return this.optionMissingArgument(searchOption);
     }
   }
