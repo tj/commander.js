@@ -45,6 +45,7 @@ function Option(flags, description) {
   if (flags.length > 1 && !/^[[<]/.test(flags[1])) this.short = flags.shift();
   this.long = flags.shift();
   this.description = description || '';
+  this.defaultValue;
 }
 
 /**
@@ -382,7 +383,10 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     // when --no-* we make sure default is true
     if (false == option.bool) defaultValue = true;
     // preassign only if we have a default
-    if (undefined !== defaultValue) self[name] = defaultValue;
+    if (undefined !== defaultValue) {
+      self[name] = defaultValue;
+      option.defaultValue= defaultValue;
+    }
   }
 
   // register the option
@@ -454,7 +458,6 @@ Command.prototype.parse = function(argv) {
   // process argv
   var parsed = this.parseOptions(this.normalize(argv.slice(2)));
   var args = this.args = parsed.args;
-
   var result = this.parseArgs(this.args, parsed.unknown);
 
   // executable sub-commands
@@ -669,15 +672,21 @@ Command.prototype.optionFor = function(arg) {
 
 Command.prototype.parseOptions = function(argv) {
   var args = []
+    , foundOption
+    , i
+    , j
     , len = argv.length
     , literal
     , option
-    , arg;
+    , searchOption
+    , arg
+    , unspecifiedArgs = [];
 
   var unknownOptions = [];
 
   // parse options
   for (var i = 0; i < len; ++i) {
+
     arg = argv[i];
 
     // literal args after --
@@ -690,18 +699,18 @@ Command.prototype.parseOptions = function(argv) {
       literal = true;
       continue;
     }
-
     // find matching Option
     option = this.optionFor(arg);
-
     // option is defined
     if (option) {
       // requires arg
-      if (option.required) {
+       if (option.required) {
         arg = argv[++i];
-        if (null == arg) return this.optionMissingArgument(option);
+        if (null == arg) {
+          return this.optionMissingArgument(option);
+        }
         this.emit(option.name(), arg);
-      // optional arg
+        // optional arg
       } else if (option.optional) {
         arg = argv[i+1];
         if (null == arg || ('-' == arg[0] && '-' != arg)) {
@@ -715,7 +724,9 @@ Command.prototype.parseOptions = function(argv) {
         this.emit(option.name());
       }
       continue;
+
     }
+    console.log(arg);
 
     // looks like an option
     if (arg.length > 1 && '-' == arg[0]) {
@@ -729,9 +740,21 @@ Command.prototype.parseOptions = function(argv) {
       }
       continue;
     }
-
     // arg
     args.push(arg);
+  }
+
+  for (i = 0; i < this.options.length; i++) {
+    foundOption = false;
+    searchOption = this.options[i];
+    for (j = 0; j < args.length; (j++ && !foundOption)) {
+      if (this.optionFor(args[1])) {
+        foundOption = true;
+      }
+    }
+    if (!foundOption && (searchOption.required) && !searchOption.defaultValue) {
+      return this.optionMissingArgument(searchOption);
+    }
   }
 
   return { args: args, unknown: unknownOptions };
