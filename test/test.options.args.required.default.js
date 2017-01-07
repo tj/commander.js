@@ -12,11 +12,6 @@ console.error = function () {
   info.push(util.format.apply(util, arguments));
 };
 
-process.on('exit', function (code) {
-  code.should.equal(0);
-  process.exit(0)
-});
-
 program
   .version('0.0.1')
   .option('-c, --cheese <type>', 'optionally specify the type of cheese', 'feta');
