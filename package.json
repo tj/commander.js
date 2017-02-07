@@ -29,7 +29,7 @@
     "index.js"
   ],
   "dependencies": {
-    "find-module-bin": "0.0.1",
+    "find-module-bin": "0.0.2",
     "graceful-readlink": ">= 1.0.0"
   }
 }
