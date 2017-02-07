@@ -530,10 +530,10 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   if (exists(localBin + '.js')) {
     bin = localBin + '.js';
     isExplicitJS = true;
-  } else if (exists(localBin)) {
+  } else if (process.platform === 'win32' ? exists(localBin + '.cmd') : exists(localBin)) {
     bin = localBin;
   } else {
-    bin = findModuleBin(bin)
+    bin = findModuleBin(process.platform === 'win32' ? bin + '.cmd' : bin)
   }
 
   args = args.slice(1);
@@ -550,8 +550,15 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
       proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
     }
   } else {
-    args.unshift(bin);
-    proc = spawn(process.execPath, args, { stdio: 'inherit'});
+    if (isExplicitJS) {
+      args.unshift(bin);
+      // add executable arguments to spawn
+      args = (process.execArgv || []).concat(args);
+
+      proc = spawn('node', args, { stdio: 'inherit'});
+    } else {
+      proc = spawn(bin, args, { stdio: 'inherit'});
+    }
   }
 
   proc.on('close', process.exit.bind(process));
