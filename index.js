@@ -991,9 +991,17 @@ Command.prototype.commandHelp = function() {
 
 Command.prototype.helpInformation = function() {
   var desc = [];
-  if (this._description) {
+  var descrString;
+  if (typeof(this.description) === 'string') {
+    descrString = this.description;
+  } else {
+    descrString = this.description();
+  }
+  if (descrString) {
     desc = [
-      '  ' + this._description
+      '  Description:'
+      ,''
+      ,'    ' + descrString
       , ''
     ];
   }
@@ -1021,8 +1029,8 @@ Command.prototype.helpInformation = function() {
   ];
 
   return usage
-    .concat(cmds)
     .concat(desc)
+    .concat(cmds)
     .concat(options)
     .join('\n');
 };
