@@ -1,0 +1,7 @@
+.DS_Store
+*.sock
+.idea
+
+# Development files
+/test/
+/.travis.yml
