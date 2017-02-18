@@ -593,7 +593,7 @@ Command.prototype.normalize = function(args) {
       break;
     } else if (lastOpt && lastOpt.required) {
       ret.push(arg);
-    } else if (arg.length > 1 && '-' == arg[0] && '-' != arg[1]) {
+    } else if (arg.length > 1 && '-' == arg[0] && '-' != arg[1] && !arg.indexOf(' ')) {
       arg.slice(1).split('').forEach(function(c) {
         ret.push('-' + c);
       });
@@ -718,7 +718,7 @@ Command.prototype.parseOptions = function(argv) {
     }
 
     // looks like an option
-    if (arg.length > 1 && '-' == arg[0]) {
+    if (arg.length > 1 && '-' == arg[0] && !arg.indexOf(' ')) {
       unknownOptions.push(arg);
 
       // If the next argument looks like it might be
