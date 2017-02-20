@@ -346,6 +346,12 @@ program.parse(process.argv);
 
 More Demos can be found in the [examples](https://github.com/tj/commander.js/tree/master/examples) directory.
 
+## Other modules
+
+Other modules in the community that may prove useful when used in conjuction with commander:
+
+- [commander.js-errors] - A tiny module for formatting error output to match commander.js default errors
+
 ## License
 
 MIT
