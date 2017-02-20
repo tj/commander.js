@@ -1,5 +1,6 @@
 /**
  * Module dependencies.
+ * @private
  */
 
 var EventEmitter = require('events').EventEmitter;
@@ -11,19 +12,24 @@ var basename = path.basename;
 var fs = require('fs');
 
 /**
- * Expose the root command.
+ * The root `command` instance. 
+ * Requiring "commander" returns a default initialized `Command` instance.
+ * @example
+ * var program = require('commander')
  */
 
 exports = module.exports = new Command();
 
 /**
  * Expose `Command`.
+ * @private
  */
 
 exports.Command = Command;
 
 /**
  * Expose `Option`.
+ * @private
  */
 
 exports.Option = Option;
@@ -33,7 +39,7 @@ exports.Option = Option;
  *
  * @param {String} flags
  * @param {String} description
- * @api public
+ * @api private
  */
 
 function Option(flags, description) {
@@ -74,6 +80,8 @@ Option.prototype.is = function(arg) {
 
 /**
  * Initialize a new `Command`.
+ * @class
+ * @augments EventEmitter
  *
  * @param {String} name
  * @api public
@@ -90,6 +98,7 @@ function Command(name) {
 
 /**
  * Inherit from `EventEmitter.prototype`.
+ * @private
  */
 
 Command.prototype.__proto__ = EventEmitter.prototype;
