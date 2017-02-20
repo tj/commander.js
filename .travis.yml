@@ -11,3 +11,5 @@ node_js:
   - "4"
   - "6"
   - "node"
+before_install:
+  npm install -g npm@'>=1.4.3'
