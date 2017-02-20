@@ -797,7 +797,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
 Command.prototype.unknownOption = function(flag) {
   if (this._allowUnknownOption) return;
   console.error();
-  console.error("  error: unknown option `%s'", flag);
+  console.error("  error: unknown option '%s'", flag);
   console.error();
   process.exit(1);
 };
@@ -811,7 +811,7 @@ Command.prototype.unknownOption = function(flag) {
 
 Command.prototype.variadicArgNotLast = function(name) {
   console.error();
-  console.error("  error: variadic arguments must be last `%s'", name);
+  console.error("  error: variadic arguments must be last '%s'", name);
   console.error();
   process.exit(1);
 };
