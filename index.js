@@ -8,6 +8,7 @@ var readlink = require('graceful-readlink').readlinkSync;
 var path = require('path');
 var dirname = path.dirname;
 var basename = path.basename;
+var extname = path.extname;
 var fs = require('fs');
 
 /**
@@ -443,7 +444,7 @@ Command.prototype.parse = function(argv) {
   this.rawArgs = argv;
 
   // guess name
-  this._name = this._name || basename(argv[1], '.js');
+  this._name = this._name || basename(argv[1], extname(argv[1]));
 
   // github-style sub-commands with no sub-command
   if (this.executables && argv.length < 3 && !this.defaultExecutable) {
@@ -507,7 +508,8 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // executable
   var f = argv[1];
   // name of the subcommand, link `pm-install`
-  var bin = basename(f, '.js') + '-' + args[0];
+  var ext = extname(f);
+  var bin = basename(f, ext) + '-' + args[0];
 
 
   // In case of globally installed, get the base dir where executable
@@ -531,6 +533,8 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     isExplicitJS = true;
   } else if (exists(localBin)) {
     bin = localBin;
+  } else if (exists(localBin + ext)) {
+    bin = localBin + ext
   }
 
   args = args.slice(1);
