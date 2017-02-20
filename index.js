@@ -61,6 +61,17 @@ Option.prototype.name = function() {
 };
 
 /**
+ * Return listen name.
+ *
+ * @return {String}
+ * @api private
+ */
+
+Option.prototype.listenName = function() {
+  return "option_" + this.name()
+}
+
+/**
  * Check if `arg` matches the short or long flag.
  *
  * @param {String} arg
@@ -361,7 +372,6 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     , option = new Option(flags, description)
     , oname = option.name()
     , name = camelcase(oname);
-
   // default as 3rd arg
   if (typeof fn != 'function') {
     if (fn instanceof RegExp) {
@@ -390,7 +400,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
 
   // when it's passed assign the value
   // and conditionally invoke the callback
-  this.on(oname, function(val) {
+  this.on(option.listenName(), function(val) {
     // coercion
     if (null !== val && fn) val = fn(val, undefined === self[name]
       ? defaultValue
@@ -453,10 +463,10 @@ Command.prototype.parse = function(argv) {
 
   // process argv
   var parsed = this.parseOptions(this.normalize(argv.slice(2)));
+
   var args = this.args = parsed.args;
 
   var result = this.parseArgs(this.args, parsed.unknown);
-
   // executable sub-commands
   var name = result.args[0];
 
@@ -603,7 +613,6 @@ Command.prototype.normalize = function(args) {
       ret.push(arg);
     }
   }
-
   return ret;
 };
 
@@ -693,14 +702,13 @@ Command.prototype.parseOptions = function(argv) {
 
     // find matching Option
     option = this.optionFor(arg);
-
     // option is defined
     if (option) {
       // requires arg
       if (option.required) {
         arg = argv[++i];
         if (null == arg) return this.optionMissingArgument(option);
-        this.emit(option.name(), arg);
+        this.emit(option.listenName(), arg);
       // optional arg
       } else if (option.optional) {
         arg = argv[i+1];
@@ -709,10 +717,10 @@ Command.prototype.parseOptions = function(argv) {
         } else {
           ++i;
         }
-        this.emit(option.name(), arg);
+        this.emit(option.listenName(), arg);
       // bool
       } else {
-        this.emit(option.name());
+        this.emit(option.listenName());
       }
       continue;
     }
