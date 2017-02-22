@@ -14,19 +14,19 @@ var fs = require('fs');
  * Expose the root command.
  */
 
-exports = module.exports = new Command();
+module.exports = new Command();
 
 /**
  * Expose `Command`.
  */
 
-exports.Command = Command;
+module.exports.Command = Command;
 
 /**
  * Expose `Option`.
  */
 
-exports.Option = Option;
+module.exports.Option = Option;
 
 /**
  * Initialize a new `Option` with the given `flags` and `description`.
