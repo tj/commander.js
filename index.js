@@ -452,6 +452,7 @@ Command.prototype.parse = function(argv) {
   }
 
   // process argv
+  var options = this.parseOptions(argv.slice(2));
   var parsed = this.parseOptions(this.normalize(argv.slice(2)));
   var args = this.args = parsed.args;
 
@@ -469,15 +470,15 @@ Command.prototype.parse = function(argv) {
   }
 
   if (this._execs[name] && typeof this._execs[name] != "function") {
-    return this.executeSubCommand(argv, args, parsed.unknown);
+    return this.executeSubCommand(argv, args, options.unknown);
   } else if (aliasCommand) {
     // is alias of a subCommand
     args[0] = aliasCommand._name;
-    return this.executeSubCommand(argv, args, parsed.unknown);
+    return this.executeSubCommand(argv, args, options.unknown);
   } else if (this.defaultExecutable) {
     // use the default subcommand
     args.unshift(this.defaultExecutable);
-    return this.executeSubCommand(argv, args, parsed.unknown);
+    return this.executeSubCommand(argv, args, options.unknown);
   }
 
   return result;
