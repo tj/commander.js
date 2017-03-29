@@ -452,7 +452,7 @@ Command.prototype.parse = function(argv) {
   }
 
   // process argv
-  var parsed = this.parseOptions(this.normalize(argv.slice(2)));
+  var parsed = this.parseOptions(this.normalize(argv.slice(1)));
   var args = this.args = parsed.args;
 
   var result = this.parseArgs(this.args, parsed.unknown);
