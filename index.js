@@ -634,7 +634,8 @@ Command.prototype.parseArgs = function(args, unknown) {
 
     // If there were no args and we have unknown options,
     // then they are extraneous and we need to error.
-    if (unknown.length > 0) {
+    // Extend unknown args to defaultExecutable
+    if (unknown.length > 0 && !this.defaultExecutable) {
       this.unknownOption(unknown[0]);
     }
   }
