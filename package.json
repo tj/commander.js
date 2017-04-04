@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "should": ">= 0.0.1 <9.0.0",
-    "sinon": ">=1.17.1 <1.17.7"
+    "sinon": ">=1.17.1 <=1.17.7"
   },
   "scripts": {
     "test": "make test"
