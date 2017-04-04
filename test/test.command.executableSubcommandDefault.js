@@ -7,12 +7,22 @@ var exec = require('child_process').exec
 var bin = path.join(__dirname, './fixtures/pm')
 // success case
 exec(bin + ' default', function(error, stdout, stderr) {
-  stdout.should.equal('default\n');
+  stdout.should.equal('default\n500\n');
 });
 
 // success case (default)
 exec(bin, function(error, stdout, stderr) {
-  stdout.should.equal('default\n');
+  stdout.should.equal('default\n500\n');
+});
+
+// success case (default) and alisa option
+exec(bin + ' -t 600', function(error, stdout, stderr) {
+  stdout.should.equal('default\n600\n');
+});
+
+// success case (default) and option
+exec(bin + ' --test 800', function(error, stdout, stderr) {
+  stdout.should.equal('default\n800\n');
 });
 
 // not exist

@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-var program = require('../../');
+var program = require('..');
 
 program
     .option('-t --test <number>', 'Test inherit subcommand option', /^\d+$/, 500)

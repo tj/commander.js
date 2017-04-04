@@ -8,6 +8,7 @@ program
   .command('search [query]', 'search with optional query').alias('s')
   .command('list', 'list packages installed')
   .command('publish', 'publish the package').alias('p')
+  .command('default', 'default command', { noHelp: true, isDefault: true })
   .parse(process.argv);
 
 // here .command() is invoked with a description,
@@ -25,3 +26,4 @@ program
 //   ./examples/pm install -h
 //   ./examples/pm install foo bar baz
 //   ./examples/pm install foo bar baz --force
+//   ./examples/pm -t 800
