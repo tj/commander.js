@@ -963,7 +963,7 @@ Command.prototype.commandHelp = function() {
         + (cmd._alias ? '|' + cmd._alias : '')
         + (cmd.options.length ? ' \033[35;5;228m[options]' : '')
         + ' \033[34;5;228m' + args
-      , '\033[37;5;228m' + cmd.description()
+      , '\033[37;5;228m' + cmd._description
     ];
   });
 
