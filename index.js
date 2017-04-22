@@ -977,7 +977,7 @@ Command.prototype.commandHelp = function() {
     , commands.map(function(cmd) {
       var desc = cmd[1] ? '  ' + cmd[1] : '';
       return pad(cmd[0], width) + desc;
-    }).join('\n').replace(/^/gm, '    ')
+    }).sort().join('\n').replace(/^/gm, '    ')
     , ''
   ].join('\n');
 };

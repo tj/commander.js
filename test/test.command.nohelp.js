@@ -43,8 +43,8 @@ var output = process.stdout.write.args[0];
 var expect = [
 	'  Commands:',
 	'',
-	'    mycommand [options]       this is my command',
-	'    anothercommand [options]',
-	'    help [cmd]                display help for [cmd]'
+    '    anothercommand [options]',
+    '    help [cmd]                display help for [cmd]',
+    '    mycommand [options]       this is my command'
 ].join('\n');
 output[0].indexOf(expect).should.not.be.equal(-1);
