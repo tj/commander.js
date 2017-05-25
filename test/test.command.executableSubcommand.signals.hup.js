@@ -19,4 +19,4 @@ setTimeout(function () {
     output.should.equal('SIGHUP\n');
   }, 1000);
 
-}, 100);
+}, 2000);

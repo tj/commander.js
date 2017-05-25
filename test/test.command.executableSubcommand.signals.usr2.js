@@ -19,4 +19,4 @@ setTimeout(function () {
     output.should.equal('SIGUSR2\n');
   }, 1000);
 
-}, 100);
+}, 2000);
