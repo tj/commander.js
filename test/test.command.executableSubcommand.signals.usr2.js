@@ -17,6 +17,6 @@ setTimeout(function () {
   // Set another timeout to give 'prog' time to handle the signal
   setTimeout(function() {
     output.should.equal('SIGUSR2\n');
-  }, 100);
+  }, 1000);
 
 }, 100);
