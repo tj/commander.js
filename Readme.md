@@ -137,7 +137,7 @@ program.parse(process.argv);
 ```js
 #!/usr/bin/env node
 
-var program = require('../');
+var program = require('commander');
 
 program
   .version('0.1.0')
@@ -162,7 +162,7 @@ Angled brackets (e.g. `<cmd>`) indicate required input. Square brackets (e.g. `[
 
 ```js
 // file: ./examples/pm
-var program = require('..');
+var program = require('commander');
 
 program
   .version('0.1.0')
