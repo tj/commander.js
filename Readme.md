@@ -28,7 +28,7 @@
 var program = require('commander');
 
 program
-  .version('0.0.1')
+  .version('0.1.0')
   .option('-p, --peppers', 'Add peppers')
   .option('-P, --pineapple', 'Add pineapple')
   .option('-b, --bbq-sauce', 'Add bbq sauce')
@@ -66,7 +66,7 @@ function increaseVerbosity(v, total) {
 }
 
 program
-  .version('0.0.1')
+  .version('0.1.0')
   .usage('[options] <file ...>')
   .option('-i, --integer <n>', 'An integer argument', parseInt)
   .option('-f, --float <n>', 'A float argument', parseFloat)
@@ -91,7 +91,7 @@ console.log(' args: %j', program.args);
 ## Regular Expression
 ```js
 program
-  .version('0.0.1')
+  .version('0.1.0')
   .option('-s --size <size>', 'Pizza size', /^(large|medium|small)$/i, 'medium')
   .option('-d --drink [drink]', 'Drink', /^(coke|pepsi|izze)$/i)
   .parse(process.argv);
@@ -115,7 +115,7 @@ console.log(' drink: %j', program.drink);
 var program = require('commander');
 
 program
-  .version('0.0.1')
+  .version('0.1.0')
   .command('rmdir <dir> [otherDirs...]')
   .action(function (dir, otherDirs) {
     console.log('rmdir %s', dir);
@@ -140,7 +140,7 @@ program.parse(process.argv);
 var program = require('../');
 
 program
-  .version('0.0.1')
+  .version('0.1.0')
   .arguments('<cmd> [env]')
   .action(function (cmd, env) {
      cmdValue = cmd;
@@ -165,7 +165,7 @@ Angled brackets (e.g. `<cmd>`) indicate required input. Square brackets (e.g. `[
 var program = require('..');
 
 program
-  .version('0.0.1')
+  .version('0.1.0')
   .command('install [name]', 'install one or more packages')
   .command('search [query]', 'search with optional query')
   .command('list', 'list packages installed', {isDefault: true})
@@ -227,7 +227,7 @@ You can enable `--harmony` option in two ways:
 var program = require('commander');
 
 program
-  .version('0.0.1')
+  .version('0.1.0')
   .option('-f, --foo', 'enable some foo')
   .option('-b, --bar', 'enable some bar')
   .option('-B, --baz', 'enable some baz');
@@ -281,7 +281,7 @@ var program = require('commander');
 var colors = require('colors');
 
 program
-  .version('0.0.1')
+  .version('0.1.0')
   .command('getstream [url]', 'get stream URL')
   .parse(process.argv);
 
@@ -305,7 +305,7 @@ function make_red(txt) {
 var program = require('commander');
 
 program
-  .version('0.0.1')
+  .version('0.1.0')
   .option('-C, --chdir <path>', 'change the working directory')
   .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
   .option('-T, --no-tests', 'ignore test hook');
