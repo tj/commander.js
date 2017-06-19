@@ -918,7 +918,7 @@ Command.prototype.name = function() {
 
 Command.prototype.largestOptionLength = function() {
   return this.options.reduce(function(max, option) {
-    return Math.max(max, option.flags.length);
+    return Math.max(max, option.flags.replace(/\033\[3\d;5;228m/g, '').length);
   }, 0);
 };
 
@@ -933,7 +933,8 @@ Command.prototype.optionHelp = function() {
   var width = this.largestOptionLength();
 
   // Prepend the help information
-  return [pad('-h, --help', width) + '  ' + 'output usage information']
+  return [pad('\033[32;5;228m-h, --help\033[37;5;228m', width)
+    + '  ' + 'output usage information']
       .concat(this.options.map(function(option) {
         return pad(option.flags, width) + '  ' + option.description;
       }))
@@ -958,21 +959,21 @@ Command.prototype.commandHelp = function() {
     }).join(' ');
 
     return [
-      cmd._name
+      '\033[32;5;228m' + cmd._name
         + (cmd._alias ? '|' + cmd._alias : '')
-        + (cmd.options.length ? ' [options]' : '')
-        + ' ' + args
-      , cmd._description
+        + (cmd.options.length ? ' \033[35;5;228m[options]' : '')
+        + ' \033[34;5;228m' + args
+      , '\033[37;5;228m' + cmd._description
     ];
   });
 
   var width = commands.reduce(function(max, command) {
-    return Math.max(max, command[0].length);
+    return Math.max(max, command[0].replace(/\033\[3\d;5;228m/g, '').length);
   }, 0);
 
   return [
     ''
-    , '  Commands:'
+    , '  \033[33;5;228mCommands:\033[37;5;228m'
     , ''
     , commands.map(function(cmd) {
       var desc = cmd[1] ? '  ' + cmd[1] : '';
@@ -1004,7 +1005,7 @@ Command.prototype.helpInformation = function() {
   }
   var usage = [
     ''
-    ,'  Usage: ' + cmdName + ' ' + this.usage()
+    ,'  \033[33;5;228mUsage:\033[37;5;228m ' + cmdName + ' ' + this.usage()
     , ''
   ];
 
@@ -1013,7 +1014,7 @@ Command.prototype.helpInformation = function() {
   if (commandHelp) cmds = [commandHelp];
 
   var options = [
-    '  Options:'
+    '  \033[33;5;228mOptions:\033[37;5;228m'
     , ''
     , '' + this.optionHelp().replace(/^/gm, '    ')
     , ''
@@ -1078,7 +1079,7 @@ function camelcase(flag) {
  */
 
 function pad(str, width) {
-  var len = Math.max(0, width - str.length);
+  var len = Math.max(0, width - str.replace(/\033\[3\d;5;228m/g, '').length);
   return str + Array(len + 1).join(' ');
 }
 
