@@ -4,6 +4,7 @@
 
 var EventEmitter = require('events').EventEmitter;
 var spawn = require('child_process').spawn;
+var fork = require('child_process').fork;
 var readlink = require('graceful-readlink').readlinkSync;
 var path = require('path');
 var dirname = path.dirname;
@@ -390,7 +391,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
 
   // when it's passed assign the value
   // and conditionally invoke the callback
-  this.on(oname, function(val) {
+  this.on('--' + oname, function(val) {
     // coercion
     if (null !== val && fn) val = fn(val, undefined === self[name]
       ? defaultValue
@@ -435,7 +436,7 @@ Command.prototype.allowUnknownOption = function(arg) {
  * @api public
  */
 
-Command.prototype.parse = function(argv) {
+Command.prototype.parse = function(argv, commandName) {
   // implicit help
   if (this.executables) this.addImplicitHelpCommand();
 
@@ -443,7 +444,7 @@ Command.prototype.parse = function(argv) {
   this.rawArgs = argv;
 
   // guess name
-  this._name = this._name || basename(argv[1], '.js');
+  this._name = this._name || commandName || basename(argv[1], '.js');
 
   // github-style sub-commands with no sub-command
   if (this.executables && argv.length < 3 && !this.defaultExecutable) {
@@ -509,11 +510,18 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // name of the subcommand, link `pm-install`
   var bin = basename(f, '.js') + '-' + args[0];
 
+  // harder path for compatibility to node 0.6.
+  var executableExists = true;
+  try {
+    fs.lstatSync(f);
+  } catch (e) {
+    executableExists = false;
+  }
 
   // In case of globally installed, get the base dir where executable
   //  subcommand file should be located at
   var baseDir
-    , link = readlink(f);
+    , link = executableExists ? readlink(f) : f;
 
   // when symbolink is relative path
   if (link !== f && link.charAt(0) !== '/') {
@@ -526,7 +534,8 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   // whether bin file is a js script with explicit `.js` extension
   var isExplicitJS = false;
-  if (exists(localBin + '.js')) {
+  if (!executableExists || exists(localBin + '.js')) {
+    // if executable does not exist, it might be packed as exe.
     bin = localBin + '.js';
     isExplicitJS = true;
   } else if (exists(localBin)) {
@@ -536,7 +545,11 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   args = args.slice(1);
 
   var proc;
-  if (process.platform !== 'win32') {
+
+  // if it's explicit js file and child_process.fork work well in current node version.
+  if (isExplicitJS && /^v(?!0\.[0-8]\.)/.test(process.version)) {
+    proc = fork(bin, args, { stdio: 'inherit' });
+  } else if (process.platform !== 'win32') {
     if (isExplicitJS) {
       args.unshift(bin);
       // add executable arguments to spawn
@@ -700,7 +713,7 @@ Command.prototype.parseOptions = function(argv) {
       if (option.required) {
         arg = argv[++i];
         if (null == arg) return this.optionMissingArgument(option);
-        this.emit(option.name(), arg);
+        this.emit('--' + option.name(), arg);
       // optional arg
       } else if (option.optional) {
         arg = argv[i+1];
@@ -709,10 +722,10 @@ Command.prototype.parseOptions = function(argv) {
         } else {
           ++i;
         }
-        this.emit(option.name(), arg);
+        this.emit('--' + option.name(), arg);
       // bool
       } else {
-        this.emit(option.name());
+        this.emit('--' + option.name());
       }
       continue;
     }
@@ -833,7 +846,7 @@ Command.prototype.version = function(str, flags) {
   this._version = str;
   flags = flags || '-V, --version';
   this.option(flags, 'output the version number');
-  this.on('version', function() {
+  this.on('--version', function() {
     process.stdout.write(str + '\n');
     process.exit(0);
   });
@@ -1126,4 +1139,3 @@ function exists(file) {
     return false;
   }
 }
-
