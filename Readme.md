@@ -6,7 +6,7 @@
 [![NPM Downloads](https://img.shields.io/npm/dm/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
 [![Join the chat at https://gitter.im/tj/commander.js](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tj/commander.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-  The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/tj/commander).  
+  The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/commander-rb/commander).  
   [API documentation](http://tj.github.com/commander.js/)
 
 
@@ -349,4 +349,3 @@ More Demos can be found in the [examples](https://github.com/tj/commander.js/tre
 ## License
 
 MIT
-
