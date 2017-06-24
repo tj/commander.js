@@ -16,10 +16,12 @@
   },
   "devDependencies": {
     "should": ">= 0.0.1 <9.0.0",
-    "sinon": ">=1.17.1"
+    "sinon": ">=1.17.1",
+    "typescript": "^2.3.4"
   },
   "scripts": {
-    "test": "make test"
+    "test": "make test && npm run test-typings",
+    "test-typings": "node_modules/typescript/bin/tsc -p tsconfig.json"
   },
   "main": "index",
   "engines": {
@@ -30,5 +32,6 @@
   ],
   "dependencies": {
     "graceful-readlink": ">= 1.0.0"
-  }
+  },
+  "typings": "typings/index.d.ts"
 }
