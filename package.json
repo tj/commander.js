@@ -31,6 +31,7 @@
     "index.js"
   ],
   "dependencies": {
+    "@types/node": "^8.0.2",
     "graceful-readlink": ">= 1.0.0"
   },
   "typings": "typings/index.d.ts"
