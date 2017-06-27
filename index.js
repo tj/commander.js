@@ -193,7 +193,7 @@ Command.prototype.arguments = function (desc) {
  */
 
 Command.prototype.addImplicitHelpCommand = function() {
-  this.command('help [cmd]', 'display help for [cmd]');
+  this.command('help [cmd]', l10n('display help for [cmd]'));
 };
 
 /**
@@ -553,9 +553,9 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   proc.on('close', process.exit.bind(process));
   proc.on('error', function(err) {
     if (err.code == "ENOENT") {
-      console.error('\n  %s(1) does not exist, try --help\n', bin);
+      console.error(colors.red(l10n('\n  %s(1) does not exist, try --help\n')), bin);
     } else if (err.code == "EACCES") {
-      console.error('\n  %s(1) not executable. try chmod or run with root\n', bin);
+      console.error(colors.red(l10n('\n  %s(1) not executable. try chmod or run with root\n')), bin);
     }
     process.exit(1);
   });
@@ -762,7 +762,7 @@ Command.prototype.opts = function() {
 
 Command.prototype.missingArgument = function(name) {
   console.error();
-  console.error("  error: missing required argument `%s'", name);
+  console.error(colors.red(l10n("  error: missing required argument `%s'")), name);
   console.error();
   process.exit(1);
 };
@@ -778,9 +778,9 @@ Command.prototype.missingArgument = function(name) {
 Command.prototype.optionMissingArgument = function(option, flag) {
   console.error();
   if (flag) {
-    console.error("  error: option `%s' argument missing, got `%s'", option.flags, flag);
+    console.error(colors.red(l10n("  error: option `%s' argument missing, got `%s'")), option.flags, flag);
   } else {
-    console.error("  error: option `%s' argument missing", option.flags);
+    console.error(colors.red(l10n("  error: option `%s' argument missing")), option.flags);
   }
   console.error();
   process.exit(1);
@@ -796,7 +796,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
 Command.prototype.unknownOption = function(flag) {
   if (this._allowUnknownOption) return;
   console.error();
-  console.error("  error: unknown option `%s'", flag);
+  console.error(colors.red(l10n("  error: unknown option `%s'")), flag);
   console.error();
   process.exit(1);
 };
@@ -810,7 +810,7 @@ Command.prototype.unknownOption = function(flag) {
 
 Command.prototype.variadicArgNotLast = function(name) {
   console.error();
-  console.error("  error: variadic arguments must be last `%s'", name);
+  console.error(colors.red(l10n("  error: variadic arguments must be last `%s'")), name);
   console.error();
   process.exit(1);
 };
@@ -831,7 +831,7 @@ Command.prototype.version = function(str, flags) {
   if (0 == arguments.length) return this._version;
   this._version = str;
   flags = flags || '-V, --version';
-  this.option(flags, 'output the version number');
+  this.option(flags, l10n('output the version number'));
   this.on('version', function() {
     process.stdout.write(str + '\n');
     process.exit(0);
@@ -843,13 +843,15 @@ Command.prototype.version = function(str, flags) {
  * Set the description to `str`.
  *
  * @param {String} str
+ * @param {Object} argsDescription
  * @return {String|Command}
  * @api public
  */
 
-Command.prototype.description = function(str) {
+Command.prototype.description = function(str, argsDescription) {
   if (0 === arguments.length) return this._description;
   this._description = str;
+  this._argsDescription = argsDescription;
   return this;
 };
 
@@ -924,6 +926,36 @@ Command.prototype.largestOptionLength = function() {
 };
 
 /**
+ * Return the largest arg length.
+ *
+ * @return {Number}
+ * @api private
+ */
+
+Command.prototype.largestArgLength = function() {
+  return this._args.reduce(function(max, arg) {
+    return Math.max(max, arg.name.length);
+  }, 0);
+};
+
+/**
+ * Return the pad width.
+ *
+ * @return {Number}
+ * @api private
+ */
+
+Command.prototype.padWidth = function() {
+  var width = this.largestOptionLength();
+  if (this._argsDescription && this._args.length) {
+    if (this.largestArgLength() > width) {
+      width = this.largestArgLength();
+    }
+  }
+  return width;
+};
+
+/**
  * Return help for options.
  *
  * @return {String}
@@ -931,10 +963,10 @@ Command.prototype.largestOptionLength = function() {
  */
 
 Command.prototype.optionHelp = function() {
-  var width = this.largestOptionLength();
+  var width = this.padWidth();
 
   // Prepend the help information
-  return [pad('-h, --help', width) + '  ' + 'output usage information']
+  return [pad('-h, --help', width) + '  ' + l10n('output usage information')]
       .concat(this.options.map(function(option) {
         return pad(option.flags, width) + '  ' + option.description;
       }))
@@ -972,8 +1004,7 @@ Command.prototype.commandHelp = function() {
   }, 0);
 
   return [
-    ''
-    , '  Commands:'
+    '  ' + colors.yellow(l10n('Commands:'))
     , ''
     , commands.map(function(cmd) {
       var desc = cmd[1] ? '  ' + cmd[1] : '';
@@ -994,9 +1025,20 @@ Command.prototype.helpInformation = function() {
   var desc = [];
   if (this._description) {
     desc = [
-      '  ' + this._description
+      '  ' + colors.cyan(this._description)
       , ''
     ];
+
+    var argsDescription = this._argsDescription;
+    if (argsDescription && this._args.length) {
+      var width = this.padWidth();
+      desc.push('  ' + colors.yellow(l10n('Arguments:')));
+      desc.push('');
+      this._args.forEach(function(arg) {
+        desc.push('    ' + pad(arg.name, width) + '  ' + argsDescription[arg.name]);
+      });
+      desc.push('');
+    }
   }
 
   var cmdName = this._name;
@@ -1005,7 +1047,7 @@ Command.prototype.helpInformation = function() {
   }
   var usage = [
     ''
-    ,'  Usage: ' + cmdName + ' ' + this.usage()
+    , '  ' + colors.yellow(l10n('Usage:')) + ' ' + cmdName + ' ' + this.usage()
     , ''
   ];
 
@@ -1014,7 +1056,7 @@ Command.prototype.helpInformation = function() {
   if (commandHelp) cmds = [commandHelp];
 
   var options = [
-    '  Options:'
+    '  ' + colors.yellow(l10n('Options:'))
     , ''
     , '' + this.optionHelp().replace(/^/gm, '    ')
     , ''
@@ -1056,6 +1098,62 @@ Command.prototype.help = function(cb) {
 };
 
 /**
+ * Add colors
+ * @param {Object}
+ */
+
+Command.prototype.colors = function(obj) {
+  for (var key in obj) {
+    if (typeof obj[key] == 'function') {
+      colors[key] = obj[key];
+    }
+  };
+};
+
+/**
+ * Colors
+ *
+ * @param {String} str
+ * @returns {String}
+ */
+
+function colors(str) {
+  return str;
+}
+colors.red = colors;
+colors.green = colors;
+colors.yellow = colors;
+colors.cyan = colors;
+
+/**
+ * Add yours translations
+ * @param {Object} translations
+ *
+ * Examples:
+ *
+ *      program.l10n({
+ *        '...': '...',
+ *        ...
+ *      });
+ */
+
+Command.prototype.l10n = function(translations) {
+  for (var key in translations) {
+    l10n[key] = translations[key];
+  };
+};
+
+/**
+ * Localization
+ * @param str
+ * @returns {*}
+ */
+
+function l10n(str) {
+  return l10n[str] || str;
+}
+
+/**
  * Camel-case the given `flag`
  *
  * @param {String} flag
@@ -1080,7 +1178,7 @@ function camelcase(flag) {
 
 function pad(str, width) {
   var len = Math.max(0, width - str.length);
-  return str + Array(len + 1).join(' ');
+  return colors.green(str) + Array(len + 1).join(' ');
 }
 
 /**
@@ -1127,4 +1225,3 @@ function exists(file) {
     return false;
   }
 }
-

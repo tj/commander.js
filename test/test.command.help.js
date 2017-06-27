@@ -7,4 +7,4 @@ program.command('mycommand [options]');
 
 program.parse(['node', 'test']);
 
-program.commandHelp().should.equal('\n  Commands:\n\n    mycommand [options]\n');
+program.commandHelp().should.equal('  Commands:\n\n    mycommand [options]\n');
