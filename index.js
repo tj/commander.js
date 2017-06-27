@@ -1056,6 +1056,20 @@ Command.prototype.help = function(cb) {
 };
 
 /**
+ * Clear parsed options so that `parse` may be run again.
+ *
+ * @api public
+ */
+
+Command.prototype.reset = function() {
+  var self = this;
+  this.args = [];
+  this.options.forEach(function(option) {
+    self[option.name()] = undefined;
+  });
+};
+
+/**
  * Camel-case the given `flag`
  *
  * @param {String} flag
