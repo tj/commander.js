@@ -626,7 +626,7 @@ Command.prototype.parseArgs = function(args, unknown) {
     if (this.listeners('command:' + name).length) {
       this.emit('command:' + args.shift(), args, unknown);
     } else {
-      this.emit('command:*', args);
+      this.emit('command:*', args, unknown);
     }
   } else {
     outputHelpIfNecessary(this, unknown);
@@ -1127,4 +1127,3 @@ function exists(file) {
     return false;
   }
 }
-

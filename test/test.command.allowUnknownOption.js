@@ -51,6 +51,20 @@ program.parse('node test sub2 -m'.split(' '));
 stubError.callCount.should.equal(0);
 stubExit.calledOnce.should.be.false();
 
+// test unknown argument passed to listeners
+resetStubStatus();
+program
+  .command('sub2')
+  .allowUnknownOption()
+  .action(function () {
+  });
+program.on("command:sub", function(args, unknown) {
+  unknown.should.equal(["-m"]);
+})
+program.on("command:*", function(args, unknown) {
+  unknown.should.equal(["-m"]);
+})
+program.parse('node test sub2 -m'.split(' '));
 
 function resetStubStatus() {
   stubError.reset();

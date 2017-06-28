@@ -11,6 +11,7 @@ var cmdValue = "";
 program
   .version('0.0.1')
   .arguments('<cmd> [env]')
+  .allowUnknownOption()
   .action(function (cmd, env) {
     cmdValue = cmd;
     envValue = env;
