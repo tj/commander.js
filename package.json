@@ -15,18 +15,13 @@
     "url": "https://github.com/tj/commander.js.git"
   },
   "devDependencies": {
-<<<<<<< HEAD
     "should": "^11.2.1",
-    "sinon": "^2.3.5"
-=======
-    "should": ">= 0.0.1 <9.0.0",
-    "sinon": ">=1.17.1",
+    "sinon": "^2.3.5",
     "lint-staged": "^4.0.0",
     "prettier": "^1.5.2",
     "standard": "^10.0.2",
     "babel-eslint": "^7.2.3",
-    "husky": "^0.14.1",
->>>>>>> Add prettier, standard, etc.
+    "husky": "^0.14.1"
   },
   "scripts": {
     "test": "make test",
@@ -41,13 +36,18 @@
   "lint-staged": {
     "*.js": "standard"
   },
-<<<<<<< HEAD
-  "main": "index",
-=======
+  "standard": {
+    "parser": "babel-eslint",
+    "ignore": [
+      "**/node_modules/**"
+    ],
+  },
+  "lint-staged": {
+    "*.js": "standard"
+  },
   "engines": {
     "node": ">= 0.6.x"
   },
->>>>>>> Add prettier, standard, etc.
   "files": [
     "index.js"
   ],
