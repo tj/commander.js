@@ -31,25 +31,12 @@
     "parser": "babel-eslint",
     "ignore": [
       "**/node_modules/**"
-    ],
+    ]
   },
   "lint-staged": {
     "*.js": "standard"
-  },
-  "standard": {
-    "parser": "babel-eslint",
-    "ignore": [
-      "**/node_modules/**"
-    ],
-  },
-  "lint-staged": {
-    "*.js": "standard"
-  },
-  "engines": {
-    "node": ">= 0.6.x"
   },
   "files": [
     "index.js"
-  ],
-  "dependencies": {}
+  ]
 }
