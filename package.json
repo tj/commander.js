@@ -16,12 +16,26 @@
   },
   "devDependencies": {
     "should": ">= 0.0.1 <9.0.0",
-    "sinon": ">=1.17.1"
+    "sinon": ">=1.17.1",
+    "lint-staged": "^4.0.0",
+    "prettier": "^1.5.2",
+    "standard": "^10.0.2",
+    "babel-eslint": "^7.2.3",
+    "husky": "^0.14.1",
   },
   "scripts": {
-    "test": "make test"
+    "test": "make test",
+    "lint": "standard **/*.js"
   },
-  "main": "index",
+  "standard": {
+    "parser": "babel-eslint",
+    "ignore": [
+      "**/node_modules/**"
+    ],
+  },
+  "lint-staged": {
+    "*.js": "standard"
+  },
   "engines": {
     "node": ">= 0.6.x"
   },
