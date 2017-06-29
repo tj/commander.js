@@ -6,7 +6,7 @@
 [![NPM Downloads](https://img.shields.io/npm/dm/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
 [![Join the chat at https://gitter.im/tj/commander.js](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tj/commander.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-  [node.js](http://nodejs.org) 命令行接口的完整解决方案，灵感来自 Ruby 的 [commander](https://github.com/tj/commander)。  
+  [node.js](http://nodejs.org) 命令行接口的完整解决方案，灵感来自 Ruby 的 [commander](https://github.com/commander-rb/commander)。  
   [API 文档](http://tj.github.com/commander.js/)
 
 
@@ -173,8 +173,7 @@ Commander 将会尝试在入口脚本（例如 `./examples/pm`）的目录中搜
 
 你可以在调用 `.command()` 时传递选项。指定 `opts.noHelp` 为 `true` 将从生成的帮助输出中剔除该选项。指定 `opts.isDefault` 为 `true` 将会在没有其它子命令指定的情况下，执行该子命令。
 
-如果你像让程序在全局安装，请确保可执行文件有对应的权限，例如 `755`。
- Commander 将尝试在入口脚本的目录中搜索可执行文件，（像 `./examples/pm`）与名称 `program-command`，像 `pm-install`，`pm-search`。
+如果你打算全局安装该命令，请确保可执行文件有对应的权限，例如 `755`。
 
 ### `--harmony`
 
