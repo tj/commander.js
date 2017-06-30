@@ -1,22 +1,21 @@
 # Commander.js
 
 
-[![Build Status](https://api.travis-ci.org/tj/commander.js.svg?branch=master)](http://travis-ci.org/tj/commander.js)
+[![Build Status](https://api.travis-ci.org/tj/commander.js.svg)](http://travis-ci.org/tj/commander.js)
 [![NPM Version](http://img.shields.io/npm/v/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
 [![NPM Downloads](https://img.shields.io/npm/dm/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
 [![Join the chat at https://gitter.im/tj/commander.js](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tj/commander.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-  The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/commander-rb/commander).  
-  [API documentation](http://tj.github.com/commander.js/)
+  [node.js](http://nodejs.org) 命令行接口的完整解决方案，灵感来自 Ruby 的 [commander](https://github.com/commander-rb/commander)。  
+  [API 文档](http://tj.github.com/commander.js/)
 
 
-## Installation
+## 安装
 
-    $ npm install commander --save
+    $ npm install commander
 
-## Option parsing
-
- Options with commander are defined with the `.option()` method, also serving as documentation for the options. The example below parses args and options from `process.argv`, leaving remaining args as the `program.args` array which were not consumed by options.
+## 参数解析
+ `.option()` 方法用来定义带选项的 commander，同时也作为这些选项的文档。下面的例子会解析来自 `progress.argv` 指定的参数和选项，没有匹配任何选项的参数将会放到 `program.args` 数组中。
 
 ```js
 #!/usr/bin/env node
@@ -28,7 +27,7 @@
 var program = require('commander');
 
 program
-  .version('0.1.0')
+  .version('0.0.1')
   .option('-p, --peppers', 'Add peppers')
   .option('-P, --pineapple', 'Add pineapple')
   .option('-b, --bbq-sauce', 'Add bbq sauce')
@@ -42,10 +41,10 @@ if (program.bbqSauce) console.log('  - bbq');
 console.log('  - %s cheese', program.cheese);
 ```
 
- Short flags may be passed as a single arg, for example `-abc` is equivalent to `-a -b -c`. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc.
+ 短标志可以作为单独的参数传递。像 `-abc` 等于 `-a -b -c`。多词组成的选项，像“--template-engine”会变成 `program.templateEngine` 等。
 
 
-## Coercion
+## 强制多态
 
 ```js
 function range(val) {
@@ -66,7 +65,7 @@ function increaseVerbosity(v, total) {
 }
 
 program
-  .version('0.1.0')
+  .version('0.0.1')
   .usage('[options] <file ...>')
   .option('-i, --integer <n>', 'An integer argument', parseInt)
   .option('-f, --float <n>', 'A float argument', parseFloat)
@@ -88,22 +87,21 @@ console.log(' verbosity: %j', program.verbose);
 console.log(' args: %j', program.args);
 ```
 
-## Regular Expression
+## 正则表达式
 ```js
 program
-  .version('0.1.0')
+  .version('0.0.1')
   .option('-s --size <size>', 'Pizza size', /^(large|medium|small)$/i, 'medium')
   .option('-d --drink [drink]', 'Drink', /^(coke|pepsi|izze)$/i)
   .parse(process.argv);
-  
+
 console.log(' size: %j', program.size);
 console.log(' drink: %j', program.drink);
 ```
 
-## Variadic arguments
+## 可变参数
 
- The last argument of a command can be variadic, and only the last argument.  To make an argument variadic you have to
- append `...` to the argument name.  Here is an example:
+ 一个命令的最后一个参数可以是可变参数, 并且只有最后一个参数可变。为了使参数可变，你需要在参数名后面追加 `...`。 下面是个示例：
 
 ```js
 #!/usr/bin/env node
@@ -115,7 +113,7 @@ console.log(' drink: %j', program.drink);
 var program = require('commander');
 
 program
-  .version('0.1.0')
+  .version('0.0.1')
   .command('rmdir <dir> [otherDirs...]')
   .action(function (dir, otherDirs) {
     console.log('rmdir %s', dir);
@@ -128,19 +126,17 @@ program
 
 program.parse(process.argv);
 ```
+可变参数的值以 `数组` 的形式保存。如上所示，在传递给你的 action 的参数和 `program.args` 中的值都是如此。
 
- An `Array` is used for the value of a variadic argument.  This applies to `program.args` as well as the argument passed
- to your action as demonstrated above.
-
-## Specify the argument syntax
+## 指定参数的语法
 
 ```js
 #!/usr/bin/env node
 
-var program = require('commander');
+var program = require('../');
 
 program
-  .version('0.1.0')
+  .version('0.0.1')
   .arguments('<cmd> [env]')
   .action(function (cmd, env) {
      cmdValue = cmd;
@@ -156,38 +152,38 @@ if (typeof cmdValue === 'undefined') {
 console.log('command:', cmdValue);
 console.log('environment:', envValue || "no environment given");
 ```
-Angled brackets (e.g. `<cmd>`) indicate required input. Square brackets (e.g. `[env]`) indicate optional input.
+尖括号（例如 `<cmd>`）代表必填输入，方括号（例如 `[env]`）代表可选输入。
 
-## Git-style sub-commands
+## Git 风格的子命令
 
 ```js
 // file: ./examples/pm
-var program = require('commander');
+var program = require('..');
 
 program
-  .version('0.1.0')
+  .version('0.0.1')
   .command('install [name]', 'install one or more packages')
   .command('search [query]', 'search with optional query')
   .command('list', 'list packages installed', {isDefault: true})
   .parse(process.argv);
 ```
 
-When `.command()` is invoked with a description argument, no `.action(callback)` should be called to handle sub-commands, otherwise there will be an error. This tells commander that you're going to use separate executables for sub-commands, much like `git(1)` and other popular tools.  
-The commander will try to search the executables in the directory of the entry script (like `./examples/pm`) with the name `program-command`, like `pm-install`, `pm-search`.
+当 `.command()` 带有描述参数时，不能采用 `.action(callback)` 来处理子命令，否则会出错。这告诉 commander，你将采用单独的可执行文件作为子命令，就像 `git(1)` 和其他流行的工具一样。
+Commander 将会尝试在入口脚本（例如 `./examples/pm`）的目录中搜索 `program-command` 形式的可执行文件，例如 `pm-install`, `pm-search`。
 
-Options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the option from the generated help output. Specifying `true` for `opts.isDefault` will run the subcommand if no other subcommand is specified.
+你可以在调用 `.command()` 时传递选项。指定 `opts.noHelp` 为 `true` 将从生成的帮助输出中剔除该选项。指定 `opts.isDefault` 为 `true` 将会在没有其它子命令指定的情况下，执行该子命令。
 
-If the program is designed to be installed globally, make sure the executables have proper modes, like `755`.
+如果你打算全局安装该命令，请确保可执行文件有对应的权限，例如 `755`。
 
 ### `--harmony`
 
-You can enable `--harmony` option in two ways:
-* Use `#! /usr/bin/env node --harmony` in the sub-commands scripts. Note some os version don’t support this pattern.
-* Use the `--harmony` option when call the command, like `node --harmony examples/pm publish`. The `--harmony` option will be preserved when spawning sub-command process.
+您可以采用两种方式启用 `--harmony`：
+* 在子命令脚本中加上 `#!/usr/bin/env node --harmony`。注意一些系统版本不支持此模式。
+* 在指令调用时加上 `--harmony` 参数，例如 `node --harmony examples/pm publish`。`--harmony` 选项在开启子进程时会被保留。
 
-## Automated --help
+## 自动化帮助信息 --help
 
- The help information is auto-generated based on the information commander already knows about your program, so the following `--help` info is for free:
+ 帮助信息是 commander 基于你的程序自动生成的，下面是 `--help` 生成的帮助信息：
 
 ```  
  $ ./examples/pizza --help
@@ -208,14 +204,9 @@ You can enable `--harmony` option in two ways:
 
 ```
 
-## Custom help
+## 自定义帮助
 
- You can display arbitrary `-h, --help` information
- by listening for "--help". Commander will automatically
- exit once you are done so that the remainder of your program
- does not execute causing undesired behaviours, for example
- in the following executable "stuff" will not output when
- `--help` is used.
+ 你可以通过监听 `--help` 来控制 `-h, --help` 显示任何信息。一旦调用完成， Commander 将自动退出，你的程序的其余部分不会展示。例如在下面的 “stuff” 将不会在执行 `--help` 时输出。
 
 ```js
 #!/usr/bin/env node
@@ -227,7 +218,7 @@ You can enable `--harmony` option in two ways:
 var program = require('commander');
 
 program
-  .version('0.1.0')
+  .version('0.0.1')
   .option('-f, --foo', 'enable some foo')
   .option('-b, --bar', 'enable some bar')
   .option('-B, --baz', 'enable some baz');
@@ -248,7 +239,7 @@ program.parse(process.argv);
 console.log('stuff');
 ```
 
-Yields the following help output when `node script-name.js -h` or `node script-name.js --help` are run:
+下列帮助信息是运行 `node script-name.js -h` or `node script-name.js --help` 时输出的:
 
 ```
 
@@ -271,17 +262,16 @@ Examples:
 
 ## .outputHelp(cb)
 
-Output help information without exiting.
-Optional callback cb allows post-processing of help text before it is displayed.
-
-If you want to display help by default (e.g. if no command was provided), you can use something like:
+不退出输出帮助信息。
+可选的回调可在显示帮助文本后处理。
+如果你想显示默认的帮助（例如，如果没有提供命令），你可以使用类似的东西：
 
 ```js
 var program = require('commander');
 var colors = require('colors');
 
 program
-  .version('0.1.0')
+  .version('0.0.1')
   .command('getstream [url]', 'get stream URL')
   .parse(process.argv);
 
@@ -290,25 +280,25 @@ program
   }
 
 function make_red(txt) {
-  return colors.red(txt); //display the help text in red on the console
+  return colors.red(txt); // 在控制台上显示红色的帮助文本
 }
 ```
 
 ## .help(cb)
 
-  Output help information and exit immediately.
-  Optional callback cb allows post-processing of help text before it is displayed.
+ 输出帮助信息并立即退出。
+ 可选的回调可在显示帮助文本后处理。
 
-## Examples
+## 例子
 
 ```js
 var program = require('commander');
 
 program
-  .version('0.1.0')
+  .version('0.0.1')
   .option('-C, --chdir <path>', 'change the working directory')
   .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
-  .option('-T, --no-tests', 'ignore test hook');
+  .option('-T, --no-tests', 'ignore test hook')
 
 program
   .command('setup [env]')
@@ -344,8 +334,8 @@ program
 program.parse(process.argv);
 ```
 
-More Demos can be found in the [examples](https://github.com/tj/commander.js/tree/master/examples) directory.
+ 更多的 [演示](https://github.com/tj/commander.js/tree/master/examples) 可以在这里找到.
 
-## License
+## 许可证
 
 MIT

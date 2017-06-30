@@ -1,11 +1,9 @@
-
 /**
  * Module dependencies.
  */
 
 var EventEmitter = require('events').EventEmitter;
 var spawn = require('child_process').spawn;
-var readlink = require('graceful-readlink').readlinkSync;
 var path = require('path');
 var dirname = path.dirname;
 var basename = path.basename;
@@ -185,7 +183,7 @@ Command.prototype.command = function(name, desc, opts) {
 
 Command.prototype.arguments = function (desc) {
   return this.parseExpectedArgs(desc.split(/ +/));
-}
+};
 
 /**
  * Add an implicit `help [cmd]` subcommand
@@ -303,8 +301,8 @@ Command.prototype.action = function(fn) {
   };
   var parent = this.parent || this;
   var name = parent === this ? '*' : this._name;
-  parent.on(name, listener);
-  if (this._alias) parent.on(this._alias, listener);
+  parent.on('command:' + name, listener);
+  if (this._alias) parent.on('command:' + this._alias, listener);
   return this;
 };
 
@@ -351,8 +349,8 @@ Command.prototype.action = function(fn) {
  *
  * @param {String} flags
  * @param {String} description
- * @param {Function|Mixed} fn or default
- * @param {Mixed} defaultValue
+ * @param {Function|*} [fn] or default
+ * @param {*} [defaultValue]
  * @return {Command} for chaining
  * @api public
  */
@@ -391,7 +389,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
 
   // when it's passed assign the value
   // and conditionally invoke the callback
-  this.on(oname, function(val) {
+  this.on('option:' + oname, function(val) {
     // coercion
     if (null !== val && fn) val = fn(val, undefined === self[name]
       ? defaultValue
@@ -460,11 +458,24 @@ Command.prototype.parse = function(argv) {
 
   // executable sub-commands
   var name = result.args[0];
+
+  var aliasCommand = null;
+  // check alias of sub commands
+  if (name) {
+    aliasCommand = this.commands.filter(function(command) {
+      return command.alias() === name;
+    })[0];
+  }
+
   if (this._execs[name] && typeof this._execs[name] != "function") {
+    return this.executeSubCommand(argv, args, parsed.unknown);
+  } else if (aliasCommand) {
+    // is alias of a subCommand
+    args[0] = aliasCommand._name;
     return this.executeSubCommand(argv, args, parsed.unknown);
   } else if (this.defaultExecutable) {
     // use the default subcommand
-    args.unshift(name = this.defaultExecutable);
+    args.unshift(this.defaultExecutable);
     return this.executeSubCommand(argv, args, parsed.unknown);
   }
 
@@ -501,7 +512,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // In case of globally installed, get the base dir where executable
   //  subcommand file should be located at
   var baseDir
-    , link = readlink(f);
+    , link = fs.lstatSync(f).isSymbolicLink() ? fs.readlinkSync(f) : f;
 
   // when symbolink is relative path
   if (link !== f && link.charAt(0) !== '/') {
@@ -526,7 +537,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   var proc;
   if (process.platform !== 'win32') {
     if (isExplicitJS) {
-      args.unshift(localBin);
+      args.unshift(bin);
       // add executable arguments to spawn
       args = (process.execArgv || []).concat(args);
 
@@ -535,7 +546,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
       proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
     }
   } else {
-    args.unshift(localBin);
+    args.unshift(bin);
     proc = spawn(process.execPath, args, { stdio: 'inherit'});
   }
 
@@ -549,6 +560,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     process.exit(1);
   });
 
+  // Store the reference to the child process
   this.runningCommand = proc;
 };
 
@@ -611,10 +623,10 @@ Command.prototype.parseArgs = function(args, unknown) {
 
   if (args.length) {
     name = args[0];
-    if (this.listeners(name).length) {
-      this.emit(args.shift(), args, unknown);
+    if (this.listeners('command:' + name).length) {
+      this.emit('command:' + args.shift(), args, unknown);
     } else {
-      this.emit('*', args);
+      this.emit('command:*', args);
     }
   } else {
     outputHelpIfNecessary(this, unknown);
@@ -668,13 +680,13 @@ Command.prototype.parseOptions = function(argv) {
     arg = argv[i];
 
     // literal args after --
-    if ('--' == arg) {
-      literal = true;
+    if (literal) {
+      args.push(arg);
       continue;
     }
 
-    if (literal) {
-      args.push(arg);
+    if ('--' == arg) {
+      literal = true;
       continue;
     }
 
@@ -687,7 +699,7 @@ Command.prototype.parseOptions = function(argv) {
       if (option.required) {
         arg = argv[++i];
         if (null == arg) return this.optionMissingArgument(option);
-        this.emit(option.name(), arg);
+        this.emit('option:' + option.name(), arg);
       // optional arg
       } else if (option.optional) {
         arg = argv[i+1];
@@ -696,10 +708,10 @@ Command.prototype.parseOptions = function(argv) {
         } else {
           ++i;
         }
-        this.emit(option.name(), arg);
+        this.emit('option:' + option.name(), arg);
       // bool
       } else {
-        this.emit(option.name());
+        this.emit('option:' + option.name());
       }
       continue;
     }
@@ -810,7 +822,7 @@ Command.prototype.variadicArgNotLast = function(name) {
  * which will print the version number when passed.
  *
  * @param {String} str
- * @param {String} flags
+ * @param {String} [flags]
  * @return {Command} for chaining
  * @api public
  */
@@ -820,7 +832,7 @@ Command.prototype.version = function(str, flags) {
   this._version = str;
   flags = flags || '-V, --version';
   this.option(flags, 'output the version number');
-  this.on('version', function() {
+  this.on('option:version', function() {
     process.stdout.write(str + '\n');
     process.exit(0);
   });
@@ -836,7 +848,7 @@ Command.prototype.version = function(str, flags) {
  */
 
 Command.prototype.description = function(str) {
-  if (0 == arguments.length) return this._description;
+  if (0 === arguments.length) return this._description;
   this._description = str;
   return this;
 };
@@ -850,8 +862,14 @@ Command.prototype.description = function(str) {
  */
 
 Command.prototype.alias = function(alias) {
-  if (0 == arguments.length) return this._alias;
-  this._alias = alias;
+  var command = this;
+  if(this.commands.length !== 0) {
+    command = this.commands[this.commands.length - 1]
+  }
+
+  if (arguments.length === 0) return command._alias;
+
+  command._alias = alias;
   return this;
 };
 
@@ -879,15 +897,17 @@ Command.prototype.usage = function(str) {
 };
 
 /**
- * Get the name of the command
+ * Get or set the name of the command
  *
- * @param {String} name
+ * @param {String} str
  * @return {String|Command}
  * @api public
  */
 
-Command.prototype.name = function() {
-  return this._name;
+Command.prototype.name = function(str) {
+  if (0 === arguments.length) return this._name;
+  this._name = str;
+  return this;
 };
 
 /**
@@ -913,7 +933,7 @@ Command.prototype.largestOptionLength = function() {
 Command.prototype.optionHelp = function() {
   var width = this.largestOptionLength();
 
-  // Prepend the help information
+  // Append the help information
   return this.options.map(function(option) {
       return pad(option.flags, width) + '  ' + option.description;
     }).concat([pad('-h, --help', width) + '  ' + 'output usage information'])
@@ -939,14 +959,10 @@ Command.prototype.commandHelp = function() {
 
     return [
       cmd._name
-        + (cmd._alias
-          ? '|' + cmd._alias
-          : '')
-        + (cmd.options.length
-          ? ' [options]'
-          : '')
+        + (cmd._alias ? '|' + cmd._alias : '')
+        + (cmd.options.length ? ' [options]' : '')
         + ' ' + args
-    , cmd.description()
+      , cmd._description
     ];
   });
 
@@ -955,11 +971,12 @@ Command.prototype.commandHelp = function() {
   }, 0);
 
   return [
-      ''
+    ''
     , '  Commands:'
     , ''
     , commands.map(function(cmd) {
-      return pad(cmd[0], width) + '  ' + cmd[1];
+      var desc = cmd[1] ? '  ' + cmd[1] : '';
+      return pad(cmd[0], width) + desc;
     }).join('\n').replace(/^/gm, '    ')
     , ''
   ].join('\n');
@@ -1017,7 +1034,11 @@ Command.prototype.helpInformation = function() {
  */
 
 Command.prototype.outputHelp = function(cb) {
-  if (!cb) cb = function(passthru) { return passthru; } //supply benign callback if none specified
+  if (!cb) {
+    cb = function(passthru) {
+      return passthru;
+    }
+  }
   process.stdout.write(cb(this.helpInformation()));
   this.emit('--help');
 };
