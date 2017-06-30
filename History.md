@@ -1,4 +1,24 @@
 
+2.10.0 / 2017-06-19
+==================
+  * Update .travis.yml. drop support for older node.js versions.
+  * Fix require arguments in README.md
+  * On SemVer you do not start from 0.0.1
+  * Add missing semi colon in readme
+  * Add save param to npm install
+  * node v6 travis test
+  * Update Readme_zh-CN.md
+  * Allow literal '--' to be passed-through as an argument
+  * Test subcommand alias help
+  * link build badge to master branch
+  * Support the alias of Git style sub-command
+  * added keyword commander for better search result on npm
+  * Fix Sub-Subcommands
+  * test node.js stable
+  * Fixes TypeError when a command has an option called `--description`
+  * Update README.md to make it beginner friendly and elaborate on the difference between angled and square brackets.
+  * Add chinese Readme file
+
 2.9.0 / 2015-10-13
 ==================
 
