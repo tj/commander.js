@@ -1,6 +1,23 @@
 
+2.11.0 / 2017-07-03
+==================
+
+  * Fix help section order and padding (#652)
+  * feature: support for signals to subcommands (#632)
+  * Fixed #37, --help should not display first (#447)
+  * Fix translation errors. (#570)
+  * Add package-lock.json
+  * Remove engines
+  * Upgrade package version
+  * Prefix events to prevent conflicts between commands and options (#494)
+  * Removing dependency on graceful-readlink
+  * Support setting name in #name function and make it chainable
+  * Add .vscode directory to .gitignore (Visual Studio Code metadata)
+  * Updated link to ruby commander in readme files
+
 2.10.0 / 2017-06-19
 ==================
+
   * Update .travis.yml. drop support for older node.js versions.
   * Fix require arguments in README.md
   * On SemVer you do not start from 0.0.1
