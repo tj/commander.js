@@ -1,6 +1,7 @@
 
 2.11.0 / 2017-07-03
 ==================
+
   * Fix help section order and padding (#652)
   * feature: support for signals to subcommands (#632)
   * Fixed #37, --help should not display first (#447)
@@ -16,6 +17,7 @@
 
 2.10.0 / 2017-06-19
 ==================
+
   * Update .travis.yml. drop support for older node.js versions.
   * Fix require arguments in README.md
   * On SemVer you do not start from 0.0.1
