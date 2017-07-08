@@ -488,6 +488,7 @@ Command.prototype.parse = function(argv) {
  * @param {Array} argv
  * @param {Array} args
  * @param {Array} unknown
+ * @return {Command} for chaining
  * @api private
  */
 
@@ -570,6 +571,8 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   // Store the reference to the child process
   this.runningCommand = proc;
+  
+  return this;
 };
 
 /**
