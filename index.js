@@ -932,20 +932,35 @@ Command.prototype.largestOptionLength = function() {
 };
 
 /**
+ * Return `Option` object for help option.  
+ *
+ * @return {Option}
+ * @api private
+ */
+Command.prototype.optionHelp = function() { 
+  // check if there is an overriding user-defined `-h` short flag
+  var shortHOptions = this.options.filter(function(option) { 
+    return option.short === '-h';
+  });
+  var helpFlags = shortHOptions.length ? '--help' : '-h, --help';
+  
+  return new Option(helpFlags, 'output usage information');
+};
+
+/**
  * Return help for options.
  *
  * @return {String}
  * @api private
  */
 
-Command.prototype.optionHelp = function() {
+Command.prototype.optionHelpText = function() {
   var width = this.largestOptionLength();
 
-  // Append the help information
-  return this.options.map(function(option) {
-      return pad(option.flags, width) + '  ' + option.description;
-    }).concat([pad('-h, --help', width) + '  ' + 'output usage information'])
-    .join('\n');
+  return [this.optionHelp()].concat(this.options).map(function(option) {
+    return pad(option.flags, width) + '  ' + option.description;
+  })
+  .join('\n');
 };
 
 /**
@@ -1024,7 +1039,7 @@ Command.prototype.helpInformation = function() {
     ''
     , '  Options:'
     , ''
-    , '' + this.optionHelp().replace(/^/gm, '    ')
+    , '' + this.optionHelpText().replace(/^/gm, '    ')
     , ''
   ];
 
