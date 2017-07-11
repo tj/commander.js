@@ -1,6 +1,6 @@
 {
   "name": "commander",
-  "version": "2.9.0",
+  "version": "2.11.0",
   "description": "the complete solution for node.js command-line programs",
   "keywords": [
     "commander",
@@ -15,21 +15,17 @@
     "url": "https://github.com/tj/commander.js.git"
   },
   "devDependencies": {
-    "should": ">= 0.0.1 <9.0.0",
-    "sinon": ">=1.17.1"
+    "should": "^11.2.1",
+    "sinon": "^2.3.5"
   },
   "scripts": {
     "test": "make test"
   },
   "main": "index",
-  "engines": {
-    "node": ">= 0.6.x"
-  },
   "files": [
     "index.js"
   ],
   "dependencies": {
-    "find-module-bin": "0.0.2",
-    "graceful-readlink": ">= 1.0.0"
+    "find-module-bin": "0.0.2"
   }
 }

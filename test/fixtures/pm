@@ -8,6 +8,7 @@ program
   .command('search [query]', 'search with optional query').alias('s')
   .command('cache', 'actions dealing with the cache').alias('c')
   .command('list', 'list packages installed')
+  .command('listen', 'listen for supported signal events').alias('l')
   .command('publish', 'publish or update package').alias('p')
   .command('default', 'default command', {noHelp: true, isDefault: true})
   .parse(process.argv);
