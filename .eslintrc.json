@@ -1,0 +1,13 @@
+{
+  "extends": "airbnb-base",
+  "rules": {
+    "class-methods-use-this": "off",
+    "default-case": "off",
+    "no-bitwise": "off",
+    "no-console": "off",
+    "no-continue": "off",
+    "no-param-reassign": "off",
+    "no-plusplus": "off",
+    "no-underscore-dangle": "off"
+  }
+}

@@ -15,15 +15,18 @@
     "url": "https://github.com/tj/commander.js.git"
   },
   "devDependencies": {
+    "eslint": "^4.2.0",
+    "eslint-config-airbnb-base": "^11.2.0",
+    "eslint-plugin-import": "^2.7.0",
     "should": "^11.2.1",
     "sinon": "^2.3.5"
   },
   "scripts": {
-    "test": "make test"
+    "test": "make test",
+    "lint": "eslint index.js lib/**.js"
   },
   "main": "index",
   "files": [
     "index.js"
-  ],
-  "dependencies": {}
+  ]
 }

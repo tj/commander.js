@@ -1,3 +1,5 @@
+/* eslint-disable no-multi-assign */
+
 const Command = require('./lib/Command.js');
 const Option = require('./lib/Option.js');
 
