@@ -1,6 +1,6 @@
 {
   "name": "commander",
-  "version": "2.10.0",
+  "version": "2.11.0",
   "description": "the complete solution for node.js command-line programs",
   "keywords": [
     "commander",
@@ -14,25 +14,21 @@
     "type": "git",
     "url": "https://github.com/tj/commander.js.git"
   },
-  "devDependencies": {
-    "should": ">= 0.0.1 <9.0.0",
-    "sinon": ">=1.17.1",
-    "typescript": "^2.3.4"
-  },
   "scripts": {
     "test": "make test && npm run test-typings",
     "test-typings": "node_modules/typescript/bin/tsc -p tsconfig.json"
   },
   "main": "index",
-  "engines": {
-    "node": ">= 0.6.x"
-  },
   "files": [
     "index.js"
   ],
   "dependencies": {
-    "@types/node": "^8.0.2",
-    "graceful-readlink": ">= 1.0.0"
+    "@types/node": "^8.0.2"
+  },
+  "devDependencies": {
+    "should": "^11.2.1",
+    "sinon": "^2.3.5",
+    "typescript": "^2.4.1"
   },
   "typings": "typings/index.d.ts"
 }
