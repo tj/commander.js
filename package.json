@@ -23,7 +23,7 @@
     "index.js"
   ],
   "dependencies": {
-    "@types/node": "^8.0.2"
+    "@types/node": "^7.0.39"
   },
   "devDependencies": {
     "should": "^11.2.1",
