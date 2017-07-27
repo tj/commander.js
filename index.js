@@ -644,6 +644,10 @@ Command.prototype.parseArgs = function(args, unknown) {
     if (unknown.length > 0) {
       this.unknownOption(unknown[0]);
     }
+    
+    // If there are no args and we are still alive, then
+    // this is a subcommand with no args so go ahead.
+    this.emit('command:*', args);
   }
 
   return this;
