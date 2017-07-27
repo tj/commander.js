@@ -255,12 +255,16 @@ declare class Command extends NodeJS.EventEmitter {
     /**
      * Output help information for this command.
      *
-     * @param {() => void} [cb] Callback method
+     * @param {(str: string) => string} [cb] Callback method
      */
-    outputHelp(cb?: () => void): void;
+    outputHelp(cb?: (str: string) => string): void;
 
-    /** Output help information and exit. */
-    help(): void;
+    /**
+     * Output help information and exit.
+     *
+     * @param {(str: string) => string} [cb] Callback method
+     */
+    help(cb?: (str: string) => string): void;
 }
 
 declare namespace commander {
