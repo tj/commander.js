@@ -85,6 +85,7 @@ function Command(name) {
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
+  this._optionKeyValueHolder = Object.create(null);
 }
 
 /**
@@ -357,6 +358,7 @@ Command.prototype.action = function(fn) {
 
 Command.prototype.option = function(flags, description, fn, defaultValue) {
   var self = this
+    , optionKeyValueHolder = this._optionKeyValueHolder
     , option = new Option(flags, description)
     , oname = option.name()
     , name = camelcase(oname);
@@ -381,7 +383,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     // when --no-* we make sure default is true
     if (false == option.bool) defaultValue = true;
     // preassign only if we have a default
-    if (undefined !== defaultValue) self[name] = defaultValue;
+    if (undefined !== defaultValue) self[name] = optionKeyValueHolder[name] = defaultValue;
   }
 
   // register the option
@@ -391,23 +393,23 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   // and conditionally invoke the callback
   this.on('option:' + oname, function(val) {
     // coercion
-    if (null !== val && fn) val = fn(val, undefined === self[name]
+    if (null !== val && fn) val = fn(val, undefined === optionKeyValueHolder[name]
       ? defaultValue
-      : self[name]);
+      : optionKeyValueHolder[name]);
 
     // unassigned or bool
-    if ('boolean' == typeof self[name] || 'undefined' == typeof self[name]) {
+    if ('boolean' == typeof optionKeyValueHolder[name] || 'undefined' == typeof optionKeyValueHolder[name]) {
       // if no value, bool true, and we have a default, then use it!
       if (null == val) {
-        self[name] = option.bool
+        self[name] = optionKeyValueHolder[name] = option.bool
           ? defaultValue || true
           : false;
       } else {
-        self[name] = val;
+        self[name] = optionKeyValueHolder[name] = val;
       }
     } else if (null !== val) {
       // reassign
-      self[name] = val;
+      self[name] = optionKeyValueHolder[name] = val;
     }
   });
 
@@ -751,12 +753,12 @@ Command.prototype.parseOptions = function(argv) {
  * @api public
  */
 Command.prototype.opts = function() {
-  var result = {}
+  var result = Object.create(null)
     , len = this.options.length;
 
   for (var i = 0 ; i < len; i++) {
     var key = camelcase(this.options[i].name());
-    result[key] = key === 'version' ? this._version : this[key];
+    result[key] = key === 'version' ? this._version : this._optionKeyValueHolder[key];
   }
   return result;
 };
