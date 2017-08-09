@@ -508,6 +508,10 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   // executable
   var f = argv[1];
+  // make sure that file path has included .js file extension otherwise
+  // readlink(f) method will throw an ENOENT error such as in sub sub
+  // commands
+  if(f.slice(-3) != '.js') f += '.js';
   // name of the subcommand, link `pm-install`
   var bin = basename(f, '.js') + '-' + args[0];
 
