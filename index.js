@@ -708,9 +708,13 @@ Command.prototype.parseOptions = function(argv) {
     if (option) {
       // requires arg
       if (option.required) {
-        arg = argv[++i];
-        if (null == arg) return this.optionMissingArgument(option);
-        this.emit('option:' + option.name(), arg);
+        arg = [argv[++i]]
+        while (argv[i+1] && '-' != argv[i+1][0]) {
+         arg.push(argv[++i]);
+        }
+        if (args[0] === null) return this.optionMissingArgument(option);
+
+        this.emit('option:' + option.name(), arg.length === 1 ? arg[0] : arg);
       // optional arg
       } else if (option.optional) {
         arg = argv[i+1];
@@ -731,10 +735,10 @@ Command.prototype.parseOptions = function(argv) {
     if (arg.length > 1 && '-' == arg[0]) {
       unknownOptions.push(arg);
 
-      // If the next argument looks like it might be
+      // If the next arguments looks like it might be
       // an argument for this option, we pass it on.
       // If it isn't, then it'll simply be ignored
-      if (argv[i+1] && '-' != argv[i+1][0]) {
+      while (argv[i+1] && '-' != argv[i+1][0]) {
         unknownOptions.push(argv[++i]);
       }
       continue;
