@@ -15,7 +15,7 @@
     $ npm install commander
 
 ## 参数解析
- `.option()` 方法用来定义带选项的 commander，同时也作为这些选项的文档。下面的例子会解析来自 `progress.argv` 指定的参数和选项，没有匹配任何选项的参数将会放到 `program.args` 数组中。
+ `.option()` 方法用来定义带选项的 commander，同时也作为这些选项的文档。下面的例子会解析来自 `process.argv` 指定的参数和选项，没有匹配任何选项的参数将会放到 `program.args` 数组中。
 
 ```js
 #!/usr/bin/env node
