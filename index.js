@@ -1023,7 +1023,7 @@ Command.prototype.helpInformation = function() {
 
   var cmds = [];
   var commandHelp = this.commandHelp();
-  if (commandHelp) cmds = [commandHelp];
+  if (commandHelp) cmds = [commandHelp, ''];
 
   var options = [
     ''
