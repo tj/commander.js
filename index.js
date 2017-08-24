@@ -60,6 +60,18 @@ Option.prototype.name = function() {
 };
 
 /**
+ * Return option name, in a camelcase format that can be used
+ * as a object attribute key.
+ *
+ * @return {String}
+ * @api private
+ */
+
+Option.prototype.attributeName = function() {
+  return camelcase( this.name() );
+};
+
+/**
  * Check if `arg` matches the short or long flag.
  *
  * @param {String} arg
@@ -362,7 +374,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   var self = this
     , option = new Option(flags, description)
     , oname = option.name()
-    , name = camelcase(oname);
+    , name = option.attributeName();
 
   // default as 3rd arg
   if (typeof fn != 'function') {
@@ -758,7 +770,7 @@ Command.prototype.opts = function() {
     , len = this.options.length;
 
   for (var i = 0 ; i < len; i++) {
-    var key = camelcase(this.options[i].name());
+    var key = this.options[i].attributeName();
     result[key] = key === 'version' ? this._version : this[key];
   }
   return result;
