@@ -666,6 +666,23 @@ Command.prototype.optionFor = function(arg) {
 };
 
 /**
+ * Return whether `name` corresponds to a defined subcommand.
+ *
+ * @param {String} name
+ * @return {boolean}
+ * @api private
+ */
+
+Command.prototype.isSubcommand = function(name) {
+  for (var i = 0; i < this.commands.length; ++i) {
+    if (name === this.commands[i]._name) {
+      return true;
+    }
+  }
+  return false;
+}
+
+/**
  * Parse options from `argv` returning `argv`
  * void of these options.
  *
@@ -687,6 +704,9 @@ Command.prototype.parseOptions = function(argv) {
   for (var i = 0; i < len; ++i) {
     arg = argv[i];
 
+    if (this.isSubcommand(arg)) {
+      return { args: argv.slice(i), unknown: unknownOptions };
+    }
     // literal args after --
     if (literal) {
       args.push(arg);
