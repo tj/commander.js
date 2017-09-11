@@ -675,7 +675,7 @@ Command.prototype.optionFor = function(arg) {
 
 Command.prototype.isSubcommand = function(name) {
   for (var i = 0; i < this.commands.length; ++i) {
-    if (name === this.commands[i]._name) {
+    if (this.commands[i]._execs[name] === true) {
       return true;
     }
   }
