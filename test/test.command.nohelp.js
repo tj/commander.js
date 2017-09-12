@@ -35,8 +35,6 @@ program.commands[4].name().should.equal('hiddencommandwithoutdescription');
 program.commands[4]._noHelp.should.be.true();
 program.commands[5].name().should.equal('help');
 
-
-
 sinon.restore();
 sinon.stub(process.stdout, 'write');
 program.outputHelp();

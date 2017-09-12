@@ -5,7 +5,6 @@
 var program = require('../')
   , should = require('should');
 
-
 program
   .version('0.0.1')
   .option('-s, --size <size>', 'Pizza Size', /^(large|medium|small)$/i, 'medium')

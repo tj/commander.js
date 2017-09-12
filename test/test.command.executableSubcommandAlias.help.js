@@ -2,8 +2,6 @@ var exec = require('child_process').exec
   , path = require('path')
   , should = require('should');
 
-
-
 var bin = path.join(__dirname, './fixtures/pm')
 
 // success case

@@ -13,7 +13,6 @@ program
   .option('-y, --yother', 'just some other option')
   .option('-z, --zother', 'just some other option');
 
-
 program.parse(['node', 'test', '--cflags', '-DDEBUG', '-o', '-xyz']);
 program.should.have.property('cflags', '-DDEBUG');
 program.should.have.property('other');

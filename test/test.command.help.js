@@ -2,7 +2,6 @@ var program = require('../')
   , sinon = require('sinon').sandbox.create()
   , should = require('should');
 
-
 program.command('mycommand [options]');
 
 program.parse(['node', 'test']);
