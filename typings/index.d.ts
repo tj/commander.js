@@ -1,6 +1,5 @@
-// Type definitions for commander 2.11
 // Project: https://github.com/visionmedia/commander.js
-// Definitions by: Alan Agius <https://github.com/alan-agius4>, Marcelo Dezem <http://github.com/mdezem>, vvakame <http://github.com/vvakame>
+// Definitions by: Alan Agius <https://github.com/alan-agius4>, Marcelo Dezem <https://github.com/mdezem>, vvakame <https://github.com/vvakame>
 
 declare class Option {
     flags: string;
@@ -246,12 +245,19 @@ declare class Command extends NodeJS.EventEmitter {
     usage(): string;
 
     /**
-     * Get or set the name of the command.
+     * Set the name of the command.
      *
      * @param {string} str
-     * @return {string|Command}
+     * @return {Command}
      */
-    name(str?: string): string | Command;
+    name(str: string): Command;
+
+    /**
+     * Get the name of the command.
+     *
+     * @return {string}
+     */
+    name(): string;
 
     /**
      * Output help information for this command.
