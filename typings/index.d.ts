@@ -1,4 +1,4 @@
-// Type definitions for commander 2.9
+// Type definitions for commander 2.11
 // Project: https://github.com/visionmedia/commander.js
 // Definitions by: Alan Agius <https://github.com/alan-agius4>, Marcelo Dezem <http://github.com/mdezem>, vvakame <http://github.com/vvakame>
 
@@ -246,25 +246,22 @@ declare class Command extends NodeJS.EventEmitter {
     usage(): string;
 
     /**
-     * Get the name of the command.
+     * Get or set the name of the command.
      *
-     * @return {string}
+     * @param {string} str
+     * @return {string|Command}
      */
-    name(): string;
+    name(str?: string): string | Command;
 
     /**
      * Output help information for this command.
      *
-     * @param {(str: string) => string} [cb] Callback method
+     * @param {() => void} [cb] Callback method
      */
-    outputHelp(cb?: (str: string) => string): void;
+    outputHelp(cb?: () => void): void;
 
-    /**
-     * Output help information and exit.
-     *
-     * @param {(str: string) => string} [cb] Callback method
-     */
-    help(cb?: (str: string) => string): void;
+    /** Output help information and exit. */
+    help(): void;
 }
 
 declare namespace commander {
