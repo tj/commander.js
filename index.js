@@ -857,13 +857,15 @@ Command.prototype.version = function(str, flags) {
  * Set the description to `str`.
  *
  * @param {String} str
+ * @param {Object} argsDescription
  * @return {String|Command}
  * @api public
  */
 
-Command.prototype.description = function(str) {
+Command.prototype.description = function(str, argsDescription) {
   if (0 === arguments.length) return this._description;
   this._description = str;
+  this._argsDescription = argsDescription;
   return this;
 };
 
@@ -927,6 +929,45 @@ Command.prototype.name = function(str) {
 };
 
 /**
+ * Return prepared commands.
+ *
+ * @return {Array}
+ * @api private
+ */
+
+Command.prototype.prepareCommands = function() {
+  return this.commands.filter(function(cmd) {
+    return !cmd._noHelp;
+  }).map(function(cmd) {
+    var args = cmd._args.map(function(arg) {
+      return humanReadableArgName(arg);
+    }).join(' ');
+
+    return [
+      cmd._name
+      + (cmd._alias ? '|' + cmd._alias : '')
+      + (cmd.options.length ? ' [options]' : '')
+      + ' ' + args
+      , cmd._description
+    ];
+  });
+};
+
+/**
+ * Return the largest command length.
+ *
+ * @return {Number}
+ * @api private
+ */
+
+Command.prototype.largestCommandLength = function() {
+  var commands = this.prepareCommands();
+  return commands.reduce(function(max, command) {
+    return Math.max(max, command[0].length);
+  }, 0);
+};
+
+/**
  * Return the largest option length.
  *
  * @return {Number}
@@ -934,9 +975,50 @@ Command.prototype.name = function(str) {
  */
 
 Command.prototype.largestOptionLength = function() {
-  return this.options.reduce(function(max, option) {
+  var options = [].slice.call(this.options);
+  options.push({
+    flags: '-h, --help'
+  });
+  return options.reduce(function(max, option) {
     return Math.max(max, option.flags.length);
   }, 0);
+};
+
+/**
+ * Return the largest arg length.
+ *
+ * @return {Number}
+ * @api private
+ */
+
+Command.prototype.largestArgLength = function() {
+  return this._args.reduce(function(max, arg) {
+    return Math.max(max, arg.name.length);
+  }, 0);
+};
+
+/**
+ * Return the pad width.
+ *
+ * @return {Number}
+ * @api private
+ */
+
+Command.prototype.padWidth = function() {
+  var width = this.largestOptionLength();
+  if (this._argsDescription && this._args.length) {
+    if (this.largestArgLength() > width) {
+      width = this.largestArgLength();
+    }
+  }
+
+  if (this.commands && this.commands.length) {
+    if (this.largestCommandLength() > width) {
+      width = this.largestCommandLength();
+    }
+  }
+
+  return width;
 };
 
 /**
@@ -947,7 +1029,7 @@ Command.prototype.largestOptionLength = function() {
  */
 
 Command.prototype.optionHelp = function() {
-  var width = this.largestOptionLength();
+  var width = this.padWidth();
 
   // Append the help information
   return this.options.map(function(option) {
@@ -967,29 +1049,11 @@ Command.prototype.optionHelp = function() {
 Command.prototype.commandHelp = function() {
   if (!this.commands.length) return '';
 
-  var commands = this.commands.filter(function(cmd) {
-    return !cmd._noHelp;
-  }).map(function(cmd) {
-    var args = cmd._args.map(function(arg) {
-      return humanReadableArgName(arg);
-    }).join(' ');
-
-    return [
-      cmd._name
-        + (cmd._alias ? '|' + cmd._alias : '')
-        + (cmd.options.length ? ' [options]' : '')
-        + ' ' + args
-      , cmd._description
-    ];
-  });
-
-  var width = commands.reduce(function(max, command) {
-    return Math.max(max, command[0].length);
-  }, 0);
+  var commands = this.prepareCommands();
+  var width = this.padWidth();
 
   return [
-    ''
-    , '  Commands:'
+    '  Commands:'
     , ''
     , commands.map(function(cmd) {
       var desc = cmd[1] ? '  ' + cmd[1] : '';
@@ -1013,6 +1077,17 @@ Command.prototype.helpInformation = function() {
       '  ' + this._description
       , ''
     ];
+
+    var argsDescription = this._argsDescription;
+    if (argsDescription && this._args.length) {
+      var width = this.padWidth();
+      desc.push('  Arguments:');
+      desc.push('');
+      this._args.forEach(function(arg) {
+        desc.push('    ' + pad(arg.name, width) + '  ' + argsDescription[arg.name]);
+      });
+      desc.push('');
+    }
   }
 
   var cmdName = this._name;
@@ -1030,8 +1105,7 @@ Command.prototype.helpInformation = function() {
   if (commandHelp) cmds = [commandHelp];
 
   var options = [
-    ''
-    , '  Options:'
+    '  Options:'
     , ''
     , '' + this.optionHelp().replace(/^/gm, '    ')
     , ''
