@@ -17,19 +17,25 @@ program
 	.command('hideagain [options]', null, { noHelp: true })
   .action(function() { return; });
 
+program.command('hiddencommandwithoutdescription [options]', { noHelp: true });
+
 program.parse(['node', 'test']);
 
-program.name.should.be.a.Function;
+program.name.should.be.a.Function();
 program.name().should.equal('test');
 program.commands[0].name().should.equal('mycommand');
 program.commands[0]._noHelp.should.be.false();
 program.commands[1].name().should.equal('anothercommand');
 program.commands[1]._noHelp.should.be.false();
 program.commands[2].name().should.equal('hiddencommand');
-program.commands[2]._noHelp.should.be.true;
+program.commands[2]._noHelp.should.be.true();
 program.commands[3].name().should.equal('hideagain');
 program.commands[3]._noHelp.should.be.true();
-program.commands[4].name().should.equal('help');
+program.commands[4].name().should.equal('hiddencommandwithoutdescription');
+program.commands[4]._noHelp.should.be.true();
+program.commands[5].name().should.equal('help');
+
+
 
 sinon.restore();
 sinon.stub(process.stdout, 'write');

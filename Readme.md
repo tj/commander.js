@@ -44,6 +44,25 @@ console.log('  - %s cheese', program.cheese);
 
  Short flags may be passed as a single arg, for example `-abc` is equivalent to `-a -b -c`. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc.
 
+Note that multi-word options starting with `--no` prefix negate the boolean value of the following word. For example, `--no-sauce` sets the value of `program.sauce` to false. 
+
+```js
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var program = require('commander');
+
+program
+  .option('--no-sauce', 'Remove sauce')
+  .parse(process.argv);
+
+console.log('you ordered a pizza');
+if (program.sauce) console.log('  with sauce');
+else console.log(' without sauce');
+```
 
 ## Coercion
 
@@ -285,9 +304,9 @@ program
   .command('getstream [url]', 'get stream URL')
   .parse(process.argv);
 
-  if (!process.argv.slice(2).length) {
-    program.outputHelp(make_red);
-  }
+if (!process.argv.slice(2).length) {
+  program.outputHelp(make_red);
+}
 
 function make_red(txt) {
   return colors.red(txt); //display the help text in red on the console

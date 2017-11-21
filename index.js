@@ -61,6 +61,18 @@ Option.prototype.name = function() {
 };
 
 /**
+ * Return option name, in a camelcase format that can be used
+ * as a object attribute key.
+ *
+ * @return {String}
+ * @api private
+ */
+
+Option.prototype.attributeName = function() {
+  return camelcase( this.name() );
+};
+
+/**
  * Check if `arg` matches the short or long flag.
  *
  * @param {String} arg
@@ -156,6 +168,10 @@ Command.prototype.__proto__ = EventEmitter.prototype;
  */
 
 Command.prototype.command = function(name, desc, opts) {
+  if(typeof desc === 'object' && desc !== null){
+    opts = desc;
+    desc = null;
+  }
   opts = opts || {};
   var args = name.split(/ +/);
   var cmd = new Command(args.shift());
@@ -166,7 +182,6 @@ Command.prototype.command = function(name, desc, opts) {
     this._execs[cmd._name] = true;
     if (opts.isDefault) this.defaultExecutable = cmd._name;
   }
-
   cmd._noHelp = !!opts.noHelp;
   this.commands.push(cmd);
   cmd.parseExpectedArgs(args);
@@ -360,7 +375,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   var self = this
     , option = new Option(flags, description)
     , oname = option.name()
-    , name = camelcase(oname);
+    , name = option.attributeName();
 
   // default as 3rd arg
   if (typeof fn != 'function') {
@@ -382,7 +397,10 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     // when --no-* we make sure default is true
     if (false == option.bool) defaultValue = true;
     // preassign only if we have a default
-    if (undefined !== defaultValue) self[name] = defaultValue;
+    if (undefined !== defaultValue) {
+      self[name] = defaultValue;
+      option.defaultValue = defaultValue;
+    }
   }
 
   // register the option
@@ -765,7 +783,7 @@ Command.prototype.opts = function() {
     , len = this.options.length;
 
   for (var i = 0 ; i < len; i++) {
-    var key = camelcase(this.options[i].name());
+    var key = this.options[i].attributeName();
     result[key] = key === 'version' ? this._version : this[key];
   }
   return result;
@@ -887,6 +905,8 @@ Command.prototype.alias = function(alias) {
 
   if (arguments.length === 0) return command._alias;
 
+  if (alias === command._name) throw new Error('Command alias can\'t be the same as its name');
+
   command._alias = alias;
   return this;
 };
@@ -953,8 +973,9 @@ Command.prototype.optionHelp = function() {
 
   // Append the help information
   return this.options.map(function(option) {
-      return pad(option.flags, width) + '  ' + option.description;
-    }).concat([pad('-h, --help', width) + '  ' + 'output usage information'])
+      return pad(option.flags, width) + '  ' + option.description
+        + (option.defaultValue !== undefined ? ' (default: ' + option.defaultValue + ')' : '');
+  }).concat([pad('-h, --help', width) + '  ' + 'output usage information'])
     .join('\n');
 };
 
