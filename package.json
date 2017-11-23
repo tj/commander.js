@@ -24,6 +24,7 @@
   ],
   "dependencies": {},
   "devDependencies": {
+    "@types/node": "^7.0.48",
     "should": "^11.2.1",
     "sinon": "^2.3.5",
     "typescript": "^2.6.1",
