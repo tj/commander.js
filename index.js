@@ -981,6 +981,8 @@ Command.prototype.commandHelp = function() {
 
   var commands = this.commands.filter(function(cmd) {
     return !cmd._noHelp;
+  }).sort(function(a, b) {
+    return a._name.localeCompare(b._name)
   }).map(function(cmd) {
     var args = cmd._args.map(function(arg) {
       return humanReadableArgName(arg);
