@@ -20,7 +20,8 @@
   },
   "main": "index",
   "files": [
-    "index.js"
+    "index.js",
+    "typings/index.d.ts"
   ],
   "dependencies": {},
   "devDependencies": {
