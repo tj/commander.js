@@ -747,7 +747,7 @@ Command.prototype.parseOptions = function(argv) {
       // If the next argument looks like it might be
       // an argument for this option, we pass it on.
       // If it isn't, then it'll simply be ignored
-      if (argv[i + 1] && argv[i + 1][0] !== '-') {
+      if ((i + 1) < argv.length && argv[i + 1][0] !== '-') {
         unknownOptions.push(argv[++i]);
       }
       continue;
