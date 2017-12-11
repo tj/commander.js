@@ -2,7 +2,6 @@ var exec = require('child_process').exec
   , path = require('path')
   , should = require('should');
 
-
 /*
  * The commands look like this
  * pm cache

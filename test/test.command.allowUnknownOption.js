@@ -15,7 +15,6 @@ program.parse('node test -m'.split(' '));
 
 stubError.callCount.should.equal(3);
 
-
 // test subcommand
 resetStubStatus();
 program
@@ -50,7 +49,6 @@ program.parse('node test sub2 -m'.split(' '));
 
 stubError.callCount.should.equal(0);
 stubExit.calledOnce.should.be.false();
-
 
 function resetStubStatus() {
   stubError.reset();
