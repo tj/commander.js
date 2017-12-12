@@ -1,4 +1,32 @@
 
+2.12.2 / 2017-11-28
+==================
+
+  * fix: typings are not shipped
+
+2.12.1 / 2017-11-23
+==================
+
+  * Move @types/node to dev dependency
+
+2.12.0 / 2017-11-22
+==================
+
+  * add attributeName() method to Option objects
+  * Documentation updated for options with --no prefix
+  * typings: `outputHelp` takes a string as the first parameter
+  * typings: use overloads
+  * feat(typings): update to match js api
+  * Print default value in option help
+  * Fix translation error
+  * Fail when using same command and alias (#491)
+  * feat(typings): add help callback
+  * fix bug when description is add after command with options (#662)
+  * Format js code
+  * Rename History.md to CHANGELOG.md (#668)
+  * feat(typings): add typings to support TypeScript (#646)
+  * use current node
+
 2.11.0 / 2017-07-03
 ==================
 
