@@ -485,15 +485,16 @@ Command.prototype.parse = function(argv) {
   }
 
   if (this._execs[name] && typeof this._execs[name] !== 'function') {
-    return this.executeSubCommand(argv, args, parsed.unknown);
+    this.args = args = argv.slice(2)
+    return this.executeSubCommand(argv, args);
   } else if (aliasCommand) {
     // is alias of a subCommand
-    args[0] = aliasCommand._name;
-    return this.executeSubCommand(argv, args, parsed.unknown);
+    this.args = args = [ aliasCommand._name ].concat(argv.slice(3))
+    return this.executeSubCommand(argv, args);
   } else if (this.defaultExecutable) {
     // use the default subcommand
-    args.unshift(this.defaultExecutable);
-    return this.executeSubCommand(argv, args, parsed.unknown);
+    this.args = args = [ this.defaultExecutable ].concat(argv.slice(3))
+    return this.executeSubCommand(argv, args);
   }
 
   return result;
@@ -508,9 +509,7 @@ Command.prototype.parse = function(argv) {
  * @api private
  */
 
-Command.prototype.executeSubCommand = function(argv, args, unknown) {
-  args = args.concat(unknown);
-
+Command.prototype.executeSubCommand = function(argv, args) {
   if (!args.length) this.help();
   if (args[0] === 'help' && args.length === 1) this.help();
 
