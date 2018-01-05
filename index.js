@@ -1031,9 +1031,12 @@ Command.prototype.helpInformation = function() {
   if (this._alias) {
     cmdName = cmdName + '|' + this._alias;
   }
+  var ancestor = this
+  var prefix = []
+  while ((ancestor = ancestor.parent)) prefix.push(ancestor.name() + ' ')
   var usage = [
     ''
-    ,'  Usage: ' + cmdName + ' ' + this.usage()
+    ,'  Usage: ' + prefix.join('') + cmdName + ' ' + this.usage()
     , ''
   ];
 
