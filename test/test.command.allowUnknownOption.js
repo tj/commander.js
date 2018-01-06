@@ -13,7 +13,7 @@ program
   .option('-p, --pepper', 'add pepper');
 program.parse('node test -m'.split(' '));
 
-stubError.callCount.should.equal(3);
+stubError.callCount.should.equal(1);
 
 
 // test subcommand
@@ -24,7 +24,7 @@ program
   });
 program.parse('node test sub -m'.split(' '));
 
-stubError.callCount.should.equal(3);
+stubError.callCount.should.equal(1);
 stubExit.calledOnce.should.be.true();
 
 // command with `allowUnknownOption`

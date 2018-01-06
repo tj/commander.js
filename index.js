@@ -101,6 +101,8 @@ function Command(name) {
 
 Command.INDENT = '  '
 
+Command.SPACING = '\n'
+
 /**
  * Inherit from `EventEmitter.prototype`.
  */
@@ -581,9 +583,9 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   proc.on('close', process.exit.bind(process));
   proc.on('error', function(err) {
     if (err.code == "ENOENT") {
-      console.error('\n' + Command.INDENT + '%s(1) does not exist, try --help\n', bin);
+      console.error(Command.SPACING + Command.INDENT + '%s(1) does not exist, try --help' + Command.SPACING, bin);
     } else if (err.code == "EACCES") {
-      console.error('\n' + Command.INDENT + '%s(1) not executable. try chmod or run with root\n', bin);
+      console.error(Command.SPACING + Command.INDENT + '%s(1) not executable. try chmod or run with root' + Command.SPACING, bin);
     }
     process.exit(1);
   });
@@ -789,9 +791,7 @@ Command.prototype.opts = function() {
  */
 
 Command.prototype.missingArgument = function(name) {
-  console.error();
-  console.error(Command.INDENT + "error: missing required argument `%s'", name);
-  console.error();
+  console.error(Command.SPACING + Command.INDENT + "error: missing required argument `%s'" + Command.SPACING, name);
   process.exit(1);
 };
 
@@ -804,13 +804,11 @@ Command.prototype.missingArgument = function(name) {
  */
 
 Command.prototype.optionMissingArgument = function(option, flag) {
-  console.error();
   if (flag) {
-    console.error(Command.INDENT + "error: option `%s' argument missing, got `%s'", option.flags, flag);
+    console.error(Command.SPACING + Command.INDENT + "error: option `%s' argument missing, got `%s'" + Command.SPACING, option.flags, flag);
   } else {
-    console.error(Command.INDENT + "error: option `%s' argument missing", option.flags);
+    console.error(Command.SPACING + Command.INDENT + "error: option `%s' argument missing" + Command.SPACING, option.flags);
   }
-  console.error();
   process.exit(1);
 };
 
@@ -823,9 +821,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
 
 Command.prototype.unknownOption = function(flag) {
   if (this._allowUnknownOption) return;
-  console.error();
-  console.error(Command.INDENT + "error: unknown option `%s'", flag);
-  console.error();
+  console.error(Command.SPACING + Command.INDENT + "error: unknown option `%s'" + Command.SPACING, flag);
   process.exit(1);
 };
 
@@ -837,9 +833,7 @@ Command.prototype.unknownOption = function(flag) {
  */
 
 Command.prototype.variadicArgNotLast = function(name) {
-  console.error();
-  console.error(Command.INDENT + "error: variadic arguments must be last `%s'", name);
-  console.error();
+  console.error(Command.SPACING + Command.INDENT + "error: variadic arguments must be last `%s'" + Command.SPACING, name);
   process.exit(1);
 };
 
@@ -1001,16 +995,11 @@ Command.prototype.commandHelp = function() {
     return Math.max(max, command[0].length);
   }, 0);
 
-  return [
-    ''
-    , Command.INDENT + 'Commands:'
-    , ''
-    , commands.map(function(cmd) {
+  return Command.SPACING + Command.INDENT + 'Commands:\n' + Command.SPACING +
+    commands.map(function(cmd) {
       var desc = cmd[1] ? '  ' + cmd[1] : '';
       return pad(cmd[0], width) + desc;
-    }).join('\n').replace(/^/gm, '    ')
-    , ''
-  ].join('\n');
+    }).join('\n').replace(/^/gm, Command.INDENT + '  ') + '\n';
 };
 
 /**
@@ -1021,41 +1010,32 @@ Command.prototype.commandHelp = function() {
  */
 
 Command.prototype.helpInformation = function() {
-  var desc = [];
-  if (this._description) {
-    desc = [
-      Command.INDENT + this._description
-      , ''
-    ];
-  }
+  var lines = []
 
   var cmdName = this._name;
   if (this._alias) {
     cmdName = cmdName + '|' + this._alias;
   }
-  var usage = [
-    ''
-    , Command.INDENT + 'Usage: ' + cmdName + ' ' + this.usage()
-    , ''
-  ];
 
-  var cmds = [];
+  lines.push('')
+  lines.push(Command.INDENT + 'Usage: ' + cmdName + ' ' + this.usage())
+  lines.push('')
+
+  if (this._description) {
+    lines.push(Command.INDENT + this._description)
+    lines.push('')
+  }
+
+  lines.push(Command.SPACING + Command.INDENT + 'Options:')
+  lines.push(Command.SPACING + this.optionHelp().replace(/^/gm, Command.INDENT + '  '));
+
   var commandHelp = this.commandHelp();
-  if (commandHelp) cmds = [commandHelp];
+  if (commandHelp) {
+    lines.push('')
+    lines.push(commandHelp);
+  }
 
-  var options = [
-    ''
-    , Command.INDENT + 'Options:'
-    , ''
-    , '' + this.optionHelp().replace(/^/gm, '    ')
-    , ''
-  ];
-
-  return usage
-    .concat(desc)
-    .concat(options)
-    .concat(cmds)
-    .join('\n');
+  return lines.join('\n')
 };
 
 /**
