@@ -99,6 +99,8 @@ function Command(name) {
   this._name = name || '';
 }
 
+Command.INDENT = '  '
+
 /**
  * Inherit from `EventEmitter.prototype`.
  */
@@ -579,9 +581,9 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   proc.on('close', process.exit.bind(process));
   proc.on('error', function(err) {
     if (err.code == "ENOENT") {
-      console.error('\n  %s(1) does not exist, try --help\n', bin);
+      console.error('\n' + Command.INDENT + '%s(1) does not exist, try --help\n', bin);
     } else if (err.code == "EACCES") {
-      console.error('\n  %s(1) not executable. try chmod or run with root\n', bin);
+      console.error('\n' + Command.INDENT + '%s(1) not executable. try chmod or run with root\n', bin);
     }
     process.exit(1);
   });
@@ -788,7 +790,7 @@ Command.prototype.opts = function() {
 
 Command.prototype.missingArgument = function(name) {
   console.error();
-  console.error("  error: missing required argument `%s'", name);
+  console.error(Command.INDENT + "error: missing required argument `%s'", name);
   console.error();
   process.exit(1);
 };
@@ -804,9 +806,9 @@ Command.prototype.missingArgument = function(name) {
 Command.prototype.optionMissingArgument = function(option, flag) {
   console.error();
   if (flag) {
-    console.error("  error: option `%s' argument missing, got `%s'", option.flags, flag);
+    console.error(Command.INDENT + "error: option `%s' argument missing, got `%s'", option.flags, flag);
   } else {
-    console.error("  error: option `%s' argument missing", option.flags);
+    console.error(Command.INDENT + "error: option `%s' argument missing", option.flags);
   }
   console.error();
   process.exit(1);
@@ -822,7 +824,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
 Command.prototype.unknownOption = function(flag) {
   if (this._allowUnknownOption) return;
   console.error();
-  console.error("  error: unknown option `%s'", flag);
+  console.error(Command.INDENT + "error: unknown option `%s'", flag);
   console.error();
   process.exit(1);
 };
@@ -836,7 +838,7 @@ Command.prototype.unknownOption = function(flag) {
 
 Command.prototype.variadicArgNotLast = function(name) {
   console.error();
-  console.error("  error: variadic arguments must be last `%s'", name);
+  console.error(Command.INDENT + "error: variadic arguments must be last `%s'", name);
   console.error();
   process.exit(1);
 };
@@ -1001,7 +1003,7 @@ Command.prototype.commandHelp = function() {
 
   return [
     ''
-    , '  Commands:'
+    , Command.INDENT + 'Commands:'
     , ''
     , commands.map(function(cmd) {
       var desc = cmd[1] ? '  ' + cmd[1] : '';
@@ -1022,7 +1024,7 @@ Command.prototype.helpInformation = function() {
   var desc = [];
   if (this._description) {
     desc = [
-      '  ' + this._description
+      Command.INDENT + this._description
       , ''
     ];
   }
@@ -1033,7 +1035,7 @@ Command.prototype.helpInformation = function() {
   }
   var usage = [
     ''
-    ,'  Usage: ' + cmdName + ' ' + this.usage()
+    , Command.INDENT + 'Usage: ' + cmdName + ' ' + this.usage()
     , ''
   ];
 
@@ -1043,7 +1045,7 @@ Command.prototype.helpInformation = function() {
 
   var options = [
     ''
-    , '  Options:'
+    , Command.INDENT + 'Options:'
     , ''
     , '' + this.optionHelp().replace(/^/gm, '    ')
     , ''
