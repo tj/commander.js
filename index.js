@@ -990,7 +990,7 @@ Command.prototype.commandHelp = function() {
       cmd._name
         + (cmd._alias ? '|' + cmd._alias : '')
         + (cmd.options.length ? ' [options]' : '')
-        + ' ' + args
+        + (args ? ' ' + args : '')
       , cmd._description
     ];
   });
@@ -1005,7 +1005,7 @@ Command.prototype.commandHelp = function() {
     , ''
     , commands.map(function(cmd) {
       var desc = cmd[1] ? '  ' + cmd[1] : '';
-      return pad(cmd[0], width) + desc;
+      return (desc ? pad(cmd[0], width) : cmd[0]) + desc;
     }).join('\n').replace(/^/gm, '    ')
     , ''
   ].join('\n');
