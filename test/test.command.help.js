@@ -3,8 +3,10 @@ var program = require('../')
   , should = require('should');
 
 
+program.command('bare');
+
+program.commandHelp().should.equal('\n  Commands:\n\n    bare\n');
+
 program.command('mycommand [options]');
 
-program.parse(['node', 'test']);
-
-program.commandHelp().should.equal('\n  Commands:\n\n    mycommand [options]\n');
+program.commandHelp().should.equal('\n  Commands:\n\n    bare\n    mycommand [options]\n');
