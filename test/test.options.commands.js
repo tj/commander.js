@@ -45,6 +45,9 @@ program
     console.log('deploying "%s"', env);
   });
 
+program.commandFor("setup").name().should.equal("setup")
+program.commandFor("ex").name().should.equal("exec")
+
 program.parse(['node', 'test', '--config', 'conf']);
 program.config.should.equal("conf");
 program.commands[0].should.not.have.property.setup_mode;

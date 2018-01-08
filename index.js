@@ -684,6 +684,23 @@ Command.prototype.optionFor = function(arg) {
 };
 
 /**
+ * Return a command matching `command` if any.
+ *
+ * @param {String} command
+ * @return {Command}
+ * @api private
+ */
+
+Command.prototype.commandFor = function(command) {
+  for (var i = 0, len = this.commands.length; i < len; ++i) {
+    var candidate = this.commands[i]
+    if (candidate.name() === command || candidate.alias() === command) {
+      return candidate;
+    }
+  }
+};
+
+/**
  * Parse options from `argv` returning `argv`
  * void of these options.
  *
