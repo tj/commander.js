@@ -303,11 +303,16 @@ Command.prototype.action = function(fn) {
       }
     });
 
-    // Always append ourselves to the end of the arguments,
-    // to make sure we match the number of arguments the user
-    // expects
-    if (self._args.length) {
-      args[self._args.length] = self;
+    // Always append ourselves to the end of the arguments.
+    // If extra arguments remain, they are passed via an array as the final argument.
+    var numArgsExpected = self._args.length;
+    if (numArgsExpected) {
+      // NOTE args.length always equals numArgsExpected when last argument is variadic
+      if (args.length > numArgsExpected) {
+        args = args.slice(0, numArgsExpected).concat(self).concat([args.slice(numArgsExpected)])
+      } else {
+        args[numArgsExpected] = self;
+      }
     } else {
       args.push(self);
     }
