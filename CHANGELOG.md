@@ -1,4 +1,12 @@
 
+2.13.0 / 2018-01-09
+==================
+
+  * Do not print default for --no-
+  * remove trailing spaces in command help
+  * Update CI's Node.js to LTS and latest version
+  * typedefs: Command and Option types added to commander namespace
+
 2.12.2 / 2017-11-28
 ==================
 
