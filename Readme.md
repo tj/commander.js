@@ -64,6 +64,27 @@ if (program.sauce) console.log('  with sauce');
 else console.log(' without sauce');
 ```
 
+## Command-specific options
+
+You can attach options to a command.
+
+```js
+#!/usr/bin/env node
+
+var program = require('commander');
+
+program
+  .command('rm <dir>')
+  .option('-r, --recursive', 'Remove recursively')
+  .action(function (dir, cmd) {
+    console.log('remove ' + dir + (cmd.recursive ? ' recursively' : ''))
+  })
+
+program.parse(process.argv)
+```
+
+A command's options are validated when the command is used. Any unknown options will be reported as an error. However, if an action-based command does not define an action, then the options are not validated.
+
 ## Coercion
 
 ```js
