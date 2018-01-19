@@ -774,7 +774,7 @@ Command.prototype.opts = function() {
 
   for (var i = 0 ; i < len; i++) {
     var key = this.options[i].attributeName();
-    result[key] = key === 'version' ? this._version : this[key];
+    result[key] = key === this._versionOptionName ? this._version : this[key];
   }
   return result;
 };
@@ -857,8 +857,10 @@ Command.prototype.version = function(str, flags) {
   if (0 == arguments.length) return this._version;
   this._version = str;
   flags = flags || '-V, --version';
+  var longOptIndex = flags.indexOf('--')
+  this._versionOptionName = ~longOptIndex ? flags.substr(longOptIndex + 2) : 'version'
   this.option(flags, 'output the version number');
-  this.on('option:version', function() {
+  this.on('option:' + this._versionOptionName, function() {
     process.stdout.write(str + '\n');
     process.exit(0);
   });

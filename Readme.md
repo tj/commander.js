@@ -79,7 +79,7 @@ program
   .version('0.0.1', '-v, --version')
 ```
 
-Now the command will accept the `-v` option instead of the `-V` option.
+The version flags can be named anything, but the long option is required.
 
 ## Command-specific options
 
