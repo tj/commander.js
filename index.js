@@ -657,6 +657,7 @@ Command.prototype.parseArgs = function(args, unknown) {
   } else {
     outputHelpIfNecessary(this, unknown);
 
+    //Also this piece of code only works when we have no valid "options"
     // If there were no args and we have unknown options,
     // then they are extraneous and we need to error.
     if (unknown.length > 0) {
@@ -697,7 +698,8 @@ Command.prototype.parseOptions = function(argv) {
     , len = argv.length
     , literal
     , option
-    , arg;
+    , arg
+    , unknown = false;
 
   var unknownOptions = [];
 
@@ -742,6 +744,17 @@ Command.prototype.parseOptions = function(argv) {
       continue;
     }
 
+    // pass this for https://github.com/tj/commander.js/issues/346, otherwise
+    // it will strip some args that match with any options
+    if (arg == 'this-arg-will-get-stripped-later'){
+      //do nothing
+    }
+    else{
+      console.log ("error: Unknown argument " + arg + "\n");
+      unknown=true;
+    }
+
+    //maybe this bottom code has it only "works" when we have no valid options
     // looks like an option
     if (arg.length > 1 && '-' == arg[0]) {
       unknownOptions.push(arg);
@@ -758,6 +771,11 @@ Command.prototype.parseOptions = function(argv) {
     // arg
     args.push(arg);
   }
+
+  if (unknown && !this._allowUnknownOption){
+    process.exit(9);
+  }
+
 
   return { args: args, unknown: unknownOptions };
 };
@@ -1155,4 +1173,3 @@ function exists(file) {
     return false;
   }
 }
-
