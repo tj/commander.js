@@ -15,6 +15,7 @@
     "url": "https://github.com/tj/commander.js.git"
   },
   "scripts": {
+    "ava": "ava test-ava",
     "test": "make test && npm run test-typings",
     "test-typings": "node_modules/typescript/bin/tsc -p tsconfig.json"
   },
@@ -25,6 +26,7 @@
   ],
   "dependencies": {},
   "devDependencies": {
+    "ava": "^0.24.0",
     "@types/node": "^7.0.48",
     "should": "^11.2.1",
     "sinon": "^2.4.1",
