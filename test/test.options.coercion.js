@@ -9,8 +9,8 @@ function parseRange(str) {
   return str.split('..').map(Number);
 }
 
-function increaseVerbosity(v, total) {
-  return total + 1;
+function increaseVerbosity(v) {
+  return v + 1;
 }
 
 function collectValues(str, memo) {
