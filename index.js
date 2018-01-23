@@ -10,6 +10,12 @@ var basename = path.basename;
 var fs = require('fs');
 
 /**
+ * Inherit `Command` from `EventEmitter.prototype`.
+ */
+
+require('util').inherits(Command, EventEmitter);
+
+/**
  * Expose the root command.
  */
 
@@ -68,7 +74,7 @@ Option.prototype.name = function() {
  */
 
 Option.prototype.attributeName = function() {
-  return camelcase( this.name() );
+  return camelcase(this.name());
 };
 
 /**
@@ -98,12 +104,6 @@ function Command(name) {
   this._args = [];
   this._name = name || '';
 }
-
-/**
- * Inherit from `EventEmitter.prototype`.
- */
-
-Command.prototype.__proto__ = EventEmitter.prototype;
 
 /**
  * Add command `name`.
@@ -167,7 +167,7 @@ Command.prototype.__proto__ = EventEmitter.prototype;
  */
 
 Command.prototype.command = function(name, desc, opts) {
-  if(typeof desc === 'object' && desc !== null){
+  if (typeof desc === 'object' && desc !== null) {
     opts = desc;
     desc = null;
   }
@@ -196,7 +196,7 @@ Command.prototype.command = function(name, desc, opts) {
  * @api public
  */
 
-Command.prototype.arguments = function (desc) {
+Command.prototype.arguments = function(desc) {
   return this.parseExpectedArgs(desc.split(/ +/));
 };
 
@@ -292,7 +292,7 @@ Command.prototype.action = function(fn) {
     if (parsed.args.length) args = parsed.args.concat(args);
 
     self._args.forEach(function(arg, i) {
-      if (arg.required && null == args[i]) {
+      if (arg.required && args[i] == null) {
         self.missingArgument(arg.name);
       } else if (arg.variadic) {
         if (i !== self._args.length - 1) {
@@ -371,10 +371,10 @@ Command.prototype.action = function(fn) {
  */
 
 Command.prototype.option = function(flags, description, fn, defaultValue) {
-  var self = this
-    , option = new Option(flags, description)
-    , oname = option.name()
-    , name = option.attributeName();
+  var self = this,
+    option = new Option(flags, description),
+    oname = option.name(),
+    name = option.attributeName();
 
   // default as 3rd arg
   if (typeof fn != 'function') {
@@ -383,18 +383,17 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
       fn = function(val, def) {
         var m = regex.exec(val);
         return m ? m[0] : def;
-      }
-    }
-    else {
+      };
+    } else {
       defaultValue = fn;
       fn = null;
     }
   }
 
   // preassign default value only for --no-*, [optional], or <required>
-  if (false == option.bool || option.optional || option.required) {
+  if (option.bool == false || option.optional || option.required) {
     // when --no-* we make sure default is true
-    if (false == option.bool) defaultValue = true;
+    if (option.bool == false) defaultValue = true;
     // preassign only if we have a default
     if (undefined !== defaultValue) {
       self[name] = defaultValue;
@@ -409,21 +408,21 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   // and conditionally invoke the callback
   this.on('option:' + oname, function(val) {
     // coercion
-    if (null !== val && fn) val = fn(val, undefined === self[name]
-      ? defaultValue
-      : self[name]);
+    if (val !== null && fn) {
+      val = fn(val, self[name] === undefined ? defaultValue : self[name]);
+    }
 
     // unassigned or bool
-    if ('boolean' == typeof self[name] || 'undefined' == typeof self[name]) {
+    if (typeof self[name] === 'boolean' || typeof self[name] === 'undefined') {
       // if no value, bool true, and we have a default, then use it!
-      if (null == val) {
+      if (val == null) {
         self[name] = option.bool
           ? defaultValue || true
           : false;
       } else {
         self[name] = val;
       }
-    } else if (null !== val) {
+    } else if (val !== null) {
       // reassign
       self[name] = val;
     }
@@ -440,8 +439,8 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
  * @api public
  */
 Command.prototype.allowUnknownOption = function(arg) {
-    this._allowUnknownOption = arguments.length === 0 || arg;
-    return this;
+  this._allowUnknownOption = arguments.length === 0 || arg;
+  return this;
 };
 
 /**
@@ -485,7 +484,7 @@ Command.prototype.parse = function(argv) {
     })[0];
   }
 
-  if (this._execs[name] && typeof this._execs[name] != "function") {
+  if (this._execs[name] && typeof this._execs[name] != 'function') {
     return this.executeSubCommand(argv, args, parsed.unknown);
   } else if (aliasCommand) {
     // is alias of a subCommand
@@ -513,10 +512,10 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   args = args.concat(unknown);
 
   if (!args.length) this.help();
-  if ('help' == args[0] && 1 == args.length) this.help();
+  if (args[0] == 'help' && args.length === 1) this.help();
 
   // <cmd> --help
-  if ('help' == args[0]) {
+  if (args[0] == 'help') {
     args[0] = args[1];
     args[1] = '--help';
   }
@@ -526,15 +525,14 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // name of the subcommand, link `pm-install`
   var bin = basename(f, '.js') + '-' + args[0];
 
-
   // In case of globally installed, get the base dir where executable
   //  subcommand file should be located at
-  var baseDir
-    , link = fs.lstatSync(f).isSymbolicLink() ? fs.readlinkSync(f) : f;
+  var baseDir,
+    link = fs.lstatSync(f).isSymbolicLink() ? fs.readlinkSync(f) : f;
 
   // when symbolink is relative path
   if (link !== f && link.charAt(0) !== '/') {
-    link = path.join(dirname(f), link)
+    link = path.join(dirname(f), link);
   }
   baseDir = dirname(link);
 
@@ -565,22 +563,22 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     }
   } else {
     args.unshift(bin);
-    proc = spawn(process.execPath, args, { stdio: 'inherit'});
+    proc = spawn(process.execPath, args, { stdio: 'inherit' });
   }
 
   var signals = ['SIGUSR1', 'SIGUSR2', 'SIGTERM', 'SIGINT', 'SIGHUP'];
   signals.forEach(function(signal) {
-    process.on(signal, function(){
-      if ((proc.killed === false) && (proc.exitCode === null)){
+    process.on(signal, function() {
+      if (proc.killed === false && proc.exitCode === null) {
         proc.kill(signal);
       }
     });
   });
   proc.on('close', process.exit.bind(process));
   proc.on('error', function(err) {
-    if (err.code == "ENOENT") {
+    if (err.code == 'ENOENT') {
       console.error('\n  %s(1) does not exist, try --help\n', bin);
-    } else if (err.code == "EACCES") {
+    } else if (err.code == 'EACCES') {
       console.error('\n  %s(1) not executable. try chmod or run with root\n', bin);
     }
     process.exit(1);
@@ -601,15 +599,15 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
  */
 
 Command.prototype.normalize = function(args) {
-  var ret = []
-    , arg
-    , lastOpt
-    , index;
+  var ret = [],
+    arg,
+    lastOpt,
+    index;
 
   for (var i = 0, len = args.length; i < len; ++i) {
     arg = args[i];
     if (i > 0) {
-      lastOpt = this.optionFor(args[i-1]);
+      lastOpt = this.optionFor(args[i - 1]);
     }
 
     if (arg === '--') {
@@ -618,7 +616,7 @@ Command.prototype.normalize = function(args) {
       break;
     } else if (lastOpt && lastOpt.required) {
       ret.push(arg);
-    } else if (arg.length > 1 && '-' == arg[0] && '-' != arg[1]) {
+    } else if (arg.length > 1 && arg[0] == '-' && arg[1] != '-') {
       arg.slice(1).split('').forEach(function(c) {
         ret.push('-' + c);
       });
@@ -693,11 +691,11 @@ Command.prototype.optionFor = function(arg) {
  */
 
 Command.prototype.parseOptions = function(argv) {
-  var args = []
-    , len = argv.length
-    , literal
-    , option
-    , arg;
+  var args = [],
+    len = argv.length,
+    literal,
+    option,
+    arg;
 
   var unknownOptions = [];
 
@@ -711,7 +709,7 @@ Command.prototype.parseOptions = function(argv) {
       continue;
     }
 
-    if ('--' == arg) {
+    if (arg == '--') {
       literal = true;
       continue;
     }
@@ -724,12 +722,12 @@ Command.prototype.parseOptions = function(argv) {
       // requires arg
       if (option.required) {
         arg = argv[++i];
-        if (null == arg) return this.optionMissingArgument(option);
+        if (arg == null) return this.optionMissingArgument(option);
         this.emit('option:' + option.name(), arg);
       // optional arg
       } else if (option.optional) {
-        arg = argv[i+1];
-        if (null == arg || ('-' == arg[0] && '-' != arg)) {
+        arg = argv[i + 1];
+        if (arg == null || (arg[0] == '-' && arg != '-')) {
           arg = null;
         } else {
           ++i;
@@ -743,13 +741,13 @@ Command.prototype.parseOptions = function(argv) {
     }
 
     // looks like an option
-    if (arg.length > 1 && '-' == arg[0]) {
+    if (arg.length > 1 && arg[0] == '-') {
       unknownOptions.push(arg);
 
       // If the next argument looks like it might be
       // an argument for this option, we pass it on.
       // If it isn't, then it'll simply be ignored
-      if (argv[i+1] && '-' != argv[i+1][0]) {
+      if (argv[i + 1] && argv[i + 1][0] != '-') {
         unknownOptions.push(argv[++i]);
       }
       continue;
@@ -769,10 +767,10 @@ Command.prototype.parseOptions = function(argv) {
  * @api public
  */
 Command.prototype.opts = function() {
-  var result = {}
-    , len = this.options.length;
+  var result = {},
+    len = this.options.length;
 
-  for (var i = 0 ; i < len; i++) {
+  for (var i = 0; i < len; i++) {
     var key = this.options[i].attributeName();
     result[key] = key === 'version' ? this._version : this[key];
   }
@@ -854,7 +852,7 @@ Command.prototype.variadicArgNotLast = function(name) {
  */
 
 Command.prototype.version = function(str, flags) {
-  if (0 == arguments.length) return this._version;
+  if (arguments.length === 0) return this._version;
   this._version = str;
   flags = flags || '-V, --version';
   this.option(flags, 'output the version number');
@@ -874,7 +872,7 @@ Command.prototype.version = function(str, flags) {
  */
 
 Command.prototype.description = function(str) {
-  if (0 === arguments.length) return this._description;
+  if (arguments.length === 0) return this._description;
   this._description = str;
   return this;
 };
@@ -889,8 +887,8 @@ Command.prototype.description = function(str) {
 
 Command.prototype.alias = function(alias) {
   var command = this;
-  if(this.commands.length !== 0) {
-    command = this.commands[this.commands.length - 1]
+  if (this.commands.length !== 0) {
+    command = this.commands[this.commands.length - 1];
   }
 
   if (arguments.length === 0) return command._alias;
@@ -914,11 +912,11 @@ Command.prototype.usage = function(str) {
     return humanReadableArgName(arg);
   });
 
-  var usage = '[options]'
-    + (this.commands.length ? ' [command]' : '')
-    + (this._args.length ? ' ' + args.join(' ') : '');
+  var usage = '[options]' +
+    (this.commands.length ? ' [command]' : '') +
+    (this._args.length ? ' ' + args.join(' ') : '');
 
-  if (0 == arguments.length) return this._usage || usage;
+  if (arguments.length === 0) return this._usage || usage;
   this._usage = str;
 
   return this;
@@ -933,7 +931,7 @@ Command.prototype.usage = function(str) {
  */
 
 Command.prototype.name = function(str) {
-  if (0 === arguments.length) return this._name;
+  if (arguments.length === 0) return this._name;
   this._name = str;
   return this;
 };
@@ -963,8 +961,8 @@ Command.prototype.optionHelp = function() {
 
   // Append the help information
   return this.options.map(function(option) {
-      return pad(option.flags, width) + '  ' + option.description
-        + ((option.bool != false && option.defaultValue !== undefined) ? ' (default: ' + option.defaultValue + ')' : '');
+    return pad(option.flags, width) + '  ' + option.description +
+      ((option.bool != false && option.defaultValue !== undefined) ? ' (default: ' + option.defaultValue + ')' : '');
   }).concat([pad('-h, --help', width) + '  ' + 'output usage information'])
     .join('\n');
 };
@@ -987,11 +985,11 @@ Command.prototype.commandHelp = function() {
     }).join(' ');
 
     return [
-      cmd._name
-        + (cmd._alias ? '|' + cmd._alias : '')
-        + (cmd.options.length ? ' [options]' : '')
-        + (args ? ' ' + args : '')
-      , cmd._description
+      cmd._name +
+        (cmd._alias ? '|' + cmd._alias : '') +
+        (cmd.options.length ? ' [options]' : '') +
+        (args ? ' ' + args : ''),
+      cmd._description
     ];
   });
 
@@ -1000,14 +998,14 @@ Command.prototype.commandHelp = function() {
   }, 0);
 
   return [
-    ''
-    , '  Commands:'
-    , ''
-    , commands.map(function(cmd) {
+    '',
+    '  Commands:',
+    '',
+    commands.map(function(cmd) {
       var desc = cmd[1] ? '  ' + cmd[1] : '';
       return (desc ? pad(cmd[0], width) : cmd[0]) + desc;
-    }).join('\n').replace(/^/gm, '    ')
-    , ''
+    }).join('\n').replace(/^/gm, '    '),
+    ''
   ].join('\n');
 };
 
@@ -1022,8 +1020,8 @@ Command.prototype.helpInformation = function() {
   var desc = [];
   if (this._description) {
     desc = [
-      '  ' + this._description
-      , ''
+      '  ' + this._description,
+      ''
     ];
   }
 
@@ -1032,9 +1030,9 @@ Command.prototype.helpInformation = function() {
     cmdName = cmdName + '|' + this._alias;
   }
   var usage = [
+    '',
+    '  Usage: ' + cmdName + ' ' + this.usage(),
     ''
-    ,'  Usage: ' + cmdName + ' ' + this.usage()
-    , ''
   ];
 
   var cmds = [];
@@ -1042,11 +1040,11 @@ Command.prototype.helpInformation = function() {
   if (commandHelp) cmds = [commandHelp];
 
   var options = [
+    '',
+    '  Options:',
+    '',
+    '' + this.optionHelp().replace(/^/gm, '    '),
     ''
-    , '  Options:'
-    , ''
-    , '' + this.optionHelp().replace(/^/gm, '    ')
-    , ''
   ];
 
   return usage
@@ -1066,7 +1064,7 @@ Command.prototype.outputHelp = function(cb) {
   if (!cb) {
     cb = function(passthru) {
       return passthru;
-    }
+    };
   }
   process.stdout.write(cb(this.helpInformation()));
   this.emit('--help');
@@ -1142,7 +1140,7 @@ function humanReadableArgName(arg) {
 
   return arg.required
     ? '<' + nameOutput + '>'
-    : '[' + nameOutput + ']'
+    : '[' + nameOutput + ']';
 }
 
 // for versions before node v0.8 when there weren't `fs.existsSync`
@@ -1155,4 +1153,3 @@ function exists(file) {
     return false;
   }
 }
-
