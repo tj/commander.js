@@ -1,0 +1,9 @@
+{
+  "extends": "standard",
+  "rules": {
+    "eqeqeq": "off",
+    "one-var": "off",
+    "semi": ["error", "always", { "omitLastInOneLineBlock": true }],
+    "space-before-function-paren": ["error", "never"],
+  }
+}
