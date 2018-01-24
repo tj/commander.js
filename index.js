@@ -86,7 +86,7 @@ Option.prototype.attributeName = function() {
  */
 
 Option.prototype.is = function(arg) {
-  return arg == this.short || arg == this.long;
+  return this.short === arg || this.long === arg;
 };
 
 /**
@@ -377,7 +377,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     name = option.attributeName();
 
   // default as 3rd arg
-  if (typeof fn != 'function') {
+  if (typeof fn !== 'function') {
     if (fn instanceof RegExp) {
       var regex = fn;
       fn = function(val, def) {
@@ -391,11 +391,11 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   }
 
   // preassign default value only for --no-*, [optional], or <required>
-  if (option.bool == false || option.optional || option.required) {
+  if (!option.bool || option.optional || option.required) {
     // when --no-* we make sure default is true
-    if (option.bool == false) defaultValue = true;
+    if (!option.bool) defaultValue = true;
     // preassign only if we have a default
-    if (undefined !== defaultValue) {
+    if (defaultValue !== undefined) {
       self[name] = defaultValue;
       option.defaultValue = defaultValue;
     }
@@ -484,7 +484,7 @@ Command.prototype.parse = function(argv) {
     })[0];
   }
 
-  if (this._execs[name] && typeof this._execs[name] != 'function') {
+  if (this._execs[name] && typeof this._execs[name] !== 'function') {
     return this.executeSubCommand(argv, args, parsed.unknown);
   } else if (aliasCommand) {
     // is alias of a subCommand
@@ -512,10 +512,10 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   args = args.concat(unknown);
 
   if (!args.length) this.help();
-  if (args[0] == 'help' && args.length === 1) this.help();
+  if (args[0] === 'help' && args.length === 1) this.help();
 
   // <cmd> --help
-  if (args[0] == 'help') {
+  if (args[0] === 'help') {
     args[0] = args[1];
     args[1] = '--help';
   }
@@ -576,9 +576,9 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   });
   proc.on('close', process.exit.bind(process));
   proc.on('error', function(err) {
-    if (err.code == 'ENOENT') {
+    if (err.code === 'ENOENT') {
       console.error('\n  %s(1) does not exist, try --help\n', bin);
-    } else if (err.code == 'EACCES') {
+    } else if (err.code === 'EACCES') {
       console.error('\n  %s(1) not executable. try chmod or run with root\n', bin);
     }
     process.exit(1);
@@ -616,7 +616,7 @@ Command.prototype.normalize = function(args) {
       break;
     } else if (lastOpt && lastOpt.required) {
       ret.push(arg);
-    } else if (arg.length > 1 && arg[0] == '-' && arg[1] != '-') {
+    } else if (arg.length > 1 && arg[0] === '-' && arg[1] !== '-') {
       arg.slice(1).split('').forEach(function(c) {
         ret.push('-' + c);
       });
@@ -709,7 +709,7 @@ Command.prototype.parseOptions = function(argv) {
       continue;
     }
 
-    if (arg == '--') {
+    if (arg === '--') {
       literal = true;
       continue;
     }
@@ -727,7 +727,7 @@ Command.prototype.parseOptions = function(argv) {
       // optional arg
       } else if (option.optional) {
         arg = argv[i + 1];
-        if (arg == null || (arg[0] == '-' && arg != '-')) {
+        if (arg == null || (arg[0] === '-' && arg !== '-')) {
           arg = null;
         } else {
           ++i;
@@ -741,13 +741,13 @@ Command.prototype.parseOptions = function(argv) {
     }
 
     // looks like an option
-    if (arg.length > 1 && arg[0] == '-') {
+    if (arg.length > 1 && arg[0] === '-') {
       unknownOptions.push(arg);
 
       // If the next argument looks like it might be
       // an argument for this option, we pass it on.
       // If it isn't, then it'll simply be ignored
-      if (argv[i + 1] && argv[i + 1][0] != '-') {
+      if (argv[i + 1] && argv[i + 1][0] !== '-') {
         unknownOptions.push(argv[++i]);
       }
       continue;
@@ -962,7 +962,7 @@ Command.prototype.optionHelp = function() {
   // Append the help information
   return this.options.map(function(option) {
     return pad(option.flags, width) + '  ' + option.description +
-      ((option.bool != false && option.defaultValue !== undefined) ? ' (default: ' + option.defaultValue + ')' : '');
+      ((option.bool && option.defaultValue !== undefined) ? ' (default: ' + option.defaultValue + ')' : '');
   }).concat([pad('-h, --help', width) + '  ' + 'output usage information'])
     .join('\n');
 };
@@ -1120,7 +1120,7 @@ function pad(str, width) {
 function outputHelpIfNecessary(cmd, options) {
   options = options || [];
   for (var i = 0; i < options.length; i++) {
-    if (options[i] == '--help' || options[i] == '-h') {
+    if (options[i] === '--help' || options[i] === '-h') {
       cmd.outputHelp();
       process.exit(0);
     }
