@@ -747,7 +747,7 @@ Command.prototype.parseOptions = function(argv) {
       // If the next argument looks like it might be
       // an argument for this option, we pass it on.
       // If it isn't, then it'll simply be ignored
-      if (argv[i + 1] && argv[i + 1][0] !== '-') {
+      if ((i + 1) < argv.length && argv[i + 1][0] !== '-') {
         unknownOptions.push(argv[++i]);
       }
       continue;
@@ -855,8 +855,8 @@ Command.prototype.version = function(str, flags) {
   if (arguments.length === 0) return this._version;
   this._version = str;
   flags = flags || '-V, --version';
-  var longOptIndex = flags.indexOf('--')
-  this._versionOptionName = ~longOptIndex ? flags.substr(longOptIndex + 2) : 'version'
+  var longOptIndex = flags.indexOf('--');
+  this._versionOptionName = ~longOptIndex ? flags.substr(longOptIndex + 2) : 'version';
   this.option(flags, 'output the version number');
   this.on('option:' + this._versionOptionName, function() {
     process.stdout.write(str + '\n');
