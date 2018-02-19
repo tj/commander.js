@@ -16,7 +16,7 @@
 
 ## Option parsing
 
- Options with commander are defined with the `.option()` method, also serving as documentation for the options. The example below parses args and options from `process.argv`, leaving remaining args as the `program.args` array which were not consumed by options.
+Options with commander are defined with the `.option()` method, also serving as documentation for the options. The example below parses args and options from `process.argv`, leaving remaining args as the `program.args` array which were not consumed by options.
 
 ```js
 #!/usr/bin/env node
@@ -42,7 +42,7 @@ if (program.bbqSauce) console.log('  - bbq');
 console.log('  - %s cheese', program.cheese);
 ```
 
- Short flags may be passed as a single arg, for example `-abc` is equivalent to `-a -b -c`. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc.
+Short flags may be passed as a single arg, for example `-abc` is equivalent to `-a -b -c`. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc.
 
 Note that multi-word options starting with `--no` prefix negate the boolean value of the following word. For example, `--no-sauce` sets the value of `program.sauce` to false. 
 
@@ -63,6 +63,44 @@ console.log('you ordered a pizza');
 if (program.sauce) console.log('  with sauce');
 else console.log(' without sauce');
 ```
+
+## Version option
+
+Calling the `version` implicitly adds the `-V` and `--version` options to the command.
+When either of these options is present, the command prints the version number and exits.
+
+    $ ./examples/pizza -V
+    0.0.1
+
+If you want your program to respond to the `-v` option instead of the `-V` option, simply pass custom flags to the `version` method using the same syntax as the `option` method.
+
+```js
+program
+  .version('0.0.1', '-v, --version')
+```
+
+The version flags can be named anything, but the long option is required.
+
+## Command-specific options
+
+You can attach options to a command.
+
+```js
+#!/usr/bin/env node
+
+var program = require('commander');
+
+program
+  .command('rm <dir>')
+  .option('-r, --recursive', 'Remove recursively')
+  .action(function (dir, cmd) {
+    console.log('remove ' + dir + (cmd.recursive ? ' recursively' : ''))
+  })
+
+program.parse(process.argv)
+```
+
+A command's options are validated when the command is used. Any unknown options will be reported as an error. However, if an action-based command does not define an action, then the options are not validated.
 
 ## Coercion
 

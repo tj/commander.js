@@ -1,6 +1,6 @@
 {
   "name": "commander",
-  "version": "2.11.0",
+  "version": "2.14.1",
   "description": "the complete solution for node.js command-line programs",
   "keywords": [
     "commander",
@@ -15,20 +15,23 @@
     "url": "https://github.com/tj/commander.js.git"
   },
   "scripts": {
+    "lint": "eslint index.js",
     "test": "make test && npm run test-typings",
     "test-typings": "node_modules/typescript/bin/tsc -p tsconfig.json"
   },
   "main": "index",
   "files": [
-    "index.js"
+    "index.js",
+    "typings/index.d.ts"
   ],
-  "dependencies": {
-    "@types/node": "^7.0.39"
-  },
+  "dependencies": {},
   "devDependencies": {
+    "@types/node": "^7.0.52",
+    "eslint": "^3.19.0",
     "should": "^11.2.1",
-    "sinon": "^2.3.5",
-    "typescript": "^2.4.1"
+    "sinon": "^2.4.1",
+    "standard": "^10.0.3",
+    "typescript": "^2.7.1"
   },
   "typings": "typings/index.d.ts"
 }

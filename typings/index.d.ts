@@ -1,7 +1,11 @@
+// Type definitions for commander 2.11
 // Project: https://github.com/visionmedia/commander.js
-// Definitions by: Alan Agius <https://github.com/alan-agius4>, Marcelo Dezem <https://github.com/mdezem>, vvakame <https://github.com/vvakame>
+// Definitions by: Alan Agius <https://github.com/alan-agius4>, Marcelo Dezem <https://github.com/mdezem>, vvakame <https://github.com/vvakame>, Jules Randolph <https://github.com/sveinburne>
+// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
-declare class Option {
+declare namespace local {
+
+  class Option {
     flags: string;
     required: boolean;
     optional: boolean;
@@ -17,9 +21,9 @@ declare class Option {
      * @param {string} [description]
      */
     constructor(flags: string, description?: string);
-}
+  }
 
-declare class Command extends NodeJS.EventEmitter {
+  class Command extends NodeJS.EventEmitter {
     [key: string]: any;
 
     args: string[];
@@ -121,6 +125,7 @@ declare class Command extends NodeJS.EventEmitter {
      * @returns {Command} for chaining
      */
     parseExpectedArgs(args: string[]): Command;
+
     /**
      * Register callback `fn` for the command.
      *
@@ -262,15 +267,24 @@ declare class Command extends NodeJS.EventEmitter {
     /**
      * Output help information for this command.
      *
-     * @param {(str: string) => string} [cb] 
+     * @param {(str: string) => string} [cb]
      */
     outputHelp(cb?: (str: string) => string): void;
 
-    /** Output help information and exit. */
-    help(): void;
+    /** Output help information and exit.
+     *
+     * @param {(str: string) => string} [cb]
+     */
+    help(cb?: (str: string) => string): void;
+  }
+
 }
 
 declare namespace commander {
+
+    type Command = local.Command
+
+    type Option = local.Option
 
     interface CommandOptions {
         noHelp?: boolean;
@@ -283,8 +297,8 @@ declare namespace commander {
     }
 
     interface CommanderStatic extends Command {
-        Command: typeof Command;
-        Option: typeof Option;
+        Command: typeof local.Command;
+        Option: typeof local.Option;
         CommandOptions: CommandOptions;
         ParseOptionsResult: ParseOptionsResult;
     }

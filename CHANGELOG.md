@@ -1,4 +1,56 @@
 
+2.14.1 / 2018-02-07
+==================
+
+  * Fix typing of help function
+
+2.14.0 / 2018-02-05
+==================
+
+  * only register the option:version event once
+  * Fixes issue #727: Passing empty string for option on command is set to undefined
+  * enable eqeqeq rule
+  * resolves #754 add linter configuration to project
+  * resolves #560 respect custom name for version option
+  * document how to override the version flag
+  * document using options per command
+
+2.13.0 / 2018-01-09
+==================
+
+  * Do not print default for --no-
+  * remove trailing spaces in command help
+  * Update CI's Node.js to LTS and latest version
+  * typedefs: Command and Option types added to commander namespace
+
+2.12.2 / 2017-11-28
+==================
+
+  * fix: typings are not shipped
+
+2.12.1 / 2017-11-23
+==================
+
+  * Move @types/node to dev dependency
+
+2.12.0 / 2017-11-22
+==================
+
+  * add attributeName() method to Option objects
+  * Documentation updated for options with --no prefix
+  * typings: `outputHelp` takes a string as the first parameter
+  * typings: use overloads
+  * feat(typings): update to match js api
+  * Print default value in option help
+  * Fix translation error
+  * Fail when using same command and alias (#491)
+  * feat(typings): add help callback
+  * fix bug when description is add after command with options (#662)
+  * Format js code
+  * Rename History.md to CHANGELOG.md (#668)
+  * feat(typings): add typings to support TypeScript (#646)
+  * use current node
+
 2.11.0 / 2017-07-03
 ==================
 
