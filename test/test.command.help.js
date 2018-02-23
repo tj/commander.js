@@ -5,8 +5,8 @@ var program = require('../')
 
 program.command('bare');
 
-program.commandHelp().should.equal('\n  Commands:\n\n    bare\n');
+program.commandHelp().should.equal('  Commands:\n\n    bare\n');
 
 program.command('mycommand [options]');
 
-program.commandHelp().should.equal('\n  Commands:\n\n    bare\n    mycommand [options]\n');
+program.commandHelp().should.equal('  Commands:\n\n    bare\n    mycommand [options]\n');
