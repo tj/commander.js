@@ -60,5 +60,6 @@ console.error = oldConsoleError;
 [
   '',
   '  error: variadic arguments must be last `variadicArg\'',
+  '  Try \'--help\' for more information.',
   ''
 ].join('\n').should.eql(errorMessage);
