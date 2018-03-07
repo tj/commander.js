@@ -5,6 +5,7 @@
 var EventEmitter = require('events').EventEmitter;
 var spawn = require('child_process').spawn;
 var path = require('path');
+var util = require('util');
 var dirname = path.dirname;
 var basename = path.basename;
 var fs = require('fs');
@@ -13,7 +14,7 @@ var fs = require('fs');
  * Inherit `Command` from `EventEmitter.prototype`.
  */
 
-require('util').inherits(Command, EventEmitter);
+util.inherits(Command, EventEmitter);
 
 /**
  * Expose the root command.
@@ -32,6 +33,18 @@ exports.Command = Command;
  */
 
 exports.Option = Option;
+
+/**
+ * Expose `translator`.
+ */
+
+exports.translator = function translator(str) {
+  return str;
+};
+
+function translate(str) {
+  return exports.translator(str);
+}
 
 /**
  * Initialize a new `Option` with the given `flags` and `description`.
@@ -208,7 +221,7 @@ Command.prototype.arguments = function(desc) {
  */
 
 Command.prototype.addImplicitHelpCommand = function() {
-  this.command('help [cmd]', 'display help for [cmd]');
+  this.command('help [cmd]', translate('display help for [cmd]'));
 };
 
 /**
@@ -577,9 +590,9 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   proc.on('close', process.exit.bind(process));
   proc.on('error', function(err) {
     if (err.code === 'ENOENT') {
-      console.error('\n  %s(1) does not exist, try --help\n', bin);
+      console.error('\n  ' + translate('%s(1) does not exist, try --help') + '\n', bin);
     } else if (err.code === 'EACCES') {
-      console.error('\n  %s(1) not executable. try chmod or run with root\n', bin);
+      console.error('\n  ' + translate('%s(1) not executable. try chmod or run with root') + '\n', bin);
     }
     process.exit(1);
   });
@@ -786,7 +799,7 @@ Command.prototype.opts = function() {
 
 Command.prototype.missingArgument = function(name) {
   console.error();
-  console.error("  error: missing required argument `%s'", name);
+  console.error('  ' + translate("error: missing required argument `%s'"), name);
   console.error();
   process.exit(1);
 };
@@ -802,9 +815,9 @@ Command.prototype.missingArgument = function(name) {
 Command.prototype.optionMissingArgument = function(option, flag) {
   console.error();
   if (flag) {
-    console.error("  error: option `%s' argument missing, got `%s'", option.flags, flag);
+    console.error('  ' + translate("error: option `%s' argument missing, got `%s'"), option.flags, flag);
   } else {
-    console.error("  error: option `%s' argument missing", option.flags);
+    console.error('  ' + translate("error: option `%s' argument missing"), option.flags);
   }
   console.error();
   process.exit(1);
@@ -820,7 +833,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
 Command.prototype.unknownOption = function(flag) {
   if (this._allowUnknownOption) return;
   console.error();
-  console.error("  error: unknown option `%s'", flag);
+  console.error('  ' + translate("error: unknown option `%s'"), flag);
   console.error();
   process.exit(1);
 };
@@ -834,7 +847,7 @@ Command.prototype.unknownOption = function(flag) {
 
 Command.prototype.variadicArgNotLast = function(name) {
   console.error();
-  console.error("  error: variadic arguments must be last `%s'", name);
+  console.error('  ' + translate("error: variadic arguments must be last `%s'"), name);
   console.error();
   process.exit(1);
 };
@@ -855,7 +868,7 @@ Command.prototype.version = function(str, flags) {
   if (arguments.length === 0) return this._version;
   this._version = str;
   flags = flags || '-V, --version';
-  var versionOption = new Option(flags, 'output the version number');
+  var versionOption = new Option(flags, translate('output the version number'));
   this._versionOptionName = versionOption.long.substr(2) || 'version';
   this.options.push(versionOption);
   this.on('option:' + this._versionOptionName, function() {
@@ -897,7 +910,7 @@ Command.prototype.alias = function(alias) {
 
   if (arguments.length === 0) return command._alias;
 
-  if (alias === command._name) throw new Error('Command alias can\'t be the same as its name');
+  if (alias === command._name) throw new Error(translate('Command alias can\'t be the same as its name'));
 
   command._alias = alias;
   return this;
@@ -1045,9 +1058,9 @@ Command.prototype.optionHelp = function() {
 
   // Append the help information
   return this.options.map(function(option) {
-    return pad(option.flags, width) + '  ' + option.description +
-      ((option.bool && option.defaultValue !== undefined) ? ' (default: ' + option.defaultValue + ')' : '');
-  }).concat([pad('-h, --help', width) + '  ' + 'output usage information'])
+    return pad(option.flags, width) + '  ' + translate(option.description) +
+      ((option.bool && option.defaultValue !== undefined) ? util.format(' ' + translate('(default: %s)', option.defaultValue)) : '');
+  }).concat([pad('-h, --help', width) + '  ' + translate('output usage information')])
     .join('\n');
 };
 
@@ -1065,10 +1078,10 @@ Command.prototype.commandHelp = function() {
   var width = this.padWidth();
 
   return [
-    '  Commands:',
+    '  ' + translate('Commands:'),
     '',
     commands.map(function(cmd) {
-      var desc = cmd[1] ? '  ' + cmd[1] : '';
+      var desc = cmd[1] ? '  ' + translate(cmd[1]) : '';
       return (desc ? pad(cmd[0], width) : cmd[0]) + desc;
     }).join('\n').replace(/^/gm, '    '),
     ''
@@ -1086,17 +1099,17 @@ Command.prototype.helpInformation = function() {
   var desc = [];
   if (this._description) {
     desc = [
-      '  ' + this._description,
+      '  ' + translate(this._description),
       ''
     ];
 
     var argsDescription = this._argsDescription;
     if (argsDescription && this._args.length) {
       var width = this.padWidth();
-      desc.push('  Arguments:');
+      desc.push('  ' + translate('Arguments:'));
       desc.push('');
       this._args.forEach(function(arg) {
-        desc.push('    ' + pad(arg.name, width) + '  ' + argsDescription[arg.name]);
+        desc.push('    ' + pad(arg.name, width) + '  ' + translate(argsDescription[arg.name]));
       });
       desc.push('');
     }
@@ -1108,7 +1121,7 @@ Command.prototype.helpInformation = function() {
   }
   var usage = [
     '',
-    '  Usage: ' + cmdName + ' ' + this.usage(),
+    '  ' + translate('Usage:') + ' ' + cmdName + ' ' + this.usage(),
     ''
   ];
 
@@ -1117,7 +1130,7 @@ Command.prototype.helpInformation = function() {
   if (commandHelp) cmds = [commandHelp];
 
   var options = [
-    '  Options:',
+    '  ' + translate('Options:'),
     '',
     '' + this.optionHelp().replace(/^/gm, '    '),
     ''
