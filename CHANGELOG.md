@@ -1,4 +1,10 @@
 
+2.15.0 / 2018-03-07
+==================
+
+  * Update downloads badge to point to graph of downloads over time instead of duplicating link to npm
+  * Arguments description
+
 2.14.1 / 2018-02-07
 ==================
 
