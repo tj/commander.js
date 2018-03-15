@@ -15,6 +15,6 @@ program
 
 program.parse(['node', 'test']);
 
-program.commandHelp().should.containEql('info|i');
-program.commandHelp().should.containEql('save|s');
-program.commandHelp().should.not.containEql('test|');
+program._printer.commandHelp(program).should.containEql('info|i');
+program._printer.commandHelp(program).should.containEql('save|s');
+program._printer.commandHelp(program).should.not.containEql('test|');

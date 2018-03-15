@@ -34,6 +34,12 @@ exports.Command = Command;
 exports.Option = Option;
 
 /**
+ * Expose `Printer`.
+ */
+
+exports.Printer = Printer;
+
+/**
  * Initialize a new `Option` with the given `flags` and `description`.
  *
  * @param {String} flags
@@ -93,16 +99,18 @@ Option.prototype.is = function(arg) {
  * Initialize a new `Command`.
  *
  * @param {String} name
+ * @param {Printer} printer
  * @api public
  */
 
-function Command(name) {
+function Command(name, printer) {
   this.commands = [];
   this.options = [];
   this._execs = {};
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
+  this._printer = printer || new Printer();
 }
 
 /**
@@ -173,7 +181,7 @@ Command.prototype.command = function(name, desc, opts) {
   }
   opts = opts || {};
   var args = name.split(/ +/);
-  var cmd = new Command(args.shift());
+  var cmd = new Command(args.shift(), this._printer);
 
   if (desc) {
     cmd.description(desc);
@@ -577,9 +585,9 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   proc.on('close', process.exit.bind(process));
   proc.on('error', function(err) {
     if (err.code === 'ENOENT') {
-      console.error('\n  %s(1) does not exist, try --help\n', bin);
+      this._printer.error('%s(1) does not exist, try --help', bin);
     } else if (err.code === 'EACCES') {
-      console.error('\n  %s(1) not executable. try chmod or run with root\n', bin);
+      this._printer.error('%s(1) not executable. try chmod or run with root', bin);
     }
     process.exit(1);
   });
@@ -785,9 +793,7 @@ Command.prototype.opts = function() {
  */
 
 Command.prototype.missingArgument = function(name) {
-  console.error();
-  console.error("  error: missing required argument `%s'", name);
-  console.error();
+  this._printer.error("error: missing required argument `%s'", name);
   process.exit(1);
 };
 
@@ -800,13 +806,11 @@ Command.prototype.missingArgument = function(name) {
  */
 
 Command.prototype.optionMissingArgument = function(option, flag) {
-  console.error();
   if (flag) {
-    console.error("  error: option `%s' argument missing, got `%s'", option.flags, flag);
+    this._printer.error("error: option `%s' argument missing, got `%s'", option.flags, flag);
   } else {
-    console.error("  error: option `%s' argument missing", option.flags);
+    this._printer.error("error: option `%s' argument missing", option.flags);
   }
-  console.error();
   process.exit(1);
 };
 
@@ -819,9 +823,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
 
 Command.prototype.unknownOption = function(flag) {
   if (this._allowUnknownOption) return;
-  console.error();
-  console.error("  error: unknown option `%s'", flag);
-  console.error();
+  this._printer.error("error: unknown option `%s'", flag);
   process.exit(1);
 };
 
@@ -833,9 +835,7 @@ Command.prototype.unknownOption = function(flag) {
  */
 
 Command.prototype.variadicArgNotLast = function(name) {
-  console.error();
-  console.error("  error: variadic arguments must be last `%s'", name);
-  console.error();
+  this._printer.error("error: variadic arguments must be last `%s'", name);
   process.exit(1);
 };
 
@@ -941,196 +941,6 @@ Command.prototype.name = function(str) {
 };
 
 /**
- * Return prepared commands.
- *
- * @return {Array}
- * @api private
- */
-
-Command.prototype.prepareCommands = function() {
-  return this.commands.filter(function(cmd) {
-    return !cmd._noHelp;
-  }).map(function(cmd) {
-    var args = cmd._args.map(function(arg) {
-      return humanReadableArgName(arg);
-    }).join(' ');
-
-    return [
-      cmd._name +
-        (cmd._alias ? '|' + cmd._alias : '') +
-        (cmd.options.length ? ' [options]' : '') +
-        (args ? ' ' + args : ''),
-      cmd._description
-    ];
-  });
-};
-
-/**
- * Return the largest command length.
- *
- * @return {Number}
- * @api private
- */
-
-Command.prototype.largestCommandLength = function() {
-  var commands = this.prepareCommands();
-  return commands.reduce(function(max, command) {
-    return Math.max(max, command[0].length);
-  }, 0);
-};
-
-/**
- * Return the largest option length.
- *
- * @return {Number}
- * @api private
- */
-
-Command.prototype.largestOptionLength = function() {
-  var options = [].slice.call(this.options);
-  options.push({
-    flags: '-h, --help'
-  });
-  return options.reduce(function(max, option) {
-    return Math.max(max, option.flags.length);
-  }, 0);
-};
-
-/**
- * Return the largest arg length.
- *
- * @return {Number}
- * @api private
- */
-
-Command.prototype.largestArgLength = function() {
-  return this._args.reduce(function(max, arg) {
-    return Math.max(max, arg.name.length);
-  }, 0);
-};
-
-/**
- * Return the pad width.
- *
- * @return {Number}
- * @api private
- */
-
-Command.prototype.padWidth = function() {
-  var width = this.largestOptionLength();
-  if (this._argsDescription && this._args.length) {
-    if (this.largestArgLength() > width) {
-      width = this.largestArgLength();
-    }
-  }
-
-  if (this.commands && this.commands.length) {
-    if (this.largestCommandLength() > width) {
-      width = this.largestCommandLength();
-    }
-  }
-
-  return width;
-};
-
-/**
- * Return help for options.
- *
- * @return {String}
- * @api private
- */
-
-Command.prototype.optionHelp = function() {
-  var width = this.padWidth();
-
-  // Append the help information
-  return this.options.map(function(option) {
-    return pad(option.flags, width) + '  ' + option.description +
-      ((option.bool && option.defaultValue !== undefined) ? ' (default: ' + option.defaultValue + ')' : '');
-  }).concat([pad('-h, --help', width) + '  ' + 'output usage information'])
-    .join('\n');
-};
-
-/**
- * Return command help documentation.
- *
- * @return {String}
- * @api private
- */
-
-Command.prototype.commandHelp = function() {
-  if (!this.commands.length) return '';
-
-  var commands = this.prepareCommands();
-  var width = this.padWidth();
-
-  return [
-    '  Commands:',
-    '',
-    commands.map(function(cmd) {
-      var desc = cmd[1] ? '  ' + cmd[1] : '';
-      return (desc ? pad(cmd[0], width) : cmd[0]) + desc;
-    }).join('\n').replace(/^/gm, '    '),
-    ''
-  ].join('\n');
-};
-
-/**
- * Return program help documentation.
- *
- * @return {String}
- * @api private
- */
-
-Command.prototype.helpInformation = function() {
-  var desc = [];
-  if (this._description) {
-    desc = [
-      '  ' + this._description,
-      ''
-    ];
-
-    var argsDescription = this._argsDescription;
-    if (argsDescription && this._args.length) {
-      var width = this.padWidth();
-      desc.push('  Arguments:');
-      desc.push('');
-      this._args.forEach(function(arg) {
-        desc.push('    ' + pad(arg.name, width) + '  ' + argsDescription[arg.name]);
-      });
-      desc.push('');
-    }
-  }
-
-  var cmdName = this._name;
-  if (this._alias) {
-    cmdName = cmdName + '|' + this._alias;
-  }
-  var usage = [
-    '',
-    '  Usage: ' + cmdName + ' ' + this.usage(),
-    ''
-  ];
-
-  var cmds = [];
-  var commandHelp = this.commandHelp();
-  if (commandHelp) cmds = [commandHelp];
-
-  var options = [
-    '  Options:',
-    '',
-    '' + this.optionHelp().replace(/^/gm, '    '),
-    ''
-  ];
-
-  return usage
-    .concat(desc)
-    .concat(options)
-    .concat(cmds)
-    .join('\n');
-};
-
-/**
  * Output help information for this command
  *
  * @api public
@@ -1142,7 +952,7 @@ Command.prototype.outputHelp = function(cb) {
       return passthru;
     };
   }
-  process.stdout.write(cb(this.helpInformation()));
+  process.stdout.write(cb(this._printer.outputHelp(this)));
   this.emit('--help');
 };
 
@@ -1158,6 +968,262 @@ Command.prototype.help = function(cb) {
 };
 
 /**
+ * Initialize a new `Printer`.
+ *
+ * @api public
+ */
+
+function Printer() {}
+
+/**
+ * Print error.
+ *
+ * @api public
+ */
+
+Printer.prototype.error = function() {
+  const args = [].slice.call(arguments);
+  args[0] = '\n  ' + args[0] + '\n';
+  console.error.apply(console, args);
+};
+
+/**
+ * Output help information for this command
+ *
+ * @param {Command} program
+ *
+ * @api public
+ */
+
+Printer.prototype.outputHelp = function(program) {
+  return this.helpInformation(program);
+};
+
+/**
+ * Return prepared commands.
+ *
+ * @param {Command} program
+ * @return {Array}
+ *
+ * @api private
+ */
+
+Printer.prototype.prepareCommands = function(program) {
+  return program.commands.filter(function(cmd) {
+    return !cmd._noHelp;
+  }).map(function(cmd) {
+    var args = cmd._args.map(function(arg) {
+      return humanReadableArgName(arg);
+    }).join(' ');
+
+    return [
+      cmd._name +
+      (cmd._alias ? '|' + cmd._alias : '') +
+      (cmd.options.length ? ' [options]' : '') +
+      (args ? ' ' + args : ''),
+      cmd._description
+    ];
+  });
+};
+
+/**
+ * Return the largest command length.
+ *
+ * @param {Command} program
+ * @return {Number}
+ *
+ * @api private
+ */
+
+Printer.prototype.largestCommandLength = function(program) {
+  var commands = this.prepareCommands(program);
+  return commands.reduce(function(max, command) {
+    return Math.max(max, command[0].length);
+  }, 0);
+};
+
+/**
+ * Return the largest option length.
+ *
+ * @param {Command} program
+ * @return {Number}
+ *
+ * @api private
+ */
+
+Printer.prototype.largestOptionLength = function(program) {
+  var options = [].slice.call(program.options);
+  options.push({
+    flags: '-h, --help'
+  });
+  return options.reduce(function(max, option) {
+    return Math.max(max, option.flags.length);
+  }, 0);
+};
+
+/**
+ * Return the largest arg length.
+ *
+ * @param {Command} program
+ * @return {Number}
+ *
+ * @api private
+ */
+
+Printer.prototype.largestArgLength = function(program) {
+  return program._args.reduce(function(max, arg) {
+    return Math.max(max, arg.name.length);
+  }, 0);
+};
+
+/**
+ * Return the pad width.
+ *
+ * @param {Command} program
+ * @return {Number}
+ *
+ * @api private
+ */
+
+Printer.prototype.padWidth = function(program) {
+  var width = this.largestOptionLength(program);
+  if (program._argsDescription && program._args.length) {
+    if (this.largestArgLength(program) > width) {
+      width = this.largestArgLength(program);
+    }
+  }
+
+  if (program.commands && program.commands.length) {
+    if (this.largestCommandLength(program) > width) {
+      width = this.largestCommandLength(program);
+    }
+  }
+
+  return width;
+};
+
+/**
+ * Pad `str` to `width`.
+ *
+ * @param {String} str
+ * @param {Number} width
+ * @return {String}
+ *
+ * @api private
+ */
+
+Printer.prototype.pad = function (str, width) {
+  var len = Math.max(0, width - str.length);
+  return str + Array(len + 1).join(' ');
+};
+
+/**
+ * Return help for options.
+ *
+ * @param {Command} program
+ * @return {String}
+ *
+ * @api private
+ */
+
+Printer.prototype.optionHelp = function(program) {
+  var width = this.padWidth(program);
+  var pad = this.pad;
+
+  // Append the help information
+  return program.options.map(function(option) {
+    return pad(option.flags, width) + '  ' + option.description +
+        ((option.bool && option.defaultValue !== undefined) ? ' (default: ' + option.defaultValue + ')' : '');
+  }).concat([pad('-h, --help', width) + '  ' + 'output usage information'])
+      .join('\n');
+};
+
+/**
+ * Return command help documentation.
+ *
+ * @param {Command} program
+ * @return {String}
+ *
+ * @api private
+ */
+
+Printer.prototype.commandHelp = function(program) {
+  if (!program.commands.length) return '';
+
+  var commands = this.prepareCommands(program);
+  var width = this.padWidth(program);
+  var pad = this.pad;
+
+  return [
+    '  Commands:',
+    '',
+    commands.map(function(cmd) {
+      var desc = cmd[1] ? '  ' + cmd[1] : '';
+      return (desc ? pad(cmd[0], width) : cmd[0]) + desc;
+    }).join('\n').replace(/^/gm, '    '),
+    ''
+  ].join('\n');
+};
+
+/**
+ * Return program help documentation.
+ *
+ * @param {Command} program
+ * @return {String}
+ *
+ * @api private
+ */
+
+Printer.prototype.helpInformation = function(program) {
+  var desc = [];
+  if (program._description) {
+    desc = [
+      '  ' + program._description,
+      ''
+    ];
+
+    var argsDescription = program._argsDescription;
+    if (argsDescription && program._args.length) {
+      var width = this.padWidth(program);
+      var pad = this.pad;
+      desc.push('  Arguments:');
+      desc.push('');
+      program._args.forEach(function(arg) {
+        desc.push('    ' + pad(arg.name, width) + '  ' + argsDescription[arg.name]);
+      });
+      desc.push('');
+    }
+  }
+
+  var cmdName = program._name;
+  if (program._alias) {
+    cmdName = cmdName + '|' + program._alias;
+  }
+  var usage = [
+    '',
+    '  Usage: ' + cmdName + ' ' + program.usage(),
+    ''
+  ];
+
+  var cmds = [];
+  var commandHelp = this.commandHelp(program);
+  if (commandHelp) cmds = [commandHelp];
+
+  var options = [
+    '  Options:',
+    '',
+    '' + this.optionHelp(program).replace(/^/gm, '    '),
+    ''
+  ];
+
+  return usage
+      .concat(desc)
+      .concat(options)
+      .concat(cmds)
+      .join('\n');
+};
+
+/**
  * Camel-case the given `flag`
  *
  * @param {String} flag
@@ -1169,20 +1235,6 @@ function camelcase(flag) {
   return flag.split('-').reduce(function(str, word) {
     return str + word[0].toUpperCase() + word.slice(1);
   });
-}
-
-/**
- * Pad `str` to `width`.
- *
- * @param {String} str
- * @param {Number} width
- * @return {String}
- * @api private
- */
-
-function pad(str, width) {
-  var len = Math.max(0, width - str.length);
-  return str + Array(len + 1).join(' ');
 }
 
 /**
