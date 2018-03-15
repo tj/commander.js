@@ -1112,7 +1112,7 @@ Printer.prototype.padWidth = function(program) {
  * @api private
  */
 
-Printer.prototype.pad = function (str, width) {
+Printer.prototype.pad = function(str, width) {
   var len = Math.max(0, width - str.length);
   return str + Array(len + 1).join(' ');
 };
