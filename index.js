@@ -176,8 +176,8 @@ Command.prototype.command = function(name, desc, opts) {
   var cmd = new Command(args.shift());
 
   if (desc) {
-    cmd.description(desc);
     this.executables = true;
+    cmd.description(desc);
     this._execs[cmd._name] = true;
     if (opts.isDefault) this.defaultExecutable = cmd._name;
   }
@@ -876,6 +876,7 @@ Command.prototype.version = function(str, flags) {
 
 Command.prototype.description = function(str, argsDescription) {
   if (arguments.length === 0) return this._description;
+  this.executables = true;
   this._description = str;
   this._argsDescription = argsDescription;
   return this;
