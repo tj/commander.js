@@ -391,9 +391,10 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   }
 
   // Is the default array like, if so its likely repeated options.
-  if (defaultValue != null &&
-    typeof defaultValue != 'function' &&
-    typeof defaultValue.length == 'number' &&
+  if (defaultValue !== undefined &&
+    defaultValue !== null &&
+    typeof defaultValue !== 'function' &&
+    typeof defaultValue.length === 'number' &&
     defaultValue.length > -1
   ) {
     option.repeated = true;
@@ -419,7 +420,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   // and conditionally invoke the callback
   this.on('option:' + oname, function(val) {
     // coercion
-    if (null !== val && fn) {
+    if (fn && val !== null) {
       if (option.repeated) {
         val = fn(val, undefined === self[name] ? defaultValue : self[name]);
       } else {
