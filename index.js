@@ -423,12 +423,10 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     if (fn && val !== null) {
       if (option.repeated) {
         val = fn(val, undefined === self[name] ? defaultValue : self[name]);
+      } else if (val === undefined && self[name] !== undefined && self[name] !== defaultValue) {
+        val = fn(self[name]);
       } else {
-        if (val === undefined && self[name] !== undefined && self[name] !== defaultValue) {
-          val = fn(self[name]);
-        } else {
-          val = fn((val === undefined) ? defaultValue : val);
-        }
+        val = fn((val === undefined) ? defaultValue : val);
       }
     }
 
