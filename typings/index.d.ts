@@ -275,7 +275,7 @@ declare namespace local {
      *
      * @param {(str: string) => string} [cb]
      */
-    help(cb?: (str: string) => string): void;
+    help(cb?: (str: string) => string): never;
   }
 
 }
