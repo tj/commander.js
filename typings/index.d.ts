@@ -218,9 +218,9 @@ declare namespace local {
     /**
      * Return an object containing options as key-value pairs
      *
-     * @returns {{[key: string]: string}}
+     * @returns {{[key: string]: any}}
      */
-    opts(): { [key: string]: string };
+    opts(): { [key: string]: any };
 
     /**
      * Set the description to `str`.
