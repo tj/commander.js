@@ -23,7 +23,7 @@ declare namespace local {
     constructor(flags: string, description?: string);
   }
 
-  class Command extends NodeJS.EventEmitter {
+  class Command {
     [key: string]: any;
 
     args: string[];
