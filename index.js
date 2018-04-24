@@ -548,7 +548,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   } else if (process.platform === 'win32' ? exists(localBin + '.cmd') : exists(localBin)) {
     bin = localBin;
   } else {
-    bin = findModuleBin(process.platform === 'win32' ? bin + '.cmd' : bin)
+    bin = findModuleBin(process.platform === 'win32' ? bin + '.cmd' : bin);
   }
 
   args = args.slice(1);
@@ -574,7 +574,6 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     } else {
       args.unshift(bin);
       proc = spawn(process.execPath, args, { stdio: 'inherit' });
-      //proc = spawn(bin, args, { stdio: 'inherit'});
     }
   }
 
