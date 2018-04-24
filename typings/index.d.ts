@@ -271,8 +271,11 @@ declare namespace local {
      */
     outputHelp(cb?: (str: string) => string): void;
 
-    /** Output help information and exit. */
-    help(): void;
+    /** Output help information and exit.
+     *
+     * @param {(str: string) => string} [cb]
+     */
+    help(cb?: (str: string) => string): void;
   }
 
 }
