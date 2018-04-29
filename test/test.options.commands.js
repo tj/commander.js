@@ -47,15 +47,15 @@ program
 
 program.parse(['node', 'test', '--config', 'conf']);
 program.config.should.equal("conf");
-program.commands[0].should.not.have.property.setup_mode;
-program.commands[1].should.not.have.property.exec_mode;
+program.commands[0].should.not.have.property('setup_mode');
+program.commands[1].should.not.have.property('exec_mode');
 envValue.should.equal("");
 cmdValue.should.equal("");
 
-program.parse(['node', 'test', '--config', 'conf1', 'setup', '--setup_mode', 'mode3', 'env1']);
+program.parse(['node', 'test', '--config', 'conf1', 'setup', '--setup_mode', 'mode2', 'env1']);
 program.config.should.equal("conf1");
-program.commands[0].setup_mode.should.equal("mode3");
-program.commands[0].should.not.have.property.host;
+program.commands[0].setup_mode.should.equal("mode2");
+program.commands[0].should.not.have.property('host');
 envValue.should.equal("env1");
 
 program.parse(['node', 'test', '--config', 'conf2', 'setup', '--setup_mode', 'mode3', '-o', 'host1', 'env2']);
@@ -72,7 +72,7 @@ envValue.should.equal("env3");
 program.parse(['node', 'test', '--config', 'conf4', 'exec', '--exec_mode', 'mode1', 'exec1']);
 program.config.should.equal("conf4");
 program.commands[1].exec_mode.should.equal("mode1");
-program.commands[1].should.not.have.property.target;
+program.commands[1].should.not.have.property('target');
 cmdValue.should.equal("exec1");
 
 program.parse(['node', 'test', '--config', 'conf5', 'exec', '-e', 'mode2', 'exec2']);
@@ -80,16 +80,17 @@ program.config.should.equal("conf5");
 program.commands[1].exec_mode.should.equal("mode2");
 cmdValue.should.equal("exec2");
 
-program.parse(['node', 'test', '--config', 'conf6', 'exec', '--target', 'target1', '-e', 'mode2', 'exec3']);
+program.parse(['node', 'test', '--config', 'conf6', 'exec', '--target', 'target1', '-e', 'mode6', 'exec3']);
 program.config.should.equal("conf6");
-program.commands[1].exec_mode.should.equal("mode2");
+program.commands[1].exec_mode.should.equal("mode6");
 program.commands[1].target.should.equal("target1");
 cmdValue.should.equal("exec3");
 
+delete program.commands[1].target;
 program.parse(['node', 'test', '--config', 'conf7', 'ex', '-e', 'mode3', 'exec4']);
 program.config.should.equal("conf7");
 program.commands[1].exec_mode.should.equal("mode3");
-program.commands[1].should.not.have.property.target;
+program.commands[1].should.not.have.property('target');
 cmdValue.should.equal("exec4");
 
 // Make sure we still catch errors with required values for options
@@ -120,5 +121,5 @@ catch (ex) {
 }
 
 process.exit = oldProcessExit;
-exceptionOccurred.should.be.true;
-customHelp.should.be.true;
+exceptionOccurred.should.be.true();
+customHelp.should.be.true();
