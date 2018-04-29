@@ -43,9 +43,9 @@ exports.Option = Option;
 
 function Option(flags, description) {
   this.flags = flags;
-  this.required = ~flags.indexOf('<');
-  this.optional = ~flags.indexOf('[');
-  this.bool = !~flags.indexOf('-no-');
+  this.required = flags.indexOf('<') >= 0;
+  this.optional = flags.indexOf('[') >= 0;
+  this.bool = flags.indexOf('-no-') === -1;
   flags = flags.split(/[ ,|]+/);
   if (flags.length > 1 && !/^[[<]/.test(flags[1])) this.short = flags.shift();
   this.long = flags.shift();
