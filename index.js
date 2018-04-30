@@ -554,7 +554,6 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   args = args.slice(1);
 
   var proc;
-  if (process.platform !== 'win32') {
     if (isExplicitJS) {
       args.unshift(bin);
       // add executable arguments to spawn
@@ -564,17 +563,6 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     } else {
       proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
     }
-  } else {
-    if (isExplicitJS) {
-      args.unshift(bin);
-      // add executable arguments to spawn
-      args = (process.execArgv || []).concat(args);
-
-      proc = spawn(process.argv[0], args, { stdio: 'inherit', customFds: [0, 1, 2] });
-    } else {
-      proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
-    }
-  }
 
   var signals = ['SIGUSR1', 'SIGUSR2', 'SIGTERM', 'SIGINT', 'SIGHUP'];
   signals.forEach(function(signal) {
