@@ -572,8 +572,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
       proc = spawn(process.argv[0], args, { stdio: 'inherit', customFds: [0, 1, 2] });
     } else {
-      args.unshift(bin);
-      proc = spawn(process.execPath, args, { stdio: 'inherit' });
+      proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
     }
   }
 
