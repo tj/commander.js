@@ -542,13 +542,14 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   // whether bin file is a js script with explicit `.js` extension
   var isExplicitJS = false;
+  var isWindows = process.platform === 'win32';
   if (exists(localBin + '.js')) {
     bin = localBin + '.js';
     isExplicitJS = true;
-  } else if (process.platform === 'win32' ? exists(localBin + '.cmd') : exists(localBin)) {
+  } else if (isWindows ? exists(localBin + '.cmd') : exists(localBin)) {
     bin = localBin;
   } else {
-    bin = findModuleBin(process.platform === 'win32' ? bin + '.cmd' : bin);
+    bin = findModuleBin(isWindows ? bin + '.cmd' : bin);
   }
 
   args = args.slice(1);
