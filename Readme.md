@@ -356,6 +356,22 @@ function make_red(txt) {
   Output help information and exit immediately.
   Optional callback cb allows post-processing of help text before it is displayed.
 
+
+## Custom event listeners
+ You can execute custom actions by listening to command and option events.
+
+```js
+program.on('option:verbose', function () {
+  process.env.VERBOSE = this.verbose;
+});
+
+// error on unknown commands
+program.on('command:*', function () {
+  console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
+  process.exit(1);
+});
+```
+
 ## Examples
 
 ```js
