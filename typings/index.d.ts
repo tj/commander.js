@@ -36,13 +36,18 @@ declare namespace local {
     constructor(name?: string);
 
     /**
-     * By default, commander interacts with the environment via calls to
-     * process.exit(), process.stdout.write(), etc. To intercept these calls,
-     * specify an environment object.
-     *
-     * @param {exit: ((number: number | undefined) => void)} env
+     * Sets a boolean value indicating whether an error should
+     * be thrown instead of exiting the application.
+     * @param {boolean} throwError Indicates whether an
+     * error should be thrown instead of exiting the application.
      */
-    setEnvironment(env: {exit: ((number: number | undefined) => void)}): void;
+    setErrorMode(throwError: boolean): void;
+
+    /**
+     * Sets a boolean value indicating whether help should exit.
+     * @param {boolean} throwError Indicates whether help should exit.
+     */
+    setHelpMode(shouldExit: boolean): void;
 
     /**
      * Set the program version to `str`.

@@ -103,37 +103,27 @@ function Command(name) {
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
-  this._env = {
-    exit(exitCode) {
-      process.exit(exitCode);
-    }
-  };
+  this._throwError = false;
+  this._shouldHelpExit = true;
 }
 
 /**
- * By default, commander interacts with the environment via calls to
- * process.exit(), process.stdout.write(), etc. To intercept these calls,
- * specify an environment object.
- *
- * @param {{exit: function(?number):void}} env
- * @api public
+ * Sets a boolean value indicating whether an error should
+ * be thrown instead of exiting the application.
+ * @param {boolean} throwError Indicates whether an
+ * error should be thrown instead of exiting the application.
  */
-
-Command.prototype.setEnvironment = function(env) {
-  this._env = env;
-};
+Command.prototype.setErrorMode = function(throwError) {
+  this._throwError = throwError;
+}
 
 /**
- * Note that normally, the caller may expect the process to terminate as a
- * result of invoking this method; howerver, if setEnvironment() has been
- * called, then this may not be the case. Callers should not assume that code
- * that is called after _exit() is unreachable.
- * @param {?number} exitCode
+ * Sets a boolean value indicating whether help should exit.
+ * @param {boolean} throwError Indicates whether help should exit.
  */
-
-Command.prototype._exit = function(exitCode) {
-  this._env.exit(exitCode);
-};
+Command.prototype.setHelpMode = function(shouldExit) {
+  this._shouldHelpExit = shouldExit;
+}
 
 /**
  * Add command `name`.
@@ -204,7 +194,6 @@ Command.prototype.command = function(name, desc, opts) {
   opts = opts || {};
   var args = name.split(/ +/);
   var cmd = new Command(args.shift());
-  cmd._env = this._env; // Inherit the environment of your parent.
 
   if (desc) {
     cmd.description(desc);
@@ -310,34 +299,29 @@ Command.prototype.action = function(fn) {
     var parsed = self.parseOptions(unknown);
 
     // Output help if necessary
-    outputHelpIfNecessary(self, parsed.unknown, this._exit.bind(this));
+    outputHelpIfNecessary(self, parsed.unknown);
 
     // If there are still any unknown options, then we simply
     // die, unless someone asked for help, in which case we give it
     // to them, and then we die.
     if (parsed.unknown.length > 0) {
       self.unknownOption(parsed.unknown[0]);
-      return;
     }
 
     // Leftover arguments need to be pushed back. Fixes issue #56
     if (parsed.args.length) args = parsed.args.concat(args);
 
-    var hasIssue = false;
     self._args.forEach(function(arg, i) {
       if (arg.required && args[i] == null) {
         self.missingArgument(arg.name);
-        hasIssue = true;
       } else if (arg.variadic) {
         if (i !== self._args.length - 1) {
           self.variadicArgNotLast(arg.name);
-          hasIssue = true;
         }
 
         args[i] = args.splice(i);
       }
     });
-    if (hasIssue) return;
 
     // Always append ourselves to the end of the arguments,
     // to make sure we match the number of arguments the user
@@ -610,18 +594,13 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
       }
     });
   });
-  proc.on('close', function(code, signal) {
-    // In this special case enforce `process.exit` WITHOUT notifying the environment.
-    process.exit(code);
-  });
+  proc.on('close', process.exit.bind(process));
   proc.on('error', function(err) {
     if (err.code === 'ENOENT') {
       console.error('\n  %s(1) does not exist, try --help\n', bin);
     } else if (err.code === 'EACCES') {
       console.error('\n  %s(1) not executable. try chmod or run with root\n', bin);
     }
-    // In this special case enforce `process.exit` after notifying the environment.
-    this._exit(1);
     process.exit(1);
   });
 
@@ -694,14 +673,12 @@ Command.prototype.parseArgs = function(args, unknown) {
       this.emit('command:*', args);
     }
   } else {
-    outputHelpIfNecessary(this, unknown, this._exit.bind(this));
+    outputHelpIfNecessary(this, unknown);
 
     // If there were no args and we have unknown options,
     // then they are extraneous and we need to error.
     if (unknown.length > 0) {
       this.unknownOption(unknown[0]);
-      // Enforce `process.exit` here
-      if (!this._allowUnknownOption) process.exit(0);
     }
   }
 
@@ -765,10 +742,7 @@ Command.prototype.parseOptions = function(argv) {
       // requires arg
       if (option.required) {
         arg = argv[++i];
-        if (arg == null) {
-          this.optionMissingArgument(option);
-          return;
-        }
+        if (arg == null) return this.optionMissingArgument(option);
         this.emit('option:' + option.name(), arg);
       // optional arg
       } else if (option.optional) {
@@ -834,7 +808,8 @@ Command.prototype.missingArgument = function(name) {
   console.error();
   console.error("  error: missing required argument `%s'", name);
   console.error();
-  this._exit(1);
+  if (this._throwError) throw new Error("missing required argument `" + name + "'");
+  else process.exit(1);
 };
 
 /**
@@ -853,7 +828,8 @@ Command.prototype.optionMissingArgument = function(option, flag) {
     console.error("  error: option `%s' argument missing", option.flags);
   }
   console.error();
-  this._exit(1);
+  if (this._throwError) throw new Error("option `" + option.flags + "' argument missing");
+  else process.exit(1);
 };
 
 /**
@@ -868,7 +844,8 @@ Command.prototype.unknownOption = function(flag) {
   console.error();
   console.error("  error: unknown option `%s'", flag);
   console.error();
-  this._exit(1);
+  if (this._throwError) throw new Error("unknown option `" + flag + "'");
+  else process.exit(1);
 };
 
 /**
@@ -882,7 +859,8 @@ Command.prototype.variadicArgNotLast = function(name) {
   console.error();
   console.error("  error: variadic arguments must be last `%s'", name);
   console.error();
-  this._exit(1);
+  if (this._throwError) throw new Error("variadic arguments must be last `" + name + "'");
+  else process.exit(1);
 };
 
 /**
@@ -906,7 +884,7 @@ Command.prototype.version = function(str, flags) {
   this.options.push(versionOption);
   this.on('option:' + this._versionOptionName, function() {
     process.stdout.write(str + '\n');
-    this._exit(0);
+    if (this._shouldHelpExit) process.exit(0);
   });
   return this;
 };
@@ -1200,7 +1178,7 @@ Command.prototype.outputHelp = function(cb) {
 
 Command.prototype.help = function(cb) {
   this.outputHelp(cb);
-  process.exit();
+  if (this._shouldHelpExit) process.exit();
 };
 
 /**
@@ -1236,16 +1214,15 @@ function pad(str, width) {
  *
  * @param {Command} command to output help for
  * @param {Array} array of options to search for -h or --help
- * @param {function(?number):void} exit
  * @api private
  */
 
-function outputHelpIfNecessary(cmd, options, exit) {
+function outputHelpIfNecessary(cmd, options) {
   options = options || [];
   for (var i = 0; i < options.length; i++) {
     if (options[i] === '--help' || options[i] === '-h') {
       cmd.outputHelp();
-      exit(0);
+      if (this._shouldHelpExit) process.exit(0);
     }
   }
 }
