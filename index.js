@@ -106,7 +106,7 @@ function Command(name) {
   this._env = {
     exit(exitCode) {
       process.exit(exitCode);
-    },
+    }
   };
 }
 
