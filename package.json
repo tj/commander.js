@@ -27,7 +27,7 @@
   "dependencies": {},
   "devDependencies": {
     "@types/node": "^7.0.55",
-    "eslint": "^3.19.0",
+    "eslint": "^4.19.1",
     "should": "^11.2.1",
     "sinon": "^2.4.1",
     "standard": "^10.0.3",
