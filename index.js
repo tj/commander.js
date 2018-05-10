@@ -317,6 +317,7 @@ Command.prototype.action = function(fn) {
     // to them, and then we die.
     if (parsed.unknown.length > 0) {
       self.unknownOption(parsed.unknown[0]);
+      return;
     }
 
     // Leftover arguments need to be pushed back. Fixes issue #56
@@ -325,9 +326,11 @@ Command.prototype.action = function(fn) {
     self._args.forEach(function(arg, i) {
       if (arg.required && args[i] == null) {
         self.missingArgument(arg.name);
+        return;
       } else if (arg.variadic) {
         if (i !== self._args.length - 1) {
           self.variadicArgNotLast(arg.name);
+          return;
         }
 
         args[i] = args.splice(i);
@@ -605,14 +608,19 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
       }
     });
   });
-  proc.on('close', this._exit.bind(this));
+  proc.on('close', function(code, signal) {
+    // In this special case enforce `process.exit` WITHOUT notifying the environment.
+    process.exit(code);
+  });
   proc.on('error', function(err) {
     if (err.code === 'ENOENT') {
       console.error('\n  %s(1) does not exist, try --help\n', bin);
     } else if (err.code === 'EACCES') {
       console.error('\n  %s(1) not executable. try chmod or run with root\n', bin);
     }
+    // In this special case enforce `process.exit` after notifying the environment.
     this._exit(1);
+    process.exit(1);
   });
 
   // Store the reference to the child process
@@ -690,6 +698,8 @@ Command.prototype.parseArgs = function(args, unknown) {
     // then they are extraneous and we need to error.
     if (unknown.length > 0) {
       this.unknownOption(unknown[0]);
+      // Enforce `process.exit` here
+      if (!this._allowUnknownOption) process.exit(0);
     }
   }
 
@@ -753,7 +763,10 @@ Command.prototype.parseOptions = function(argv) {
       // requires arg
       if (option.required) {
         arg = argv[++i];
-        if (arg == null) return this.optionMissingArgument(option);
+        if (arg == null) {
+          this.optionMissingArgument(option);
+          return;
+        }
         this.emit('option:' + option.name(), arg);
       // optional arg
       } else if (option.optional) {
