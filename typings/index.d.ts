@@ -36,6 +36,20 @@ declare namespace local {
     constructor(name?: string);
 
     /**
+     * Sets a boolean value indicating whether an error should
+     * be thrown instead of exiting the application.
+     * @param {boolean} throwError Indicates whether an
+     * error should be thrown instead of exiting the application.
+     */
+    setErrorMode(throwError: boolean): void;
+
+    /**
+     * Sets a boolean value indicating whether help should exit.
+     * @param {boolean} throwError Indicates whether help should exit.
+     */
+    setHelpMode(shouldExit: boolean): void;
+
+    /**
      * Set the program version to `str`.
      *
      * This method auto-registers the "-V, --version" flag

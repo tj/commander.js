@@ -103,7 +103,27 @@ function Command(name) {
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
+  this._throwError = false;
+  this._shouldHelpExit = true;
 }
+
+/**
+ * Sets a boolean value indicating whether an error should
+ * be thrown instead of exiting the application.
+ * @param {boolean} throwError Indicates whether an
+ * error should be thrown instead of exiting the application.
+ */
+Command.prototype.setErrorMode = function(throwError) {
+  this._throwError = throwError;
+};
+
+/**
+ * Sets a boolean value indicating whether help should exit.
+ * @param {boolean} throwError Indicates whether help should exit.
+ */
+Command.prototype.setHelpMode = function(shouldExit) {
+  this._shouldHelpExit = shouldExit;
+};
 
 /**
  * Add command `name`.
@@ -174,6 +194,9 @@ Command.prototype.command = function(name, desc, opts) {
   opts = opts || {};
   var args = name.split(/ +/);
   var cmd = new Command(args.shift());
+  // Inherit custom settings
+  cmd._shouldHelpExit = this._shouldHelpExit;
+  cmd._throwError = this._throwError;
 
   if (desc) {
     cmd.description(desc);
@@ -788,7 +811,8 @@ Command.prototype.missingArgument = function(name) {
   console.error();
   console.error("  error: missing required argument `%s'", name);
   console.error();
-  process.exit(1);
+  if (this._throwError) throw new Error('missing required argument `' + name + '\'');
+  else process.exit(1);
 };
 
 /**
@@ -807,7 +831,8 @@ Command.prototype.optionMissingArgument = function(option, flag) {
     console.error("  error: option `%s' argument missing", option.flags);
   }
   console.error();
-  process.exit(1);
+  if (this._throwError) throw new Error('option `' + option.flags + '\' argument missing');
+  else process.exit(1);
 };
 
 /**
@@ -822,7 +847,8 @@ Command.prototype.unknownOption = function(flag) {
   console.error();
   console.error("  error: unknown option `%s'", flag);
   console.error();
-  process.exit(1);
+  if (this._throwError) throw new Error('unknown option `' + flag + '\'');
+  else process.exit(1);
 };
 
 /**
@@ -836,7 +862,8 @@ Command.prototype.variadicArgNotLast = function(name) {
   console.error();
   console.error("  error: variadic arguments must be last `%s'", name);
   console.error();
-  process.exit(1);
+  if (this._throwError) throw new Error('variadic arguments must be last `' + name + '\'');
+  else process.exit(1);
 };
 
 /**
@@ -860,7 +887,7 @@ Command.prototype.version = function(str, flags) {
   this.options.push(versionOption);
   this.on('option:' + this._versionOptionName, function() {
     process.stdout.write(str + '\n');
-    process.exit(0);
+    if (this._shouldHelpExit) process.exit(0);
   });
   return this;
 };
@@ -1154,7 +1181,7 @@ Command.prototype.outputHelp = function(cb) {
 
 Command.prototype.help = function(cb) {
   this.outputHelp(cb);
-  process.exit();
+  if (this._shouldHelpExit) process.exit();
 };
 
 /**
@@ -1198,7 +1225,7 @@ function outputHelpIfNecessary(cmd, options) {
   for (var i = 0; i < options.length; i++) {
     if (options[i] === '--help' || options[i] === '-h') {
       cmd.outputHelp();
-      process.exit(0);
+      if (this._shouldHelpExit) process.exit(0);
     }
   }
 }
