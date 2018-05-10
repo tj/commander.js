@@ -194,6 +194,9 @@ Command.prototype.command = function(name, desc, opts) {
   opts = opts || {};
   var args = name.split(/ +/);
   var cmd = new Command(args.shift());
+  // Inherit custom settings
+  cmd._shouldHelpExit = this._shouldHelpExit;
+  cmd._throwError = this._throwError;
 
   if (desc) {
     cmd.description(desc);
