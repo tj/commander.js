@@ -103,7 +103,37 @@ function Command(name) {
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
+  this._env = {
+    exit(exitCode) {
+      process.exit(exitCode);
+    },
+  };
 }
+
+/**
+ * By default, commander interacts with the environment via calls to
+ * process.exit(), process.stdout.write(), etc. To intercept these calls,
+ * specify an environment object.
+ *
+ * @param {{exit: function(?number):void}} env
+ * @api public
+ */
+
+Command.prototype.setEnvironment = function(env) {
+  this._env = env;
+};
+
+/**
+ * Note that normally, the caller may expect the process to terminate as a
+ * result of invoking this method; howerver, if setEnvironment() has been
+ * called, then this may not be the case. Callers should not assume that code
+ * that is called after _exit() is unreachable.
+ * @param {?number} exitCode
+ */
+
+Command.prototype._exit = function(exitCode) {
+  this._env.exit(exitCode);
+};
 
 /**
  * Add command `name`.
@@ -174,6 +204,7 @@ Command.prototype.command = function(name, desc, opts) {
   opts = opts || {};
   var args = name.split(/ +/);
   var cmd = new Command(args.shift());
+  cmd._env = this._env; // Inherit the environment of your parent.
 
   if (desc) {
     cmd.description(desc);
@@ -279,7 +310,7 @@ Command.prototype.action = function(fn) {
     var parsed = self.parseOptions(unknown);
 
     // Output help if necessary
-    outputHelpIfNecessary(self, parsed.unknown);
+    outputHelpIfNecessary(self, parsed.unknown, this._exit.bind(this));
 
     // If there are still any unknown options, then we simply
     // die, unless someone asked for help, in which case we give it
@@ -574,14 +605,14 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
       }
     });
   });
-  proc.on('close', process.exit.bind(process));
+  proc.on('close', this._exit.bind(this));
   proc.on('error', function(err) {
     if (err.code === 'ENOENT') {
       console.error('\n  %s(1) does not exist, try --help\n', bin);
     } else if (err.code === 'EACCES') {
       console.error('\n  %s(1) not executable. try chmod or run with root\n', bin);
     }
-    process.exit(1);
+    this._exit(1);
   });
 
   // Store the reference to the child process
@@ -653,7 +684,7 @@ Command.prototype.parseArgs = function(args, unknown) {
       this.emit('command:*', args);
     }
   } else {
-    outputHelpIfNecessary(this, unknown);
+    outputHelpIfNecessary(this, unknown, this._exit.bind(this));
 
     // If there were no args and we have unknown options,
     // then they are extraneous and we need to error.
@@ -788,7 +819,7 @@ Command.prototype.missingArgument = function(name) {
   console.error();
   console.error("  error: missing required argument `%s'", name);
   console.error();
-  process.exit(1);
+  this._exit(1);
 };
 
 /**
@@ -807,7 +838,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
     console.error("  error: option `%s' argument missing", option.flags);
   }
   console.error();
-  process.exit(1);
+  this._exit(1);
 };
 
 /**
@@ -822,7 +853,7 @@ Command.prototype.unknownOption = function(flag) {
   console.error();
   console.error("  error: unknown option `%s'", flag);
   console.error();
-  process.exit(1);
+  this._exit(1);
 };
 
 /**
@@ -836,7 +867,7 @@ Command.prototype.variadicArgNotLast = function(name) {
   console.error();
   console.error("  error: variadic arguments must be last `%s'", name);
   console.error();
-  process.exit(1);
+  this._exit(1);
 };
 
 /**
@@ -860,7 +891,7 @@ Command.prototype.version = function(str, flags) {
   this.options.push(versionOption);
   this.on('option:' + this._versionOptionName, function() {
     process.stdout.write(str + '\n');
-    process.exit(0);
+    this._exit(0);
   });
   return this;
 };
@@ -1190,15 +1221,16 @@ function pad(str, width) {
  *
  * @param {Command} command to output help for
  * @param {Array} array of options to search for -h or --help
+ * @param {function(?number):void} exit
  * @api private
  */
 
-function outputHelpIfNecessary(cmd, options) {
+function outputHelpIfNecessary(cmd, options, exit) {
   options = options || [];
   for (var i = 0; i < options.length; i++) {
     if (options[i] === '--help' || options[i] === '-h') {
       cmd.outputHelp();
-      process.exit(0);
+      exit(0);
     }
   }
 }

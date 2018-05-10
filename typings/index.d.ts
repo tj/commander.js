@@ -36,6 +36,15 @@ declare namespace local {
     constructor(name?: string);
 
     /**
+     * By default, commander interacts with the environment via calls to
+     * process.exit(), process.stdout.write(), etc. To intercept these calls,
+     * specify an environment object.
+     *
+     * @param {exit: ((number: number | undefined) => void)} env
+     */
+    setEnvironment(env: {exit: ((number: number | undefined) => void)}): void;
+
+    /**
      * Set the program version to `str`.
      *
      * This method auto-registers the "-V, --version" flag
