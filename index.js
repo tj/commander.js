@@ -115,7 +115,7 @@ function Command(name) {
  */
 Command.prototype.setErrorMode = function(throwError) {
   this._throwError = throwError;
-}
+};
 
 /**
  * Sets a boolean value indicating whether help should exit.
@@ -123,7 +123,7 @@ Command.prototype.setErrorMode = function(throwError) {
  */
 Command.prototype.setHelpMode = function(shouldExit) {
   this._shouldHelpExit = shouldExit;
-}
+};
 
 /**
  * Add command `name`.
@@ -808,7 +808,7 @@ Command.prototype.missingArgument = function(name) {
   console.error();
   console.error("  error: missing required argument `%s'", name);
   console.error();
-  if (this._throwError) throw new Error("missing required argument `" + name + "'");
+  if (this._throwError) throw new Error('missing required argument `' + name + '\'');
   else process.exit(1);
 };
 
@@ -828,7 +828,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
     console.error("  error: option `%s' argument missing", option.flags);
   }
   console.error();
-  if (this._throwError) throw new Error("option `" + option.flags + "' argument missing");
+  if (this._throwError) throw new Error('option `' + option.flags + '\' argument missing');
   else process.exit(1);
 };
 
@@ -844,7 +844,7 @@ Command.prototype.unknownOption = function(flag) {
   console.error();
   console.error("  error: unknown option `%s'", flag);
   console.error();
-  if (this._throwError) throw new Error("unknown option `" + flag + "'");
+  if (this._throwError) throw new Error('unknown option `' + flag + '\'');
   else process.exit(1);
 };
 
@@ -859,7 +859,7 @@ Command.prototype.variadicArgNotLast = function(name) {
   console.error();
   console.error("  error: variadic arguments must be last `%s'", name);
   console.error();
-  if (this._throwError) throw new Error("variadic arguments must be last `" + name + "'");
+  if (this._throwError) throw new Error('variadic arguments must be last `' + name + '\'');
   else process.exit(1);
 };
 
