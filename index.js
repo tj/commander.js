@@ -323,19 +323,21 @@ Command.prototype.action = function(fn) {
     // Leftover arguments need to be pushed back. Fixes issue #56
     if (parsed.args.length) args = parsed.args.concat(args);
 
+    var hasIssue = false;
     self._args.forEach(function(arg, i) {
       if (arg.required && args[i] == null) {
         self.missingArgument(arg.name);
-        return;
+        hasIssue = true;
       } else if (arg.variadic) {
         if (i !== self._args.length - 1) {
           self.variadicArgNotLast(arg.name);
-          return;
+          hasIssue = true;
         }
 
         args[i] = args.splice(i);
       }
     });
+    if (hasIssue) return;
 
     // Always append ourselves to the end of the arguments,
     // to make sure we match the number of arguments the user
