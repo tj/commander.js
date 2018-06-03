@@ -486,7 +486,7 @@ Command.prototype.parse = function(argv) {
 
   if (this._execs[name] && typeof this._execs[name] !== 'function') {
     return this.executeSubCommand(argv, args, parsed.unknown);
-  } else if (aliasCommand) {
+  } else if (aliasCommand && this._execs[aliasCommand._name] && typeof this._execs[aliasCommand._name] !== 'function') {
     // is alias of a subCommand
     args[0] = aliasCommand._name;
     return this.executeSubCommand(argv, args, parsed.unknown);
