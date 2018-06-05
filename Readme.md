@@ -100,6 +100,23 @@ program
 program.parse(process.argv)
 ```
 
+or with an option that takes a value
+
+```js
+#!/usr/bin/env node
+
+var program = require('commander');
+
+program
+  .command('rm <dir>')
+  .option('-r, --depth <depth>', 'Remove to a depth')
+  .action(function (dir, options) {
+    console.log('remove ' + dir + options.depth)
+  })
+
+program.parse(process.argv)
+```
+
 A command's options are validated when the command is used. Any unknown options will be reported as an error. However, if an action-based command does not define an action, then the options are not validated.
 
 ## Coercion
