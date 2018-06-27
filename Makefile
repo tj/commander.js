@@ -1,7 +1,6 @@
 
-TESTS = $(shell find test/test.*.js)
 
 test:
-	@./test/run $(TESTS)
+	@./test/run.js
 
 .PHONY: test
