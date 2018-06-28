@@ -16,7 +16,7 @@
   },
   "scripts": {
     "lint": "eslint index.js",
-    "test": "make test && npm run test-typings",
+    "test": "node test/run.js && npm run test-typings",
     "test-typings": "node_modules/typescript/bin/tsc -p tsconfig.json"
   },
   "main": "index",
