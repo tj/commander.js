@@ -1,4 +1,18 @@
 
+2.16.0 / 2018-06-29
+==================
+
+  * Remove Makefile and `test/run` (#821)
+  * Make 'npm test' run on Windows (#820)
+  * Add badge to display install size (#807)
+  * chore: cache node_modules (#814)
+  * chore: remove Node.js 4 (EOL), add Node.js 10 (#813)
+  * fixed typo in readme (#812)
+  * Fix types (#804)
+  * Update eslint to resolve vulnerabilities in lodash (#799)
+  * updated readme with custom event listeners. (#791)
+  * fix tests (#794)
+
 2.15.0 / 2018-03-07
 ==================
 
