@@ -546,6 +546,16 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     isExplicitJS = true;
   } else if (exists(localBin)) {
     bin = localBin;
+  } else if (link !== f) {
+    // if the resolved bin file is different, try that instead
+    bin = basename(link, '.js') + '-' + args[0];
+    localBin = path.join(baseDir, bin);
+    if (exists(localBin + '.js')) {
+      bin = localBin + '.js';
+      isExplicitJS = true;
+    } else if (exists(localBin)) {
+      bin = localBin;
+    }
   }
 
   args = args.slice(1);
