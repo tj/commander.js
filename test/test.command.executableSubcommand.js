@@ -34,3 +34,8 @@ var bin = path.join(__dirname, './fixtures/pmlink')
 exec(bin + ' install', function (error, stdout, stderr) {
   stdout.should.equal('install\n');
 });
+
+// pmlink-publish should fallback to pm-publish with explicit extension
+exec(bin + ' publish', function (error, stdout, stderr) {
+  stdout.should.equal('publish\n');
+});
