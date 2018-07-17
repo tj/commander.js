@@ -1112,7 +1112,7 @@ Command.prototype.helpInformation = function() {
 
   var usage = [
     '',
-    '  Usage: ' + cmdName + ' ' + this.usage(),
+    '  Usage: ' + this.usage(),
     ''
   ];
 
