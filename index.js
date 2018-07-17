@@ -919,7 +919,12 @@ Command.prototype.usage = function(str) {
     return humanReadableArgName(arg);
   });
 
-  var usage = '[options]' +
+  var cmdName = this._name;
+  if (this._alias) {
+    cmdName = cmdName + '|' + this._alias;
+  }
+
+  var usage = cmdName + ' [options]' +
     (this.commands.length ? ' [command]' : '') +
     (this._args.length ? ' ' + args.join(' ') : '');
 
@@ -1105,10 +1110,6 @@ Command.prototype.helpInformation = function() {
     }
   }
 
-  var cmdName = this._name;
-  if (this._alias) {
-    cmdName = cmdName + '|' + this._alias;
-  }
   var usage = [
     '',
     '  Usage: ' + cmdName + ' ' + this.usage(),
