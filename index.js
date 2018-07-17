@@ -660,6 +660,9 @@ Command.prototype.parseArgs = function(args, unknown) {
     if (unknown.length > 0) {
       this.unknownOption(unknown[0]);
     }
+    if (this._args.filter(a => a.required).length === 0) {
+      this.emit('command:*');
+    }
   }
 
   return this;
