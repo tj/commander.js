@@ -105,6 +105,8 @@ A command's options are validated when the command is used. Any unknown options 
 
 ## Coercion
 
+Options can have a default value and/or a coercion function (usually in that order) passed in after the description string.  For example, a coercion function of `parseInt` or `parseFloat` will transform arguments into integers or floats, respectively.  If the default value is specified after the coercion function, then the function can take a second argument which is the current argument value so far (starting with the default value), which enables accumulating repeated arguments e.g. into an array.
+
 ```js
 function range(val) {
   return val.split('..').map(Number);
@@ -126,7 +128,10 @@ function increaseVerbosity(v, total) {
 program
   .version('0.1.0')
   .usage('[options] <file ...>')
+  .option('-s, --string <x>', 'A string argument')
+  .option('-S, --string-default <x>', 'A string argument with default', 'hello')
   .option('-i, --integer <n>', 'An integer argument', parseInt)
+  .option('-I, --integer-default <n>', 'An integer argument with default', 5, parseInt)
   .option('-f, --float <n>', 'A float argument', parseFloat)
   .option('-r, --range <a>..<b>', 'A range', range)
   .option('-l, --list <items>', 'A list', list)
