@@ -1130,6 +1130,7 @@ Command.prototype.helpInformation = function() {
     .concat(desc)
     .concat(options)
     .concat(cmds)
+    .concat([''])
     .join('\n');
 };
 
