@@ -1,4 +1,11 @@
 
+2.17.0 / 2018-08-03
+==================
+
+  * fixed newline output after help information (#833)
+  * Fix to emit the action even without command (#778)
+  * npm update (#823)
+
 2.16.0 / 2018-06-29
 ==================
 
