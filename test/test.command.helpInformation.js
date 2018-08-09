@@ -21,4 +21,4 @@ var expectedHelpInformation = [
   '\n'
 ].join('\n');
 
-program.helpInformation().should.equal(expectedHelpInformation);
+program._printer.helpInformation(program).should.equal(expectedHelpInformation);
