@@ -218,9 +218,9 @@ declare namespace local {
     /**
      * Return an object containing options as key-value pairs
      *
-     * @returns {{[key: string]: string}}
+     * @returns {{[key: string]: any}}
      */
-    opts(): { [key: string]: string };
+    opts(): { [key: string]: any };
 
     /**
      * Set the description to `str`.
@@ -275,7 +275,7 @@ declare namespace local {
      *
      * @param {(str: string) => string} [cb]
      */
-    help(cb?: (str: string) => string): void;
+    help(cb?: (str: string) => string): never;
   }
 
 }

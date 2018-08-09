@@ -49,9 +49,9 @@ exports.Printer = Printer;
 
 function Option(flags, description) {
   this.flags = flags;
-  this.required = ~flags.indexOf('<');
-  this.optional = ~flags.indexOf('[');
-  this.bool = !~flags.indexOf('-no-');
+  this.required = flags.indexOf('<') >= 0;
+  this.optional = flags.indexOf('[') >= 0;
+  this.bool = flags.indexOf('-no-') === -1;
   flags = flags.split(/[ ,|]+/);
   if (flags.length > 1 && !/^[[<]/.test(flags[1])) this.short = flags.shift();
   this.long = flags.shift();
@@ -167,7 +167,7 @@ function Command(name, printer) {
  *        });
  *
  *      program.parse(process.argv);
-  *
+ *
  * @param {String} name
  * @param {String} [desc] for git-style sub-commands
  * @return {Command} the new command
@@ -668,6 +668,10 @@ Command.prototype.parseArgs = function(args, unknown) {
     if (unknown.length > 0) {
       this.unknownOption(unknown[0]);
     }
+    if (this.commands.length === 0 &&
+        this._args.filter(function(a) { return a.required }).length === 0) {
+      this.emit('command:*');
+    }
   }
 
   return this;
@@ -1018,9 +1022,9 @@ Printer.prototype.prepareCommands = function(program) {
 
     return [
       cmd._name +
-      (cmd._alias ? '|' + cmd._alias : '') +
-      (cmd.options.length ? ' [options]' : '') +
-      (args ? ' ' + args : ''),
+        (cmd._alias ? '|' + cmd._alias : '') +
+        (cmd.options.length ? ' [options]' : '') +
+        (args ? ' ' + args : ''),
       cmd._description
     ];
   });
@@ -1133,9 +1137,9 @@ Printer.prototype.optionHelp = function(program) {
   // Append the help information
   return program.options.map(function(option) {
     return pad(option.flags, width) + '  ' + option.description +
-        ((option.bool && option.defaultValue !== undefined) ? ' (default: ' + option.defaultValue + ')' : '');
+      ((option.bool && option.defaultValue !== undefined) ? ' (default: ' + option.defaultValue + ')' : '');
   }).concat([pad('-h, --help', width) + '  ' + 'output usage information'])
-      .join('\n');
+    .join('\n');
 };
 
 /**
@@ -1217,10 +1221,11 @@ Printer.prototype.helpInformation = function(program) {
   ];
 
   return usage
-      .concat(desc)
-      .concat(options)
-      .concat(cmds)
-      .join('\n');
+    .concat(desc)
+    .concat(options)
+    .concat(cmds)
+    .concat([''])
+    .join('\n');
 };
 
 /**

@@ -10,4 +10,4 @@ program
   .option('-c, --cheese [type]', 'optionally specify the type of cheese');
 
 program.parse(['node', 'test', '--cheese']);
-program.cheese.should.be.true;
+program.cheese.should.be.true();

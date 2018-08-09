@@ -4,6 +4,7 @@
 [![Build Status](https://api.travis-ci.org/tj/commander.js.svg?branch=master)](http://travis-ci.org/tj/commander.js)
 [![NPM Version](http://img.shields.io/npm/v/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
 [![NPM Downloads](https://img.shields.io/npm/dm/commander.svg?style=flat)](https://npmcharts.com/compare/commander?minimal=true)
+[![Install Size](https://packagephobia.now.sh/badge?p=commander)](https://packagephobia.now.sh/result?p=commander)
 [![Join the chat at https://gitter.im/tj/commander.js](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tj/commander.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
   The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/commander-rb/commander).  
@@ -232,7 +233,7 @@ program
 When `.command()` is invoked with a description argument, no `.action(callback)` should be called to handle sub-commands, otherwise there will be an error. This tells commander that you're going to use separate executables for sub-commands, much like `git(1)` and other popular tools.  
 The commander will try to search the executables in the directory of the entry script (like `./examples/pm`) with the name `program-command`, like `pm-install`, `pm-search`.
 
-Options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the option from the generated help output. Specifying `true` for `opts.isDefault` will run the subcommand if no other subcommand is specified.
+Options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the subcommand from the generated help output. Specifying `true` for `opts.isDefault` will run the subcommand if no other subcommand is specified.
 
 If the program is designed to be installed globally, make sure the executables have proper modes, like `755`.
 
@@ -355,6 +356,22 @@ function make_red(txt) {
 
   Output help information and exit immediately.
   Optional callback cb allows post-processing of help text before it is displayed.
+
+
+## Custom event listeners
+ You can execute custom actions by listening to command and option events.
+
+```js
+program.on('option:verbose', function () {
+  process.env.VERBOSE = this.verbose;
+});
+
+// error on unknown commands
+program.on('command:*', function () {
+  console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
+  process.exit(1);
+});
+```
 
 ## Examples
 
