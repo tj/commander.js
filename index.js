@@ -523,7 +523,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // executable
   var f = argv[1];
   // name of the subcommand, link `pm-install`
-  var bin = basename(f, '.js') + '-' + args[0];
+  var bin = basename(f, path.extname(f)) + '-' + args[0];
 
   // In case of globally installed, get the base dir where executable
   //  subcommand file should be located at
@@ -539,10 +539,13 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // prefer local `./<bin>` to bin in the $PATH
   var localBin = path.join(baseDir, bin);
 
-  // whether bin file is a js script with explicit `.js` extension
+  // whether bin file is a js script with explicit `.js` or `.ts` extension
   var isExplicitJS = false;
   if (exists(localBin + '.js')) {
     bin = localBin + '.js';
+    isExplicitJS = true;
+  } else if (exists(localBin + '.ts')) {
+    bin = localBin + '.ts';
     isExplicitJS = true;
   } else if (exists(localBin)) {
     bin = localBin;
