@@ -390,6 +390,18 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     }
   }
 
+  // Is the default array like, if so its likely repeated options.
+  if (defaultValue !== undefined &&
+    defaultValue !== null &&
+    typeof defaultValue !== 'function' &&
+    typeof defaultValue.length === 'number' &&
+    defaultValue.length > -1
+  ) {
+    option.repeated = true;
+  } else {
+    option.repeated = false;
+  }
+
   // preassign default value only for --no-*, [optional], or <required>
   if (!option.bool || option.optional || option.required) {
     // when --no-* we make sure default is true
@@ -408,8 +420,14 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   // and conditionally invoke the callback
   this.on('option:' + oname, function(val) {
     // coercion
-    if (val !== null && fn) {
-      val = fn(val, self[name] === undefined ? defaultValue : self[name]);
+    if (fn && val !== null) {
+      if (option.repeated) {
+        val = fn(val, undefined === self[name] ? defaultValue : self[name]);
+      } else if (val === undefined && self[name] !== undefined && self[name] !== defaultValue) {
+        val = fn(self[name]);
+      } else {
+        val = fn((val === undefined) ? defaultValue : val);
+      }
     }
 
     // unassigned or bool
