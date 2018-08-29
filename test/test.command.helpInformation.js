@@ -7,7 +7,6 @@ program.command('somecommand');
 program.command('anothercommand [options]');
 
 var expectedHelpInformation = [
-  '',
   '  Usage:  [options] [command]',
   '',
   '  Options:',
@@ -18,7 +17,7 @@ var expectedHelpInformation = [
   '',
   '    somecommand',
   '    anothercommand [options]',
-  '\n'
+  ''
 ].join('\n');
 
 program.helpInformation().should.equal(expectedHelpInformation);

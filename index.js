@@ -1114,7 +1114,6 @@ Command.prototype.helpInformation = function() {
     cmdName = cmdName + '|' + this._alias;
   }
   var usage = [
-    '',
     '  Usage: ' + cmdName + ' ' + this.usage(),
     ''
   ];
@@ -1134,7 +1133,6 @@ Command.prototype.helpInformation = function() {
     .concat(desc)
     .concat(options)
     .concat(cmds)
-    .concat([''])
     .join('\n');
 };
 
