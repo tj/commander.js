@@ -16,11 +16,11 @@ program
 // node's emit() is immediate
 
 program.on('--help', function(){
+  console.log('');
   console.log('  Examples:');
   console.log('');
   console.log('    $ custom-help --help');
   console.log('    $ custom-help -h');
-  console.log('');
 });
 
 program.parse(process.argv);
