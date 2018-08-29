@@ -580,7 +580,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   proc.on('close', process.exit.bind(process));
   proc.on('error', function(err) {
     if (err.code === 'ENOENT') {
-      console.error('\n  %s(1) does not exist, try --help\n', bin);
+      console.error('%s(1) does not exist, try --help', bin);
     } else if (err.code === 'EACCES') {
       console.error('\n  %s(1) not executable. try chmod or run with root\n', bin);
     }
