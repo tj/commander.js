@@ -1072,12 +1072,12 @@ Command.prototype.commandHelp = function() {
   var width = this.padWidth();
 
   return [
-    '  Commands:',
+    'Commands:',
     '',
     commands.map(function(cmd) {
       var desc = cmd[1] ? '  ' + cmd[1] : '';
       return (desc ? pad(cmd[0], width) : cmd[0]) + desc;
-    }).join('\n').replace(/^/gm, '    '),
+    }).join('\n').replace(/^/gm, '  '),
     ''
   ].join('\n');
 };
@@ -1093,17 +1093,17 @@ Command.prototype.helpInformation = function() {
   var desc = [];
   if (this._description) {
     desc = [
-      '  ' + this._description,
+      this._description,
       ''
     ];
 
     var argsDescription = this._argsDescription;
     if (argsDescription && this._args.length) {
       var width = this.padWidth();
-      desc.push('  Arguments:');
+      desc.push('Arguments:');
       desc.push('');
       this._args.forEach(function(arg) {
-        desc.push('    ' + pad(arg.name, width) + '  ' + argsDescription[arg.name]);
+        desc.push('  ' + pad(arg.name, width) + '  ' + argsDescription[arg.name]);
       });
       desc.push('');
     }
@@ -1114,7 +1114,7 @@ Command.prototype.helpInformation = function() {
     cmdName = cmdName + '|' + this._alias;
   }
   var usage = [
-    '  Usage: ' + cmdName + ' ' + this.usage(),
+    'Usage: ' + cmdName + ' ' + this.usage(),
     ''
   ];
 
@@ -1123,9 +1123,9 @@ Command.prototype.helpInformation = function() {
   if (commandHelp) cmds = [commandHelp];
 
   var options = [
-    '  Options:',
+    'Options:',
     '',
-    '' + this.optionHelp().replace(/^/gm, '    '),
+    '' + this.optionHelp().replace(/^/gm, '  '),
     ''
   ];
 

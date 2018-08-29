@@ -248,20 +248,20 @@ You can enable `--harmony` option in two ways:
  The help information is auto-generated based on the information commander already knows about your program, so the following `--help` info is for free:
 
 ```  
- $ ./examples/pizza --help
-   Usage: pizza [options]
+$ ./examples/pizza --help
+Usage: pizza [options]
 
-   An application for pizzas ordering
+An application for pizzas ordering
 
-   Options:
+Options:
 
-     -h, --help           output usage information
-     -V, --version        output the version number
-     -p, --peppers        Add peppers
-     -P, --pineapple      Add pineapple
-     -b, --bbq            Add bbq sauce
-     -c, --cheese <type>  Add the specified type of cheese [marble]
-     -C, --no-cheese      You do not want any cheese
+  -h, --help           output usage information
+  -V, --version        output the version number
+  -p, --peppers        Add peppers
+  -P, --pineapple      Add pineapple
+  -b, --bbq            Add bbq sauce
+  -c, --cheese <type>  Add the specified type of cheese [marble]
+  -C, --no-cheese      You do not want any cheese
 ```
 
 ## Custom help
@@ -293,10 +293,10 @@ program
 
 program.on('--help', function(){
   console.log('')
-  console.log('  Examples:');
+  console.log('Examples:');
   console.log('');
-  console.log('    $ custom-help --help');
-  console.log('    $ custom-help -h');
+  console.log('  $ custom-help --help');
+  console.log('  $ custom-help -h');
 });
 
 program.parse(process.argv);
