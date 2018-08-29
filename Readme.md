@@ -398,11 +398,11 @@ program
   .action(function(cmd, options){
     console.log('exec "%s" using %s mode', cmd, options.exec_mode);
   }).on('--help', function() {
-    console.log('  Examples:');
-    console.log();
-    console.log('    $ deploy exec sequential');
-    console.log('    $ deploy exec async');
-    console.log();
+    console.log('');
+    console.log('Examples:');
+    console.log('');
+    console.log('  $ deploy exec sequential');
+    console.log('  $ deploy exec async');
   });
 
 program
