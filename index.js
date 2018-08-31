@@ -580,9 +580,9 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   proc.on('close', process.exit.bind(process));
   proc.on('error', function(err) {
     if (err.code === 'ENOENT') {
-      console.error('\n  %s(1) does not exist, try --help\n', bin);
+      console.error('%s(1) does not exist, try --help', bin);
     } else if (err.code === 'EACCES') {
-      console.error('\n  %s(1) not executable. try chmod or run with root\n', bin);
+      console.error('%s(1) not executable. try chmod or run with root', bin);
     }
     process.exit(1);
   });
@@ -1072,12 +1072,12 @@ Command.prototype.commandHelp = function() {
   var width = this.padWidth();
 
   return [
-    '  Commands:',
+    'Commands:',
     '',
     commands.map(function(cmd) {
       var desc = cmd[1] ? '  ' + cmd[1] : '';
       return (desc ? pad(cmd[0], width) : cmd[0]) + desc;
-    }).join('\n').replace(/^/gm, '    '),
+    }).join('\n').replace(/^/gm, '  '),
     ''
   ].join('\n');
 };
@@ -1093,17 +1093,17 @@ Command.prototype.helpInformation = function() {
   var desc = [];
   if (this._description) {
     desc = [
-      '  ' + this._description,
+      this._description,
       ''
     ];
 
     var argsDescription = this._argsDescription;
     if (argsDescription && this._args.length) {
       var width = this.padWidth();
-      desc.push('  Arguments:');
+      desc.push('Arguments:');
       desc.push('');
       this._args.forEach(function(arg) {
-        desc.push('    ' + pad(arg.name, width) + '  ' + argsDescription[arg.name]);
+        desc.push('  ' + pad(arg.name, width) + '  ' + argsDescription[arg.name]);
       });
       desc.push('');
     }
@@ -1114,8 +1114,7 @@ Command.prototype.helpInformation = function() {
     cmdName = cmdName + '|' + this._alias;
   }
   var usage = [
-    '',
-    '  Usage: ' + cmdName + ' ' + this.usage(),
+    'Usage: ' + cmdName + ' ' + this.usage(),
     ''
   ];
 
@@ -1124,9 +1123,9 @@ Command.prototype.helpInformation = function() {
   if (commandHelp) cmds = [commandHelp];
 
   var options = [
-    '  Options:',
+    'Options:',
     '',
-    '' + this.optionHelp().replace(/^/gm, '    '),
+    '' + this.optionHelp().replace(/^/gm, '  '),
     ''
   ];
 
@@ -1134,7 +1133,6 @@ Command.prototype.helpInformation = function() {
     .concat(desc)
     .concat(options)
     .concat(cmds)
-    .concat([''])
     .join('\n');
 };
 

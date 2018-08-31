@@ -186,22 +186,20 @@ Commander 将会尝试在入口脚本（例如 `./examples/pm`）的目录中搜
  帮助信息是 commander 基于你的程序自动生成的，下面是 `--help` 生成的帮助信息：
 
 ```  
- $ ./examples/pizza --help
+$ ./examples/pizza --help
+Usage: pizza [options]
 
-   Usage: pizza [options]
+An application for pizzas ordering
 
-   An application for pizzas ordering
+Options:
 
-   Options:
-
-     -h, --help           output usage information
-     -V, --version        output the version number
-     -p, --peppers        Add peppers
-     -P, --pineapple      Add pineapple
-     -b, --bbq            Add bbq sauce
-     -c, --cheese <type>  Add the specified type of cheese [marble]
-     -C, --no-cheese      You do not want any cheese
-
+  -h, --help           output usage information
+  -V, --version        output the version number
+  -p, --peppers        Add peppers
+  -P, --pineapple      Add pineapple
+  -b, --bbq            Add bbq sauce
+  -c, --cheese <type>  Add the specified type of cheese [marble]
+  -C, --no-cheese      You do not want any cheese
 ```
 
 ## 自定义帮助
@@ -227,11 +225,11 @@ program
 // node's emit() is immediate
 
 program.on('--help', function(){
+  console.log('');
   console.log('  Examples:');
   console.log('');
   console.log('    $ custom-help --help');
   console.log('    $ custom-help -h');
-  console.log('');
 });
 
 program.parse(process.argv);
@@ -242,7 +240,6 @@ console.log('stuff');
 下列帮助信息是运行 `node script-name.js -h` or `node script-name.js --help` 时输出的:
 
 ```
-
 Usage: custom-help [options]
 
 Options:
@@ -257,7 +254,6 @@ Examples:
 
   $ custom-help --help
   $ custom-help -h
-
 ```
 
 ## .outputHelp(cb)
@@ -318,11 +314,11 @@ program
   .action(function(cmd, options){
     console.log('exec "%s" using %s mode', cmd, options.exec_mode);
   }).on('--help', function() {
-    console.log('  Examples:');
-    console.log();
-    console.log('    $ deploy exec sequential');
-    console.log('    $ deploy exec async');
-    console.log();
+    console.log('');
+    console.log('Examples:');
+    console.log('');
+    console.log('  $ deploy exec sequential');
+    console.log('  $ deploy exec async');
   });
 
 program
