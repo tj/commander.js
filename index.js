@@ -582,7 +582,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     if (err.code === 'ENOENT') {
       console.error('%s(1) does not exist, try --help', bin);
     } else if (err.code === 'EACCES') {
-      console.error('\n  %s(1) not executable. try chmod or run with root\n', bin);
+      console.error('%s(1) not executable. try chmod or run with root', bin);
     }
     process.exit(1);
   });
