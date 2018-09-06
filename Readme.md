@@ -65,6 +65,18 @@ if (program.sauce) console.log('  with sauce');
 else console.log(' without sauce');
 ```
 
+To get string arguments from options you will need to use angle brackets <> for required inputs <br>
+or square brackets [] for optional inputs. 
+
+e.g. ```.option(' -m --myarg [myVar]', 'my super cool description')```<br>
+
+Then to access the input if it was passed in.
+
+e.g. ```var myInput = program.myarg```
+
+**NOTE**: If you pass a argument without using brackets the example above will return true and not the value passed in.
+
+
 ## Version option
 
 Calling the `version` implicitly adds the `-V` and `--version` options to the command.
