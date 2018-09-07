@@ -1,4 +1,11 @@
 
+2.18.0 / 2018-09-07
+==================
+
+  * Standardize help output (#853)
+  * chmod 644 travis.yml (#851)
+  * add support for execute typescript subcommand via ts-node (#849)
+
 2.17.1 / 2018-08-07
 ==================
 
