@@ -531,7 +531,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // executable
   var f = argv[1];
   // name of the subcommand, link `pm-install`
-  var bin = basename(f, '.js') + '-' + args[0];
+  var bin = basename(f, path.extname(f)) + '-' + args[0];
 
   // In case of globally installed, get the base dir where executable
   //  subcommand file should be located at
@@ -547,10 +547,13 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // prefer local `./<bin>` to bin in the $PATH
   var localBin = path.join(baseDir, bin);
 
-  // whether bin file is a js script with explicit `.js` extension
+  // whether bin file is a js script with explicit `.js` or `.ts` extension
   var isExplicitJS = false;
   if (exists(localBin + '.js')) {
     bin = localBin + '.js';
+    isExplicitJS = true;
+  } else if (exists(localBin + '.ts')) {
+    bin = localBin + '.ts';
     isExplicitJS = true;
   } else if (exists(localBin)) {
     bin = localBin;
@@ -986,9 +989,7 @@ function Printer() {}
  */
 
 Printer.prototype.error = function() {
-  const args = [].slice.call(arguments);
-  args[0] = '\n  ' + args[0] + '\n';
-  console.error.apply(console, args);
+  console.error.apply(console, arguments);
 };
 
 /**
@@ -1159,12 +1160,12 @@ Printer.prototype.commandHelp = function(program) {
   var pad = this.pad;
 
   return [
-    '  Commands:',
+    'Commands:',
     '',
     commands.map(function(cmd) {
       var desc = cmd[1] ? '  ' + cmd[1] : '';
       return (desc ? pad(cmd[0], width) : cmd[0]) + desc;
-    }).join('\n').replace(/^/gm, '    '),
+    }).join('\n').replace(/^/gm, '  '),
     ''
   ].join('\n');
 };
@@ -1182,7 +1183,7 @@ Printer.prototype.helpInformation = function(program) {
   var desc = [];
   if (program._description) {
     desc = [
-      '  ' + program._description,
+      program._description,
       ''
     ];
 
@@ -1190,10 +1191,10 @@ Printer.prototype.helpInformation = function(program) {
     if (argsDescription && program._args.length) {
       var width = this.padWidth(program);
       var pad = this.pad;
-      desc.push('  Arguments:');
+      desc.push('Arguments:');
       desc.push('');
       program._args.forEach(function(arg) {
-        desc.push('    ' + pad(arg.name, width) + '  ' + argsDescription[arg.name]);
+        desc.push('  ' + pad(arg.name, width) + '  ' + argsDescription[arg.name]);
       });
       desc.push('');
     }
@@ -1204,8 +1205,7 @@ Printer.prototype.helpInformation = function(program) {
     cmdName = cmdName + '|' + program._alias;
   }
   var usage = [
-    '',
-    '  Usage: ' + cmdName + ' ' + program.usage(),
+    'Usage: ' + cmdName + ' ' + program.usage(),
     ''
   ];
 
@@ -1214,9 +1214,9 @@ Printer.prototype.helpInformation = function(program) {
   if (commandHelp) cmds = [commandHelp];
 
   var options = [
-    '  Options:',
+    'Options:',
     '',
-    '' + this.optionHelp(program).replace(/^/gm, '    '),
+    '' + this.optionHelp(program).replace(/^/gm, '  '),
     ''
   ];
 
@@ -1224,7 +1224,6 @@ Printer.prototype.helpInformation = function(program) {
     .concat(desc)
     .concat(options)
     .concat(cmds)
-    .concat([''])
     .join('\n');
 };
 

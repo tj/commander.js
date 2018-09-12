@@ -45,7 +45,7 @@ console.log('  - %s cheese', program.cheese);
 
 Short flags may be passed as a single arg, for example `-abc` is equivalent to `-a -b -c`. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc.
 
-Note that multi-word options starting with `--no` prefix negate the boolean value of the following word. For example, `--no-sauce` sets the value of `program.sauce` to false. 
+Note that multi-word options starting with `--no` prefix negate the boolean value of the following word. For example, `--no-sauce` sets the value of `program.sauce` to false.
 
 ```js
 #!/usr/bin/env node
@@ -153,7 +153,7 @@ program
   .option('-s --size <size>', 'Pizza size', /^(large|medium|small)$/i, 'medium')
   .option('-d --drink [drink]', 'Drink', /^(coke|pepsi|izze)$/i)
   .parse(process.argv);
-  
+
 console.log(' size: %j', program.size);
 console.log(' drink: %j', program.drink);
 ```
@@ -248,22 +248,20 @@ You can enable `--harmony` option in two ways:
  The help information is auto-generated based on the information commander already knows about your program, so the following `--help` info is for free:
 
 ```  
- $ ./examples/pizza --help
+$ ./examples/pizza --help
+Usage: pizza [options]
 
-   Usage: pizza [options]
+An application for pizzas ordering
 
-   An application for pizzas ordering
+Options:
 
-   Options:
-
-     -h, --help           output usage information
-     -V, --version        output the version number
-     -p, --peppers        Add peppers
-     -P, --pineapple      Add pineapple
-     -b, --bbq            Add bbq sauce
-     -c, --cheese <type>  Add the specified type of cheese [marble]
-     -C, --no-cheese      You do not want any cheese
-
+  -h, --help           output usage information
+  -V, --version        output the version number
+  -p, --peppers        Add peppers
+  -P, --pineapple      Add pineapple
+  -b, --bbq            Add bbq sauce
+  -c, --cheese <type>  Add the specified type of cheese [marble]
+  -C, --no-cheese      You do not want any cheese
 ```
 
 ## Custom help
@@ -271,7 +269,7 @@ You can enable `--harmony` option in two ways:
  You can display arbitrary `-h, --help` information
  by listening for "--help". Commander will automatically
  exit once you are done so that the remainder of your program
- does not execute causing undesired behaviours, for example
+ does not execute causing undesired behaviors, for example
  in the following executable "stuff" will not output when
  `--help` is used.
 
@@ -294,11 +292,11 @@ program
 // node's emit() is immediate
 
 program.on('--help', function(){
-  console.log('  Examples:');
+  console.log('')
+  console.log('Examples:');
   console.log('');
-  console.log('    $ custom-help --help');
-  console.log('    $ custom-help -h');
-  console.log('');
+  console.log('  $ custom-help --help');
+  console.log('  $ custom-help -h');
 });
 
 program.parse(process.argv);
@@ -309,7 +307,6 @@ console.log('stuff');
 Yields the following help output when `node script-name.js -h` or `node script-name.js --help` are run:
 
 ```
-
 Usage: custom-help [options]
 
 Options:
@@ -324,7 +321,6 @@ Examples:
 
   $ custom-help --help
   $ custom-help -h
-
 ```
 
 ## .outputHelp(cb)
@@ -402,11 +398,11 @@ program
   .action(function(cmd, options){
     console.log('exec "%s" using %s mode', cmd, options.exec_mode);
   }).on('--help', function() {
-    console.log('  Examples:');
-    console.log();
-    console.log('    $ deploy exec sequential');
-    console.log('    $ deploy exec async');
-    console.log();
+    console.log('');
+    console.log('Examples:');
+    console.log('');
+    console.log('  $ deploy exec sequential');
+    console.log('  $ deploy exec async');
   });
 
 program
