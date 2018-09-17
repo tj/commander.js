@@ -48,7 +48,6 @@ var output = process.stdout.write.args[0];
 
 var expect = [
 	'Commands:',
-	'',
 	'  mycommand [options]       this is my command',
 	'  anothercommand [options]',
 	'  help [cmd]                display help for [cmd]'

@@ -254,7 +254,6 @@ Usage: pizza [options]
 An application for pizzas ordering
 
 Options:
-
   -h, --help           output usage information
   -V, --version        output the version number
   -p, --peppers        Add peppers
@@ -294,7 +293,6 @@ program
 program.on('--help', function(){
   console.log('')
   console.log('Examples:');
-  console.log('');
   console.log('  $ custom-help --help');
   console.log('  $ custom-help -h');
 });
@@ -310,7 +308,6 @@ Yields the following help output when `node script-name.js -h` or `node script-n
 Usage: custom-help [options]
 
 Options:
-
   -h, --help     output usage information
   -V, --version  output the version number
   -f, --foo      enable some foo
@@ -318,7 +315,6 @@ Options:
   -B, --baz      enable some baz
 
 Examples:
-
   $ custom-help --help
   $ custom-help -h
 ```
