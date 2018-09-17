@@ -14,8 +14,8 @@ console.error = function () {
 
 process.on('exit', function (code) {
   code.should.equal(1);
-  info.length.should.equal(3);
-  info[1].should.equal("error: option `-c, --cheese <type>' argument missing");
+  info.length.should.equal(1);
+  info[0].should.equal("error: option `-c, --cheese <type>' argument missing");
   process.exit(0)
 });
 
