@@ -1073,7 +1073,6 @@ Command.prototype.commandHelp = function() {
 
   return [
     'Commands:',
-    '',
     commands.map(function(cmd) {
       var desc = cmd[1] ? '  ' + cmd[1] : '';
       return (desc ? pad(cmd[0], width) : cmd[0]) + desc;
@@ -1124,7 +1123,6 @@ Command.prototype.helpInformation = function() {
 
   var options = [
     'Options:',
-    '',
     '' + this.optionHelp().replace(/^/gm, '  '),
     ''
   ];
