@@ -59,6 +59,6 @@ console.error = oldConsoleError;
 
 [
   '',
-  '  error: variadic arguments must be last `variadicArg\'',
+  'error: variadic arguments must be last `variadicArg\'',
   ''
 ].join('\n').should.eql(errorMessage);
