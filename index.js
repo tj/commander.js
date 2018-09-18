@@ -1205,7 +1205,7 @@ function outputHelpIfNecessary(cmd, options) {
 }
 
 /**
- * Takes an argument an returns its human readable equivalent for help usage.
+ * Takes an argument and returns its human readable equivalent for help usage.
  *
  * @param {Object} arg
  * @return {String}
