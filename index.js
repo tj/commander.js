@@ -159,7 +159,7 @@ function Command(name) {
  *        });
  *
  *      program.parse(process.argv);
-  *
+ *
  * @param {String} name
  * @param {String} [desc] for git-style sub-commands
  * @return {Command} the new command
@@ -231,15 +231,10 @@ Command.prototype.parseExpectedArgs = function(args) {
       variadic: false
     };
 
-    switch (arg[0]) {
-      case '<':
-        argDetails.required = true;
-        argDetails.name = arg.slice(1, -1);
-        break;
-      case '[':
-        argDetails.name = arg.slice(1, -1);
-        break;
+    if (arg[0] === '<') {
+      argDetails.required = true;
     }
+    argDetails.name = arg.slice(1, -1);
 
     if (argDetails.name.length > 3 && argDetails.name.slice(-3) === '...') {
       argDetails.variadic = true;
