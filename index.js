@@ -854,21 +854,38 @@ Command.prototype.variadicArgNotLast = function(name) {
  *
  * @param {String} str
  * @param {String} [flags]
+ * @param {String} [description]
  * @return {Command} for chaining
  * @api public
  */
 
-Command.prototype.version = function(str, flags) {
+Command.prototype.version = function(str, flags, description) {
   if (arguments.length === 0) return this._version;
   this._version = str;
   flags = flags || '-V, --version';
-  var versionOption = new Option(flags, 'output the version number');
+  var versionOption = new Option(flags, description || 'Output the version number');
   this._versionOptionName = versionOption.long.substr(2) || 'version';
   this.options.push(versionOption);
   this.on('option:' + this._versionOptionName, function() {
     process.stdout.write(str + '\n');
     process.exit(0);
   });
+  return this;
+};
+
+/**
+ * Set the help message description to `description`.
+ *
+ * This methods sets the help description for the "-h, --help" flag
+ * If not provided, it willl default to 'Output usage information'
+ *
+ * @param {String} [description]
+ * @return {Command} for chaining
+ * @api public
+ */
+
+Command.prototype.helpDescription = function(description) {
+  this._helpDescription = description;
   return this;
 };
 
@@ -1054,7 +1071,7 @@ Command.prototype.optionHelp = function() {
   return this.options.map(function(option) {
     return pad(option.flags, width) + '  ' + option.description +
       ((option.bool && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
-  }).concat([pad('-h, --help', width) + '  ' + 'output usage information'])
+  }).concat([pad('-h, --help', width) + '  ' + (this._helpDescription || 'Output usage information')])
     .join('\n');
 };
 

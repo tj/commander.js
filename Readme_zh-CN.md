@@ -192,8 +192,8 @@ Usage: pizza [options]
 An application for pizzas ordering
 
 Options:
-  -h, --help           output usage information
-  -V, --version        output the version number
+  -h, --help           Output usage information
+  -V, --version        Output the version number
   -p, --peppers        Add peppers
   -P, --pineapple      Add pineapple
   -b, --bbq            Add bbq sauce
@@ -241,8 +241,8 @@ console.log('stuff');
 Usage: custom-help [options]
 
 Options:
-  -h, --help     output usage information
-  -V, --version  output the version number
+  -h, --help     Output usage information
+  -V, --version  Output the version number
   -f, --foo      enable some foo
   -b, --bar      enable some bar
   -B, --baz      enable some baz

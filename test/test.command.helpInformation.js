@@ -10,7 +10,7 @@ var expectedHelpInformation = [
   'Usage:  [options] [command]',
   '',
   'Options:',
-  '  -h, --help                output usage information',
+  '  -h, --help                Output usage information',
   '',
   'Commands:',
   '  somecommand',
