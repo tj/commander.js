@@ -13,7 +13,7 @@
 
 ## Installation
 
-    $ npm install commander --save
+    $ npm install commander
 
 ## Option parsing
 
