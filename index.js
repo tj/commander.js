@@ -558,7 +558,24 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     if (isExplicitJS) {
       args.unshift(bin);
       // add executable arguments to spawn
-      args = (process.execArgv || []).concat(args);
+      args = ((process.execArgv && process.execArgv.map(function( v ) {
+
+          var debugPort, matches;
+
+          if( (matches = v.match(/^(--debug=|--debug-brk=|--inspect=|--inspect-brk=)(?:(\b(?:(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\.){3}(?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9]?[0-9])\b):)?(\d+)/)) && matches.length > 0 ){
+
+              debugPort = + matches[3];
+
+              if( ! Number.isFinite(debugPort) )
+                  throw new Error('Debug port is not a finite number.');
+
+              return ( matches[2] ) ? matches[1] + matches[2] + ':' + (++debugPort) : matches[1] + (++debugPort);
+
+          }
+          else
+              return v;
+
+      })) || []).concat(args);
 
       proc = spawn(process.argv[0], args, { stdio: 'inherit', customFds: [0, 1, 2] });
     } else {
