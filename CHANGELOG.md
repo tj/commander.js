@@ -1,4 +1,11 @@
 
+2.19.0 / 2018-10-02
+==================
+
+  * Removed newline after Options and Commands headers (#864)
+  * Bugfix - Error output (#862)
+  * Fix to change default value to string (#856)
+
 2.18.0 / 2018-09-07
 ==================
 
