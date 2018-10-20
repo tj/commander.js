@@ -664,7 +664,7 @@ Command.prototype.parseArgs = function(args, unknown) {
       this.unknownOption(unknown[0]);
     }
     if (this.commands.length === 0 &&
-        this._args.filter(function(a) { return a.required }).length === 0) {
+        this._args.filter(function(a) { return a.required; }).length === 0) {
       this.emit('command:*');
     }
   }
