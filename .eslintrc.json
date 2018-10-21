@@ -2,7 +2,7 @@
   "extends": "standard",
   "rules": {
     "one-var": "off",
-    "semi": ["error", "always", { "omitLastInOneLineBlock": true }],
+    "semi": ["error", "always"],
     "space-before-function-paren": ["error", "never"]
   }
 }
