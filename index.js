@@ -672,7 +672,7 @@ Command.prototype.parseArgs = function(args, unknown) {
       this.unknownOption(unknown[0]);
     }
     if (this.commands.length === 0 &&
-        this._args.filter(function(a) { return a.required }).length === 0) {
+        this._args.filter(function(a) { return a.required; }).length === 0) {
       this.emit('command:*');
     }
   }
@@ -800,7 +800,7 @@ Command.prototype.opts = function() {
  */
 
 Command.prototype.missingArgument = function(name) {
-  this._printer.error("error: missing required argument `%s'", name);
+  this._printer.error("missing required argument `%s'", name);
   process.exit(1);
 };
 
@@ -814,9 +814,9 @@ Command.prototype.missingArgument = function(name) {
 
 Command.prototype.optionMissingArgument = function(option, flag) {
   if (flag) {
-    this._printer.error("error: option `%s' argument missing, got `%s'", option.flags, flag);
+    this._printer.error("option `%s' argument missing, got `%s'", option.flags, flag);
   } else {
-    this._printer.error("error: option `%s' argument missing", option.flags);
+    this._printer.error("option `%s' argument missing", option.flags);
   }
   process.exit(1);
 };
@@ -830,7 +830,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
 
 Command.prototype.unknownOption = function(flag) {
   if (this._allowUnknownOption) return;
-  this._printer.error("error: unknown option `%s'", flag);
+  this._printer.error("unknown option `%s'", flag);
   process.exit(1);
 };
 
@@ -842,7 +842,7 @@ Command.prototype.unknownOption = function(flag) {
  */
 
 Command.prototype.variadicArgNotLast = function(name) {
-  this._printer.error("error: variadic arguments must be last `%s'", name);
+  this._printer.error("variadic arguments must be last `%s'", name);
   process.exit(1);
 };
 
@@ -989,7 +989,9 @@ function Printer() {}
  */
 
 Printer.prototype.error = function() {
-  console.error.apply(console, arguments);
+  var args = [].slice.call(arguments);
+  args[0] = 'error: ' + args[0];
+  console.error.apply(console, args);
 };
 
 /**
@@ -1023,9 +1025,9 @@ Printer.prototype.prepareCommands = function(program) {
 
     return [
       cmd._name +
-        (cmd._alias ? '|' + cmd._alias : '') +
-        (cmd.options.length ? ' [options]' : '') +
-        (args ? ' ' + args : ''),
+      (cmd._alias ? '|' + cmd._alias : '') +
+      (cmd.options.length ? ' [options]' : '') +
+      (args ? ' ' + args : ''),
       cmd._description
     ];
   });
@@ -1138,7 +1140,7 @@ Printer.prototype.optionHelp = function(program) {
   // Append the help information
   return program.options.map(function(option) {
     return pad(option.flags, width) + '  ' + option.description +
-      ((option.bool && option.defaultValue !== undefined) ? ' (default: ' + option.defaultValue + ')' : '');
+      ((option.bool && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
   }).concat([pad('-h, --help', width) + '  ' + 'output usage information'])
     .join('\n');
 };
@@ -1161,7 +1163,6 @@ Printer.prototype.commandHelp = function(program) {
 
   return [
     'Commands:',
-    '',
     commands.map(function(cmd) {
       var desc = cmd[1] ? '  ' + cmd[1] : '';
       return (desc ? pad(cmd[0], width) : cmd[0]) + desc;
@@ -1192,7 +1193,6 @@ Printer.prototype.helpInformation = function(program) {
       var width = this.padWidth(program);
       var pad = this.pad;
       desc.push('Arguments:');
-      desc.push('');
       program._args.forEach(function(arg) {
         desc.push('  ' + pad(arg.name, width) + '  ' + argsDescription[arg.name]);
       });
@@ -1215,7 +1215,6 @@ Printer.prototype.helpInformation = function(program) {
 
   var options = [
     'Options:',
-    '',
     '' + this.optionHelp(program).replace(/^/gm, '  '),
     ''
   ];
