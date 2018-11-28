@@ -558,7 +558,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     if (isExplicitJS) {
       args.unshift(bin);
       // add executable arguments to spawn
-      args = (process.execArgv || []).concat(args);
+      args = this.getExecutableArguments().concat(args);
 
       proc = spawn(process.argv[0], args, { stdio: 'inherit', customFds: [0, 1, 2] });
     } else {
@@ -566,6 +566,9 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     }
   } else {
     args.unshift(bin);
+    // add executable arguments to spawn
+    args = this.getExecutableArguments().concat(args);
+
     proc = spawn(process.execPath, args, { stdio: 'inherit' });
   }
 
@@ -589,6 +592,24 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   // Store the reference to the child process
   this.runningCommand = proc;
+};
+
+/**
+ * Get executable arguments for sub-command process.
+ * If COMMANDER_NODE_OPTIONS Environment Variable is set,
+ * it combines current execArgv and COMMANDER_NODE_OPTIONS.
+ *
+ * @return {Array}
+ * @api private
+ */
+
+Command.prototype.getExecutableArguments = function() {
+  var commanderNodeOptions = process.env['COMMANDER_NODE_OPTIONS'];
+  var execArgv = process.execArgv || [];
+  if (commanderNodeOptions && commanderNodeOptions !== null && commanderNodeOptions.length > 0) {
+    execArgv = execArgv.concat(commanderNodeOptions.split(' '));
+  }
+  return execArgv;
 };
 
 /**
