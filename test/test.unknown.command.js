@@ -12,7 +12,7 @@ program.command(cmd, 'description...');
 program.parse(['node', 'test', invalidCmd]);
 
 var output = process.stdout.write.args[0];
-output[0].should.equal('error: unknown command:  ' + invalidCmd + '\n');
+output[0].should.equal('error: unknown command ' + invalidCmd + '\n');
 
 sinon.restore();
 
