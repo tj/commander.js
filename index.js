@@ -496,6 +496,12 @@ Command.prototype.parse = function(argv) {
     return this.executeSubCommand(argv, args, parsed.unknown);
   }
 
+  // Output unknown command error
+  if (args.length > 0) {
+    console.log('error: unknown command: ', args[0]);
+    this.outputHelp();
+  }
+
   return result;
 };
 
@@ -584,7 +590,9 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     } else if (err.code === 'EACCES') {
       console.error('error: %s(1) not executable. try chmod or run with root', bin);
     }
-    process.exit(1);
+    if ('test' !== process.env.NODE_ENV) {
+      process.exit(1);
+    }
   });
 
   // Store the reference to the child process

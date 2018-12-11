@@ -7,7 +7,7 @@ sinon.stub(process.stdout, 'write');
 
 program
   .version('0.0.1')
-  .command('version')
+  .command('version', 'description')
   .action(function() {
     console.log('Version command invoked');
   });

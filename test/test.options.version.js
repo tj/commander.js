@@ -3,7 +3,7 @@ var program = require('../')
 
 var capturedExitCode, capturedOutput, oldProcessExit, oldProcessStdoutWrite;
 
-program.version('0.0.1');
+program.version('0.0.1').description('description');
 
 ['-V', '--version'].forEach(function (flag) {
   capturedExitCode = -1;
