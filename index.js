@@ -590,7 +590,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     } else if (err.code === 'EACCES') {
       console.error('error: %s(1) not executable. try chmod or run with root', bin);
     }
-    if ('test' !== process.env.NODE_ENV) {
+    if (process.env.NODE_ENV !== 'test') {
       process.exit(1);
     }
   });
