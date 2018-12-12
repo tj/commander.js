@@ -24,7 +24,7 @@ program
   });
 program.parse('node test sub -m'.split(' '));
 
-stubError.callCount.should.equal(1);
+stubError.callCount.should.equal(2);
 stubExit.calledOnce.should.be.true();
 
 // command with `allowUnknownOption`
@@ -48,7 +48,7 @@ program
   });
 program.parse('node test sub2 -m'.split(' '));
 
-stubError.callCount.should.equal(0);
+stubError.callCount.should.equal(1);
 stubExit.calledOnce.should.be.false();
 
 

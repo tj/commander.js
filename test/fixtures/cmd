@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+
+var program = require('../../');
+
+program
+  .version('0.0.1')
+  .command('foo [name]', 'dummy command to test unknown command')
+  .parse(process.argv);

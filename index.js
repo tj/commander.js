@@ -498,7 +498,7 @@ Command.prototype.parse = function(argv) {
 
   // Output unknown command error
   if (args.length > 0) {
-    console.log('error: unknown command %s', args[0]);
+    console.error('error: unknown command %s', args[0]);
     this.outputHelp();
   }
 
