@@ -6,14 +6,14 @@ var exec = require('child_process').exec
 
 var bin = path.join(__dirname, './fixtures/pm')
 // success case
-// exec(bin + ' default', function(error, stdout, stderr) {
-//   stdout.should.equal('default\n');
-// });
-//
-// // success case (default)
-// exec(bin, function(error, stdout, stderr) {
-//   stdout.should.equal('default\n');
-// });
+exec(bin + ' default', function(error, stdout, stderr) {
+  stdout.should.equal('default\n');
+});
+
+// success case (default)
+exec(bin, function(error, stdout, stderr) {
+  stdout.should.equal('default\n');
+});
 
 // not exist
 exec(bin + ' list', function (error, stdout, stderr) {
