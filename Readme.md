@@ -425,4 +425,4 @@ More Demos can be found in the [examples](https://github.com/tj/commander.js/tre
 
 ## License
 
-MIT
+[MIT](https://github.com/jamesgeorge007/commander.js/blob/master/LICENSE)
