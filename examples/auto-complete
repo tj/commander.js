@@ -1,0 +1,39 @@
+#!/usr/bin/env node
+
+/**
+ * To simulate real use cases please set the example path into PATH variable
+ * export PATH=".":$PATH
+ *
+ * Then please execute the following line to enable completion for your shell
+ * eval "$(auto-complete --install-autocompletion)"
+ */
+
+var program = require('..');
+
+program
+  .command('auto-complete <a> <b>', 'add in shell')
+  .option('--name', 'specify name')
+  .option('--description', 'specify description')
+  .onComplete({
+    options: {
+      name: function() { return ['kate', 'jim']; },
+      description: function() { return ['xxx', 'yyy']; }
+    },
+    args: {
+      arg1: function() {},
+      arg2: function() {},
+    }
+  })
+  .parse(process.argv);
+
+// program
+//   .command('sub1 <name> <service>', 'sub command 1')
+//   .option('--name1', 'specify name')
+//   .option('--description1', 'specify description');
+
+// program
+//   .command('sub1', 'sub command 2')
+//   .option('--name2', 'specify name')
+//   .option('--description2', 'specify description');
+
+// program.parse(process.argv);

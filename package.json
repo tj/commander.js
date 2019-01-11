@@ -24,7 +24,9 @@
     "index.js",
     "typings/index.d.ts"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "omelette": "^0.4.12"
+  },
   "devDependencies": {
     "@types/node": "^10.11.3",
     "eslint": "^5.6.1",
