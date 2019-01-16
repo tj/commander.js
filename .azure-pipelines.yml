@@ -1,0 +1,49 @@
+#
+# Azure Pipelines configuration for building and testing commander.js on Linux, Windows, and macOS.
+#
+
+trigger:
+- master
+
+jobs:
+- job: Linux
+  pool:
+    vmImage: 'ubuntu-16.04'
+  strategy:
+    matrix:
+      Node6:
+        NODE_VERSION: '6.x'
+        NPM_INSTALL: true
+      Node8:
+        NODE_VERSION: '8.x'
+        NPM_INSTALL: true
+      Node10:
+        NODE_VERSION: '10.x'
+      Lint:
+        NODE_VERSION: '10.x'
+        LINT: true
+        SKIP_TESTS: true
+  steps:
+    - template: .azure-pipelines-steps.yml
+
+- job: Windows
+  pool:
+    vmImage: 'vs2017-win2016'
+  strategy:
+    matrix:
+      Node10:
+        NODE_VERSION: '10.x'
+  steps:
+    - script: git config --global core.symlinks true
+      displayName: 'Preserve symbolic links on check out'
+    - template: .azure-pipelines-steps.yml
+
+- job: Mac
+  pool:
+    vmImage: 'macOS-10.13'
+  strategy:
+    matrix:
+      Node10:
+        NODE_VERSION: '10.x'
+  steps:
+    - template: .azure-pipelines-steps.yml

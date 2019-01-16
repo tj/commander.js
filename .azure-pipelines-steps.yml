@@ -1,0 +1,31 @@
+#
+# Steps for building and testing commander.js. See jobs defined in .azure-pipelines.yml.
+#
+
+steps:
+  # Clones the repo. This is an explicit step to preserve symlinks for Windows.
+  - checkout: self
+
+  - task: NodeTool@0
+    inputs:
+      versionSpec: $(NODE_VERSION)
+      checkLatest: 'true'
+    displayName: 'Install Node.js'
+
+  # Run npm ci by default unless NPM_INSTALL is set
+  - script: npm ci
+    displayName: 'Install dependencies'
+    condition: not(variables.NPM_INSTALL)
+
+  # Otherwise, run npm install if NPM_INSTALL is set (typically for Node versions < 10.x)
+  - script: npm install
+    displayName: 'Install dependencies (npm install)'
+    condition: variables.NPM_INSTALL
+
+  - script: npm run lint
+    displayName: 'Run lint'
+    condition: variables.LINT
+
+  - script: npm run test
+    displayName: 'Run tests'
+    condition: not(variables.SKIP_TESTS)
