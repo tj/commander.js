@@ -6,33 +6,83 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'Ubuntu 16.04'
+- job: Linux
 
-strategy:
-  matrix:
-    Node6:
-      NODE_VERSION: '6.x'
-    Node8:
-      NODE_VERSION: '8.x'
-    Node10:
-      NODE_VERSION: '10.x'
+  pool:
+    vmImage: 'Ubuntu 16.04'
 
-steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: $(NODE_VERSION)
-      checkLatest: 'true'
-    displayName: 'Install Node.js'
-    
-  - script: |
-      npm install
-    displayName: 'npm install'
+  strategy:
+    matrix:
+      Node6:
+        NODE_VERSION: '6.x'
+      Node8:
+        NODE_VERSION: '8.x'
+      Node10:
+        NODE_VERSION: '10.x'
 
-  - script: |
-      npm run lint
-    displayName: 'npm lint'
+  steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: $(NODE_VERSION)
+        checkLatest: 'true'
+      displayName: 'Install Node.js'
 
-  - script: |
-      npm run test
-    displayName: 'npm test'
+    - script: |
+        npm install
+      displayName: 'npm install'
+
+    - script: |
+        npm run lint
+      displayName: 'npm lint'
+
+    - script: |
+        npm run test
+      displayName: 'npm test'
+
+- job: Windows
+
+  pool:
+    vmImage: 'vs2017-win2016'
+
+  steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '8.x'
+        checkLatest: 'true'
+      displayName: 'Install Node.js'
+
+    - script: |
+        npm install
+      displayName: 'npm install'
+
+    - script: |
+        npm run lint
+      displayName: 'npm lint'
+
+    - script: |
+        npm run test
+      displayName: 'npm test'
+ 
+- job: Mac
+
+  pool:
+    vmImage: 'macOS-10.13'
+
+  steps:
+    - task: NodeTool@0
+      inputs:
+        versionSpec: '8.x'
+        checkLatest: 'true'
+      displayName: 'Install Node.js'
+
+    - script: |
+        npm install
+      displayName: 'npm install'
+
+    - script: |
+        npm run lint
+      displayName: 'npm lint'
+
+    - script: |
+        npm run test
+      displayName: 'npm test'      
