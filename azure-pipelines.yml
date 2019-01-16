@@ -6,6 +6,7 @@
 trigger:
 - master
 
+jobs:
 - job: Linux
 
   pool:
@@ -85,4 +86,4 @@ trigger:
 
     - script: |
         npm run test
-      displayName: 'npm test'      
+      displayName: 'npm test'
