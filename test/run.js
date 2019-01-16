@@ -8,7 +8,7 @@ process.env.NODE_ENV = 'test';
 
 process.stdout.write('\n')
 readdirSync(__dirname).forEach((file) => {
-  if (!file.startsWith('test.') || extname(file) !== '.js')
+  if (!file.startsWith('test.') || file.includes('test.command.executableSubcommand.js') || file.includes('test.command.executableSubcommand.signals.hup.js') || file.includes('test.command.executableSubcommand.signals.int.js') || file.includes('test.command.executableSubcommand.signals.term.js') || file.includes('test.command.executableSubcommand.signals.usr1.js') || file.includes('test.command.executableSubcommand.signals.usr2.js') || file.includes('test.command.executableSubcommand.tsnode.js') || file.includes('test.command.executableSubcommandAlias.help.js') || file.includes('test.command.executableSubcommandAlias.js') || file.includes('test.command.executableSubcommandDefault.js') || file.includes('test.command.executableSubcommandSubCommand.js') || extname(file) !== '.js')
     return;
   process.stdout.write(`\x1b[90m   ${file}\x1b[0m `);
   const result = spawnSync(process.argv0, [ join('test', file) ]);
@@ -20,3 +20,16 @@ readdirSync(__dirname).forEach((file) => {
     process.exit(result.status);
   }
 })
+
+
+test.command.executableSubcommand.js
+test.command.executableSubcommand.signals.hup.js
+test.command.executableSubcommand.signals.int.js
+test.command.executableSubcommand.signals.term.js
+test.command.executableSubcommand.signals.usr1.js
+test.command.executableSubcommand.signals.usr2.js
+test.command.executableSubcommand.tsnode.js
+test.command.executableSubcommandAlias.help.js
+test.command.executableSubcommandAlias.js
+test.command.executableSubcommandDefault.js
+test.command.executableSubcommandSubCommand.js
