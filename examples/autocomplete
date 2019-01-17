@@ -5,7 +5,7 @@
  * export PATH=".":$PATH
  *
  * Then please execute the following line to enable completion for your shell
- * eval "$(auto-complete --completion)"
+ * eval "$(autocomplete --completion)"
  *
  * And then you can try use tab completion after auto-complete command
  */

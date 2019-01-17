@@ -5,7 +5,7 @@
  * export PATH=".":$PATH
  *
  * Then please execute the following line to enable completion for your shell
- * eval "$(auto-complete-sub --completion)"
+ * eval "$(autocomplete-sub --completion)"
  */
 
 var program = require('..');
