@@ -4,7 +4,7 @@ var exec = require('child_process').exec
 
 
 
-var bin = path.join(__dirname, './fixtures/pm')
+var bin = 'node ' + path.join(__dirname, './fixtures/pm')
 
 // success case
 exec(bin + ' help', function (error, stdout, stderr) {

@@ -2,7 +2,7 @@ var exec = require('child_process').exec
   , path = require('path')
   , should = require('should');
 
-var bin = path.join(__dirname, './fixtures/pm')
+var bin = 'node ' + path.join(__dirname, './fixtures/pm')
 
 // success case
 exec(bin + ' i', function (error, stdout, stderr) {
@@ -21,7 +21,7 @@ exec(bin + ' s', function (error, stdout, stderr) {
 });
 
 // when `bin` is a symbol link for mocking global install
-var bin = path.join(__dirname, './fixtures/pmlink')
+var bin = 'node ' + path.join(__dirname, './fixtures/pmlink')
 // success case
 exec(bin + ' i', function (error, stdout, stderr) {
   stdout.should.equal('install\n');
