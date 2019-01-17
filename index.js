@@ -1374,17 +1374,17 @@ function autocompleteNormalizeRules(command) {
  * Detect whether current command line input infers an option.
  *
  * @param {Object} normalized option rules
- * @param {Array} filled args
+ * @param {Array} typed args
  * @return {Object} active option if found, otherwise false
  * @api private
  */
 
-function autocompleteActiveOption(optionRules, filledArgs) {
-  if (filledArgs.length === 0) {
+function autocompleteActiveOption(optionRules, typedArgs) {
+  if (typedArgs.length === 0) {
     return false;
   }
 
-  var lastArg = filledArgs[filledArgs.length - 1];
+  var lastArg = typedArgs[typedArgs.length - 1];
 
   if (!optionRules[lastArg]) {
     return false;
@@ -1404,22 +1404,22 @@ function autocompleteActiveOption(optionRules, filledArgs) {
  *
  * @param {Object} normalized option rules
  * @param {Array} normalized arg rules
- * @param {Array} filled args
+ * @param {Array} typed args
  * @return {Object} active arg if found, otherwise false
  * @api private
  */
 
-function autocompleteActiveArg(optionRules, argRules, filledArgs) {
+function autocompleteActiveArg(optionRules, argRules, typedArgs) {
   if (argRules.length === 0) {
     return false;
   }
 
-  // find out how many args are already filled
+  // find out how many args are already typed
   var count = 0;
   var curr = 0;
 
-  while (curr < filledArgs.length) {
-    var currStr = filledArgs[curr];
+  while (curr < typedArgs.length) {
+    var currStr = typedArgs[curr];
 
     if (optionRules[currStr]) {
       curr = curr + 1 + optionRules[currStr].arity;
@@ -1441,23 +1441,23 @@ function autocompleteActiveArg(optionRules, argRules, filledArgs) {
  * This is the core of smart logic of autocompletion
  *
  * @param {Object} normalized rules
- * @param {Array} filled args
+ * @param {Array} typed args
  * @return {Array} auto complete candidates
  * @api private
  */
 
-function autocompleteReply(completionRules, filledArgs) {
+function autocompleteReply(completionRules, typedArgs) {
   var activeOption = autocompleteActiveOption(
-    completionRules.options, filledArgs
+    completionRules.options, typedArgs
   );
 
   if (activeOption) {
-    // if current filledArgs suggests it's filling an option
+    // if current typedArgs suggests it's filling an option
     // next value would be the possible values for that option
     var reply = activeOption.reply;
 
     if (isFunction(reply)) {
-      return (reply(filledArgs) || []);
+      return (reply(typedArgs) || []);
     } else if (isArray(reply)) {
       return reply;
     } else {
@@ -1474,11 +1474,11 @@ function autocompleteReply(completionRules, filledArgs) {
         if (option.sibling) {
           // remove both option and its sibling form
           return (
-            !filledArgs.includes(name) &&
-            !filledArgs.includes(option.sibling)
+            !typedArgs.includes(name) &&
+            !typedArgs.includes(option.sibling)
           );
         } else {
-          return !filledArgs.includes(name);
+          return !typedArgs.includes(name);
         }
       });
 
@@ -1486,11 +1486,11 @@ function autocompleteReply(completionRules, filledArgs) {
     var activeArg = autocompleteActiveArg(
       completionRules.options,
       completionRules.args,
-      filledArgs
+      typedArgs
     );
 
     if (isFunction(activeArg)) {
-      return optionNames.concat(activeArg(filledArgs) || []);
+      return optionNames.concat(activeArg(typedArgs) || []);
     } else if (isArray(activeArg)) {
       return optionNames.concat(activeArg);
     } else {

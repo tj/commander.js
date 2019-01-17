@@ -181,6 +181,36 @@ Commander 将会尝试在入口脚本（例如 `./examples/pm`）的目录中搜
 * 在子命令脚本中加上 `#!/usr/bin/env node --harmony`。注意一些系统版本不支持此模式。
 * 在指令调用时加上 `--harmony` 参数，例如 `node --harmony examples/pm publish`。`--harmony` 选项在开启子进程时会被保留。
 
+## 自动补全
+
+commander 已自带命令行自动补全功能。您可以按照以下步骤启用它：
+
+1. 声明对应每个选项和参数的候选值。候选值可以是一个数组或者是一个 接受当前已经输入值的数组然后返回一个候选数组的function。
+
+```js
+program
+  .arguments('<a> <b>')
+  .option('--verbose', 'verbose')
+  .option('-n, --name <name>', 'specify name')
+  .option('--description <desc>', 'specify description')
+  .complete({
+    options: {
+      '--name': function(typedArgs) { return ['kate', 'jim']; },
+      '--description': ['desc1', 'desc2']
+    },
+    args: {
+      a: function(typedArgs) { return ['a-1', 'a-2']; },
+      b: ['b-1', 'b-2']
+    }
+  });
+```
+
+2. 邀请你的命令行用户开启自动补全功能。他们可以直接在shell执行以下指令，或是把其加入到个人shell对应的.bashrc或.zshrc等文件中，就可以获得长期的自动补全支持。
+
+```
+eval "$(<command-name> --completion)"
+```
+
 ## 自动化帮助信息 --help
 
  帮助信息是 commander 基于你的程序自动生成的，下面是 `--help` 生成的帮助信息：
