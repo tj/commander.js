@@ -5,35 +5,26 @@
  * export PATH=".":$PATH
  *
  * Then please execute the following line to enable completion for your shell
- * eval "$(auto-complete --install-autocompletion)"
+ * eval "$(auto-complete --completion)"
+ *
+ * And then you can try use tab completion after auto-complete command
  */
 
 var program = require('..');
 
 program
-  .command('auto-complete <a> <b>', 'add in shell')
-  .option('--name', 'specify name')
-  .option('--description', 'specify description')
-  .onComplete({
+  .arguments('<a> <b>')
+  .option('--verbose', 'verbose')
+  .option('-n, --name <name>', 'specify name')
+  .option('--description <desc>', 'specify description')
+  .complete({
     options: {
-      name: function() { return ['kate', 'jim']; },
-      description: function() { return ['xxx', 'yyy']; }
+      '--name': function() { return ['kate', 'jim']; },
+      '--description': ['desc1', 'desc2']
     },
     args: {
-      arg1: function() {},
-      arg2: function() {},
+      a: function() { return ['a-1', 'a-2']; },
+      b: ['b-1', 'b-2']
     }
   })
   .parse(process.argv);
-
-// program
-//   .command('sub1 <name> <service>', 'sub command 1')
-//   .option('--name1', 'specify name')
-//   .option('--description1', 'specify description');
-
-// program
-//   .command('sub1', 'sub command 2')
-//   .option('--name2', 'specify name')
-//   .option('--description2', 'specify description');
-
-// program.parse(process.argv);

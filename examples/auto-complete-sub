@@ -1,0 +1,46 @@
+#!/usr/bin/env node
+
+/**
+ * To simulate real use cases please set the example path into PATH variable
+ * export PATH=".":$PATH
+ *
+ * Then please execute the following line to enable completion for your shell
+ * eval "$(auto-complete-sub --completion)"
+ */
+
+var program = require('..');
+
+program
+  .command('sub1 <arg1> <arg2>')
+  .description('sub command 1')
+  .option('--verbose', 'verbose')
+  .option('-n, --name <name>', 'specify name')
+  .option('--description <desc>', 'specify description')
+  .complete({
+    options: {
+      '--name': function() { return ['kate', 'jim']; },
+      '--description': ['d1', 'd2']
+    },
+    args: {
+      arg1: function() { return ['a-1', 'a-2', 'a-3']; },
+      arg2: ['b-1', 'b-2']
+    }
+  });
+
+program
+  .command('sub2 <arg1>')
+  .description('sub command 2')
+  .option('--verbose', 'verbose')
+  .option('-n, --name <name>', 'specify name')
+  .option('--description <desc>', 'specify description')
+  .complete({
+    options: {
+      '--name': function() { return ['lucy', 'linda']; },
+      '--description': ['db1', 'db2']
+    },
+    args: {
+      arg1: function() { return ['a-11', 'a-12']; },
+    }
+  });
+
+program.parse(process.argv);
