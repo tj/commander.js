@@ -1,6 +1,13 @@
 var spawn = require('child_process').spawn,
   path = require('path'),
-  should = require('should');
+  should = require('should'),
+  utils = require('./utils.js');
+
+// Skip this test for Windows since signals are unsupported
+if (utils.isWindows()) {
+  utils.skip();
+  return;
+}
 
 var bin = path.join(__dirname, './fixtures/pm');
 var proc = spawn(bin, ['listen'], {});
