@@ -1,6 +1,7 @@
 var exec = require('child_process').exec
   , path = require('path')
-  , should = require('should');
+  , should = require('should')
+  , utils = require('./utils.js');
 
 
 
@@ -35,7 +36,12 @@ exec(bin + ' publish', function (error, stdout, stderr) {
 // spawn EACCES
 exec(bin + ' search', function (error, stdout, stderr) {
   // TODO error info are not the same in between <v0.10 and v0.12
-  should.notEqual(0, stderr.length);
+  // search command works on windows
+  if (utils.isWindows()) {
+    stdout.should.equal('search\n');
+  } else {
+    should.notEqual(0, stderr.length);
+  }
 });
 
 // when `bin` is a symbol link for mocking global install
