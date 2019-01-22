@@ -463,6 +463,7 @@ Command.prototype.allowUnknownOption = function(arg) {
  * Define completionRules which will later be used by autocomplete to generate appropriate response
  *
  * @param {Object} completion rules
+ * @api public
  */
 
 Command.prototype.complete = function(rules) {
@@ -491,21 +492,189 @@ Command.prototype.autocomplete = function(argv) {
 
   if (
     firstArg === '--completion' ||
+    firstArg === '--completion-fish' ||
     firstArg === '--compzsh' ||
-    firstArg === '--compbash'
+    firstArg === '--compbash' ||
+    firstArg === '--compfish'
   ) {
     // lazy require
     var omelette = require('omelette');
     var executableName = basename(argv[1], '.js');
+    var self = this;
 
-    var completion = autocompleteBuild(omelette, executableName, this);
+    var completion = omelette(executableName);
 
-    // for successful handlings
+    completion.on('complete', function(f, event) {
+      self.autocompleteHandleEvent(event);
+    });
+
     // omelette will call process.exit(0)
     completion.init();
   }
 
   return this;
+};
+
+/**
+ * Handle omelette complete event
+ *
+ * @param {Object} omelette event which contains fragment, line, reply info
+ *
+ * @api private
+ */
+Command.prototype.autocompleteHandleEvent = function(event) {
+  if (this.commands.length > 0) {
+    // sub command style
+    if (event.fragment === 1) {
+      // for sub command first complete should return command
+      var commands = this.commands.map(function(c) { return c.name(); });
+
+      event.reply(commands.concat(['--help']));
+    } else {
+      var elements = event.line.split(' ');
+      var commandName = elements[1];
+      var commandArgs = elements.slice(2, event.fragment);
+      var currentCommand = this.commands.find(function(c) {
+        return c.name() === commandName;
+      });
+
+      if (currentCommand) {
+        event.reply(
+          currentCommand.autocompleteCandidates(commandArgs)
+        );
+      } else {
+        event.reply([]);
+      }
+    }
+  } else {
+    // single command style
+    var singleCommandArgs = event.line.split(' ').slice(1, event.fragment);
+
+    if (event.fragment === 1) {
+      // offer --help for the first complete only
+      event.reply(
+        this.autocompleteCandidates(singleCommandArgs).concat(['--help'])
+      );
+    } else {
+      event.reply(
+        this.autocompleteCandidates(singleCommandArgs)
+      );
+    }
+  }
+};
+
+/**
+ * Return candidates base on current line input and completionRules.
+ * This is the core of smart logic of autocompletion
+ *
+ * @param {Array} typed args
+ * @return {Array} auto complete candidates
+ * @api private
+ */
+
+Command.prototype.autocompleteCandidates = function(typedArgs) {
+  var completionRules = this.autocompleteNormalizeRules();
+  var activeOption = autocompleteActiveOption(
+    completionRules.options, typedArgs
+  );
+
+  if (activeOption) {
+    // if current typedArgs suggests it's filling an option
+    // next value would be the possible values for that option
+    var reply = activeOption.reply;
+
+    if (isFunction(reply)) {
+      return (reply(typedArgs) || []);
+    } else if (isArray(reply)) {
+      return reply;
+    } else {
+      return [];
+    }
+  } else {
+    // otherwise
+    // next value would be one of the unused option names
+    var optionNames = Object
+      .keys(completionRules.options)
+      .filter(function(name) {
+        var option = completionRules.options[name];
+
+        if (option.sibling) {
+          // remove both option and its sibling form
+          return (
+            !typedArgs.includes(name) &&
+            !typedArgs.includes(option.sibling)
+          );
+        } else {
+          return !typedArgs.includes(name);
+        }
+      });
+
+    // or possible values for next arguments
+    var activeArg = autocompleteActiveArg(
+      completionRules.options,
+      completionRules.args,
+      typedArgs
+    );
+
+    if (isFunction(activeArg)) {
+      return optionNames.concat(activeArg(typedArgs) || []);
+    } else if (isArray(activeArg)) {
+      return optionNames.concat(activeArg);
+    } else {
+      return optionNames;
+    }
+  }
+};
+
+/**
+ * For the ease of processing,
+ * the internal presentation of completion rules is quite different from user input.
+ *
+ * @return {Object} normalized rules
+ * @api private
+ */
+
+Command.prototype.autocompleteNormalizeRules = function() {
+  // supplement with important information including
+  // option arity and sibling
+  var rawRules = this._completionRules;
+  var options = this.options;
+  var args = this._args;
+  var normalizedRules = { options: {}, args: [] };
+
+  options.forEach(function(option) {
+    if (option.short) {
+      var reply = (
+        rawRules.options[option.long] ||
+        rawRules.options[option.short] ||
+        []
+      );
+
+      normalizedRules.options[option.short] = {
+        arity: option.arity(),
+        sibling: option.long,
+        reply: reply
+      };
+
+      normalizedRules.options[option.long] = {
+        arity: option.arity(),
+        sibling: option.short,
+        reply: reply
+      };
+    } else {
+      normalizedRules.options[option.long] = {
+        arity: option.arity(),
+        sibling: null,
+        reply: rawRules.options[option.long] || []
+      };
+    }
+  });
+
+  args.forEach(function(arg) {
+    normalizedRules.args.push(rawRules.args[arg.name] || []);
+  });
+
+  return normalizedRules;
 };
 
 /**
@@ -1319,58 +1488,6 @@ function isArray(thing) {
 }
 
 /**
- * For the ease of processing,
- * the internal presentation of completion rules is quite different from user input.
- *
- * @param {Command} command
- * @return {Object} normalized rules
- * @api private
- */
-
-function autocompleteNormalizeRules(command) {
-  // supplement with important information including
-  // option arity and sibling
-  var rawRules = command._completionRules;
-  var options = command.options;
-  var args = command._args;
-  var normalizedRules = { options: {}, args: [] };
-
-  options.forEach(function(option) {
-    if (option.short) {
-      var reply = (
-        rawRules.options[option.long] ||
-        rawRules.options[option.short] ||
-        []
-      );
-
-      normalizedRules.options[option.short] = {
-        arity: option.arity(),
-        sibling: option.long,
-        reply: reply
-      };
-
-      normalizedRules.options[option.long] = {
-        arity: option.arity(),
-        sibling: option.short,
-        reply: reply
-      };
-    } else {
-      normalizedRules.options[option.long] = {
-        arity: option.arity(),
-        sibling: null,
-        reply: rawRules.options[option.long] || []
-      };
-    }
-  });
-
-  args.forEach(function(arg) {
-    normalizedRules.args.push(rawRules.args[arg.name] || []);
-  });
-
-  return normalizedRules;
-}
-
-/**
  * Detect whether current command line input infers an option.
  *
  * @param {Object} normalized option rules
@@ -1414,7 +1531,7 @@ function autocompleteActiveArg(optionRules, argRules, typedArgs) {
     return false;
   }
 
-  // find out how many args are already typed
+  // find out how many args have already been typed
   var count = 0;
   var curr = 0;
 
@@ -1434,123 +1551,4 @@ function autocompleteActiveArg(optionRules, argRules, typedArgs) {
   } else {
     return false;
   }
-}
-
-/**
- * Generate reply base on current line input and completionRules.
- * This is the core of smart logic of autocompletion
- *
- * @param {Object} normalized rules
- * @param {Array} typed args
- * @return {Array} auto complete candidates
- * @api private
- */
-
-function autocompleteReply(completionRules, typedArgs) {
-  var activeOption = autocompleteActiveOption(
-    completionRules.options, typedArgs
-  );
-
-  if (activeOption) {
-    // if current typedArgs suggests it's filling an option
-    // next value would be the possible values for that option
-    var reply = activeOption.reply;
-
-    if (isFunction(reply)) {
-      return (reply(typedArgs) || []);
-    } else if (isArray(reply)) {
-      return reply;
-    } else {
-      return [];
-    }
-  } else {
-    // otherwise
-    // next value would be one of the unused option names
-    var optionNames = Object
-      .keys(completionRules.options)
-      .filter(function(name) {
-        var option = completionRules.options[name];
-
-        if (option.sibling) {
-          // remove both option and its sibling form
-          return (
-            !typedArgs.includes(name) &&
-            !typedArgs.includes(option.sibling)
-          );
-        } else {
-          return !typedArgs.includes(name);
-        }
-      });
-
-    // or possible values for next arguments
-    var activeArg = autocompleteActiveArg(
-      completionRules.options,
-      completionRules.args,
-      typedArgs
-    );
-
-    if (isFunction(activeArg)) {
-      return optionNames.concat(activeArg(typedArgs) || []);
-    } else if (isArray(activeArg)) {
-      return optionNames.concat(activeArg);
-    } else {
-      return optionNames;
-    }
-  }
-}
-
-function autocompleteBuild(omelette, executableName, cmd) {
-  // now starts simple by hard code support for 12 args
-  // which is usually long enough for a typical CLI command
-  // in the future we may explore more dynamic support
-  var NUMBER_OF_SUPPORTED_ARGS = 12;
-
-  var args = [[executableName]];
-
-  if (cmd.commands.length > 0) {
-    // sub command style
-    // first command arg callback should return commands
-    args.push(function(context) {
-      var commands = cmd.commands.map(function(c) { return c.name(); });
-
-      context.reply(commands.concat(['--help']));
-    });
-
-    var subCommandArgCallback = function(context) {
-      var elements = context.line.split(' ');
-      var commandName = elements[1];
-      var commandArgs = elements.slice(2, context.fragment);
-      var currentCommand = cmd.commands.find(function(c) {
-        return c.name() === commandName;
-      });
-
-      if (currentCommand) {
-        var normalizedRules = autocompleteNormalizeRules(currentCommand);
-
-        context.reply(
-          autocompleteReply(normalizedRules, commandArgs)
-        );
-      } else {
-        context.reply([]);
-      }
-    };
-
-    for (var sbn = 1; sbn <= NUMBER_OF_SUPPORTED_ARGS; sbn++) {
-      args.push(subCommandArgCallback);
-    }
-  } else {
-    // single command style
-    var singleCommandArgCallback = function(context) {
-      var commandArgs = context.line.split(' ').slice(1, context.fragment);
-      var normalizedRules = autocompleteNormalizeRules(cmd);
-
-      return autocompleteReply(normalizedRules, commandArgs);
-    };
-
-    for (var sn = 1; sn <= NUMBER_OF_SUPPORTED_ARGS; sn++) {
-      args.push(singleCommandArgCallback);
-    }
-  }
-
-  return omelette.apply(null, args);
 }
