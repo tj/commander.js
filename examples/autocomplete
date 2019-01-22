@@ -22,7 +22,7 @@ program
       '--name': function() { return ['kate', 'jim']; },
       '--description': ['desc1', 'desc2']
     },
-    args: {
+    arguments: {
       a: function() { return ['a-1', 'a-2']; },
       b: ['b-1', 'b-2']
     }

@@ -271,17 +271,22 @@ program
       '--name': function(typedArgs) { return ['kate', 'jim']; },
       '--description': ['desc1', 'desc2']
     },
-    args: {
+    arguments: {
       a: function(typedArgs) { return ['a-1', 'a-2']; },
       b: ['b-1', 'b-2']
     }
   });
 ```
 
-2. Ask your command line user to enable autocompletion by executing the following command, or adding it to their .bashrc or .zshrc etc for persistent autocompletion support.
+2. Ask your command line user to enable autocompletion for current session by executing the following command.
+For persistent support, we can recommend adding the command to their shell initialization file such as .bashrc or .zshrc etc.
 
 ```
-eval "$(<command-name> --completion)"
+# for zsh or bash
+eval "$(<cli-program-name> --completion)"
+
+# for fish shell
+<cli-program-name> --completion-fish | source
 ```
 
 ## Automated --help

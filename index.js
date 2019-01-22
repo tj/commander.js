@@ -473,7 +473,10 @@ Command.prototype.complete = function(rules) {
     this._completionRules.options = rules.options;
   }
 
-  if (rules.args) {
+  // support both arguments or args as key
+  if (rules.arguments) {
+    this._completionRules.args = rules.arguments;
+  } else if (rules.args) {
     this._completionRules.args = rules.args;
   }
 
@@ -488,15 +491,16 @@ Command.prototype.complete = function(rules) {
  */
 
 Command.prototype.autocomplete = function(argv) {
+  var RESERVED_STARTING_KEYWORDS = [
+    '--completion',
+    '--completion-fish',
+    '--compzsh',
+    '--compbash',
+    '--compfish'
+  ];
   var firstArg = argv[2];
 
-  if (
-    firstArg === '--completion' ||
-    firstArg === '--completion-fish' ||
-    firstArg === '--compzsh' ||
-    firstArg === '--compbash' ||
-    firstArg === '--compfish'
-  ) {
+  if (RESERVED_STARTING_KEYWORDS.includes(firstArg)) {
     // lazy require
     var omelette = require('omelette');
     var executableName = basename(argv[1], '.js');

@@ -198,7 +198,7 @@ program
       '--name': function(typedArgs) { return ['kate', 'jim']; },
       '--description': ['desc1', 'desc2']
     },
-    args: {
+    arguments: {
       a: function(typedArgs) { return ['a-1', 'a-2']; },
       b: ['b-1', 'b-2']
     }
@@ -208,7 +208,11 @@ program
 2. 邀请你的命令行用户开启自动补全功能。他们可以直接在shell执行以下指令，或是把其加入到个人shell对应的.bashrc或.zshrc等文件中，就可以获得长期的自动补全支持。
 
 ```
-eval "$(<command-name> --completion)"
+# for zsh or bash
+eval "$(<cli-program-name> --completion)"
+
+# for fish shell
+<cli-program-name> --completion-fish | source
 ```
 
 ## 自动化帮助信息 --help

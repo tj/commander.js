@@ -13,7 +13,7 @@ program
       '--debug-level': ['info', 'error'],
       '-m': function(typedArgs) { return typedArgs; }
     },
-    args: {
+    arguments: {
       filename: ['file1.c', 'file2.c']
     }
   });

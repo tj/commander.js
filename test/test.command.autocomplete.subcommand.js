@@ -9,7 +9,7 @@ program
     options: {
       '--debug-level': ['info', 'error'],
     },
-    args: {
+    arguments: {
       url: ['https://github.com/1', 'https://github.com/2']
     }
   });
@@ -22,7 +22,7 @@ program
     options: {
       '--debug-level': ['info', 'error'],
     },
-    args: {
+    arguments: {
       file1: ['file1.c', 'file11.c'],
       file2: ['file2.c', 'file21.c']
     }

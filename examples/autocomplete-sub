@@ -21,7 +21,7 @@ program
       '--name': function() { return ['kate', 'jim']; },
       '--description': ['d1', 'd2']
     },
-    args: {
+    arguments: {
       arg1: function() { return ['a-1', 'a-2', 'a-3']; },
       arg2: ['b-1', 'b-2']
     }
@@ -38,7 +38,7 @@ program
       '--name': function() { return ['lucy', 'linda']; },
       '--description': ['db1', 'db2']
     },
-    args: {
+    arguments: {
       arg1: function() { return ['a-11', 'a-12']; },
     }
   });
