@@ -8,6 +8,7 @@ var path = require('path');
 var dirname = path.dirname;
 var basename = path.basename;
 var fs = require('fs');
+var readlink = require('readlink').sync;
 
 /**
  * Inherit `Command` from `EventEmitter.prototype`.
@@ -527,13 +528,12 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   // In case of globally installed, get the base dir where executable
   //  subcommand file should be located at
-  var baseDir,
-    link = fs.lstatSync(f).isSymbolicLink() ? fs.readlinkSync(f) : f;
+  var baseDir, link = f;
 
-  // when symbolink is relative path
-  if (link !== f && link.charAt(0) !== '/') {
-    link = path.join(dirname(f), link);
+  while (fs.lstatSync(link).isSymbolicLink()) {
+    link = readlink(link);
   }
+
   baseDir = dirname(link);
 
   // prefer local `./<bin>` to bin in the $PATH

@@ -24,7 +24,9 @@
     "index.js",
     "typings/index.d.ts"
   ],
-  "dependencies": {},
+  "dependencies": {
+    "readlink": "^2.0.0"
+  },
   "devDependencies": {
     "@types/node": "^10.11.3",
     "eslint": "^5.6.1",
