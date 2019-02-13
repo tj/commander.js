@@ -587,9 +587,9 @@ Command.prototype.autocompleteCandidates = function(typedArgs) {
     // next value would be the possible values for that option
     var reply = activeOption.reply;
 
-    if (isFunction(reply)) {
+    if (typeof reply === 'function') {
       return (reply(typedArgs) || []);
-    } else if (isArray(reply)) {
+    } else if (Array.isArray(reply)) {
       return reply;
     } else {
       return [];
@@ -620,9 +620,9 @@ Command.prototype.autocompleteCandidates = function(typedArgs) {
       typedArgs
     );
 
-    if (isFunction(activeArg)) {
+    if (typeof activeArg === 'function') {
       return optionNames.concat(activeArg(typedArgs) || []);
-    } else if (isArray(activeArg)) {
+    } else if (Array.isArray(activeArg)) {
       return optionNames.concat(activeArg);
     } else {
       return optionNames;
@@ -1468,30 +1468,6 @@ function exists(file) {
 }
 
 /**
- * Tests whether the given parameter is a function.
- *
- * @param {Object} arg
- * @return {Boolean}
- * @api private
- */
-
-function isFunction(thing) {
-  return (typeof thing === 'function');
-}
-
-/**
- * Tests whether the given parameter is an array.
- *
- * @param {Object} arg
- * @return {Boolean}
- * @api private
- */
-
-function isArray(thing) {
-  return thing && typeof thing === 'object' && thing.constructor === Array;
-}
-
-/**
  * Detect whether current command line input infers an option.
  *
  * @param {Object} normalized option rules
@@ -1543,10 +1519,10 @@ function autocompleteActiveArg(optionRules, argRules, typedArgs) {
     var currStr = typedArgs[curr];
 
     if (optionRules[currStr]) {
-      curr = curr + 1 + optionRules[currStr].arity;
+      curr += optionRules[currStr].arity + 1;
     } else {
-      count = count + 1;
-      curr = curr + 1;
+      count += 1;
+      curr += 1;
     }
   }
 
