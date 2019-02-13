@@ -484,6 +484,29 @@ Command.prototype.complete = function(rules) {
 };
 
 /**
+ * Test if any complete rules has been defined for current command or its subcommands.
+ *
+ * @return {Boolean}
+ * @api private
+ */
+
+Command.prototype.hasCompletionRules = function() {
+  function isEmptyRule(rules) {
+    return (
+      Object.keys(rules.options).length === 0 &&
+      Object.keys(rules.args).length === 0
+    );
+  }
+
+  return !(
+    isEmptyRule(this._completionRules) &&
+    this.commands.every(function(command) {
+      return isEmptyRule(command._completionRules);
+    })
+  );
+};
+
+/**
  * Handle autocomplete if command args starts with special options.
  * It will exit current process after successful processing.
  *
@@ -690,8 +713,10 @@ Command.prototype.autocompleteNormalizeRules = function() {
  */
 
 Command.prototype.parse = function(argv) {
-  // trigger autocomplete first
-  this.autocomplete(argv);
+  // trigger autocomplete first if some completion rules have been defined
+  if (this.hasCompletionRules()) {
+    this.autocomplete(argv);
+  }
 
   // implicit help
   if (this.executables) this.addImplicitHelpCommand();

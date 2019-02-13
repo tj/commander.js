@@ -28,6 +28,8 @@ program
     }
   });
 
+program.hasCompletionRules().should.be.true();
+
 var rootReply = sinon.spy();
 
 program.autocompleteHandleEvent({

@@ -1,6 +1,8 @@
 var program = require('../')
   , should = require('should');
 
+program.hasCompletionRules().should.be.false();
+
 program
   .arguments('<filename>')
   .option('--verbose', 'verbose')
@@ -17,6 +19,8 @@ program
       filename: ['file1.c', 'file2.c']
     }
   });
+
+program.hasCompletionRules().should.be.true();
 
 program.autocompleteNormalizeRules().should.deepEqual({
   options: {
