@@ -2,6 +2,7 @@
 
 
 [![Build Status](https://api.travis-ci.org/tj/commander.js.svg)](http://travis-ci.org/tj/commander.js)
+[![Azure Pipelines Build Status](https://dev.azure.com/commanderjs/commander.js/_apis/build/status/commander.js-CI?branchName=master)](https://dev.azure.com/commanderjs/commander.js/_build/latest?definitionId=1&branchName=master)
 [![NPM Version](http://img.shields.io/npm/v/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
 [![NPM Downloads](https://img.shields.io/npm/dm/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
 [![Join the chat at https://gitter.im/tj/commander.js](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tj/commander.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)

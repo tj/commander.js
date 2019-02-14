@@ -2,6 +2,7 @@
 
 
 [![Build Status](https://api.travis-ci.org/tj/commander.js.svg?branch=master)](http://travis-ci.org/tj/commander.js)
+[![Azure Pipelines Build Status](https://dev.azure.com/commanderjs/commander.js/_apis/build/status/commander.js-CI?branchName=master)](https://dev.azure.com/commanderjs/commander.js/_build/latest?definitionId=1&branchName=master)
 [![NPM Version](http://img.shields.io/npm/v/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
 [![NPM Downloads](https://img.shields.io/npm/dm/commander.svg?style=flat)](https://npmcharts.com/compare/commander?minimal=true)
 [![Install Size](https://packagephobia.now.sh/badge?p=commander)](https://packagephobia.now.sh/result?p=commander)
