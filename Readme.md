@@ -75,6 +75,9 @@ e.g. ```var myInput = program.myarg```
 
 **NOTE**: If you pass a argument without using brackets the example above will return true and not the value passed in.
 
+### Validation
+
+Options will be validated by default by throwing an error when an invalid option is passed (`error: unknown option '--thisIsInvalid'`). You can disable this validation per command by calling: `allowUnknownOption(true)`
 
 ## Version option
 
