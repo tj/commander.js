@@ -67,7 +67,7 @@ else console.log(' without sauce');
 
 To get string arguments from options you will need to use angle brackets <> for required inputs or square brackets [] for optional inputs. 
 
-e.g. ```.option(' -m --myarg [myVar]', 'my super cool description')```
+e.g. ```.option('-m --myarg [myVar]', 'my super cool description')```
 
 Then to access the input if it was passed in.
 
