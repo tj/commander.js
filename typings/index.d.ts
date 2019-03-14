@@ -226,9 +226,10 @@ declare namespace local {
      * Set the description to `str`.
      *
      * @param {string} str
+     * @param {{[key: string]: any}} argsDescription
      * @return {(Command | string)}
      */
-    description(str: string): Command;
+    description(str: string, argsDescription?: {[key: string]: any}): Command;
     description(): string;
 
     /**
