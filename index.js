@@ -173,7 +173,7 @@ Command.prototype.command = function(name, desc, opts) {
   }
   opts = opts || {};
   var args = name.split(/ +/);
-  var cmd = new Command(args.shift());
+  var cmd = new Command(toName(args));
 
   if (desc) {
     cmd.description(desc);
@@ -646,12 +646,10 @@ Command.prototype.normalize = function(args) {
  */
 
 Command.prototype.parseArgs = function(args, unknown) {
-  var name;
-
   if (args.length) {
-    name = args[0];
+    var name = toName(args);
     if (this.listeners('command:' + name).length) {
-      this.emit('command:' + args.shift(), args, unknown);
+      this.emit('command:' + name, [], unknown);
     } else {
       this.emit('command:*', args);
     }
@@ -1224,4 +1222,14 @@ function exists(file) {
   } catch (e) {
     return false;
   }
+}
+
+/**
+ * resolve command name from args.
+ * 
+ * @param {string[]} args 
+ * @returns {string}
+ */
+function toName(args) {
+  return args.join(" ");
 }
