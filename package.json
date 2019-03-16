@@ -1,6 +1,6 @@
 {
-  "name": "commander",
-  "version": "2.19.0",
+  "name": "@kunimitaiyoh/commander",
+  "version": "3.0.0",
   "description": "the complete solution for node.js command-line programs",
   "keywords": [
     "commander",
@@ -12,7 +12,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tj/commander.js.git"
+    "url": "https://github.com/kunimitaiyoh/commander.js.git"
   },
   "scripts": {
     "lint": "eslint index.js",
