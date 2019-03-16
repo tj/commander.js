@@ -1226,10 +1226,10 @@ function exists(file) {
 
 /**
  * resolve command name from args.
- * 
- * @param {string[]} args 
+ *
+ * @param {string[]} args
  * @returns {string}
  */
 function toName(args) {
-  return args.join(" ");
+  return args.join(' ');
 }
