@@ -292,9 +292,7 @@ Command.prototype.action = function(fn) {
     if (parsed.args.length) args = parsed.args.concat(args);
 
     self._args.forEach(function(arg, i) {
-      if (arg.required && args[i] == null) {
-        self.missingArgument(arg.name);
-      } else if (arg.variadic) {
+      if (arg.variadic) {
         if (i !== self._args.length - 1) {
           self.variadicArgNotLast(arg.name);
         }
@@ -663,9 +661,13 @@ Command.prototype.parseArgs = function(args, unknown) {
     if (unknown.length > 0) {
       this.unknownOption(unknown[0]);
     }
+
+    var requiredArgs = this._args.filter(function(a) { return a.required; })
     if (this.commands.length === 0 &&
-        this._args.filter(function(a) { return a.required; }).length === 0) {
+        requiredArgs.length === 0) {
       this.emit('command:*');
+    } else if (requiredArgs.length) {
+      this.missingArgument(requiredArgs[0].name)
     }
   }
 
