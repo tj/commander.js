@@ -645,7 +645,7 @@ Command.prototype.normalize = function(args) {
 
 Command.prototype.parseArgs = function(args, unknown) {
   if (args.length) {
-    name = args[0];
+    var name = args[0];
     if (this.listeners('command:' + name).length) {
       this.emit('command:' + args.shift(), args, unknown);
     } else {
@@ -664,7 +664,7 @@ Command.prototype.parseArgs = function(args, unknown) {
     if (unknown.length > 0) {
       this.unknownOption(unknown[0]);
     }
-    var requiredArgs = this._args.filter(function(a) { return a.required; });
+    requiredArgs = this._args.filter(function(a) { return a.required; });
     if (requiredArgs.length) {
       this.missingArgument(requiredArgs[args.length].name);
     }
