@@ -644,14 +644,17 @@ Command.prototype.normalize = function(args) {
  */
 
 Command.prototype.parseArgs = function(args, unknown) {
-  var name;
-
   if (args.length) {
     name = args[0];
     if (this.listeners('command:' + name).length) {
       this.emit('command:' + args.shift(), args, unknown);
     } else {
-      this.emit('command:*', args);
+      var requiredArgs = this._args.filter(function(a) { return a.required; });
+      if (requiredArgs.length <= args.length) {
+        this.emit('command:*', args);
+      } else {
+        this.missingArgument(requiredArgs[args.length].name);
+      }
     }
   } else {
     outputHelpIfNecessary(this, unknown);
@@ -661,13 +664,13 @@ Command.prototype.parseArgs = function(args, unknown) {
     if (unknown.length > 0) {
       this.unknownOption(unknown[0]);
     }
+    var requiredArgs = this._args.filter(function(a) { return a.required; });
+    if (requiredArgs.length) {
+      this.missingArgument(requiredArgs[args.length].name);
+    }
 
-    var requiredArgs = this._args.filter(function(a) { return a.required; })
-    if (this.commands.length === 0 &&
-        requiredArgs.length === 0) {
+    if (this.commands.length === 0) {
       this.emit('command:*');
-    } else if (requiredArgs.length) {
-      this.missingArgument(requiredArgs[0].name)
     }
   }
 

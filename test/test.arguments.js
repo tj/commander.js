@@ -13,15 +13,15 @@ program
   .arguments('<cmd> [env]')
   .action(function (cmd, env) {
     cmdValue = cmd;
-    envValue = env;
+    envValue = env || '';
   })
   .option('-C, --chdir <path>', 'change the working directory')
   .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
   .option('-T, --no-tests', 'ignore test hook');
 
-program.parse(['node', 'test', '--config', 'conf']);
+program.parse(['node', 'test', 'setup', '--config', 'conf']);
 program.config.should.equal("conf");
-cmdValue.should.equal("");
+cmdValue.should.equal("setup");
 envValue.should.equal("");
 
 program.parse(['node', 'test', '--config', 'conf1', 'setup', '--setup_mode', 'mode3', 'env1']);
