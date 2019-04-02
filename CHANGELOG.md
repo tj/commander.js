@@ -1,4 +1,16 @@
 
+2.20.0 / 2019-04-02
+==================
+
+  * fix: resolve symbolic links completely when hunting for subcommands (#935)
+  * Update index.d.ts (#930)
+  * Update Readme.md (#924)
+  * Remove --save option as it isn't required anymore (#918)
+  * Add link to the license file (#900)
+  * Added example of receiving args from options (#858)
+  * Added missing semicolon (#882)
+  * Add extension to .eslintrc (#876)
+
 2.19.0 / 2018-10-02
 ==================
 
