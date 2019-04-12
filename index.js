@@ -544,6 +544,9 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   } else if (exists(localBin + '.ts')) {
     bin = localBin + '.ts';
     isExplicitJS = true;
+  } else if (exists(localBin + '.mjs')) {
+    bin = localBin + '.mjs';
+    isExplicitJS = true;
   } else if (exists(localBin)) {
     bin = localBin;
   }
