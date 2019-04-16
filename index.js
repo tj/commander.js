@@ -103,6 +103,8 @@ function Command(name) {
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
+  this._optionValues = Object.create(null); // pure object as map
+  this._mapStyleOptions = false; // new behaviour
 }
 
 /**
@@ -376,6 +378,13 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     oname = option.name(),
     name = option.attributeName();
 
+  // Warn about clashes ????
+  if (!self._mapStyleOptions && self[name] !== undefined) {
+    console.log("Warning: option name '%s' conflicts with internal name", name);
+    console.log('   Either change option name or move to pureOpts');
+    return this;
+  }
+
   // default as 3rd arg
   if (typeof fn !== 'function') {
     if (fn instanceof RegExp) {
@@ -396,7 +405,10 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     if (!option.bool) defaultValue = true;
     // preassign only if we have a default
     if (defaultValue !== undefined) {
-      self[name] = defaultValue;
+      self._optionValues[name] = defaultValue;
+      if (!self._mapStyleOptions) {
+        self[name] = self._optionValues[name];
+      }
       option.defaultValue = defaultValue;
     }
   }
@@ -409,22 +421,28 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   this.on('option:' + oname, function(val) {
     // coercion
     if (val !== null && fn) {
-      val = fn(val, self[name] === undefined ? defaultValue : self[name]);
+      val = fn(val, self._optionValues[name] === undefined ? defaultValue : self._optionValues[name]);
     }
 
     // unassigned or bool
-    if (typeof self[name] === 'boolean' || typeof self[name] === 'undefined') {
+    if (typeof self._optionValues[name] === 'boolean' || typeof self._optionValues[name] === 'undefined') {
       // if no value, bool true, and we have a default, then use it!
       if (val == null) {
-        self[name] = option.bool
+        self._optionValues[name] = option.bool
           ? defaultValue || true
           : false;
       } else {
-        self[name] = val;
+        self._optionValues[name] = val;
+      }
+      if (!self._mapStyleOptions) {
+        self[name] = self._optionValues[name];
       }
     } else if (val !== null) {
       // reassign
-      self[name] = val;
+      self._optionValues[name] = val;
+      if (!self._mapStyleOptions) {
+        self[name] = self._optionValues[name];
+      }
     }
   });
 
@@ -440,6 +458,27 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
  */
 Command.prototype.allowUnknownOption = function(arg) {
   this._allowUnknownOption = arguments.length === 0 || arg;
+  return this;
+};
+
+/**
+ * Set featureFlags.
+ *
+ * @param {String|Object} flag/flags
+ * @return {Command} for chaining
+ * @api public
+ */
+Command.prototype.setFeatureFlags = function(flags) {
+  const mapStyleOptionsStr = 'mapStyleOptions';
+  if (typeof flags === 'string') {
+    if (flags === mapStyleOptionsStr) {
+      this._mapStyleOptions = true;
+    }
+  } else if (typeof flags === 'object') {
+    if (Object.prototype.hasOwnProperty.call(flags, mapStyleOptionsStr)) {
+      this._mapStyleOptions = flags[mapStyleOptionsStr];
+    }
+  }
   return this;
 };
 
@@ -765,20 +804,46 @@ Command.prototype.parseOptions = function(argv) {
 };
 
 /**
+ * Return whether an option has been specified (or has a default value)
+ *
+ * @param {String} optionKey
+ * @return {Boolean}
+ * @api public
+ */
+Command.prototype.get = function(optionKey) {
+  return (this._optionValues[optionKey] !== undefined);
+};
+
+/**
+ * Return specified option (or default value)
+ *
+ * @param {String} optionKey
+ * @return {Object}
+ * @api public
+ */
+Command.prototype.has = function(optionKey) {
+  return this._optionValues[optionKey];
+};
+
+/**
  * Return an object containing options as key-value pairs
  *
  * @return {Object}
  * @api public
  */
 Command.prototype.opts = function() {
-  var result = {},
-    len = this.options.length;
+  if (this._mapStyleOptions) {
+    return this._optionValues;
+  } else {
+    var result = {},
+      len = this.options.length;
 
-  for (var i = 0; i < len; i++) {
-    var key = this.options[i].attributeName();
-    result[key] = key === this._versionOptionName ? this._version : this[key];
+    for (var i = 0; i < len; i++) {
+      var key = this.options[i].attributeName();
+      result[key] = key === this._versionOptionName ? this._version : this._optionValues[key];
+    }
+    return result;
   }
-  return result;
 };
 
 /**
