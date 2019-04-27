@@ -1,6 +1,5 @@
 # Commander.js
 
-
 [![Build Status](https://api.travis-ci.org/tj/commander.js.svg?branch=master)](http://travis-ci.org/tj/commander.js)
 [![NPM Version](http://img.shields.io/npm/v/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
 [![NPM Downloads](https://img.shields.io/npm/dm/commander.svg?style=flat)](https://npmcharts.com/compare/commander?minimal=true)
@@ -10,73 +9,204 @@
   The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/commander-rb/commander).  
   [API documentation](http://tj.github.com/commander.js/)
 
-
 ## Installation
 
     $ npm install commander
 
-## Option parsing
+## Declaring _program_ variable
 
-Options with commander are defined with the `.option()` method, also serving as documentation for the options. The example below parses args and options from `process.argv`, leaving remaining args as the `program.args` array which were not consumed by options.
-
-```js
-#!/usr/bin/env node
-
-/**
- * Module dependencies.
- */
-
-var program = require('commander');
-
-program
-  .version('0.1.0')
-  .option('-p, --peppers', 'Add peppers')
-  .option('-P, --pineapple', 'Add pineapple')
-  .option('-b, --bbq-sauce', 'Add bbq sauce')
-  .option('-c, --cheese [type]', 'Add the specified type of cheese [marble]', 'marble')
-  .parse(process.argv);
-
-console.log('you ordered a pizza with:');
-if (program.peppers) console.log('  - peppers');
-if (program.pineapple) console.log('  - pineapple');
-if (program.bbqSauce) console.log('  - bbq');
-console.log('  - %s cheese', program.cheese);
-```
-
-Short flags may be passed as a single arg, for example `-abc` is equivalent to `-a -b -c`. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc.
-
-Note that multi-word options starting with `--no` prefix negate the boolean value of the following word. For example, `--no-sauce` sets the value of `program.sauce` to false.
+Commander exports a global object which is convenient for quick programs.
+This is used in the examples in this README for brevity.
 
 ```js
-#!/usr/bin/env node
-
-/**
- * Module dependencies.
- */
-
-var program = require('commander');
-
-program
-  .option('--no-sauce', 'Remove sauce')
-  .parse(process.argv);
-
-console.log('you ordered a pizza');
-if (program.sauce) console.log('  with sauce');
-else console.log(' without sauce');
+const program = require('commander');
+program.version('0.0.1);
 ```
 
-To get string arguments from options you will need to use angle brackets <> for required inputs or square brackets [] for optional inputs. 
+For larger programs which may use commander in multiple ways, including unit testing, it is better to create a local Command object to use.
 
-e.g. ```.option('-m --myarg [myVar]', 'my super cool description')```
-
-Then to access the input if it was passed in.
-
-e.g. ```var myInput = program.myarg```
-
-**NOTE**: If you pass a argument without using brackets the example above will return true and not the value passed in.
+ ```js
+ const commander = require('commander');
+ const program = new commander.Command;
+ program.version('0.0.1);
+ ```
 
 
-## Version option
+## Options
+
+Options are defined with the `.option()` method, also serving as documentation for the options. Each option can have a short flag (single character) and a long name, separated by a comma or space.
+
+The options can be accessed as properties on the Command object. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc. Multiple short flags may be combined as a single arg, for example `-abc` is equivalent to `-a -b -c`.
+
+### Common option types, boolean and value
+
+The two most used option types are a boolean flag, and an option which takes a value (declared using angle brackets). Both are `undefined` unless specified on command line.
+
+```js
+const program = require('commander');
+
+program
+  .option('-d, --debug', 'output extra debugging')
+  .option('-s, --small', 'small pizza size')
+  .option('-p, --pizza-type <type>', 'flavour of pizza');
+
+program.parse(process.argv);
+
+if (program.debug) console.log(program.opts());
+console.log('pizza details:');
+if (program.small) console.log('- small pizza size');
+if (program.pizzaType) console.log(`- ${program.pizzaType}`);
+```
+
+```bash
+$ pizza-options -d
+{ debug: true, small: undefined, pizzaType: undefined }
+pizza details:
+$ pizza-options -p
+error: option `-p, --pizza-type <type>' argument missing
+$ pizza-options -ds -p vegetarian
+{ debug: true, small: true, pizzaType: 'vegetarian' }
+pizza details:
+- small pizza size
+- vegetarian
+$ pizza-options --pizza-type=cheese
+pizza details:
+- cheese
+```
+
+`program.parse(arguments)` processes the arguments, leaving any args not consumed by the options as the `program.args` array.
+
+### Default option value
+
+You can specify a default value for an option which takes a value.
+
+```js
+const program = require('commander');
+
+program
+  .option('-c, --cheese <type>', 'add the specified type of cheese', 'blue');
+
+program.parse(process.argv);
+
+console.log(`cheese: ${program.cheese}`);
+```
+
+```bash
+$ pizza-options
+cheese: blue
+$ pizza-options --cheese stilton
+cheese: stilton
+```
+
+### Other option types, negatable boolean and flag|value
+
+You can specify a boolean option long name with a leading `no-` to make it true by default and able to be negated.
+
+
+```js
+const program = require('commander');
+
+program
+  .option('-n, --no-sauce', 'Remove sauce')
+  .parse(process.argv);
+
+if (program.sauce) console.log('you ordered a pizza with sauce');
+else console.log('you ordered a pizza without sauce');
+```
+
+```bash
+$ pizza-options
+you ordered a pizza with sauce
+$ pizza-options --sauce
+error: unknown option `--sauce'
+$ pizza-options --no-sauce
+you ordered a pizza without sauce
+```
+You can specify an option which functions as a flag but may also take a value (declared using square brackets).
+
+
+```js
+const program = require('commander');
+
+program
+  .option('-c, --cheese [type]', 'Add cheese with optional type');
+
+program.parse(process.argv);
+
+if (program.cheese === undefined) console.log('no cheese');
+else if (program.cheese === true) console.log('add cheese');
+else console.log(`add cheese type ${program.cheese}`);
+```
+
+```bash
+$ pizza-options
+no cheese
+$ pizza-options --cheese
+add cheese
+$ pizza-options --cheese mozzarella
+add cheese type mozzarella
+```
+
+### Custom option processing
+
+You may specify a function to do custom processing on options. The callback function receives two parameters, the user specified value and the 
+previous value for the option. It returns the new value for the option.
+
+This allows you to coerce the option value to the desired type, or accumulate values, or do entirely custom processing.
+
+You can optionally specify the default/starting value for the option after the function.
+
+```js
+const program = require('commander');
+
+function myParseInt(value, dummyPrevious) {
+  // parseInt takes a string and an optional radix
+  return parseInt(value);
+}
+
+function increaseVerbosity(dummyValue, previous) {
+  return previous + 1;
+}
+
+function collect(value, previous) {
+  return previous.concat([value]);
+}
+
+function commaSeparatedList(value, dummyPrevious) {
+  return value.split(',');
+}
+
+program
+  .option('-f, --float <number>', 'float argument', parseFloat)
+  .option('-i, --integer <number>', 'integer argument', myParseInt)
+  .option('-v, --verbose', 'verbosity that can be increased', increaseVerbosity, 0)
+  .option('-c, --collect <value>', 'repeatable value', collect, [])
+  .option('-l, --list <items>', 'comma separated list', commaSeparatedList)
+;
+
+program.parse(process.argv);
+
+if (program.float !== undefined) console.log(`float: ${program.float}`);
+if (program.integer !== undefined) console.log(`integer: ${program.integer}`);
+if (program.verbose > 0) console.log(`verbosity: ${program.verbose}`);
+if (program.collect.length > 0) console.log(program.collect);
+if (program.list !== undefined) console.log(program.list);
+```
+
+```bash
+$ custom -f 1e2
+float: 100
+$ custom --integer 2
+integer: 2
+$ custom -v -v -v
+verbose: 3
+$ custom -c a -c b -c c
+[ 'a', 'b', 'c' ]
+$ custom --list x,y,z
+[ 'x', 'y', 'z' ]
+```
+
+### Version option
 
 Calling the `version` implicitly adds the `-V` and `--version` options to the command.
 When either of these options is present, the command prints the version number and exits.
@@ -113,49 +243,6 @@ program.parse(process.argv)
 ```
 
 A command's options are validated when the command is used. Any unknown options will be reported as an error. However, if an action-based command does not define an action, then the options are not validated.
-
-## Coercion
-
-```js
-function range(val) {
-  return val.split('..').map(Number);
-}
-
-function list(val) {
-  return val.split(',');
-}
-
-function collect(val, memo) {
-  memo.push(val);
-  return memo;
-}
-
-function increaseVerbosity(v, total) {
-  return total + 1;
-}
-
-program
-  .version('0.1.0')
-  .usage('[options] <file ...>')
-  .option('-i, --integer <n>', 'An integer argument', parseInt)
-  .option('-f, --float <n>', 'A float argument', parseFloat)
-  .option('-r, --range <a>..<b>', 'A range', range)
-  .option('-l, --list <items>', 'A list', list)
-  .option('-o, --optional [value]', 'An optional value')
-  .option('-c, --collect [value]', 'A repeatable value', collect, [])
-  .option('-v, --verbose', 'A value that can be increased', increaseVerbosity, 0)
-  .parse(process.argv);
-
-console.log(' int: %j', program.integer);
-console.log(' float: %j', program.float);
-console.log(' optional: %j', program.optional);
-program.range = program.range || [];
-console.log(' range: %j..%j', program.range[0], program.range[1]);
-console.log(' list: %j', program.list);
-console.log(' collect: %j', program.collect);
-console.log(' verbosity: %j', program.verbose);
-console.log(' args: %j', program.args);
-```
 
 ## Regular Expression
 ```js
