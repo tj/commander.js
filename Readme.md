@@ -149,7 +149,7 @@ add cheese type mozzarella
 
 ### Custom option processing
 
-You may specify a function to do custom processing on options. The callback function receives two parameters, the user specified value and the 
+You may specify a function to do custom processing of option values. The callback function receives two parameters, the user specified value and the 
 previous value for the option. It returns the new value for the option.
 
 This allows you to coerce the option value to the desired type, or accumulate values, or do entirely custom processing.
@@ -208,20 +208,24 @@ $ custom --list x,y,z
 
 ### Version option
 
-Calling the `version` implicitly adds the `-V` and `--version` options to the command.
-When either of these options is present, the command prints the version number and exits.
-
-    $ ./examples/pizza -V
-    0.0.1
-
-If you want your program to respond to the `-v` option instead of the `-V` option, simply pass custom flags to the `version` method using the same syntax as the `option` method.
+The optional `version` method adds handling for displaying the command version. The default option flags are `-V` and `--version`, and when present the  command prints the version number and exits.
 
 ```js
-program
-  .version('0.0.1', '-v, --version')
+    program.version('0.0.1');
 ```
 
-The version flags can be named anything, but the long option is required.
+```bash
+    $ ./examples/pizza -V
+    0.0.1
+```
+
+You may specify custom flags by passing an additional parameter to the `version` method using the same syntax as the `option` method. The version flags can be named anything, but a long name is required.
+
+```js
+program.version('0.0.1', '-v, --version');
+```
+
+
 
 ## Command-specific options
 
