@@ -4,9 +4,8 @@
 [![Build Status](https://api.travis-ci.org/tj/commander.js.svg)](http://travis-ci.org/tj/commander.js)
 [![NPM Version](http://img.shields.io/npm/v/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
 [![NPM Downloads](https://img.shields.io/npm/dm/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
-[![Join the chat at https://gitter.im/tj/commander.js](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/tj/commander.js?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-  [node.js](http://nodejs.org) 命令行接口的完整解决方案，灵感来自 Ruby 的 [commander](https://github.com/tj/commander)。  
+  [node.js](http://nodejs.org) 命令行接口的完整解决方案，灵感来自 Ruby 的 [commander](https://github.com/commander-rb/commander)。  
   [API 文档](http://tj.github.com/commander.js/)
 
 
@@ -15,7 +14,7 @@
     $ npm install commander
 
 ## 参数解析
- 定义并使用 commander 的选项功能 `.option()` 方法。作为这些选项的文档，下面的例子会解析来自 `progress.argv` 指定的参数和选项，留下剩余未被选择的参数放到 `program.args` 数组中。
+ `.option()` 方法用来定义带选项的 commander，同时也作为这些选项的文档。下面的例子会解析来自 `process.argv` 指定的参数和选项，没有匹配任何选项的参数将会放到 `program.args` 数组中。
 
 ```js
 #!/usr/bin/env node
@@ -94,14 +93,14 @@ program
   .option('-s --size <size>', 'Pizza size', /^(large|medium|small)$/i, 'medium')
   .option('-d --drink [drink]', 'Drink', /^(coke|pepsi|izze)$/i)
   .parse(process.argv);
-  
+
 console.log(' size: %j', program.size);
 console.log(' drink: %j', program.drink);
 ```
 
 ## 可变参数
 
- 一个命令的最后一个参数可以是可变参数, 并且只能是最后一个参数。为了使参数可变，你需要在参数名后面追加 `...`。 下面是个示例：
+ 一个命令的最后一个参数可以是可变参数, 并且只有最后一个参数可变。为了使参数可变，你需要在参数名后面追加 `...`。 下面是个示例：
 
 ```js
 #!/usr/bin/env node
@@ -126,9 +125,7 @@ program
 
 program.parse(process.argv);
 ```
-
- `数组` 是可以用于给可变参数传值的。 这适用于 `program.args` 以及参数传递，以你的行动证明上述。
- 你可以如上所示的去尝试。
+可变参数的值以 `数组` 的形式保存。如上所示，在传递给你的 action 的参数和 `program.args` 中的值都是如此。
 
 ## 指定参数的语法
 
@@ -154,6 +151,7 @@ if (typeof cmdValue === 'undefined') {
 console.log('command:', cmdValue);
 console.log('environment:', envValue || "no environment given");
 ```
+尖括号（例如 `<cmd>`）代表必填输入，方括号（例如 `[env]`）代表可选输入。
 
 ## Git 风格的子命令
 
@@ -169,45 +167,42 @@ program
   .parse(process.argv);
 ```
 
- 当说明参数调用 `.command()` 时，没有 `.action(callback)` 应调用来处理子命令，否则会出错。这告诉 commander，你要使用单独的可执行文件的子命令，就像 `git(1)` 和其他流行工具一样。 
- Commander 将尝试在入口脚本的目录中搜索可执行文件，（像 `./examples/pm`）与名称 `program-command`，像 `pm-install`，`pm-search`。
+当 `.command()` 带有描述参数时，不能采用 `.action(callback)` 来处理子命令，否则会出错。这告诉 commander，你将采用单独的可执行文件作为子命令，就像 `git(1)` 和其他流行的工具一样。
+Commander 将会尝试在入口脚本（例如 `./examples/pm`）的目录中搜索 `program-command` 形式的可执行文件，例如 `pm-install`, `pm-search`。
 
- 对 `.command()` 的调用，可以传递选项。指定 `opts.noHelp` 为 `true` 将从生成的帮助输出中删除选项。如果没有其他子命令指定，指定 `opts.isDefault` 为 `true` 将运行子命令。
+你可以在调用 `.command()` 时传递选项。指定 `opts.noHelp` 为 `true` 将从生成的帮助输出中剔除该选项。指定 `opts.isDefault` 为 `true` 将会在没有其它子命令指定的情况下，执行该子命令。
 
- 如果打算全局（--global）安装该命令，请确保可执行文件有适当的模式，如 '755'。
+如果你打算全局安装该命令，请确保可执行文件有对应的权限，例如 `755`。
 
 ### `--harmony`
 
-您可以启用 `--harmoney` 选项在两个方面：
-* 用 `#!/usr/bin/env node --harmony` 在子命令脚本中。注意一些系统版本不支持此模式。
-* 用 `--harmoney` 选项时调用的命令，像 `node --harmony examples/pm publish`。`--harmoney` 选项当产生一个子命令进程时保留选项。
+您可以采用两种方式启用 `--harmony`：
+* 在子命令脚本中加上 `#!/usr/bin/env node --harmony`。注意一些系统版本不支持此模式。
+* 在指令调用时加上 `--harmony` 参数，例如 `node --harmony examples/pm publish`。`--harmony` 选项在开启子进程时会被保留。
 
 ## 自动化帮助信息 --help
 
  帮助信息是 commander 基于你的程序自动生成的，下面是 `--help` 生成的帮助信息：
 
 ```  
- $ ./examples/pizza --help
+$ ./examples/pizza --help
+Usage: pizza [options]
 
-   Usage: pizza [options]
+An application for pizzas ordering
 
-   An application for pizzas ordering
-
-   Options:
-
-     -h, --help           output usage information
-     -V, --version        output the version number
-     -p, --peppers        Add peppers
-     -P, --pineapple      Add pineapple
-     -b, --bbq            Add bbq sauce
-     -c, --cheese <type>  Add the specified type of cheese [marble]
-     -C, --no-cheese      You do not want any cheese
-
+Options:
+  -h, --help           output usage information
+  -V, --version        output the version number
+  -p, --peppers        Add peppers
+  -P, --pineapple      Add pineapple
+  -b, --bbq            Add bbq sauce
+  -c, --cheese <type>  Add the specified type of cheese [marble]
+  -C, --no-cheese      You do not want any cheese
 ```
 
 ## 自定义帮助
 
- 你可以显示任何 `-h, --help` 信息，通过监听 `--help` 。一旦你完成了 Commander 将自动退出，你的程序的其余部分不会展示。例如在下面的 “stuff” 将不会在执行 `--help` 时输出。
+ 你可以通过监听 `--help` 来控制 `-h, --help` 显示任何信息。一旦调用完成， Commander 将自动退出，你的程序的其余部分不会展示。例如在下面的 “stuff” 将不会在执行 `--help` 时输出。
 
 ```js
 #!/usr/bin/env node
@@ -228,11 +223,10 @@ program
 // node's emit() is immediate
 
 program.on('--help', function(){
-  console.log('  Examples:');
   console.log('');
-  console.log('    $ custom-help --help');
-  console.log('    $ custom-help -h');
-  console.log('');
+  console.log('Examples:');
+  console.log('  $ custom-help --help');
+  console.log('  $ custom-help -h');
 });
 
 program.parse(process.argv);
@@ -243,11 +237,9 @@ console.log('stuff');
 下列帮助信息是运行 `node script-name.js -h` or `node script-name.js --help` 时输出的:
 
 ```
-
 Usage: custom-help [options]
 
 Options:
-
   -h, --help     output usage information
   -V, --version  output the version number
   -f, --foo      enable some foo
@@ -255,10 +247,8 @@ Options:
   -B, --baz      enable some baz
 
 Examples:
-
   $ custom-help --help
   $ custom-help -h
-
 ```
 
 ## .outputHelp(cb)
@@ -319,11 +309,11 @@ program
   .action(function(cmd, options){
     console.log('exec "%s" using %s mode', cmd, options.exec_mode);
   }).on('--help', function() {
-    console.log('  Examples:');
-    console.log();
-    console.log('    $ deploy exec sequential');
-    console.log('    $ deploy exec async');
-    console.log();
+    console.log('');
+    console.log('Examples:');
+    console.log('');
+    console.log('  $ deploy exec sequential');
+    console.log('  $ deploy exec async');
   });
 
 program
@@ -340,4 +330,3 @@ program.parse(process.argv);
 ## 许可证
 
 MIT
-

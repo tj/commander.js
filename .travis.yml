@@ -1,13 +1,12 @@
 language: node_js
 sudo: false
 node_js:
-  - "0.6"
-  - "0.8"
-  - "0.10"
-  - "0.12"
-  - "io.js"
-  - "2"
-  - "3"
-  - "4"
-  - "6"
-  - "node"
+- "6"
+- "8"
+- "10"
+cache:
+  directories:
+    - "node_modules"
+script:
+- npm run lint
+- npm test

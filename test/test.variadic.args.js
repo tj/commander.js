@@ -57,8 +57,4 @@ try {
 process.exit = oldProcessExit;
 console.error = oldConsoleError;
 
-[
-  '',
-  '  error: variadic arguments must be last `variadicArg\'',
-  ''
-].join('\n').should.eql(errorMessage);
+'error: variadic arguments must be last `variadicArg\''.should.eql(errorMessage);

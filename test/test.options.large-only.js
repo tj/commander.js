@@ -10,4 +10,4 @@ program
   .option('--verbose', 'do stuff');
 
 program.parse(['node', 'test', '--verbose']);
-program.verbose.should.be.true;
+program.verbose.should.be.true();
