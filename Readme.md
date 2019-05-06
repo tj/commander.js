@@ -27,7 +27,7 @@ For larger programs which may use commander in multiple ways, including unit tes
 
  ```js
  const commander = require('commander');
- const program = new commander.Command;
+ const program = new commander.Command();
  program.version('0.0.1);
  ```
 
