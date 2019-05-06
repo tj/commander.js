@@ -1,6 +1,24 @@
 #!/usr/bin/env node
 
-const program = require('commander');
+// This is used as an example in the README for:
+//    Custom option processing
+//    You may specify a function to do custom processing of option values. ...
+//
+// Example output pretending command called custom (or try directly with `node options-custom-processing.js`)
+//
+// $ custom -f 1e2
+// float: 100
+// $ custom --integer 2
+// integer: 2
+// $ custom -v -v -v
+// verbose: 3
+// $ custom -c a -c b -c c
+// [ 'a', 'b', 'c' ]
+// $ custom --list x,y,z
+// [ 'x', 'y', 'z' ]
+
+const commander = require('commander');
+const program = new commander.Command();
 
 function myParseInt(value, dummyPrevious) {
   // parseInt takes a string and a radix
