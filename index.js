@@ -1098,10 +1098,12 @@ Command.prototype.helpInformation = function() {
     var argsDescription = this._argsDescription;
     if (argsDescription && this._args.length) {
       var width = this.padWidth();
+      var columns = process.stdout.columns || 80;
+      var descriptionWidth = columns - width - 5;
       desc.push('Arguments:');
       desc.push('');
       this._args.forEach(function(arg) {
-        desc.push('  ' + pad(arg.name, width) + '  ' + argsDescription[arg.name]);
+        desc.push('  ' + pad(arg.name, width) + '  ' + wrap(argsDescription[arg.name], descriptionWidth, width + 4));
       });
       desc.push('');
     }
