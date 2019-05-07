@@ -1042,10 +1042,14 @@ Command.prototype.padWidth = function() {
 Command.prototype.optionHelp = function() {
   var width = this.padWidth();
 
+  var columns = process.stdout.columns || 80;
+  var descriptionWidth = columns - width;
+
   // Append the help information
   return this.options.map(function(option) {
-    return pad(option.flags, width) + '  ' + option.description +
+    var description = option.description +
       ((option.bool && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
+    return pad(option.flags, width) + '  ' + wrap(description, descriptionWidth, width + 2);
   }).concat([pad('-h, --help', width) + '  ' + 'output usage information'])
     .join('\n');
 };
@@ -1179,6 +1183,28 @@ function camelcase(flag) {
 function pad(str, width) {
   var len = Math.max(0, width - str.length);
   return str + Array(len + 1).join(' ');
+}
+
+/**
+ * Wraps the given string with line breaks at the specified width while breaking
+ * words and indenting every but the first line on the left.
+ * 
+ * @param {String} str
+ * @param {Number} width
+ * @param {Number} indent
+ * @return {String}
+ * @api private
+ */
+function wrap(str, width, indent) {
+  var regex = new RegExp('.{1,' + width + '}([\\s\u200B]+|$)|[^\\s\u200B]+?([\\s\u200B]+|$)', 'g')
+  var lines = str.match(regex) || [];
+  var result = lines.map((function(line, i) {
+    if (line.slice(-1) === '\n') {
+      line = line.slice(0, line.length - 1);
+    }
+    return ((i > 0 && indent) ? Array(indent + 1).join(' ') : '') + line;
+  })).join('\n');
+  return result;
 }
 
 /**
