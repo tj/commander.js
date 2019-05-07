@@ -1193,7 +1193,7 @@ function pad(str, width) {
 /**
  * Wraps the given string with line breaks at the specified width while breaking
  * words and indenting every but the first line on the left.
- * 
+ *
  * @param {String} str
  * @param {Number} width
  * @param {Number} indent
@@ -1201,14 +1201,14 @@ function pad(str, width) {
  * @api private
  */
 function wrap(str, width, indent) {
-  var regex = new RegExp('.{1,' + width + '}([\\s\u200B]+|$)|[^\\s\u200B]+?([\\s\u200B]+|$)', 'g')
+  var regex = new RegExp('.{1,' + width + '}([\\s\u200B]+|$)|[^\\s\u200B]+?([\\s\u200B]+|$)', 'g');
   var lines = str.match(regex) || [];
-  var result = lines.map((function(line, i) {
+  var result = lines.map(function(line, i) {
     if (line.slice(-1) === '\n') {
       line = line.slice(0, line.length - 1);
     }
     return ((i > 0 && indent) ? Array(indent + 1).join(' ') : '') + line;
-  })).join('\n');
+  }).join('\n');
   return result;
 }
 
