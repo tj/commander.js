@@ -1067,11 +1067,14 @@ Command.prototype.commandHelp = function() {
   var commands = this.prepareCommands();
   var width = this.padWidth();
 
+  var columns = process.stdout.columns || 80;
+  var descriptionWidth = columns - width - 5;
+
   return [
     'Commands:',
     commands.map(function(cmd) {
       var desc = cmd[1] ? '  ' + cmd[1] : '';
-      return (desc ? pad(cmd[0], width) : cmd[0]) + desc;
+      return (desc ? pad(cmd[0], width) : cmd[0]) + wrap(desc, descriptionWidth, width + 2);
     }).join('\n').replace(/^/gm, '  '),
     ''
   ].join('\n');
