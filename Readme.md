@@ -19,7 +19,7 @@ This is used in the examples in this README for brevity.
 
 ```js
 const program = require('commander');
-program.version('0.0.1);
+program.version('0.0.1');
 ```
 
 For larger programs which may use commander in multiple ways, including unit testing, it is better to create a local Command object to use.
@@ -27,7 +27,7 @@ For larger programs which may use commander in multiple ways, including unit tes
  ```js
  const commander = require('commander');
  const program = new commander.Command();
- program.version('0.0.1);
+ program.version('0.0.1');
  ```
 
 
