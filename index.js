@@ -1139,7 +1139,7 @@ Command.prototype.outputHelp = function(cb) {
     };
   }
   const cbOutput = cb(this.helpInformation());
-  if (!cbOutput) {
+  if (typeof cbOutput !== 'string' && !Buffer.isBuffer(cbOutput)) {
     throw new Error('outputHelp callback must return a string or a Buffer');
   }
   process.stdout.write(cbOutput);
