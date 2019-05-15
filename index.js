@@ -1138,7 +1138,11 @@ Command.prototype.outputHelp = function(cb) {
       return passthru;
     };
   }
-  process.stdout.write(cb(this.helpInformation()));
+  const cbOutput = cb(this.helpInformation());
+  if (!cbOutput) {
+    throw new Error('outputHelp callback must return a string or a Buffer');
+  }
+  process.stdout.write(cbOutput);
   this.emit('--help');
 };
 
