@@ -224,6 +224,12 @@ You may specify custom flags by passing an additional parameter to the `version`
 program.version('0.0.1', '-v, --version');
 ```
 
+You can also override the help description for the version command.
+
+```js
+program.version('0.0.1', '-v, --version', 'output the current version');
+```
+
 
 
 ## Command-specific options
@@ -431,6 +437,15 @@ if (!process.argv.slice(2).length) {
 function make_red(txt) {
   return colors.red(txt); //display the help text in red on the console
 }
+```
+
+## .help(str)
+
+  Override the default help description.
+
+```js
+program
+  .help('read more information');
 ```
 
 ## .help(cb)

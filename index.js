@@ -852,11 +852,12 @@ Command.prototype.variadicArgNotLast = function(name) {
  * @api public
  */
 
-Command.prototype.version = function(str, flags) {
+Command.prototype.version = function(str, flags, description) {
   if (arguments.length === 0) return this._version;
   this._version = str;
   flags = flags || '-V, --version';
-  var versionOption = new Option(flags, 'output the version number');
+  description = description || 'output the version number';
+  var versionOption = new Option(flags, description);
   this._versionOptionName = versionOption.long.substr(2) || 'version';
   this.options.push(versionOption);
   this.on('option:' + this._versionOptionName, function() {
@@ -1043,12 +1044,13 @@ Command.prototype.padWidth = function() {
 
 Command.prototype.optionHelp = function() {
   var width = this.padWidth();
+  var description = this._helpDescription || 'output usage information';
 
   // Append the help information
   return this.options.map(function(option) {
     return pad(option.flags, width) + '  ' + option.description +
       ((option.bool && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
-  }).concat([pad('-h, --help', width) + '  ' + 'output usage information'])
+  }).concat([pad('-h, --help', width) + '  ' + description])
     .join('\n');
 };
 
@@ -1151,10 +1153,17 @@ Command.prototype.outputHelp = function(cb) {
 /**
  * Output help information and exit.
  *
+ * @param {Function|String} cb
+ * @return {Command?}
  * @api public
  */
 
 Command.prototype.help = function(cb) {
+  if (typeof cb === 'string') {
+    this._helpDescription = cb;
+    return this;
+  }
+
   this.outputHelp(cb);
   process.exit();
 };
