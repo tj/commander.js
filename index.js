@@ -1160,6 +1160,7 @@ Command.prototype.outputHelp = function(cb) {
  * Output help information and exit.
  *
  * @param {Function|String} cb
+ * @param {String} description
  * @return {Command?}
  * @api public
  */
