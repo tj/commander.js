@@ -104,7 +104,7 @@ function Command(name) {
   this._args = [];
   this._name = name || '';
   this._optionValues = Object.create(null); // pure object as map
-  this._mapStyleOptions = false; // new behaviour
+  this._storeOptionsAsProperties = true; // legacy behaviour by default
 }
 
 /**
@@ -378,11 +378,9 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     oname = option.name(),
     name = option.attributeName();
 
-  // Warn about clashes ????
-  if (!self._mapStyleOptions && self[name] !== undefined) {
-    console.log("Warning: option name '%s' conflicts with internal name", name);
-    console.log('   Either change option name or move to pureOpts');
-    return this;
+  if (self._storeOptionsAsProperties && self[name] !== undefined) {
+    console.log("Setup warning: option name '%s' conflicts with internal property", name);
+    console.log('   Either change option name, or setFeatureFlags with storeOptionsAsProperties:false and update code');
   }
 
   // default as 3rd arg
@@ -406,7 +404,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     // preassign only if we have a default
     if (defaultValue !== undefined) {
       self._optionValues[name] = defaultValue;
-      if (!self._mapStyleOptions) {
+      if (self._storeOptionsAsProperties) {
         self[name] = self._optionValues[name];
       }
       option.defaultValue = defaultValue;
@@ -434,13 +432,13 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
       } else {
         self._optionValues[name] = val;
       }
-      if (!self._mapStyleOptions) {
+      if (self._storeOptionsAsProperties) {
         self[name] = self._optionValues[name];
       }
     } else if (val !== null) {
       // reassign
       self._optionValues[name] = val;
-      if (!self._mapStyleOptions) {
+      if (self._storeOptionsAsProperties) {
         self[name] = self._optionValues[name];
       }
     }
@@ -464,19 +462,15 @@ Command.prototype.allowUnknownOption = function(arg) {
 /**
  * Set featureFlags.
  *
- * @param {String|Object} flag/flags
+ * @param {Object} boolean values for feature flags
  * @return {Command} for chaining
  * @api public
  */
 Command.prototype.setFeatureFlags = function(flags) {
-  const mapStyleOptionsStr = 'mapStyleOptions';
-  if (typeof flags === 'string') {
-    if (flags === mapStyleOptionsStr) {
-      this._mapStyleOptions = true;
-    }
-  } else if (typeof flags === 'object') {
-    if (Object.prototype.hasOwnProperty.call(flags, mapStyleOptionsStr)) {
-      this._mapStyleOptions = flags[mapStyleOptionsStr];
+  const storeOptionsAsPropertiesStr = 'storeOptionsAsProperties';
+  if (typeof flags === 'object') {
+    if (Object.prototype.hasOwnProperty.call(flags, storeOptionsAsPropertiesStr)) {
+      this._storeOptionsAsProperties = flags[storeOptionsAsPropertiesStr];
     }
   }
   return this;
@@ -811,7 +805,7 @@ Command.prototype.parseOptions = function(argv) {
  * @api public
  */
 Command.prototype.get = function(optionKey) {
-  return (this._optionValues[optionKey] !== undefined);
+  return this._optionValues[optionKey];
 };
 
 /**
@@ -822,7 +816,7 @@ Command.prototype.get = function(optionKey) {
  * @api public
  */
 Command.prototype.has = function(optionKey) {
-  return this._optionValues[optionKey];
+  return (this._optionValues[optionKey] !== undefined);
 };
 
 /**
@@ -832,7 +826,7 @@ Command.prototype.has = function(optionKey) {
  * @api public
  */
 Command.prototype.opts = function() {
-  if (this._mapStyleOptions) {
+  if (!this._storeOptionsAsProperties) {
     return this._optionValues;
   } else {
     var result = {},
