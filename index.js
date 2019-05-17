@@ -997,7 +997,7 @@ Command.prototype.largestCommandLength = function() {
 Command.prototype.largestOptionLength = function() {
   var options = [].slice.call(this.options);
   options.push({
-    flags: this._helpFlags,
+    flags: this._helpFlags
   });
 
   return options.reduce(function(max, option) {
