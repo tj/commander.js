@@ -439,13 +439,13 @@ function make_red(txt) {
 }
 ```
 
-## .help(str)
+## .help(flags, description)
 
-  Override the default help description.
+  Override the default help flags and description.
 
 ```js
 program
-  .help('read more information');
+  .help('-e, --HELP', 'read more information');
 ```
 
 ## .help(cb)

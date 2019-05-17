@@ -45,7 +45,7 @@ declare namespace local {
      * @param {string} [flags]
      * @returns {Command} for chaining
      */
-    version(str: string, flags?: string): Command;
+    version(str: string, flags?: string, description?: string): Command;
 
     /**
      * Add command `name`.
@@ -274,12 +274,15 @@ declare namespace local {
 
     /** Output help information and exit.
      *
-     * @param {(str: string) => string} [cb]
+     * @param {string | (str: string) => string} [flagsOrCb]
+     * @param {string} [description]
      */
-    help(cb?: (str: string) => string): never;
+    help(flagsOrCb?: string | callback, description?: string): never;
   }
 
 }
+
+type callback = (str: string) => string;
 
 declare namespace commander {
 

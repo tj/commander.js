@@ -103,6 +103,11 @@ function Command(name) {
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
+
+  this._helpFlags = '-h, --help';
+  this._helpDescription = 'output usage information';
+  this._helpShortFlag = '-h';
+  this._helpLongFlag = '--help';
 }
 
 /**
@@ -466,7 +471,7 @@ Command.prototype.parse = function(argv) {
   // github-style sub-commands with no sub-command
   if (this.executables && argv.length < 3 && !this.defaultExecutable) {
     // this user needs help
-    argv.push('--help');
+    argv.push(this._helpLongFlag);
   }
 
   // process argv
@@ -519,7 +524,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // <cmd> --help
   if (args[0] === 'help') {
     args[0] = args[1];
-    args[1] = '--help';
+    args[1] = this._helpLongFlag;
   }
 
   // executable
@@ -848,6 +853,7 @@ Command.prototype.variadicArgNotLast = function(name) {
  *
  * @param {String} str
  * @param {String} [flags]
+ * @param {String} [description]
  * @return {Command} for chaining
  * @api public
  */
@@ -991,8 +997,9 @@ Command.prototype.largestCommandLength = function() {
 Command.prototype.largestOptionLength = function() {
   var options = [].slice.call(this.options);
   options.push({
-    flags: '-h, --help'
+    flags: this._helpFlags,
   });
+
   return options.reduce(function(max, option) {
     return Math.max(max, option.flags.length);
   }, 0);
@@ -1044,13 +1051,12 @@ Command.prototype.padWidth = function() {
 
 Command.prototype.optionHelp = function() {
   var width = this.padWidth();
-  var description = this._helpDescription || 'output usage information';
 
   // Append the help information
   return this.options.map(function(option) {
     return pad(option.flags, width) + '  ' + option.description +
       ((option.bool && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
-  }).concat([pad('-h, --help', width) + '  ' + description])
+  }).concat([pad(this._helpFlags, width) + '  ' + this._helpDescription])
     .join('\n');
 };
 
@@ -1147,7 +1153,7 @@ Command.prototype.outputHelp = function(cb) {
     throw new Error('outputHelp callback must return a string or a Buffer');
   }
   process.stdout.write(cbOutput);
-  this.emit('--help');
+  this.emit(this._helpLongFlag);
 };
 
 /**
@@ -1158,14 +1164,20 @@ Command.prototype.outputHelp = function(cb) {
  * @api public
  */
 
-Command.prototype.help = function(cb) {
-  if (typeof cb === 'string') {
-    this._helpDescription = cb;
-    return this;
+Command.prototype.help = function(flagsOrCb, description) {
+  if (typeof cb === 'function' || arguments.length === 0) {
+    this.outputHelp(flagsOrCb);
+    process.exit();
   }
 
-  this.outputHelp(cb);
-  process.exit();
+  this._helpFlags = flagsOrCb || this._helpFlags;
+  this._helpDescription = description || this._helpDescription;
+
+  var flags = this._helpFlags.split(/[ ,|]+/);
+  if (flags.length > 1 && !/^[[<]/.test(flags[1])) this._helpShortFlag = flags.shift();
+  this._helpLongFlag = flags.shift();
+
+  return this;
 };
 
 /**
@@ -1206,8 +1218,9 @@ function pad(str, width) {
 
 function outputHelpIfNecessary(cmd, options) {
   options = options || [];
+
   for (var i = 0; i < options.length; i++) {
-    if (options[i] === '--help' || options[i] === '-h') {
+    if (options[i] === cmd._helpLongFlag || options[i] === cmd._helpShortFlag) {
       cmd.outputHelp();
       process.exit(0);
     }
