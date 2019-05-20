@@ -13,83 +13,231 @@
 
     $ npm install commander
 
-## 参数解析
- `.option()` 方法用来定义带选项的 commander，同时也作为这些选项的文档。下面的例子会解析来自 `process.argv` 指定的参数和选项，没有匹配任何选项的参数将会放到 `program.args` 数组中。
+## 声明program变量
+
+Commander为了方便快速编程导出了一个全局对象。为简洁起见，本README中的示例中使用了它。
+
+```js
+const program = require('commander');
+program.version('0.0.1');
+```
+
+对于可能以多种方式使用commander的大型程序，包括单元测试，最好创建一个本地Command对象来使用。
+
+```js
+const commander = require('commander');
+const program = new commander.Command();
+program.version('0.0.1');
+```
+
+## 选项
+
+`.option()` 方法用来定义带选项的 commander，同时也用于这些选项的文档。每个选项可以有一个短标识(单个字符)和一个长名字，它们之间用逗号或空格分开。
+
+ 选项会被放到 Commander 对象的属性上，多词选项如"--template-engine"会被转为驼峰法`program.templateEngine`。多个短标识可以组合为一个参数，如`-a -b -c`等价于`-abc`。
+
+### 常用选项类型，boolean和值
+
+最常用的两个选项类型是boolean(选项后面不跟值)和选项跟一个值（使用尖括号声明）。除非在命令行中指定，否则两者都是`undefined`。
+
+ ```js
+const program = require('commander');
+
+program
+  .option('-d, --debug', 'output extra debugging')
+  .option('-s, --small', 'small pizza size')
+  .option('-p, --pizza-type <type>', 'flavour of pizza');
+
+program.parse(process.argv);
+
+if (program.debug) console.log(program.opts());
+console.log('pizza details:');
+if (program.small) console.log('- small pizza size');
+if (program.pizzaType) console.log(`- ${program.pizzaType}`);
+ ```
+
+```
+$ pizza-options -d
+{ debug: true, small: undefined, pizzaType: undefined }
+pizza details:
+$ pizza-options -p
+error: option `-p, --pizza-type <type>' argument missing
+$ pizza-options -ds -p vegetarian
+{ debug: true, small: true, pizzaType: 'vegetarian' }
+pizza details:
+- small pizza size
+- vegetarian
+$ pizza-options --pizza-type=cheese
+pizza details:
+- cheese
+```
+
+`program.parse(arguments)`会处理参数，没有被使用的选项会被存放在`program.args`数组中。
+
+### 默认选项值
+
+可以为选项设置一个默认值。
+
+```js
+const program = require('commander');
+
+program
+  .option('-c, --cheese <type>', 'add the specified type of cheese', 'blue');
+
+program.parse(process.argv);
+
+console.log(`cheese: ${program.cheese}`);
+```
+
+```
+$ pizza-options
+cheese: blue
+$ pizza-options --cheese stilton
+cheese: stilton
+```
+
+### 其他选项类型，可忽略的布尔值和标志值
+
+选项的值为 boolean 类型时，可以在其长名字前加`no-`使默认值为true，如果传了这个选项则值为false。
+
+```js
+const program = require('commander');
+
+program
+  .option('-n, --no-sauce', 'Remove sauce')
+  .parse(process.argv);
+
+if (program.sauce) console.log('you ordered a pizza with sauce');
+else console.log('you ordered a pizza without sauce');
+```
+
+```
+$ pizza-options
+you ordered a pizza with sauce
+$ pizza-options --sauce
+error: unknown option `--sauce'
+$ pizza-options --no-sauce
+you ordered a pizza without sauce
+```
+
+您可以指定一个用作标志的选项，它可以接受值（使用方括号声明，即传值不是必须的）。
+
+```js
+const program = require('commander');
+
+program
+  .option('-c, --cheese [type]', 'Add cheese with optional type');
+
+program.parse(process.argv);
+
+if (program.cheese === undefined) console.log('no cheese');
+else if (program.cheese === true) console.log('add cheese');
+else console.log(`add cheese type ${program.cheese}`);
+```
+
+## 自定义选项处理
+
+你可以指定一个函数来处理选项的值，接收两个参数：用户传入的值、上一个值(previous value)，它会返回新的选项值。
+
+你可以将选项值强制转换为所需类型，或累积值，或完全自定义处理。
+
+你可以在函数后面指定选项的默认或初始值。
+
+```js
+const program = require('commander');
+
+function myParseInt(value, dummyPrevious) {
+  // parseInt takes a string and an optional radix
+  return parseInt(value);
+}
+
+function increaseVerbosity(dummyValue, previous) {
+  return previous + 1;
+}
+
+function collect(value, previous) {
+  return previous.concat([value]);
+}
+
+function commaSeparatedList(value, dummyPrevious) {
+  return value.split(',');
+}
+
+program
+  .option('-f, --float <number>', 'float argument', parseFloat)
+  .option('-i, --integer <number>', 'integer argument', myParseInt)
+  .option('-v, --verbose', 'verbosity that can be increased', increaseVerbosity, 0)
+  .option('-c, --collect <value>', 'repeatable value', collect, [])
+  .option('-l, --list <items>', 'comma separated list', commaSeparatedList)
+;
+
+program.parse(process.argv);
+
+if (program.float !== undefined) console.log(`float: ${program.float}`);
+if (program.integer !== undefined) console.log(`integer: ${program.integer}`);
+if (program.verbose > 0) console.log(`verbosity: ${program.verbose}`);
+if (program.collect.length > 0) console.log(program.collect);
+if (program.list !== undefined) console.log(program.list);
+```
+
+```
+$ custom -f 1e2
+float: 100
+$ custom --integer 2
+integer: 2
+$ custom -v -v -v
+verbose: 3
+$ custom -c a -c b -c c
+[ 'a', 'b', 'c' ]
+$ custom --list x,y,z
+[ 'x', 'y', 'z' ]
+```
+
+### 版本选项
+
+`version`方法会处理显示版本命令，默认选项标识为`-V`和`--version`，当存在时会打印版本号并退出。
+
+```js
+    program.version('0.0.1');
+```
+
+```
+    $ ./examples/pizza -V
+    0.0.1
+```
+
+你可以自定义标识，通过给`version`方法再传递一个参数，语法给`option`方法一致。版本标识名字可以是任意的，但是必须要有长名字。
+
+```
+program.version('0.0.1', '-v, --version');
+```
+
+## 指定命令选项
+
+可以给命令绑定选项。
 
 ```js
 #!/usr/bin/env node
 
-/**
- * Module dependencies.
- */
-
 var program = require('commander');
 
 program
-  .version('0.0.1')
-  .option('-p, --peppers', 'Add peppers')
-  .option('-P, --pineapple', 'Add pineapple')
-  .option('-b, --bbq-sauce', 'Add bbq sauce')
-  .option('-c, --cheese [type]', 'Add the specified type of cheese [marble]', 'marble')
-  .parse(process.argv);
+  .command('rm <dir>')
+  .option('-r, --recursive', 'Remove recursively')
+  .action(function (dir, cmd) {
+    console.log('remove ' + dir + (cmd.recursive ? ' recursively' : ''))
+  })
 
-console.log('you ordered a pizza with:');
-if (program.peppers) console.log('  - peppers');
-if (program.pineapple) console.log('  - pineapple');
-if (program.bbqSauce) console.log('  - bbq');
-console.log('  - %s cheese', program.cheese);
+program.parse(process.argv)
 ```
 
- 短标志可以作为单独的参数传递。像 `-abc` 等于 `-a -b -c`。多词组成的选项，像“--template-engine”会变成 `program.templateEngine` 等。
-
-
-## 强制多态
-
-```js
-function range(val) {
-  return val.split('..').map(Number);
-}
-
-function list(val) {
-  return val.split(',');
-}
-
-function collect(val, memo) {
-  memo.push(val);
-  return memo;
-}
-
-function increaseVerbosity(v, total) {
-  return total + 1;
-}
-
-program
-  .version('0.0.1')
-  .usage('[options] <file ...>')
-  .option('-i, --integer <n>', 'An integer argument', parseInt)
-  .option('-f, --float <n>', 'A float argument', parseFloat)
-  .option('-r, --range <a>..<b>', 'A range', range)
-  .option('-l, --list <items>', 'A list', list)
-  .option('-o, --optional [value]', 'An optional value')
-  .option('-c, --collect [value]', 'A repeatable value', collect, [])
-  .option('-v, --verbose', 'A value that can be increased', increaseVerbosity, 0)
-  .parse(process.argv);
-
-console.log(' int: %j', program.integer);
-console.log(' float: %j', program.float);
-console.log(' optional: %j', program.optional);
-program.range = program.range || [];
-console.log(' range: %j..%j', program.range[0], program.range[1]);
-console.log(' list: %j', program.list);
-console.log(' collect: %j', program.collect);
-console.log(' verbosity: %j', program.verbose);
-console.log(' args: %j', program.args);
-```
+使用该命令时，将验证命令的选项。任何未知选项都将报告为错误。但是，如果基于操作的命令没有定义action，则不验证选项。
 
 ## 正则表达式
+
 ```js
 program
-  .version('0.0.1')
+  .version('0.1.0')
   .option('-s --size <size>', 'Pizza size', /^(large|medium|small)$/i, 'medium')
   .option('-d --drink [drink]', 'Drink', /^(coke|pepsi|izze)$/i)
   .parse(process.argv);
@@ -97,6 +245,8 @@ program
 console.log(' size: %j', program.size);
 console.log(' drink: %j', program.drink);
 ```
+
+注：上面代码如果size选项传入的值和正则不匹配，则值为medium(默认值)。drink选项和正则不匹配，值为true。
 
 ## 可变参数
 
