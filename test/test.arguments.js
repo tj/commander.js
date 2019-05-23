@@ -19,6 +19,14 @@ program
   .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
   .option('-T, --no-tests', 'ignore test hook');
 
+program
+  .command("setup [env]")
+  .option("--setup_mode <mode>")
+  .action(function (env) {
+    cmdValue = "setup";
+    envValue = env;
+  })
+
 program.parse(['node', 'test', '--config', 'conf']);
 program.config.should.equal("conf");
 cmdValue.should.equal("");
