@@ -7,6 +7,7 @@ var program = require('../')
 
 var envValue = "";
 var cmdValue = "";
+var optionsValue = {};
 
 program
   .version('0.0.1')
@@ -21,10 +22,11 @@ program
 
 program
   .command("setup [env]")
-  .option("--setup_mode <mode>")
-  .action(function (env) {
+  .option("--setup_mode <mode>", "the setup mode")
+  .action(function (env, options) {
     cmdValue = "setup";
     envValue = env;
+    optionsValue = options
   })
 
 program.parse(['node', 'test', '--config', 'conf']);
@@ -36,3 +38,4 @@ program.parse(['node', 'test', '--config', 'conf1', 'setup', '--setup_mode', 'mo
 program.config.should.equal("conf1");
 cmdValue.should.equal("setup");
 envValue.should.equal("env1");
+optionsValue.setup_mode.should.equal("mode3");
