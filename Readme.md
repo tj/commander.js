@@ -247,18 +247,6 @@ program.parse(process.argv)
 
 A command's options are validated when the command is used. Any unknown options will be reported as an error. However, if an action-based command does not define an action, then the options are not validated.
 
-## Regular Expression
-```js
-program
-  .version('0.1.0')
-  .option('-s --size <size>', 'Pizza size', /^(large|medium|small)$/i, 'medium')
-  .option('-d --drink [drink]', 'Drink', /^(coke|pepsi|izze)$/i)
-  .parse(process.argv);
-
-console.log(' size: %j', program.size);
-console.log(' drink: %j', program.drink);
-```
-
 ## Variadic arguments
 
  The last argument of a command can be variadic, and only the last argument.  To make an argument variadic you have to
@@ -464,6 +452,23 @@ program.on('command:*', function () {
   console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
   process.exit(1);
 });
+```
+
+## Bits and pieces
+
+### TypeScript
+
+The Commander package includes its TypeScript Definition file, but also requires the node types which you need to install yourself. e.g.
+
+```bash
+npm install commander
+npm install --save-dev @types/node
+```
+
+If you use `ts-node` and  git-style sub-commands written as `.ts` files, you need to call your program through node to get the sub-commands called correctly. e.g.
+
+```bash
+node -r ts-node/register pm.ts
 ```
 
 ## Examples

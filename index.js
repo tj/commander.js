@@ -379,6 +379,8 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   // default as 3rd arg
   if (typeof fn !== 'function') {
     if (fn instanceof RegExp) {
+      // This is a bit simplistic (especially no error messages), and probably better handled by caller using custom option processing.
+      // No longer documented in README, but still present for backwards compatibility.
       var regex = fn;
       fn = function(val, def) {
         var m = regex.exec(val);
