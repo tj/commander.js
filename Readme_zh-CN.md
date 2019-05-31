@@ -451,7 +451,7 @@ program.on('command:*', function () {
 
 ### TypeScript
 
-包里包含 TypeScript 定义文件，但是需要你需要自己安装 node types。如：
+包里包含 TypeScript 定义文件，但是需要你自己安装 node types。如：
 
 ```bash
 npm install commander
