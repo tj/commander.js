@@ -430,7 +430,41 @@ function make_red(txt) {
  输出帮助信息并立即退出。
  可选的回调可在显示帮助文本后处理。
 
-## 例子
+## 自定义事件监听
+
+ 你可以通过监听命令和选项来执行自定义函数。
+
+```js
+// 当有选项verbose时会执行函数
+program.on('option:verbose', function () {
+  process.env.VERBOSE = this.verbose;
+});
+
+// 未知命令会报错
+program.on('command:*', function () {
+  console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
+  process.exit(1);
+});
+```
+
+## 零碎知识
+
+### TypeScript
+
+包里包含 TypeScript 定义文件，但是需要你需要自己安装 node types。如：
+
+```bash
+npm install commander
+npm install --save-dev @types/node
+```
+
+如果你使用 `ts-node` 和 git风格子命令编写 `.ts` 文件, 你需要使用 node 来执行程序以保证正确执行子命令。如：
+
+```bash
+node -r ts-node/register pm.ts
+```
+ 
+ ## 例子
 
 ```js
 var program = require('commander');
@@ -475,8 +509,9 @@ program
 program.parse(process.argv);
 ```
 
- 更多的 [演示](https://github.com/tj/commander.js/tree/master/examples) 可以在这里找到.
+ 更多的 [演示](https://github.com/tj/commander.js/tree/master/examples) 可以在这里找到。
 
 ## 许可证
 
-MIT
+[MIT](https://github.com/tj/commander.js/blob/master/LICENSE)
+
