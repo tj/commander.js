@@ -9,5 +9,13 @@ var program = require('../');
 program
   .help('-c, --HELP', 'custom help message')
   .option('-s, --sessions', 'add session support')
-  .option('-t, --template <engine>', 'specify template engine (jade|ejs) [jade]', 'jade')
-  .parse(process.argv);
+  .option('-t, --template <engine>', 'specify template engine (jade|ejs) [jade]', 'jade');
+
+program
+  .command('child')
+  .option('--gender', 'specific gender of child')
+  .action((cmd) => {
+    console.log('Childsubcommand...');
+  });
+
+program.parse(process.argv);

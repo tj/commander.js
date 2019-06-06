@@ -268,21 +268,29 @@ declare namespace local {
     /**
      * Output help information for this command.
      *
+     * When listener(s) are available for the helpLongFlag
+     * those callbacks are invoked.
+     * 
      * @param {(str: string) => string} [cb]
      */
     outputHelp(cb?: (str: string) => string): void;
 
-    /** Output help information and exit.
+    /**
+     * When called with no arguments, or with a callback, this will
+     * output help information and exit.
+     *
+     * You can pass in flags and a description to override the help
+     * flags and help description for your command.
      *
      * @param {string | (str: string) => string} [flagsOrCb]
      * @param {string} [description]
      */
-    help(flagsOrCb?: string | callback, description?: string): never;
+    help(flagsOrCb?: string | helpCallback, description?: string): never;
   }
 
 }
 
-type callback = (str: string) => string;
+type helpCallback = (str: string) => string;
 
 declare namespace commander {
 

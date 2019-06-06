@@ -187,6 +187,10 @@ Command.prototype.command = function(name, desc, opts) {
     if (opts.isDefault) this.defaultExecutable = cmd._name;
   }
   cmd._noHelp = !!opts.noHelp;
+  cmd._helpFlags = this._helpFlags;
+  cmd._helpDescription = this._helpDescription;
+  cmd._helpShortFlag = this._helpShortFlag;
+  cmd._helpLongFlag = this._helpLongFlag;
   this.commands.push(cmd);
   cmd.parseExpectedArgs(args);
   cmd.parent = this;
@@ -1137,7 +1141,10 @@ Command.prototype.helpInformation = function() {
 };
 
 /**
- * Output help information for this command
+ * Output help information for this command.
+ *
+ * When listener(s) are available for the helpLongFlag
+ * those callbacks are invoked.
  *
  * @api public
  */
@@ -1157,10 +1164,14 @@ Command.prototype.outputHelp = function(cb) {
 };
 
 /**
- * Output help information and exit.
+ * When called with no arguments, or with a callback, this will
+ * output help information and exit.
  *
- * @param {Function|String} cb
- * @param {String} description
+ * You can pass in flags and a description to override the help
+ * flags and help description for your command.
+ *
+ * @param {Function|String} [flagsOrCb]
+ * @param {String} [description]
  * @return {Command?}
  * @api public
  */
@@ -1175,7 +1186,9 @@ Command.prototype.help = function(flagsOrCb, description) {
   this._helpDescription = description || this._helpDescription;
 
   var flags = this._helpFlags.split(/[ ,|]+/);
-  if (flags.length > 1 && !/^[[<]/.test(flags[1])) this._helpShortFlag = flags.shift();
+
+  if (flags.length > 1) this._helpShortFlag = flags.shift();
+
   this._helpLongFlag = flags.shift();
 
   return this;
