@@ -1,7 +1,8 @@
 3.0.0
 =====
 
-  * Change: use straight quotes around strings in error messages (like 'this' instead of `this') (#915)
+  * Change to use straight quotes around strings in error messages (like 'this' instead of `this') (#915)
+  * Add TypeScript "reference types" for node (#974)
 
 2.20.0 / 2019-04-02
 ==================
