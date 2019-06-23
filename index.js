@@ -794,7 +794,7 @@ Command.prototype.opts = function() {
  */
 
 Command.prototype.missingArgument = function(name) {
-  console.error("error: missing required argument `%s'", name);
+  console.error("error: missing required argument '%s'", name);
   process.exit(1);
 };
 
@@ -808,9 +808,9 @@ Command.prototype.missingArgument = function(name) {
 
 Command.prototype.optionMissingArgument = function(option, flag) {
   if (flag) {
-    console.error("error: option `%s' argument missing, got `%s'", option.flags, flag);
+    console.error("error: option '%s' argument missing, got '%s'", option.flags, flag);
   } else {
-    console.error("error: option `%s' argument missing", option.flags);
+    console.error("error: option '%s' argument missing", option.flags);
   }
   process.exit(1);
 };
@@ -824,7 +824,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
 
 Command.prototype.unknownOption = function(flag) {
   if (this._allowUnknownOption) return;
-  console.error("error: unknown option `%s'", flag);
+  console.error("error: unknown option '%s'", flag);
   process.exit(1);
 };
 
@@ -836,7 +836,7 @@ Command.prototype.unknownOption = function(flag) {
  */
 
 Command.prototype.variadicArgNotLast = function(name) {
-  console.error("error: variadic arguments must be last `%s'", name);
+  console.error("error: variadic arguments must be last '%s'", name);
   process.exit(1);
 };
 
