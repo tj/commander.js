@@ -9,7 +9,7 @@
 // $ pizza-options
 // you ordered a pizza with sauce
 // $ pizza-options --sauce
-// error: unknown option `--sauce'
+// error: unknown option '--sauce'
 // $ pizza-options --no-sauce
 // you ordered a pizza without sauce
 

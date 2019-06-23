@@ -61,7 +61,7 @@ $ pizza-options -d
 { debug: true, small: undefined, pizzaType: undefined }
 pizza details:
 $ pizza-options -p
-error: option `-p, --pizza-type <type>' argument missing
+error: option '-p, --pizza-type <type>' argument missing
 $ pizza-options -ds -p vegetarian
 { debug: true, small: true, pizzaType: 'vegetarian' }
 pizza details:
@@ -115,7 +115,7 @@ else console.log('you ordered a pizza without sauce');
 $ pizza-options
 you ordered a pizza with sauce
 $ pizza-options --sauce
-error: unknown option `--sauce'
+error: unknown '--sauce'
 $ pizza-options --no-sauce
 you ordered a pizza without sauce
 ```
