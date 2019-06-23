@@ -470,7 +470,8 @@ Command.prototype.parse = function(argv) {
   }
 
   // process argv
-  var parsed = this.parseOptions(this.normalize(argv.slice(2)));
+  var normalized = this.normalize(argv.slice(2));
+  var parsed = this.parseOptions(normalized);
   var args = this.args = parsed.args;
 
   var result = this.parseArgs(this.args, parsed.unknown);
@@ -607,7 +608,9 @@ Command.prototype.normalize = function(args) {
   var ret = [],
     arg,
     lastOpt,
-    index;
+    index,
+    short,
+    opt;
 
   for (var i = 0, len = args.length; i < len; ++i) {
     arg = args[i];
@@ -621,10 +624,17 @@ Command.prototype.normalize = function(args) {
       break;
     } else if (lastOpt && lastOpt.required) {
       ret.push(arg);
-    } else if (arg.length > 1 && arg[0] === '-' && arg[1] !== '-') {
-      arg.slice(1).split('').forEach(function(c) {
-        ret.push('-' + c);
-      });
+    } else if (arg.length > 2 && arg[0] === '-' && arg[1] !== '-') {
+      short = arg.slice(0, 2);
+      opt = this.optionFor(short);
+      if (opt && (opt.required || opt.optional)) {
+        ret.push(short);
+        ret.push(arg.slice(2));
+      } else {
+        arg.slice(1).split('').forEach(function(c) {
+          ret.push('-' + c);
+        });
+      }
     } else if (/^--/.test(arg) && ~(index = arg.indexOf('='))) {
       ret.push(arg.slice(0, index), arg.slice(index + 1));
     } else {
