@@ -1116,11 +1116,12 @@ Command.prototype.helpInformation = function() {
   if (this._alias) {
     cmdName = cmdName + '|' + this._alias;
   }
-  var ancestor = this;
-  var prefix = [];
-  while ((ancestor = ancestor.parent)) prefix.push(ancestor.name() + ' ');
+  var parentCmdNames = '';
+  for (var parentCmd = this.parent; parentCmd; parentCmd = parentCmd.parent) {
+    parentCmdNames = parentCmd.name() + ' ' + parentCmdNames;
+  }
   var usage = [
-    'Usage: ' + prefix.join('') + cmdName + ' ' + this.usage(),
+    'Usage: ' + parentCmdNames + cmdName + ' ' + this.usage(),
     ''
   ];
 
