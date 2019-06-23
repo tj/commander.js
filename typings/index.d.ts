@@ -3,6 +3,8 @@
 // Definitions by: Alan Agius <https://github.com/alan-agius4>, Marcelo Dezem <https://github.com/mdezem>, vvakame <https://github.com/vvakame>, Jules Randolph <https://github.com/sveinburne>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
+///<reference types="node" />
+
 declare namespace local {
 
   class Option {
