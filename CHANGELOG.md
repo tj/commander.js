@@ -3,6 +3,7 @@
 
   * Change to use straight quotes around strings in error messages (like 'this' instead of `this') (#915)
   * Add TypeScript "reference types" for node (#974)
+  * Add support for hyphen as an option argument in subcommands (#697)
 
 2.20.0 / 2019-04-02
 ==================
