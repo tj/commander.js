@@ -8,6 +8,7 @@
     * e.g. `-p 80` can also be supplied as `-p80`
   * Add executable arguments to spawn in win32, for git-style executables (#611)
     * e.g. `--harmony`
+  * Add parent command as prefix of subcommand in help (#980)
 
 2.20.0 / 2019-04-02
 ==================
