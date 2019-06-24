@@ -568,8 +568,6 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     }
   } else {
     args.unshift(bin);
-    // add executable arguments to spawn
-    args = (process.execArgv || []).concat(args);
     proc = spawn(process.execPath, args, { stdio: 'inherit' });
   }
 
