@@ -1116,8 +1116,12 @@ Command.prototype.helpInformation = function() {
   if (this._alias) {
     cmdName = cmdName + '|' + this._alias;
   }
+  var parentCmdNames = '';
+  for (var parentCmd = this.parent; parentCmd; parentCmd = parentCmd.parent) {
+    parentCmdNames = parentCmd.name() + ' ' + parentCmdNames;
+  }
   var usage = [
-    'Usage: ' + cmdName + ' ' + this.usage(),
+    'Usage: ' + parentCmdNames + cmdName + ' ' + this.usage(),
     ''
   ];
 
