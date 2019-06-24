@@ -5,6 +5,9 @@
   * Add TypeScript "reference types" for node (#974)
   * Add support for hyphen as an option argument in subcommands (#697)
   * Add support for a short option flag and its value to be concatenated (#599)
+    * e.g. `-p 80` can also be supplied as `-p80`
+  * Add executable arguments to spawn in win32, for git-style executables (#611)
+    * e.g. `--harmony`
 
 2.20.0 / 2019-04-02
 ==================
