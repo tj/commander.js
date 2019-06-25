@@ -7,7 +7,7 @@
 var program = require('../');
 
 program
-  .help('-c, --HELP', 'custom help message')
+  .helpOption('-c, --HELP', 'custom help message')
   .option('-s, --sessions', 'add session support')
   .option('-t, --template <engine>', 'specify template engine (jade|ejs) [jade]', 'jade');
 

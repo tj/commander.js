@@ -1164,34 +1164,38 @@ Command.prototype.outputHelp = function(cb) {
 };
 
 /**
- * When called with no arguments, or with a callback, this will
- * output help information and exit.
- *
  * You can pass in flags and a description to override the help
  * flags and help description for your command.
  *
- * @param {Function|String} [flagsOrCb]
- * @param {String} [description]
- * @return {Command?}
+ * @param {String} flags
+ * @param {String} description
+ * @return {Command}
  * @api public
  */
 
-Command.prototype.help = function(flagsOrCb, description) {
-  if (typeof cb === 'function' || arguments.length === 0) {
-    this.outputHelp(flagsOrCb);
-    process.exit();
-  }
-
-  this._helpFlags = flagsOrCb || this._helpFlags;
+Command.prototype.helpOption = function(flags, description) {
+  this._helpFlags = flags || this._helpFlags;
   this._helpDescription = description || this._helpDescription;
 
-  var flags = this._helpFlags.split(/[ ,|]+/);
+  var splitFlags = this._helpFlags.split(/[ ,|]+/);
 
-  if (flags.length > 1) this._helpShortFlag = flags.shift();
+  if (splitFlags.length > 1) this._helpShortFlag = splitFlags.shift();
 
-  this._helpLongFlag = flags.shift();
+  this._helpLongFlag = splitFlags.shift();
 
   return this;
+};
+
+/**
+ * Output help information and exit.
+ *
+ * @param {Function} cb
+ * @api public
+ */
+
+Command.prototype.help = function(cb) {
+  this.outputHelp(cb);
+  process.exit();
 };
 
 /**

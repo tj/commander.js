@@ -282,10 +282,18 @@ declare namespace local {
      * You can pass in flags and a description to override the help
      * flags and help description for your command.
      *
-     * @param {string | (str: string) => string} [flagsOrCb]
+     * @param {string} [flags]
+     * @param {string} [description]
+     * @return {Command}
+     */
+    helpOption(flags?: string, description?: string): Command;
+
+    /** Output help information and exit.
+     *
+     * @param {(str: string) => string} [cb]
      * @param {string} [description]
      */
-    help(flagsOrCb?: string | helpCallback, description?: string): never;
+    help(cb: helpCallback, description?: string): never;
   }
 
 }

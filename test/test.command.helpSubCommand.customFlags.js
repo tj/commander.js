@@ -8,7 +8,7 @@ sinon.stub(process.stdout, 'write');
 // Test that subcommands inherit the help flags
 // but can also override help flags
 program
-  .help('-i, --ihelp', 'foo foo');
+  .helpOption('-i, --ihelp', 'foo foo');
 
 program
   .command('child')
@@ -19,7 +19,7 @@ program
 
 program
   .command('family')
-  .help('-h, --help')
+  .helpOption('-h, --help')
   .action((cmd) => {
     console.log('Familysubcommand...');
   });

@@ -5,7 +5,7 @@ var program = require('../')
 sinon.stub(process, 'exit');
 sinon.stub(process.stdout, 'write');
 
-program.help('-c, --HELP', 'custom help output');
+program.helpOption('-c, --HELP', 'custom help output');
 program.command('somecommand');
 program.command('anothercommand [options]');
 
