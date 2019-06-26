@@ -36,16 +36,15 @@ declare namespace local {
     constructor(name?: string);
 
     /**
-     * Set the program version to `str`.
+     * Set the program version to `str`. 
      *
      * This method auto-registers the "-V, --version" flag
      * which will print the version number when passed.
+     * 
+     * You can optionally supply the  flags and description to override the defaults.
      *
-     * @param {string} str
-     * @param {string} [flags]
-     * @returns {Command} for chaining
      */
-    version(str: string, flags?: string): Command;
+    version(str: string, flags?: string, description?: string): Command;
 
     /**
      * Add command `name`.
@@ -268,13 +267,21 @@ declare namespace local {
     /**
      * Output help information for this command.
      *
+     * When listener(s) are available for the helpLongFlag
+     * those callbacks are invoked.
+     * 
      * @param {(str: string) => string} [cb]
      */
     outputHelp(cb?: (str: string) => string): void;
 
-    /** Output help information and exit.
-     *
-     * @param {(str: string) => string} [cb]
+    /**
+     * You can pass in flags and a description to override the help
+     * flags and help description for your command.
+     */
+    helpOption(flags?: string, description?: string): Command;
+
+    /** 
+     * Output help information and exit.
      */
     help(cb?: (str: string) => string): never;
   }
