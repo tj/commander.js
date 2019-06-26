@@ -207,7 +207,7 @@ $ custom --list x,y,z
 
 ### Version option
 
-The optional `version` method adds handling for displaying the command version. The default option flags are `-V` and `--version`, and when present the  command prints the version number and exits.
+The optional `version` method adds handling for displaying the command version. The default option flags are `-V` and `--version`, and when present the command prints the version number and exits.
 
 ```js
     program.version('0.0.1');
@@ -218,19 +218,12 @@ The optional `version` method adds handling for displaying the command version. 
     0.0.1
 ```
 
-You may specify custom flags by passing an additional parameter to the `version` method using the same syntax as the `option` method. The version flags can be named anything, but a long name is required.
+You may change the flags and description by passing additional parameters to the `version` method, using
+the same syntax for flags as the `option` method. The version flags can be named anything, but a long name is required.
 
 ```js
-program.version('0.0.1', '-v, --version');
+program.version('0.0.1', '-v, --vers', 'output the current version');
 ```
-
-You can also override the help description for the version command.
-
-```js
-program.version('0.0.1', '-v, --version', 'output the current version');
-```
-
-
 
 ## Command-specific options
 
