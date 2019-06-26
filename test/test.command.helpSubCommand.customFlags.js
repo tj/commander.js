@@ -26,7 +26,7 @@ program
 
 // Test arguments
 var expectedCommandHelpInformation = [
-  'Usage: child [options]',
+  'Usage: test child [options]',
   '',
   'Options:',
   '  --gender     specific gender of child',
@@ -48,7 +48,7 @@ sinon.stub(process, 'exit');
 sinon.stub(process.stdout, 'write');
 
 var expectedFamilyCommandHelpInformation = [
-  'Usage: family [options]',
+  'Usage: test family [options]',
   '',
   'Options:',
   '  -h, --help  foo foo',
