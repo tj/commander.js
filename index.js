@@ -103,6 +103,11 @@ function Command(name) {
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
+
+  this._helpFlags = '-h, --help';
+  this._helpDescription = 'output usage information';
+  this._helpShortFlag = '-h';
+  this._helpLongFlag = '--help';
 }
 
 /**
@@ -182,6 +187,10 @@ Command.prototype.command = function(name, desc, opts) {
     if (opts.isDefault) this.defaultExecutable = cmd._name;
   }
   cmd._noHelp = !!opts.noHelp;
+  cmd._helpFlags = this._helpFlags;
+  cmd._helpDescription = this._helpDescription;
+  cmd._helpShortFlag = this._helpShortFlag;
+  cmd._helpLongFlag = this._helpLongFlag;
   this.commands.push(cmd);
   cmd.parseExpectedArgs(args);
   cmd.parent = this;
@@ -466,7 +475,7 @@ Command.prototype.parse = function(argv) {
   // github-style sub-commands with no sub-command
   if (this.executables && argv.length < 3 && !this.defaultExecutable) {
     // this user needs help
-    argv.push('--help');
+    argv.push(this._helpLongFlag);
   }
 
   // process argv
@@ -520,7 +529,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // <cmd> --help
   if (args[0] === 'help') {
     args[0] = args[1];
-    args[1] = '--help';
+    args[1] = this._helpLongFlag;
   }
 
   // executable
@@ -858,17 +867,21 @@ Command.prototype.variadicArgNotLast = function(name) {
  * This method auto-registers the "-V, --version" flag
  * which will print the version number when passed.
  *
+ * You can optionally supply the  flags and description to override the defaults.
+ *
  * @param {String} str
  * @param {String} [flags]
+ * @param {String} [description]
  * @return {Command} for chaining
  * @api public
  */
 
-Command.prototype.version = function(str, flags) {
+Command.prototype.version = function(str, flags, description) {
   if (arguments.length === 0) return this._version;
   this._version = str;
   flags = flags || '-V, --version';
-  var versionOption = new Option(flags, 'output the version number');
+  description = description || 'output the version number';
+  var versionOption = new Option(flags, description);
   this._versionOptionName = versionOption.long.substr(2) || 'version';
   this.options.push(versionOption);
   this.on('option:' + this._versionOptionName, function() {
@@ -1002,8 +1015,9 @@ Command.prototype.largestCommandLength = function() {
 Command.prototype.largestOptionLength = function() {
   var options = [].slice.call(this.options);
   options.push({
-    flags: '-h, --help'
+    flags: this._helpFlags
   });
+
   return options.reduce(function(max, option) {
     return Math.max(max, option.flags.length);
   }, 0);
@@ -1060,7 +1074,7 @@ Command.prototype.optionHelp = function() {
   return this.options.map(function(option) {
     return pad(option.flags, width) + '  ' + option.description +
       ((option.bool && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
-  }).concat([pad('-h, --help', width) + '  ' + 'output usage information'])
+  }).concat([pad(this._helpFlags, width) + '  ' + this._helpDescription])
     .join('\n');
 };
 
@@ -1145,7 +1159,10 @@ Command.prototype.helpInformation = function() {
 };
 
 /**
- * Output help information for this command
+ * Output help information for this command.
+ *
+ * When listener(s) are available for the helpLongFlag
+ * those callbacks are invoked.
  *
  * @api public
  */
@@ -1161,12 +1178,36 @@ Command.prototype.outputHelp = function(cb) {
     throw new Error('outputHelp callback must return a string or a Buffer');
   }
   process.stdout.write(cbOutput);
-  this.emit('--help');
+  this.emit(this._helpLongFlag);
+};
+
+/**
+ * You can pass in flags and a description to override the help
+ * flags and help description for your command.
+ *
+ * @param {String} [flags]
+ * @param {String} [description]
+ * @return {Command}
+ * @api public
+ */
+
+Command.prototype.helpOption = function(flags, description) {
+  this._helpFlags = flags || this._helpFlags;
+  this._helpDescription = description || this._helpDescription;
+
+  var splitFlags = this._helpFlags.split(/[ ,|]+/);
+
+  if (splitFlags.length > 1) this._helpShortFlag = splitFlags.shift();
+
+  this._helpLongFlag = splitFlags.shift();
+
+  return this;
 };
 
 /**
  * Output help information and exit.
  *
+ * @param {Function} [cb]
  * @api public
  */
 
@@ -1213,8 +1254,9 @@ function pad(str, width) {
 
 function outputHelpIfNecessary(cmd, options) {
   options = options || [];
+
   for (var i = 0; i < options.length; i++) {
-    if (options[i] === '--help' || options[i] === '-h') {
+    if (options[i] === cmd._helpLongFlag || options[i] === cmd._helpShortFlag) {
       cmd.outputHelp();
       process.exit(0);
     }
