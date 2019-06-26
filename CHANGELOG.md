@@ -9,6 +9,8 @@
   * Add executable arguments to spawn in win32, for git-style executables (#611)
     * e.g. `--harmony`
   * Add parent command as prefix of subcommand in help (#980)
+  * Add optional custom description to `.version` (#963)
+  * Add `.helpOption(flags, description)` routine to customise help flags and description (#963)
 
 2.20.0 / 2019-04-02
 ==================
