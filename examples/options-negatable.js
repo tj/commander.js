@@ -6,19 +6,24 @@
 //
 // Example output pretending command called pizza-options (or try directly with `node options-negatable.js`)
 //
-// $ pizza-options
-// you ordered a pizza with sauce
+// $ pizza-options 
+// You ordered a pizza with sauce and mozzarella cheese
 // $ pizza-options --sauce
 // error: unknown option '--sauce'
-// $ pizza-options --no-sauce
-// you ordered a pizza without sauce
+// $ pizza-options --cheese=blue
+// You ordered a pizza with sauce and blue cheese
+// $ pizza-options --no-sauce --no-cheese
+// You ordered a pizza with no sauce and no cheese
 
 const commander = require('commander');
 const program = new commander.Command();
 
 program
-  .option('-n, --no-sauce', 'Remove sauce')
+  .option('--no-sauce', 'Remove sauce')
+  .option('--cheese <flavour>', 'cheese flavour', 'mozzarella')
+  .option('--no-cheese', 'plain with no cheese')
   .parse(process.argv);
 
-if (program.sauce) console.log('you ordered a pizza with sauce');
-else console.log('you ordered a pizza without sauce');
+const sauceStr = program.sauce ? 'sauce' : 'no sauce';
+const cheeseStr = (program.cheese === false) ? 'no cheese' : `${program.cheese} cheese`;
+console.log(`You ordered a pizza with ${sauceStr} and ${cheeseStr}`);

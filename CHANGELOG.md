@@ -11,6 +11,10 @@
   * Add parent command as prefix of subcommand in help (#980)
   * Add optional custom description to `.version` (#963)
   * Add `.helpOption(flags, description)` routine to customise help flags and description (#963)
+  * Fix behavior of --no-* options (#795)
+    * can now define both `--foo` and `--no-foo`
+    * custom event listeners: `--no-foo` on cli now emits `option:no-foo` (previously `option:foo`)
+    * default value: defining `--no-foo` after defining `--foo` leaves the default value unchanged (previously set it to false)
 
 2.20.0 / 2019-04-02
 ==================

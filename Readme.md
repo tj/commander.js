@@ -99,30 +99,37 @@ cheese: stilton
 
 ### Other option types, negatable boolean and flag|value
 
-You can specify a boolean option long name with a leading `no-` to make it true by default and able to be negated.
+You can specify a boolean option long name with a leading `no-` to set the option value to false when used.
+Defined alone this also makes the option true by default.
+If you define `foo` first, adding `--no-foo` does not change the default value.
 
 
 ```js
 const program = require('commander');
 
 program
-  .option('-n, --no-sauce', 'Remove sauce')
+  .option('--no-sauce', 'Remove sauce')
+  .option('--cheese <flavour>', 'cheese flavour', 'mozzarella')
+  .option('--no-cheese', 'plain with no cheese')
   .parse(process.argv);
 
-if (program.sauce) console.log('you ordered a pizza with sauce');
-else console.log('you ordered a pizza without sauce');
+const sauceStr = program.sauce ? 'sauce' : 'no sauce';
+const cheeseStr = (program.cheese === false) ? 'no cheese' : `${program.cheese} cheese`;
+console.log(`You ordered a pizza with ${sauceStr} and ${cheeseStr}`);
 ```
 
 ```bash
-$ pizza-options
-you ordered a pizza with sauce
+$ pizza-options 
+You ordered a pizza with sauce and mozzarella cheese
 $ pizza-options --sauce
 error: unknown option '--sauce'
-$ pizza-options --no-sauce
-you ordered a pizza without sauce
+$ pizza-options --cheese=blue
+You ordered a pizza with sauce and blue cheese
+$ pizza-options --no-sauce --no-cheese
+You ordered a pizza with no sauce and no cheese
 ```
-You can specify an option which functions as a flag but may also take a value (declared using square brackets).
 
+You can specify an option which functions as a flag but may also take a value (declared using square brackets).
 
 ```js
 const program = require('commander');
