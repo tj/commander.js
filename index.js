@@ -60,9 +60,7 @@ function Option(flags, description) {
  */
 
 Option.prototype.name = function() {
-  return this.long
-    .replace('--', '')
-    .replace('no-', '');
+  return this.long.replace(/^--/, '');
 };
 
 /**
@@ -74,7 +72,7 @@ Option.prototype.name = function() {
  */
 
 Option.prototype.attributeName = function() {
-  return camelcase(this.name());
+  return camelcase(this.name().replace(/^no-/, ''));
 };
 
 /**
@@ -344,14 +342,17 @@ Command.prototype.action = function(fn) {
  *
  * Examples:
  *
- *     // simple boolean defaulting to false
+ *     // simple boolean defaulting to undefined
  *     program.option('-p, --pepper', 'add pepper');
+ *
+ *     program.pepper
+ *     // => undefined
  *
  *     --pepper
  *     program.pepper
- *     // => Boolean
+ *     // => true
  *
- *     // simple boolean defaulting to true
+ *     // simple boolean defaulting to true (unless non-negated option is also defined)
  *     program.option('-C, --no-cheese', 'remove cheese');
  *
  *     program.cheese
@@ -403,8 +404,11 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
 
   // preassign default value only for --no-*, [optional], or <required>
   if (!option.bool || option.optional || option.required) {
-    // when --no-* we make sure default is true
-    if (!option.bool) defaultValue = true;
+    // when --no-foo we make sure default is true, unless a --foo option is already defined
+    if (!option.bool) {
+      var opts = self.opts();
+      defaultValue = Object.prototype.hasOwnProperty.call(opts, name) ? opts[name] : true;
+    }
     // preassign only if we have a default
     if (defaultValue !== undefined) {
       self[name] = defaultValue;
@@ -435,7 +439,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
       }
     } else if (val !== null) {
       // reassign
-      self[name] = val;
+      self[name] = option.bool ? val : false;
     }
   });
 

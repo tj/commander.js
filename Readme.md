@@ -342,13 +342,13 @@ Usage: pizza [options]
 An application for pizzas ordering
 
 Options:
-  -h, --help           output usage information
   -V, --version        output the version number
   -p, --peppers        Add peppers
   -P, --pineapple      Add pineapple
   -b, --bbq            Add bbq sauce
-  -c, --cheese <type>  Add the specified type of cheese [marble]
+  -c, --cheese <type>  Add the specified type of cheese (default: "marble")
   -C, --no-cheese      You do not want any cheese
+  -h, --help           output usage information
 ```
 
 ## Custom help
