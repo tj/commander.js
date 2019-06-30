@@ -45,7 +45,7 @@ function Option(flags, description) {
   this.flags = flags;
   this.required = flags.indexOf('<') >= 0;
   this.optional = flags.indexOf('[') >= 0;
-  this.bool = flags.indexOf('-no-') === -1;
+  this.negate = flags.indexOf('-no-') !== -1;
   flags = flags.split(/[ ,|]+/);
   if (flags.length > 1 && !/^[[<]/.test(flags[1])) this.short = flags.shift();
   this.long = flags.shift();
@@ -403,9 +403,9 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   }
 
   // preassign default value only for --no-*, [optional], or <required>
-  if (!option.bool || option.optional || option.required) {
+  if (option.negate || option.optional || option.required) {
     // when --no-foo we make sure default is true, unless a --foo option is already defined
-    if (!option.bool) {
+    if (option.negate) {
       var opts = self.opts();
       defaultValue = Object.prototype.hasOwnProperty.call(opts, name) ? opts[name] : true;
     }
@@ -429,17 +429,17 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
 
     // unassigned or bool
     if (typeof self[name] === 'boolean' || typeof self[name] === 'undefined') {
-      // if no value, bool true, and we have a default, then use it!
+      // if no value, negate false, and we have a default, then use it!
       if (val == null) {
-        self[name] = option.bool
-          ? defaultValue || true
-          : false;
+        self[name] = option.negate
+          ? false
+          : defaultValue || true;
       } else {
         self[name] = val;
       }
     } else if (val !== null) {
       // reassign
-      self[name] = option.bool ? val : false;
+      self[name] = option.negate ? false : val;
     }
   });
 
@@ -767,7 +767,7 @@ Command.prototype.parseOptions = function(argv) {
           ++i;
         }
         this.emit('option:' + option.name(), arg);
-      // bool
+      // flag
       } else {
         this.emit('option:' + option.name());
       }
@@ -1077,7 +1077,7 @@ Command.prototype.optionHelp = function() {
   // Append the help information
   return this.options.map(function(option) {
     return pad(option.flags, width) + '  ' + option.description +
-      ((option.bool && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
+      ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
   }).concat([pad(this._helpFlags, width) + '  ' + this._helpDescription])
     .join('\n');
 };
