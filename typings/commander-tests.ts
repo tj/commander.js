@@ -82,6 +82,7 @@ program.on('--help', () => {
 
 program
     .command('allow-unknown-option')
+    .description("description")
     .allowUnknownOption()
     .action(() => {
         console.log('unknown option is allowed');
@@ -93,6 +94,10 @@ program
     .action((cmd, env) => {
         console.log(cmd, env);
     });
+
+program
+    .command("name1", "description")
+    .command("name2", "description", { isDefault:true })
 
 program.parse(process.argv);
 
