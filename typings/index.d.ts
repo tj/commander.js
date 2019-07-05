@@ -51,6 +51,9 @@ declare namespace local {
     /**
      * Define a command, implemented using an action handler.
      * 
+     * @remarks
+     * The command description is supplied using `.description`, not as a parameter to `.command`.
+     * 
      * @example
      * ```
      *    program
@@ -68,6 +71,9 @@ declare namespace local {
     command(nameAndArgs: string, opts?: commander.CommandOptions): Command;
     /**
      * Define a command, implemented in a separate executable file.
+     * 
+     * @remarks
+     * The command description is supplied as the second parameter to `.command`.
      * 
      * @example
      * ```
