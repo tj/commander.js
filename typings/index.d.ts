@@ -55,13 +55,13 @@ declare namespace local {
      * The command description is supplied using `.description`, not as a parameter to `.command`.
      * 
      * @example
-     * ```
-     *    program
-     *      .command('clone <source> [destination]')
-     *      .description('clone a repository into a newly created directory')
-     *      .action((source, destination) => {
-     *        console.log('clone command called');
-     *      });
+     * ```ts
+     *  program
+     *    .command('clone <source> [destination]')
+     *    .description('clone a repository into a newly created directory')
+     *    .action((source, destination) => {
+     *      console.log('clone command called');
+     *    });
      * ```
      * 
      * @param nameAndArgs - command name and arguments, args are  `<required>` or `[optional]` and last may be `variadic...`
@@ -76,10 +76,10 @@ declare namespace local {
      * The command description is supplied as the second parameter to `.command`.
      * 
      * @example
-     * ```
-     *    program
-     *      .command('start <service>', 'start named service')
-     *      .command('stop [service]', 'stop named serice, or all if no name supplied');
+     * ```ts
+     *  program
+     *    .command('start <service>', 'start named service')
+     *    .command('stop [service]', 'stop named serice, or all if no name supplied');
      * ```
      * 
      * @param nameAndArgs - command name and arguments, args are  `<required>` or `[optional]` and last may be `variadic...`
