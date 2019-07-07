@@ -64,7 +64,7 @@ declare namespace local {
      *    });
      * ```
      * 
-     * @param nameAndArgs - command name and arguments, args are  `<required>` or `[optional]` and last may be `variadic...`
+     * @param nameAndArgs - command name and arguments, args are  `<required>` or `[optional]` and last may also be `variadic...`
      * @param opts - configuration options
      * @returns new command
      */
@@ -82,7 +82,7 @@ declare namespace local {
      *    .command('stop [service]', 'stop named serice, or all if no name supplied');
      * ```
      * 
-     * @param nameAndArgs - command name and arguments, args are  `<required>` or `[optional]` and last may be `variadic...`
+     * @param nameAndArgs - command name and arguments, args are  `<required>` or `[optional]` and last may also be `variadic...`
      * @param description - description of executable command
      * @param opts - configuration options
      * @returns top level command for chaining more command definitions
