@@ -277,6 +277,13 @@ declare namespace local {
      * @param {(str: string) => string} [cb]
      */
     help(cb?: (str: string) => string): never;
+
+    /**
+     * Returns the help information text as a string.
+     * 
+     * @return {string}
+     */
+    helpInformation(): string;
   }
 
 }
