@@ -252,7 +252,7 @@ program
 // Returns top-level command for adding more commands.
 program
   .command('start <service>', 'start named service')
-  .command('stop [service]', 'stop named serice, or all if no name supplied');
+  .command('stop [service]', 'stop named service, or all if no name supplied');
 ```
 
 ### Specify the argument syntax
@@ -281,8 +281,6 @@ console.log('command:', cmdValue);
 console.log('environment:', envValue || "no environment given");
 ```
 
-### Variadic arguments
-
  The last argument of a command can be variadic, and only the last argument.  To make an argument variadic you
  append `...` to the argument name. For example:
 
@@ -304,7 +302,7 @@ program
 program.parse(process.argv);
 ```
 
-The variadic argument is passed to the action handler as an array.
+The variadic argument is passed to the action handler as an array. (And this also applies to `program.args`.)
 
 ### Action handler (sub)commands
 
