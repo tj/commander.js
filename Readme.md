@@ -217,12 +217,12 @@ $ custom --list x,y,z
 The optional `version` method adds handling for displaying the command version. The default option flags are `-V` and `--version`, and when present the command prints the version number and exits.
 
 ```js
-    program.version('0.0.1');
+program.version('0.0.1');
 ```
 
 ```bash
-    $ ./examples/pizza -V
-    0.0.1
+$ ./examples/pizza -V
+0.0.1
 ```
 
 You may change the flags and description by passing additional parameters to the `version` method, using
@@ -267,15 +267,15 @@ program
   .version('0.1.0')
   .arguments('<cmd> [env]')
   .action(function (cmd, env) {
-     cmdValue = cmd;
-     envValue = env;
+    cmdValue = cmd;
+    envValue = env;
   });
 
 program.parse(process.argv);
 
 if (typeof cmdValue === 'undefined') {
-   console.error('no command given!');
-   process.exit(1);
+  console.error('no command given!');
+  process.exit(1);
 }
 console.log('command:', cmdValue);
 console.log('environment:', envValue || "no environment given");
