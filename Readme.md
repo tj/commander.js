@@ -216,12 +216,12 @@ $ custom --list x,y,z
 The optional `version` method adds handling for displaying the command version. The default option flags are `-V` and `--version`, and when present the command prints the version number and exits.
 
 ```js
-    program.version('0.0.1');
+program.version('0.0.1');
 ```
 
 ```bash
-    $ ./examples/pizza -V
-    0.0.1
+$ ./examples/pizza -V
+0.0.1
 ```
 
 You may change the flags and description by passing additional parameters to the `version` method, using
@@ -231,39 +231,59 @@ the same syntax for flags as the `option` method. The version flags can be named
 program.version('0.0.1', '-v, --vers', 'output the current version');
 ```
 
-## Command-specific options
+## Commands
 
-You can attach options to a command.
+You can specify (sub)commands for your top-level command using `.command`. There are two ways these can be implemented: using an action handler attached to the command, or as a separate executable file (described in more detail later). In the first parameter to `.command` you specify the command name and any command arguments. The arguments may be `<required>` or `[optional]`, and the last argument may also be `variadic...`.
+
+For example:
 
 ```js
-#!/usr/bin/env node
+// Command implemented using action handler (description is supplied separately to `.command`)
+// Returns new command for configuring.
+program
+  .command('clone <source> [destination]')
+  .description('clone a repository into a newly created directory')
+  .action((source, destination) => {
+    console.log('clone command called');
+  });
 
+// Command implemented using separate executable file (description is second parameter to `.command`)
+// Returns top-level command for adding more commands.
+program
+  .command('start <service>', 'start named service')
+  .command('stop [service]', 'stop named service, or all if no name supplied');
+```
+
+### Specify the argument syntax
+
+You use `.arguments` to specify the arguments for the top-level command, and for subcommands they are included in the `.command` call. Angled brackets (e.g. `<required>`) indicate required input. Square brackets (e.g. `[optional]`) indicate optional input.
+
+
+```js
 var program = require('commander');
 
 program
-  .command('rm <dir>')
-  .option('-r, --recursive', 'Remove recursively')
-  .action(function (dir, cmd) {
-    console.log('remove ' + dir + (cmd.recursive ? ' recursively' : ''))
-  })
+  .version('0.1.0')
+  .arguments('<cmd> [env]')
+  .action(function (cmd, env) {
+    cmdValue = cmd;
+    envValue = env;
+  });
 
-program.parse(process.argv)
+program.parse(process.argv);
+
+if (typeof cmdValue === 'undefined') {
+  console.error('no command given!');
+  process.exit(1);
+}
+console.log('command:', cmdValue);
+console.log('environment:', envValue || "no environment given");
 ```
 
-A command's options are validated when the command is used. Any unknown options will be reported as an error. However, if an action-based command does not define an action, then the options are not validated.
-
-## Variadic arguments
-
- The last argument of a command can be variadic, and only the last argument.  To make an argument variadic you have to
- append `...` to the argument name.  Here is an example:
+ The last argument of a command can be variadic, and only the last argument.  To make an argument variadic you
+ append `...` to the argument name. For example:
 
 ```js
-#!/usr/bin/env node
-
-/**
- * Module dependencies.
- */
-
 var program = require('commander');
 
 program
@@ -281,36 +301,37 @@ program
 program.parse(process.argv);
 ```
 
- An `Array` is used for the value of a variadic argument.  This applies to `program.args` as well as the argument passed
- to your action as demonstrated above.
+The variadic argument is passed to the action handler as an array. (And this also applies to `program.args`.)
 
-## Specify the argument syntax
+### Action handler (sub)commands
+
+You can add options to a command that uses an action handler.
+The action handler gets passed a parameter for each argument you declared, and one additional argument which is the
+command object itself. This command argument has the values for the command-specific options added as properties.
 
 ```js
-#!/usr/bin/env node
-
 var program = require('commander');
 
 program
-  .version('0.1.0')
-  .arguments('<cmd> [env]')
-  .action(function (cmd, env) {
-     cmdValue = cmd;
-     envValue = env;
-  });
+  .command('rm <dir>')
+  .option('-r, --recursive', 'Remove recursively')
+  .action(function (dir, cmdObj) {
+    console.log('remove ' + dir + (cmdObj.recursive ? ' recursively' : ''))
+  })
 
-program.parse(process.argv);
-
-if (typeof cmdValue === 'undefined') {
-   console.error('no command given!');
-   process.exit(1);
-}
-console.log('command:', cmdValue);
-console.log('environment:', envValue || "no environment given");
+program.parse(process.argv)
 ```
-Angled brackets (e.g. `<cmd>`) indicate required input. Square brackets (e.g. `[env]`) indicate optional input.
 
-## Git-style sub-commands
+A command's options on the command line are validated when the command is used. Any unknown options will be reported as an error. However, if an action-based command does not define an action, then the options are not validated.
+
+Configuration options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the command from the generated help output.
+
+### Git-style executable (sub)commands
+
+When `.command()` is invoked with a description argument, this tells commander that you're going to use separate executables for sub-commands, much like `git(1)` and other popular tools.
+Commander will search the executables in the directory of the entry script (like `./examples/pm`) with the name `program-subcommand`, like `pm-install`, `pm-search`.
+
+You handle the options for an executable (sub)command in the executable, and don't declare them at the top-level.
 
 ```js
 // file: ./examples/pm
@@ -324,18 +345,9 @@ program
   .parse(process.argv);
 ```
 
-When `.command()` is invoked with a description argument, no `.action(callback)` should be called to handle sub-commands, otherwise there will be an error. This tells commander that you're going to use separate executables for sub-commands, much like `git(1)` and other popular tools.  
-The commander will try to search the executables in the directory of the entry script (like `./examples/pm`) with the name `program-command`, like `pm-install`, `pm-search`.
-
-Options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the subcommand from the generated help output. Specifying `true` for `opts.isDefault` will run the subcommand if no other subcommand is specified.
+Configuration options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the command from the generated help output. Specifying `true` for `opts.isDefault` will run the subcommand if no other subcommand is specified.
 
 If the program is designed to be installed globally, make sure the executables have proper modes, like `755`.
-
-### `--harmony`
-
-You can enable `--harmony` option in two ways:
-* Use `#! /usr/bin/env node --harmony` in the sub-commands scripts. Note some os version don’t support this pattern.
-* Use the `--harmony` option when call the command, like `node --harmony examples/pm publish`. The `--harmony` option will be preserved when spawning sub-command process.
 
 ## Automated --help
 
@@ -484,6 +496,12 @@ If you use `ts-node` and  git-style sub-commands written as `.ts` files, you nee
 ```bash
 node -r ts-node/register pm.ts
 ```
+
+### Node options such as `--harmony`
+
+You can enable `--harmony` option in two ways:
+* Use `#! /usr/bin/env node --harmony` in the sub-commands scripts. (Note Windows does not support this pattern.)
+* Use the `--harmony` option when call the command, like `node --harmony examples/pm publish`. The `--harmony` option will be preserved when spawning sub-command process.
 
 ## Examples
 

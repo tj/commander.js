@@ -49,65 +49,45 @@ declare namespace local {
     version(str: string, flags?: string, description?: string): Command;
 
     /**
-     * Add command `name`.
-     *
-     * The `.action()` callback is invoked when the
-     * command `name` is specified via __ARGV__,
-     * and the remaining arguments are applied to the
-     * function for access.
-     *
-     * When the `name` is "*" an un-matched command
-     * will be passed as the first arg, followed by
-     * the rest of __ARGV__ remaining.
-     *
+     * Define a command, implemented using an action handler.
+     * 
+     * @remarks
+     * The command description is supplied using `.description`, not as a parameter to `.command`.
+     * 
      * @example
-     *      program
-     *        .version('0.0.1')
-     *        .option('-C, --chdir <path>', 'change the working directory')
-     *        .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
-     *        .option('-T, --no-tests', 'ignore test hook')
-     *
-     *      program
-     *        .command('setup')
-     *        .description('run remote setup commands')
-     *        .action(function() {
-     *          console.log('setup');
-     *        });
-     *
-     *      program
-     *        .command('exec <cmd>')
-     *        .description('run the given remote command')
-     *        .action(function(cmd) {
-     *          console.log('exec "%s"', cmd);
-     *        });
-     *
-     *      program
-     *        .command('teardown <dir> [otherDirs...]')
-     *        .description('run teardown commands')
-     *        .action(function(dir, otherDirs) {
-     *          console.log('dir "%s"', dir);
-     *          if (otherDirs) {
-     *            otherDirs.forEach(function (oDir) {
-     *              console.log('dir "%s"', oDir);
-     *            });
-     *          }
-     *        });
-     *
-     *      program
-     *        .command('*')
-     *        .description('deploy the given env')
-     *        .action(function(env) {
-     *          console.log('deploying "%s"', env);
-     *        });
-     *
-     *      program.parse(process.argv);
-     *
-     * @param {string} name
-     * @param {string} [desc] for git-style sub-commands
-     * @param {CommandOptions} [opts] command options
-     * @returns {Command} the new command
+     * ```ts
+     *  program
+     *    .command('clone <source> [destination]')
+     *    .description('clone a repository into a newly created directory')
+     *    .action((source, destination) => {
+     *      console.log('clone command called');
+     *    });
+     * ```
+     * 
+     * @param nameAndArgs - command name and arguments, args are  `<required>` or `[optional]` and last may also be `variadic...`
+     * @param opts - configuration options
+     * @returns new command
      */
-    command(name: string, desc?: string, opts?: commander.CommandOptions): Command;
+    command(nameAndArgs: string, opts?: commander.CommandOptions): Command;
+    /**
+     * Define a command, implemented in a separate executable file.
+     * 
+     * @remarks
+     * The command description is supplied as the second parameter to `.command`.
+     * 
+     * @example
+     * ```ts
+     *  program
+     *    .command('start <service>', 'start named service')
+     *    .command('stop [service]', 'stop named serice, or all if no name supplied');
+     * ```
+     * 
+     * @param nameAndArgs - command name and arguments, args are  `<required>` or `[optional]` and last may also be `variadic...`
+     * @param description - description of executable command
+     * @param opts - configuration options
+     * @returns top level command for chaining more command definitions
+     */
+    command(nameAndArgs: string, description: string, opts?: commander.CommandOptions): Command;
 
     /**
      * Define argument syntax for the top-level command.
