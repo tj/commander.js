@@ -45,7 +45,7 @@ function Option(flags, description) {
   this.flags = flags;
   this.required = flags.indexOf('<') >= 0;
   this.optional = flags.indexOf('[') >= 0;
-  this.bool = flags.indexOf('-no-') === -1;
+  this.negate = flags.indexOf('-no-') !== -1;
   flags = flags.split(/[ ,|]+/);
   if (flags.length > 1 && !/^[[<]/.test(flags[1])) this.short = flags.shift();
   this.long = flags.shift();
@@ -109,73 +109,41 @@ function Command(name) {
 }
 
 /**
- * Add command `name`.
+ * Define a command.
  *
- * The `.action()` callback is invoked when the
- * command `name` is specified via __ARGV__,
- * and the remaining arguments are applied to the
- * function for access.
- *
- * When the `name` is "*" an un-matched command
- * will be passed as the first arg, followed by
- * the rest of __ARGV__ remaining.
+ * There are two styles of command: pay attention to where to put the description.
  *
  * Examples:
  *
+ *      // Command implemented using action handler (description is supplied separately to `.command`)
  *      program
- *        .version('0.0.1')
- *        .option('-C, --chdir <path>', 'change the working directory')
- *        .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
- *        .option('-T, --no-tests', 'ignore test hook')
- *
- *      program
- *        .command('setup')
- *        .description('run remote setup commands')
- *        .action(function() {
- *          console.log('setup');
+ *        .command('clone <source> [destination]')
+ *        .description('clone a repository into a newly created directory')
+ *        .action((source, destination) => {
+ *          console.log('clone command called');
  *        });
  *
+ *      // Command implemented using separate executable file (description is second parameter to `.command`)
  *      program
- *        .command('exec <cmd>')
- *        .description('run the given remote command')
- *        .action(function(cmd) {
- *          console.log('exec "%s"', cmd);
- *        });
+ *        .command('start <service>', 'start named service')
+ *        .command('stop [service]', 'stop named serice, or all if no name supplied');
  *
- *      program
- *        .command('teardown <dir> [otherDirs...]')
- *        .description('run teardown commands')
- *        .action(function(dir, otherDirs) {
- *          console.log('dir "%s"', dir);
- *          if (otherDirs) {
- *            otherDirs.forEach(function (oDir) {
- *              console.log('dir "%s"', oDir);
- *            });
- *          }
- *        });
- *
- *      program
- *        .command('*')
- *        .description('deploy the given env')
- *        .action(function(env) {
- *          console.log('deploying "%s"', env);
- *        });
- *
- *      program.parse(process.argv);
-  *
- * @param {String} name
- * @param {String} [desc] for git-style sub-commands
- * @return {Command} the new command
+ * @param {string} nameAndArgs - command name and arguments, args are `<required>` or `[optional]` and last may also be `variadic...`
+ * @param {Object|string} [actionOptsOrExecDesc] - configuration options (for action), or description (for executable)
+ * @param {Object} [execOpts] - configuration options (for executable)
+ * @return {Command} returns new command for action handler, or top-level command for executable command
  * @api public
  */
 
-Command.prototype.command = function(name, desc, opts) {
+Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts) {
+  var desc = actionOptsOrExecDesc;
+  var opts = execOpts;
   if (typeof desc === 'object' && desc !== null) {
     opts = desc;
     desc = null;
   }
   opts = opts || {};
-  var args = name.split(/ +/);
+  var args = nameAndArgs.split(/ +/);
   var cmd = new Command(args.shift());
 
   if (desc) {
@@ -403,9 +371,9 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   }
 
   // preassign default value only for --no-*, [optional], or <required>
-  if (!option.bool || option.optional || option.required) {
+  if (option.negate || option.optional || option.required) {
     // when --no-foo we make sure default is true, unless a --foo option is already defined
-    if (!option.bool) {
+    if (option.negate) {
       var opts = self.opts();
       defaultValue = Object.prototype.hasOwnProperty.call(opts, name) ? opts[name] : true;
     }
@@ -429,17 +397,17 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
 
     // unassigned or bool
     if (typeof self[name] === 'boolean' || typeof self[name] === 'undefined') {
-      // if no value, bool true, and we have a default, then use it!
+      // if no value, negate false, and we have a default, then use it!
       if (val == null) {
-        self[name] = option.bool
-          ? defaultValue || true
-          : false;
+        self[name] = option.negate
+          ? false
+          : defaultValue || true;
       } else {
         self[name] = val;
       }
     } else if (val !== null) {
       // reassign
-      self[name] = option.bool ? val : false;
+      self[name] = option.negate ? false : val;
     }
   });
 
@@ -767,7 +735,7 @@ Command.prototype.parseOptions = function(argv) {
           ++i;
         }
         this.emit('option:' + option.name(), arg);
-      // bool
+      // flag
       } else {
         this.emit('option:' + option.name());
       }
@@ -1077,7 +1045,7 @@ Command.prototype.optionHelp = function() {
   // Append the help information
   return this.options.map(function(option) {
     return pad(option.flags, width) + '  ' + option.description +
-      ((option.bool && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
+      ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
   }).concat([pad(this._helpFlags, width) + '  ' + this._helpDescription])
     .join('\n');
 };
