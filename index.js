@@ -1201,7 +1201,7 @@ function pad(str, width) {
  * @api private
  */
 function wrap(str, width, indent) {
-  var regex = new RegExp('.{1,' + (width - 1) + '}([\\s\u200B]|$)|[^\\s\u200B]+?([\\s\u200B]|$)', 'g');;
+  var regex = new RegExp('.{1,' + (width - 1) + '}([\\s\u200B]|$)|[^\\s\u200B]+?([\\s\u200B]|$)', 'g');
   var lines = str.match(regex) || [];
   var result = lines.map(function(line, i) {
     if (line.slice(-1) === '\n') {
