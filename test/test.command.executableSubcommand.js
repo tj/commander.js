@@ -34,3 +34,10 @@ var bin = path.join(__dirname, './fixtures/pmlink')
 exec(bin + ' install', function (error, stdout, stderr) {
   stdout.should.equal('install\n');
 });
+
+// when `bin` is a symbol link pointing at a symbolic for mocking global install
+var bin = path.join(__dirname, './fixtures/another-dir/pm')
+// success case
+exec(bin + ' install', function (error, stdout, stderr) {
+  stdout.should.equal('install\n');
+});

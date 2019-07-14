@@ -377,6 +377,8 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   // default as 3rd arg
   if (typeof fn !== 'function') {
     if (fn instanceof RegExp) {
+      // This is a bit simplistic (especially no error messages), and probably better handled by caller using custom option processing.
+      // No longer documented in README, but still present for backwards compatibility.
       var regex = fn;
       fn = function(val, def) {
         var m = regex.exec(val);
@@ -525,14 +527,11 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
 
   // In case of globally installed, get the base dir where executable
   //  subcommand file should be located at
-  var baseDir,
-    link = fs.lstatSync(f).isSymbolicLink() ? fs.readlinkSync(f) : f;
+  var baseDir;
 
-  // when symbolink is relative path
-  if (link !== f && link.charAt(0) !== '/') {
-    link = path.join(dirname(f), link);
-  }
-  baseDir = dirname(link);
+  var resolvedLink = fs.realpathSync(f);
+
+  baseDir = dirname(resolvedLink);
 
   // prefer local `./<bin>` to bin in the $PATH
   var localBin = path.join(baseDir, bin);
@@ -544,6 +543,9 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     isExplicitJS = true;
   } else if (exists(localBin + '.ts')) {
     bin = localBin + '.ts';
+    isExplicitJS = true;
+  } else if (exists(localBin + '.mjs')) {
+    bin = localBin + '.mjs';
     isExplicitJS = true;
   } else if (exists(localBin)) {
     bin = localBin;
@@ -1143,7 +1145,11 @@ Command.prototype.outputHelp = function(cb) {
       return passthru;
     };
   }
-  process.stdout.write(cb(this.helpInformation()));
+  const cbOutput = cb(this.helpInformation());
+  if (typeof cbOutput !== 'string' && !Buffer.isBuffer(cbOutput)) {
+    throw new Error('outputHelp callback must return a string or a Buffer');
+  }
+  process.stdout.write(cbOutput);
   this.emit('--help');
 };
 
