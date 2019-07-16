@@ -653,8 +653,11 @@ Command.prototype.parseArgs = function(args, unknown) {
   if (args.length) {
     name = args[0];
     if (this.listeners('command:' + name).length) {
-      this.emit('command:' + args.shift(), args, unknown);
+      args.shift();
+      this.emit('before:command', name, args, unknown);
+      this.emit('command:' + name, args, unknown);
     } else {
+      this.emit('before:command', '*', args);
       this.emit('command:*', args);
     }
   } else {
@@ -667,6 +670,7 @@ Command.prototype.parseArgs = function(args, unknown) {
     }
     if (this.commands.length === 0 &&
         this._args.filter(function(a) { return a.required; }).length === 0) {
+      this.emit('before:command', '*');
       this.emit('command:*');
     }
   }
@@ -732,6 +736,7 @@ Command.prototype.parseOptions = function(argv) {
       if (option.required) {
         arg = argv[++i];
         if (arg == null) return this.optionMissingArgument(option);
+        this.emit('before:option', option.name(), arg);
         this.emit('option:' + option.name(), arg);
       // optional arg
       } else if (option.optional) {
@@ -741,9 +746,11 @@ Command.prototype.parseOptions = function(argv) {
         } else {
           ++i;
         }
+        this.emit('before:option', option.name(), arg);
         this.emit('option:' + option.name(), arg);
       // bool
       } else {
+        this.emit('before:option', option.name());
         this.emit('option:' + option.name());
       }
       continue;
