@@ -459,6 +459,7 @@ Command.prototype.parse = function(argv) {
   var result = this.parseArgs(this.args, parsed.unknown);
 
   // executable sub-commands
+  // (Debugging note for future: args[0] is not right if an action has been called)
   var name = result.args[0];
   var subCommand = null;
 
