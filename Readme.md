@@ -330,6 +330,7 @@ Configuration options can be passed with the call to `.command()`. Specifying `t
 
 When `.command()` is invoked with a description argument, this tells commander that you're going to use separate executables for sub-commands, much like `git(1)` and other popular tools.
 Commander will search the executables in the directory of the entry script (like `./examples/pm`) with the name `program-subcommand`, like `pm-install`, `pm-search`.
+You can specify a custom name with the `executableFile` configuration option.
 
 You handle the options for an executable (sub)command in the executable, and don't declare them at the top-level.
 
@@ -341,11 +342,13 @@ program
   .version('0.1.0')
   .command('install [name]', 'install one or more packages')
   .command('search [query]', 'search with optional query')
+  .command('update', 'update installed packages', {executableFile: 'myUpdateSubCommand'})
   .command('list', 'list packages installed', {isDefault: true})
   .parse(process.argv);
 ```
 
 Configuration options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the command from the generated help output. Specifying `true` for `opts.isDefault` will run the subcommand if no other subcommand is specified.
+Specifying a name with `executableFile` will override the default constructed name.
 
 If the program is designed to be installed globally, make sure the executables have proper modes, like `755`.
 

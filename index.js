@@ -157,7 +157,7 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
   cmd._helpDescription = this._helpDescription;
   cmd._helpShortFlag = this._helpShortFlag;
   cmd._helpLongFlag = this._helpLongFlag;
-  cmd._specifySubcommand = opts.subcommand;
+  cmd._executableFile = opts.executableFile; // Custom name for executable file
   this.commands.push(cmd);
   cmd.parseExpectedArgs(args);
   cmd.parent = this;
@@ -460,34 +460,37 @@ Command.prototype.parse = function(argv) {
 
   // executable sub-commands
   var name = result.args[0];
+  var subCommand = null;
 
-  var aliasCommand = null;
-  // check alias of sub commands
+  // Look for subcommand
   if (name) {
-    aliasCommand = this.commands.filter(function(command) {
+    subCommand = this.commands.find(function(command) {
+      return command._name === name;
+    });
+  }
+
+  // Look for alias
+  if (!subCommand && name) {
+    subCommand = this.commands.find(function(command) {
       return command.alias() === name;
-    })[0];
+    });
+    if (subCommand) {
+      name = subCommand._name;
+      args[0] = name;
+    }
   }
 
-  var specifySubcommand = null;
-  if (name) {
-    specifySubcommand = this.commands.filter(function(command) {
-      return command._name === name && command._specifySubcommand != null;
-    })[0];
+  // Look for default subcommand
+  if (!subCommand && this.defaultExecutable) {
+    name = this.defaultExecutable;
+    args.unshift(name);
+    subCommand = this.commands.find(function(command) {
+      return command._name === name;
+    });
   }
 
-  if (specifySubcommand) {
-    return this.executeSubCommand(argv, args, parsed.unknown, specifySubcommand._specifySubcommand);
-  } else if (this._execs[name] && typeof this._execs[name] !== 'function') {
-    return this.executeSubCommand(argv, args, parsed.unknown);
-  } else if (aliasCommand) {
-    // is alias of a subCommand
-    args[0] = aliasCommand._name;
-    return this.executeSubCommand(argv, args, parsed.unknown);
-  } else if (this.defaultExecutable) {
-    // use the default subcommand
-    args.unshift(this.defaultExecutable);
-    return this.executeSubCommand(argv, args, parsed.unknown);
+  if (this._execs[name] && typeof this._execs[name] !== 'function') {
+    return this.executeSubCommand(argv, args, parsed.unknown, subCommand ? subCommand._executableFile : undefined);
   }
 
   return result;
@@ -503,7 +506,7 @@ Command.prototype.parse = function(argv) {
  * @api private
  */
 
-Command.prototype.executeSubCommand = function(argv, args, unknown, specifySubcommand) {
+Command.prototype.executeSubCommand = function(argv, args, unknown, executableFile) {
   args = args.concat(unknown);
 
   if (!args.length) this.help();
@@ -515,19 +518,24 @@ Command.prototype.executeSubCommand = function(argv, args, unknown, specifySubco
     args[1] = this._helpLongFlag;
   }
 
+  var isExplicitJS = false; // Whether to use node to launch "executable"
+
   // executable
-  var f = argv[1];
-  // name of the subcommand, link `pm-install`
-  var bin = basename(f, path.extname(f)) + '-' + args[0];
-  if (specifySubcommand != null) {
-    bin = specifySubcommand;
+  var pm = argv[1];
+  // name of the subcommand, like `pm-install`
+  var bin = basename(pm, path.extname(pm)) + '-' + args[0];
+  if (executableFile != null) {
+    bin = executableFile;
+    // Check for same extensions as we scan for below so get consistent launch behaviour.
+    var executableExt = path.extname(executableFile);
+    isExplicitJS = executableExt === '.js' || executableExt === '.ts' || executableExt === '.mjs';
   }
 
   // In case of globally installed, get the base dir where executable
   //  subcommand file should be located at
   var baseDir;
 
-  var resolvedLink = fs.realpathSync(f);
+  var resolvedLink = fs.realpathSync(pm);
 
   baseDir = dirname(resolvedLink);
 
@@ -535,7 +543,6 @@ Command.prototype.executeSubCommand = function(argv, args, unknown, specifySubco
   var localBin = path.join(baseDir, bin);
 
   // whether bin file is a js script with explicit `.js` or `.ts` extension
-  var isExplicitJS = false;
   if (exists(localBin + '.js')) {
     bin = localBin + '.js';
     isExplicitJS = true;
