@@ -157,6 +157,7 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
   cmd._helpDescription = this._helpDescription;
   cmd._helpShortFlag = this._helpShortFlag;
   cmd._helpLongFlag = this._helpLongFlag;
+  cmd._specifySubcommand = opts.subcommand;
   this.commands.push(cmd);
   cmd.parseExpectedArgs(args);
   cmd.parent = this;
@@ -468,7 +469,16 @@ Command.prototype.parse = function(argv) {
     })[0];
   }
 
-  if (this._execs[name] && typeof this._execs[name] !== 'function') {
+  var specifySubcommand = null;
+  if (name) {
+    specifySubcommand = this.commands.filter(function(command) {
+      return command._name === name && command._specifySubcommand != null;
+    })[0];
+  }
+
+  if (specifySubcommand) {
+    return this.executeSubCommand(argv, args, parsed.unknown, specifySubcommand._specifySubcommand);
+  } else if (this._execs[name] && typeof this._execs[name] !== 'function') {
     return this.executeSubCommand(argv, args, parsed.unknown);
   } else if (aliasCommand) {
     // is alias of a subCommand
@@ -489,10 +499,11 @@ Command.prototype.parse = function(argv) {
  * @param {Array} argv
  * @param {Array} args
  * @param {Array} unknown
+ * @param {String} specifySubcommand
  * @api private
  */
 
-Command.prototype.executeSubCommand = function(argv, args, unknown) {
+Command.prototype.executeSubCommand = function(argv, args, unknown, specifySubcommand) {
   args = args.concat(unknown);
 
   if (!args.length) this.help();
@@ -508,6 +519,9 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   var f = argv[1];
   // name of the subcommand, link `pm-install`
   var bin = basename(f, path.extname(f)) + '-' + args[0];
+  if (specifySubcommand != null) {
+    bin = specifySubcommand;
+  }
 
   // In case of globally installed, get the base dir where executable
   //  subcommand file should be located at
