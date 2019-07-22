@@ -503,6 +503,11 @@ You can enable `--harmony` option in two ways:
 * Use `#! /usr/bin/env node --harmony` in the sub-commands scripts. (Note Windows does not support this pattern.)
 * Use the `--harmony` option when call the command, like `node --harmony examples/pm publish`. The `--harmony` option will be preserved when spawning sub-command process.
 
+### Node debugging
+
+If you are using the node inspector for [debugging](https://nodejs.org/en/docs/guides/debugging-getting-started/) git-style executable (sub)commands using `node -inspect` et al,
+the inspector port is incremented by 1 for the spawned subcommand.
+
 ## Examples
 
 ```js

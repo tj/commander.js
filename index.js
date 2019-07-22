@@ -542,7 +542,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     if (isExplicitJS) {
       args.unshift(bin);
       // add executable arguments to spawn
-      args = (process.execArgv || []).concat(args);
+      args = incrementNodeInspectorPort(process.execArgv).concat(args);
 
       proc = spawn(process.argv[0], args, { stdio: 'inherit', customFds: [0, 1, 2] });
     } else {
@@ -551,7 +551,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   } else {
     args.unshift(bin);
     // add executable arguments to spawn
-    args = (process.execArgv || []).concat(args);
+    args = incrementNodeInspectorPort(process.execArgv).concat(args);
     proc = spawn(process.execPath, args, { stdio: 'inherit' });
   }
 
@@ -1260,4 +1260,51 @@ function exists(file) {
   } catch (e) {
     return false;
   }
+}
+
+/**
+ * Scan arguments and increment port number for inspect calls (to avoid conflicts when spawning new command).
+ *
+ * @param {string[]} args - array of arguments from node.execArgv
+ * @returns {string[]}
+ * @api private
+ */
+
+function incrementNodeInspectorPort(args) {
+  // Testing for these options:
+  //  --inspect[=[host:]port]
+  //  --inspect-brk[=[host:]port]
+  //  --inspect-port=[host:]port
+  return args.map((arg) => {
+    var result = arg;
+    if (arg.indexOf('--inspect') === 0) {
+      var debugOption;
+      var debugHost = '127.0.0.1';
+      var debugPort = '9229';
+      var match;
+      if ((match = arg.match(/^(--inspect(-brk)?)$/)) !== null) {
+        // e.g. --inspect
+        debugOption = match[1];
+      } else if ((match = arg.match(/^(--inspect(-brk|-port)?)=([^:]+)$/)) !== null) {
+        debugOption = match[1];
+        if (/^\d+$/.test(match[3])) {
+          // e.g. --inspect=1234
+          debugPort = match[3];
+        } else {
+          // e.g. --inspect=localhost
+          debugHost = match[3];
+        }
+      } else if ((match = arg.match(/^(--inspect(-brk|-port)?)=([^:]+):(\d+)$/)) !== null) {
+        // e.g. --inspect=localhost:1234
+        debugOption = match[1];
+        debugHost = match[3];
+        debugPort = match[4];
+      }
+
+      if (debugOption && debugPort !== '0') {
+        result = `${debugOption}=${debugHost}:${parseInt(debugPort) + 1}`;
+      }
+    }
+    return result;
+  });
 }
