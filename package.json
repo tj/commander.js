@@ -26,13 +26,13 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "^10.11.3",
-    "eslint": "^5.16.0",
+    "@types/node": "^12.6.2",
+    "eslint": "^6.0.1",
     "should": "^13.2.3",
-    "sinon": "^6.3.4",
-    "standard": "^12.0.1",
-    "ts-node": "^7.0.1",
-    "typescript": "^2.9.2"
+    "sinon": "^7.3.2",
+    "standard": "^13.0.1",
+    "ts-node": "^8.3.0",
+    "typescript": "^3.5.3"
   },
   "typings": "typings/index.d.ts"
 }

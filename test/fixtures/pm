@@ -10,5 +10,7 @@ program
   .command('list', 'list packages installed')
   .command('listen', 'listen for supported signal events').alias('l')
   .command('publish', 'publish or update package').alias('p')
-  .command('default', 'default command', {noHelp: true, isDefault: true})
+  .command('default', 'default command', { noHelp: true, isDefault: true })
+  .command('specifyInstall', 'specify install subcommand', { executableFile: 'pm-install' })
+  .command('specifyPublish', 'specify publish subcommand', { executableFile: 'pm-publish' })
   .parse(process.argv);
