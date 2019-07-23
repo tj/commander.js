@@ -12,7 +12,7 @@ or after six months otherwise.
 
 ## Pull Requests
 
-Pull Requests will be considered.
+Pull Requests will be considered. Please submit pull requests against the develop branch.
 
 Follow the existing code style. Check the tests succeed, including lint.
 
