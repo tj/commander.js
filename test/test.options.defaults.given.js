@@ -1,6 +1,5 @@
 const program = require('../');
-// eslint-disable-next-line no-unused-vars
-const should = require('should');
+require('should');
 
 program
   .option('-a, --anchovies', 'Add anchovies?')

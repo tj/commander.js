@@ -1,6 +1,5 @@
 const commander = require('../');
-// eslint-disable-next-line no-unused-vars
-const should = require('should');
+require('should');
 
 // Test simple flag and negatable flag
 
