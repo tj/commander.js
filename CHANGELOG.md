@@ -1,6 +1,8 @@
 3.0.0
 =====
 
+  * Add option to specify executable file name (#999)
+  * Rework docs to clarify action vs executable commands (#990)
   * Change to use straight quotes around strings in error messages (like 'this' instead of `this') (#915)
   * Add TypeScript "reference types" for node (#974)
   * Add support for hyphen as an option argument in subcommands (#697)
