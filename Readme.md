@@ -100,8 +100,9 @@ cheese: stilton
 
 You can specify a boolean option long name with a leading `no-` to set the option value to false when used.
 Defined alone this also makes the option true by default.
-If you define `foo` first, adding `--no-foo` does not change the default value.
 
+If you define `--foo` first, adding `--no-foo` does not change the default value from what it would
+otherwise be. You can specify a default boolean value for a boolean flag and it can be overridden on command line.
 
 ```js
 const program = require('commander');

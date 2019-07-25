@@ -371,8 +371,8 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     }
   }
 
-  // preassign default value only for --no-*, [optional], or <required>
-  if (option.negate || option.optional || option.required) {
+  // preassign default value for --no-*, [optional], <required>, or plain flag if boolean value
+  if (option.negate || option.optional || option.required || typeof defaultValue === 'boolean') {
     // when --no-foo we make sure default is true, unless a --foo option is already defined
     if (option.negate) {
       var opts = self.opts();
@@ -396,7 +396,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
       val = fn(val, self[name] === undefined ? defaultValue : self[name]);
     }
 
-    // unassigned or bool
+    // unassigned or boolean value
     if (typeof self[name] === 'boolean' || typeof self[name] === 'undefined') {
       // if no value, negate false, and we have a default, then use it!
       if (val == null) {

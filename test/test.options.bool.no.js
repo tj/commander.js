@@ -1,31 +1,63 @@
-/**
- * Module dependencies.
- */
+const commander = require('../');
+require('should');
 
-var program = require('../')
-  , should = require('should');
+// Test combination of flag and --no-flag
+// (negatable flag on its own is tested in test.options.bool.js)
 
-program
-  .version('0.0.1')
-  .option('-e, --everything', 'add all of the toppings')
-  .option('-p, --pepper', 'add pepper')
-  .option('-P, --no-pepper', 'remove pepper')
-  .option('-c|--no-cheese', 'remove cheese');
+function flagProgram(defaultValue) {
+  const program = new commander.Command();
+  program
+    .option('-p, --pepper', 'add pepper', defaultValue)
+    .option('-P, --no-pepper', 'remove pepper');
+  return program;
+}
 
-program.parse(['node', 'test']);
-program.should.not.have.property('everything');
-program.should.not.have.property('pepper');
-program.cheese.should.be.true();
+// Flag with no default, normal usage.
 
-program.parse(['node', 'test', '--everything']);
-program.everything.should.be.true();
-program.should.not.have.property('pepper');
-program.cheese.should.be.true();
+const programNoDefaultNoOptions = flagProgram();
+programNoDefaultNoOptions.parse(['node', 'test']);
+programNoDefaultNoOptions.should.not.have.property('pepper');
 
-program.parse(['node', 'test', '--pepper']);
-program.pepper.should.be.true();
-program.cheese.should.be.true();
+const programNoDefaultWithFlag = flagProgram();
+programNoDefaultWithFlag.parse(['node', 'test', '--pepper']);
+programNoDefaultWithFlag.pepper.should.be.true();
 
-program.parse(['node', 'test', '--everything', '--no-pepper', '--no-cheese']);
-program.pepper.should.be.false();
-program.cheese.should.be.false();
+const programNoDefaultWithNegFlag = flagProgram();
+programNoDefaultWithNegFlag.parse(['node', 'test', '--no-pepper']);
+programNoDefaultWithNegFlag.pepper.should.be.false();
+
+// Flag with default, say from an environment variable.
+
+const programTrueDefaultNoOptions = flagProgram(true);
+programTrueDefaultNoOptions.parse(['node', 'test']);
+programTrueDefaultNoOptions.pepper.should.be.true();
+
+const programTrueDefaultWithFlag = flagProgram(true);
+programTrueDefaultWithFlag.parse(['node', 'test', '-p']);
+programTrueDefaultWithFlag.pepper.should.be.true();
+
+const programTrueDefaultWithNegFlag = flagProgram(true);
+programTrueDefaultWithNegFlag.parse(['node', 'test', '-P']);
+programTrueDefaultWithNegFlag.pepper.should.be.false();
+
+const programFalseDefaultNoOptions = flagProgram(false);
+programFalseDefaultNoOptions.parse(['node', 'test']);
+programFalseDefaultNoOptions.pepper.should.be.false();
+
+const programFalseDefaultWithFlag = flagProgram(false);
+programFalseDefaultWithFlag.parse(['node', 'test', '-p']);
+programFalseDefaultWithFlag.pepper.should.be.true();
+
+const programFalseDefaultWithNegFlag = flagProgram(false);
+programFalseDefaultWithNegFlag.parse(['node', 'test', '-P']);
+programFalseDefaultWithNegFlag.pepper.should.be.false();
+
+// Flag specified both ways, last one wins.
+
+const programNoYes = flagProgram();
+programNoYes.parse(['node', 'test', '--no-pepper', '--pepper']);
+programNoYes.pepper.should.be.true();
+
+const programYesNo = flagProgram();
+programYesNo.parse(['node', 'test', '--pepper', '--no-pepper']);
+programYesNo.pepper.should.be.false();

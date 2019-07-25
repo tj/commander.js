@@ -1,15 +1,22 @@
-/**
- * Module dependencies.
- */
+const commander = require('../');
+require('should');
 
-var program = require('../')
-  , should = require('should');
+// Test simple flag and negatable flag
 
-program
-  .version('0.0.1')
-  .option('-p, --pepper', 'add pepper')
-  .option('-c, --no-cheese', 'remove cheese');
+function simpleFlagProgram() {
+  const program = new commander.Command();
+  program
+    .option('-p, --pepper', 'add pepper')
+    .option('-C, --no-cheese', 'remove cheese');
+  return program;
+}
 
-program.parse(['node', 'test', '--pepper']);
-program.pepper.should.be.true();
-program.cheese.should.be.true();
+const simpleFlagNoOptions = simpleFlagProgram();
+simpleFlagNoOptions.parse(['node', 'test']);
+simpleFlagNoOptions.should.not.have.property('pepper');
+simpleFlagNoOptions.cheese.should.be.true();
+
+const simpleFlagLong = simpleFlagProgram();
+simpleFlagLong.parse(['node', 'test', '--pepper', '--no-cheese']);
+simpleFlagLong.pepper.should.be.true();
+simpleFlagLong.cheese.should.be.false();
