@@ -17,6 +17,7 @@
     * can now define both `--foo` and `--no-foo`
     * custom event listeners: `--no-foo` on cli now emits `option:no-foo` (previously `option:foo`)
     * default value: defining `--no-foo` after defining `--foo` leaves the default value unchanged (previously set it to false)
+    * allow boolean default value, such as from environment (#987)
   * Increment inspector port for spawned subcommands (#991)
   * Change docs for `.command` to contrast action handler vs git-style executable. TypeScript now uses overloaded function. (#938)
 
