@@ -20,8 +20,3 @@ const simpleFlagLong = simpleFlagProgram();
 simpleFlagLong.parse(['node', 'test', '--pepper', '--no-cheese']);
 simpleFlagLong.pepper.should.be.true();
 simpleFlagLong.cheese.should.be.false();
-
-const simpleFlagShort = simpleFlagProgram();
-simpleFlagShort.parse(['node', 'test', '-p', '-C']);
-simpleFlagShort.pepper.should.be.true();
-simpleFlagShort.cheese.should.be.false();
