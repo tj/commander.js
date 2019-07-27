@@ -565,6 +565,6 @@ More Demos can be found in the [examples](https://github.com/tj/commander.js/tre
 
 ## Support
 
-[Get supported commander with the Tidelift Subscription](https://tidelift.com/subscription/pkg/npm-commander?utm_source=npm-commander&utm_medium=referral&utm_campaign=readme)
+[Professionally supported commander is now available](https://tidelift.com/subscription/pkg/npm-commander?utm_source=npm-commander&utm_medium=referral&utm_campaign=readme)
 
 Tidelift gives software development teams a single source for purchasing and maintaining their software, with professional grade assurances from the experts who know it best, while seamlessly integrating with existing tools.
