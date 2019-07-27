@@ -1,29 +1,42 @@
-3.0.0-0 Prerelease
-=====
+3.0.0-0 Prerelease / 2019-07-28
+==============================
 
-  * Add option to specify executable file name (#999)
+  * Add option to specify executable file name ([#999])
     * e.g. `.command('clone', 'clone description', { executableFile: 'myClone' })`
-  * Change docs for `.command` to contrast action handler vs git-style executable. TypeScript now uses overloaded function. (#938 #990)
-  * Change to use straight quotes around strings in error messages (like 'this' instead of `this') (#915)
-  * Add TypeScript "reference types" for node (#974)
-  * Add support for hyphen as an option argument in subcommands (#697)
-  * Add support for a short option flag and its value to be concatenated for action handler subcommands (#599)
+  * Change docs for `.command` to contrast action handler vs git-style executable. TypeScript now uses overloaded function. ([#938] [#990])
+  * Change to use straight quotes around strings in error messages (like 'this' instead of `this') ([#915])
+  * Add TypeScript "reference types" for node ([#974])
+  * Add support for hyphen as an option argument in subcommands ([#697])
+  * Add support for a short option flag and its value to be concatenated for action handler subcommands ([#599])
     * e.g. `-p 80` can also be supplied as `-p80`
-  * Add executable arguments to spawn in win32, for git-style executables (#611)
+  * Add executable arguments to spawn in win32, for git-style executables ([#611])
     * e.g. `node --harmony myCommand.js clone`
-  * Add parent command as prefix of subcommand in help (#980)
-  * Add optional custom description to `.version` (#963)
+  * Add parent command as prefix of subcommand in help ([#980])
+  * Add optional custom description to `.version` ([#963])
     * e.g. `program.version('0.0.1', '-v, --vers', 'output the current version')`
-  * Add `.helpOption(flags, description)` routine to customise help flags and description (#963)
+  * Add `.helpOption(flags, description)` routine to customise help flags and description ([#963])
     * e.g. `.helpOption('-e, --HELP', 'read more information')`
-  * Fix behavior of --no-* options (#795)
+  * Fix behavior of --no-* options ([#795])
     * can now define both `--foo` and `--no-foo`
     * custom event listeners: `--no-foo` on cli now emits `option:no-foo` (previously `option:foo`)
     * default value: defining `--no-foo` after defining `--foo` leaves the default value unchanged (previously set it to false)
-    * allow boolean default value, such as from environment (#987)
-  * Increment inspector port for spawned subcommands (#991)
+    * allow boolean default value, such as from environment ([#987])
+  * Increment inspector port for spawned subcommands ([#991])
     * e.g. `node --inspect myCommand.js clone`
  
+ [#599]: https://github.com/tj/commander.js/issues/599
+ [#611]: https://github.com/tj/commander.js/issues/611
+ [#697]: https://github.com/tj/commander.js/issues/697
+ [#795]: https://github.com/tj/commander.js/issues/795
+ [#915]: https://github.com/tj/commander.js/issues/915
+ [#938]: https://github.com/tj/commander.js/issues/938
+ [#963]: https://github.com/tj/commander.js/issues/963
+ [#974]: https://github.com/tj/commander.js/issues/974
+ [#980]: https://github.com/tj/commander.js/issues/980
+ [#987]: https://github.com/tj/commander.js/issues/987
+ [#990]: https://github.com/tj/commander.js/issues/990
+ [#991]: https://github.com/tj/commander.js/issues/991
+ [#999]: https://github.com/tj/commander.js/issues/999
 
 2.20.0 / 2019-04-02
 ==================
