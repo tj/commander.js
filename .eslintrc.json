@@ -1,5 +1,6 @@
 {
-  "extends": "standard",
+  "extends": ["standard", "plugin:jest/recommended"],
+  "plugins": ["jest"],
   "rules": {
     "one-var": "off",
     "semi": ["error", "always"],
