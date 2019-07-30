@@ -103,7 +103,7 @@ function Command(name) {
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
-  this._optionValues = Object.create(null); // pure object as map
+  this.optMap = new Map();
   this._storeOptionsAsProperties = true; // legacy behaviour by default
 }
 
@@ -403,9 +403,9 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     if (!option.bool) defaultValue = true;
     // preassign only if we have a default
     if (defaultValue !== undefined) {
-      self._optionValues[name] = defaultValue;
+      self.optMap.set(name, defaultValue);
       if (self._storeOptionsAsProperties) {
-        self[name] = self._optionValues[name];
+        self[name] = defaultValue;
       }
       option.defaultValue = defaultValue;
     }
@@ -419,27 +419,27 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   this.on('option:' + oname, function(val) {
     // coercion
     if (val !== null && fn) {
-      val = fn(val, self._optionValues[name] === undefined ? defaultValue : self._optionValues[name]);
+      val = fn(val, self.optMap.has(name) ? self.optMap.get(name) : defaultValue);
     }
 
     // unassigned or bool
-    if (typeof self._optionValues[name] === 'boolean' || typeof self._optionValues[name] === 'undefined') {
+    if (typeof self.optMap.get(name) === 'boolean' || !self.optMap.has(name)) {
       // if no value, bool true, and we have a default, then use it!
       if (val == null) {
-        self._optionValues[name] = option.bool
+        self.optMap.set(name, option.bool
           ? defaultValue || true
-          : false;
+          : false);
       } else {
-        self._optionValues[name] = val;
+        self.optMap.set(name, val);
       }
       if (self._storeOptionsAsProperties) {
-        self[name] = self._optionValues[name];
+        self[name] = self.optMap.get(name);
       }
     } else if (val !== null) {
       // reassign
-      self._optionValues[name] = val;
+      self.optMap.set(name, val);
       if (self._storeOptionsAsProperties) {
-        self[name] = self._optionValues[name];
+        self[name] = val;
       }
     }
   });
@@ -798,46 +798,24 @@ Command.prototype.parseOptions = function(argv) {
 };
 
 /**
- * Return whether an option has been specified (or has a default value)
- *
- * @param {String} optionKey
- * @return {Boolean}
- * @api public
- */
-Command.prototype.get = function(optionKey) {
-  return this._optionValues[optionKey];
-};
-
-/**
- * Return specified option (or default value)
- *
- * @param {String} optionKey
- * @return {Object}
- * @api public
- */
-Command.prototype.has = function(optionKey) {
-  return (this._optionValues[optionKey] !== undefined);
-};
-
-/**
  * Return an object containing options as key-value pairs
  *
  * @return {Object}
  * @api public
  */
 Command.prototype.opts = function() {
-  if (!this._storeOptionsAsProperties) {
-    return this._optionValues;
-  } else {
-    var result = {},
-      len = this.options.length;
+  var result = {};
 
-    for (var i = 0; i < len; i++) {
-      var key = this.options[i].attributeName();
-      result[key] = key === this._versionOptionName ? this._version : this._optionValues[key];
-    }
-    return result;
+  for (const [key, val] of this.optMap.entries()) {
+    result[key] = val;
   }
+
+  // Preserve legacy behaviour that version added into result.
+  if (this._versionOptionName) {
+    result[this._versionOptionName] = this._version;
+  }
+
+  return result;
 };
 
 /**
