@@ -3,7 +3,8 @@
 
   * Add option to specify executable file name ([#999])
     * e.g. `.command('clone', 'clone description', { executableFile: 'myClone' })`
-  * Change docs for `.command` to contrast action handler vs git-style executable. TypeScript now uses overloaded function. ([#938] [#990])
+  * Change docs for `.command` to contrast action handler vs git-style executable. ([#938] [#990])
+  * **Breaking** Change TypeScript to use overloaded function for `.command`. ([#938] [#990])
   * Change to use straight quotes around strings in error messages (like 'this' instead of `this') ([#915])
   * Add TypeScript "reference types" for node ([#974])
   * Add support for hyphen as an option argument in subcommands ([#697])
@@ -18,12 +19,34 @@
     * e.g. `.helpOption('-e, --HELP', 'read more information')`
   * Fix behavior of --no-* options ([#795])
     * can now define both `--foo` and `--no-foo`
-    * custom event listeners: `--no-foo` on cli now emits `option:no-foo` (previously `option:foo`)
-    * default value: defining `--no-foo` after defining `--foo` leaves the default value unchanged (previously set it to false)
+    * **Breaking** custom event listeners: `--no-foo` on cli now emits `option:no-foo` (previously `option:foo`)
+    * **Breaking** default value: defining `--no-foo` after defining `--foo` leaves the default value unchanged (previously set it to false)
     * allow boolean default value, such as from environment ([#987])
   * Increment inspector port for spawned subcommands ([#991])
     * e.g. `node --inspect myCommand.js clone`
- 
+
+Example Breaking Changes
+------------------------
+
+The custom event for a negated option like `--no-foo` is `option:no-foo` (previously `option:foo`).
+
+```js
+program
+  .option('--no-foo')
+  .on('option:no-foo', () => {
+    console.log('removing foo');
+  });
+```
+
+When using TypeScript, adding a command does not allow an explicit `undefined` for an unwanted executable description (e.g
+for a command with an action handler).
+
+```js
+program
+  .command('action1', undefined, { noHelp: true }) // No longer valid
+  .command('action2', { noHelp: true }) // Correct
+```
+
  [#599]: https://github.com/tj/commander.js/issues/599
  [#611]: https://github.com/tj/commander.js/issues/611
  [#697]: https://github.com/tj/commander.js/issues/697
