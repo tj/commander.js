@@ -39,7 +39,7 @@ program
 ```
 
 When using TypeScript, adding a command does not allow an explicit `undefined` for an unwanted executable description (e.g
-for a command with an action handler.)
+for a command with an action handler).
 
 ```js
 program
