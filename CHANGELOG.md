@@ -1,5 +1,5 @@
-3.0.0-0 Prerelease / 2019-07-28
-==============================
+3.0.0 / 2019-08-??
+=================
 
   * Add option to specify executable file name ([#999])
     * e.g. `.command('clone', 'clone description', { executableFile: 'myClone' })`
@@ -60,6 +60,11 @@ program
  [#990]: https://github.com/tj/commander.js/issues/990
  [#991]: https://github.com/tj/commander.js/issues/991
  [#999]: https://github.com/tj/commander.js/issues/999
+
+3.0.0-0 Prerelease / 2019-07-28
+==============================
+
+(Released as 3.0.0)
 
 2.20.0 / 2019-04-02
 ==================
