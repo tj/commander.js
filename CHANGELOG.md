@@ -1,4 +1,4 @@
-3.0.0 / 2019-08-??
+3.0.0 / 2019-08-08
 =================
 
   * Add option to specify executable file name ([#999])
