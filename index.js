@@ -529,7 +529,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown, executableFi
     bin = executableFile;
     // Check for same extensions as we scan for below so get consistent launch behaviour.
     var executableExt = path.extname(executableFile);
-    isExplicitJS = executableExt === '.js' || executableExt === '.ts' || executableExt === '.mjs';
+    isExplicitJS = ['.js', '.ts', '.mjs'].indexOf(executableExt) !== -1;
   }
 
   // In case of globally installed, get the base dir where executable
@@ -544,17 +544,16 @@ Command.prototype.executeSubCommand = function(argv, args, unknown, executableFi
   var localBin = path.join(baseDir, bin);
 
   // whether bin file is a js script with explicit `.js` or `.ts` extension
-  if (exists(localBin + '.js')) {
-    bin = localBin + '.js';
-    isExplicitJS = true;
-  } else if (exists(localBin + '.ts')) {
-    bin = localBin + '.ts';
-    isExplicitJS = true;
-  } else if (exists(localBin + '.mjs')) {
-    bin = localBin + '.mjs';
-    isExplicitJS = true;
-  } else if (exists(localBin)) {
-    bin = localBin;
+  if (exists(localBin)) {
+  	bin = localBin;
+  } else {
+    ['js', 'ts', 'mjs'].some(function(extension) {
+  	  if (exists(localBin + extension)) {
+  	    bin = localBin + extension;
+  	    isExplicitJS = true;
+  	    return true;
+  	  }
+  	});
   }
 
   args = args.slice(1);
