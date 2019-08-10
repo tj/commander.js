@@ -7,9 +7,39 @@
 
 The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/commander-rb/commander).
 
+- [Commander.js](#commanderjs)
+  - [Installation](#installation)
+  - [Declaring _program_ variable](#declaring-program-variable)
+  - [Options](#options)
+    - [Common option types, boolean and value](#common-option-types-boolean-and-value)
+    - [Default option value](#default-option-value)
+    - [Other option types, negatable boolean and flag|value](#other-option-types-negatable-boolean-and-flagvalue)
+    - [Custom option processing](#custom-option-processing)
+    - [Version option](#version-option)
+  - [Commands](#commands)
+    - [Specify the argument syntax](#specify-the-argument-syntax)
+    - [Action handler (sub)commands](#action-handler-subcommands)
+    - [Git-style executable (sub)commands](#git-style-executable-subcommands)
+  - [Automated --help](#automated---help)
+    - [Custom help](#custom-help)
+    - [.usage and .name](#usage-and-name)
+    - [.outputHelp(cb)](#outputhelpcb)
+    - [.helpOption(flags, description)](#helpoptionflags-description)
+    - [.help(cb)](#helpcb)
+  - [Custom event listeners](#custom-event-listeners)
+  - [Bits and pieces](#bits-and-pieces)
+    - [TypeScript](#typescript)
+    - [Node options such as `--harmony`](#node-options-such-as---harmony)
+    - [Node debugging](#node-debugging)
+  - [Examples](#examples)
+  - [License](#license)
+  - [Support](#support)
+
 ## Installation
 
-    $ npm install commander
+```bash
+npm install commander
+```
 
 ## Declaring _program_ variable
 
@@ -28,7 +58,6 @@ For larger programs which may use commander in multiple ways, including unit tes
  const program = new commander.Command();
  program.version('0.0.1');
  ```
-
 
 ## Options
 
@@ -119,7 +148,7 @@ console.log(`You ordered a pizza with ${sauceStr} and ${cheeseStr}`);
 ```
 
 ```bash
-$ pizza-options 
+$ pizza-options
 You ordered a pizza with sauce and mozzarella cheese
 $ pizza-options --sauce
 error: unknown option '--sauce'
@@ -155,7 +184,7 @@ add cheese type mozzarella
 
 ### Custom option processing
 
-You may specify a function to do custom processing of option values. The callback function receives two parameters, the user specified value and the 
+You may specify a function to do custom processing of option values. The callback function receives two parameters, the user specified value and the
 previous value for the option. It returns the new value for the option.
 
 This allows you to coerce the option value to the desired type, or accumulate values, or do entirely custom processing.
@@ -259,7 +288,6 @@ program
 
 You use `.arguments` to specify the arguments for the top-level command, and for subcommands they are included in the `.command` call. Angled brackets (e.g. `<required>`) indicate required input. Square brackets (e.g. `[optional]`) indicate optional input.
 
-
 ```js
 var program = require('commander');
 
@@ -357,7 +385,7 @@ If the program is designed to be installed globally, make sure the executables h
 
  The help information is auto-generated based on the information commander already knows about your program, so the following `--help` info is for free:
 
-```  
+```bash
 $ ./examples/pizza --help
 Usage: pizza [options]
 
@@ -373,7 +401,7 @@ Options:
   -h, --help           output usage information
 ```
 
-## Custom help
+### Custom help
 
  You can display arbitrary `-h, --help` information
  by listening for "--help". Commander will automatically
@@ -384,10 +412,6 @@ Options:
 
 ```js
 #!/usr/bin/env node
-
-/**
- * Module dependencies.
- */
 
 var program = require('commander');
 
@@ -414,7 +438,7 @@ console.log('stuff');
 
 Yields the following help output when `node script-name.js -h` or `node script-name.js --help` are run:
 
-```
+```Text
 Usage: custom-help [options]
 
 Options:
@@ -429,7 +453,24 @@ Examples:
   $ custom-help -h
 ```
 
-## .outputHelp(cb)
+### .usage and .name
+
+These allow you to customise the usage description in the first line of the help. The name is otherwise
+deduced from the (full) program arguments. Given:
+
+```js
+program
+  .name("my-command")
+  .usage("[global options] command")
+```
+
+The help will start with:
+
+```Text
+Usage: my-command [global options] command
+```
+
+### .outputHelp(cb)
 
 Output help information without exiting.
 Optional callback cb allows post-processing of help text before it is displayed.
@@ -454,7 +495,7 @@ function make_red(txt) {
 }
 ```
 
-## .helpOption(flags, description)
+### .helpOption(flags, description)
 
   Override the default help flags and description.
 
@@ -463,13 +504,13 @@ program
   .helpOption('-e, --HELP', 'read more information');
 ```
 
-## .help(cb)
+### .help(cb)
 
   Output help information and exit immediately.
   Optional callback cb allows post-processing of help text before it is displayed.
 
-
 ## Custom event listeners
+
  You can execute custom actions by listening to command and option events.
 
 ```js
@@ -504,8 +545,9 @@ node -r ts-node/register pm.ts
 ### Node options such as `--harmony`
 
 You can enable `--harmony` option in two ways:
-* Use `#! /usr/bin/env node --harmony` in the sub-commands scripts. (Note Windows does not support this pattern.)
-* Use the `--harmony` option when call the command, like `node --harmony examples/pm publish`. The `--harmony` option will be preserved when spawning sub-command process.
+
+- Use `#! /usr/bin/env node --harmony` in the sub-commands scripts. (Note Windows does not support this pattern.)
+- Use the `--harmony` option when call the command, like `node --harmony examples/pm publish`. The `--harmony` option will be preserved when spawning sub-command process.
 
 ### Node debugging
 
