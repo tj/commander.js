@@ -545,15 +545,15 @@ Command.prototype.executeSubCommand = function(argv, args, unknown, executableFi
 
   // whether bin file is a js script with explicit `.js` or `.ts` extension
   if (exists(localBin)) {
-  	bin = localBin;
+    bin = localBin;
   } else {
     ['js', 'ts', 'mjs'].some(function(extension) {
-  	  if (exists(localBin + extension)) {
-  	    bin = localBin + extension;
-  	    isExplicitJS = true;
-  	    return true;
-  	  }
-  	});
+      if (exists(localBin + extension)) {
+        bin = localBin + extension;
+        isExplicitJS = true;
+        return true;
+      }
+    });
   }
 
   args = args.slice(1);
