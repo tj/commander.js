@@ -2,12 +2,12 @@
  * Module dependencies.
  */
 
-var EventEmitter = require('events').EventEmitter;
-var spawn = require('child_process').spawn;
-var path = require('path');
-var dirname = path.dirname;
-var basename = path.basename;
-var fs = require('fs');
+const EventEmitter = require('events').EventEmitter;
+const spawn = require('child_process').spawn;
+const path = require('path');
+const dirname = path.dirname;
+const basename = path.basename;
+const fs = require('fs');
 
 /**
  * Inherit `Command` from `EventEmitter.prototype`.
@@ -128,7 +128,7 @@ function Command(name) {
  *        .command('start <service>', 'start named service')
  *        .command('stop [service]', 'stop named serice, or all if no name supplied');
  *
- * @param {string} nameAndArgs - command name and arguments, args are `<required>` or `[optional]` and last may also be `variadic...`
+ * @param {string} nameAndArgs - command name and arguments, args are `<required>` or `[optional]` and last may also be `letiadic...`
  * @param {Object|string} [actionOptsOrExecDesc] - configuration options (for action), or description (for executable)
  * @param {Object} [execOpts] - configuration options (for executable)
  * @return {Command} returns new command for action handler, or top-level command for executable command
@@ -136,15 +136,15 @@ function Command(name) {
  */
 
 Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts) {
-  var desc = actionOptsOrExecDesc;
-  var opts = execOpts;
+  let desc = actionOptsOrExecDesc;
+  let opts = execOpts;
   if (typeof desc === 'object' && desc !== null) {
     opts = desc;
     desc = null;
   }
   opts = opts || {};
-  var args = nameAndArgs.split(/ +/);
-  var cmd = new Command(args.shift());
+  const args = nameAndArgs.split(/ +/);
+  const cmd = new Command(args.shift());
 
   if (desc) {
     cmd.description(desc);
@@ -199,12 +199,12 @@ Command.prototype.addImplicitHelpCommand = function() {
 
 Command.prototype.parseExpectedArgs = function(args) {
   if (!args.length) return;
-  var self = this;
-  args.forEach(function(arg) {
-    var argDetails = {
+  let self = this;
+  args.forEach(arg => {
+    let argDetails = {
       required: false,
       name: '',
-      variadic: false
+      letiadic: false
     };
 
     switch (arg[0]) {
@@ -218,7 +218,7 @@ Command.prototype.parseExpectedArgs = function(args) {
     }
 
     if (argDetails.name.length > 3 && argDetails.name.slice(-3) === '...') {
-      argDetails.variadic = true;
+      argDetails.letiadic = true;
       argDetails.name = argDetails.name.slice(0, -3);
     }
     if (argDetails.name) {
@@ -246,13 +246,13 @@ Command.prototype.parseExpectedArgs = function(args) {
  */
 
 Command.prototype.action = function(fn) {
-  var self = this;
-  var listener = function(args, unknown) {
+  const self = this;
+  let listener = (args, unknown) => {
     // Parse any so-far unknown options
     args = args || [];
     unknown = unknown || [];
 
-    var parsed = self.parseOptions(unknown);
+    let parsed = self.parseOptions(unknown);
 
     // Output help if necessary
     outputHelpIfNecessary(self, parsed.unknown);
@@ -267,12 +267,12 @@ Command.prototype.action = function(fn) {
     // Leftover arguments need to be pushed back. Fixes issue #56
     if (parsed.args.length) args = parsed.args.concat(args);
 
-    self._args.forEach(function(arg, i) {
+    self._args.forEach((arg, i) => {
       if (arg.required && args[i] == null) {
         self.missingArgument(arg.name);
-      } else if (arg.variadic) {
+      } else if (arg.letiadic) {
         if (i !== self._args.length - 1) {
-          self.variadicArgNotLast(arg.name);
+          self.letiadicArgNotLast(arg.name);
         }
 
         args[i] = args.splice(i);
@@ -290,8 +290,8 @@ Command.prototype.action = function(fn) {
 
     fn.apply(self, args);
   };
-  var parent = this.parent || this;
-  var name = parent === this ? '*' : this._name;
+  const parent = this.parent || this;
+  const name = parent === this ? '*' : this._name;
   parent.on('command:' + name, listener);
   if (this._alias) parent.on('command:' + this._alias, listener);
   return this;
@@ -350,7 +350,7 @@ Command.prototype.action = function(fn) {
  */
 
 Command.prototype.option = function(flags, description, fn, defaultValue) {
-  var self = this,
+  let self = this,
     option = new Option(flags, description),
     oname = option.name(),
     name = option.attributeName();
@@ -360,9 +360,9 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     if (fn instanceof RegExp) {
       // This is a bit simplistic (especially no error messages), and probably better handled by caller using custom option processing.
       // No longer documented in README, but still present for backwards compatibility.
-      var regex = fn;
-      fn = function(val, def) {
-        var m = regex.exec(val);
+      let regex = fn;
+      fn = (val, def) => {
+        let m = regex.exec(val);
         return m ? m[0] : def;
       };
     } else {
@@ -375,7 +375,7 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   if (option.negate || option.optional || option.required || typeof defaultValue === 'boolean') {
     // when --no-foo we make sure default is true, unless a --foo option is already defined
     if (option.negate) {
-      var opts = self.opts();
+      let opts = self.opts();
       defaultValue = Object.prototype.hasOwnProperty.call(opts, name) ? opts[name] : true;
     }
     // preassign only if we have a default
@@ -452,29 +452,25 @@ Command.prototype.parse = function(argv) {
   }
 
   // process argv
-  var normalized = this.normalize(argv.slice(2));
-  var parsed = this.parseOptions(normalized);
-  var args = this.args = parsed.args;
+  let normalized = this.normalize(argv.slice(2));
+  let parsed = this.parseOptions(normalized);
+  let args = this.args = parsed.args;
 
-  var result = this.parseArgs(this.args, parsed.unknown);
+  let result = this.parseArgs(this.args, parsed.unknown);
 
   // executable sub-commands
   // (Debugging note for future: args[0] is not right if an action has been called)
-  var name = result.args[0];
-  var subCommand = null;
+  let name = result.args[0];
+  let subCommand = null;
 
   // Look for subcommand
   if (name) {
-    subCommand = this.commands.find(function(command) {
-      return command._name === name;
-    });
+    subCommand = this.commands.find(command => command._name === name);
   }
 
   // Look for alias
   if (!subCommand && name) {
-    subCommand = this.commands.find(function(command) {
-      return command.alias() === name;
-    });
+    subCommand = this.commands.find(command => command.alias() === name);
     if (subCommand) {
       name = subCommand._name;
       args[0] = name;
@@ -485,9 +481,7 @@ Command.prototype.parse = function(argv) {
   if (!subCommand && this.defaultExecutable) {
     name = this.defaultExecutable;
     args.unshift(name);
-    subCommand = this.commands.find(function(command) {
-      return command._name === name;
-    });
+    subCommand = this.commands.find(command => command._name === name);
   }
 
   if (this._execs[name] && typeof this._execs[name] !== 'function') {
@@ -519,29 +513,29 @@ Command.prototype.executeSubCommand = function(argv, args, unknown, executableFi
     args[1] = this._helpLongFlag;
   }
 
-  var isExplicitJS = false; // Whether to use node to launch "executable"
+  let isExplicitJS = false; // Whether to use node to launch "executable"
 
   // executable
-  var pm = argv[1];
+  let pm = argv[1];
   // name of the subcommand, like `pm-install`
-  var bin = basename(pm, path.extname(pm)) + '-' + args[0];
+  let bin = basename(pm, path.extname(pm)) + '-' + args[0];
   if (executableFile != null) {
     bin = executableFile;
     // Check for same extensions as we scan for below so get consistent launch behaviour.
-    var executableExt = path.extname(executableFile);
+    let executableExt = path.extname(executableFile);
     isExplicitJS = executableExt === '.js' || executableExt === '.ts' || executableExt === '.mjs';
   }
 
   // In case of globally installed, get the base dir where executable
   //  subcommand file should be located at
-  var baseDir;
+  let baseDir;
 
-  var resolvedLink = fs.realpathSync(pm);
+  let resolvedLink = fs.realpathSync(pm);
 
   baseDir = dirname(resolvedLink);
 
   // prefer local `./<bin>` to bin in the $PATH
-  var localBin = path.join(baseDir, bin);
+  const localBin = path.join(baseDir, bin);
 
   // whether bin file is a js script with explicit `.js` or `.ts` extension
   if (exists(localBin + '.js')) {
@@ -559,7 +553,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown, executableFi
 
   args = args.slice(1);
 
-  var proc;
+  let proc;
   if (process.platform !== 'win32') {
     if (isExplicitJS) {
       args.unshift(bin);
@@ -577,16 +571,16 @@ Command.prototype.executeSubCommand = function(argv, args, unknown, executableFi
     proc = spawn(process.execPath, args, { stdio: 'inherit' });
   }
 
-  var signals = ['SIGUSR1', 'SIGUSR2', 'SIGTERM', 'SIGINT', 'SIGHUP'];
-  signals.forEach(function(signal) {
-    process.on(signal, function() {
+  let signals = ['SIGUSR1', 'SIGUSR2', 'SIGTERM', 'SIGINT', 'SIGHUP'];
+  signals.forEach(signal => {
+    process.on(signal, () => {
       if (proc.killed === false && proc.exitCode === null) {
         proc.kill(signal);
       }
     });
   });
   proc.on('close', process.exit.bind(process));
-  proc.on('error', function(err) {
+  proc.on('error', err => {
     if (err.code === 'ENOENT') {
       console.error('error: %s(1) does not exist, try --help', bin);
     } else if (err.code === 'EACCES') {
@@ -610,14 +604,14 @@ Command.prototype.executeSubCommand = function(argv, args, unknown, executableFi
  */
 
 Command.prototype.normalize = function(args) {
-  var ret = [],
+  let ret = [],
     arg,
     lastOpt,
     index,
     short,
     opt;
 
-  for (var i = 0, len = args.length; i < len; ++i) {
+  for (let i = 0, len = args.length; i < len; ++i) {
     arg = args[i];
     if (i > 0) {
       lastOpt = this.optionFor(args[i - 1]);
@@ -636,7 +630,7 @@ Command.prototype.normalize = function(args) {
         ret.push(short);
         ret.push(arg.slice(2));
       } else {
-        arg.slice(1).split('').forEach(function(c) {
+        arg.slice(1).split('').forEach(c => {
           ret.push('-' + c);
         });
       }
@@ -663,7 +657,7 @@ Command.prototype.normalize = function(args) {
  */
 
 Command.prototype.parseArgs = function(args, unknown) {
-  var name;
+  let name;
 
   if (args.length) {
     name = args[0];
@@ -681,7 +675,7 @@ Command.prototype.parseArgs = function(args, unknown) {
       this.unknownOption(unknown[0]);
     }
     if (this.commands.length === 0 &&
-        this._args.filter(function(a) { return a.required; }).length === 0) {
+        this._args.filter(a => a.required).length === 0) {
       this.emit('command:*');
     }
   }
@@ -698,7 +692,7 @@ Command.prototype.parseArgs = function(args, unknown) {
  */
 
 Command.prototype.optionFor = function(arg) {
-  for (var i = 0, len = this.options.length; i < len; ++i) {
+  for (let i = 0, len = this.options.length; i < len; ++i) {
     if (this.options[i].is(arg)) {
       return this.options[i];
     }
@@ -715,16 +709,16 @@ Command.prototype.optionFor = function(arg) {
  */
 
 Command.prototype.parseOptions = function(argv) {
-  var args = [],
+  let args = [],
     len = argv.length,
     literal,
     option,
     arg;
 
-  var unknownOptions = [];
+  let unknownOptions = [];
 
   // parse options
-  for (var i = 0; i < len; ++i) {
+  for (let i = 0; i < len; ++i) {
     arg = argv[i];
 
     // literal args after --
@@ -791,11 +785,11 @@ Command.prototype.parseOptions = function(argv) {
  * @api public
  */
 Command.prototype.opts = function() {
-  var result = {},
+  let result = {},
     len = this.options.length;
 
-  for (var i = 0; i < len; i++) {
-    var key = this.options[i].attributeName();
+  for (let i = 0; i < len; i++) {
+    let key = this.options[i].attributeName();
     result[key] = key === this._versionOptionName ? this._version : this[key];
   }
   return result;
@@ -844,14 +838,14 @@ Command.prototype.unknownOption = function(flag) {
 };
 
 /**
- * Variadic argument with `name` is not the last argument as required.
+ * letiadic argument with `name` is not the last argument as required.
  *
  * @param {String} name
  * @api private
  */
 
-Command.prototype.variadicArgNotLast = function(name) {
-  console.error("error: variadic arguments must be last '%s'", name);
+Command.prototype.letiadicArgNotLast = function(name) {
+  console.error("error: letiadic arguments must be last '%s'", name);
   process.exit(1);
 };
 
@@ -875,10 +869,10 @@ Command.prototype.version = function(str, flags, description) {
   this._version = str;
   flags = flags || '-V, --version';
   description = description || 'output the version number';
-  var versionOption = new Option(flags, description);
+  let versionOption = new Option(flags, description);
   this._versionOptionName = versionOption.long.substr(2) || 'version';
   this.options.push(versionOption);
-  this.on('option:' + this._versionOptionName, function() {
+  this.on('option:' + this._versionOptionName, () => {
     process.stdout.write(str + '\n');
     process.exit(0);
   });
@@ -910,7 +904,7 @@ Command.prototype.description = function(str, argsDescription) {
  */
 
 Command.prototype.alias = function(alias) {
-  var command = this;
+  let command = this;
   if (this.commands.length !== 0) {
     command = this.commands[this.commands.length - 1];
   }
@@ -932,11 +926,11 @@ Command.prototype.alias = function(alias) {
  */
 
 Command.prototype.usage = function(str) {
-  var args = this._args.map(function(arg) {
+  let args = this._args.map(arg => {
     return humanReadableArgName(arg);
   });
 
-  var usage = '[options]' +
+  let usage = '[options]' +
     (this.commands.length ? ' [command]' : '') +
     (this._args.length ? ' ' + args.join(' ') : '');
 
@@ -968,10 +962,10 @@ Command.prototype.name = function(str) {
  */
 
 Command.prototype.prepareCommands = function() {
-  return this.commands.filter(function(cmd) {
+  return this.commands.filter(cmd => {
     return !cmd._noHelp;
-  }).map(function(cmd) {
-    var args = cmd._args.map(function(arg) {
+  }).map(cmd => {
+    const args = cmd._args.map(arg => {
       return humanReadableArgName(arg);
     }).join(' ');
 
@@ -993,8 +987,8 @@ Command.prototype.prepareCommands = function() {
  */
 
 Command.prototype.largestCommandLength = function() {
-  var commands = this.prepareCommands();
-  return commands.reduce(function(max, command) {
+  let commands = this.prepareCommands();
+  return commands.reduce((max, command) => {
     return Math.max(max, command[0].length);
   }, 0);
 };
@@ -1007,12 +1001,12 @@ Command.prototype.largestCommandLength = function() {
  */
 
 Command.prototype.largestOptionLength = function() {
-  var options = [].slice.call(this.options);
+  let options = [].slice.call(this.options);
   options.push({
     flags: this._helpFlags
   });
 
-  return options.reduce(function(max, option) {
+  return options.reduce((max, option) => {
     return Math.max(max, option.flags.length);
   }, 0);
 };
@@ -1025,7 +1019,7 @@ Command.prototype.largestOptionLength = function() {
  */
 
 Command.prototype.largestArgLength = function() {
-  return this._args.reduce(function(max, arg) {
+  return this._args.reduce((max, arg) => {
     return Math.max(max, arg.name.length);
   }, 0);
 };
@@ -1038,7 +1032,7 @@ Command.prototype.largestArgLength = function() {
  */
 
 Command.prototype.padWidth = function() {
-  var width = this.largestOptionLength();
+  let width = this.largestOptionLength();
   if (this._argsDescription && this._args.length) {
     if (this.largestArgLength() > width) {
       width = this.largestArgLength();
@@ -1062,10 +1056,10 @@ Command.prototype.padWidth = function() {
  */
 
 Command.prototype.optionHelp = function() {
-  var width = this.padWidth();
+  let width = this.padWidth();
 
   // Append the help information
-  return this.options.map(function(option) {
+  return this.options.map(option => {
     return pad(option.flags, width) + '  ' + option.description +
       ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
   }).concat([pad(this._helpFlags, width) + '  ' + this._helpDescription])
@@ -1082,13 +1076,13 @@ Command.prototype.optionHelp = function() {
 Command.prototype.commandHelp = function() {
   if (!this.commands.length) return '';
 
-  var commands = this.prepareCommands();
-  var width = this.padWidth();
+  let commands = this.prepareCommands();
+  let width = this.padWidth();
 
   return [
     'Commands:',
-    commands.map(function(cmd) {
-      var desc = cmd[1] ? '  ' + cmd[1] : '';
+    commands.map(cmd => {
+      let desc = cmd[1] ? '  ' + cmd[1] : '';
       return (desc ? pad(cmd[0], width) : cmd[0]) + desc;
     }).join('\n').replace(/^/gm, '  '),
     ''
@@ -1103,43 +1097,43 @@ Command.prototype.commandHelp = function() {
  */
 
 Command.prototype.helpInformation = function() {
-  var desc = [];
+  let desc = [];
   if (this._description) {
     desc = [
       this._description,
       ''
     ];
 
-    var argsDescription = this._argsDescription;
+    let argsDescription = this._argsDescription;
     if (argsDescription && this._args.length) {
-      var width = this.padWidth();
+      let width = this.padWidth();
       desc.push('Arguments:');
       desc.push('');
-      this._args.forEach(function(arg) {
+      this._args.forEach(arg => {
         desc.push('  ' + pad(arg.name, width) + '  ' + argsDescription[arg.name]);
       });
       desc.push('');
     }
   }
 
-  var cmdName = this._name;
+  let cmdName = this._name;
   if (this._alias) {
     cmdName = cmdName + '|' + this._alias;
   }
-  var parentCmdNames = '';
-  for (var parentCmd = this.parent; parentCmd; parentCmd = parentCmd.parent) {
+  let parentCmdNames = '';
+  for (let parentCmd = this.parent; parentCmd; parentCmd = parentCmd.parent) {
     parentCmdNames = parentCmd.name() + ' ' + parentCmdNames;
   }
-  var usage = [
+  let usage = [
     'Usage: ' + parentCmdNames + cmdName + ' ' + this.usage(),
     ''
   ];
 
-  var cmds = [];
-  var commandHelp = this.commandHelp();
+  let cmds = [];
+  let commandHelp = this.commandHelp();
   if (commandHelp) cmds = [commandHelp];
 
-  var options = [
+  let options = [
     'Options:',
     '' + this.optionHelp().replace(/^/gm, '  '),
     ''
@@ -1163,9 +1157,7 @@ Command.prototype.helpInformation = function() {
 
 Command.prototype.outputHelp = function(cb) {
   if (!cb) {
-    cb = function(passthru) {
-      return passthru;
-    };
+    cb = passthru => passthru;
   }
   const cbOutput = cb(this.helpInformation());
   if (typeof cbOutput !== 'string' && !Buffer.isBuffer(cbOutput)) {
@@ -1189,7 +1181,7 @@ Command.prototype.helpOption = function(flags, description) {
   this._helpFlags = flags || this._helpFlags;
   this._helpDescription = description || this._helpDescription;
 
-  var splitFlags = this._helpFlags.split(/[ ,|]+/);
+  let splitFlags = this._helpFlags.split(/[ ,|]+/);
 
   if (splitFlags.length > 1) this._helpShortFlag = splitFlags.shift();
 
@@ -1219,9 +1211,7 @@ Command.prototype.help = function(cb) {
  */
 
 function camelcase(flag) {
-  return flag.split('-').reduce(function(str, word) {
-    return str + word[0].toUpperCase() + word.slice(1);
-  });
+  return flag.split('-').reduce((str, word) => str + word[0].toUpperCase() + word.slice(1));
 }
 
 /**
@@ -1234,7 +1224,7 @@ function camelcase(flag) {
  */
 
 function pad(str, width) {
-  var len = Math.max(0, width - str.length);
+  const len = Math.max(0, width - str.length);
   return str + Array(len + 1).join(' ');
 }
 
@@ -1249,7 +1239,7 @@ function pad(str, width) {
 function outputHelpIfNecessary(cmd, options) {
   options = options || [];
 
-  for (var i = 0; i < options.length; i++) {
+  for (let i = 0; i < options.length; i++) {
     if (options[i] === cmd._helpLongFlag || options[i] === cmd._helpShortFlag) {
       cmd.outputHelp();
       process.exit(0);
@@ -1266,7 +1256,7 @@ function outputHelpIfNecessary(cmd, options) {
  */
 
 function humanReadableArgName(arg) {
-  var nameOutput = arg.name + (arg.variadic === true ? '...' : '');
+  const nameOutput = arg.name + (arg.letiadic === true ? '...' : '');
 
   return arg.required
     ? '<' + nameOutput + '>'
@@ -1297,13 +1287,13 @@ function incrementNodeInspectorPort(args) {
   //  --inspect[=[host:]port]
   //  --inspect-brk[=[host:]port]
   //  --inspect-port=[host:]port
-  return args.map((arg) => {
-    var result = arg;
+  return args.map(arg => {
+    let result = arg;
     if (arg.indexOf('--inspect') === 0) {
-      var debugOption;
-      var debugHost = '127.0.0.1';
-      var debugPort = '9229';
-      var match;
+      let debugOption;
+      let debugHost = '127.0.0.1';
+      let debugPort = '9229';
+      let match;
       if ((match = arg.match(/^(--inspect(-brk)?)$/)) !== null) {
         // e.g. --inspect
         debugOption = match[1];
