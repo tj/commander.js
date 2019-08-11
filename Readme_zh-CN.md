@@ -7,9 +7,39 @@
 
 [node.js](http://nodejs.org) 命令行接口的完整解决方案，灵感来自 Ruby 的 [commander](https://github.com/commander-rb/commander)。
 
+- [Commander.js](#commanderjs)
+  - [安装](#%e5%ae%89%e8%a3%85)
+  - [声明program变量](#%e5%a3%b0%e6%98%8eprogram%e5%8f%98%e9%87%8f)
+  - [选项](#%e9%80%89%e9%a1%b9)
+    - [常用选项类型，boolean和值](#%e5%b8%b8%e7%94%a8%e9%80%89%e9%a1%b9%e7%b1%bb%e5%9e%8bboolean%e5%92%8c%e5%80%bc)
+    - [默认选项值](#%e9%bb%98%e8%ae%a4%e9%80%89%e9%a1%b9%e5%80%bc)
+    - [其他选项类型，可忽略的布尔值和标志值](#%e5%85%b6%e4%bb%96%e9%80%89%e9%a1%b9%e7%b1%bb%e5%9e%8b%e5%8f%af%e5%bf%bd%e7%95%a5%e7%9a%84%e5%b8%83%e5%b0%94%e5%80%bc%e5%92%8c%e6%a0%87%e5%bf%97%e5%80%bc)
+    - [自定义选项处理](#%e8%87%aa%e5%ae%9a%e4%b9%89%e9%80%89%e9%a1%b9%e5%a4%84%e7%90%86)
+    - [版本选项](#%e7%89%88%e6%9c%ac%e9%80%89%e9%a1%b9)
+  - [Commands](#commands)
+    - [指定参数语法](#%e6%8c%87%e5%ae%9a%e5%8f%82%e6%95%b0%e8%af%ad%e6%b3%95)
+    - [操作处理程序(Action handler) (子)命令](#%e6%93%8d%e4%bd%9c%e5%a4%84%e7%90%86%e7%a8%8b%e5%ba%8faction-handler-%e5%ad%90%e5%91%bd%e4%bb%a4)
+    - [Git 风格的子命令](#git-%e9%a3%8e%e6%a0%bc%e7%9a%84%e5%ad%90%e5%91%bd%e4%bb%a4)
+  - [自动化帮助信息 --help](#%e8%87%aa%e5%8a%a8%e5%8c%96%e5%b8%ae%e5%8a%a9%e4%bf%a1%e6%81%af---help)
+    - [自定义帮助](#%e8%87%aa%e5%ae%9a%e4%b9%89%e5%b8%ae%e5%8a%a9)
+    - [.usage and .name](#usage-and-name)
+    - [.outputHelp(cb)](#outputhelpcb)
+    - [.helpOption(flags, description)](#helpoptionflags-description)
+    - [.help(cb)](#helpcb)
+  - [自定义事件监听](#%e8%87%aa%e5%ae%9a%e4%b9%89%e4%ba%8b%e4%bb%b6%e7%9b%91%e5%90%ac)
+  - [零碎知识](#%e9%9b%b6%e7%a2%8e%e7%9f%a5%e8%af%86)
+    - [TypeScript](#typescript)
+    - [Node 选项例如 `--harmony`](#node-%e9%80%89%e9%a1%b9%e4%be%8b%e5%a6%82---harmony)
+    - [Node 调试](#node-%e8%b0%83%e8%af%95)
+  - [例子](#%e4%be%8b%e5%ad%90)
+  - [许可证](#%e8%ae%b8%e5%8f%af%e8%af%81)
+  - [支持](#%e6%94%af%e6%8c%81)
+
 ## 安装
 
-    $ npm install commander
+```bash
+npm install commander
+```
 
 ## 声明program变量
 
@@ -115,8 +145,8 @@ const cheeseStr = (program.cheese === false) ? 'no cheese' : `${program.cheese} 
 console.log(`You ordered a pizza with ${sauceStr} and ${cheeseStr}`);
 ```
 
-```
-$ pizza-options 
+```bash
+$ pizza-options
 You ordered a pizza with sauce and mozzarella cheese
 $ pizza-options --sauce
 error: unknown option '--sauce'
@@ -150,7 +180,7 @@ $ pizza-options --cheese mozzarella
 add cheese type mozzarella
 ```
 
-## 自定义选项处理
+### 自定义选项处理
 
 你可以指定一个函数来处理选项的值，接收两个参数：用户传入的值、上一个值(previous value)，它会返回新的选项值。
 
@@ -348,7 +378,6 @@ program
 
 如果你打算全局安装该命令，请确保可执行文件有对应的权限，例如 `755`。
 
-
 ## 自动化帮助信息 --help
 
  帮助信息是 commander 基于你的程序自动生成的，下面是 `--help` 生成的帮助信息：
@@ -369,16 +398,12 @@ Options:
   -h, --help           output usage information
 ```
 
-## 自定义帮助
+### 自定义帮助
 
  你可以通过监听 `--help` 来控制 `-h, --help` 显示任何信息。一旦调用完成， Commander 将自动退出，你的程序的其余部分不会展示。例如在下面的 “stuff” 将不会在执行 `--help` 时输出。
 
 ```js
 #!/usr/bin/env node
-
-/**
- * Module dependencies.
- */
 
 var program = require('commander');
 
@@ -405,7 +430,7 @@ console.log('stuff');
 
 下列帮助信息是运行 `node script-name.js -h` or `node script-name.js --help` 时输出的:
 
-```
+```Text
 Usage: custom-help [options]
 
 Options:
@@ -420,7 +445,24 @@ Examples:
   $ custom-help -h
 ```
 
-## .outputHelp(cb)
+### .usage and .name
+
+These allow you to customise the usage description in the first line of the help. The name is otherwise
+deduced from the (full) program arguments. Given:
+
+```js
+program
+  .name("my-command")
+  .usage("[global options] command")
+```
+
+The help will start with:
+
+```Text
+Usage: my-command [global options] command
+```
+
+### .outputHelp(cb)
 
 输出帮助信息的同时不退出。
 可选的回调可在显示帮助文本后处理。
@@ -443,7 +485,8 @@ function make_red(txt) {
   return colors.red(txt); //display the help text in red on the console
 }
 ```
-## .helpOption(flags, description)
+
+### .helpOption(flags, description)
 
   重写覆盖默认的帮助标识和描述
 
@@ -452,7 +495,7 @@ program
   .helpOption('-e, --HELP', 'read more information');
 ```
 
-## .help(cb)
+### .help(cb)
 
  输出帮助信息并立即退出。
  可选的回调可在显示帮助文本后处理。
@@ -490,18 +533,20 @@ npm install --save-dev @types/node
 ```bash
 node -r ts-node/register pm.ts
 ```
+
 ### Node 选项例如 `--harmony`
 
 你可以采用两种方式启用 `--harmony`：
-* 在子命令脚本中加上 `#!/usr/bin/env node --harmony`。注意一些系统版本不支持此模式。
-* 在指令调用时加上 `--harmony` 参数，例如 `node --harmony examples/pm publish`。`--harmony` 选项在开启子进程时会被保留。
+
+- 在子命令脚本中加上 `#!/usr/bin/env node --harmony`。注意一些系统版本不支持此模式。
+- 在指令调用时加上 `--harmony` 参数，例如 `node --harmony examples/pm publish`。`--harmony` 选项在开启子进程时会被保留。
 
 ### Node 调试
 
 如果你在使用 node inspector的 `node -inspect` 等命令来[调试](https://nodejs.org/en/docs/guides/debugging-getting-started/) git风格的可执行命令，
 对于生成的子命令，inspector端口递增1。
 
- ## 例子
+## 例子
 
 ```js
 var program = require('commander');
