@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+var program = require('../');
+
+program
+  .helpOption('-c, --HELP', 'custom help message')
+  .option('-s, --sessions', 'add session support')
+  .option('-t, --template <engine>', 'specify template engine (jade|ejs) [jade]', 'jade');
+
+program
+  .command('child')
+  .option('--gender', 'specific gender of child')
+  .action((cmd) => {
+    console.log('Childsubcommand...');
+  });
+
+program.parse(process.argv);

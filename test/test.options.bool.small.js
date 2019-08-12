@@ -1,9 +1,5 @@
-/**
- * Module dependencies.
- */
-
-var program = require('../')
-  , should = require('should');
+var program = require('../');
+require('should');
 
 program
   .version('0.0.1')

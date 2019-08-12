@@ -1,185 +1,290 @@
 # Commander.js
 
-
 [![Build Status](https://api.travis-ci.org/tj/commander.js.svg?branch=master)](http://travis-ci.org/tj/commander.js)
 [![NPM Version](http://img.shields.io/npm/v/commander.svg?style=flat)](https://www.npmjs.org/package/commander)
 [![NPM Downloads](https://img.shields.io/npm/dm/commander.svg?style=flat)](https://npmcharts.com/compare/commander?minimal=true)
 [![Install Size](https://packagephobia.now.sh/badge?p=commander)](https://packagephobia.now.sh/result?p=commander)
 
-  The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/commander-rb/commander).  
-  [API documentation](http://tj.github.com/commander.js/)
-
+The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/commander-rb/commander).
 
 ## Installation
 
     $ npm install commander
 
-## Option parsing
+## Declaring _program_ variable
 
-Options with commander are defined with the `.option()` method, also serving as documentation for the options. The example below parses args and options from `process.argv`, leaving remaining args as the `program.args` array which were not consumed by options.
+Commander exports a global object which is convenient for quick programs.
+This is used in the examples in this README for brevity.
 
 ```js
-#!/usr/bin/env node
-
-/**
- * Module dependencies.
- */
-
-var program = require('commander');
-
-program
-  .version('0.1.0')
-  .option('-p, --peppers', 'Add peppers')
-  .option('-P, --pineapple', 'Add pineapple')
-  .option('-b, --bbq-sauce', 'Add bbq sauce')
-  .option('-c, --cheese [type]', 'Add the specified type of cheese [marble]', 'marble')
-  .parse(process.argv);
-
-console.log('you ordered a pizza with:');
-if (program.peppers) console.log('  - peppers');
-if (program.pineapple) console.log('  - pineapple');
-if (program.bbqSauce) console.log('  - bbq');
-console.log('  - %s cheese', program.cheese);
+const program = require('commander');
+program.version('0.0.1');
 ```
 
-Short flags may be passed as a single arg, for example `-abc` is equivalent to `-a -b -c`. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc.
+For larger programs which may use commander in multiple ways, including unit testing, it is better to create a local Command object to use.
 
-Note that multi-word options starting with `--no` prefix negate the boolean value of the following word. For example, `--no-sauce` sets the value of `program.sauce` to false.
+ ```js
+ const commander = require('commander');
+ const program = new commander.Command();
+ program.version('0.0.1');
+ ```
+
+
+## Options
+
+Options are defined with the `.option()` method, also serving as documentation for the options. Each option can have a short flag (single character) and a long name, separated by a comma or space.
+
+The options can be accessed as properties on the Command object. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc. Multiple short flags may be combined as a single arg, for example `-abc` is equivalent to `-a -b -c`.
+
+### Common option types, boolean and value
+
+The two most used option types are a boolean flag, and an option which takes a value (declared using angle brackets). Both are `undefined` unless specified on command line.
 
 ```js
-#!/usr/bin/env node
+const program = require('commander');
 
-/**
- * Module dependencies.
- */
+program
+  .option('-d, --debug', 'output extra debugging')
+  .option('-s, --small', 'small pizza size')
+  .option('-p, --pizza-type <type>', 'flavour of pizza');
 
-var program = require('commander');
+program.parse(process.argv);
+
+if (program.debug) console.log(program.opts());
+console.log('pizza details:');
+if (program.small) console.log('- small pizza size');
+if (program.pizzaType) console.log(`- ${program.pizzaType}`);
+```
+
+```bash
+$ pizza-options -d
+{ debug: true, small: undefined, pizzaType: undefined }
+pizza details:
+$ pizza-options -p
+error: option '-p, --pizza-type <type>' argument missing
+$ pizza-options -ds -p vegetarian
+{ debug: true, small: true, pizzaType: 'vegetarian' }
+pizza details:
+- small pizza size
+- vegetarian
+$ pizza-options --pizza-type=cheese
+pizza details:
+- cheese
+```
+
+`program.parse(arguments)` processes the arguments, leaving any args not consumed by the options as the `program.args` array.
+
+### Default option value
+
+You can specify a default value for an option which takes a value.
+
+```js
+const program = require('commander');
+
+program
+  .option('-c, --cheese <type>', 'add the specified type of cheese', 'blue');
+
+program.parse(process.argv);
+
+console.log(`cheese: ${program.cheese}`);
+```
+
+```bash
+$ pizza-options
+cheese: blue
+$ pizza-options --cheese stilton
+cheese: stilton
+```
+
+### Other option types, negatable boolean and flag|value
+
+You can specify a boolean option long name with a leading `no-` to set the option value to false when used.
+Defined alone this also makes the option true by default.
+
+If you define `--foo` first, adding `--no-foo` does not change the default value from what it would
+otherwise be. You can specify a default boolean value for a boolean flag and it can be overridden on command line.
+
+```js
+const program = require('commander');
 
 program
   .option('--no-sauce', 'Remove sauce')
+  .option('--cheese <flavour>', 'cheese flavour', 'mozzarella')
+  .option('--no-cheese', 'plain with no cheese')
   .parse(process.argv);
 
-console.log('you ordered a pizza');
-if (program.sauce) console.log('  with sauce');
-else console.log(' without sauce');
+const sauceStr = program.sauce ? 'sauce' : 'no sauce';
+const cheeseStr = (program.cheese === false) ? 'no cheese' : `${program.cheese} cheese`;
+console.log(`You ordered a pizza with ${sauceStr} and ${cheeseStr}`);
 ```
 
-To get string arguments from options you will need to use angle brackets <> for required inputs or square brackets [] for optional inputs. 
+```bash
+$ pizza-options 
+You ordered a pizza with sauce and mozzarella cheese
+$ pizza-options --sauce
+error: unknown option '--sauce'
+$ pizza-options --cheese=blue
+You ordered a pizza with sauce and blue cheese
+$ pizza-options --no-sauce --no-cheese
+You ordered a pizza with no sauce and no cheese
+```
 
-e.g. ```.option('-m --myarg [myVar]', 'my super cool description')```
-
-Then to access the input if it was passed in.
-
-e.g. ```var myInput = program.myarg```
-
-**NOTE**: If you pass a argument without using brackets the example above will return true and not the value passed in.
-
-
-## Version option
-
-Calling the `version` implicitly adds the `-V` and `--version` options to the command.
-When either of these options is present, the command prints the version number and exits.
-
-    $ ./examples/pizza -V
-    0.0.1
-
-If you want your program to respond to the `-v` option instead of the `-V` option, simply pass custom flags to the `version` method using the same syntax as the `option` method.
+You can specify an option which functions as a flag but may also take a value (declared using square brackets).
 
 ```js
+const program = require('commander');
+
 program
-  .version('0.0.1', '-v, --version')
+  .option('-c, --cheese [type]', 'Add cheese with optional type');
+
+program.parse(process.argv);
+
+if (program.cheese === undefined) console.log('no cheese');
+else if (program.cheese === true) console.log('add cheese');
+else console.log(`add cheese type ${program.cheese}`);
 ```
 
-The version flags can be named anything, but the long option is required.
+```bash
+$ pizza-options
+no cheese
+$ pizza-options --cheese
+add cheese
+$ pizza-options --cheese mozzarella
+add cheese type mozzarella
+```
 
-## Command-specific options
+### Custom option processing
 
-You can attach options to a command.
+You may specify a function to do custom processing of option values. The callback function receives two parameters, the user specified value and the 
+previous value for the option. It returns the new value for the option.
+
+This allows you to coerce the option value to the desired type, or accumulate values, or do entirely custom processing.
+
+You can optionally specify the default/starting value for the option after the function.
 
 ```js
-#!/usr/bin/env node
+const program = require('commander');
 
+function myParseInt(value, dummyPrevious) {
+  // parseInt takes a string and an optional radix
+  return parseInt(value);
+}
+
+function increaseVerbosity(dummyValue, previous) {
+  return previous + 1;
+}
+
+function collect(value, previous) {
+  return previous.concat([value]);
+}
+
+function commaSeparatedList(value, dummyPrevious) {
+  return value.split(',');
+}
+
+program
+  .option('-f, --float <number>', 'float argument', parseFloat)
+  .option('-i, --integer <number>', 'integer argument', myParseInt)
+  .option('-v, --verbose', 'verbosity that can be increased', increaseVerbosity, 0)
+  .option('-c, --collect <value>', 'repeatable value', collect, [])
+  .option('-l, --list <items>', 'comma separated list', commaSeparatedList)
+;
+
+program.parse(process.argv);
+
+if (program.float !== undefined) console.log(`float: ${program.float}`);
+if (program.integer !== undefined) console.log(`integer: ${program.integer}`);
+if (program.verbose > 0) console.log(`verbosity: ${program.verbose}`);
+if (program.collect.length > 0) console.log(program.collect);
+if (program.list !== undefined) console.log(program.list);
+```
+
+```bash
+$ custom -f 1e2
+float: 100
+$ custom --integer 2
+integer: 2
+$ custom -v -v -v
+verbose: 3
+$ custom -c a -c b -c c
+[ 'a', 'b', 'c' ]
+$ custom --list x,y,z
+[ 'x', 'y', 'z' ]
+```
+
+### Version option
+
+The optional `version` method adds handling for displaying the command version. The default option flags are `-V` and `--version`, and when present the command prints the version number and exits.
+
+```js
+program.version('0.0.1');
+```
+
+```bash
+$ ./examples/pizza -V
+0.0.1
+```
+
+You may change the flags and description by passing additional parameters to the `version` method, using
+the same syntax for flags as the `option` method. The version flags can be named anything, but a long name is required.
+
+```js
+program.version('0.0.1', '-v, --vers', 'output the current version');
+```
+
+## Commands
+
+You can specify (sub)commands for your top-level command using `.command`. There are two ways these can be implemented: using an action handler attached to the command, or as a separate executable file (described in more detail later). In the first parameter to `.command` you specify the command name and any command arguments. The arguments may be `<required>` or `[optional]`, and the last argument may also be `variadic...`.
+
+For example:
+
+```js
+// Command implemented using action handler (description is supplied separately to `.command`)
+// Returns new command for configuring.
+program
+  .command('clone <source> [destination]')
+  .description('clone a repository into a newly created directory')
+  .action((source, destination) => {
+    console.log('clone command called');
+  });
+
+// Command implemented using separate executable file (description is second parameter to `.command`)
+// Returns top-level command for adding more commands.
+program
+  .command('start <service>', 'start named service')
+  .command('stop [service]', 'stop named service, or all if no name supplied');
+```
+
+### Specify the argument syntax
+
+You use `.arguments` to specify the arguments for the top-level command, and for subcommands they are included in the `.command` call. Angled brackets (e.g. `<required>`) indicate required input. Square brackets (e.g. `[optional]`) indicate optional input.
+
+
+```js
 var program = require('commander');
 
 program
-  .command('rm <dir>')
-  .option('-r, --recursive', 'Remove recursively')
-  .action(function (dir, cmd) {
-    console.log('remove ' + dir + (cmd.recursive ? ' recursively' : ''))
-  })
-
-program.parse(process.argv)
-```
-
-A command's options are validated when the command is used. Any unknown options will be reported as an error. However, if an action-based command does not define an action, then the options are not validated.
-
-## Coercion
-
-```js
-function range(val) {
-  return val.split('..').map(Number);
-}
-
-function list(val) {
-  return val.split(',');
-}
-
-function collect(val, memo) {
-  memo.push(val);
-  return memo;
-}
-
-function increaseVerbosity(v, total) {
-  return total + 1;
-}
-
-program
   .version('0.1.0')
-  .usage('[options] <file ...>')
-  .option('-i, --integer <n>', 'An integer argument', parseInt)
-  .option('-f, --float <n>', 'A float argument', parseFloat)
-  .option('-r, --range <a>..<b>', 'A range', range)
-  .option('-l, --list <items>', 'A list', list)
-  .option('-o, --optional [value]', 'An optional value')
-  .option('-c, --collect [value]', 'A repeatable value', collect, [])
-  .option('-v, --verbose', 'A value that can be increased', increaseVerbosity, 0)
-  .parse(process.argv);
+  .arguments('<cmd> [env]')
+  .action(function (cmd, env) {
+    cmdValue = cmd;
+    envValue = env;
+  });
 
-console.log(' int: %j', program.integer);
-console.log(' float: %j', program.float);
-console.log(' optional: %j', program.optional);
-program.range = program.range || [];
-console.log(' range: %j..%j', program.range[0], program.range[1]);
-console.log(' list: %j', program.list);
-console.log(' collect: %j', program.collect);
-console.log(' verbosity: %j', program.verbose);
-console.log(' args: %j', program.args);
+program.parse(process.argv);
+
+if (typeof cmdValue === 'undefined') {
+  console.error('no command given!');
+  process.exit(1);
+}
+console.log('command:', cmdValue);
+console.log('environment:', envValue || "no environment given");
 ```
 
-## Regular Expression
-```js
-program
-  .version('0.1.0')
-  .option('-s --size <size>', 'Pizza size', /^(large|medium|small)$/i, 'medium')
-  .option('-d --drink [drink]', 'Drink', /^(coke|pepsi|izze)$/i)
-  .parse(process.argv);
-
-console.log(' size: %j', program.size);
-console.log(' drink: %j', program.drink);
-```
-
-## Variadic arguments
-
- The last argument of a command can be variadic, and only the last argument.  To make an argument variadic you have to
- append `...` to the argument name.  Here is an example:
+ The last argument of a command can be variadic, and only the last argument.  To make an argument variadic you
+ append `...` to the argument name. For example:
 
 ```js
-#!/usr/bin/env node
-
-/**
- * Module dependencies.
- */
-
 var program = require('commander');
 
 program
@@ -197,36 +302,38 @@ program
 program.parse(process.argv);
 ```
 
- An `Array` is used for the value of a variadic argument.  This applies to `program.args` as well as the argument passed
- to your action as demonstrated above.
+The variadic argument is passed to the action handler as an array. (And this also applies to `program.args`.)
 
-## Specify the argument syntax
+### Action handler (sub)commands
+
+You can add options to a command that uses an action handler.
+The action handler gets passed a parameter for each argument you declared, and one additional argument which is the
+command object itself. This command argument has the values for the command-specific options added as properties.
 
 ```js
-#!/usr/bin/env node
-
 var program = require('commander');
 
 program
-  .version('0.1.0')
-  .arguments('<cmd> [env]')
-  .action(function (cmd, env) {
-     cmdValue = cmd;
-     envValue = env;
-  });
+  .command('rm <dir>')
+  .option('-r, --recursive', 'Remove recursively')
+  .action(function (dir, cmdObj) {
+    console.log('remove ' + dir + (cmdObj.recursive ? ' recursively' : ''))
+  })
 
-program.parse(process.argv);
-
-if (typeof cmdValue === 'undefined') {
-   console.error('no command given!');
-   process.exit(1);
-}
-console.log('command:', cmdValue);
-console.log('environment:', envValue || "no environment given");
+program.parse(process.argv)
 ```
-Angled brackets (e.g. `<cmd>`) indicate required input. Square brackets (e.g. `[env]`) indicate optional input.
 
-## Git-style sub-commands
+A command's options on the command line are validated when the command is used. Any unknown options will be reported as an error. However, if an action-based command does not define an action, then the options are not validated.
+
+Configuration options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the command from the generated help output.
+
+### Git-style executable (sub)commands
+
+When `.command()` is invoked with a description argument, this tells commander that you're going to use separate executables for sub-commands, much like `git(1)` and other popular tools.
+Commander will search the executables in the directory of the entry script (like `./examples/pm`) with the name `program-subcommand`, like `pm-install`, `pm-search`.
+You can specify a custom name with the `executableFile` configuration option.
+
+You handle the options for an executable (sub)command in the executable, and don't declare them at the top-level.
 
 ```js
 // file: ./examples/pm
@@ -236,22 +343,15 @@ program
   .version('0.1.0')
   .command('install [name]', 'install one or more packages')
   .command('search [query]', 'search with optional query')
+  .command('update', 'update installed packages', {executableFile: 'myUpdateSubCommand'})
   .command('list', 'list packages installed', {isDefault: true})
   .parse(process.argv);
 ```
 
-When `.command()` is invoked with a description argument, no `.action(callback)` should be called to handle sub-commands, otherwise there will be an error. This tells commander that you're going to use separate executables for sub-commands, much like `git(1)` and other popular tools.  
-The commander will try to search the executables in the directory of the entry script (like `./examples/pm`) with the name `program-command`, like `pm-install`, `pm-search`.
-
-Options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the subcommand from the generated help output. Specifying `true` for `opts.isDefault` will run the subcommand if no other subcommand is specified.
+Configuration options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the command from the generated help output. Specifying `true` for `opts.isDefault` will run the subcommand if no other subcommand is specified.
+Specifying a name with `executableFile` will override the default constructed name.
 
 If the program is designed to be installed globally, make sure the executables have proper modes, like `755`.
-
-### `--harmony`
-
-You can enable `--harmony` option in two ways:
-* Use `#! /usr/bin/env node --harmony` in the sub-commands scripts. Note some os version don’t support this pattern.
-* Use the `--harmony` option when call the command, like `node --harmony examples/pm publish`. The `--harmony` option will be preserved when spawning sub-command process.
 
 ## Automated --help
 
@@ -264,13 +364,13 @@ Usage: pizza [options]
 An application for pizzas ordering
 
 Options:
-  -h, --help           output usage information
   -V, --version        output the version number
   -p, --peppers        Add peppers
   -P, --pineapple      Add pineapple
   -b, --bbq            Add bbq sauce
-  -c, --cheese <type>  Add the specified type of cheese [marble]
+  -c, --cheese <type>  Add the specified type of cheese (default: "marble")
   -C, --no-cheese      You do not want any cheese
+  -h, --help           output usage information
 ```
 
 ## Custom help
@@ -354,6 +454,15 @@ function make_red(txt) {
 }
 ```
 
+## .helpOption(flags, description)
+
+  Override the default help flags and description.
+
+```js
+program
+  .helpOption('-e, --HELP', 'read more information');
+```
+
 ## .help(cb)
 
   Output help information and exit immediately.
@@ -374,6 +483,34 @@ program.on('command:*', function () {
   process.exit(1);
 });
 ```
+
+## Bits and pieces
+
+### TypeScript
+
+The Commander package includes its TypeScript Definition file, but also requires the node types which you need to install yourself. e.g.
+
+```bash
+npm install commander
+npm install --save-dev @types/node
+```
+
+If you use `ts-node` and  git-style sub-commands written as `.ts` files, you need to call your program through node to get the sub-commands called correctly. e.g.
+
+```bash
+node -r ts-node/register pm.ts
+```
+
+### Node options such as `--harmony`
+
+You can enable `--harmony` option in two ways:
+* Use `#! /usr/bin/env node --harmony` in the sub-commands scripts. (Note Windows does not support this pattern.)
+* Use the `--harmony` option when call the command, like `node --harmony examples/pm publish`. The `--harmony` option will be preserved when spawning sub-command process.
+
+### Node debugging
+
+If you are using the node inspector for [debugging](https://nodejs.org/en/docs/guides/debugging-getting-started/) git-style executable (sub)commands using `node -inspect` et al,
+the inspector port is incremented by 1 for the spawned subcommand.
 
 ## Examples
 
@@ -425,3 +562,9 @@ More Demos can be found in the [examples](https://github.com/tj/commander.js/tre
 ## License
 
 [MIT](https://github.com/tj/commander.js/blob/master/LICENSE)
+
+## Support
+
+[Professionally supported commander is now available](https://tidelift.com/subscription/pkg/npm-commander?utm_source=npm-commander&utm_medium=referral&utm_campaign=readme)
+
+Tidelift gives software development teams a single source for purchasing and maintaining their software, with professional grade assurances from the experts who know it best, while seamlessly integrating with existing tools.

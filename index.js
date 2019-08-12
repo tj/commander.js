@@ -45,7 +45,7 @@ function Option(flags, description) {
   this.flags = flags;
   this.required = flags.indexOf('<') >= 0;
   this.optional = flags.indexOf('[') >= 0;
-  this.bool = flags.indexOf('-no-') === -1;
+  this.negate = flags.indexOf('-no-') !== -1;
   flags = flags.split(/[ ,|]+/);
   if (flags.length > 1 && !/^[[<]/.test(flags[1])) this.short = flags.shift();
   this.long = flags.shift();
@@ -60,9 +60,7 @@ function Option(flags, description) {
  */
 
 Option.prototype.name = function() {
-  return this.long
-    .replace('--', '')
-    .replace('no-', '');
+  return this.long.replace(/^--/, '');
 };
 
 /**
@@ -74,7 +72,7 @@ Option.prototype.name = function() {
  */
 
 Option.prototype.attributeName = function() {
-  return camelcase(this.name());
+  return camelcase(this.name().replace(/^no-/, ''));
 };
 
 /**
@@ -103,76 +101,49 @@ function Command(name) {
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
+
+  this._helpFlags = '-h, --help';
+  this._helpDescription = 'output usage information';
+  this._helpShortFlag = '-h';
+  this._helpLongFlag = '--help';
 }
 
 /**
- * Add command `name`.
+ * Define a command.
  *
- * The `.action()` callback is invoked when the
- * command `name` is specified via __ARGV__,
- * and the remaining arguments are applied to the
- * function for access.
- *
- * When the `name` is "*" an un-matched command
- * will be passed as the first arg, followed by
- * the rest of __ARGV__ remaining.
+ * There are two styles of command: pay attention to where to put the description.
  *
  * Examples:
  *
+ *      // Command implemented using action handler (description is supplied separately to `.command`)
  *      program
- *        .version('0.0.1')
- *        .option('-C, --chdir <path>', 'change the working directory')
- *        .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
- *        .option('-T, --no-tests', 'ignore test hook')
- *
- *      program
- *        .command('setup')
- *        .description('run remote setup commands')
- *        .action(function() {
- *          console.log('setup');
+ *        .command('clone <source> [destination]')
+ *        .description('clone a repository into a newly created directory')
+ *        .action((source, destination) => {
+ *          console.log('clone command called');
  *        });
  *
+ *      // Command implemented using separate executable file (description is second parameter to `.command`)
  *      program
- *        .command('exec <cmd>')
- *        .description('run the given remote command')
- *        .action(function(cmd) {
- *          console.log('exec "%s"', cmd);
- *        });
+ *        .command('start <service>', 'start named service')
+ *        .command('stop [service]', 'stop named serice, or all if no name supplied');
  *
- *      program
- *        .command('teardown <dir> [otherDirs...]')
- *        .description('run teardown commands')
- *        .action(function(dir, otherDirs) {
- *          console.log('dir "%s"', dir);
- *          if (otherDirs) {
- *            otherDirs.forEach(function (oDir) {
- *              console.log('dir "%s"', oDir);
- *            });
- *          }
- *        });
- *
- *      program
- *        .command('*')
- *        .description('deploy the given env')
- *        .action(function(env) {
- *          console.log('deploying "%s"', env);
- *        });
- *
- *      program.parse(process.argv);
-  *
- * @param {String} name
- * @param {String} [desc] for git-style sub-commands
- * @return {Command} the new command
+ * @param {string} nameAndArgs - command name and arguments, args are `<required>` or `[optional]` and last may also be `variadic...`
+ * @param {Object|string} [actionOptsOrExecDesc] - configuration options (for action), or description (for executable)
+ * @param {Object} [execOpts] - configuration options (for executable)
+ * @return {Command} returns new command for action handler, or top-level command for executable command
  * @api public
  */
 
-Command.prototype.command = function(name, desc, opts) {
+Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts) {
+  var desc = actionOptsOrExecDesc;
+  var opts = execOpts;
   if (typeof desc === 'object' && desc !== null) {
     opts = desc;
     desc = null;
   }
   opts = opts || {};
-  var args = name.split(/ +/);
+  var args = nameAndArgs.split(/ +/);
   var cmd = new Command(args.shift());
 
   if (desc) {
@@ -182,6 +153,11 @@ Command.prototype.command = function(name, desc, opts) {
     if (opts.isDefault) this.defaultExecutable = cmd._name;
   }
   cmd._noHelp = !!opts.noHelp;
+  cmd._helpFlags = this._helpFlags;
+  cmd._helpDescription = this._helpDescription;
+  cmd._helpShortFlag = this._helpShortFlag;
+  cmd._helpLongFlag = this._helpLongFlag;
+  cmd._executableFile = opts.executableFile; // Custom name for executable file
   this.commands.push(cmd);
   cmd.parseExpectedArgs(args);
   cmd.parent = this;
@@ -335,14 +311,17 @@ Command.prototype.action = function(fn) {
  *
  * Examples:
  *
- *     // simple boolean defaulting to false
+ *     // simple boolean defaulting to undefined
  *     program.option('-p, --pepper', 'add pepper');
+ *
+ *     program.pepper
+ *     // => undefined
  *
  *     --pepper
  *     program.pepper
- *     // => Boolean
+ *     // => true
  *
- *     // simple boolean defaulting to true
+ *     // simple boolean defaulting to true (unless non-negated option is also defined)
  *     program.option('-C, --no-cheese', 'remove cheese');
  *
  *     program.cheese
@@ -379,6 +358,8 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   // default as 3rd arg
   if (typeof fn !== 'function') {
     if (fn instanceof RegExp) {
+      // This is a bit simplistic (especially no error messages), and probably better handled by caller using custom option processing.
+      // No longer documented in README, but still present for backwards compatibility.
       var regex = fn;
       fn = function(val, def) {
         var m = regex.exec(val);
@@ -390,10 +371,13 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
     }
   }
 
-  // preassign default value only for --no-*, [optional], or <required>
-  if (!option.bool || option.optional || option.required) {
-    // when --no-* we make sure default is true
-    if (!option.bool) defaultValue = true;
+  // preassign default value for --no-*, [optional], <required>, or plain flag if boolean value
+  if (option.negate || option.optional || option.required || typeof defaultValue === 'boolean') {
+    // when --no-foo we make sure default is true, unless a --foo option is already defined
+    if (option.negate) {
+      var opts = self.opts();
+      defaultValue = Object.prototype.hasOwnProperty.call(opts, name) ? opts[name] : true;
+    }
     // preassign only if we have a default
     if (defaultValue !== undefined) {
       self[name] = defaultValue;
@@ -412,19 +396,19 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
       val = fn(val, self[name] === undefined ? defaultValue : self[name]);
     }
 
-    // unassigned or bool
+    // unassigned or boolean value
     if (typeof self[name] === 'boolean' || typeof self[name] === 'undefined') {
-      // if no value, bool true, and we have a default, then use it!
+      // if no value, negate false, and we have a default, then use it!
       if (val == null) {
-        self[name] = option.bool
-          ? defaultValue || true
-          : false;
+        self[name] = option.negate
+          ? false
+          : defaultValue || true;
       } else {
         self[name] = val;
       }
     } else if (val !== null) {
       // reassign
-      self[name] = val;
+      self[name] = option.negate ? false : val;
     }
   });
 
@@ -464,36 +448,50 @@ Command.prototype.parse = function(argv) {
   // github-style sub-commands with no sub-command
   if (this.executables && argv.length < 3 && !this.defaultExecutable) {
     // this user needs help
-    argv.push('--help');
+    argv.push(this._helpLongFlag);
   }
 
   // process argv
-  var parsed = this.parseOptions(this.normalize(argv.slice(2)));
+  var normalized = this.normalize(argv.slice(2));
+  var parsed = this.parseOptions(normalized);
   var args = this.args = parsed.args;
 
   var result = this.parseArgs(this.args, parsed.unknown);
 
   // executable sub-commands
+  // (Debugging note for future: args[0] is not right if an action has been called)
   var name = result.args[0];
+  var subCommand = null;
 
-  var aliasCommand = null;
-  // check alias of sub commands
+  // Look for subcommand
   if (name) {
-    aliasCommand = this.commands.filter(function(command) {
+    subCommand = this.commands.find(function(command) {
+      return command._name === name;
+    });
+  }
+
+  // Look for alias
+  if (!subCommand && name) {
+    subCommand = this.commands.find(function(command) {
       return command.alias() === name;
-    })[0];
+    });
+    if (subCommand) {
+      name = subCommand._name;
+      args[0] = name;
+    }
+  }
+
+  // Look for default subcommand
+  if (!subCommand && this.defaultExecutable) {
+    name = this.defaultExecutable;
+    args.unshift(name);
+    subCommand = this.commands.find(function(command) {
+      return command._name === name;
+    });
   }
 
   if (this._execs[name] && typeof this._execs[name] !== 'function') {
-    return this.executeSubCommand(argv, args, parsed.unknown);
-  } else if (aliasCommand) {
-    // is alias of a subCommand
-    args[0] = aliasCommand._name;
-    return this.executeSubCommand(argv, args, parsed.unknown);
-  } else if (this.defaultExecutable) {
-    // use the default subcommand
-    args.unshift(this.defaultExecutable);
-    return this.executeSubCommand(argv, args, parsed.unknown);
+    return this.executeSubCommand(argv, args, parsed.unknown, subCommand ? subCommand._executableFile : undefined);
   }
 
   return result;
@@ -505,10 +503,11 @@ Command.prototype.parse = function(argv) {
  * @param {Array} argv
  * @param {Array} args
  * @param {Array} unknown
+ * @param {String} specifySubcommand
  * @api private
  */
 
-Command.prototype.executeSubCommand = function(argv, args, unknown) {
+Command.prototype.executeSubCommand = function(argv, args, unknown, executableFile) {
   args = args.concat(unknown);
 
   if (!args.length) this.help();
@@ -517,19 +516,27 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   // <cmd> --help
   if (args[0] === 'help') {
     args[0] = args[1];
-    args[1] = '--help';
+    args[1] = this._helpLongFlag;
   }
 
+  var isExplicitJS = false; // Whether to use node to launch "executable"
+
   // executable
-  var f = argv[1];
-  // name of the subcommand, link `pm-install`
-  var bin = basename(f, path.extname(f)) + '-' + args[0];
+  var pm = argv[1];
+  // name of the subcommand, like `pm-install`
+  var bin = basename(pm, path.extname(pm)) + '-' + args[0];
+  if (executableFile != null) {
+    bin = executableFile;
+    // Check for same extensions as we scan for below so get consistent launch behaviour.
+    var executableExt = path.extname(executableFile);
+    isExplicitJS = executableExt === '.js' || executableExt === '.ts' || executableExt === '.mjs';
+  }
 
   // In case of globally installed, get the base dir where executable
   //  subcommand file should be located at
   var baseDir;
 
-  var resolvedLink = fs.realpathSync(f);
+  var resolvedLink = fs.realpathSync(pm);
 
   baseDir = dirname(resolvedLink);
 
@@ -537,7 +544,6 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
   var localBin = path.join(baseDir, bin);
 
   // whether bin file is a js script with explicit `.js` or `.ts` extension
-  var isExplicitJS = false;
   if (exists(localBin + '.js')) {
     bin = localBin + '.js';
     isExplicitJS = true;
@@ -558,7 +564,7 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     if (isExplicitJS) {
       args.unshift(bin);
       // add executable arguments to spawn
-      args = (process.execArgv || []).concat(args);
+      args = incrementNodeInspectorPort(process.execArgv).concat(args);
 
       proc = spawn(process.argv[0], args, { stdio: 'inherit', customFds: [0, 1, 2] });
     } else {
@@ -566,6 +572,8 @@ Command.prototype.executeSubCommand = function(argv, args, unknown) {
     }
   } else {
     args.unshift(bin);
+    // add executable arguments to spawn
+    args = incrementNodeInspectorPort(process.execArgv).concat(args);
     proc = spawn(process.execPath, args, { stdio: 'inherit' });
   }
 
@@ -605,7 +613,9 @@ Command.prototype.normalize = function(args) {
   var ret = [],
     arg,
     lastOpt,
-    index;
+    index,
+    short,
+    opt;
 
   for (var i = 0, len = args.length; i < len; ++i) {
     arg = args[i];
@@ -619,10 +629,17 @@ Command.prototype.normalize = function(args) {
       break;
     } else if (lastOpt && lastOpt.required) {
       ret.push(arg);
-    } else if (arg.length > 1 && arg[0] === '-' && arg[1] !== '-') {
-      arg.slice(1).split('').forEach(function(c) {
-        ret.push('-' + c);
-      });
+    } else if (arg.length > 2 && arg[0] === '-' && arg[1] !== '-') {
+      short = arg.slice(0, 2);
+      opt = this.optionFor(short);
+      if (opt && (opt.required || opt.optional)) {
+        ret.push(short);
+        ret.push(arg.slice(2));
+      } else {
+        arg.slice(1).split('').forEach(function(c) {
+          ret.push('-' + c);
+        });
+      }
     } else if (/^--/.test(arg) && ~(index = arg.indexOf('='))) {
       ret.push(arg.slice(0, index), arg.slice(index + 1));
     } else {
@@ -740,7 +757,7 @@ Command.prototype.parseOptions = function(argv) {
           ++i;
         }
         this.emit('option:' + option.name(), arg);
-      // bool
+      // flag
       } else {
         this.emit('option:' + option.name());
       }
@@ -754,7 +771,7 @@ Command.prototype.parseOptions = function(argv) {
       // If the next argument looks like it might be
       // an argument for this option, we pass it on.
       // If it isn't, then it'll simply be ignored
-      if ((i + 1) < argv.length && argv[i + 1][0] !== '-') {
+      if ((i + 1) < argv.length && (argv[i + 1][0] !== '-' || argv[i + 1] === '-')) {
         unknownOptions.push(argv[++i]);
       }
       continue;
@@ -792,7 +809,7 @@ Command.prototype.opts = function() {
  */
 
 Command.prototype.missingArgument = function(name) {
-  console.error("error: missing required argument `%s'", name);
+  console.error("error: missing required argument '%s'", name);
   process.exit(1);
 };
 
@@ -806,9 +823,9 @@ Command.prototype.missingArgument = function(name) {
 
 Command.prototype.optionMissingArgument = function(option, flag) {
   if (flag) {
-    console.error("error: option `%s' argument missing, got `%s'", option.flags, flag);
+    console.error("error: option '%s' argument missing, got '%s'", option.flags, flag);
   } else {
-    console.error("error: option `%s' argument missing", option.flags);
+    console.error("error: option '%s' argument missing", option.flags);
   }
   process.exit(1);
 };
@@ -822,7 +839,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
 
 Command.prototype.unknownOption = function(flag) {
   if (this._allowUnknownOption) return;
-  console.error("error: unknown option `%s'", flag);
+  console.error("error: unknown option '%s'", flag);
   process.exit(1);
 };
 
@@ -834,7 +851,7 @@ Command.prototype.unknownOption = function(flag) {
  */
 
 Command.prototype.variadicArgNotLast = function(name) {
-  console.error("error: variadic arguments must be last `%s'", name);
+  console.error("error: variadic arguments must be last '%s'", name);
   process.exit(1);
 };
 
@@ -844,17 +861,21 @@ Command.prototype.variadicArgNotLast = function(name) {
  * This method auto-registers the "-V, --version" flag
  * which will print the version number when passed.
  *
+ * You can optionally supply the  flags and description to override the defaults.
+ *
  * @param {String} str
  * @param {String} [flags]
+ * @param {String} [description]
  * @return {Command} for chaining
  * @api public
  */
 
-Command.prototype.version = function(str, flags) {
+Command.prototype.version = function(str, flags, description) {
   if (arguments.length === 0) return this._version;
   this._version = str;
   flags = flags || '-V, --version';
-  var versionOption = new Option(flags, 'output the version number');
+  description = description || 'output the version number';
+  var versionOption = new Option(flags, description);
   this._versionOptionName = versionOption.long.substr(2) || 'version';
   this.options.push(versionOption);
   this.on('option:' + this._versionOptionName, function() {
@@ -988,8 +1009,9 @@ Command.prototype.largestCommandLength = function() {
 Command.prototype.largestOptionLength = function() {
   var options = [].slice.call(this.options);
   options.push({
-    flags: '-h, --help'
+    flags: this._helpFlags
   });
+
   return options.reduce(function(max, option) {
     return Math.max(max, option.flags.length);
   }, 0);
@@ -1047,10 +1069,9 @@ Command.prototype.optionHelp = function() {
 
   // Append the help information
   return this.options.map(function(option) {
-    var description = option.description +
-      ((option.bool && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
-    return pad(option.flags, width) + '  ' + wrap(description, descriptionWidth, width + 2);
-  }).concat([pad('-h, --help', width) + '  ' + 'output usage information'])
+    return pad(option.flags, width) + '  ' + option.description +
+      ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
+  }).concat([pad(this._helpFlags, width) + '  ' + wrap(this._helpDescription, descriptionWidth, width + 2)])
     .join('\n');
 };
 
@@ -1113,8 +1134,12 @@ Command.prototype.helpInformation = function() {
   if (this._alias) {
     cmdName = cmdName + '|' + this._alias;
   }
+  var parentCmdNames = '';
+  for (var parentCmd = this.parent; parentCmd; parentCmd = parentCmd.parent) {
+    parentCmdNames = parentCmd.name() + ' ' + parentCmdNames;
+  }
   var usage = [
-    'Usage: ' + cmdName + ' ' + this.usage(),
+    'Usage: ' + parentCmdNames + cmdName + ' ' + this.usage(),
     ''
   ];
 
@@ -1136,7 +1161,10 @@ Command.prototype.helpInformation = function() {
 };
 
 /**
- * Output help information for this command
+ * Output help information for this command.
+ *
+ * When listener(s) are available for the helpLongFlag
+ * those callbacks are invoked.
  *
  * @api public
  */
@@ -1147,13 +1175,41 @@ Command.prototype.outputHelp = function(cb) {
       return passthru;
     };
   }
-  process.stdout.write(cb(this.helpInformation()));
-  this.emit('--help');
+  const cbOutput = cb(this.helpInformation());
+  if (typeof cbOutput !== 'string' && !Buffer.isBuffer(cbOutput)) {
+    throw new Error('outputHelp callback must return a string or a Buffer');
+  }
+  process.stdout.write(cbOutput);
+  this.emit(this._helpLongFlag);
+};
+
+/**
+ * You can pass in flags and a description to override the help
+ * flags and help description for your command.
+ *
+ * @param {String} [flags]
+ * @param {String} [description]
+ * @return {Command}
+ * @api public
+ */
+
+Command.prototype.helpOption = function(flags, description) {
+  this._helpFlags = flags || this._helpFlags;
+  this._helpDescription = description || this._helpDescription;
+
+  var splitFlags = this._helpFlags.split(/[ ,|]+/);
+
+  if (splitFlags.length > 1) this._helpShortFlag = splitFlags.shift();
+
+  this._helpLongFlag = splitFlags.shift();
+
+  return this;
 };
 
 /**
  * Output help information and exit.
  *
+ * @param {Function} [cb]
  * @api public
  */
 
@@ -1222,8 +1278,9 @@ function wrap(str, width, indent) {
 
 function outputHelpIfNecessary(cmd, options) {
   options = options || [];
+
   for (var i = 0; i < options.length; i++) {
-    if (options[i] === '--help' || options[i] === '-h') {
+    if (options[i] === cmd._helpLongFlag || options[i] === cmd._helpShortFlag) {
       cmd.outputHelp();
       process.exit(0);
     }
@@ -1255,4 +1312,51 @@ function exists(file) {
   } catch (e) {
     return false;
   }
+}
+
+/**
+ * Scan arguments and increment port number for inspect calls (to avoid conflicts when spawning new command).
+ *
+ * @param {string[]} args - array of arguments from node.execArgv
+ * @returns {string[]}
+ * @api private
+ */
+
+function incrementNodeInspectorPort(args) {
+  // Testing for these options:
+  //  --inspect[=[host:]port]
+  //  --inspect-brk[=[host:]port]
+  //  --inspect-port=[host:]port
+  return args.map((arg) => {
+    var result = arg;
+    if (arg.indexOf('--inspect') === 0) {
+      var debugOption;
+      var debugHost = '127.0.0.1';
+      var debugPort = '9229';
+      var match;
+      if ((match = arg.match(/^(--inspect(-brk)?)$/)) !== null) {
+        // e.g. --inspect
+        debugOption = match[1];
+      } else if ((match = arg.match(/^(--inspect(-brk|-port)?)=([^:]+)$/)) !== null) {
+        debugOption = match[1];
+        if (/^\d+$/.test(match[3])) {
+          // e.g. --inspect=1234
+          debugPort = match[3];
+        } else {
+          // e.g. --inspect=localhost
+          debugHost = match[3];
+        }
+      } else if ((match = arg.match(/^(--inspect(-brk|-port)?)=([^:]+):(\d+)$/)) !== null) {
+        // e.g. --inspect=localhost:1234
+        debugOption = match[1];
+        debugHost = match[3];
+        debugPort = match[4];
+      }
+
+      if (debugOption && debugPort !== '0') {
+        result = `${debugOption}=${debugHost}:${parseInt(debugPort) + 1}`;
+      }
+    }
+    return result;
+  });
 }
