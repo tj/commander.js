@@ -128,7 +128,7 @@ function Command(name) {
  *        .command('start <service>', 'start named service')
  *        .command('stop [service]', 'stop named serice, or all if no name supplied');
  *
- * @param {string} nameAndArgs - command name and arguments, args are `<required>` or `[optional]` and last may also be `letiadic...`
+ * @param {string} nameAndArgs - command name and arguments, args are `<required>` or `[optional]` and last may also be `variadic...`
  * @param {Object|string} [actionOptsOrExecDesc] - configuration options (for action), or description (for executable)
  * @param {Object} [execOpts] - configuration options (for executable)
  * @return {Command} returns new command for action handler, or top-level command for executable command
@@ -204,7 +204,7 @@ Command.prototype.parseExpectedArgs = function(args) {
     let argDetails = {
       required: false,
       name: '',
-      letiadic: false
+      variadic: false
     };
 
     switch (arg[0]) {
@@ -218,7 +218,7 @@ Command.prototype.parseExpectedArgs = function(args) {
     }
 
     if (argDetails.name.length > 3 && argDetails.name.slice(-3) === '...') {
-      argDetails.letiadic = true;
+      argDetails.variadic = true;
       argDetails.name = argDetails.name.slice(0, -3);
     }
     if (argDetails.name) {
@@ -270,9 +270,9 @@ Command.prototype.action = function(fn) {
     self._args.forEach((arg, i) => {
       if (arg.required && args[i] == null) {
         self.missingArgument(arg.name);
-      } else if (arg.letiadic) {
+      } else if (arg.variadic) {
         if (i !== self._args.length - 1) {
-          self.letiadicArgNotLast(arg.name);
+          self.variadicArgNotLast(arg.name);
         }
 
         args[i] = args.splice(i);
@@ -838,14 +838,14 @@ Command.prototype.unknownOption = function(flag) {
 };
 
 /**
- * letiadic argument with `name` is not the last argument as required.
+ * variadic argument with `name` is not the last argument as required.
  *
  * @param {String} name
  * @api private
  */
 
-Command.prototype.letiadicArgNotLast = function(name) {
-  console.error("error: letiadic arguments must be last '%s'", name);
+Command.prototype.variadicArgNotLast = function(name) {
+  console.error("error: variadic arguments must be last '%s'", name);
   process.exit(1);
 };
 
@@ -1256,7 +1256,7 @@ function outputHelpIfNecessary(cmd, options) {
  */
 
 function humanReadableArgName(arg) {
-  const nameOutput = arg.name + (arg.letiadic === true ? '...' : '');
+  const nameOutput = arg.name + (arg.variadic === true ? '...' : '');
 
   return arg.required
     ? '<' + nameOutput + '>'
