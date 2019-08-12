@@ -1069,7 +1069,7 @@ Command.prototype.optionHelp = function() {
 
   // Append the help information
   return this.options.map(function(option) {
-    return pad(option.flags, width) + '  ' + option.description +
+    return pad(option.flags, width) + '  ' + wrap(option.description, descriptionWidth, width + 2) +
       ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
   }).concat([pad(this._helpFlags, width) + '  ' + wrap(this._helpDescription, descriptionWidth, width + 2)])
     .join('\n');
