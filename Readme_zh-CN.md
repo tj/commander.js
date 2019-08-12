@@ -22,7 +22,7 @@
     - [Git 风格的子命令](#git-%e9%a3%8e%e6%a0%bc%e7%9a%84%e5%ad%90%e5%91%bd%e4%bb%a4)
   - [自动化帮助信息 --help](#%e8%87%aa%e5%8a%a8%e5%8c%96%e5%b8%ae%e5%8a%a9%e4%bf%a1%e6%81%af---help)
     - [自定义帮助](#%e8%87%aa%e5%ae%9a%e4%b9%89%e5%b8%ae%e5%8a%a9)
-    - [.usage and .name](#usage-and-name)
+    - [.usage 和 .name](#usage-%e5%92%8c-name)
     - [.outputHelp(cb)](#outputhelpcb)
     - [.helpOption(flags, description)](#helpoptionflags-description)
     - [.help(cb)](#helpcb)
@@ -445,10 +445,9 @@ Examples:
   $ custom-help -h
 ```
 
-### .usage and .name
+### .usage 和 .name
 
-These allow you to customise the usage description in the first line of the help. The name is otherwise
-deduced from the (full) program arguments. Given:
+这两个选项让你可以自定义在帮助信息第一行中显示的命令使用描述(description)，并且描述是从（完整的）命令参数中推导出来的。例如：
 
 ```js
 program
@@ -456,7 +455,7 @@ program
   .usage("[global options] command")
 ```
 
-The help will start with:
+帮助信息会以此开头：
 
 ```Text
 Usage: my-command [global options] command
