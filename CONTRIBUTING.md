@@ -16,6 +16,9 @@ Pull Requests will be considered. Please submit pull requests against the develo
 
 Follow the existing code style. Check the tests succeed, including lint.
 
+- `npm run test`
+- `npm run lint`
+
 Don't update the CHANGELOG or command version number. That gets done by maintainers when preparing the release.
 
 Useful things to include in your request description are:
