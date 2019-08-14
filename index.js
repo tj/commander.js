@@ -458,6 +458,14 @@ Command.prototype.parse = function(argv) {
 
   var result = this.parseArgs(this.args, parsed.unknown);
 
+  if (args[0] === 'help' && args.length === 1) this.help();
+
+  // <cmd> --help
+  if (args[0] === 'help') {
+    args[0] = args[1];
+    args[1] = this._helpLongFlag;
+  }
+
   // executable sub-commands
   // (Debugging note for future: args[0] is not right if an action has been called)
   var name = result.args[0];
@@ -511,13 +519,6 @@ Command.prototype.executeSubCommand = function(argv, args, unknown, executableFi
   args = args.concat(unknown);
 
   if (!args.length) this.help();
-  if (args[0] === 'help' && args.length === 1) this.help();
-
-  // <cmd> --help
-  if (args[0] === 'help') {
-    args[0] = args[1];
-    args[1] = this._helpLongFlag;
-  }
 
   var isExplicitJS = false; // Whether to use node to launch "executable"
 
