@@ -16,9 +16,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 * help for sub commands with custom executableFile ([#1018])
 
-[#1010]: https://github.com/tj/commander.js/pull/1010
-[#1018]: https://github.com/tj/commander.js/pull/1018
-
 3.0.0 / 2019-08-08
 =================
 
@@ -67,20 +64,6 @@ program
   .command('action1', undefined, { noHelp: true }) // No longer valid
   .command('action2', { noHelp: true }) // Correct
 ```
-
- [#599]: https://github.com/tj/commander.js/issues/599
- [#611]: https://github.com/tj/commander.js/issues/611
- [#697]: https://github.com/tj/commander.js/issues/697
- [#795]: https://github.com/tj/commander.js/issues/795
- [#915]: https://github.com/tj/commander.js/issues/915
- [#938]: https://github.com/tj/commander.js/issues/938
- [#963]: https://github.com/tj/commander.js/issues/963
- [#974]: https://github.com/tj/commander.js/issues/974
- [#980]: https://github.com/tj/commander.js/issues/980
- [#987]: https://github.com/tj/commander.js/issues/987
- [#990]: https://github.com/tj/commander.js/issues/990
- [#991]: https://github.com/tj/commander.js/issues/991
- [#999]: https://github.com/tj/commander.js/issues/999
 
 3.0.0-0 Prerelease / 2019-07-28
 ==============================
@@ -494,5 +477,21 @@ program
 ==================
 
   * Initial release
+
+[#599]: https://github.com/tj/commander.js/issues/599
+[#611]: https://github.com/tj/commander.js/issues/611
+[#697]: https://github.com/tj/commander.js/issues/697
+[#795]: https://github.com/tj/commander.js/issues/795
+[#915]: https://github.com/tj/commander.js/issues/915
+[#938]: https://github.com/tj/commander.js/issues/938
+[#963]: https://github.com/tj/commander.js/issues/963
+[#974]: https://github.com/tj/commander.js/issues/974
+[#980]: https://github.com/tj/commander.js/issues/980
+[#987]: https://github.com/tj/commander.js/issues/987
+[#990]: https://github.com/tj/commander.js/issues/990
+[#991]: https://github.com/tj/commander.js/issues/991
+[#999]: https://github.com/tj/commander.js/issues/999
+[#1010]: https://github.com/tj/commander.js/pull/1010
+[#1018]: https://github.com/tj/commander.js/pull/1018
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
