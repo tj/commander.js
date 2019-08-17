@@ -26,11 +26,11 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "^12.6.2",
-    "eslint": "^6.0.1",
+    "@types/node": "^12.7.2",
+    "eslint": "^6.1.0",
     "should": "^13.2.3",
-    "sinon": "^7.3.2",
-    "standard": "^13.0.1",
+    "sinon": "^7.4.1",
+    "standard": "^13.1.0",
     "ts-node": "^8.3.0",
     "typescript": "^3.5.3"
   },
