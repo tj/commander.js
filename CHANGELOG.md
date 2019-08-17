@@ -1,3 +1,24 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
+and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html). (Format adopted after v3.0.0.)
+
+## [Unreleased] (date goes here)
+
+### Added
+
+* Table of Contents to README ([#1010])
+* .name and .usage to README ([#1010])
+
+### Fixed
+
+* help for sub commands with custom executableFile ([#1018])
+
+[#1010]: https://github.com/tj/commander.js/pull/1010
+[#1018]: https://github.com/tj/commander.js/pull/1018
+
 3.0.0 / 2019-08-08
 =================
 
@@ -473,3 +494,5 @@ program
 ==================
 
   * Initial release
+
+[Unreleased]: https://github.com/tj/commander.js/compare/master...develop
