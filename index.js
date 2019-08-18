@@ -1065,13 +1065,14 @@ Command.prototype.optionHelp = function() {
   var width = this.padWidth();
 
   var columns = process.stdout.columns || 80;
-  var descriptionWidth = columns - width;
+  var descriptionWidth = columns - width - 4;
+  var minWidth = 40;
 
   // Append the help information
   return this.options.map(function(option) {
-    return pad(option.flags, width) + '  ' + wrap(option.description, descriptionWidth, width + 2) +
+    return pad(option.flags, width) + '  ' + optionalWrap(option.description, descriptionWidth, width + 2, minWidth) +
       ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
-  }).concat([pad(this._helpFlags, width) + '  ' + wrap(this._helpDescription, descriptionWidth, width + 2)])
+  }).concat([pad(this._helpFlags, width) + '  ' + optionalWrap(this._helpDescription, descriptionWidth, width + 2, minWidth)])
     .join('\n');
 };
 
@@ -1089,13 +1090,14 @@ Command.prototype.commandHelp = function() {
   var width = this.padWidth();
 
   var columns = process.stdout.columns || 80;
-  var descriptionWidth = columns - width - 5;
+  var descriptionWidth = columns - width - 4;
+  var minWidth = 40;
 
   return [
     'Commands:',
     commands.map(function(cmd) {
       var desc = cmd[1] ? '  ' + cmd[1] : '';
-      return (desc ? pad(cmd[0], width) : cmd[0]) + wrap(desc, descriptionWidth, width + 2);
+      return (desc ? pad(cmd[0], width) : cmd[0]) + optionalWrap(desc, descriptionWidth, width + 2, minWidth);
     }).join('\n').replace(/^/gm, '  '),
     ''
   ].join('\n');
@@ -1266,6 +1268,26 @@ function wrap(str, width, indent) {
     return ((i > 0 && indent) ? Array(indent + 1).join(' ') : '') + line;
   }).join('\n');
   return result;
+}
+
+/**
+ * Optionally wrap the given str to a max width of width characters per line
+ * while indenting with indent spaces. Do not wrap the text when the minWidth
+ * is not hit.
+ * 
+ * @param {String} str
+ * @param {Number} width
+ * @param {Number} indent
+ * @return {String}
+ * @api private
+ */
+function optionalWrap(str, width, indent, minWidth) {
+  // detected manually wrapped and indented strings by searching for line breaks
+  // followed by multiple spaces/tabs
+  if (str.match(/[\n]\s+/)) return str;
+  // check if minimum width is reached
+  if (width < minWidth) return str;
+  return wrap(str, width, indent);
 }
 
 /**
