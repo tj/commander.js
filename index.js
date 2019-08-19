@@ -1274,7 +1274,7 @@ function wrap(str, width, indent) {
  * Optionally wrap the given str to a max width of width characters per line
  * while indenting with indent spaces. Do not wrap the text when the minWidth
  * is not hit.
- * 
+ *
  * @param {String} str
  * @param {Number} width
  * @param {Number} indent
