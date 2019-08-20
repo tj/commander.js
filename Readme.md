@@ -430,7 +430,7 @@ $ node myapp journal list myjournal1
 $ node myapp journal delete myjournal1 
 ```
 
-Be aware of option handling. In the example above `--force` option is available in the command object passed to action. However, `--quiet` belongs to it's parent.
+Be aware of option handling. In the example above `--force` option is available in the command object passed to action. However, `--quiet` belongs to it's parent. Along with the explicit reach you can use `collectAllOptions` - it collects option values from all levels and returns as an object.
 
 ```js
 // invoked with "journal --quiet delete xxx --force"
@@ -438,6 +438,7 @@ function Delete(path, cmdInstance) {
   console.log(cmdInstance.force); // true
   console.log(cmdInstance.quiet); // false !!!
   console.log(cmdInstance.parent.quiet); // true
+  console.log(cmdInstance.collectAllOptions()); // { quiet: true, force: true }
 }
 ```
 

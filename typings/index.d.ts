@@ -214,6 +214,16 @@ declare namespace commander {
     forwardSubcommands(): Command;
 
     /**
+     * Returns an object with all options values, including parent options values
+     * This makes it especially useful with forwardSubcommands as it collects
+     * options from upper levels too
+     *
+     * @returns {Object} dictionary of option values
+     */
+
+    collectAllOptions(): Object;
+
+    /**
      * Return an object containing options as key-value pairs
      *
      * @returns {{[key: string]: any}}

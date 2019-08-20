@@ -1422,6 +1422,27 @@ Command.prototype.forwardSubcommands = function() {
 };
 
 /**
+ * Returns an object with all options values, including parent options values
+ * This makes it especially useful with forwardSubcommands as it collects
+ * options from upper levels too
+ *
+ * @returns {Object} dictionary of option values
+ */
+
+Command.prototype.collectAllOptions = function() {
+  var allOpts = {};
+  var node = this;
+  while (node) {
+    allOpts = node.options
+      .map(o => o.attributeName())
+      .filter(o => typeof node[o] !== 'function')
+      .reduce((r, o) => ({ [o]: node[o], ...r }), allOpts); // deeper opts enjoy the priority
+    node = node.parent;
+  }
+  return allOpts;
+};
+
+/**
  * Camel-case the given `flag`
  *
  * @param {String} flag
