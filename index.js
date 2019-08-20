@@ -1402,7 +1402,7 @@ Command.prototype.forwardSubcommands = function() {
     unknown = parsed.unknown;
 
     // Output help if necessary
-    if (unknown.includes('--help') || unknown.includes('-h')) {
+    if ((unknown.includes('--help') || unknown.includes('-h')) && (!args || !self.listeners('command:' + args[0]))) {
       self.outputHelp();
       process.exit(0);
     }
