@@ -206,6 +206,14 @@ declare namespace commander {
     parseOptions(argv: string[]): commander.ParseOptionsResult;
 
     /**
+     * Creates an instance of sub command
+     * 
+     * @returns {Command} which is the subcommand instance
+     */
+
+    forwardSubcommands(): Command;
+
+    /**
      * Return an object containing options as key-value pairs
      *
      * @returns {{[key: string]: any}}

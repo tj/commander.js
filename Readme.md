@@ -404,6 +404,43 @@ Specifying a name with `executableFile` will override the default constructed na
 
 If the program is designed to be installed globally, make sure the executables have proper modes, like `755`.
 
+### Sub commands (handlers)
+
+This approach does not spawn a new process in comparison to *'Git-style executable (sub)commands'* above. Instead it creates a new subcommand instance which can be initiated with own actions, options (and further subcommands). Then when upper level command is found it triggers delegates handling to lower levels.
+
+```js
+const subCommand = program
+    .command('journal')
+    .description('Journal utils') // this should be separate line
+    .option('-q, --quiet')
+    .forwardSubcommands(); // instead of "action"
+
+subCommand
+    .command('list <path>')
+    .action(List);
+
+subCommand
+    .command('delete <path>')
+    .option('-f, --force')
+    .action(Delete);
+```
+
+```
+$ node myapp journal list myjournal1 
+$ node myapp journal delete myjournal1 
+```
+
+Be aware of option handling. In the example above `--force` option is available in the command object passed to action. However, `--quiet` belongs to it's parent.
+
+```js
+// invoked with "journal --quiet delete xxx --force"
+function Delete(path, cmdInstance) {
+  console.log(cmdInstance.force); // true
+  console.log(cmdInstance.quiet); // false !!!
+  console.log(cmdInstance.parent.quiet); // true
+}
+```
+
 ## Automated --help
 
  The help information is auto-generated based on the information commander already knows about your program, so the following `--help` info is for free:
