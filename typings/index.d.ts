@@ -279,6 +279,7 @@ declare namespace commander {
     interface CommandOptions {
         noHelp?: boolean;
         isDefault?: boolean;
+        executableFile?: string;
     }
 
     interface ParseOptionsResult {
