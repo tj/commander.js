@@ -286,7 +286,7 @@ program
 你可以通过使用 `.arguments` 来为最顶级命令指定参数，对于子命令来说参数都包括在 `.command` 调用之中了。尖括号(e.g. `<required>`)意味着必须的输入，而方括号(e.g. `[optional]`)则是代表了可选的输入
 
 ```js
-var program = require('commander');
+const program = require('commander');
 
 program
   .version('0.1.0')
@@ -309,7 +309,7 @@ console.log('environment:', envValue || "no environment given");
 一个命令有且仅有最后一个参数是可变的，你需要在参数名后加上 `...` 来使它可变，例如
 
 ```js
-var program = require('commander');
+const program = require('commander');
 
 program
   .version('0.1.0')
@@ -334,7 +334,7 @@ program.parse(process.argv);
 操作处理程序会接收每一个你声明的参数的变量，和一个额外的参数——这个命令对象自己。这个命令的参数包括添加的命令特定选项的值。
 
 ```js
-var program = require('commander');
+const program = require('commander');
 
 program
   .command('rm <dir>')
@@ -361,7 +361,7 @@ Commander 将会尝试在入口脚本（例如 `./examples/pm`）的目录中搜
 
 ```js
 // file: ./examples/pm
-var program = require('commander');
+const program = require('commander');
 
 program
   .version('0.1.0')
@@ -405,7 +405,7 @@ Options:
 ```js
 #!/usr/bin/env node
 
-var program = require('commander');
+const program = require('commander');
 
 program
   .version('0.0.1')
@@ -468,8 +468,8 @@ Usage: my-command [global options] command
 如果你想显示默认的帮助（例如，如果没有提供命令），你可以使用类似的东西：
 
 ```js
-var program = require('commander');
-var colors = require('colors');
+const program = require('commander');
+const colors = require('colors');
 
 program
   .version('0.1.0')
@@ -548,7 +548,7 @@ node -r ts-node/register pm.ts
 ## 例子
 
 ```js
-var program = require('commander');
+const program = require('commander');
 
 program
   .version('0.1.0')
@@ -561,7 +561,7 @@ program
   .description('run setup commands for all envs')
   .option("-s, --setup_mode [mode]", "Which setup mode to use")
   .action(function(env, options){
-    var mode = options.setup_mode || "normal";
+    const mode = options.setup_mode || "normal";
     env = env || 'all';
     console.log('setup for %s env(s) with %s mode', env, mode);
   });

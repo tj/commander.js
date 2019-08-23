@@ -289,7 +289,7 @@ program
 You use `.arguments` to specify the arguments for the top-level command, and for subcommands they are included in the `.command` call. Angled brackets (e.g. `<required>`) indicate required input. Square brackets (e.g. `[optional]`) indicate optional input.
 
 ```js
-var program = require('commander');
+const program = require('commander');
 
 program
   .version('0.1.0')
@@ -313,7 +313,7 @@ console.log('environment:', envValue || "no environment given");
  append `...` to the argument name. For example:
 
 ```js
-var program = require('commander');
+const program = require('commander');
 
 program
   .version('0.1.0')
@@ -339,7 +339,7 @@ The action handler gets passed a parameter for each argument you declared, and o
 command object itself. This command argument has the values for the command-specific options added as properties.
 
 ```js
-var program = require('commander');
+const program = require('commander');
 
 program
   .command('rm <dir>')
@@ -365,7 +365,7 @@ You handle the options for an executable (sub)command in the executable, and don
 
 ```js
 // file: ./examples/pm
-var program = require('commander');
+const program = require('commander');
 
 program
   .version('0.1.0')
@@ -413,7 +413,7 @@ Options:
 ```js
 #!/usr/bin/env node
 
-var program = require('commander');
+const program = require('commander');
 
 program
   .version('0.1.0')
@@ -478,8 +478,8 @@ Optional callback cb allows post-processing of help text before it is displayed.
 If you want to display help by default (e.g. if no command was provided), you can use something like:
 
 ```js
-var program = require('commander');
-var colors = require('colors');
+const program = require('commander');
+const colors = require('colors');
 
 program
   .version('0.1.0')
@@ -557,7 +557,7 @@ the inspector port is incremented by 1 for the spawned subcommand.
 ## Examples
 
 ```js
-var program = require('commander');
+const program = require('commander');
 
 program
   .version('0.1.0')
@@ -570,7 +570,7 @@ program
   .description('run setup commands for all envs')
   .option("-s, --setup_mode [mode]", "Which setup mode to use")
   .action(function(env, options){
-    var mode = options.setup_mode || "normal";
+    const mode = options.setup_mode || "normal";
     env = env || 'all';
     console.log('setup for %s env(s) with %s mode', env, mode);
   });
