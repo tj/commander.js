@@ -283,7 +283,8 @@ Command.prototype.action = function(fn) {
     var expectedArgsCount = self._args.length;
     var actionArgs = args.slice(0, expectedArgsCount);
     actionArgs[expectedArgsCount] = self;
-    actionArgs = actionArgs.concat(args.slice(expectedArgsCount)); // Unknown arguments beyond expected! Array, or individual, or ignore?
+    // Add the extra arguments too
+    actionArgs.push(args.slice(expectedArgsCount));
 
     fn.apply(self, actionArgs);
   };
