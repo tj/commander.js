@@ -5,12 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html). (Format adopted after v3.0.0.)
 
-## [Unreleased] (date goes here)
+## [3.0.1] (date goes here)
 
 ### Added
 
-* Table of Contents to README ([#1010])
 * .name and .usage to README ([#1010])
+* Table of Contents to README ([#1010])
+* TypeScript definition for `executableFile` in CommandOptions ([#1028])
+
+### Changed
+
+* consistently use `const` rather than `var` in README ([#1026])
 
 ### Fixed
 
@@ -493,5 +498,8 @@ program
 [#999]: https://github.com/tj/commander.js/issues/999
 [#1010]: https://github.com/tj/commander.js/pull/1010
 [#1018]: https://github.com/tj/commander.js/pull/1018
+[#1026]: https://github.com/tj/commander.js/pull/1026
+[#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[3.0.1]: https://github.com/tj/commander.js/compare/v3.0.0...v3.0.1
