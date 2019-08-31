@@ -1,3 +1,5 @@
+// Example test, fairly direct port from original
+
 /**
  * Top-level command syntax.
  */

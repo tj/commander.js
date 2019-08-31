@@ -1,3 +1,5 @@
+// Example test, fairly direct port from original
+
 var program = require('../');
 
 test('option set on command', () => {
