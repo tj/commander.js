@@ -25,6 +25,16 @@ describe('option with optional value, no default', () => {
     program.parse(['node', 'test', '--cheese']);
     expect(program.cheese).toBe(true);
   });
+
+  test('when option specified without value and following option then value is true', () => {
+    // optional options do not eat values with dashes
+    const program = new commander.Command();
+    program
+      .option('--cheese [type]', 'cheese type')
+      .option('--some-option');
+    program.parse(['node', 'test', '--cheese', '--some-option']);
+    expect(program.cheese).toBe(true);
+  });
 });
 
 describe('option with optional value, with default', () => {

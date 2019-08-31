@@ -18,6 +18,16 @@ describe('option with required value, no default', () => {
     expect(program.cheese).toBe(cheeseType);
   });
 
+  test('when option specified even including dashes then value is as specified', () => {
+    // required options eat values even with dashes
+    const program = new commander.Command();
+    program
+      .option('--cheese <type>', 'cheese type');
+    const cheeseType = '--flavour';
+    program.parse(['node', 'test', '--cheese', cheeseType]);
+    expect(program.cheese).toBe(cheeseType);
+  });
+
   test('when option value not specified then error', () => {
     // Arrange. Mock error routine to allow interception.
     const spyOptionMissingArgument = jest.fn(() => {
