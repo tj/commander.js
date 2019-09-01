@@ -1,5 +1,6 @@
 const commander = require('../');
 
+// option with required value, no default
 describe('option with required value, no default', () => {
   test('when option not specified then value is undefined', () => {
     const program = new commander.Command();
@@ -18,24 +19,24 @@ describe('option with required value, no default', () => {
     expect(program.cheese).toBe(cheeseType);
   });
 
-  test('when option specified including dash then value is as specified', () => {
+  test('when option specified as dash then value is dash', () => {
     // required options eat values even with dashes
     const program = new commander.Command();
     program
-      .option('--cheese <type>', 'cheese type');
-    const cheeseType = '-';
-    program.parse(['node', 'test', '--cheese', cheeseType]);
-    expect(program.cheese).toBe(cheeseType);
+      .option('--output <file>', 'output');
+    const dash = '-';
+    program.parse(['node', 'test', '--output', dash]);
+    expect(program.output).toBe(dash);
   });
 
-  test('when option specified including dashes then value is as specified', () => {
+  test('when option value specified with leading dashes then value is as specified', () => {
     // required options eat values even with dashes
     const program = new commander.Command();
     program
-      .option('--cheese <type>', 'cheese type');
-    const cheeseType = '--flavour';
-    program.parse(['node', 'test', '--cheese', cheeseType]);
-    expect(program.cheese).toBe(cheeseType);
+      .option('--warning-flags <flags>', 'options for another command');
+    const warningFlags = '--failOnWarning';
+    program.parse(['node', 'test', '--warning-flags', warningFlags]);
+    expect(program.warningFlags).toBe(warningFlags);
   });
 
   test('when option value not specified then error', () => {
@@ -58,6 +59,7 @@ describe('option with required value, no default', () => {
   });
 });
 
+// option with required value, with default
 describe('option with required value, with default', () => {
   test('when option not specified then value is default', () => {
     const defaultValue = 'default';
