@@ -1,6 +1,6 @@
 const commander = require('../');
 
-// Test the various ways flags can be specified
+// Test the various ways flags can be specified in the first parameter to `.option`
 
 test('when only short flag defined and specified then value is true', () => {
   const program = new commander.Command();
