@@ -21,11 +21,11 @@ describe('option with required value, no default', () => {
 
   test('when option value not specified then error', () => {
     // Arrange. Mock error routine to allow interception.
-    const spyOptionMissingArgument = jest.fn(() => {
+    const mockOptionMissingArgument = jest.fn(() => {
       throw new Error('optionMissingArgument');
     });
     const program = new commander.Command();
-    program.optionMissingArgument = spyOptionMissingArgument;
+    program.optionMissingArgument = mockOptionMissingArgument;
     program
       .option('--cheese <type>', 'cheese type');
 
@@ -35,7 +35,7 @@ describe('option with required value, no default', () => {
     }).toThrow();
 
     // Assert
-    expect(spyOptionMissingArgument).toHaveBeenCalled();
+    expect(mockOptionMissingArgument).toHaveBeenCalled();
   });
 });
 
@@ -62,12 +62,12 @@ describe('option with required value, with default', () => {
 
   test('when option value not specified then error', () => {
     // Arrange. Mock error routine to allow interception.
-    const spyOptionMissingArgument = jest.fn(() => {
+    const mockOptionMissingArgument = jest.fn(() => {
       throw new Error('optionMissingArgument');
     });
     const defaultValue = 'default';
     const program = new commander.Command();
-    program.optionMissingArgument = spyOptionMissingArgument;
+    program.optionMissingArgument = mockOptionMissingArgument;
     program
       .option('--cheese <type>', 'cheese type', defaultValue);
 
@@ -77,6 +77,6 @@ describe('option with required value, with default', () => {
     }).toThrow();
 
     // Assert
-    expect(spyOptionMissingArgument).toHaveBeenCalled();
+    expect(mockOptionMissingArgument).toHaveBeenCalled();
   });
 });
