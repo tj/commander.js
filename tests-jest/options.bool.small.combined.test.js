@@ -1,6 +1,6 @@
 const commander = require('../');
 
-test('when when multiple short flags specified then all true', () => {
+test('when when multiple short flags specified then all values are true', () => {
   const program = new commander.Command();
   program
     .option('-p, --pepper', 'add pepper')
