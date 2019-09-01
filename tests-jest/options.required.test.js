@@ -19,36 +19,6 @@ describe('option with required value, no default', () => {
     expect(program.cheese).toBe(cheeseType);
   });
 
-  test('when option specified as dash then value is dash', () => {
-    // required options eat values even with dashes
-    const program = new commander.Command();
-    program
-      .option('--output <file>', 'output');
-    const dash = '-';
-    program.parse(['node', 'test', '--output', dash]);
-    expect(program.output).toBe(dash);
-  });
-
-  test('when option value specified with negatve number then value is as specified', () => {
-    // required options eat values even with dashes
-    const program = new commander.Command();
-    program
-      .option('--number <n>', 'number');
-    const negativeNumber = '-5';
-    program.parse(['node', 'test', '--number', negativeNumber]);
-    expect(program.number).toBe(negativeNumber);
-  });
-
-  test('when option value specified with leading dashes then value is as specified', () => {
-    // required options eat values even with dashes
-    const program = new commander.Command();
-    program
-      .option('--warning-flags <flags>', 'options for another command');
-    const warningFlags = '--failOnWarning';
-    program.parse(['node', 'test', '--warning-flags', warningFlags]);
-    expect(program.warningFlags).toBe(warningFlags);
-  });
-
   test('when option value not specified then error', () => {
     // Arrange. Mock error routine to allow interception.
     const spyOptionMissingArgument = jest.fn(() => {
