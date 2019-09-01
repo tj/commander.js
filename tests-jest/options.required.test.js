@@ -18,7 +18,17 @@ describe('option with required value, no default', () => {
     expect(program.cheese).toBe(cheeseType);
   });
 
-  test('when option specified even including dashes then value is as specified', () => {
+  test('when option specified including dash then value is as specified', () => {
+    // required options eat values even with dashes
+    const program = new commander.Command();
+    program
+      .option('--cheese <type>', 'cheese type');
+    const cheeseType = '-';
+    program.parse(['node', 'test', '--cheese', cheeseType]);
+    expect(program.cheese).toBe(cheeseType);
+  });
+
+  test('when option specified including dashes then value is as specified', () => {
     // required options eat values even with dashes
     const program = new commander.Command();
     program
