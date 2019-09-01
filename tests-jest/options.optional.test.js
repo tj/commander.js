@@ -1,5 +1,6 @@
 const commander = require('../');
 
+// option with optional value, no default
 describe('option with optional value, no default', () => {
   test('when option not specified then value is undefined', () => {
     const program = new commander.Command();
@@ -37,6 +38,7 @@ describe('option with optional value, no default', () => {
   });
 });
 
+// option with optional value, with default
 describe('option with optional value, with default', () => {
   test('when option not specified then value is default', () => {
     const defaultValue = 'default';
