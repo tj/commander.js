@@ -122,4 +122,32 @@ describe('.version', () => {
     expect(helpInformation.includes(myVersionFlags)).toBe(true);
     expect(helpInformation.includes(myVersionDescription)).toBe(true);
   });
+
+  test('when have .version+version and specify version then command called', () => {
+    const actionMock = jest.fn();
+    const program = new commander.Command();
+    program
+      .version('1.2.3')
+      .command('version')
+      .action(actionMock);
+
+    program.parse(['node', 'test', 'version']);
+
+    expect(actionMock).toHaveBeenCalled();
+  });
+
+  test('when have .version+version and specify --version then version displayed', () => {
+    const myVersion = '1.2.3';
+    const program = new commander.Command();
+    program
+      .version(myVersion)
+      .command('version')
+      .action(jest.fn());
+
+    expect(() => {
+      program.parse(['node', 'test', '--version']);
+    }).toThrow(fakeExit);
+
+    expect(writeSpy).toHaveBeenCalledWith(`${myVersion}\n`);
+  });
 });
