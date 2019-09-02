@@ -4,6 +4,7 @@ const commander = require('../');
 
 describe('.version', () => {
   // Implement the spy handling outside the test routines to keep the tests focused on arrange/act/assert.
+  // Using knowledge of implementation of .version.
   let exitSpy;
   let writeSpy;
   let fakeExit;
