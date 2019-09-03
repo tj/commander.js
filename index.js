@@ -88,6 +88,30 @@ Option.prototype.is = function(arg) {
 };
 
 /**
+ * CommanderError class
+ * @class
+ */
+class CommanderError extends Error {
+  /**
+   * Constructs the CommanderError class
+   * @param {String} code an id string representing the error
+   * @param {String} message human-readable description of the error
+   * @param {Number} [exitCode] suggested exit code which could be used with process.exit
+   * @constructor
+   */
+  constructor(code, message, exitCode) {
+    super(message);
+    // properly capture stack trace in Node.js
+    Error.captureStackTrace(this, this.constructor);
+    this.name = this.constructor.name;
+    this.code = code;
+    this.exitCode = code;
+  }
+}
+
+exports.CommanderError = CommanderError;
+
+/**
  * Initialize a new `Command`.
  *
  * @param {String} name
@@ -226,6 +250,35 @@ Command.prototype.parseExpectedArgs = function(args) {
     }
   });
   return this;
+};
+
+/**
+ * Register callback `fn` to use as replacement for calling process.exit.
+ *
+ * @param {Function} fn callback which will be passed an Error object
+ * @return {Command} for chaining
+ * @api public
+ */
+
+Command.prototype._exitOverride = function(fn) {
+  this._exitCallback = fn;
+  return this;
+};
+
+/**
+ * Call process.exit, or exitOverride if defined.
+ *
+  * @param {Number} exitCode exit code for using with process.exit
+  * @param {String} code an id string representing the error
+  * @param {String} message human-readable description of the error
+ * @api public
+ */
+
+Command.prototype._exit = function(errorCode, code, message) {
+  if (this._exitCallback) {
+    this._exitCallback(new CommanderError(code, message, errorCode));
+  }
+  process.exit(errorCode);
 };
 
 /**
@@ -881,7 +934,7 @@ Command.prototype.version = function(str, flags, description) {
   this.options.push(versionOption);
   this.on('option:' + this._versionOptionName, function() {
     process.stdout.write(str + '\n');
-    process.exit(0);
+    this._exit(0, 'commander.version', str);
   });
   return this;
 };
