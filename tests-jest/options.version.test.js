@@ -1,40 +1,32 @@
 const commander = require('../');
 
-// Test .version
+// Test .version. Using _exitOverride to check behaviour (instead of mocking process.exit).
 
 describe('.version', () => {
-  // Implement the spy handling outside the test routines to keep the tests focused on arrange/act/assert.
-  // Using knowledge of implementation of .version.
-  let exitSpy;
+  // Optional. Suppress normal output to keep test output clean.
   let writeSpy;
-  let fakeExit;
 
   beforeAll(() => {
-    fakeExit = new Error('exit');
-    exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => { throw fakeExit; });
     writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
   });
 
   afterAll(() => {
-    exitSpy.mockRestore();
     writeSpy.mockRestore();
   });
 
   beforeEach(() => {
-    exitSpy.mockClear();
     writeSpy.mockClear();
   });
 
-  test('when no .version and specify --version then unknown option', () => {
-    const mockUnknownOption = jest.fn().mockImplementation(() => { throw new Error('unknownOption'); });
+  test('when no .version and specify --version then unknown option error', () => {
+    const errorMessage = 'unknownOption';
     const program = new commander.Command();
-    program.unknownOption = mockUnknownOption;
+    // Override unknownOption as convenient way to check fails as expected.
+    jest.spyOn(program, 'unknownOption').mockImplementation(() => { throw new Error(errorMessage); });
 
     expect(() => {
       program.parse(['node', 'test', '--version']);
-    }).toThrow();
-
-    expect(mockUnknownOption).toHaveBeenCalled();
+    }).toThrow(errorMessage);
   });
 
   test('when no .version then helpInformation does not include version', () => {
@@ -50,12 +42,14 @@ describe('.version', () => {
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
+      ._exitOverride((err) => { throw err; })
       .version(myVersion);
 
     expect(() => {
       program.parse(['node', 'test', '-V']);
-    }).toThrow(fakeExit);
+    }).toThrow(myVersion);
 
+    // Test output once as well, rest of tests just check the thrown message.
     expect(writeSpy).toHaveBeenCalledWith(`${myVersion}\n`);
   });
 
@@ -63,13 +57,12 @@ describe('.version', () => {
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
+      ._exitOverride((err) => { throw err; })
       .version(myVersion);
 
     expect(() => {
       program.parse(['node', 'test', '--version']);
-    }).toThrow(fakeExit);
-
-    expect(writeSpy).toHaveBeenCalledWith(`${myVersion}\n`);
+    }).toThrow(myVersion);
   });
 
   test('when default .version then helpInformation includes default version help', () => {
@@ -88,26 +81,24 @@ describe('.version', () => {
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
+      ._exitOverride((err) => { throw err; })
       .version(myVersion, '-r, --revision');
 
     expect(() => {
       program.parse(['node', 'test', '-r']);
-    }).toThrow(fakeExit);
-
-    expect(writeSpy).toHaveBeenCalledWith(`${myVersion}\n`);
+    }).toThrow(myVersion);
   });
 
   test('when specify custom long flag then display version', () => {
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
+      ._exitOverride((err) => { throw err; })
       .version(myVersion, '-r, --revision');
 
     expect(() => {
       program.parse(['node', 'test', '--revision']);
-    }).toThrow(fakeExit);
-
-    expect(writeSpy).toHaveBeenCalledWith(`${myVersion}\n`);
+    }).toThrow(myVersion);
   });
 
   test('when custom .version then helpInformation includes custom version help', () => {
@@ -141,14 +132,13 @@ describe('.version', () => {
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
+      ._exitOverride((err) => { throw err; })
       .version(myVersion)
       .command('version')
       .action(jest.fn());
 
     expect(() => {
       program.parse(['node', 'test', '--version']);
-    }).toThrow(fakeExit);
-
-    expect(writeSpy).toHaveBeenCalledWith(`${myVersion}\n`);
+    }).toThrow(myVersion);
   });
 });
