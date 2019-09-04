@@ -15,7 +15,7 @@ test('when program name not set and parse then name is found from arguments', ()
 
 test('when add command then command is named', () => {
   const program = new commander.Command();
-  program
+  const subcommand = program
     .command('mycommand [options]');
-  expect(program.commands[0].name()).toBe('mycommand');
+  expect(subcommand.name()).toBe('mycommand');
 });
