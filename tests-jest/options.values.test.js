@@ -71,4 +71,12 @@ describe('option with optional value', () => {
     program.parse('node test --port=80'.split(' '));
     expect(program.port).toBe('80');
   });
+
+  test('when long flag followed empty string then value is empty string', () => {
+    const program = createPortProgram();
+    program
+      .option('-c, --cheese [type]', 'optionally specify the type of cheese');
+    program.parse(['node', 'test', '--cheese', '']);
+    expect(program.cheese).toBe('');
+  });
 });
