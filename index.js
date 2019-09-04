@@ -181,6 +181,8 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
   cmd._helpDescription = this._helpDescription;
   cmd._helpShortFlag = this._helpShortFlag;
   cmd._helpLongFlag = this._helpLongFlag;
+  cmd._exitCallback = this._exitCallback;
+
   cmd._executableFile = opts.executableFile; // Custom name for executable file
   this.commands.push(cmd);
   cmd.parseExpectedArgs(args);
@@ -893,8 +895,9 @@ Command.prototype.optionMissingArgument = function(option, flag) {
 
 Command.prototype.unknownOption = function(flag) {
   if (this._allowUnknownOption) return;
-  console.error("error: unknown option '%s'", flag);
-  process.exit(1);
+  const message = `error: unknown option '${flag}`;
+  console.error(message);
+  this._exit(1, 'command.unknownOption', message);
 };
 
 /**
