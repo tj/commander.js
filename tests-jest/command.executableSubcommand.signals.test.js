@@ -7,7 +7,7 @@ test('when command killed with SIGINT then executableSubcommand receieves SIGINT
   const pmPath = path.join(__dirname, '../test/fixtures/pm');
 
   // The child process writes dots to stdout.
-  var proc = childProcess.spawn(pmPath, ['progress'], {});
+  var proc = childProcess.spawn(pmPath, ['listen2'], {});
 
   let processOutput = '';
   proc.stdout.on('data', (data) => {
@@ -17,11 +17,7 @@ test('when command killed with SIGINT then executableSubcommand receieves SIGINT
     processOutput += data.toString();
   });
   proc.on('close', (code) => {
-    expect(processOutput).toBe('.SIGINT\n');
+    expect(processOutput).toBe('Listening for signal...SIGINT');
     done();
   });
-  // Set a timeout to give 'proc' time to get launched and listening
-  // setTimeout(() => {
-  //   proc.kill('SIGINT');
-  // }, 500);
 });
