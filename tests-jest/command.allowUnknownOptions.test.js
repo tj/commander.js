@@ -14,10 +14,6 @@ describe('.version', () => {
     consoleErrorSpy.mockRestore();
   });
 
-  beforeEach(() => {
-    consoleErrorSpy.mockClear();
-  });
-
   test('when specify unknown program option then error', () => {
     const program = new commander.Command();
     program

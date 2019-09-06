@@ -908,8 +908,9 @@ Command.prototype.unknownOption = function(flag) {
  */
 
 Command.prototype.variadicArgNotLast = function(name) {
-  console.error("error: variadic arguments must be last '%s'", name);
-  process.exit(1);
+  const message = `error: variadic arguments must be last '${name}'`;
+  console.error(message);
+  this._exit(1, 'command.variadicArgNotLast', message);
 };
 
 /**
