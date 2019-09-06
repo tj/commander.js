@@ -40,7 +40,7 @@ test('when subcommand file is symlink then lookup succeeds', (done) => {
   });
 });
 
-test('when subcommand file is double symlink then lookp succeeds', (done) => {
+test('when subcommand file is double symlink then lookup succeeds', (done) => {
   const binLink = path.join(__dirname, '../test/fixtures/another-dir/pm');
   childProcess.execFile(binLink, ['install'], { }, function(_error, stdout, stderr) {
     expect(stdout).toBe('install\n');
@@ -48,7 +48,7 @@ test('when subcommand file is double symlink then lookp succeeds', (done) => {
   });
 });
 
-test('when subcommand suffix is .ts then lookp sucueeds', (done) => {
+test('when subcommand suffix is .ts then lookup succeeds', (done) => {
   const binLinkTs = path.join(__dirname, '../test/fixtures-ts/pm.ts');
   childProcess.execFile('node', ['-r', 'ts-node/register', binLinkTs, 'install'], { }, function(_error, stdout, stderr) {
     expect(stdout).toBe('install\n');
