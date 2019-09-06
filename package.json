@@ -26,10 +26,11 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "eslint-plugin-jest": "^22.14.0",
-    "jest": "^24.8.0",
+    "@types/jest": "^24.0.18",
     "@types/node": "^12.7.2",
     "eslint": "^6.1.0",
+    "eslint-plugin-jest": "^22.14.0",
+    "jest": "^24.8.0",
     "should": "^13.2.3",
     "sinon": "^7.4.1",
     "standard": "^13.1.0",
