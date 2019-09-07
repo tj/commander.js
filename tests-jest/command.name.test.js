@@ -16,6 +16,13 @@ test('when program name not set and parse then name is found from arguments', ()
 test('when add command then command is named', () => {
   const program = new commander.Command();
   const subcommand = program
-    .command('mycommand [options]');
+    .command('mycommand <file>');
   expect(subcommand.name()).toBe('mycommand');
+});
+
+test('when set program name then name appears in help', () => {
+  const program = new commander.Command();
+  program.name('custom-name');
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch(/^Usage: custom-name/);
 });
