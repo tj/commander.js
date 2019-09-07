@@ -10,6 +10,13 @@ test('when subcommand file missing then error', (done) => {
   });
 });
 
+test('when alias subcommand file missing then error', (done) => {
+  childProcess.execFile(bin, ['lst'], function(_error, stdout, stderr) {
+    expect(stderr).toBe('error: pm-list(1) does not exist, try --help\n');
+    done();
+  });
+});
+
 test('when subcommand file has no suffix then lookup succeeds', (done) => {
   childProcess.execFile(bin, ['install'], { }, function(_error, stdout, stderr) {
     expect(stdout).toBe('install\n');
@@ -17,8 +24,22 @@ test('when subcommand file has no suffix then lookup succeeds', (done) => {
   });
 });
 
+test('when alias subcommand file has no suffix then lookup succeeds', (done) => {
+  childProcess.execFile(bin, ['i'], { }, function(_error, stdout, stderr) {
+    expect(stdout).toBe('install\n');
+    done();
+  });
+});
+
 test('when subcommand file suffix .js then lookup succeeds', (done) => {
   childProcess.execFile(bin, ['publish'], { }, function(_error, stdout, stderr) {
+    expect(stdout).toBe('publish\n');
+    done();
+  });
+});
+
+test('when alias subcommand file suffix .js then lookup succeeds', (done) => {
+  childProcess.execFile(bin, ['p'], { }, function(_error, stdout, stderr) {
     expect(stdout).toBe('publish\n');
     done();
   });

@@ -7,7 +7,7 @@ program
   .command('install [name]', 'install one or more packages').alias('i')
   .command('search [query]', 'search with optional query').alias('s')
   .command('cache', 'actions dealing with the cache').alias('c')
-  .command('list', 'list packages installed')
+  .command('list', 'list packages installed').alias('lst')
   .command('listen', 'listen for supported signal events').alias('l')
   .command('listen2', 'listen for supported signal events')
   .command('publish', 'publish or update package').alias('p')
