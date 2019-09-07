@@ -1265,7 +1265,9 @@ Command.prototype.helpOption = function(flags, description) {
 
 Command.prototype.help = function(cb) {
   this.outputHelp(cb);
-  process.exit();
+  // Passing undefined as exitCode to preserve original behaviour. i.e. was calling process.exit()
+  // (Do not have all displayed text available so only passing placeholder.)
+  this._exit(undefined, 'commander.help', '(outputHelp)');
 };
 
 /**
@@ -1310,7 +1312,8 @@ function outputHelpIfNecessary(cmd, options) {
   for (var i = 0; i < options.length; i++) {
     if (options[i] === cmd._helpLongFlag || options[i] === cmd._helpShortFlag) {
       cmd.outputHelp();
-      process.exit(0);
+      // (Do not have all displayed text available so only passing placeholder.)
+      cmd._exit(0, 'commander.outputHelpIfNecessary', '(outputHelp)');
     }
   }
 }
