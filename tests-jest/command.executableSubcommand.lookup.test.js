@@ -91,3 +91,9 @@ test('when subcommand suffix is .ts then lookup succeeds', (done) => {
   });
 });
 
+test('when subsubcommand then lookup sub-sub-command', (done) => {
+  childProcess.execFile(bin, ['cache', 'clear'], { }, function(_error, stdout, stderr) {
+    expect(stdout).toBe('cache-clear\n');
+    done();
+  });
+});
