@@ -31,6 +31,13 @@ test('when alias subcommand file has no suffix then lookup succeeds', (done) => 
   });
 });
 
+test('when subcommand target executablefile has no suffix then lookup succeeds', (done) => {
+  childProcess.execFile(bin, ['specifyInstall'], { }, function(_error, stdout, stderr) {
+    expect(stdout).toBe('install\n');
+    done();
+  });
+});
+
 test('when subcommand file suffix .js then lookup succeeds', (done) => {
   childProcess.execFile(bin, ['publish'], { }, function(_error, stdout, stderr) {
     expect(stdout).toBe('publish\n');
@@ -40,6 +47,13 @@ test('when subcommand file suffix .js then lookup succeeds', (done) => {
 
 test('when alias subcommand file suffix .js then lookup succeeds', (done) => {
   childProcess.execFile(bin, ['p'], { }, function(_error, stdout, stderr) {
+    expect(stdout).toBe('publish\n');
+    done();
+  });
+});
+
+test('when subcommand target executablefile has suffix .js then lookup succeeds', (done) => {
+  childProcess.execFile(bin, ['specifyPublish'], { }, function(_error, stdout, stderr) {
     expect(stdout).toBe('publish\n');
     done();
   });
@@ -76,3 +90,4 @@ test('when subcommand suffix is .ts then lookup succeeds', (done) => {
     done();
   });
 });
+
