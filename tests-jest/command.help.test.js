@@ -86,3 +86,11 @@ test('when call outputHelp(cb) then display cb output', () => {
   expect(writeSpy).toHaveBeenCalledWith(helpReplacement);
   writeSpy.mockClear();
 });
+
+test('when command sets noHelp then not displayed in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .command('secret', 'secret description', { noHelp: true });
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).not.toMatch('secret');
+});
