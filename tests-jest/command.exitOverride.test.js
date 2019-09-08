@@ -1,4 +1,5 @@
 const commander = require('../');
+const path = require('path');
 
 // Test details of the exitOverride errors.
 // The important checks are the exitCode and code which are intended to be stable for
@@ -177,7 +178,6 @@ describe('.exitOverride and error details', () => {
     expect(caughtErr.message).toBe(myVersion);
   });
 
-
   test('when program variadic argument not last then throw CommanderError', () => {
     // Note: this error is notified during parse, although could have been detected at declaration.
     const program = new commander.Command();
@@ -198,4 +198,29 @@ describe('.exitOverride and error details', () => {
     expect(caughtErr.code).toBe('commander.variadicArgNotLast');
     expect(caughtErr.message).toBe("error: variadic arguments must be last 'myVariadicArg'");
   });
+
+  // test('when executableSubcommand has error then throw CommanderError', () => {
+  //   const program = new commander.Command();
+  //   program
+  //     ._exitOverride()
+  //     .command('exec-does-not-exist', 'description');
+
+  //   // Executable command passes back spawn error
+  //   expect(() => {
+  //     program.parse(['node', 'test', 'exec-does-not-exist']);
+  //   }).toThrow();
+  // });
+
+  // test('when executableSubcommand fine then throw CommanderError', () => {
+  //   const pmInstall = path.join(__dirname, '../test/fixtures/pm-install');
+  //   const program = new commander.Command();
+  //   program
+  //     ._exitOverride()
+  //     .command('install', 'description', { executableFile: 'pmInstall' });
+
+  //   // Executable command passes back spawn error
+  //   expect(() => {
+  //     program.parse(['node', 'test', 'install']);
+  //   }).toThrow();
+  // });
 });
