@@ -94,18 +94,18 @@ Option.prototype.is = function(arg) {
 class CommanderError extends Error {
   /**
    * Constructs the CommanderError class
+   * @param {Number} exitCode suggested exit code which could be used with process.exit
    * @param {String} code an id string representing the error
    * @param {String} message human-readable description of the error
-   * @param {Number} [exitCode] suggested exit code which could be used with process.exit
    * @constructor
    */
-  constructor(code, message, exitCode) {
+  constructor(exitCode, code, message) {
     super(message);
     // properly capture stack trace in Node.js
     Error.captureStackTrace(this, this.constructor);
     this.name = this.constructor.name;
     this.code = code;
-    this.exitCode = code;
+    this.exitCode = exitCode;
   }
 }
 
@@ -263,7 +263,11 @@ Command.prototype.parseExpectedArgs = function(args) {
  */
 
 Command.prototype._exitOverride = function(fn) {
-  this._exitCallback = fn;
+  if (fn) {
+    this._exitCallback = fn;
+  } else {
+    this._exitCallback = function(err) { throw err; };
+  }
   return this;
 };
 
@@ -276,11 +280,12 @@ Command.prototype._exitOverride = function(fn) {
  * @api public
  */
 
-Command.prototype._exit = function(errorCode, code, message) {
+Command.prototype._exit = function(exitCode, code, message) {
   if (this._exitCallback) {
-    this._exitCallback(new CommanderError(code, message, errorCode));
+    this._exitCallback(new CommanderError(exitCode, code, message));
   }
-  process.exit(errorCode);
+  // This should not be reached.
+  process.exit(exitCode);
 };
 
 /**
@@ -865,8 +870,9 @@ Command.prototype.opts = function() {
  */
 
 Command.prototype.missingArgument = function(name) {
-  console.error("error: missing required argument '%s'", name);
-  process.exit(1);
+  const message = `error: missing required argument '${name}'`;
+  console.error(message);
+  this._exit(1, 'commander.missingArgument', message);
 };
 
 /**
@@ -878,12 +884,14 @@ Command.prototype.missingArgument = function(name) {
  */
 
 Command.prototype.optionMissingArgument = function(option, flag) {
+  let message;
   if (flag) {
-    console.error("error: option '%s' argument missing, got '%s'", option.flags, flag);
+    message = `error: option '${option.flags}' argument missing, got '${flag}'`;
   } else {
-    console.error("error: option '%s' argument missing", option.flags);
+    message = `error: option '${option.flags}' argument missing`;
   }
-  process.exit(1);
+  console.error(message);
+  this._exit(1, 'commander.optionMissingArgument', message);
 };
 
 /**
@@ -895,9 +903,9 @@ Command.prototype.optionMissingArgument = function(option, flag) {
 
 Command.prototype.unknownOption = function(flag) {
   if (this._allowUnknownOption) return;
-  const message = `error: unknown option '${flag}`;
+  const message = `error: unknown option '${flag}'`;
   console.error(message);
-  this._exit(1, 'command.unknownOption', message);
+  this._exit(1, 'commander.unknownOption', message);
 };
 
 /**
@@ -910,7 +918,7 @@ Command.prototype.unknownOption = function(flag) {
 Command.prototype.variadicArgNotLast = function(name) {
   const message = `error: variadic arguments must be last '${name}'`;
   console.error(message);
-  this._exit(1, 'command.variadicArgNotLast', message);
+  this._exit(1, 'commander.variadicArgNotLast', message);
 };
 
 /**
@@ -1265,9 +1273,9 @@ Command.prototype.helpOption = function(flags, description) {
 
 Command.prototype.help = function(cb) {
   this.outputHelp(cb);
-  // Passing undefined as exitCode to preserve original behaviour. i.e. was calling process.exit()
-  // (Do not have all displayed text available so only passing placeholder.)
-  this._exit(undefined, 'commander.help', '(outputHelp)');
+  // exitCode: preserving original behaviour which was calling process.exit()
+  // message: do not have all displayed text available so only passing placeholder.
+  this._exit(process.exitCode || 0, 'commander.help', '(outputHelp)');
 };
 
 /**
@@ -1313,7 +1321,7 @@ function outputHelpIfNecessary(cmd, options) {
     if (options[i] === cmd._helpLongFlag || options[i] === cmd._helpShortFlag) {
       cmd.outputHelp();
       // (Do not have all displayed text available so only passing placeholder.)
-      cmd._exit(0, 'commander.outputHelpIfNecessary', '(outputHelp)');
+      cmd._exit(0, 'commander.helpDisplayed', '(outputHelp)');
     }
   }
 }
