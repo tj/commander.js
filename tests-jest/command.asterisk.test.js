@@ -15,7 +15,7 @@ test('when recognised command then asterisk action not called', () => {
   const program = new commander.Command();
   program
     .command('install')
-    .action(jest.fn());
+    .action(() => { });
   program
     .action(mockAction);
   program.parse(['node', 'test', 'install']);

@@ -10,6 +10,11 @@ describe('.version', () => {
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
   });
 
+  afterEach(() => {
+    consoleErrorSpy.mockClear();
+  });
+
+
   afterAll(() => {
     consoleErrorSpy.mockRestore();
   });
@@ -17,7 +22,7 @@ describe('.version', () => {
   test('when specify unknown program option then error', () => {
     const program = new commander.Command();
     program
-      ._exitOverride((err) => { throw err; })
+      ._exitOverride()
       .option('-p, --pepper', 'add pepper');
 
     expect(() => {
@@ -28,7 +33,7 @@ describe('.version', () => {
   test('when specify unknown program option and allowUnknownOption then no error', () => {
     const program = new commander.Command();
     program
-      ._exitOverride((err) => { throw err; })
+      ._exitOverride()
       .allowUnknownOption()
       .option('-p, --pepper', 'add pepper');
 
@@ -40,7 +45,7 @@ describe('.version', () => {
   test('when specify unknown command option then error', () => {
     const program = new commander.Command();
     program
-      ._exitOverride((err) => { throw err; })
+      ._exitOverride()
       .command('sub')
       .option('-p, --pepper', 'add pepper')
       .action(() => { });
@@ -53,7 +58,7 @@ describe('.version', () => {
   test('when specify unknown command option and allowUnknownOption then no error', () => {
     const program = new commander.Command();
     program
-      ._exitOverride((err) => { throw err; })
+      ._exitOverride()
       .command('sub')
       .allowUnknownOption()
       .option('-p, --pepper', 'add pepper')

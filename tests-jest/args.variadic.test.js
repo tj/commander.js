@@ -10,6 +10,10 @@ describe('.version', () => {
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
   });
 
+  afterEach(() => {
+    consoleErrorSpy.mockClear();
+  });
+
   afterAll(() => {
     consoleErrorSpy.mockRestore();
   });
@@ -67,7 +71,7 @@ describe('.version', () => {
   test('when program variadic argument not last then error', () => {
     const program = new commander.Command();
     program
-      ._exitOverride((err) => { throw err; })
+      ._exitOverride()
       .arguments('<variadicArg...> [optionalArg]')
       .action(jest.fn);
 
@@ -79,7 +83,7 @@ describe('.version', () => {
   test('when command variadic argument not last then error', () => {
     const program = new commander.Command();
     program
-      ._exitOverride((err) => { throw err; })
+      ._exitOverride()
       .command('sub <variadicArg...> [optionalArg]')
       .action(jest.fn);
 

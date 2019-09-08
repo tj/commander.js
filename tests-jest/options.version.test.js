@@ -10,12 +10,12 @@ describe('.version', () => {
     writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
   });
 
-  afterAll(() => {
-    writeSpy.mockRestore();
+  afterEach(() => {
+    writeSpy.mockClear();
   });
 
-  beforeEach(() => {
-    writeSpy.mockClear();
+  afterAll(() => {
+    writeSpy.mockRestore();
   });
 
   test('when no .version and specify --version then unknown option error', () => {
@@ -42,7 +42,7 @@ describe('.version', () => {
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
-      ._exitOverride((err) => { throw err; })
+      ._exitOverride()
       .version(myVersion);
 
     expect(() => {
@@ -57,7 +57,7 @@ describe('.version', () => {
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
-      ._exitOverride((err) => { throw err; })
+      ._exitOverride()
       .version(myVersion);
 
     expect(() => {
@@ -81,7 +81,7 @@ describe('.version', () => {
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
-      ._exitOverride((err) => { throw err; })
+      ._exitOverride()
       .version(myVersion, '-r, --revision');
 
     expect(() => {
@@ -93,7 +93,7 @@ describe('.version', () => {
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
-      ._exitOverride((err) => { throw err; })
+      ._exitOverride()
       .version(myVersion, '-r, --revision');
 
     expect(() => {
@@ -132,10 +132,10 @@ describe('.version', () => {
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
-      ._exitOverride((err) => { throw err; })
+      ._exitOverride()
       .version(myVersion)
       .command('version')
-      .action(jest.fn());
+      .action(() => {});
 
     expect(() => {
       program.parse(['node', 'test', '--version']);
