@@ -85,7 +85,7 @@ describe('.exitOverride and error details', () => {
     const program = new commander.Command();
     program
       ._exitOverride()
-      .option(optionFlags, 'ad)d pepper');
+      .option(optionFlags, 'add pepper');
 
     let caughtErr;
     try {
