@@ -88,6 +88,30 @@ Option.prototype.is = function(arg) {
 };
 
 /**
+ * CommanderError class
+ * @class
+ */
+class CommanderError extends Error {
+  /**
+   * Constructs the CommanderError class
+   * @param {Number} exitCode suggested exit code which could be used with process.exit
+   * @param {String} code an id string representing the error
+   * @param {String} message human-readable description of the error
+   * @constructor
+   */
+  constructor(exitCode, code, message) {
+    super(message);
+    // properly capture stack trace in Node.js
+    Error.captureStackTrace(this, this.constructor);
+    this.name = this.constructor.name;
+    this.code = code;
+    this.exitCode = exitCode;
+  }
+}
+
+exports.CommanderError = CommanderError;
+
+/**
  * Initialize a new `Command`.
  *
  * @param {String} name
@@ -157,6 +181,8 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
   cmd._helpDescription = this._helpDescription;
   cmd._helpShortFlag = this._helpShortFlag;
   cmd._helpLongFlag = this._helpLongFlag;
+  cmd._exitCallback = this._exitCallback;
+
   cmd._executableFile = opts.executableFile; // Custom name for executable file
   this.commands.push(cmd);
   cmd.parseExpectedArgs(args);
@@ -226,6 +252,40 @@ Command.prototype.parseExpectedArgs = function(args) {
     }
   });
   return this;
+};
+
+/**
+ * Register callback `fn` to use as replacement for calling process.exit.
+ *
+ * @param {Function} fn callback which will be passed an Error object
+ * @return {Command} for chaining
+ * @api public
+ */
+
+Command.prototype._exitOverride = function(fn) {
+  if (fn) {
+    this._exitCallback = fn;
+  } else {
+    this._exitCallback = function(err) { throw err; };
+  }
+  return this;
+};
+
+/**
+ * Call process.exit, or exitOverride if defined.
+ *
+  * @param {Number} exitCode exit code for using with process.exit
+  * @param {String} code an id string representing the error
+  * @param {String} message human-readable description of the error
+ * @api public
+ */
+
+Command.prototype._exit = function(exitCode, code, message) {
+  if (this._exitCallback) {
+    this._exitCallback(new CommanderError(exitCode, code, message));
+  }
+  // This should not be reached.
+  process.exit(exitCode);
 };
 
 /**
@@ -810,8 +870,9 @@ Command.prototype.opts = function() {
  */
 
 Command.prototype.missingArgument = function(name) {
-  console.error("error: missing required argument '%s'", name);
-  process.exit(1);
+  const message = `error: missing required argument '${name}'`;
+  console.error(message);
+  this._exit(1, 'commander.missingArgument', message);
 };
 
 /**
@@ -823,12 +884,14 @@ Command.prototype.missingArgument = function(name) {
  */
 
 Command.prototype.optionMissingArgument = function(option, flag) {
+  let message;
   if (flag) {
-    console.error("error: option '%s' argument missing, got '%s'", option.flags, flag);
+    message = `error: option '${option.flags}' argument missing, got '${flag}'`;
   } else {
-    console.error("error: option '%s' argument missing", option.flags);
+    message = `error: option '${option.flags}' argument missing`;
   }
-  process.exit(1);
+  console.error(message);
+  this._exit(1, 'commander.optionMissingArgument', message);
 };
 
 /**
@@ -840,8 +903,9 @@ Command.prototype.optionMissingArgument = function(option, flag) {
 
 Command.prototype.unknownOption = function(flag) {
   if (this._allowUnknownOption) return;
-  console.error("error: unknown option '%s'", flag);
-  process.exit(1);
+  const message = `error: unknown option '${flag}'`;
+  console.error(message);
+  this._exit(1, 'commander.unknownOption', message);
 };
 
 /**
@@ -852,8 +916,9 @@ Command.prototype.unknownOption = function(flag) {
  */
 
 Command.prototype.variadicArgNotLast = function(name) {
-  console.error("error: variadic arguments must be last '%s'", name);
-  process.exit(1);
+  const message = `error: variadic arguments must be last '${name}'`;
+  console.error(message);
+  this._exit(1, 'commander.variadicArgNotLast', message);
 };
 
 /**
@@ -881,7 +946,7 @@ Command.prototype.version = function(str, flags, description) {
   this.options.push(versionOption);
   this.on('option:' + this._versionOptionName, function() {
     process.stdout.write(str + '\n');
-    process.exit(0);
+    this._exit(0, 'commander.version', str);
   });
   return this;
 };
@@ -1208,7 +1273,9 @@ Command.prototype.helpOption = function(flags, description) {
 
 Command.prototype.help = function(cb) {
   this.outputHelp(cb);
-  process.exit();
+  // exitCode: preserving original behaviour which was calling process.exit()
+  // message: do not have all displayed text available so only passing placeholder.
+  this._exit(process.exitCode || 0, 'commander.help', '(outputHelp)');
 };
 
 /**
@@ -1253,7 +1320,8 @@ function outputHelpIfNecessary(cmd, options) {
   for (var i = 0; i < options.length; i++) {
     if (options[i] === cmd._helpLongFlag || options[i] === cmd._helpShortFlag) {
       cmd.outputHelp();
-      process.exit(0);
+      // (Do not have all displayed text available so only passing placeholder.)
+      cmd._exit(0, 'commander.helpDisplayed', '(outputHelp)');
     }
   }
 }
