@@ -1,6 +1,6 @@
 const commander = require('../');
 
-describe('open issues', () => {
+describe.skip('open issues', () => {
   // https://github.com/tj/commander.js/issues/1039
   test('#1039: when unknown option then unknown option detected', () => {
     const program = new commander.Command();
