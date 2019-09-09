@@ -257,7 +257,7 @@ Command.prototype.parseExpectedArgs = function(args) {
 /**
  * Register callback `fn` to use as replacement for calling process.exit.
  *
- * @param {Function} fn callback which will be passed an Error object
+ * @param {Function} fn callback which will be passed a CommanderError
  * @return {Command} for chaining
  * @api public
  */
