@@ -39,6 +39,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(consoleErrorSpy).toHaveBeenCalled();
+    expect(caughtErr).toBeInstanceOf(commander.CommanderError);
     expect(caughtErr.exitCode).toBe(1);
     expect(caughtErr.code).toBe('commander.unknownOption');
     expect(caughtErr.message).toBe("error: unknown option '-m'");
@@ -60,6 +61,7 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
+    expect(caughtErr).toBeInstanceOf(commander.CommanderError);
     expect(caughtErr.exitCode).toBe(customError.exitCode);
     expect(caughtErr.code).toBe(customError.code);
     expect(caughtErr.message).toBe(customError.message);
@@ -95,6 +97,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(consoleErrorSpy).toHaveBeenCalled();
+    expect(caughtErr).toBeInstanceOf(commander.CommanderError);
     expect(caughtErr.exitCode).toBe(1);
     expect(caughtErr.code).toBe('commander.optionMissingArgument');
     expect(caughtErr.message).toBe(`error: option '${optionFlags}' argument missing`);
@@ -115,6 +118,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(consoleErrorSpy).toHaveBeenCalled();
+    expect(caughtErr).toBeInstanceOf(commander.CommanderError);
     expect(caughtErr.exitCode).toBe(1);
     expect(caughtErr.code).toBe('commander.missingArgument');
     expect(caughtErr.message).toBe(`error: missing required argument 'arg-name'`);
@@ -133,6 +137,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(writeSpy).toHaveBeenCalled();
+    expect(caughtErr).toBeInstanceOf(commander.CommanderError);
     expect(caughtErr.exitCode).toBe(0);
     expect(caughtErr.code).toBe('commander.helpDisplayed');
     expect(caughtErr.message).toBe('(outputHelp)');
@@ -153,6 +158,7 @@ describe('.exitOverride and error details', () => {
 
     // This is effectively treated as a deliberate request for help, rather than an error.
     expect(writeSpy).toHaveBeenCalled();
+    expect(caughtErr).toBeInstanceOf(commander.CommanderError);
     expect(caughtErr.exitCode).toBe(0);
     expect(caughtErr.code).toBe('commander.helpDisplayed');
     expect(caughtErr.message).toBe('(outputHelp)');
@@ -173,6 +179,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(writeSpy).toHaveBeenCalled();
+    expect(caughtErr).toBeInstanceOf(commander.CommanderError);
     expect(caughtErr.exitCode).toBe(0);
     expect(caughtErr.code).toBe('commander.version');
     expect(caughtErr.message).toBe(myVersion);
@@ -194,11 +201,14 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(consoleErrorSpy).toHaveBeenCalled();
+    expect(caughtErr).toBeInstanceOf(commander.CommanderError);
     expect(caughtErr.exitCode).toBe(1);
     expect(caughtErr.code).toBe('commander.variadicArgNotLast');
     expect(caughtErr.message).toBe("error: variadic arguments must be last 'myVariadicArg'");
   });
 
+  // Not currently overriding executable subCommand errors
+  //
   // test('when executableSubcommand has error then throw CommanderError', () => {
   //   const program = new commander.Command();
   //   program
@@ -211,6 +221,8 @@ describe('.exitOverride and error details', () => {
   //   }).toThrow();
   // });
 
+  // Not currently overriding executable subCommand errors
+  //
   // test('when executableSubcommand fine then throw CommanderError', () => {
   //   const pmInstall = path.join(__dirname, '../test/fixtures/pm-install');
   //   const program = new commander.Command();
