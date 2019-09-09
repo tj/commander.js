@@ -262,7 +262,7 @@ Command.prototype.parseExpectedArgs = function(args) {
  * @api public
  */
 
-Command.prototype._exitOverride = function(fn) {
+Command.prototype.exitOverride = function(fn) {
   if (fn) {
     this._exitCallback = fn;
   } else {
