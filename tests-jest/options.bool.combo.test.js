@@ -122,4 +122,3 @@ describe('boolean option combo with non-boolean default', () => {
     expect(program.pepper).toBe(false);
   });
 });
-
