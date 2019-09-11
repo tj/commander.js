@@ -1,7 +1,7 @@
 const childProcess = require('child_process');
 const path = require('path');
 
-const bin = path.join(__dirname, '../test/fixtures/pm');
+const bin = path.join(__dirname, './fixtures/pm');
 
 test('when default subcommand and no command then call default', (done) => {
   childProcess.execFile(bin, [], { }, function(_error, stdout, stderr) {

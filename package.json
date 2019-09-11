@@ -16,7 +16,7 @@
   },
   "scripts": {
     "lint": "eslint index.js",
-    "test": "node test/run.js && npm run test-typings",
+    "test": "jest && npm run test-typings",
     "test-typings": "tsc -p tsconfig.json"
   },
   "main": "index",
@@ -31,8 +31,6 @@
     "eslint": "^6.1.0",
     "eslint-plugin-jest": "^22.14.0",
     "jest": "^24.8.0",
-    "should": "^13.2.3",
-    "sinon": "^7.4.1",
     "standard": "^13.1.0",
     "ts-node": "^8.3.0",
     "typescript": "^3.5.3"

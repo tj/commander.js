@@ -4,7 +4,7 @@ const path = require('path');
 // Test the special handling for --inspect to increment fixed debug port numbers.
 // If we reuse port we can get conflicts because port not released fast enough.
 
-const inspectCommand = path.join(__dirname, '../test/fixtures', 'inspect.js');
+const inspectCommand = path.join(__dirname, './fixtures', 'inspect.js');
 
 test('when execArgv empty then spawn execArgs empty', (done) => {
   childProcess.execFile('node', [inspectCommand, 'sub'], function(_error, stdout, stderr) {

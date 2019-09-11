@@ -1,7 +1,7 @@
 const childProcess = require('child_process');
 const path = require('path');
 
-const bin = path.join(__dirname, '../test/fixtures/pm');
+const bin = path.join(__dirname, './fixtures/pm');
 
 test('when subcommand file missing then error', (done) => {
   childProcess.execFile(bin, ['list'], function(_error, stdout, stderr) {
@@ -68,7 +68,7 @@ test('when subcommand file not executable then error', (done) => {
 });
 
 test('when subcommand file is symlink then lookup succeeds', (done) => {
-  const binLink = path.join(__dirname, '../test/fixtures/pmlink');
+  const binLink = path.join(__dirname, './fixtures/pmlink');
   childProcess.execFile(binLink, ['install'], { }, function(_error, stdout, stderr) {
     expect(stdout).toBe('install\n');
     done();
@@ -76,7 +76,7 @@ test('when subcommand file is symlink then lookup succeeds', (done) => {
 });
 
 test('when subcommand file is double symlink then lookup succeeds', (done) => {
-  const binLink = path.join(__dirname, '../test/fixtures/another-dir/pm');
+  const binLink = path.join(__dirname, './fixtures/another-dir/pm');
   childProcess.execFile(binLink, ['install'], { }, function(_error, stdout, stderr) {
     expect(stdout).toBe('install\n');
     done();
@@ -84,7 +84,7 @@ test('when subcommand file is double symlink then lookup succeeds', (done) => {
 });
 
 test('when subcommand suffix is .ts then lookup succeeds', (done) => {
-  const binLinkTs = path.join(__dirname, '../test/fixtures-ts/pm.ts');
+  const binLinkTs = path.join(__dirname, './fixtures-ts/pm.ts');
   childProcess.execFile('node', ['-r', 'ts-node/register', binLinkTs, 'install'], { }, function(_error, stdout, stderr) {
     expect(stdout).toBe('install\n');
     done();

@@ -224,7 +224,7 @@ describe('.exitOverride and error details', () => {
   // Not currently overriding executable subCommand errors
   //
   // test('when executableSubcommand fine then throw CommanderError', () => {
-  //   const pmInstall = path.join(__dirname, '../test/fixtures/pm-install');
+  //   const pmInstall = path.join(__dirname, './fixtures/pm-install');
   //   const program = new commander.Command();
   //   program
   //     ._exitOverride()
