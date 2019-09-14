@@ -266,28 +266,33 @@ Command.prototype._exitOverride = function(fn) {
   if (fn) {
     this._exitCallback = fn;
   } else {
-    this._exitCallback = function(err) { throw err; };
+    this._exitCallback = function(err) {
+      if (err.code !== 'commander.executeSubCommandAsync') {
+        throw err;
+      } else {
+        // Async callback from spawn events, not useful to throw.
+      }
+    };
   }
   return this;
 };
 
 /**
- * Call process.exit, or exitOverride if defined.
+ * Call process.exit, and _exitCallback if defined.
  *
-  * @param {Number} exitCode exit code for using with process.exit
-  * @param {String} code an id string representing the error
-  * @param {String} message human-readable description of the error
- * @api public
+ * @param {Number} exitCode exit code for using with process.exit
+ * @param {String} code an id string representing the error
+ * @param {String} message human-readable description of the error
+ * @return never
+ * @api private
  */
 
 Command.prototype._exit = function(exitCode, code, message) {
   if (this._exitCallback) {
     this._exitCallback(new CommanderError(exitCode, code, message));
-    // Commander expects program to exit, so further errors may occur if
-    // the override does not interrupt program flow. Caller beware.
-  } else {
-    process.exit(exitCode);
+    // Expecting this line is not reached.
   }
+  process.exit(exitCode);
 };
 
 /**
@@ -650,12 +655,13 @@ Command.prototype.executeSubCommand = function(argv, args, unknown, executableFi
   });
 
   // By default terminate process when spawned process terminates.
-  const self = this;
-  if (!self._exitCallback) {
-    proc.on('close', process.exit.bind(process)); // Unchanged exit call if no callback
+  // Suppressing the exit if exitCallback defined is a bit messy and of limited use, but does allow process to stay running!
+  const exitCallback = this._exitCallback;
+  if (!exitCallback) {
+    proc.on('close', process.exit.bind(process));
   } else {
     proc.on('close', () => {
-      self._exit(process.exitCode || 0, 'commander.executeSubCommand', '(close)');
+      exitCallback(new CommanderError(process.exitCode || 0, 'commander.executeSubCommandAsync', '(close)'));
     });
   }
   proc.on('error', function(err) {
@@ -664,13 +670,12 @@ Command.prototype.executeSubCommand = function(argv, args, unknown, executableFi
     } else if (err.code === 'EACCES') {
       console.error('error: %s(1) not executable. try chmod or run with root', bin);
     }
-    if (!self._exitCallback) {
-      process.exit(1); // Unchanged exit call if no callback
+    if (!exitCallback) {
+      process.exit(1);
     } else {
-      // Construct error directly to embed original error.
-      const wrappedError = new CommanderError(1, 'commander.executeSubCommand', '(error)');
+      const wrappedError = new CommanderError(1, 'commander.executeSubCommandAsync', '(error)');
       wrappedError.nestedError = err;
-      self._exitCallback(wrappedError);
+      exitCallback(wrappedError);
     }
   });
 
