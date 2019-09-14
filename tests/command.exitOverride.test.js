@@ -6,6 +6,13 @@ const path = require('path');
 // semver minor versions. For now, also testing the error.message and that output occured
 // to detect accidental changes in behaviour.
 
+function expectCommanderError(err, exitCode, code, message) {
+  expect(err).toBeInstanceOf(commander.CommanderError);
+  expect(err.exitCode).toBe(exitCode);
+  expect(err.code).toBe(code);
+  expect(err.message).toBe(message);
+}
+
 describe('.exitOverride and error details', () => {
   // Use internal knowledge to suppress output to keep test output clean.
   let consoleErrorSpy;
@@ -39,10 +46,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(consoleErrorSpy).toHaveBeenCalled();
-    expect(caughtErr).toBeInstanceOf(commander.CommanderError);
-    expect(caughtErr.exitCode).toBe(1);
-    expect(caughtErr.code).toBe('commander.unknownOption');
-    expect(caughtErr.message).toBe("error: unknown option '-m'");
+    expectCommanderError(caughtErr, 1, 'commander.unknownOption', "error: unknown option '-m'");
   });
 
   // Same error as above, but with custom handler.
@@ -61,25 +65,7 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expect(caughtErr).toBeInstanceOf(commander.CommanderError);
-    expect(caughtErr.exitCode).toBe(customError.exitCode);
-    expect(caughtErr.code).toBe(customError.code);
-    expect(caughtErr.message).toBe(customError.message);
-  });
-
-  // Same error as above, but with custom handler.
-  test('when supply custom handler which returns then call process.exit', () => {
-    const exitError = new Error('oops-returned');
-    const processExitSpy = jest.spyOn(process, 'exit').mockImplementation(() => { throw exitError; });
-    const program = new commander.Command();
-    program
-      ._exitOverride((_err) => { }); // [sic]
-
-    expect(() => {
-      program.parse(['node', 'test', '-m']);
-    }).toThrow(exitError);
-    expect(processExitSpy).toHaveBeenCalled();
-    processExitSpy.mockRestore();
+    expectCommanderError(caughtErr, customError.exitCode, customError.code, customError.message);
   });
 
   test('when specify option without required value then throw CommanderError', () => {
@@ -97,10 +83,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(consoleErrorSpy).toHaveBeenCalled();
-    expect(caughtErr).toBeInstanceOf(commander.CommanderError);
-    expect(caughtErr.exitCode).toBe(1);
-    expect(caughtErr.code).toBe('commander.optionMissingArgument');
-    expect(caughtErr.message).toBe(`error: option '${optionFlags}' argument missing`);
+    expectCommanderError(caughtErr, 1, 'commander.optionMissingArgument', `error: option '${optionFlags}' argument missing`);
   });
 
   test('when specify command without required argument then throw CommanderError', () => {
@@ -118,10 +101,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(consoleErrorSpy).toHaveBeenCalled();
-    expect(caughtErr).toBeInstanceOf(commander.CommanderError);
-    expect(caughtErr.exitCode).toBe(1);
-    expect(caughtErr.code).toBe('commander.missingArgument');
-    expect(caughtErr.message).toBe(`error: missing required argument 'arg-name'`);
+    expectCommanderError(caughtErr, 1, 'commander.missingArgument', `error: missing required argument 'arg-name'`);
   });
 
   test('when specify --help then throw CommanderError', () => {
@@ -137,10 +117,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(writeSpy).toHaveBeenCalled();
-    expect(caughtErr).toBeInstanceOf(commander.CommanderError);
-    expect(caughtErr.exitCode).toBe(0);
-    expect(caughtErr.code).toBe('commander.helpDisplayed');
-    expect(caughtErr.message).toBe('(outputHelp)');
+    expectCommanderError(caughtErr, 0, 'commander.helpDisplayed', '(outputHelp)');
   });
 
   test('when executable subcommand and no command specified then throw CommanderError', () => {
@@ -158,10 +135,7 @@ describe('.exitOverride and error details', () => {
 
     // This is effectively treated as a deliberate request for help, rather than an error.
     expect(writeSpy).toHaveBeenCalled();
-    expect(caughtErr).toBeInstanceOf(commander.CommanderError);
-    expect(caughtErr.exitCode).toBe(0);
-    expect(caughtErr.code).toBe('commander.helpDisplayed');
-    expect(caughtErr.message).toBe('(outputHelp)');
+    expectCommanderError(caughtErr, 0, 'commander.helpDisplayed', '(outputHelp)');
   });
 
   test('when specify --version then throw CommanderError', () => {
@@ -179,10 +153,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(writeSpy).toHaveBeenCalled();
-    expect(caughtErr).toBeInstanceOf(commander.CommanderError);
-    expect(caughtErr.exitCode).toBe(0);
-    expect(caughtErr.code).toBe('commander.version');
-    expect(caughtErr.message).toBe(myVersion);
+    expectCommanderError(caughtErr, 0, 'commander.version', myVersion);
   });
 
   test('when program variadic argument not last then throw CommanderError', () => {
@@ -201,38 +172,39 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(consoleErrorSpy).toHaveBeenCalled();
-    expect(caughtErr).toBeInstanceOf(commander.CommanderError);
-    expect(caughtErr.exitCode).toBe(1);
-    expect(caughtErr.code).toBe('commander.variadicArgNotLast');
-    expect(caughtErr.message).toBe("error: variadic arguments must be last 'myVariadicArg'");
+    expectCommanderError(caughtErr, 1, 'commander.variadicArgNotLast', "error: variadic arguments must be last 'myVariadicArg'");
   });
 
-  // Not currently overriding executable subCommand errors
-  //
-  // test('when executableSubcommand has error then throw CommanderError', () => {
-  //   const program = new commander.Command();
-  //   program
-  //     ._exitOverride()
-  //     .command('exec-does-not-exist', 'description');
+  test('when executableSubcommand succeeds then call exitOverride', (done) => {
+    const pm = path.join(__dirname, 'fixtures/pm');
+    const program = new commander.Command();
+    program
+      ._exitOverride((err) => {
+        expectCommanderError(err, 0, 'commander.executeSubCommand', '(close)');
+        done();
+      })
+      .command('silent', 'description');
 
-  //   // Executable command passes back spawn error
-  //   expect(() => {
-  //     program.parse(['node', 'test', 'exec-does-not-exist']);
-  //   }).toThrow();
-  // });
+    program.parse(['node', pm, 'silent']);
+  });
 
-  // Not currently overriding executable subCommand errors
-  //
-  // test('when executableSubcommand fine then throw CommanderError', () => {
-  //   const pmInstall = path.join(__dirname, './fixtures/pm-install');
-  //   const program = new commander.Command();
-  //   program
-  //     ._exitOverride()
-  //     .command('install', 'description', { executableFile: 'pmInstall' });
+  test('when executableSubcommand fails then call exitOverride', (done) => {
+    // Tricky for override, get called for `error` event then `exit` event.
+    const mockExit = jest.fn()
+      .mockImplementationOnce((err) => {
+        expectCommanderError(err, 1, 'commander.executeSubCommand', '(error)');
+        expect(err.nestedError.code).toBe('ENOENT');
+      })
+      .mockImplementationOnce((err) => {
+        expectCommanderError(err, 0, 'commander.executeSubCommand', '(close)');
+        done();
+      });
+    const pm = path.join(__dirname, 'fixtures/pm');
+    const program = new commander.Command();
+    program
+      ._exitOverride(mockExit)
+      .command('does-not-exist', 'fail');
 
-  //   // Executable command passes back spawn error
-  //   expect(() => {
-  //     program.parse(['node', 'test', 'install']);
-  //   }).toThrow();
-  // });
+    program.parse(['node', pm, 'does-not-exist']);
+  });
 });

@@ -14,4 +14,5 @@ program
   .command('default', 'default command', { noHelp: true, isDefault: true })
   .command('specifyInstall', 'specify install subcommand', { executableFile: 'pm-install' })
   .command('specifyPublish', 'specify publish subcommand', { executableFile: 'pm-publish' })
+  .command('silent', 'silently succeed')
   .parse(process.argv);

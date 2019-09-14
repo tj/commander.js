@@ -283,9 +283,11 @@ Command.prototype._exitOverride = function(fn) {
 Command.prototype._exit = function(exitCode, code, message) {
   if (this._exitCallback) {
     this._exitCallback(new CommanderError(exitCode, code, message));
+    // Commander expects program to exit, so further errors may occur if
+    // the override does not interrupt program flow. Caller beware.
+  } else {
+    process.exit(exitCode);
   }
-  // This should not be reached.
-  process.exit(exitCode);
 };
 
 /**
@@ -646,14 +648,30 @@ Command.prototype.executeSubCommand = function(argv, args, unknown, executableFi
       }
     });
   });
-  proc.on('close', process.exit.bind(process));
+
+  // By default terminate process when spawned process terminates.
+  const self = this;
+  if (!self._exitCallback) {
+    proc.on('close', process.exit.bind(process)); // Unchanged exit call if no callback
+  } else {
+    proc.on('close', () => {
+      self._exit(process.exitCode || 0, 'commander.executeSubCommand', '(close)');
+    });
+  }
   proc.on('error', function(err) {
     if (err.code === 'ENOENT') {
       console.error('error: %s(1) does not exist, try --help', bin);
     } else if (err.code === 'EACCES') {
       console.error('error: %s(1) not executable. try chmod or run with root', bin);
     }
-    process.exit(1);
+    if (!self._exitCallback) {
+      process.exit(1); // Unchanged exit call if no callback
+    } else {
+      // Construct error directly to embed original error.
+      const wrappedError = new CommanderError(1, 'commander.executeSubCommand', '(error)');
+      wrappedError.nestedError = err;
+      self._exitCallback(wrappedError);
+    }
   });
 
   // Store the reference to the child process
