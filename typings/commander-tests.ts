@@ -6,6 +6,7 @@ interface ExtendedOptions extends program.CommandOptions {
 
 const commandInstance = new program.Command('-f');
 const optionsInstance = new program.Option('-f');
+const errorInstance = new program.CommanderError(1, 'code', 'message');
 
 const name = program.name();
 
@@ -98,6 +99,24 @@ program
 program
     .command("name1", "description")
     .command("name2", "description", { isDefault:true })
+
+program
+    .exitOverride();
+
+program.exitOverride((err):never => {
+  console.log(err.code);
+  console.log(err.message);
+  console.log(err.nestedError);
+  return process.exit(err.exitCode);
+});
+
+program.exitOverride((err):void => {
+  if (err.code !== 'commander.executeSubCommandAsync') {
+    throw err;
+  } else {
+    // Async callback from spawn events, not useful to throw.
+  }
+});
 
 program.parse(process.argv);
 

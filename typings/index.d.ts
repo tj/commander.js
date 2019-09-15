@@ -7,6 +7,15 @@
 
 declare namespace local {
 
+  class CommanderError extends Error {
+    code: string;
+    exitCode: number;
+    message: string;
+    nestedError?: string;
+
+    constructor(exitCode: number, code: string, message: string);
+  }
+
   class Option {
     flags: string;
     required: boolean;
@@ -26,7 +35,7 @@ declare namespace local {
   }
 
   class Command extends NodeJS.EventEmitter {
-    [key: string]: any;
+    [key: string]: any; // options as properties
 
     args: string[];
 
@@ -98,14 +107,19 @@ declare namespace local {
     arguments(desc: string): Command;
 
     /**
-     * Parse expected `args`.
+    * Parse expected `args`.
      *
      * For example `["[type]"]` becomes `[{ required: false, name: 'type' }]`.
      *
      * @param {string[]} args
      * @returns {Command} for chaining
      */
-    parseExpectedArgs(args: string[]): Command;
+     parseExpectedArgs(args: string[]): Command;
+
+    /**
+     * Register callback to use as replacement for calling process.exit.
+     */
+    exitOverride(callback?: (err: CommanderError) => never|void): Command;
 
     /**
      * Register callback `fn` for the command.
@@ -292,7 +306,8 @@ declare namespace commander {
         Option: typeof local.Option;
         CommandOptions: CommandOptions;
         ParseOptionsResult: ParseOptionsResult;
-    }
+        CommanderError : typeof local.CommanderError;
+      }
 
 }
 
