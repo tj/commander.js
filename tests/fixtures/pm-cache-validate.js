@@ -1,1 +1,1 @@
-console.log('cache-validate')
+console.log('cache-validate');

@@ -1,3 +1,2 @@
 #!/usr/bin/env node
-console.log('search')
-
+console.log('search');
