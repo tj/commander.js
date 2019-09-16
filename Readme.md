@@ -551,7 +551,7 @@ You can enable `--harmony` option in two ways:
 
 ### Node debugging
 
-If you are using the node inspector for [debugging](https://nodejs.org/en/docs/guides/debugging-getting-started/) git-style executable (sub)commands using `node -inspect` et al,
+If you are using the node inspector for [debugging](https://nodejs.org/en/docs/guides/debugging-getting-started/) git-style executable (sub)commands using `node --inspect` et al,
 the inspector port is incremented by 1 for the spawned subcommand.
 
 ## Examples
