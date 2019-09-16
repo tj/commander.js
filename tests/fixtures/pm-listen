@@ -1,28 +1,29 @@
 #!/usr/bin/env node
 
-process.on('SIGUSR1', function(){
-    console.log('SIGUSR1');
-    process.exit();
+process.on('SIGUSR1', function() {
+  process.stdout.write('SIGUSR1');
+  process.exit();
 });
 
-process.on('SIGUSR2', function(){
-    console.log('SIGUSR2');
-    process.exit();
+process.on('SIGUSR2', function() {
+  process.stdout.write('SIGUSR2');
+  process.exit();
 });
 
-process.on('SIGTERM', function(){
-    console.log('SIGTERM');
-    process.exit();
+process.on('SIGTERM', function() {
+  process.stdout.write('SIGTERM');
+  process.exit();
 });
 
-process.on('SIGINT', function(){
-    console.log('SIGINT');
-    process.exit();
+process.on('SIGINT', function() {
+  process.stdout.write('SIGINT');
+  process.exit();
 });
 
-process.on('SIGHUP', function(){
-    console.log('SIGHUP');
-    process.exit();
+process.on('SIGHUP', function() {
+  process.stdout.write('SIGHUP');
+  process.exit();
 });
 
-setInterval(function(){}, 5000); // Mimic a running process
+process.stdout.write('Listening for signal...');
+setInterval(function() {}, 1000); // Stay running

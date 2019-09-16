@@ -14,8 +14,8 @@ describe.each([['SIGINT'], ['SIGHUP'], ['SIGTERM'], ['SIGUSR1'], ['SIGUSR2']])(
     test(`when command killed with ${value} then executableSubcommand receieves ${value}`, (done) => {
       const pmPath = path.join(__dirname, './fixtures/pm');
 
-      // The child process writes dots to stdout.
-      var proc = childProcess.spawn(pmPath, ['listen2'], {});
+      // The child process writes to stdout.
+      var proc = childProcess.spawn(pmPath, ['listen'], {});
 
       let processOutput = '';
       proc.stdout.on('data', (data) => {
