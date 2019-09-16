@@ -1385,6 +1385,46 @@ Command.prototype.help = function(cb) {
 };
 
 /**
+ * Add action-like sub command
+ * command name is taken from name() property - must be defined
+ * 
+ * @returns {Command} `this` instance
+ */
+
+Command.prototype.useSubcommand = function(subCommand) {
+  if (this._args.length > 0) throw Error('useSubcommand cannot be applied to a command with explicit args');
+  if (!subCommand._name) throw Error('subCommand name is not specified');
+
+  var self     = subCommand;
+  var listener = function(args, unknown) {
+    // Parse any so-far unknown options
+    args    = args || [];
+    unknown = unknown || [];
+
+    var parsed = self.parseOptions(unknown);
+    if (parsed.args.length) args = parsed.args.concat(args);
+    unknown = parsed.unknown;
+
+    // Output help if necessary
+    const helpRequested    = unknown.includes('--help') || unknown.includes('-h');
+    const noFutherCommands = !args || !self.listeners('command:' + args[0]);
+    if (helpRequested && noFutherCommands) {
+      self.outputHelp();
+      process.exit(0);
+    }
+
+    self.parseArgs(args, unknown);
+  };
+
+  for (const label of [subCommand._name, subCommand._alias]) {
+    if (label) this.on('command:' + label, listener);
+  }
+  this.commands.push(subCommand);
+  subCommand.parent = this;
+  return this;
+};
+
+/**
  * Creates an instance of sub command
  *
  * @returns {Command} which is the subcommand instance

@@ -214,6 +214,15 @@ declare namespace commander {
     forwardSubcommands(): Command;
 
     /**
+     * Add action-like sub command
+     * command name is taken from name() property - must be defined
+     * 
+     * @returns {Command} `this` instance
+     */
+
+    useSubcommand(subCommand : Command): Command;
+
+    /**
      * Returns an object with all options values, including parent options values
      * This makes it especially useful with forwardSubcommands as it collects
      * options from upper levels too
