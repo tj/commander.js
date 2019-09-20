@@ -1,0 +1,3 @@
+#!/usr/bin/env node
+
+// This is a subcommand which succeeds and does not write any output, for using from unit test

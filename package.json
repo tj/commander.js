@@ -15,8 +15,8 @@
     "url": "https://github.com/tj/commander.js.git"
   },
   "scripts": {
-    "lint": "eslint index.js",
-    "test": "node test/run.js && npm run test-typings",
+    "lint": "eslint index.js \"tests/**/*.js\"",
+    "test": "jest && npm run test-typings",
     "test-typings": "tsc -p tsconfig.json"
   },
   "main": "index",
@@ -26,10 +26,11 @@
   ],
   "dependencies": {},
   "devDependencies": {
+    "@types/jest": "^24.0.18",
     "@types/node": "^12.7.2",
     "eslint": "^6.1.0",
-    "should": "^13.2.3",
-    "sinon": "^7.4.1",
+    "eslint-plugin-jest": "^22.14.0",
+    "jest": "^24.8.0",
     "standard": "^13.1.0",
     "ts-node": "^8.3.0",
     "typescript": "^3.5.3"
