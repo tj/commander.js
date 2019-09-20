@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html). (Format adopted after v3.0.0.)
 
+## [Unreleased] (date goes here)
+
+### Added
+
+* `.exitOverride()` allows override of calls to `process.exit` for additional error handling and to keep program running ([#1040])
+
+### Changed
+
+* switch from Sinon+Should to Jest for tests ([#1035])
+
 ## [3.0.1] (2019-08-30)
 
 ### Added
@@ -437,6 +447,8 @@ program
 [#1018]: https://github.com/tj/commander.js/pull/1018
 [#1026]: https://github.com/tj/commander.js/pull/1026
 [#1028]: https://github.com/tj/commander.js/pull/1028
+[#1035]: https://github.com/tj/commander.js/pull/1035
+[#1040]: https://github.com/tj/commander.js/pull/1040
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
 [3.0.1]: https://github.com/tj/commander.js/compare/v3.0.0...v3.0.1
