@@ -71,7 +71,7 @@ describe('.version', () => {
   test('when program variadic argument not last then error', () => {
     const program = new commander.Command();
     program
-      ._exitOverride()
+      .exitOverride()
       .arguments('<variadicArg...> [optionalArg]')
       .action(jest.fn);
 
@@ -83,7 +83,7 @@ describe('.version', () => {
   test('when command variadic argument not last then error', () => {
     const program = new commander.Command();
     program
-      ._exitOverride()
+      .exitOverride()
       .command('sub <variadicArg...> [optionalArg]')
       .action(jest.fn);
 

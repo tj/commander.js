@@ -1,6 +1,6 @@
 const commander = require('../');
 
-// Test .version. Using _exitOverride to check behaviour (instead of mocking process.exit).
+// Test .version. Using exitOverride to check behaviour (instead of mocking process.exit).
 
 describe('.version', () => {
   // Optional. Suppress normal output to keep test output clean.
@@ -42,7 +42,7 @@ describe('.version', () => {
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
-      ._exitOverride()
+      .exitOverride()
       .version(myVersion);
 
     expect(() => {
@@ -57,7 +57,7 @@ describe('.version', () => {
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
-      ._exitOverride()
+      .exitOverride()
       .version(myVersion);
 
     expect(() => {
@@ -81,7 +81,7 @@ describe('.version', () => {
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
-      ._exitOverride()
+      .exitOverride()
       .version(myVersion, '-r, --revision');
 
     expect(() => {
@@ -93,7 +93,7 @@ describe('.version', () => {
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
-      ._exitOverride()
+      .exitOverride()
       .version(myVersion, '-r, --revision');
 
     expect(() => {
@@ -132,7 +132,7 @@ describe('.version', () => {
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
-      ._exitOverride()
+      .exitOverride()
       .version(myVersion)
       .command('version')
       .action(() => {});

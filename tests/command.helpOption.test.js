@@ -5,7 +5,7 @@ test('when helpOption has custom flags then custom flag invokes help', () => {
   const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
   const program = new commander.Command();
   program
-    ._exitOverride()
+    .exitOverride()
     .helpOption('--custom-help', 'custom help output');
   expect(() => {
     program.parse(['node', 'test', '--custom-help']);

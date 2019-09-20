@@ -7,7 +7,7 @@ describe('open issues', () => {
   test('#1039: when unknown option then unknown option detected', () => {
     const program = new commander.Command();
     program
-      ._exitOverride();
+      .exitOverride();
     expect(() => {
       program.parse(['node', 'text', '--bug']);
     }).toThrow();
@@ -16,7 +16,7 @@ describe('open issues', () => {
   test('#1039: when unknown option and multiple arguments then unknown option detected', () => {
     const program = new commander.Command();
     program
-      ._exitOverride();
+      .exitOverride();
     expect(() => {
       program.parse(['node', 'text', '--bug', '0', '1', '2', '3']);
     }).toThrow();
@@ -49,7 +49,7 @@ describe('open issues', () => {
   test('#561: when specify argument and unknown option then error', () => {
     const program = new commander.Command();
     program
-      ._exitOverride()
+      .exitOverride()
       .option('-x, --x-flag', 'A flag')
       .arguments('<file>');
 

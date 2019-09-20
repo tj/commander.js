@@ -36,7 +36,7 @@ describe('.exitOverride and error details', () => {
   test('when specify unknown program option then throw CommanderError', () => {
     const program = new commander.Command();
     program
-      ._exitOverride();
+      .exitOverride();
 
     let caughtErr;
     try {
@@ -54,7 +54,7 @@ describe('.exitOverride and error details', () => {
     const customError = new commander.CommanderError(123, 'custom-code', 'custom-message');
     const program = new commander.Command();
     program
-      ._exitOverride((_err) => {
+      .exitOverride((_err) => {
         throw customError;
       });
 
@@ -72,7 +72,7 @@ describe('.exitOverride and error details', () => {
     const optionFlags = '-p, --pepper <type>';
     const program = new commander.Command();
     program
-      ._exitOverride()
+      .exitOverride()
       .option(optionFlags, 'add pepper');
 
     let caughtErr;
@@ -89,7 +89,7 @@ describe('.exitOverride and error details', () => {
   test('when specify command without required argument then throw CommanderError', () => {
     const program = new commander.Command();
     program
-      ._exitOverride()
+      .exitOverride()
       .command('compress <arg-name>')
       .action(() => { });
 
@@ -107,7 +107,7 @@ describe('.exitOverride and error details', () => {
   test('when specify --help then throw CommanderError', () => {
     const program = new commander.Command();
     program
-      ._exitOverride();
+      .exitOverride();
 
     let caughtErr;
     try {
@@ -123,7 +123,7 @@ describe('.exitOverride and error details', () => {
   test('when executable subcommand and no command specified then throw CommanderError', () => {
     const program = new commander.Command();
     program
-      ._exitOverride()
+      .exitOverride()
       .command('compress', 'compress description');
 
     let caughtErr;
@@ -142,7 +142,7 @@ describe('.exitOverride and error details', () => {
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
-      ._exitOverride()
+      .exitOverride()
       .version(myVersion);
 
     let caughtErr;
@@ -160,7 +160,7 @@ describe('.exitOverride and error details', () => {
     // Note: this error is notified during parse, although could have been detected at declaration.
     const program = new commander.Command();
     program
-      ._exitOverride()
+      .exitOverride()
       .arguments('<myVariadicArg...> [optionalArg]')
       .action(jest.fn);
 
@@ -179,7 +179,7 @@ describe('.exitOverride and error details', () => {
     const pm = path.join(__dirname, 'fixtures/pm');
     const program = new commander.Command();
     program
-      ._exitOverride((err) => {
+      .exitOverride((err) => {
         expectCommanderError(err, 0, 'commander.executeSubCommandAsync', '(close)');
         done();
       })
@@ -202,7 +202,7 @@ describe('.exitOverride and error details', () => {
     const pm = path.join(__dirname, 'fixtures/pm');
     const program = new commander.Command();
     program
-      ._exitOverride(exitCallback)
+      .exitOverride(exitCallback)
       .command('does-not-exist', 'fail');
 
     program.parse(['node', pm, 'does-not-exist']);
