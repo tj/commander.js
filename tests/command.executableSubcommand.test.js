@@ -8,7 +8,7 @@ test('when no command missing then display help', () => {
   const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
   const program = new commander.Command();
   program
-    ._exitOverride((err) => { throw err; })
+    .exitOverride((err) => { throw err; })
     .command('install', 'install description');
   expect(() => {
     program.parse(['node', 'test']);

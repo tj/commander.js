@@ -255,14 +255,14 @@ Command.prototype.parseExpectedArgs = function(args) {
 };
 
 /**
- * Register callback `fn` to use as replacement for calling process.exit.
+ * Register callback to use as replacement for calling process.exit.
  *
- * @param {Function} fn callback which will be passed a CommanderError
+ * @param {Function} [fn] optional callback which will be passed a CommanderError, defaults to throwing
  * @return {Command} for chaining
  * @api public
  */
 
-Command.prototype._exitOverride = function(fn) {
+Command.prototype.exitOverride = function(fn) {
   if (fn) {
     this._exitCallback = fn;
   } else {

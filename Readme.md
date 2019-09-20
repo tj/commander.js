@@ -31,6 +31,7 @@ The complete solution for [node.js](http://nodejs.org) command-line interfaces, 
     - [TypeScript](#typescript)
     - [Node options such as `--harmony`](#node-options-such-as---harmony)
     - [Node debugging](#node-debugging)
+    - [Override exit handling](#override-exit-handling)
   - [Examples](#examples)
   - [License](#license)
   - [Support](#support)
@@ -553,6 +554,24 @@ You can enable `--harmony` option in two ways:
 
 If you are using the node inspector for [debugging](https://nodejs.org/en/docs/guides/debugging-getting-started/) git-style executable (sub)commands using `node --inspect` et al,
 the inspector port is incremented by 1 for the spawned subcommand.
+
+### Override exit handling
+
+By default Commander calls `process.exit` when it detects errors, or after displaying the help or version. You can override
+this behaviour and optionally supply a callback. The default override throws a `CommanderError`.
+
+The override callback is passed a `CommanderError` with properties `exitCode` number, `code` string, and `message`. The default override behaviour is to throw the error, except for async handling of executable subcommand completion which carries on. The normal display of error messages or version or help
+is not affected by the override which is called after the display.
+
+``` js
+program.exitOverride();
+
+try {
+  program.parse(process.argv);
+} catch (err) {
+  // custom processing...
+}
+```
 
 ## Examples
 

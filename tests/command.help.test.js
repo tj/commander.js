@@ -40,7 +40,7 @@ test('when call .help then exit', () => {
   const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
   const program = new commander.Command();
   program
-    ._exitOverride();
+    .exitOverride();
   expect(() => {
     program.help();
   }).toThrow('(outputHelp)');
@@ -52,7 +52,7 @@ test('when specify --help then exit', () => {
   const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
   const program = new commander.Command();
   program
-    ._exitOverride();
+    .exitOverride();
   expect(() => {
     program.parse(['node', 'test', '--help']);
   }).toThrow('(outputHelp)');
@@ -65,7 +65,7 @@ test('when call help(cb) then display cb output and exit', () => {
   const helpReplacement = 'reformatted help';
   const program = new commander.Command();
   program
-    ._exitOverride();
+    .exitOverride();
   expect(() => {
     program.help((helpInformation) => {
       return helpReplacement;
