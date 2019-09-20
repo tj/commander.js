@@ -6,7 +6,7 @@ const path = require('path');
 // Note: the previous (sinon) test had custom code for SIGUSR1, revist if required:
 //    As described at https://nodejs.org/api/process.html#process_signal_events
 //    this signal will start a debugger and thus the process might output an
-//    additional error message: 
+//    additional error message:
 //      "Failed to open socket on port 5858, waiting 1000 ms before retrying".
 
 describe.each([['SIGINT'], ['SIGHUP'], ['SIGTERM'], ['SIGUSR1'], ['SIGUSR2']])(

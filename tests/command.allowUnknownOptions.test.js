@@ -14,7 +14,6 @@ describe('.version', () => {
     consoleErrorSpy.mockClear();
   });
 
-
   afterAll(() => {
     consoleErrorSpy.mockRestore();
   });

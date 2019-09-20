@@ -103,7 +103,7 @@ test('when option specified multiple times then callback called with value and p
 test('when parseFloat "1e2" then value is 100', () => {
   const program = new commander.Command();
   program
-    .option('-f, --float <number>', 'float argument', parseFloat)
+    .option('-f, --float <number>', 'float argument', parseFloat);
   program.parse(['node', 'test', '-f', '1e2']);
   expect(program.float).toBe(100);
 });
