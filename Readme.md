@@ -558,9 +558,9 @@ the inspector port is incremented by 1 for the spawned subcommand.
 ### Override exit handling
 
 By default Commander calls `process.exit` when it detects errors, or after displaying the help or version. You can override
-this behaviour with an optional callback. The default override throws a `CommanderError`.
+this behaviour and optionally supply a callback. The default override throws a `CommanderError`.
 
-The override callback is passed a `CommanderError` with properties `exitCode`, `code`, and `message`. The default override behaviour is to throw the error, except for async handling of executable subcommand completion which carries on. The normal display of error messages or version or help
+The override callback is passed a `CommanderError` with properties `exitCode` number, `code` string, and `message`. The default override behaviour is to throw the error, except for async handling of executable subcommand completion which carries on. The normal display of error messages or version or help
 is not affected by the override which is called after the display.
 
 ``` js
