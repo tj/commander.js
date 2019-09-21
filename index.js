@@ -346,16 +346,16 @@ Command.prototype.action = function(fn) {
       }
     });
 
-    // Always append ourselves to the end of the arguments,
-    // to make sure we match the number of arguments the user
-    // expects
-    if (self._args.length) {
-      args[self._args.length] = self;
-    } else {
-      args.push(self);
+    // The .action callback takes an extra parameter which is the command itself.
+    var expectedArgsCount = self._args.length;
+    var actionArgs = args.slice(0, expectedArgsCount);
+    actionArgs[expectedArgsCount] = self;
+    // Add the extra arguments so available too.
+    if (args.length > expectedArgsCount) {
+      actionArgs.push(args.slice(expectedArgsCount));
     }
 
-    fn.apply(self, args);
+    fn.apply(self, actionArgs);
   };
   var parent = this.parent || this;
   var name = parent === this ? '*' : this._name;
