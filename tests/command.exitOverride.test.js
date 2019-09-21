@@ -101,7 +101,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(consoleErrorSpy).toHaveBeenCalled();
-    expectCommanderError(caughtErr, 1, 'commander.missingArgument', `error: missing required argument 'arg-name'`);
+    expectCommanderError(caughtErr, 1, 'commander.missingArgument', "error: missing required argument 'arg-name'");
   });
 
   test('when specify --help then throw CommanderError', () => {

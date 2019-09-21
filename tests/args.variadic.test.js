@@ -77,7 +77,7 @@ describe('.version', () => {
 
     expect(() => {
       program.parse(['node', 'test', 'a']);
-    }).toThrow(`error: variadic arguments must be last 'variadicArg'`);
+    }).toThrow("error: variadic arguments must be last 'variadicArg'");
   });
 
   test('when command variadic argument not last then error', () => {
@@ -89,6 +89,6 @@ describe('.version', () => {
 
     expect(() => {
       program.parse(['node', 'test', 'sub', 'a']);
-    }).toThrow(`error: variadic arguments must be last 'variadicArg'`);
+    }).toThrow("error: variadic arguments must be last 'variadicArg'");
   });
 });
