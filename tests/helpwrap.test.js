@@ -97,8 +97,7 @@ test('when option descripton preformatted then only add small indent', () => {
   const optionSpec = '-t, --time <HH:MM>';
   const program = new commander.Command();
   program
-    .option(optionSpec,
-`select time
+    .option(optionSpec, `select time
 
 Time can also be specified using special values:
   "dawn" - From night to sunrise.
