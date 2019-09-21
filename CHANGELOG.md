@@ -15,7 +15,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-* switch from Sinon+Should to Jest for tests ([#1035])
+* switch from Sinon+Should to Jest with major rewrite of tests ([#1035])
+
+### Fixed
+
+* Complain about unknown options when program argument supplied and action handler ([#1049])
+  * *Breaking* This changes parameters to `command:*` event to include unknown arguments
+* *Breaking* Keep command object out of program.args when action handler called ([#1048])
+  * *Breaking* Action handler now passed array of unknown arguments
+* *Breaking* Call default subcommand when there are unknown options ([#1047])
 
 ## [3.0.1] (2019-08-30)
 
