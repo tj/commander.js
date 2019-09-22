@@ -3,25 +3,25 @@ name: Node CI
 on: [push]
 
 jobs:
-  test-unix:
-    name: Test on node ${{ matrix.node-version }} and ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        node-version: [8.x, 10.x, 12.x]
-        os: [ubuntu-latest, macos-latest]
+  # test-unix:
+  #   name: Test on node ${{ matrix.node-version }} and ${{ matrix.os }}
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     matrix:
+  #       node-version: [8.x, 10.x, 12.x]
+  #       os: [ubuntu-latest, macos-latest]
 
-    steps:
-    - uses: actions/checkout@v1
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - name: npm install and test
-      run: |
-        npm install
-        npm run test
-        npm run lint
+  #   steps:
+  #   - uses: actions/checkout@v1
+  #   - name: Use Node.js ${{ matrix.node-version }}
+  #     uses: actions/setup-node@v1
+  #     with:
+  #       node-version: ${{ matrix.node-version }}
+  #   - name: npm install and test
+  #     run: |
+  #       npm install
+  #       npm run test
+  #       npm run lint
   test-windows:
     name: Test on node ${{ matrix.node-version }} and Windows
     runs-on: ${{ matrix.os }}
@@ -39,6 +39,6 @@ jobs:
     - name: npm install and test
       run: |
         npm install
-        npm run test 2>&1 | %{ "$_" }
+        npm run test 2> $null
         npm run lint
       shell: powershell
