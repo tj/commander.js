@@ -634,9 +634,9 @@ Command.prototype.executeSubCommand = function(argv, args, unknown, executableFi
       // add executable arguments to spawn
       args = incrementNodeInspectorPort(process.execArgv).concat(args);
 
-      proc = spawn(process.argv[0], args, { stdio: 'inherit', customFds: [0, 1, 2] });
+      proc = spawn(process.argv[0], args, { stdio: 'inherit' });
     } else {
-      proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
+      proc = spawn(bin, args, { stdio: 'inherit' });
     }
   } else {
     args.unshift(bin);
