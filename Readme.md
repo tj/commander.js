@@ -42,6 +42,8 @@ The complete solution for [node.js](http://nodejs.org) command-line interfaces, 
 npm install commander
 ```
 
+Commander is supported on Node 8 and above (and may still work on older versions but is not tested below 8).
+
 ## Declaring _program_ variable
 
 Commander exports a global object which is convenient for quick programs.
