@@ -38,6 +38,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - name: npm install and test
       run: |
-        npm install
-        npx jest --verbose --ci
-      shell: powershell
+        call npm install
+        call npm run test
+        call npm run lint
+      # shell: powershell
