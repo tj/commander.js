@@ -23,7 +23,7 @@ jobs:
         npm run test
         npm run lint
   test-windows:
-    name: Test on node ${{ matrix.node-version }} and ${{ matrix.os }}
+    name: Test on node ${{ matrix.node-version }} and Windows
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
