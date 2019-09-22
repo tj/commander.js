@@ -1153,11 +1153,15 @@ Command.prototype.padWidth = function() {
 Command.prototype.optionHelp = function() {
   var width = this.padWidth();
 
+  var columns = process.stdout.columns || 80;
+  var descriptionWidth = columns - width - 4;
+
   // Append the help information
   return this.options.map(function(option) {
-    return pad(option.flags, width) + '  ' + option.description +
+    const fullDesc = option.description +
       ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
-  }).concat([pad(this._helpFlags, width) + '  ' + this._helpDescription])
+    return pad(option.flags, width) + '  ' + optionalWrap(fullDesc, descriptionWidth, width + 2);
+  }).concat([pad(this._helpFlags, width) + '  ' + optionalWrap(this._helpDescription, descriptionWidth, width + 2)])
     .join('\n');
 };
 
@@ -1174,11 +1178,14 @@ Command.prototype.commandHelp = function() {
   var commands = this.prepareCommands();
   var width = this.padWidth();
 
+  var columns = process.stdout.columns || 80;
+  var descriptionWidth = columns - width - 4;
+
   return [
     'Commands:',
     commands.map(function(cmd) {
       var desc = cmd[1] ? '  ' + cmd[1] : '';
-      return (desc ? pad(cmd[0], width) : cmd[0]) + desc;
+      return (desc ? pad(cmd[0], width) : cmd[0]) + optionalWrap(desc, descriptionWidth, width + 2);
     }).join('\n').replace(/^/gm, '  '),
     ''
   ].join('\n');
@@ -1202,10 +1209,12 @@ Command.prototype.helpInformation = function() {
     var argsDescription = this._argsDescription;
     if (argsDescription && this._args.length) {
       var width = this.padWidth();
+      var columns = process.stdout.columns || 80;
+      var descriptionWidth = columns - width - 5;
       desc.push('Arguments:');
       desc.push('');
       this._args.forEach(function(arg) {
-        desc.push('  ' + pad(arg.name, width) + '  ' + argsDescription[arg.name]);
+        desc.push('  ' + pad(arg.name, width) + '  ' + wrap(argsDescription[arg.name], descriptionWidth, width + 4));
       });
       desc.push('');
     }
@@ -1327,6 +1336,49 @@ function camelcase(flag) {
 function pad(str, width) {
   var len = Math.max(0, width - str.length);
   return str + Array(len + 1).join(' ');
+}
+
+/**
+ * Wraps the given string with line breaks at the specified width while breaking
+ * words and indenting every but the first line on the left.
+ *
+ * @param {String} str
+ * @param {Number} width
+ * @param {Number} indent
+ * @return {String}
+ * @api private
+ */
+function wrap(str, width, indent) {
+  var regex = new RegExp('.{1,' + (width - 1) + '}([\\s\u200B]|$)|[^\\s\u200B]+?([\\s\u200B]|$)', 'g');
+  var lines = str.match(regex) || [];
+  return lines.map(function(line, i) {
+    if (line.slice(-1) === '\n') {
+      line = line.slice(0, line.length - 1);
+    }
+    return ((i > 0 && indent) ? Array(indent + 1).join(' ') : '') + line;
+  }).join('\n');
+}
+
+/**
+ * Optionally wrap the given str to a max width of width characters per line
+ * while indenting with indent spaces. Do not wrap if insufficient width or
+ * string is manually formatted.
+ *
+ * @param {String} str
+ * @param {Number} width
+ * @param {Number} indent
+ * @return {String}
+ * @api private
+ */
+function optionalWrap(str, width, indent) {
+  // Detect manually wrapped and indented strings by searching for line breaks
+  // followed by multiple spaces/tabs.
+  if (str.match(/[\n]\s+/)) return str;
+  // Do not wrap to narrow columns (or can end up with a word per line).
+  const minWidth = 40;
+  if (width < minWidth) return str;
+
+  return wrap(str, width, indent);
 }
 
 /**
