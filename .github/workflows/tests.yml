@@ -39,6 +39,6 @@ jobs:
     - name: npm install and test
       run: |
         npm install
-        npm run test
+        npm run test 2>&1 | %{ "$_" }
         npm run lint
       shell: powershell
