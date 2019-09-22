@@ -39,6 +39,5 @@ jobs:
     - name: npm install and test
       run: |
         npm install
-        npm run test 2> $null
-        npm run lint
+        npx jest --verbose --ci
       shell: powershell
