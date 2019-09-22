@@ -1,4 +1,5 @@
 const childProcess = require('child_process');
+const os = require('os');
 const path = require('path');
 
 // Test that a signal sent to the parent process is received by the executable subcommand process (which is listening)
@@ -9,7 +10,14 @@ const path = require('path');
 //    additional error message:
 //      "Failed to open socket on port 5858, waiting 1000 ms before retrying".
 
-describe.each([['SIGINT'], ['SIGHUP'], ['SIGTERM'], ['SIGUSR1'], ['SIGUSR2']])(
+let conditionalDescribe;
+if (os.platform() === 'win32') {
+  conditionalDescribe = describe.skip;
+} else {
+  conditionalDescribe = describe;
+}
+
+conditionalDescribe.each([['SIGINT'], ['SIGHUP'], ['SIGTERM'], ['SIGUSR1'], ['SIGUSR2']])(
   'test signal handling in executableSubcommand', (value) => {
     test(`when command killed with ${value} then executableSubcommand receieves ${value}`, (done) => {
       const pmPath = path.join(__dirname, './fixtures/pm');
