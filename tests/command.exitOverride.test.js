@@ -189,22 +189,35 @@ describe('.exitOverride and error details', () => {
   });
 
   test('when executableSubcommand fails then call exitOverride', (done) => {
-    // Tricky for override, get called for `error` event then `exit` event.
-    const exitCallback = jest.fn()
-      .mockImplementationOnce((err) => {
-        expectCommanderError(err, 1, 'commander.executeSubCommandAsync', '(error)');
-        expect(err.nestedError.code).toBe('ENOENT');
-      })
-      .mockImplementation((err) => {
-        expectCommanderError(err, 0, 'commander.executeSubCommandAsync', '(close)');
-        done();
-      });
-    const pm = path.join(__dirname, 'fixtures/pm');
-    const program = new commander.Command();
-    program
-      .exitOverride(exitCallback)
-      .command('does-not-exist', 'fail');
+    if (process.platform !== 'win32') {
+      // Tricky for override, get called for `error` event then `exit` event.
+      const exitCallback = jest.fn()
+        .mockImplementationOnce((err) => {
+          expectCommanderError(err, 1, 'commander.executeSubCommandAsync', '(error)');
+          expect(err.nestedError.code).toBe('ENOENT');
+        })
+        .mockImplementation((err) => {
+          expectCommanderError(err, 0, 'commander.executeSubCommandAsync', '(close)');
+          done();
+        });
+      const pm = path.join(__dirname, 'fixtures/pm');
+      const program = new commander.Command();
+      program
+        .exitOverride(exitCallback)
+        .command('does-not-exist', 'fail');
 
-    program.parse(['node', pm, 'does-not-exist']);
+      program.parse(['node', pm, 'does-not-exist']);
+    } else {
+      // Throwing on windows rather than emiting event through process
+      const pm = path.join(__dirname, 'fixtures/pm');
+      const program = new commander.Command();
+      program
+        .command('does-not-exist', 'fail');
+
+      done(); // Complete the async callback, not doing async!
+      expect(() => {
+        program.parse(['node', pm, 'does-not-exist']);
+      }).toThrow();
+    }
   });
 });
