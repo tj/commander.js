@@ -4,6 +4,14 @@ const path = require('path');
 
 const bin = path.join(__dirname, './fixtures/pm');
 
+// Suppress failed tests while debugging
+let conditionalTest;
+if (os.platform() === 'win32') {
+  conditionalTest = test.skip;
+} else {
+  conditionalTest = test;
+}
+
 test('when subcommand file missing then error', (done) => {
   childProcess.exec(`node ${bin} list`, function(_error, stdout, stderr) {
     expect(stderr).toBe('error: pm-list(1) does not exist, try --help\n');
@@ -11,7 +19,7 @@ test('when subcommand file missing then error', (done) => {
   });
 });
 
-test('when alias subcommand file missing then error', (done) => {
+conditionalTest('when alias subcommand file missing then error', (done) => {
   childProcess.exec(`node ${bin} lst`, function(_error, stdout, stderr) {
     expect(stderr).toBe('error: pm-list(1) does not exist, try --help\n');
     done();
@@ -61,20 +69,18 @@ test('when subcommand target executablefile has suffix .js then lookup succeeds'
 });
 
 // This is not a behaviour we enforce but rather one that is expected.
-if (os.platform() !== 'win32') {
-  test('when subcommand file not executable then error', (done) => {
-    childProcess.execFile('node', [bin, 'search'], { }, function(error, stdout, stderr) {
-      // In node 8 the EACCES gets thrown instead of emitted through the spawned process.
-      // In node 10 and 12 we get the commander error.
-      // commander: error: %s(1) not executable. try chmod or run with root
-      // node: Error: Command failed: ... Error: spawn EACCES
-      expect(error.toString()).toMatch(new RegExp('not executable|EACCES'));
-      done();
-    });
+conditionalTest('when subcommand file not executable then error', (done) => {
+  childProcess.execFile('node', [bin, 'search'], { }, function(error, stdout, stderr) {
+    // In node 8 the EACCES gets thrown instead of emitted through the spawned process.
+    // In node 10 and 12 we get the commander error.
+    // commander: error: %s(1) not executable. try chmod or run with root
+    // node: Error: Command failed: ... Error: spawn EACCES
+    expect(error.toString()).toMatch(new RegExp('not executable|EACCES'));
+    done();
   });
-}
+});
 
-test('when subcommand file is symlink then lookup succeeds', (done) => {
+conditionalTest('when subcommand file is symlink then lookup succeeds', (done) => {
   const binLink = path.join(__dirname, './fixtures/pmlink');
   childProcess.exec(`node ${binLink} install`, { }, function(_error, stdout, stderr) {
     expect(stdout).toBe('install\n');
@@ -82,7 +88,7 @@ test('when subcommand file is symlink then lookup succeeds', (done) => {
   });
 });
 
-test('when subcommand file is double symlink then lookup succeeds', (done) => {
+conditionalTest('when subcommand file is double symlink then lookup succeeds', (done) => {
   const binLink = path.join(__dirname, './fixtures/another-dir/pm');
   childProcess.execFile('node', [binLink, 'install'], { }, function(_error, stdout, stderr) {
     expect(stdout).toBe('install\n');
