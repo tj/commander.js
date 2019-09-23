@@ -12,7 +12,7 @@ if (os.platform() === 'win32') {
   conditionalTest = test;
 }
 
-test('when subcommand file missing then error', (done) => {
+conditionalTest('when subcommand file missing then error', (done) => {
   childProcess.exec(`node ${bin} list`, function(_error, stdout, stderr) {
     expect(stderr).toBe('error: pm-list(1) does not exist, try --help\n');
     done();
