@@ -8,8 +8,11 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [8.x, 10.x, 12.x]
-        os: [ubuntu-latest, macos-latest]
+        # Simplify matrix while fixing Windows failures
+        # node-version: [8.x, 10.x, 12.x]
+        node-version: [10.x]
+        # os: [ubuntu-latest, macos-latest]
+        os: [ubuntu-latest]
 
     steps:
     - uses: actions/checkout@v1
