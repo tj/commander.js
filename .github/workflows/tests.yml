@@ -8,11 +8,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # Simplify matrix while fixing Windows failures
-        # node-version: [8.x, 10.x, 12.x]
-        node-version: [10.x]
-        # os: [ubuntu-latest, macos-latest]
-        os: [ubuntu-latest]
+        node-version: [8.x, 10.x, 12.x]
+        # node-version: [10.x]
+        os: [ubuntu-latest, macos-latest]
+        # os: [ubuntu-latest]
 
     steps:
     - uses: actions/checkout@v1
@@ -32,9 +31,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # Windows tests broken so just test one version of node until fixed
-        # node-version: [8.x, 10.x, 12.x]
-        node-version: [10.x]
+        node-version: [8.x, 10.x, 12.x]
+        # node-version: [10.x]
         os: [windows-latest]
 
     steps:
@@ -48,4 +46,4 @@ jobs:
     - name: npm test
       run: npm test
     - name: npm lint
-      run: npm lint
+      run: npm run lint
