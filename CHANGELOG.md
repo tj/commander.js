@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 * Improve tracking of executable subcommands.
 
+### Changed
+
+* update development dependencies
+
 ## [3.0.1] (2019-08-30)
 
 ### Added
