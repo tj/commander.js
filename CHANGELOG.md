@@ -1,3 +1,8 @@
+2.20.1 / 2019-09-29
+==================
+
+  * Improve executable subcommand tracking
+  * Update dev dependencies
 
 2.20.0 / 2019-04-02
 ==================

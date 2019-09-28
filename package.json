@@ -1,6 +1,6 @@
 {
   "name": "commander",
-  "version": "2.20.0",
+  "version": "2.20.1",
   "description": "the complete solution for node.js command-line programs",
   "keywords": [
     "commander",
@@ -26,13 +26,13 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "@types/node": "^10.11.3",
-    "eslint": "^5.6.1",
+    "@types/node": "^12.7.8",
+    "eslint": "^6.4.0",
     "should": "^13.2.3",
-    "sinon": "^6.3.4",
-    "standard": "^12.0.1",
-    "ts-node": "^7.0.1",
-    "typescript": "^2.9.2"
+    "sinon": "^7.5.0",
+    "standard": "^14.3.1",
+    "ts-node": "^8.4.1",
+    "typescript": "^3.6.3"
   },
   "typings": "typings/index.d.ts"
 }
