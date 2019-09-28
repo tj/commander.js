@@ -25,6 +25,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   * *Breaking* Action handler now passed array of unknown arguments
 * *Breaking* Call default subcommand when there are unknown options ([#1047])
 
+## [3.0.2] (2019-09-27)
+
+### Fixed
+
+* Improve tracking of executable subcommands.
+
+### Changed
+
+* update development dependencies
+
 ## [3.0.1] (2019-08-30)
 
 ### Added
