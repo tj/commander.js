@@ -471,6 +471,9 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 [#1035]: https://github.com/tj/commander.js/pull/1035
 [#1040]: https://github.com/tj/commander.js/pull/1040
+[#1047]: https://github.com/tj/commander.js/pull/1047
+[#1048]: https://github.com/tj/commander.js/pull/1048
+[#1049]: https://github.com/tj/commander.js/pull/1049
 [#1051]: https://github.com/tj/commander.js/pull/1051
 [#1052]: https://github.com/tj/commander.js/pull/1052
 
