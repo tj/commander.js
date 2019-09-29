@@ -25,6 +25,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   * *Breaking* Action handler now passed array of unknown arguments
 * *Breaking* Call default subcommand when there are unknown options ([#1047])
 
+## [2.20.1] (2019-09-29)
+
+### Fixed
+
+* Improve tracking of executable subcommands.
+
+### Changed
+
+* update development dependencies
+
 ## [3.0.2] (2019-09-27)
 
 ### Fixed
@@ -471,4 +481,6 @@ program
 [#1040]: https://github.com/tj/commander.js/pull/1040
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[2.20.1]: https://github.com/tj/commander.js/compare/v2.20.0...v2.20.1
+[3.0.2]: https://github.com/tj/commander.js/compare/v3.0.1...v3.0.2
 [3.0.1]: https://github.com/tj/commander.js/compare/v3.0.0...v3.0.1
