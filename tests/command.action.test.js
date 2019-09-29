@@ -34,3 +34,57 @@ test('when .action called with extra arguments then extras also passed to action
   program.parse(['node', 'test', 'info', 'my-file', 'a']);
   expect(actionMock).toHaveBeenCalledWith('my-file', cmd, ['a']);
 });
+
+test('when .action on program with argument then action called', () => {
+  const actionMock = jest.fn();
+  const program = new commander.Command();
+  program
+    .arguments('<file>')
+    .action(actionMock);
+  program.parse(['node', 'test', 'my-file']);
+  expect(actionMock).toHaveBeenCalledWith('my-file', program);
+});
+
+// Changes made in #729 to call program action handler
+test('when .action on program and no arguments then action called', () => {
+  const actionMock = jest.fn();
+  const program = new commander.Command();
+  program
+    .action(actionMock);
+  program.parse(['node', 'test']);
+  expect(actionMock).toHaveBeenCalledWith(program);
+});
+
+test('when .action on program with optional argument supplied then action called', () => {
+  const actionMock = jest.fn();
+  const program = new commander.Command();
+  program
+    .arguments('[file]')
+    .action(actionMock);
+  program.parse(['node', 'test', 'my-file']);
+  expect(actionMock).toHaveBeenCalledWith('my-file', program);
+});
+
+test('when .action on program without optional argument supplied then action called', () => {
+  const actionMock = jest.fn();
+  const program = new commander.Command();
+  program
+    .arguments('[file]')
+    .action(actionMock);
+  program.parse(['node', 'test']);
+  expect(actionMock).toHaveBeenCalledWith(undefined, program);
+});
+
+test('when .action on program with subcommand and program argument then program action called', () => {
+  const actionMock = jest.fn();
+  const program = new commander.Command();
+  program
+    .arguments('[file]')
+    .action(actionMock);
+  program
+    .command('subcommand');
+
+  program.parse(['node', 'test', 'a']);
+
+  expect(actionMock).toHaveBeenCalledWith('a', program);
+});
