@@ -42,8 +42,6 @@ The complete solution for [node.js](http://nodejs.org) command-line interfaces, 
 npm install commander
 ```
 
-Commander is supported on Node 8 and above (and may still work on older versions but is not tested below 8).
-
 ## Declaring _program_ variable
 
 Commander exports a global object which is convenient for quick programs.
@@ -627,6 +625,10 @@ More Demos can be found in the [examples](https://github.com/tj/commander.js/tre
 [MIT](https://github.com/tj/commander.js/blob/master/LICENSE)
 
 ## Support
+
+Commander is supported on Node 8 and above. (Commander is likely to still work on older versions of Node, but is not tested below Node 8.)
+
+The main forum for free and community support is the project [Issues](https://github.com/tj/commander.js/issues) on GitHub.
 
 [Professionally supported commander is now available](https://tidelift.com/subscription/pkg/npm-commander?utm_source=npm-commander&utm_medium=referral&utm_campaign=readme)
 
