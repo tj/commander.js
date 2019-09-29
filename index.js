@@ -360,8 +360,12 @@ Command.prototype.action = function(fn) {
     fn.apply(self, actionArgs);
   };
   var parent = this.parent || this;
-  var name = parent === this ? '*' : this._name;
-  parent.on('command:' + name, listener);
+  if (parent === this) {
+    parent.on('program-action', listener);
+  } else {
+    parent.on('command:' + this._name, listener);
+  }
+
   if (this._alias) parent.on('command:' + this._alias, listener);
   return this;
 };
@@ -793,25 +797,28 @@ Command.prototype.normalize = function(args) {
 Command.prototype.parseArgs = function(args, unknown) {
   var name;
 
+  if (this.listeners('program-action').length && this.listeners('command:*').length) {
+    console.error("Can't have listeners for both command:* and for the main program");
+    this._exit(1);
+  }
+
   if (args.length) {
     name = args[0];
     if (this.listeners('command:' + name).length) {
       this.emit('command:' + args.shift(), args, unknown);
-    } else {
+    } else if (this.listeners('command:*').length) {
       this.emit('command:*', args, unknown);
+    } else {
+      this.emit('program-action', args, unknown);
     }
   } else {
     outputHelpIfNecessary(this, unknown);
-
     // If there were no args and we have unknown options,
     // then they are extraneous and we need to error.
     if (unknown.length > 0 && !this.defaultExecutable) {
       this.unknownOption(unknown[0]);
     }
-    if (this.commands.length === 0 &&
-        this._args.filter(function(a) { return a.required; }).length === 0) {
-      this.emit('command:*');
-    }
+    this.emit('program-action');
   }
 
   return this;
