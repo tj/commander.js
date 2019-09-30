@@ -626,6 +626,10 @@ More Demos can be found in the [examples](https://github.com/tj/commander.js/tre
 
 ## Support
 
+Commander is supported on Node 8 and above. (Commander is likely to still work on older versions of Node, but is not tested below Node 8.)
+
+The main forum for free and community support is the project [Issues](https://github.com/tj/commander.js/issues) on GitHub.
+
 [Professionally supported commander is now available](https://tidelift.com/subscription/pkg/npm-commander?utm_source=npm-commander&utm_medium=referral&utm_campaign=readme)
 
 Tidelift gives software development teams a single source for purchasing and maintaining their software, with professional grade assurances from the experts who know it best, while seamlessly integrating with existing tools.
