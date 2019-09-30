@@ -11,19 +11,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
+* automatically wrap and indent help descriptions for options and commands ([#1051])
 * `.exitOverride()` allows override of calls to `process.exit` for additional error handling and to keep program running ([#1040])
 
 ### Changed
 
-* switch from Sinon+Should to Jest with major rewrite of tests ([#1035])
+* switch tests from Sinon+Should to Jest with major rewrite of tests ([#1035])
+* call default subcommand even when there are unknown options ([#1047])
 
 ### Fixed
 
-* Complain about unknown options when program argument supplied and action handler ([#1049])
-  * *Breaking* This changes parameters to `command:*` event to include unknown arguments
-* *Breaking* Keep command object out of program.args when action handler called ([#1048])
-  * *Breaking* Action handler now passed array of unknown arguments
-* *Breaking* Call default subcommand when there are unknown options ([#1047])
+* *Breaking* keep command object out of program.args when action handler called ([#1048])
+  * also, action handler now passed array of unknown arguments
+* complain about unknown options when program argument supplied and action handler ([#1049])
+  * this changes parameters to `command:*` event to include unknown arguments
+* removed deprecated `customFds` option from call to `child_process.spawn` ([#1052])
 
 ## [2.20.1] (2019-09-29)
 
@@ -87,7 +89,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * Increment inspector port for spawned subcommands ([#991])
   * e.g. `node --inspect myCommand.js clone`
 
-### Example Breaking Changes
+### Migration Tips
 
 The custom event for a negated option like `--no-foo` is `option:no-foo` (previously `option:foo`).
 
@@ -477,8 +479,13 @@ program
 [#1018]: https://github.com/tj/commander.js/pull/1018
 [#1026]: https://github.com/tj/commander.js/pull/1026
 [#1028]: https://github.com/tj/commander.js/pull/1028
-[#1035]: https://github.com/tj/commander.js/pull/1035
+[#1035]: https://github.com/tj/commander.js/pull/1035
 [#1040]: https://github.com/tj/commander.js/pull/1040
+[#1047]: https://github.com/tj/commander.js/pull/1047
+[#1048]: https://github.com/tj/commander.js/pull/1048
+[#1049]: https://github.com/tj/commander.js/pull/1049
+[#1051]: https://github.com/tj/commander.js/pull/1051
+[#1052]: https://github.com/tj/commander.js/pull/1052
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
 [2.20.1]: https://github.com/tj/commander.js/compare/v2.20.0...v2.20.1
