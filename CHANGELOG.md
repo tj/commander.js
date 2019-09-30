@@ -7,17 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [Unreleased] (date goes here)
+## [4.0.0-0] Prerelease (2019-10-xx)
 
 ### Added
 
 * automatically wrap and indent help descriptions for options and commands ([#1051])
 * `.exitOverride()` allows override of calls to `process.exit` for additional error handling and to keep program running ([#1040])
+* dev: work in progress GitHub Actions support ([#1027])
 
 ### Changed
 
-* switch tests from Sinon+Should to Jest with major rewrite of tests ([#1035])
+* dev: switch tests from Sinon+Should to Jest with major rewrite of tests ([#1035])
 * call default subcommand even when there are unknown options ([#1047])
+* *Breaking* Commander is only officially supported on Node 8 and above ([#1053])
 
 ### Fixed
 
@@ -478,6 +480,7 @@ program
 [#1010]: https://github.com/tj/commander.js/pull/1010
 [#1018]: https://github.com/tj/commander.js/pull/1018
 [#1026]: https://github.com/tj/commander.js/pull/1026
+[#1027]: https://github.com/tj/commander.js/pull/1027
 [#1028]: https://github.com/tj/commander.js/pull/1028
 [#1035]: https://github.com/tj/commander.js/pull/1035
 [#1040]: https://github.com/tj/commander.js/pull/1040
@@ -486,8 +489,10 @@ program
 [#1049]: https://github.com/tj/commander.js/pull/1049
 [#1051]: https://github.com/tj/commander.js/pull/1051
 [#1052]: https://github.com/tj/commander.js/pull/1052
+[#1053]: https://github.com/tj/commander.js/pull/1053
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
-[2.20.1]: https://github.com/tj/commander.js/compare/v2.20.0...v2.20.1
+[4.0.0-0]: https://github.com/tj/commander.js/compare/v3.0.2...v4.0.0-0
 [3.0.2]: https://github.com/tj/commander.js/compare/v3.0.1...v3.0.2
 [3.0.1]: https://github.com/tj/commander.js/compare/v3.0.0...v3.0.1
+[2.20.1]: https://github.com/tj/commander.js/compare/v2.20.0...v2.20.1
