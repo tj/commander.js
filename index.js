@@ -880,7 +880,7 @@ Command.prototype.version = function(str, flags, description) {
   this._versionOptionName = versionOption.long.substr(2) || 'version';
   this.options.push(versionOption);
   this.on('option:' + this._versionOptionName, function() {
-    process.stdout.write(str + '\n');
+    process.stderr.write(str + '\n');
     process.exit(0);
   });
   return this;
@@ -1172,7 +1172,7 @@ Command.prototype.outputHelp = function(cb) {
   if (typeof cbOutput !== 'string' && !Buffer.isBuffer(cbOutput)) {
     throw new Error('outputHelp callback must return a string or a Buffer');
   }
-  process.stdout.write(cbOutput);
+  process.stderr.write(cbOutput);
   this.emit(this._helpLongFlag);
 };
 
