@@ -1,5 +1,4 @@
 const childProcess = require('child_process');
-const os = require('os');
 const path = require('path');
 
 // Test that a signal sent to the parent process is received by the executable subcommand process (which is listening).
@@ -7,7 +6,7 @@ const path = require('path');
 // Disabling tests on Windows as:
 // "Windows does not support sending signals"
 //  https://nodejs.org/api/process.html#process_signal_events
-const conditionalDescribe = (os.platform() === 'win32') ? describe.skip : describe;
+const conditionalDescribe = (process.platform === 'win32') ? describe.skip : describe;
 
 // Note: the previous (sinon) test had custom code for SIGUSR1, revist if required:
 //    As described at https://nodejs.org/api/process.html#process_signal_events
