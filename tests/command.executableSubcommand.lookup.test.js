@@ -30,66 +30,66 @@ test('when alias subcommand file missing then error', (done) => {
 });
 
 test('when subcommand file has no suffix then lookup succeeds', (done) => {
-  childProcess.exec(`node ${pm} install`, { }, function(_error, stdout, stderr) {
+  childProcess.exec(`node ${pm} install`, function(_error, stdout, stderr) {
     expect(stdout).toBe('install\n');
     done();
   });
 });
 
 test('when alias subcommand file has no suffix then lookup succeeds', (done) => {
-  childProcess.exec(`node ${pm} i`, { }, function(_error, stdout, stderr) {
+  childProcess.exec(`node ${pm} i`, function(_error, stdout, stderr) {
     expect(stdout).toBe('install\n');
     done();
   });
 });
 
 test('when subcommand target executablefile has no suffix then lookup succeeds', (done) => {
-  childProcess.exec(`node ${pm} specifyInstall`, { }, function(_error, stdout, stderr) {
+  childProcess.exec(`node ${pm} specifyInstall`, function(_error, stdout, stderr) {
     expect(stdout).toBe('install\n');
     done();
   });
 });
 
 test('when subcommand file suffix .js then lookup succeeds', (done) => {
-  childProcess.exec(`node ${pm} publish`, { }, function(_error, stdout, stderr) {
+  childProcess.exec(`node ${pm} publish`, function(_error, stdout, stderr) {
     expect(stdout).toBe('publish\n');
     done();
   });
 });
 
 test('when alias subcommand file suffix .js then lookup succeeds', (done) => {
-  childProcess.exec(`node ${pm} p`, { }, function(_error, stdout, stderr) {
+  childProcess.exec(`node ${pm} p`, function(_error, stdout, stderr) {
     expect(stdout).toBe('publish\n');
     done();
   });
 });
 
 test('when subcommand target executablefile has suffix .js then lookup succeeds', (done) => {
-  childProcess.exec(`node ${pm} specifyPublish`, { }, function(_error, stdout, stderr) {
+  childProcess.exec(`node ${pm} specifyPublish`, function(_error, stdout, stderr) {
     expect(stdout).toBe('publish\n');
     done();
   });
 });
 
 test('when subcommand file is symlink then lookup succeeds', (done) => {
-  const pmlink = path.join(__dirname, './fixtures/pmlink');
-  childProcess.exec(`node ${pmlink} install`, { }, function(_error, stdout, stderr) {
+  const pmlink = path.join(__dirname, 'fixtures', 'pmlink');
+  childProcess.exec(`node ${pmlink} install`, function(_error, stdout, stderr) {
     expect(stdout).toBe('install\n');
     done();
   });
 });
 
 test('when subcommand file is double symlink then lookup succeeds', (done) => {
-  const pmlink = path.join(__dirname, './fixtures/another-dir/pm');
-  childProcess.exec(`node ${pmlink} install`, { }, function(_error, stdout, stderr) {
+  const pmlink = path.join(__dirname, 'fixtures', 'another-dir', 'pm');
+  childProcess.exec(`node ${pmlink} install`, function(_error, stdout, stderr) {
     expect(stdout).toBe('install\n');
     done();
   });
 });
 
 test('when subcommand suffix is .ts then lookup succeeds', (done) => {
-  const binLinkTs = path.join(__dirname, './fixtures-ts/pm.ts');
-  childProcess.execFile('node', ['-r', 'ts-node/register', binLinkTs, 'install'], { }, function(_error, stdout, stderr) {
+  const binLinkTs = path.join(__dirname, 'fixtures-ts', 'pm.ts');
+  childProcess.execFile('node', ['-r', 'ts-node/register', binLinkTs, 'install'], function(_error, stdout, stderr) {
     expect(stdout).toBe('install\n');
     done();
   });
