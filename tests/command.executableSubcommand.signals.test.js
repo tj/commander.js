@@ -1,7 +1,12 @@
 const childProcess = require('child_process');
 const path = require('path');
 
-// Test that a signal sent to the parent process is received by the executable subcommand process (which is listening)
+// Test that a signal sent to the parent process is received by the executable subcommand process (which is listening).
+
+// Disabling tests on Windows as:
+// "Windows does not support sending signals"
+//  https://nodejs.org/api/process.html#process_signal_events
+const describeOrSkipOnWindows = (process.platform === 'win32') ? describe.skip : describe;
 
 // Note: the previous (sinon) test had custom code for SIGUSR1, revist if required:
 //    As described at https://nodejs.org/api/process.html#process_signal_events
@@ -9,7 +14,7 @@ const path = require('path');
 //    additional error message:
 //      "Failed to open socket on port 5858, waiting 1000 ms before retrying".
 
-describe.each([['SIGINT'], ['SIGHUP'], ['SIGTERM'], ['SIGUSR1'], ['SIGUSR2']])(
+describeOrSkipOnWindows.each([['SIGINT'], ['SIGHUP'], ['SIGTERM'], ['SIGUSR1'], ['SIGUSR2']])(
   'test signal handling in executableSubcommand', (value) => {
     test(`when command killed with ${value} then executableSubcommand receieves ${value}`, (done) => {
       const pmPath = path.join(__dirname, './fixtures/pm');
