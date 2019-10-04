@@ -71,18 +71,6 @@ test('when subcommand target executablefile has suffix .js then lookup succeeds'
   });
 });
 
-// This is not a behaviour we enforce but rather one that is expected.
-test('when subcommand file not executable then error', (done) => {
-  childProcess.exec(`node ${pm} search`, { }, function(error, stdout, stderr) {
-    // In node 8 the EACCES gets thrown instead of emitted through the spawned process.
-    // In node 10 and 12 we get the commander error.
-    // commander: error: %s(1) not executable. try chmod or run with root
-    // node: Error: Command failed: ... Error: spawn EACCES
-    expect(error.toString()).toMatch(new RegExp('not executable|EACCES'));
-    done();
-  });
-});
-
 test('when subcommand file is symlink then lookup succeeds', (done) => {
   const pmlink = path.join(__dirname, './fixtures/pmlink');
   childProcess.exec(`node ${pmlink} install`, { }, function(_error, stdout, stderr) {
