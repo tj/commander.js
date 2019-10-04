@@ -1162,7 +1162,7 @@ Command.prototype.helpInformation = function() {
  * @api public
  */
 
-Command.prototype.outputHelp = function(cb) {
+Command.prototype.outputHelp = function(cb, err = true) {
   if (!cb) {
     cb = function(passthru) {
       return passthru;
@@ -1172,7 +1172,11 @@ Command.prototype.outputHelp = function(cb) {
   if (typeof cbOutput !== 'string' && !Buffer.isBuffer(cbOutput)) {
     throw new Error('outputHelp callback must return a string or a Buffer');
   }
-  process.stderr.write(cbOutput);
+  if (err) {
+    process.stderr.write(cbOutput);
+  } else {
+    process.stdout.write(cbOutput);
+  }
   this.emit(this._helpLongFlag);
 };
 
@@ -1207,7 +1211,7 @@ Command.prototype.helpOption = function(flags, description) {
  */
 
 Command.prototype.help = function(cb) {
-  this.outputHelp(cb);
+  this.outputHelp(cb, false);
   process.exit();
 };
 
@@ -1252,7 +1256,7 @@ function outputHelpIfNecessary(cmd, options) {
 
   for (var i = 0; i < options.length; i++) {
     if (options[i] === cmd._helpLongFlag || options[i] === cmd._helpShortFlag) {
-      cmd.outputHelp();
+      cmd.outputHelp(null, false);
       process.exit(0);
     }
   }
