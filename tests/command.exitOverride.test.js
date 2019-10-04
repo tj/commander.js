@@ -13,6 +13,8 @@ function expectCommanderError(err, exitCode, code, message) {
   expect(err.message).toBe(message);
 }
 
+const testOrSkipOnWindows = (process.platform === 'win32') ? test.skip : test;
+
 describe('.exitOverride and error details', () => {
   // Use internal knowledge to suppress output to keep test output clean.
   let consoleErrorSpy;
@@ -188,7 +190,8 @@ describe('.exitOverride and error details', () => {
     program.parse(['node', pm, 'silent']);
   });
 
-  test('when executableSubcommand fails then call exitOverride', (done) => {
+  // Throws directly on Windows
+  testOrSkipOnWindows('when executableSubcommand fails then call exitOverride', (done) => {
     // Tricky for override, get called for `error` event then `exit` event.
     const exitCallback = jest.fn()
       .mockImplementationOnce((err) => {
