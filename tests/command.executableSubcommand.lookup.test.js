@@ -3,6 +3,7 @@ const path = require('path');
 
 // Calling node explicitly so pm works without file suffix cross-platform.
 
+const testOrSkipOnWindows = (process.platform === 'win32') ? test.skip : test;
 const pm = path.join(__dirname, './fixtures/pm');
 
 test('when subcommand file missing then error', (done) => {
@@ -71,7 +72,7 @@ test('when subcommand target executablefile has suffix .js then lookup succeeds'
   });
 });
 
-test('when subcommand file is symlink then lookup succeeds', (done) => {
+testOrSkipOnWindows('when subcommand file is symlink then lookup succeeds', (done) => {
   const pmlink = path.join(__dirname, 'fixtures', 'pmlink');
   childProcess.exec(`node ${pmlink} install`, function(_error, stdout, stderr) {
     expect(stdout).toBe('install\n');
@@ -79,7 +80,7 @@ test('when subcommand file is symlink then lookup succeeds', (done) => {
   });
 });
 
-test('when subcommand file is double symlink then lookup succeeds', (done) => {
+testOrSkipOnWindows('when subcommand file is double symlink then lookup succeeds', (done) => {
   const pmlink = path.join(__dirname, 'fixtures', 'another-dir', 'pm');
   childProcess.exec(`node ${pmlink} install`, function(_error, stdout, stderr) {
     expect(stdout).toBe('install\n');
