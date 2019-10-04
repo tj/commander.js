@@ -8,11 +8,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # Temporary: just run one configuration while sorting out Windows test failures
-        # node-version: [8.x, 10.x, 12.x]
-        node-version: [10.x]
-        # os: [ubuntu-latest, windows-latest, macos-latest]
-        os: [windows-latest]
+        node-version: [8.x, 10.x, 12.x]
+        os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
     - uses: actions/checkout@v1
@@ -25,5 +22,5 @@ jobs:
       run: npm install
     - name: npm test
       run: npm test
-    - name: npm lint
-      run: npm lint
+    - name: npm run lint
+      run: npm run lint
