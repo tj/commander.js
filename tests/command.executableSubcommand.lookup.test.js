@@ -80,9 +80,10 @@ conditionalTest('when subcommand file not executable then error', (done) => {
   });
 });
 
-conditionalTest('when subcommand file is symlink then lookup succeeds', (done) => {
+test('when subcommand file is symlink then lookup succeeds', (done) => {
   const binLink = path.join(__dirname, './fixtures/pmlink');
   childProcess.exec(`node ${binLink} install`, { }, function(_error, stdout, stderr) {
+    expect(stderr).toBe('');
     expect(stdout).toBe('install\n');
     done();
   });
