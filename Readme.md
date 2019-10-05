@@ -245,7 +245,7 @@ $ custom --list x,y,z
 
 ### Required option
 
-You may specify a required (mandatory) option using `.requiredOption`, which must have a value after parsing. This is otherwise the same as `.option` in format, taking flags and description, and optional default value or custom processing.
+You may specify a required (mandatory) option using `.requiredOption`. The option must be specified on the command line, or by having a default value. The method is otherwise the same as `.option` in format, taking flags and description, and optional default value or custom processing.
 
 ```js
 const program = require('commander');
