@@ -834,7 +834,7 @@ Command.prototype.optionFor = function(arg) {
 Command.prototype._checkForMissingMandatoryOptions = function() {
   const self = this;
   this.options.forEach((anOption) => {
-    if (anOption.mandatory && (self[anOption.name()] === undefined)) {
+    if (anOption.mandatory && (self[anOption.attributeName()] === undefined)) {
       self.missingMandatoryOptionValue(anOption);
     }
   });
