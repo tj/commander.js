@@ -826,6 +826,21 @@ Command.prototype.optionFor = function(arg) {
 };
 
 /**
+ * Display an error message if a mandatory option does not have a value.
+ *
+ * @api private
+ */
+
+Command.prototype._checkForMissingMandatoryOptions = function() {
+  const self = this;
+  this.options.forEach((anOption) => {
+    if (anOption.mandatory && (self[anOption.name()] === undefined)) {
+      self.missingMandatoryOptionValue(anOption);
+    }
+  });
+};
+
+/**
  * Parse options from `argv` returning `argv`
  * void of these options.
  *
@@ -901,6 +916,8 @@ Command.prototype.parseOptions = function(argv) {
     args.push(arg);
   }
 
+  this._checkForMissingMandatoryOptions();
+
   return { args: args, unknown: unknownOptions };
 };
 
@@ -951,6 +968,19 @@ Command.prototype.optionMissingArgument = function(option, flag) {
   }
   console.error(message);
   this._exit(1, 'commander.optionMissingArgument', message);
+};
+
+/**
+ * `Option` does not have a value, and is a mandatory option.
+ *
+ * @param {String} option
+ * @api private
+ */
+
+Command.prototype.missingMandatoryOptionValue = function(option) {
+  const message = `error: required option '${option.flags}' not specified`;
+  console.error(message);
+  this._exit(1, 'commander.missingMandatoryOptionValue', message);
 };
 
 /**
