@@ -1,19 +1,30 @@
 const commander = require('../');
 
-// Assuming mandatory options behave as expected apart from the mandatory aspect, not retesting all permutations.
+// Assuming mandatory options behave as normal options apart from the mandatory aspect, not retesting all behaviour.
 
 describe('required program option with mandatory value specified', () => {
-  test('when program has required value specified then specified value', () => {
+  test('when program has required value specified then value as specified', () => {
     const program = new commander.Command();
     program
+      .exitOverride()
       .requiredOption('--cheese <type>', 'cheese type');
     program.parse(['node', 'test', '--cheese', 'blue']);
     expect(program.cheese).toBe('blue');
   });
 
+  test('when program has option with name different than property then still recognised', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .requiredOption('--cheese-type <type>', 'cheese type');
+    program.parse(['node', 'test', '--cheese-type', 'blue']);
+    expect(program.cheeseType).toBe('blue');
+  });
+
   test('when program has required value default then default value', () => {
     const program = new commander.Command();
     program
+      .exitOverride()
       .requiredOption('--cheese <type>', 'cheese type', 'default');
     program.parse(['node', 'test']);
     expect(program.cheese).toBe('default');
@@ -22,6 +33,7 @@ describe('required program option with mandatory value specified', () => {
   test('when program has optional value flag specified then true', () => {
     const program = new commander.Command();
     program
+      .exitOverride()
       .requiredOption('--cheese [type]', 'cheese type');
     program.parse(['node', 'test', '--cheese']);
     expect(program.cheese).toBe(true);
@@ -30,25 +42,38 @@ describe('required program option with mandatory value specified', () => {
   test('when program has optional value default then default value', () => {
     const program = new commander.Command();
     program
+      .exitOverride()
       .requiredOption('--cheese [type]', 'cheese type', 'default');
     program.parse(['node', 'test']);
     expect(program.cheese).toBe('default');
   });
 
-  test('when program has yes/no flag specified with value then specified value', () => {
+  test('when program has value/no flag specified with value then specified value', () => {
     const program = new commander.Command();
     program
+      .exitOverride()
       .requiredOption('--cheese <type>', 'cheese type')
-      .option('--no-cheese', 'no cheese thanks');
+      .requiredOption('--no-cheese', 'no cheese thanks');
     program.parse(['node', 'test', '--cheese', 'blue']);
     expect(program.cheese).toBe('blue');
   });
 
-  test('when program has yes/no flag specified with flag then true', () => {
+  test('when program has mandatory-yes/no flag specified with flag then true', () => {
     const program = new commander.Command();
     program
+      .exitOverride()
       .requiredOption('--cheese', 'cheese type')
       .option('--no-cheese', 'no cheese thanks');
+    program.parse(['node', 'test', '--cheese']);
+    expect(program.cheese).toBe(true);
+  });
+
+  test('when program has mandatory-yes/mandatory-no flag specified with flag then true', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .requiredOption('--cheese', 'cheese type')
+      .requiredOption('--no-cheese', 'no cheese thanks');
     program.parse(['node', 'test', '--cheese']);
     expect(program.cheese).toBe(true);
   });
@@ -56,6 +81,7 @@ describe('required program option with mandatory value specified', () => {
   test('when program has yes/no flag specified negated then false', () => {
     const program = new commander.Command();
     program
+      .exitOverride()
       .requiredOption('--cheese <type>', 'cheese type')
       .option('--no-cheese', 'no cheese thanks');
     program.parse(['node', 'test', '--no-cheese']);
@@ -65,6 +91,7 @@ describe('required program option with mandatory value specified', () => {
   test('when program has required value specified and subcommand then specified value', () => {
     const program = new commander.Command();
     program
+      .exitOverride()
       .requiredOption('--cheese <type>', 'cheese type')
       .command('sub')
       .action(() => {});
@@ -142,6 +169,7 @@ describe('required command option with mandatory value specified', () => {
     const program = new commander.Command();
     let cmdOptions;
     program
+      .exitOverride()
       .command('sub')
       .requiredOption('--subby <type>', 'description')
       .action((cmd) => {
