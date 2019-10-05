@@ -18,8 +18,9 @@ declare namespace local {
 
   class Option {
     flags: string;
-    required: boolean;
-    optional: boolean;
+    required: boolean; // A value must be supplied when the option is specified.
+    optional: boolean; // A value is optional when the option is specified.
+    mandatory: boolean; // The option must have a value after parsing, which usually means it must be specified on command line.
     bool: boolean;
     short?: string;
     long: string;
@@ -185,6 +186,15 @@ declare namespace local {
      */
     option(flags: string, description?: string, fn?: ((arg1: any, arg2: any) => void) | RegExp, defaultValue?: any): Command;
     option(flags: string, description?: string, defaultValue?: any): Command;
+
+    /**
+     * Define a required option, which must have a value after parsing. This usually means
+     * the option must be specified on the command line. (Otherwise the same as .option().)
+     *
+     * The `flags` string should contain both the short and long flags, separated by comma, a pipe or space.
+     */
+    requiredOption(flags: string, description?: string, fn?: ((arg1: any, arg2: any) => void) | RegExp, defaultValue?: any): Command;
+    requiredOption(flags: string, description?: string, defaultValue?: any): Command;
 
     /**
      * Allow unknown options on the command line.

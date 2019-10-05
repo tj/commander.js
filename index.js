@@ -43,8 +43,9 @@ exports.Option = Option;
 
 function Option(flags, description) {
   this.flags = flags;
-  this.required = flags.indexOf('<') >= 0;
-  this.optional = flags.indexOf('[') >= 0;
+  this.required = flags.indexOf('<') >= 0; // A value must be supplied when the option is specified.
+  this.optional = flags.indexOf('[') >= 0; // A value is optional when the option is specified.
+  this.mandatory = false; // The option must have a value after parsing, which usually means it must be specified on command line.
   this.negate = flags.indexOf('-no-') !== -1;
   flags = flags.split(/[ ,|]+/);
   if (flags.length > 1 && !/^[[<]/.test(flags[1])) this.short = flags.shift();
@@ -365,62 +366,23 @@ Command.prototype.action = function(fn) {
 };
 
 /**
- * Define option with `flags`, `description` and optional
- * coercion `fn`.
+ * Internal implementation shared by .option() and .requiredOption()
  *
- * The `flags` string should contain both the short and long flags,
- * separated by comma, a pipe or space. The following are all valid
- * all will output this way when `--help` is used.
- *
- *    "-p, --pepper"
- *    "-p|--pepper"
- *    "-p --pepper"
- *
- * Examples:
- *
- *     // simple boolean defaulting to undefined
- *     program.option('-p, --pepper', 'add pepper');
- *
- *     program.pepper
- *     // => undefined
- *
- *     --pepper
- *     program.pepper
- *     // => true
- *
- *     // simple boolean defaulting to true (unless non-negated option is also defined)
- *     program.option('-C, --no-cheese', 'remove cheese');
- *
- *     program.cheese
- *     // => true
- *
- *     --no-cheese
- *     program.cheese
- *     // => false
- *
- *     // required argument
- *     program.option('-C, --chdir <path>', 'change the working directory');
- *
- *     --chdir /tmp
- *     program.chdir
- *     // => "/tmp"
- *
- *     // optional argument
- *     program.option('-c, --cheese [type]', 'add cheese [marble]');
- *
+ * @param {Object} config
  * @param {String} flags
  * @param {String} description
- * @param {Function|*} [fn] or default
+ * @param {Function|*} [fn] - custom option processing function or default vaue
  * @param {*} [defaultValue]
  * @return {Command} for chaining
- * @api public
+ * @api private
  */
 
-Command.prototype.option = function(flags, description, fn, defaultValue) {
+Command.prototype._optionEx = function(config, flags, description, fn, defaultValue) {
   var self = this,
     option = new Option(flags, description),
     oname = option.name(),
     name = option.attributeName();
+  option.mandatory = !!config.mandatory;
 
   // default as 3rd arg
   if (typeof fn !== 'function') {
@@ -480,6 +442,80 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
   });
 
   return this;
+};
+
+/**
+ * Define option with `flags`, `description` and optional
+ * coercion `fn`.
+ *
+ * The `flags` string should contain both the short and long flags,
+ * separated by comma, a pipe or space. The following are all valid
+ * all will output this way when `--help` is used.
+ *
+ *    "-p, --pepper"
+ *    "-p|--pepper"
+ *    "-p --pepper"
+ *
+ * Examples:
+ *
+ *     // simple boolean defaulting to undefined
+ *     program.option('-p, --pepper', 'add pepper');
+ *
+ *     program.pepper
+ *     // => undefined
+ *
+ *     --pepper
+ *     program.pepper
+ *     // => true
+ *
+ *     // simple boolean defaulting to true (unless non-negated option is also defined)
+ *     program.option('-C, --no-cheese', 'remove cheese');
+ *
+ *     program.cheese
+ *     // => true
+ *
+ *     --no-cheese
+ *     program.cheese
+ *     // => false
+ *
+ *     // required argument
+ *     program.option('-C, --chdir <path>', 'change the working directory');
+ *
+ *     --chdir /tmp
+ *     program.chdir
+ *     // => "/tmp"
+ *
+ *     // optional argument
+ *     program.option('-c, --cheese [type]', 'add cheese [marble]');
+ *
+ * @param {String} flags
+ * @param {String} description
+ * @param {Function|*} [fn] - custom option processing function or default vaue
+ * @param {*} [defaultValue]
+ * @return {Command} for chaining
+ * @api public
+ */
+
+Command.prototype.option = function(flags, description, fn, defaultValue) {
+  return this._optionEx({}, flags, description, fn, defaultValue);
+};
+
+/*
+ * Add a required option which must have a value after parsing. This usually means
+ * the option must be specified on the command line. (Otherwise the same as .option().)
+ *
+ * The `flags` string should contain both the short and long flags, separated by comma, a pipe or space.
+ *
+ * @param {String} flags
+ * @param {String} description
+ * @param {Function|*} [fn] - custom option processing function or default vaue
+ * @param {*} [defaultValue]
+ * @return {Command} for chaining
+ * @api public
+ */
+
+Command.prototype.requiredOption = function(flags, description, fn, defaultValue) {
+  return this._optionEx({ mandatory: true }, flags, description, fn, defaultValue);
 };
 
 /**
