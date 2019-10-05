@@ -210,4 +210,21 @@ describe('.exitOverride and error details', () => {
 
     program.parse(['node', pm, 'does-not-exist']);
   });
+
+  test('when mandatory program option missing then throw CommanderError', () => {
+    const optionFlags = '-p, --pepper <type>';
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .requiredOption(optionFlags, 'add pepper');
+
+    let caughtErr;
+    try {
+      program.parse(['node', 'test']);
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expectCommanderError(caughtErr, 1, 'commander.missingMandatoryOptionValue', `error: required option '${optionFlags}' not specified`);
+  });
 });
