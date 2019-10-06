@@ -2,9 +2,10 @@
 
 // This is used as an example in the README for:
 //    Required option
-//    You may specify a required (mandatory) option using `.requiredOption`, which must have a value after parsing.
+//    You may specify a required (mandatory) option using `.requiredOption`.
+//    The option must be specified on the command line, or by having a default value.
 //
-// Example output pretending command called pizza (or try directly with `node options-mandatory.js`)
+// Example output pretending command called pizza (or try directly with `node options-required.js`)
 //
 // $ pizza
 // error: required option '-c, --cheese <type>' not specified
