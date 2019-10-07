@@ -13,7 +13,7 @@
 // $ pizza-options --cheese mozzarella
 // add cheese type mozzarella
 
-const commander = require('commander');
+const commander = require('../');
 const program = new commander.Command();
 
 program

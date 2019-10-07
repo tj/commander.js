@@ -15,7 +15,7 @@ program
 // must be before .parse() since
 // node's emit() is immediate
 
-program.on('--help', function(){
+program.on('--help', function() {
   console.log('');
   console.log('Examples:');
   console.log('');
