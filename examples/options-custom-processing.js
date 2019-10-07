@@ -17,7 +17,7 @@
 // $ custom --list x,y,z
 // [ 'x', 'y', 'z' ]
 
-const commander = require('commander');
+const commander = require('../');
 const program = new commander.Command();
 
 function myParseInt(value, dummyPrevious) {

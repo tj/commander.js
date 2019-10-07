@@ -11,7 +11,7 @@
 // $ pizza-options --cheese stilton
 // cheese: stilton
 
-const commander = require('commander');
+const commander = require('../');
 const program = new commander.Command();
 
 program
