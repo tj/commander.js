@@ -15,6 +15,7 @@ The complete solution for [node.js](http://nodejs.org) command-line interfaces, 
     - [Default option value](#default-option-value)
     - [Other option types, negatable boolean and flag|value](#other-option-types-negatable-boolean-and-flagvalue)
     - [Custom option processing](#custom-option-processing)
+    - [Required option](#required-option)
     - [Version option](#version-option)
   - [Commands](#commands)
     - [Specify the argument syntax](#specify-the-argument-syntax)
@@ -240,6 +241,24 @@ $ custom -c a -c b -c c
 [ 'a', 'b', 'c' ]
 $ custom --list x,y,z
 [ 'x', 'y', 'z' ]
+```
+
+### Required option
+
+You may specify a required (mandatory) option using `.requiredOption`. The option must be specified on the command line, or by having a default value. The method is otherwise the same as `.option` in format, taking flags and description, and optional default value or custom processing.
+
+```js
+const program = require('commander');
+
+program
+  .requiredOption('-c, --cheese <type>', 'pizza must have cheese');
+
+program.parse(process.argv);
+```
+
+```
+$ pizza
+error: required option '-c, --cheese <type>' not specified
 ```
 
 ### Version option

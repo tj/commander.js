@@ -90,6 +90,16 @@ program
     });
 
 program
+  .requiredOption('-a,--aaa', 'description')
+  .requiredOption('-b,--bbb <value>', 'description')
+  .requiredOption('-c,--ccc [value]', 'description')
+  .requiredOption('-d,--ddd <value>', 'description', 'default value')
+  .requiredOption('-e,--eee <value>', 'description', (value, memo) => { return value; })
+  .requiredOption('-f,--fff <value>', 'description', (value, memo) => { return value; }, 'starting value')
+  .requiredOption('-g,--ggg <value>', 'description')
+  .requiredOption('-G,--no-ggg <value>', 'description for negation');
+
+program
     .version('0.0.1')
     .arguments('<cmd> [env]')
     .action((cmd, env) => {
