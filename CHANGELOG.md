@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [4.0.0-1] Prerelease (2019-10-08)
+
+### Added
+
+* support for declaring required options with `.requiredOptions()` ([#1071])
+
 ## [4.0.0-0] Prerelease (2019-10-01)
 
 ### Added
@@ -490,8 +496,10 @@ program
 [#1051]: https://github.com/tj/commander.js/pull/1051
 [#1052]: https://github.com/tj/commander.js/pull/1052
 [#1053]: https://github.com/tj/commander.js/pull/1053
+[#1071]: https://github.com/tj/commander.js/pull/1071
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[4.0.0-1]: https://github.com/tj/commander.js/compare/v4.0.0-0..v4.0.0-1
 [4.0.0-0]: https://github.com/tj/commander.js/compare/v3.0.2...v4.0.0-0
 [3.0.2]: https://github.com/tj/commander.js/compare/v3.0.1...v3.0.2
 [3.0.1]: https://github.com/tj/commander.js/compare/v3.0.0...v3.0.1
