@@ -99,7 +99,7 @@ Option.prototype.is = function(arg) {
 function Command(name) {
   this.commands = [];
   this.options = [];
-  this._execs = new Set();
+  this._execs = {};
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
@@ -178,7 +178,7 @@ Command.prototype.command = function(name, desc, opts) {
   if (desc) {
     cmd.description(desc);
     this.executables = true;
-    this._execs.add(cmd._name);
+    this._execs[cmd._name] = true;
     if (opts.isDefault) this.defaultExecutable = cmd._name;
   }
   cmd._noHelp = !!opts.noHelp;
@@ -484,7 +484,7 @@ Command.prototype.parse = function(argv) {
     })[0];
   }
 
-  if (this._execs.has(name)) {
+  if (this._execs[name] === true) {
     return this.executeSubCommand(argv, args, parsed.unknown);
   } else if (aliasCommand) {
     // is alias of a subCommand
