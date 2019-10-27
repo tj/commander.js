@@ -35,5 +35,8 @@
     "ts-node": "^8.4.1",
     "typescript": "^3.6.3"
   },
-  "typings": "typings/index.d.ts"
+  "typings": "typings/index.d.ts",
+  "engines": {
+    "node": ">= 6"
+  }
 }
