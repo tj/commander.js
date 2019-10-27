@@ -238,6 +238,24 @@ $ custom --list x,y,z
 [ 'x', 'y', 'z' ]
 ```
 
+### 必需的选项
+
+你可以使用`.requiredOption`指定一个必需的(强制性的)选项，这样的选项在命令行的命令中必须被给出，除非它拥有一个默认的值。另外，这个方法在格式上和使用`.option`一样：The method is otherwise the same as `.option` in format, 采用标志和说明，以及可选的默认值或自定义处理。
+
+```js
+const program = require('commander');
+
+program
+  .requiredOption('-c, --cheese <type>', 'pizza must have cheese');
+
+program.parse(process.argv);
+```
+
+```
+$ pizza
+error: required option '-c, --cheese <type>' not specified
+```
+
 ### 版本选项
 
 `version`方法会处理显示版本命令，默认选项标识为`-V`和`--version`，当存在时会打印版本号并退出。
@@ -545,6 +563,22 @@ node -r ts-node/register pm.ts
 如果你在使用 node inspector的 `node -inspect` 等命令来[调试](https://nodejs.org/en/docs/guides/debugging-getting-started/) git风格的可执行命令，
 对于生成的子命令，inspector端口递增1。
 
+### 重载退出(exit)处理
+
+默认情况下，当检测到错误以及打印出帮助信息或版本信息时Commander将调用`process.exit`方法。你可以重写覆盖这项操作并提供一个可选的回调。默认的实现会抛出一个`CommanderError`。
+
+重载的回调接受一个包含了 Number类型的`exitCode`、String类型的`code`和`message` 属性的`CommanderError`。除了对可执行子命令完成的异步处理之外，默认的实现方法会抛出这个错。正常情况下，打印错误信息以及帮助或版本信息不会被重载所影响，因为重载的调用在打印之后。
+
+``` js
+program.exitOverride();
+
+try {
+  program.parse(process.argv);
+} catch (err) {
+  // 自定义处理...
+}
+```
+
 ## 例子
 
 ```js
@@ -590,13 +624,17 @@ program
 program.parse(process.argv);
 ```
 
- 更多的 [演示](https://github.com/tj/commander.js/tree/master/examples) 可以在这里找到。
+更多的 [演示](https://github.com/tj/commander.js/tree/master/examples) 可以在这里找到。
 
 ## 许可证
 
 [MIT](https://github.com/tj/commander.js/blob/master/LICENSE)
 
 ## 支持
+
+Commander 现在在Node 8以及更高的版本上得到支持。（尽管Commander仍有可能在更低的Node版本上工作，但是Node 8以下版本不再保证相关的测试）
+
+主要的社区支持的免费论坛就在Github上的项目[Issues](https://github.com/tj/commander.js/issues)
 
 [专业支持的commander现在已经可用！](https://tidelift.com/subscription/pkg/npm-commander?utm_source=npm-commander&utm_medium=referral&utm_campaign=readme)
 
