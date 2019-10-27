@@ -5,18 +5,17 @@
 
 ///<reference types="node" />
 
-declare namespace local {
+declare namespace commander {
 
-  class CommanderError extends Error {
+  interface CommanderError extends Error {
     code: string;
     exitCode: number;
     message: string;
     nestedError?: string;
-
-    constructor(exitCode: number, code: string, message: string);
   }
+  type CommanderErrorConstructor = { new (exitCode: number, code: string, message: string): CommanderError };
 
-  class Option {
+  interface Option {
     flags: string;
     required: boolean; // A value must be supplied when the option is specified.
     optional: boolean; // A value is optional when the option is specified.
@@ -25,27 +24,13 @@ declare namespace local {
     short?: string;
     long: string;
     description: string;
-
-    /**
-     * Initialize a new `Option` with the given `flags` and `description`.
-     *
-     * @param {string} flags
-     * @param {string} [description]
-     */
-    constructor(flags: string, description?: string);
   }
+  type OptionConstructor = { new (flags: string, description?: string): Option };
 
-  class Command extends NodeJS.EventEmitter {
+  interface Command extends NodeJS.EventEmitter {
     [key: string]: any; // options as properties
 
     args: string[];
-
-    /**
-     * Initialize a new `Command`.
-     *
-     * @param {string} [name]
-     */
-    constructor(name?: string);
 
     /**
      * Set the program version to `str`. 
@@ -78,7 +63,7 @@ declare namespace local {
      * @param opts - configuration options
      * @returns new command
      */
-    command(nameAndArgs: string, opts?: commander.CommandOptions): Command;
+    command(nameAndArgs: string, opts?: CommandOptions): Command;
     /**
      * Define a command, implemented in a separate executable file.
      * 
@@ -291,14 +276,8 @@ declare namespace local {
      */
     help(cb?: (str: string) => string): never;
   }
+  type CommandConstructor = { new (name?: string): Command };
 
-}
-
-declare namespace commander {
-
-    type Command = local.Command
-
-    type Option = local.Option
 
     interface CommandOptions {
         noHelp?: boolean;
@@ -312,11 +291,9 @@ declare namespace commander {
     }
 
     interface CommanderStatic extends Command {
-        Command: typeof local.Command;
-        Option: typeof local.Option;
-        CommandOptions: CommandOptions;
-        ParseOptionsResult: ParseOptionsResult;
-        CommanderError : typeof local.CommanderError;
+        Command: CommandConstructor;
+        Option: OptionConstructor;
+        CommanderError:CommanderErrorConstructor;
       }
 
 }
