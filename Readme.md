@@ -7,6 +7,8 @@
 
 The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/commander-rb/commander).
 
+Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
+
 - [Commander.js](#commanderjs)
   - [Installation](#installation)
   - [Declaring _program_ variable](#declaring-program-variable)
