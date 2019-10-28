@@ -7,7 +7,7 @@
 
 [node.js](http://nodejs.org) 命令行接口的完整解决方案，灵感来自 Ruby 的 [commander](https://github.com/commander-rb/commander)。
 
-用其他语言阅读 [English](./Readme.md) | 简体中文
+用其他语言阅读：[English](./Readme.md) | 简体中文
 
 - [Commander.js](#commanderjs)
   - [安装](#%e5%ae%89%e8%a3%85)
