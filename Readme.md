@@ -36,6 +36,7 @@ The complete solution for [node.js](http://nodejs.org) command-line interfaces, 
   - [Examples](#examples)
   - [License](#license)
   - [Support](#support)
+    - [Commander for enterprise](#commander-for-enterprise)
 
 ## Installation
 
@@ -649,6 +650,8 @@ Commander is supported on Node 8 and above. (Commander is likely to still work o
 
 The main forum for free and community support is the project [Issues](https://github.com/tj/commander.js/issues) on GitHub.
 
-[Professionally supported commander is now available](https://tidelift.com/subscription/pkg/npm-commander?utm_source=npm-commander&utm_medium=referral&utm_campaign=readme)
+### Commander for enterprise
 
-Tidelift gives software development teams a single source for purchasing and maintaining their software, with professional grade assurances from the experts who know it best, while seamlessly integrating with existing tools.
+Available as part of the Tidelift Subscription
+
+The maintainers of Commander and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/npm-commander?utm_source=npm-commander&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
