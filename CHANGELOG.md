@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [4.0.0] (date goes here)
+
+### Fixed
+
+* rework TypeScript declarations to bring all types into imported namespace ([#1081])
+
 ## [4.0.0-1] Prerelease (2019-10-08)
 
 ### Added
@@ -25,7 +31,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 * dev: switch tests from Sinon+Should to Jest with major rewrite of tests ([#1035])
 * call default subcommand even when there are unknown options ([#1047])
-* *Breaking* Commander is only officially supported on Node 8 and above ([#1053])
+* *Breaking* Commander is only officially supported on Node 8 and above, and requires Node 6 ([#1053])
 
 ### Fixed
 
@@ -71,7 +77,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 * help for sub commands with custom executableFile ([#1018])
 
-## 3.0.0 / 2019-08-08
+## [3.0.0] / 2019-08-08
 
 * Add option to specify executable file name ([#999])
   * e.g. `.command('clone', 'clone description', { executableFile: 'myClone' })`
@@ -497,10 +503,13 @@ program
 [#1052]: https://github.com/tj/commander.js/pull/1052
 [#1053]: https://github.com/tj/commander.js/pull/1053
 [#1071]: https://github.com/tj/commander.js/pull/1071
+[#1081]: https://github.com/tj/commander.js/pull/1081
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[4.0.0]: https://github.com/tj/commander.js/compare/v3.0.2..v4.0.0
 [4.0.0-1]: https://github.com/tj/commander.js/compare/v4.0.0-0..v4.0.0-1
 [4.0.0-0]: https://github.com/tj/commander.js/compare/v3.0.2...v4.0.0-0
 [3.0.2]: https://github.com/tj/commander.js/compare/v3.0.1...v3.0.2
 [3.0.1]: https://github.com/tj/commander.js/compare/v3.0.0...v3.0.1
+[3.0.0]: https://github.com/tj/commander.js/compare/v2.20.1...v3.0.0
 [2.20.1]: https://github.com/tj/commander.js/compare/v2.20.0...v2.20.1
