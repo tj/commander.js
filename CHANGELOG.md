@@ -7,25 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [4.0.0] (date goes here)
-
-### Fixed
-
-* rework TypeScript declarations to bring all types into imported namespace ([#1081])
-
-## [4.0.0-1] Prerelease (2019-10-08)
-
-### Added
-
-* support for declaring required options with `.requiredOptions()` ([#1071])
-
-## [4.0.0-0] Prerelease (2019-10-01)
+## [4.0.0] (2019-11-02)
 
 ### Added
 
 * automatically wrap and indent help descriptions for options and commands ([#1051])
 * `.exitOverride()` allows override of calls to `process.exit` for additional error handling and to keep program running ([#1040])
-* dev: work in progress GitHub Actions support ([#1027])
+* support for declaring required options with `.requiredOptions()` ([#1071])
+* GitHub Actions support ([#1027])
+* translation links in README
 
 ### Changed
 
@@ -40,6 +30,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * complain about unknown options when program argument supplied and action handler ([#1049])
   * this changes parameters to `command:*` event to include unknown arguments
 * removed deprecated `customFds` option from call to `child_process.spawn` ([#1052])
+* rework TypeScript declarations to bring all types into imported namespace ([#1081])
+
+## [4.0.0-1] Prerelease (2019-10-08)
+
+(Released in 4.0.0)
+
+## [4.0.0-0] Prerelease (2019-10-01)
+
+(Released in 4.0.0)
 
 ## [2.20.1] (2019-09-29)
 
