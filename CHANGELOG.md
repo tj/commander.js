@@ -32,6 +32,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * removed deprecated `customFds` option from call to `child_process.spawn` ([#1052])
 * rework TypeScript declarations to bring all types into imported namespace ([#1081])
 
+### Migration Tips
+
+#### Testing for no arguments
+
+If you were previously using code like:
+
+```js
+if (!program.args.length) ...
+```
+
+a partial replacement is:
+
+```js
+if (program.rawArgs.length < 3) ...
+```
+
 ## [4.0.0-1] Prerelease (2019-10-08)
 
 (Released in 4.0.0)
