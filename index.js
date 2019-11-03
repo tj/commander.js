@@ -128,6 +128,7 @@ function Command(name) {
   this._name = name || '';
   this._optionValues = {};
   this._storeOptionsAsProperties = true; // backwards compatible by default
+  this._passCommandToAction = true; // backwards compatible by default
 
   this._helpFlags = '-h, --help';
   this._helpDescription = 'output usage information';
@@ -185,6 +186,8 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
   cmd._helpShortFlag = this._helpShortFlag;
   cmd._helpLongFlag = this._helpLongFlag;
   cmd._exitCallback = this._exitCallback;
+  cmd._storeOptionsAsProperties = this._storeOptionsAsProperties;
+  cmd._passCommandToAction = this._passCommandToAction;
 
   cmd._executableFile = opts.executableFile; // Custom name for executable file
   this.commands.push(cmd);
@@ -352,7 +355,11 @@ Command.prototype.action = function(fn) {
     // The .action callback takes an extra parameter which is the command itself.
     var expectedArgsCount = self._args.length;
     var actionArgs = args.slice(0, expectedArgsCount);
-    actionArgs[expectedArgsCount] = self;
+    if (self._passCommandToAction) {
+      actionArgs[expectedArgsCount] = self;
+    } else {
+      actionArgs[expectedArgsCount] = self.opts();
+    }
     // Add the extra arguments so available too.
     if (args.length > expectedArgsCount) {
       actionArgs.push(args.slice(expectedArgsCount));
@@ -529,6 +536,27 @@ Command.prototype.requiredOption = function(flags, description, fn, defaultValue
  */
 Command.prototype.allowUnknownOption = function(arg) {
   this._allowUnknownOption = arguments.length === 0 || arg;
+  return this;
+};
+
+/**
+  * configureCommand
+  *
+  * @param {Object} boolean values for feature flags
+  * @return {Command} for chaining
+  * @api public
+  */
+Command.prototype.configureCommand = function(flags) {
+  if (flags.modern !== undefined) {
+    this._storeOptionsAsProperties = !flags.modern;
+    this._passCommandToAction = !flags.modern;
+  }
+  if (flags.storeOptionsAsProperties !== undefined) {
+    this._storeOptionsAsProperties = flags.storeOptionsAsProperties;
+  }
+  if (flags.passCommandToAction !== undefined) {
+    this._passCommandToAction = flags.storeOptionsAsProperties;
+  }
   return this;
 };
 
