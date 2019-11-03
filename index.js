@@ -126,6 +126,8 @@ function Command(name) {
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
+  this._optionValues = {};
+  this._storeOptionsAsProperties = true; // backwards compatible by default
 
   this._helpFlags = '-h, --help';
   this._helpDescription = 'output usage information';
@@ -404,12 +406,12 @@ Command.prototype._optionEx = function(config, flags, description, fn, defaultVa
   if (option.negate || option.optional || option.required || typeof defaultValue === 'boolean') {
     // when --no-foo we make sure default is true, unless a --foo option is already defined
     if (option.negate) {
-      var opts = self.opts();
-      defaultValue = Object.prototype.hasOwnProperty.call(opts, name) ? opts[name] : true;
+      const positiveLongFlag = option.long.replace(/^--no-/, '--');
+      defaultValue = self.optionFor(positiveLongFlag) ? self._optionValues[name] : true;
     }
     // preassign only if we have a default
     if (defaultValue !== undefined) {
-      self[name] = defaultValue;
+      self._setOptionValue(name, defaultValue);
       option.defaultValue = defaultValue;
     }
   }
@@ -422,22 +424,22 @@ Command.prototype._optionEx = function(config, flags, description, fn, defaultVa
   this.on('option:' + oname, function(val) {
     // coercion
     if (val !== null && fn) {
-      val = fn(val, self[name] === undefined ? defaultValue : self[name]);
+      val = fn(val, self._optionValues[name] === undefined ? defaultValue : self._optionValues[name]);
     }
 
     // unassigned or boolean value
-    if (typeof self[name] === 'boolean' || typeof self[name] === 'undefined') {
+    if (typeof self._optionValues[name] === 'boolean' || typeof self._optionValues[name] === 'undefined') {
       // if no value, negate false, and we have a default, then use it!
       if (val == null) {
-        self[name] = option.negate
+        self._setOptionValue(name, option.negate
           ? false
-          : defaultValue || true;
+          : defaultValue || true);
       } else {
-        self[name] = val;
+        self._setOptionValue(name, val);
       }
     } else if (val !== null) {
       // reassign
-      self[name] = option.negate ? false : val;
+      self._setOptionValue(name, option.negate ? false : val);
     }
   });
 
@@ -528,6 +530,22 @@ Command.prototype.requiredOption = function(flags, description, fn, defaultValue
 Command.prototype.allowUnknownOption = function(arg) {
   this._allowUnknownOption = arguments.length === 0 || arg;
   return this;
+};
+
+/**
+ * Store option value
+ *
+ * @param {String} key
+ * @param {Object} value
+ * @api private
+ */
+
+Command.prototype._setOptionValue = function(key, value) {
+  this._optionValues[key] = value;
+  if (this._storeOptionsAsProperties) {
+    // Legacy behaviour, also store value directly as property.
+    this[key] = value;
+  }
 };
 
 /**
@@ -834,7 +852,7 @@ Command.prototype.optionFor = function(arg) {
 Command.prototype._checkForMissingMandatoryOptions = function() {
   const self = this;
   this.options.forEach((anOption) => {
-    if (anOption.mandatory && (self[anOption.attributeName()] === undefined)) {
+    if (anOption.mandatory && (self._optionValues[anOption.attributeName()] === undefined)) {
       self.missingMandatoryOptionValue(anOption);
     }
   });
@@ -928,14 +946,7 @@ Command.prototype.parseOptions = function(argv) {
  * @api public
  */
 Command.prototype.opts = function() {
-  var result = {},
-    len = this.options.length;
-
-  for (var i = 0; i < len; i++) {
-    var key = this.options[i].attributeName();
-    result[key] = key === this._versionOptionName ? this._version : this[key];
-  }
-  return result;
+  return this._optionValues;
 };
 
 /**
