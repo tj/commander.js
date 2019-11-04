@@ -974,7 +974,19 @@ Command.prototype.parseOptions = function(argv) {
  * @api public
  */
 Command.prototype.opts = function() {
-  return this._optionValues;
+  if (this._storeOptionsAsProperties) {
+    // Preserve original behaviour so backwards compatible when still using properties
+    var result = {},
+      len = this.options.length;
+
+    for (var i = 0; i < len; i++) {
+      var key = this.options[i].attributeName();
+      result[key] = key === this._versionOptionName ? this._version : this[key];
+    }
+    return result;
+  } else {
+    return this._optionValues;
+  }
 };
 
 /**
