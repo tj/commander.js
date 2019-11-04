@@ -414,7 +414,7 @@ Command.prototype._optionEx = function(config, flags, description, fn, defaultVa
     // when --no-foo we make sure default is true, unless a --foo option is already defined
     if (option.negate) {
       const positiveLongFlag = option.long.replace(/^--no-/, '--');
-      defaultValue = self.optionFor(positiveLongFlag) ? self._optionValues[name] : true;
+      defaultValue = self.optionFor(positiveLongFlag) ? self._getOptionValue(name) : true;
     }
     // preassign only if we have a default
     if (defaultValue !== undefined) {
@@ -431,11 +431,11 @@ Command.prototype._optionEx = function(config, flags, description, fn, defaultVa
   this.on('option:' + oname, function(val) {
     // coercion
     if (val !== null && fn) {
-      val = fn(val, self._optionValues[name] === undefined ? defaultValue : self._optionValues[name]);
+      val = fn(val, self._getOptionValue(name) === undefined ? defaultValue : self._getOptionValue(name));
     }
 
     // unassigned or boolean value
-    if (typeof self._optionValues[name] === 'boolean' || typeof self._optionValues[name] === 'undefined') {
+    if (typeof self._getOptionValue(name) === 'boolean' || typeof self._getOptionValue(name) === 'undefined') {
       // if no value, negate false, and we have a default, then use it!
       if (val == null) {
         self._setOptionValue(name, option.negate
@@ -569,10 +569,26 @@ Command.prototype.configureCommand = function(flags) {
  */
 
 Command.prototype._setOptionValue = function(key, value) {
-  this._optionValues[key] = value;
   if (this._storeOptionsAsProperties) {
-    // Legacy behaviour, also store value directly as property.
     this[key] = value;
+  } else {
+    this._optionValues[key] = value;
+  }
+};
+
+/**
+ * Retrieve option value
+ *
+ * @param {String} key
+ * @return {Object} value
+ * @api private
+ */
+
+Command.prototype._getOptionValue = function(key) {
+  if (this._storeOptionsAsProperties) {
+    return this[key];
+  } else {
+    return this._optionValues[key];
   }
 };
 
@@ -880,7 +896,7 @@ Command.prototype.optionFor = function(arg) {
 Command.prototype._checkForMissingMandatoryOptions = function() {
   const self = this;
   this.options.forEach((anOption) => {
-    if (anOption.mandatory && (self._optionValues[anOption.attributeName()] === undefined)) {
+    if (anOption.mandatory && (self._getOptionValue(anOption.attributeName()) === undefined)) {
       self.missingMandatoryOptionValue(anOption);
     }
   });
