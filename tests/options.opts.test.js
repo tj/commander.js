@@ -3,7 +3,7 @@ const commander = require('../');
 // Test the `.opts()` way of accesing option values.
 // Basic coverage of the main option types (leaving out negatable flags and options with optional values).
 
-test.skip('when .version used then version in opts', () => {
+test('when .version used then version in opts', () => {
   const program = new commander.Command();
   const version = '0.0.1';
   program
