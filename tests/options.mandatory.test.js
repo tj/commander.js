@@ -1,6 +1,7 @@
 const commander = require('../');
 
 // Assuming mandatory options behave as normal options apart from the mandatory aspect, not retesting all behaviour.
+// Likewise, not redoing all tests on subcommand after testing on program.
 
 describe('required program option with mandatory value specified', () => {
   test('when program has required value specified then value as specified', () => {
@@ -222,5 +223,56 @@ describe('required command option with mandatory value not specified', () => {
     expect(() => {
       program.parse(['node', 'test']);
     }).not.toThrow();
+  });
+});
+
+describe('missing mandatory option but help requested', () => {
+  // Optional. Use internal knowledge to suppress output to keep test output clean.
+  let writeSpy;
+
+  beforeAll(() => {
+    writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
+  });
+
+  afterEach(() => {
+    writeSpy.mockClear();
+  });
+
+  afterAll(() => {
+    writeSpy.mockRestore();
+  });
+
+  test('when program has required option not specified and --help then help', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .requiredOption('--cheese <type>', 'cheese type');
+
+    let caughtErr;
+    try {
+      program.parse(['node', 'test', '--help']);
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expect(caughtErr.code).toEqual('commander.helpDisplayed');
+  });
+
+  test('when program has required option not specified and subcommand --help then help', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .requiredOption('--cheese <type>', 'cheese type')
+      .command('sub')
+      .action(() => {});
+
+    let caughtErr;
+    try {
+      program.parse(['node', 'test', 'sub', '--help']);
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expect(caughtErr.code).toEqual('commander.helpDisplayed');
   });
 });
