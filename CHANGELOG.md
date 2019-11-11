@@ -11,7 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Fixed
 
-* display help when requested, even if there are missing required options [(#1091)]
+* display help when requested, even if there are missing required options ([#1091])
 
 ## [4.0.0] (2019-11-02)
 
