@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [4.0.1] (2019-11-12)
+
+### Fixed
+
+* display help when requested, even if there are missing required options [(#1091)]
+
 ## [4.0.0] (2019-11-02)
 
 ### Added
@@ -519,8 +525,10 @@ program
 [#1053]: https://github.com/tj/commander.js/pull/1053
 [#1071]: https://github.com/tj/commander.js/pull/1071
 [#1081]: https://github.com/tj/commander.js/pull/1081
+[#1091]: https://github.com/tj/commander.js/pull/1091
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[4.0.1]: https://github.com/tj/commander.js/compare/v4.0.0..v4.0.1
 [4.0.0]: https://github.com/tj/commander.js/compare/v3.0.2..v4.0.0
 [4.0.0-1]: https://github.com/tj/commander.js/compare/v4.0.0-0..v4.0.0-1
 [4.0.0-0]: https://github.com/tj/commander.js/compare/v3.0.2...v4.0.0-0
