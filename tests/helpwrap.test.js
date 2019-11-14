@@ -13,8 +13,8 @@ test('when long option description then wrap and indent', () => {
 `Usage:  [options]
 
 Options:
-  -x -extra-long-option-switch  kjsahdkajshkahd kajhsd akhds kashd kajhs dkha 
-                                dkh aksd ka dkha kdh kasd ka kahs dkh sdkh 
+  -x -extra-long-option-switch  kjsahdkajshkahd kajhsd akhds kashd kajhs dkha
+                                dkh aksd ka dkha kdh kasd ka kahs dkh sdkh
                                 askdh aksd kashdk ahsd kahs dkha skdh
   -h, --help                    output usage information
 `;
@@ -34,7 +34,7 @@ test('when long option description and default then wrap and indent', () => {
 `Usage:  [options]
 
 Options:
-  -x -extra-long-option <value>  kjsahdkajshkahd kajhsd akhds (default: "aaa 
+  -x -extra-long-option <value>  kjsahdkajshkahd kajhsd akhds (default: "aaa
                                  bbb ccc ddd eee fff ggg")
   -h, --help                     output usage information
 `;
@@ -59,7 +59,7 @@ Options:
   -h, --help                    output usage information
 
 Commands:
-  alpha                         Lorem mollit quis dolor ex do eu quis ad insa 
+  alpha                         Lorem mollit quis dolor ex do eu quis ad insa
                                 a commodo esse.
 `;
 

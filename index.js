@@ -1429,7 +1429,7 @@ function wrap(str, width, indent) {
     if (line.slice(-1) === '\n') {
       line = line.slice(0, line.length - 1);
     }
-    return ((i > 0 && indent) ? Array(indent + 1).join(' ') : '') + line;
+    return ((i > 0 && indent) ? Array(indent + 1).join(' ') : '') + line.trimRight();
   }).join('\n');
 }
 
