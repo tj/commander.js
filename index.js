@@ -552,10 +552,10 @@ Command.prototype.configureCommand = function(flags) {
     this._passCommandToAction = !flags.modern;
   }
   if (flags.storeOptionsAsProperties !== undefined) {
-    this._storeOptionsAsProperties = flags.storeOptionsAsProperties;
+    this._storeOptionsAsProperties = !!flags.storeOptionsAsProperties;
   }
   if (flags.passCommandToAction !== undefined) {
-    this._passCommandToAction = flags.storeOptionsAsProperties;
+    this._passCommandToAction = !!flags.passCommandToAction;
   }
   return this;
 };
