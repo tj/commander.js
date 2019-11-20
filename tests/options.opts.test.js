@@ -12,44 +12,71 @@ test('when .version used then version in opts', () => {
   expect(program.opts()).toEqual({ version });
 });
 
-test('when boolean flag not specified then not in opts', () => {
+test('when .version used with modern then version not in opts', () => {
   const program = new commander.Command();
+  const version = '0.0.1';
   program
-    .option('--pepper', 'add pepper');
+    .configureCommand({ modern: true })
+    .version(version);
   program.parse(['node', 'test']);
   expect(program.opts()).toEqual({ });
 });
 
-test('when boolean flag specified then value true', () => {
-  const program = new commander.Command();
-  program
-    .option('--pepper', 'add pepper');
-  program.parse(['node', 'test', '--pepper']);
-  expect(program.opts()).toEqual({ pepper: true });
-});
+describe.each([true, false])('using modern is %s', (useModern) => {
+  test('when boolean flag not specified then not in opts', () => {
+    const program = new commander.Command();
+    if (useModern) {
+      program.configureCommand({ modern: true });
+    }
+    program
+      .option('--pepper', 'add pepper');
+    program.parse(['node', 'test']);
+    expect(program.opts()).toEqual({ });
+  });
 
-test('when option with required value not specified then not in opts', () => {
-  const program = new commander.Command();
-  program
-    .option('--pepper <flavour>', 'add pepper');
-  program.parse(['node', 'test']);
-  expect(program.opts()).toEqual({ });
-});
+  test('when boolean flag specified then value true', () => {
+    const program = new commander.Command();
+    if (useModern) {
+      program.configureCommand({ modern: true });
+    }
+    program
+      .option('--pepper', 'add pepper');
+    program.parse(['node', 'test', '--pepper']);
+    expect(program.opts()).toEqual({ pepper: true });
+  });
 
-test('when option with required value specified then value as specified', () => {
-  const pepperValue = 'red';
-  const program = new commander.Command();
-  program
-    .option('--pepper <flavour>', 'add pepper');
-  program.parse(['node', 'test', '--pepper', pepperValue]);
-  expect(program.opts()).toEqual({ pepper: pepperValue });
-});
+  test('when option with required value not specified then not in opts', () => {
+    const program = new commander.Command();
+    if (useModern) {
+      program.configureCommand({ modern: true });
+    }
+    program
+      .option('--pepper <flavour>', 'add pepper');
+    program.parse(['node', 'test']);
+    expect(program.opts()).toEqual({ });
+  });
 
-test('when option with default value not specified then default value in opts', () => {
-  const pepperDefault = 'red';
-  const program = new commander.Command();
-  program
-    .option('--pepper <flavour>', 'add pepper', pepperDefault);
-  program.parse(['node', 'test']);
-  expect(program.opts()).toEqual({ pepper: pepperDefault });
+  test('when option with required value specified then value as specified', () => {
+    const pepperValue = 'red';
+    const program = new commander.Command();
+    if (useModern) {
+      program.configureCommand({ modern: true });
+    }
+    program
+      .option('--pepper <flavour>', 'add pepper');
+    program.parse(['node', 'test', '--pepper', pepperValue]);
+    expect(program.opts()).toEqual({ pepper: pepperValue });
+  });
+
+  test('when option with default value not specified then default value in opts', () => {
+    const pepperDefault = 'red';
+    const program = new commander.Command();
+    if (useModern) {
+      program.configureCommand({ modern: true });
+    }
+    program
+      .option('--pepper <flavour>', 'add pepper', pepperDefault);
+    program.parse(['node', 'test']);
+    expect(program.opts()).toEqual({ pepper: pepperDefault });
+  });
 });

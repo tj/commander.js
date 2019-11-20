@@ -1,5 +1,7 @@
 const commander = require('../');
 
+// Mostly testing direct on program, limited check that (sub)command working same.
+
 // Default behaviours
 
 test('when default then options stored on command', () => {
@@ -40,6 +42,18 @@ test('when modern:true then options passed to action', () => {
     .action(callback);
   program.parse(['node', 'test', 'value']);
   expect(callback).toHaveBeenCalledWith('value', program.opts());
+});
+
+test('when modern:true then options passed to (sub)command action', () => {
+  const program = new commander.Command();
+  const callback = jest.fn();
+  program
+    .configureCommand({ modern: true });
+  const command = program.command('sub')
+    .option('--foo <value>', 'description')
+    .action(callback);
+  program.parse(['node', 'test', 'sub', '--foo', 'bar']);
+  expect(callback).toHaveBeenCalledWith(command.opts());
 });
 
 test('when modern:false then options stored on command', () => {
