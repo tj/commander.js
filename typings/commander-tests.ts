@@ -10,6 +10,8 @@ const errorInstance = new program.CommanderError(1, 'code', 'message');
 
 const name = program.name();
 
+program.configureCommand({ modern: true });
+
 program
     .name('set name')
     .version('0.0.1')

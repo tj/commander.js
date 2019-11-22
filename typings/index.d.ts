@@ -27,6 +27,12 @@ declare namespace commander {
   }
   type OptionConstructor = { new (flags: string, description?: string): Option };
 
+  type ConfigureCommandFlags = {
+    modern?: boolean;
+    storeOptionsAsProperties?: boolean;
+    passCommandToAction?: boolean;
+  }
+
   interface Command extends NodeJS.EventEmitter {
     [key: string]: any; // options as properties
 
@@ -180,6 +186,22 @@ declare namespace commander {
      */
     requiredOption(flags: string, description?: string, fn?: ((arg1: any, arg2: any) => void) | RegExp, defaultValue?: any): Command;
     requiredOption(flags: string, description?: string, defaultValue?: any): Command;
+
+    /**
+    * Configure command behaviour by setting feature flags.
+    *
+    *     modern: set to true for recommended flag settings
+    *       - option values stored separately, rather than as command properties
+    *       - option values passed to action handler, rather than command object
+    *     storeOptionsAsProperties: whether to store option values as properties on command object, or store separately
+    *     passCommandToAction: whether to pass full command to action hanlder, or just option values
+    *
+    * Example:
+    *
+    *     program.configureCommand({ modern: true });
+    *
+    */
+    configureCommand(flags: ConfigureCommandFlags): Command;
 
     /**
      * Allow unknown options on the command line.

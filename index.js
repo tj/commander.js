@@ -540,9 +540,19 @@ Command.prototype.allowUnknownOption = function(arg) {
 };
 
 /**
-  * configureCommand
+  * Configure command behaviour by setting feature flags.
   *
-  * @param {Object} boolean values for feature flags
+  *     modern: set to true for recommended flag settings
+  *       - option values stored separately, rather than as command properties
+  *       - option values passed to action handler, rather than command object
+  *     storeOptionsAsProperties: whether to store option values as properties on command object, or store separately
+  *     passCommandToAction: whether to pass full command to action hanlder, or just option values
+  *
+  * Example:
+  *
+  *     program.configureCommand({ modern: true });
+  *
+  * @param {Object} flags - modern, storeOptionsAsProperties, passCommandToAction
   * @return {Command} for chaining
   * @api public
   */
