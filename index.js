@@ -329,6 +329,7 @@ Command.prototype.action = function(fn) {
 
     // Output help if necessary
     outputHelpIfNecessary(self, parsed.unknown);
+    self._checkForMissingMandatoryOptions();
 
     // If there are still any unknown options, then we simply
     // die, unless someone asked for help, in which case we give it
@@ -635,10 +636,17 @@ Command.prototype.parse = function(argv) {
 
   if (args[0] === 'help' && args.length === 1) this.help();
 
+  // Note for future: we could return early if we found an action handler in parseArgs, as none of following code needed?
+
   // <cmd> --help
   if (args[0] === 'help') {
     args[0] = args[1];
     args[1] = this._helpLongFlag;
+  } else {
+    // If calling through to executable subcommand we could check for help flags before failing,
+    // but a somewhat unlikely case since program options not passed to executable subcommands.
+    // Wait for reports to see if check needed and what usage pattern is.
+    this._checkForMissingMandatoryOptions();
   }
 
   // executable sub-commands
@@ -904,12 +912,14 @@ Command.prototype.optionFor = function(arg) {
  */
 
 Command.prototype._checkForMissingMandatoryOptions = function() {
-  const self = this;
-  this.options.forEach((anOption) => {
-    if (anOption.mandatory && (self._getOptionValue(anOption.attributeName()) === undefined)) {
-      self.missingMandatoryOptionValue(anOption);
-    }
-  });
+  // Walk up hierarchy so can call from action handler after checking for displaying help.
+  for (var cmd = this; cmd; cmd = cmd.parent) {
+    cmd.options.forEach((anOption) => {
+      if (anOption.mandatory && (cmd._getOptionValue(anOption.attributeName()) === undefined)) {
+        cmd.missingMandatoryOptionValue(anOption);
+      }
+    });
+  }
 };
 
 /**
@@ -987,8 +997,6 @@ Command.prototype.parseOptions = function(argv) {
     // arg
     args.push(arg);
   }
-
-  this._checkForMissingMandatoryOptions();
 
   return { args: args, unknown: unknownOptions };
 };
@@ -1498,7 +1506,7 @@ function wrap(str, width, indent) {
     if (line.slice(-1) === '\n') {
       line = line.slice(0, line.length - 1);
     }
-    return ((i > 0 && indent) ? Array(indent + 1).join(' ') : '') + line;
+    return ((i > 0 && indent) ? Array(indent + 1).join(' ') : '') + line.trimRight();
   }).join('\n');
 }
 
