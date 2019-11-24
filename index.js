@@ -1041,9 +1041,10 @@ Command.prototype.version = function(str, flags, description) {
   var versionOption = new Option(flags, description);
   this._versionOptionName = versionOption.long.substr(2) || 'version';
   this.options.push(versionOption);
+  var self = this;
   this.on('option:' + this._versionOptionName, function() {
     process.stdout.write(str + '\n');
-    this._exit(0, 'commander.version', str);
+    self._exit(0, 'commander.version', str);
   });
   return this;
 };
