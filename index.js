@@ -543,24 +543,27 @@ Command.prototype.allowUnknownOption = function(arg) {
 /**
   * Configure command behaviour by setting feature flags.
   *
-  *     modern: set to true for recommended flag settings
-  *       - option values stored separately, rather than as command properties
-  *       - option values passed to action handler, rather than command object
   *     storeOptionsAsProperties: whether to store option values as properties on command object, or store separately
-  *     passCommandToAction: whether to pass full command to action hanlder, or just option values
+  *     passCommandToAction: whether to pass full command to action handler, or just option values
+  *     combo:
+  *         'safeOptions': store option values separately, and pass options to action handler
+  *           = storeOptionsAsProperties:false, passCommandToAction: false
   *
   * Example:
   *
-  *     program.configureCommand({ modern: true });
+  *     program.configureCommand({ combo: 'safeOptions' });
   *
-  * @param {Object} flags - modern, storeOptionsAsProperties, passCommandToAction
+  * @param {Object} flags - combo, storeOptionsAsProperties, passCommandToAction
   * @return {Command} for chaining
   * @api public
   */
 Command.prototype.configureCommand = function(flags) {
-  if (flags.modern !== undefined) {
-    this._storeOptionsAsProperties = !flags.modern;
-    this._passCommandToAction = !flags.modern;
+  if (flags.combo === 'safeOptions') {
+    this._storeOptionsAsProperties = false;
+    this._passCommandToAction = false;
+  } else if (flags.combo !== undefined) {
+    // Give an error for programmer, not written for end users.
+    console.error(`Setup error: unrecognised combo passed to configureCommand: ${flags.combo}`);
   }
   if (flags.storeOptionsAsProperties !== undefined) {
     this._storeOptionsAsProperties = !!flags.storeOptionsAsProperties;

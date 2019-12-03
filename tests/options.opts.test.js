@@ -12,21 +12,22 @@ test('when .version used then version in opts', () => {
   expect(program.opts()).toEqual({ version });
 });
 
-test('when .version used with modern then version not in opts', () => {
+test('when .version used with storeOptionsAsProperties:false then version not in opts', () => {
+  // New behaviour, stop storing version as an option value.
   const program = new commander.Command();
   const version = '0.0.1';
   program
-    .configureCommand({ modern: true })
+    .configureCommand({ storeOptionsAsProperties: false })
     .version(version);
   program.parse(['node', 'test']);
   expect(program.opts()).toEqual({ });
 });
 
-describe.each([true, false])('using modern is %s', (useModern) => {
+describe.each([undefined, 'safeOptions'])('configureCommand combo is %s', (combo) => {
   test('when boolean flag not specified then not in opts', () => {
     const program = new commander.Command();
-    if (useModern) {
-      program.configureCommand({ modern: true });
+    if (combo) {
+      program.configureCommand({ combo });
     }
     program
       .option('--pepper', 'add pepper');
@@ -36,8 +37,8 @@ describe.each([true, false])('using modern is %s', (useModern) => {
 
   test('when boolean flag specified then value true', () => {
     const program = new commander.Command();
-    if (useModern) {
-      program.configureCommand({ modern: true });
+    if (combo) {
+      program.configureCommand({ combo });
     }
     program
       .option('--pepper', 'add pepper');
@@ -47,8 +48,8 @@ describe.each([true, false])('using modern is %s', (useModern) => {
 
   test('when option with required value not specified then not in opts', () => {
     const program = new commander.Command();
-    if (useModern) {
-      program.configureCommand({ modern: true });
+    if (combo) {
+      program.configureCommand({ combo });
     }
     program
       .option('--pepper <flavour>', 'add pepper');
@@ -59,8 +60,8 @@ describe.each([true, false])('using modern is %s', (useModern) => {
   test('when option with required value specified then value as specified', () => {
     const pepperValue = 'red';
     const program = new commander.Command();
-    if (useModern) {
-      program.configureCommand({ modern: true });
+    if (combo) {
+      program.configureCommand({ combo });
     }
     program
       .option('--pepper <flavour>', 'add pepper');
@@ -71,8 +72,8 @@ describe.each([true, false])('using modern is %s', (useModern) => {
   test('when option with default value not specified then default value in opts', () => {
     const pepperDefault = 'red';
     const program = new commander.Command();
-    if (useModern) {
-      program.configureCommand({ modern: true });
+    if (combo) {
+      program.configureCommand({ combo });
     }
     program
       .option('--pepper <flavour>', 'add pepper', pepperDefault);

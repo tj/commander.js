@@ -28,7 +28,7 @@ declare namespace commander {
   type OptionConstructor = { new (flags: string, description?: string): Option };
 
   type ConfigureCommandFlags = {
-    modern?: boolean;
+    combo?: 'safeOptions';
     storeOptionsAsProperties?: boolean;
     passCommandToAction?: boolean;
   }
@@ -190,15 +190,15 @@ declare namespace commander {
     /**
     * Configure command behaviour by setting feature flags.
     *
-    *     modern: set to true for recommended flag settings
-    *       - option values stored separately, rather than as command properties
-    *       - option values passed to action handler, rather than command object
     *     storeOptionsAsProperties: whether to store option values as properties on command object, or store separately
-    *     passCommandToAction: whether to pass full command to action hanlder, or just option values
+    *     passCommandToAction: whether to pass full command to action handler, or just option values
+    *     combo:
+    *         'safeOptions': store option values separately, and pass options to action handler
+    *           = storeOptionsAsProperties:false, passCommandToAction: false
     *
     * Example:
     *
-    *     program.configureCommand({ modern: true });
+    *     program.configureCommand({ combo: 'safeOptions' });
     *
     */
     configureCommand(flags: ConfigureCommandFlags): Command;

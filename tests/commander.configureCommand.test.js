@@ -22,58 +22,38 @@ test('when default then command passed to action', () => {
   expect(callback).toHaveBeenCalledWith('value', program);
 });
 
-// modern
+// combo:safeOptions
 
-test('when modern:true then options not stored on command', () => {
+test('when combo:safeOptions then options not stored on command', () => {
   const program = new commander.Command();
   program
-    .configureCommand({ modern: true })
+    .configureCommand({ combo: 'safeOptions' })
     .option('--foo <value>', 'description');
   program.parse(['node', 'test', '--foo', 'bar']);
   expect(program.foo).toBeUndefined();
 });
 
-test('when modern:true then options passed to action', () => {
+test('when combo:safeOptions then options passed to action', () => {
   const program = new commander.Command();
   const callback = jest.fn();
   program
-    .configureCommand({ modern: true })
+    .configureCommand({ combo: 'safeOptions' })
     .arguments('<value>')
     .action(callback);
   program.parse(['node', 'test', 'value']);
   expect(callback).toHaveBeenCalledWith('value', program.opts());
 });
 
-test('when modern:true then options passed to (sub)command action', () => {
+test('when combo:safeOptions then options passed to (sub)command action', () => {
   const program = new commander.Command();
   const callback = jest.fn();
   program
-    .configureCommand({ modern: true });
+    .configureCommand({ combo: 'safeOptions' });
   const command = program.command('sub')
     .option('--foo <value>', 'description')
     .action(callback);
   program.parse(['node', 'test', 'sub', '--foo', 'bar']);
   expect(callback).toHaveBeenCalledWith(command.opts());
-});
-
-test('when modern:false then options stored on command', () => {
-  const program = new commander.Command();
-  program
-    .configureCommand({ modern: false })
-    .option('--foo <value>', 'description');
-  program.parse(['node', 'test', '--foo', 'bar']);
-  expect(program.foo).toBe('bar');
-});
-
-test('when modern:false then command passed to action', () => {
-  const program = new commander.Command();
-  const callback = jest.fn();
-  program
-    .configureCommand({ modern: false })
-    .arguments('<value>')
-    .action(callback);
-  program.parse(['node', 'test', 'value']);
-  expect(callback).toHaveBeenCalledWith('value', program);
 });
 
 // storeOptionsAsProperties
@@ -96,11 +76,11 @@ test('when storeOptionsAsProperties:false then options stored on command', () =>
   expect(program.foo).toBeUndefined();
 });
 
-test('when modern:true and storeOptionsAsProperties:true then options stored on command', () => {
-  // modern is overruled by specific configuration
+test('when combo:safeOptions and storeOptionsAsProperties:true then options stored on command', () => {
+  // combo is overruled by specific configuration
   const program = new commander.Command();
   program
-    .configureCommand({ modern: true, storeOptionsAsProperties: true })
+    .configureCommand({ combo: 'safeOptions', storeOptionsAsProperties: true })
     .option('--foo <value>', 'description');
   program.parse(['node', 'test', '--foo', 'bar']);
   expect(program.foo).toBe('bar');
@@ -130,12 +110,12 @@ test('when passCommandToAction:false then options passed to action', () => {
   expect(callback).toHaveBeenCalledWith('value', program.opts());
 });
 
-test('when modern:true and passCommandToAction:true then options passed to action', () => {
-  // modern is overruled by specific configuration
+test('when combo:safeOptions and passCommandToAction:true then options passed to action', () => {
+  // combo is overruled by specific configuration
   const program = new commander.Command();
   const callback = jest.fn();
   program
-    .configureCommand({ modern: true, passCommandToAction: true })
+    .configureCommand({ combo: 'safeOptions', passCommandToAction: true })
     .arguments('<value>')
     .action(callback);
   program.parse(['node', 'test', 'value']);
