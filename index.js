@@ -541,36 +541,30 @@ Command.prototype.allowUnknownOption = function(arg) {
 };
 
 /**
-  * Configure command behaviour by setting feature flags.
+  * Whether to store option values as properties on command object (pass true),
+  * or store separately (pass false). In both cases the option values can be accessed using .opts().
   *
-  *     storeOptionsAsProperties: whether to store option values as properties on command object, or store separately
-  *     passCommandToAction: whether to pass full command to action handler, or just option values
-  *     combo:
-  *         'safeOptions': store option values separately, and pass options to action handler
-  *           = storeOptionsAsProperties:false, passCommandToAction: false
-  *
-  * Example:
-  *
-  *     program.configureCommand({ combo: 'safeOptions' });
-  *
-  * @param {Object} flags - combo, storeOptionsAsProperties, passCommandToAction
-  * @return {Command} for chaining
+  * @param {boolean} value
+  * @return {Command} Command for chaining
   * @api public
   */
-Command.prototype.configureCommand = function(flags) {
-  if (flags.combo === 'safeOptions') {
-    this._storeOptionsAsProperties = false;
-    this._passCommandToAction = false;
-  } else if (flags.combo !== undefined) {
-    // Give an error for programmer, not written for end users.
-    console.error(`Setup error: unrecognised combo passed to configureCommand: ${flags.combo}`);
-  }
-  if (flags.storeOptionsAsProperties !== undefined) {
-    this._storeOptionsAsProperties = !!flags.storeOptionsAsProperties;
-  }
-  if (flags.passCommandToAction !== undefined) {
-    this._passCommandToAction = !!flags.passCommandToAction;
-  }
+
+Command.prototype.storeOptionsAsProperties = function(value) {
+  this._storeOptionsAsProperties = value;
+  return this;
+};
+
+/**
+  * Whether to pass command to action handler (pass true),
+  * or just the options (pass false).
+  *
+  * @param {boolean} value
+  * @return {Command} Command for chaining
+  * @api public
+  */
+
+Command.prototype.passCommandToAction = function(value) {
+  this._passCommandToAction = value;
   return this;
 };
 

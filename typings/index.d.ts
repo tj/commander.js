@@ -27,12 +27,6 @@ declare namespace commander {
   }
   type OptionConstructor = { new (flags: string, description?: string): Option };
 
-  type ConfigureCommandFlags = {
-    combo?: 'safeOptions';
-    storeOptionsAsProperties?: boolean;
-    passCommandToAction?: boolean;
-  }
-
   interface Command extends NodeJS.EventEmitter {
     [key: string]: any; // options as properties
 
@@ -187,21 +181,22 @@ declare namespace commander {
     requiredOption(flags: string, description?: string, fn?: ((arg1: any, arg2: any) => void) | RegExp, defaultValue?: any): Command;
     requiredOption(flags: string, description?: string, defaultValue?: any): Command;
 
+
     /**
-    * Configure command behaviour by setting feature flags.
-    *
-    *     storeOptionsAsProperties: whether to store option values as properties on command object, or store separately
-    *     passCommandToAction: whether to pass full command to action handler, or just option values
-    *     combo:
-    *         'safeOptions': store option values separately, and pass options to action handler
-    *           = storeOptionsAsProperties:false, passCommandToAction: false
-    *
-    * Example:
-    *
-    *     program.configureCommand({ combo: 'safeOptions' });
-    *
-    */
-    configureCommand(flags: ConfigureCommandFlags): Command;
+     * Whether to store option values as properties on command object (pass true),
+     * or store separately (pass false). In both cases the option values can be accessed using .opts().
+     *
+     * @return Command for chaining
+     */
+    storeOptionsAsProperties(value: boolean): Command;
+
+    /**
+     * Whether to pass command to action handler (pass true),
+     * or just the options (pass false).
+     * 
+     * @return Command for chaining
+     */
+    passCommandToAction(value: boolean): Command;
 
     /**
      * Allow unknown options on the command line.
