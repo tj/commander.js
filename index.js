@@ -541,7 +541,7 @@ Command.prototype.allowUnknownOption = function(arg) {
 };
 
 /**
-  * Whether to store option values as properties on command object (pass true),
+  * Whether to store option values as properties on command object (pass true or nothing),
   * or store separately (pass false). In both cases the option values can be accessed using .opts().
   *
   * @param {boolean} value
@@ -550,12 +550,16 @@ Command.prototype.allowUnknownOption = function(arg) {
   */
 
 Command.prototype.storeOptionsAsProperties = function(value) {
-  this._storeOptionsAsProperties = value;
+  this._storeOptionsAsProperties = (value === undefined) || value;
+  if (this.options.length) {
+    // This is for programmer, not end user.
+    console.error('Commander usage error: call storeOptionsAsProperties before adding options');
+  }
   return this;
 };
 
 /**
-  * Whether to pass command to action handler (pass true),
+  * Whether to pass command to action handler (pass true or nothing),
   * or just the options (pass false).
   *
   * @param {boolean} value
@@ -564,7 +568,7 @@ Command.prototype.storeOptionsAsProperties = function(value) {
   */
 
 Command.prototype.passCommandToAction = function(value) {
-  this._passCommandToAction = value;
+  this._passCommandToAction = (value === undefined) || value;
   return this;
 };
 

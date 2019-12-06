@@ -24,6 +24,15 @@ test('when default then command passed to action', () => {
 
 // storeOptionsAsProperties
 
+test('when storeOptionsAsProperties() then options stored on command', () => {
+  const program = new commander.Command();
+  program
+    .storeOptionsAsProperties()
+    .option('--foo <value>', 'description');
+  program.parse(['node', 'test', '--foo', 'bar']);
+  expect(program.foo).toBe('bar');
+});
+
 test('when storeOptionsAsProperties(true) then options stored on command', () => {
   const program = new commander.Command();
   program
@@ -43,6 +52,17 @@ test('when storeOptionsAsProperties(false) then options not stored on command', 
 });
 
 // passCommandToAction
+
+test('when passCommandToAction() then command passed to action', () => {
+  const program = new commander.Command();
+  const callback = jest.fn();
+  program
+    .passCommandToAction()
+    .arguments('<value>')
+    .action(callback);
+  program.parse(['node', 'test', 'value']);
+  expect(callback).toHaveBeenCalledWith('value', program);
+});
 
 test('when passCommandToAction(true) then command passed to action', () => {
   const program = new commander.Command();
