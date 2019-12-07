@@ -151,7 +151,7 @@ function Command(name) {
  *      // Command implemented using separate executable file (description is second parameter to `.command`)
  *      program
  *        .command('start <service>', 'start named service')
- *        .command('stop [service]', 'stop named serice, or all if no name supplied');
+ *        .command('stop [service]', 'stop named service, or all if no name supplied');
  *
  * @param {string} nameAndArgs - command name and arguments, args are `<required>` or `[optional]` and last may also be `variadic...`
  * @param {Object|string} [actionOptsOrExecDesc] - configuration options (for action), or description (for executable)
