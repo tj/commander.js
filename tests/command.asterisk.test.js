@@ -10,6 +10,16 @@ test('when no arguments then asterisk action not called', () => {
   expect(mockAction).not.toHaveBeenCalled();
 });
 
+test('when no arguments with asterisk handler then asterisk action not called', () => {
+  const mockAction = jest.fn();
+  const program = new commander.Command();
+  program
+    .command('*')
+    .action(mockAction);
+  program.parse(['node', 'test']);
+  expect(mockAction).not.toHaveBeenCalled();
+});
+
 test('when recognised command then asterisk action not called', () => {
   const mockAction = jest.fn();
   const program = new commander.Command();
