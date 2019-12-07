@@ -183,16 +183,16 @@ declare namespace commander {
 
 
     /**
-     * Whether to store option values as properties on command object (pass true or nothing),
-     * or store separately (pass false). In both cases the option values can be accessed using .opts().
+     * Whether to store option values as properties on command object,
+     * or store separately (specify false). In both cases the option values can be accessed using .opts().
      *
      * @return Command for chaining
      */
     storeOptionsAsProperties(value?: boolean): Command;
 
     /**
-     * Whether to pass command to action handler (pass true or nothing),
-     * or just the options (pass false).
+     * Whether to pass command to action handler,
+     * or just the options (specify false).
      * 
      * @return Command for chaining
      */

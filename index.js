@@ -541,8 +541,8 @@ Command.prototype.allowUnknownOption = function(arg) {
 };
 
 /**
-  * Whether to store option values as properties on command object (pass true or nothing),
-  * or store separately (pass false). In both cases the option values can be accessed using .opts().
+  * Whether to store option values as properties on command object,
+  * or store separately (specify false). In both cases the option values can be accessed using .opts().
   *
   * @param {boolean} value
   * @return {Command} Command for chaining
@@ -559,8 +559,8 @@ Command.prototype.storeOptionsAsProperties = function(value) {
 };
 
 /**
-  * Whether to pass command to action handler (pass true or nothing),
-  * or just the options (pass false).
+  * Whether to pass command to action handler,
+  * or just the options (specify false).
   *
   * @param {boolean} value
   * @return {Command} Command for chaining
