@@ -1041,9 +1041,10 @@ Command.prototype.version = function(str, flags, description) {
   var versionOption = new Option(flags, description);
   this._versionOptionName = versionOption.long.substr(2) || 'version';
   this.options.push(versionOption);
+  var self = this;
   this.on('option:' + this._versionOptionName, function() {
     process.stdout.write(str + '\n');
-    this._exit(0, 'commander.version', str);
+    self._exit(0, 'commander.version', str);
   });
   return this;
 };
@@ -1429,7 +1430,7 @@ function wrap(str, width, indent) {
     if (line.slice(-1) === '\n') {
       line = line.slice(0, line.length - 1);
     }
-    return ((i > 0 && indent) ? Array(indent + 1).join(' ') : '') + line;
+    return ((i > 0 && indent) ? Array(indent + 1).join(' ') : '') + line.trimRight();
   }).join('\n');
 }
 

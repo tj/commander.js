@@ -89,6 +89,7 @@ testOrSkipOnWindows('when subcommand file is double symlink then lookup succeeds
 });
 
 test('when subcommand suffix is .ts then lookup succeeds', (done) => {
+  jest.setTimeout(20000); // Extend timeout for GitHub Actions
   const binLinkTs = path.join(__dirname, 'fixtures-ts', 'pm.ts');
   childProcess.execFile('node', ['-r', 'ts-node/register', binLinkTs, 'install'], function(_error, stdout, stderr) {
     expect(stdout).toBe('install\n');
