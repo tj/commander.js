@@ -818,7 +818,10 @@ Command.prototype.parseArgs = function(args, unknown) {
     if (unknown.length > 0 && !this.defaultExecutable) {
       this.unknownOption(unknown[0]);
     }
-    this.emit('program-action');
+    // Call the program actionm handler, unless it has a (missing) required parameter and signature does not match.
+    if (this._args.filter(function(a) { return a.required; }).length === 0) {
+      this.emit('program-action');
+    }
   }
 
   return this;
