@@ -6,6 +6,7 @@ interface ExtendedOptions extends program.CommandOptions {
 
 const commandInstance = new program.Command('-f');
 const optionsInstance = new program.Option('-f');
+const errorInstance = new program.CommanderError(1, 'code', 'message');
 
 const name = program.name();
 
@@ -89,6 +90,16 @@ program
     });
 
 program
+  .requiredOption('-a,--aaa', 'description')
+  .requiredOption('-b,--bbb <value>', 'description')
+  .requiredOption('-c,--ccc [value]', 'description')
+  .requiredOption('-d,--ddd <value>', 'description', 'default value')
+  .requiredOption('-e,--eee <value>', 'description', (value, memo) => { return value; })
+  .requiredOption('-f,--fff <value>', 'description', (value, memo) => { return value; }, 'starting value')
+  .requiredOption('-g,--ggg <value>', 'description')
+  .requiredOption('-G,--no-ggg <value>', 'description for negation');
+
+program
     .version('0.0.1')
     .arguments('<cmd> [env]')
     .action((cmd, env) => {
@@ -98,6 +109,24 @@ program
 program
     .command("name1", "description")
     .command("name2", "description", { isDefault:true })
+
+program
+    .exitOverride();
+
+program.exitOverride((err):never => {
+  console.log(err.code);
+  console.log(err.message);
+  console.log(err.nestedError);
+  return process.exit(err.exitCode);
+});
+
+program.exitOverride((err):void => {
+  if (err.code !== 'commander.executeSubCommandAsync') {
+    throw err;
+  } else {
+    // Async callback from spawn events, not useful to throw.
+  }
+});
 
 program.parse(process.argv);
 

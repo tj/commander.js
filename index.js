@@ -43,8 +43,9 @@ exports.Option = Option;
 
 function Option(flags, description) {
   this.flags = flags;
-  this.required = flags.indexOf('<') >= 0;
-  this.optional = flags.indexOf('[') >= 0;
+  this.required = flags.indexOf('<') >= 0; // A value must be supplied when the option is specified.
+  this.optional = flags.indexOf('[') >= 0; // A value is optional when the option is specified.
+  this.mandatory = false; // The option must have a value after parsing, which usually means it must be specified on command line.
   this.negate = flags.indexOf('-no-') !== -1;
   flags = flags.split(/[ ,|]+/);
   if (flags.length > 1 && !/^[[<]/.test(flags[1])) this.short = flags.shift();
@@ -86,6 +87,30 @@ Option.prototype.attributeName = function() {
 Option.prototype.is = function(arg) {
   return this.short === arg || this.long === arg;
 };
+
+/**
+ * CommanderError class
+ * @class
+ */
+class CommanderError extends Error {
+  /**
+   * Constructs the CommanderError class
+   * @param {Number} exitCode suggested exit code which could be used with process.exit
+   * @param {String} code an id string representing the error
+   * @param {String} message human-readable description of the error
+   * @constructor
+   */
+  constructor(exitCode, code, message) {
+    super(message);
+    // properly capture stack trace in Node.js
+    Error.captureStackTrace(this, this.constructor);
+    this.name = this.constructor.name;
+    this.code = code;
+    this.exitCode = exitCode;
+  }
+}
+
+exports.CommanderError = CommanderError;
 
 /**
  * Initialize a new `Command`.
@@ -157,6 +182,8 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
   cmd._helpDescription = this._helpDescription;
   cmd._helpShortFlag = this._helpShortFlag;
   cmd._helpLongFlag = this._helpLongFlag;
+  cmd._exitCallback = this._exitCallback;
+
   cmd._executableFile = opts.executableFile; // Custom name for executable file
   this.commands.push(cmd);
   cmd.parseExpectedArgs(args);
@@ -229,6 +256,47 @@ Command.prototype.parseExpectedArgs = function(args) {
 };
 
 /**
+ * Register callback to use as replacement for calling process.exit.
+ *
+ * @param {Function} [fn] optional callback which will be passed a CommanderError, defaults to throwing
+ * @return {Command} for chaining
+ * @api public
+ */
+
+Command.prototype.exitOverride = function(fn) {
+  if (fn) {
+    this._exitCallback = fn;
+  } else {
+    this._exitCallback = function(err) {
+      if (err.code !== 'commander.executeSubCommandAsync') {
+        throw err;
+      } else {
+        // Async callback from spawn events, not useful to throw.
+      }
+    };
+  }
+  return this;
+};
+
+/**
+ * Call process.exit, and _exitCallback if defined.
+ *
+ * @param {Number} exitCode exit code for using with process.exit
+ * @param {String} code an id string representing the error
+ * @param {String} message human-readable description of the error
+ * @return never
+ * @api private
+ */
+
+Command.prototype._exit = function(exitCode, code, message) {
+  if (this._exitCallback) {
+    this._exitCallback(new CommanderError(exitCode, code, message));
+    // Expecting this line is not reached.
+  }
+  process.exit(exitCode);
+};
+
+/**
  * Register callback `fn` for the command.
  *
  * Examples:
@@ -256,6 +324,7 @@ Command.prototype.action = function(fn) {
 
     // Output help if necessary
     outputHelpIfNecessary(self, parsed.unknown);
+    self._checkForMissingMandatoryOptions();
 
     // If there are still any unknown options, then we simply
     // die, unless someone asked for help, in which case we give it
@@ -279,81 +348,46 @@ Command.prototype.action = function(fn) {
       }
     });
 
-    // Always append ourselves to the end of the arguments,
-    // to make sure we match the number of arguments the user
-    // expects
-    if (self._args.length) {
-      args[self._args.length] = self;
-    } else {
-      args.push(self);
+    // The .action callback takes an extra parameter which is the command itself.
+    var expectedArgsCount = self._args.length;
+    var actionArgs = args.slice(0, expectedArgsCount);
+    actionArgs[expectedArgsCount] = self;
+    // Add the extra arguments so available too.
+    if (args.length > expectedArgsCount) {
+      actionArgs.push(args.slice(expectedArgsCount));
     }
 
-    fn.apply(self, args);
+    fn.apply(self, actionArgs);
   };
   var parent = this.parent || this;
-  var name = parent === this ? '*' : this._name;
-  parent.on('command:' + name, listener);
+  if (parent === this) {
+    parent.on('program-action', listener);
+  } else {
+    parent.on('command:' + this._name, listener);
+  }
+
   if (this._alias) parent.on('command:' + this._alias, listener);
   return this;
 };
 
 /**
- * Define option with `flags`, `description` and optional
- * coercion `fn`.
+ * Internal implementation shared by .option() and .requiredOption()
  *
- * The `flags` string should contain both the short and long flags,
- * separated by comma, a pipe or space. The following are all valid
- * all will output this way when `--help` is used.
- *
- *    "-p, --pepper"
- *    "-p|--pepper"
- *    "-p --pepper"
- *
- * Examples:
- *
- *     // simple boolean defaulting to undefined
- *     program.option('-p, --pepper', 'add pepper');
- *
- *     program.pepper
- *     // => undefined
- *
- *     --pepper
- *     program.pepper
- *     // => true
- *
- *     // simple boolean defaulting to true (unless non-negated option is also defined)
- *     program.option('-C, --no-cheese', 'remove cheese');
- *
- *     program.cheese
- *     // => true
- *
- *     --no-cheese
- *     program.cheese
- *     // => false
- *
- *     // required argument
- *     program.option('-C, --chdir <path>', 'change the working directory');
- *
- *     --chdir /tmp
- *     program.chdir
- *     // => "/tmp"
- *
- *     // optional argument
- *     program.option('-c, --cheese [type]', 'add cheese [marble]');
- *
+ * @param {Object} config
  * @param {String} flags
  * @param {String} description
- * @param {Function|*} [fn] or default
+ * @param {Function|*} [fn] - custom option processing function or default vaue
  * @param {*} [defaultValue]
  * @return {Command} for chaining
- * @api public
+ * @api private
  */
 
-Command.prototype.option = function(flags, description, fn, defaultValue) {
+Command.prototype._optionEx = function(config, flags, description, fn, defaultValue) {
   var self = this,
     option = new Option(flags, description),
     oname = option.name(),
     name = option.attributeName();
+  option.mandatory = !!config.mandatory;
 
   // default as 3rd arg
   if (typeof fn !== 'function') {
@@ -416,6 +450,80 @@ Command.prototype.option = function(flags, description, fn, defaultValue) {
 };
 
 /**
+ * Define option with `flags`, `description` and optional
+ * coercion `fn`.
+ *
+ * The `flags` string should contain both the short and long flags,
+ * separated by comma, a pipe or space. The following are all valid
+ * all will output this way when `--help` is used.
+ *
+ *    "-p, --pepper"
+ *    "-p|--pepper"
+ *    "-p --pepper"
+ *
+ * Examples:
+ *
+ *     // simple boolean defaulting to undefined
+ *     program.option('-p, --pepper', 'add pepper');
+ *
+ *     program.pepper
+ *     // => undefined
+ *
+ *     --pepper
+ *     program.pepper
+ *     // => true
+ *
+ *     // simple boolean defaulting to true (unless non-negated option is also defined)
+ *     program.option('-C, --no-cheese', 'remove cheese');
+ *
+ *     program.cheese
+ *     // => true
+ *
+ *     --no-cheese
+ *     program.cheese
+ *     // => false
+ *
+ *     // required argument
+ *     program.option('-C, --chdir <path>', 'change the working directory');
+ *
+ *     --chdir /tmp
+ *     program.chdir
+ *     // => "/tmp"
+ *
+ *     // optional argument
+ *     program.option('-c, --cheese [type]', 'add cheese [marble]');
+ *
+ * @param {String} flags
+ * @param {String} description
+ * @param {Function|*} [fn] - custom option processing function or default vaue
+ * @param {*} [defaultValue]
+ * @return {Command} for chaining
+ * @api public
+ */
+
+Command.prototype.option = function(flags, description, fn, defaultValue) {
+  return this._optionEx({}, flags, description, fn, defaultValue);
+};
+
+/*
+ * Add a required option which must have a value after parsing. This usually means
+ * the option must be specified on the command line. (Otherwise the same as .option().)
+ *
+ * The `flags` string should contain both the short and long flags, separated by comma, a pipe or space.
+ *
+ * @param {String} flags
+ * @param {String} description
+ * @param {Function|*} [fn] - custom option processing function or default vaue
+ * @param {*} [defaultValue]
+ * @return {Command} for chaining
+ * @api public
+ */
+
+Command.prototype.requiredOption = function(flags, description, fn, defaultValue) {
+  return this._optionEx({ mandatory: true }, flags, description, fn, defaultValue);
+};
+
+/**
  * Allow unknown options on the command line.
  *
  * @param {Boolean} arg if `true` or omitted, no error will be thrown
@@ -460,10 +568,17 @@ Command.prototype.parse = function(argv) {
 
   if (args[0] === 'help' && args.length === 1) this.help();
 
+  // Note for future: we could return early if we found an action handler in parseArgs, as none of following code needed?
+
   // <cmd> --help
   if (args[0] === 'help') {
     args[0] = args[1];
     args[1] = this._helpLongFlag;
+  } else {
+    // If calling through to executable subcommand we could check for help flags before failing,
+    // but a somewhat unlikely case since program options not passed to executable subcommands.
+    // Wait for reports to see if check needed and what usage pattern is.
+    this._checkForMissingMandatoryOptions();
   }
 
   // executable sub-commands
@@ -567,9 +682,9 @@ Command.prototype.executeSubCommand = function(argv, args, unknown, executableFi
       // add executable arguments to spawn
       args = incrementNodeInspectorPort(process.execArgv).concat(args);
 
-      proc = spawn(process.argv[0], args, { stdio: 'inherit', customFds: [0, 1, 2] });
+      proc = spawn(process.argv[0], args, { stdio: 'inherit' });
     } else {
-      proc = spawn(bin, args, { stdio: 'inherit', customFds: [0, 1, 2] });
+      proc = spawn(bin, args, { stdio: 'inherit' });
     }
   } else {
     args.unshift(bin);
@@ -586,14 +701,30 @@ Command.prototype.executeSubCommand = function(argv, args, unknown, executableFi
       }
     });
   });
-  proc.on('close', process.exit.bind(process));
+
+  // By default terminate process when spawned process terminates.
+  // Suppressing the exit if exitCallback defined is a bit messy and of limited use, but does allow process to stay running!
+  const exitCallback = this._exitCallback;
+  if (!exitCallback) {
+    proc.on('close', process.exit.bind(process));
+  } else {
+    proc.on('close', () => {
+      exitCallback(new CommanderError(process.exitCode || 0, 'commander.executeSubCommandAsync', '(close)'));
+    });
+  }
   proc.on('error', function(err) {
     if (err.code === 'ENOENT') {
       console.error('error: %s(1) does not exist, try --help', bin);
     } else if (err.code === 'EACCES') {
       console.error('error: %s(1) not executable. try chmod or run with root', bin);
     }
-    process.exit(1);
+    if (!exitCallback) {
+      process.exit(1);
+    } else {
+      const wrappedError = new CommanderError(1, 'commander.executeSubCommandAsync', '(error)');
+      wrappedError.nestedError = err;
+      exitCallback(wrappedError);
+    }
   });
 
   // Store the reference to the child process
@@ -666,24 +797,30 @@ Command.prototype.normalize = function(args) {
 Command.prototype.parseArgs = function(args, unknown) {
   var name;
 
+  if (this.listeners('program-action').length && this.listeners('command:*').length) {
+    console.error("Can't have listeners for both command:* and for the main program");
+    this._exit(1);
+  }
+
   if (args.length) {
     name = args[0];
     if (this.listeners('command:' + name).length) {
       this.emit('command:' + args.shift(), args, unknown);
+    } else if (this.listeners('command:*').length) {
+      this.emit('command:*', args, unknown);
     } else {
-      this.emit('command:*', args);
+      this.emit('program-action', args, unknown);
     }
   } else {
     outputHelpIfNecessary(this, unknown);
-
     // If there were no args and we have unknown options,
     // then they are extraneous and we need to error.
-    if (unknown.length > 0) {
+    if (unknown.length > 0 && !this.defaultExecutable) {
       this.unknownOption(unknown[0]);
     }
-    if ((this.commands.length !== 1 || this.commands[0]._name !== '*') &&
-        this._args.filter(function(a) { return a.required; }).length === 0) {
-      this.emit('command:*');
+    // Call the program action handler, unless it has a (missing) required parameter and signature does not match.
+    if (this._args.filter(function(a) { return a.required; }).length === 0) {
+      this.emit('program-action');
     }
   }
 
@@ -703,6 +840,23 @@ Command.prototype.optionFor = function(arg) {
     if (this.options[i].is(arg)) {
       return this.options[i];
     }
+  }
+};
+
+/**
+ * Display an error message if a mandatory option does not have a value.
+ *
+ * @api private
+ */
+
+Command.prototype._checkForMissingMandatoryOptions = function() {
+  // Walk up hierarchy so can call from action handler after checking for displaying help.
+  for (var cmd = this; cmd; cmd = cmd.parent) {
+    cmd.options.forEach((anOption) => {
+      if (anOption.mandatory && (cmd[anOption.attributeName()] === undefined)) {
+        cmd.missingMandatoryOptionValue(anOption);
+      }
+    });
   }
 };
 
@@ -810,8 +964,9 @@ Command.prototype.opts = function() {
  */
 
 Command.prototype.missingArgument = function(name) {
-  console.error("error: missing required argument '%s'", name);
-  process.exit(1);
+  const message = `error: missing required argument '${name}'`;
+  console.error(message);
+  this._exit(1, 'commander.missingArgument', message);
 };
 
 /**
@@ -823,12 +978,27 @@ Command.prototype.missingArgument = function(name) {
  */
 
 Command.prototype.optionMissingArgument = function(option, flag) {
+  let message;
   if (flag) {
-    console.error("error: option '%s' argument missing, got '%s'", option.flags, flag);
+    message = `error: option '${option.flags}' argument missing, got '${flag}'`;
   } else {
-    console.error("error: option '%s' argument missing", option.flags);
+    message = `error: option '${option.flags}' argument missing`;
   }
-  process.exit(1);
+  console.error(message);
+  this._exit(1, 'commander.optionMissingArgument', message);
+};
+
+/**
+ * `Option` does not have a value, and is a mandatory option.
+ *
+ * @param {String} option
+ * @api private
+ */
+
+Command.prototype.missingMandatoryOptionValue = function(option) {
+  const message = `error: required option '${option.flags}' not specified`;
+  console.error(message);
+  this._exit(1, 'commander.missingMandatoryOptionValue', message);
 };
 
 /**
@@ -840,8 +1010,9 @@ Command.prototype.optionMissingArgument = function(option, flag) {
 
 Command.prototype.unknownOption = function(flag) {
   if (this._allowUnknownOption) return;
-  console.error("error: unknown option '%s'", flag);
-  process.exit(1);
+  const message = `error: unknown option '${flag}'`;
+  console.error(message);
+  this._exit(1, 'commander.unknownOption', message);
 };
 
 /**
@@ -852,8 +1023,9 @@ Command.prototype.unknownOption = function(flag) {
  */
 
 Command.prototype.variadicArgNotLast = function(name) {
-  console.error("error: variadic arguments must be last '%s'", name);
-  process.exit(1);
+  const message = `error: variadic arguments must be last '${name}'`;
+  console.error(message);
+  this._exit(1, 'commander.variadicArgNotLast', message);
 };
 
 /**
@@ -881,7 +1053,7 @@ Command.prototype.version = function(str, flags, description) {
   this.options.push(versionOption);
   this.on('option:' + this._versionOptionName, function() {
     process.stdout.write(str + '\n');
-    process.exit(0);
+    this._exit(0, 'commander.version', str);
   });
   return this;
 };
@@ -1065,11 +1237,15 @@ Command.prototype.padWidth = function() {
 Command.prototype.optionHelp = function() {
   var width = this.padWidth();
 
+  var columns = process.stdout.columns || 80;
+  var descriptionWidth = columns - width - 4;
+
   // Append the help information
   return this.options.map(function(option) {
-    return pad(option.flags, width) + '  ' + option.description +
+    const fullDesc = option.description +
       ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
-  }).concat([pad(this._helpFlags, width) + '  ' + this._helpDescription])
+    return pad(option.flags, width) + '  ' + optionalWrap(fullDesc, descriptionWidth, width + 2);
+  }).concat([pad(this._helpFlags, width) + '  ' + optionalWrap(this._helpDescription, descriptionWidth, width + 2)])
     .join('\n');
 };
 
@@ -1086,11 +1262,14 @@ Command.prototype.commandHelp = function() {
   var commands = this.prepareCommands();
   var width = this.padWidth();
 
+  var columns = process.stdout.columns || 80;
+  var descriptionWidth = columns - width - 4;
+
   return [
     'Commands:',
     commands.map(function(cmd) {
       var desc = cmd[1] ? '  ' + cmd[1] : '';
-      return (desc ? pad(cmd[0], width) : cmd[0]) + desc;
+      return (desc ? pad(cmd[0], width) : cmd[0]) + optionalWrap(desc, descriptionWidth, width + 2);
     }).join('\n').replace(/^/gm, '  '),
     ''
   ].join('\n');
@@ -1114,10 +1293,12 @@ Command.prototype.helpInformation = function() {
     var argsDescription = this._argsDescription;
     if (argsDescription && this._args.length) {
       var width = this.padWidth();
+      var columns = process.stdout.columns || 80;
+      var descriptionWidth = columns - width - 5;
       desc.push('Arguments:');
       desc.push('');
       this._args.forEach(function(arg) {
-        desc.push('  ' + pad(arg.name, width) + '  ' + argsDescription[arg.name]);
+        desc.push('  ' + pad(arg.name, width) + '  ' + wrap(argsDescription[arg.name], descriptionWidth, width + 4));
       });
       desc.push('');
     }
@@ -1208,7 +1389,9 @@ Command.prototype.helpOption = function(flags, description) {
 
 Command.prototype.help = function(cb) {
   this.outputHelp(cb);
-  process.exit();
+  // exitCode: preserving original behaviour which was calling process.exit()
+  // message: do not have all displayed text available so only passing placeholder.
+  this._exit(process.exitCode || 0, 'commander.help', '(outputHelp)');
 };
 
 /**
@@ -1240,6 +1423,49 @@ function pad(str, width) {
 }
 
 /**
+ * Wraps the given string with line breaks at the specified width while breaking
+ * words and indenting every but the first line on the left.
+ *
+ * @param {String} str
+ * @param {Number} width
+ * @param {Number} indent
+ * @return {String}
+ * @api private
+ */
+function wrap(str, width, indent) {
+  var regex = new RegExp('.{1,' + (width - 1) + '}([\\s\u200B]|$)|[^\\s\u200B]+?([\\s\u200B]|$)', 'g');
+  var lines = str.match(regex) || [];
+  return lines.map(function(line, i) {
+    if (line.slice(-1) === '\n') {
+      line = line.slice(0, line.length - 1);
+    }
+    return ((i > 0 && indent) ? Array(indent + 1).join(' ') : '') + line;
+  }).join('\n');
+}
+
+/**
+ * Optionally wrap the given str to a max width of width characters per line
+ * while indenting with indent spaces. Do not wrap if insufficient width or
+ * string is manually formatted.
+ *
+ * @param {String} str
+ * @param {Number} width
+ * @param {Number} indent
+ * @return {String}
+ * @api private
+ */
+function optionalWrap(str, width, indent) {
+  // Detect manually wrapped and indented strings by searching for line breaks
+  // followed by multiple spaces/tabs.
+  if (str.match(/[\n]\s+/)) return str;
+  // Do not wrap to narrow columns (or can end up with a word per line).
+  const minWidth = 40;
+  if (width < minWidth) return str;
+
+  return wrap(str, width, indent);
+}
+
+/**
  * Output help information if necessary
  *
  * @param {Command} command to output help for
@@ -1253,7 +1479,8 @@ function outputHelpIfNecessary(cmd, options) {
   for (var i = 0; i < options.length; i++) {
     if (options[i] === cmd._helpLongFlag || options[i] === cmd._helpShortFlag) {
       cmd.outputHelp();
-      process.exit(0);
+      // (Do not have all displayed text available so only passing placeholder.)
+      cmd._exit(0, 'commander.helpDisplayed', '(outputHelp)');
     }
   }
 }

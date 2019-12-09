@@ -1,0 +1,5 @@
+#!/usr/bin/env node
+console.log('default');
+if (process.argv.length > 2) {
+  console.log(process.argv.slice(2));
+}

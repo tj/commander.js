@@ -5,37 +5,32 @@
 
 ///<reference types="node" />
 
-declare namespace local {
+declare namespace commander {
 
-  class Option {
+  interface CommanderError extends Error {
+    code: string;
+    exitCode: number;
+    message: string;
+    nestedError?: string;
+  }
+  type CommanderErrorConstructor = { new (exitCode: number, code: string, message: string): CommanderError };
+
+  interface Option {
     flags: string;
-    required: boolean;
-    optional: boolean;
+    required: boolean; // A value must be supplied when the option is specified.
+    optional: boolean; // A value is optional when the option is specified.
+    mandatory: boolean; // The option must have a value after parsing, which usually means it must be specified on command line.
     bool: boolean;
     short?: string;
     long: string;
     description: string;
-
-    /**
-     * Initialize a new `Option` with the given `flags` and `description`.
-     *
-     * @param {string} flags
-     * @param {string} [description]
-     */
-    constructor(flags: string, description?: string);
   }
+  type OptionConstructor = { new (flags: string, description?: string): Option };
 
-  class Command extends NodeJS.EventEmitter {
-    [key: string]: any;
+  interface Command extends NodeJS.EventEmitter {
+    [key: string]: any; // options as properties
 
     args: string[];
-
-    /**
-     * Initialize a new `Command`.
-     *
-     * @param {string} [name]
-     */
-    constructor(name?: string);
 
     /**
      * Set the program version to `str`. 
@@ -68,7 +63,7 @@ declare namespace local {
      * @param opts - configuration options
      * @returns new command
      */
-    command(nameAndArgs: string, opts?: commander.CommandOptions): Command;
+    command(nameAndArgs: string, opts?: CommandOptions): Command;
     /**
      * Define a command, implemented in a separate executable file.
      * 
@@ -98,14 +93,19 @@ declare namespace local {
     arguments(desc: string): Command;
 
     /**
-     * Parse expected `args`.
+    * Parse expected `args`.
      *
      * For example `["[type]"]` becomes `[{ required: false, name: 'type' }]`.
      *
      * @param {string[]} args
      * @returns {Command} for chaining
      */
-    parseExpectedArgs(args: string[]): Command;
+     parseExpectedArgs(args: string[]): Command;
+
+    /**
+     * Register callback to use as replacement for calling process.exit.
+     */
+    exitOverride(callback?: (err: CommanderError) => never|void): Command;
 
     /**
      * Register callback `fn` for the command.
@@ -171,6 +171,15 @@ declare namespace local {
      */
     option(flags: string, description?: string, fn?: ((arg1: any, arg2: any) => void) | RegExp, defaultValue?: any): Command;
     option(flags: string, description?: string, defaultValue?: any): Command;
+
+    /**
+     * Define a required option, which must have a value after parsing. This usually means
+     * the option must be specified on the command line. (Otherwise the same as .option().)
+     *
+     * The `flags` string should contain both the short and long flags, separated by comma, a pipe or space.
+     */
+    requiredOption(flags: string, description?: string, fn?: ((arg1: any, arg2: any) => void) | RegExp, defaultValue?: any): Command;
+    requiredOption(flags: string, description?: string, defaultValue?: any): Command;
 
     /**
      * Allow unknown options on the command line.
@@ -267,14 +276,8 @@ declare namespace local {
      */
     help(cb?: (str: string) => string): never;
   }
+  type CommandConstructor = { new (name?: string): Command };
 
-}
-
-declare namespace commander {
-
-    type Command = local.Command
-
-    type Option = local.Option
 
     interface CommandOptions {
         noHelp?: boolean;
@@ -288,11 +291,10 @@ declare namespace commander {
     }
 
     interface CommanderStatic extends Command {
-        Command: typeof local.Command;
-        Option: typeof local.Option;
-        CommandOptions: CommandOptions;
-        ParseOptionsResult: ParseOptionsResult;
-    }
+        Command: CommandConstructor;
+        Option: OptionConstructor;
+        CommanderError:CommanderErrorConstructor;
+      }
 
 }
 

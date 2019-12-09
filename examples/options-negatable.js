@@ -6,7 +6,7 @@
 //
 // Example output pretending command called pizza-options (or try directly with `node options-negatable.js`)
 //
-// $ pizza-options 
+// $ pizza-options
 // You ordered a pizza with sauce and mozzarella cheese
 // $ pizza-options --sauce
 // error: unknown option '--sauce'
@@ -15,7 +15,7 @@
 // $ pizza-options --no-sauce --no-cheese
 // You ordered a pizza with no sauce and no cheese
 
-const commander = require('commander');
+const commander = require('../');
 const program = new commander.Command();
 
 program

@@ -7,6 +7,8 @@
 
 [node.js](http://nodejs.org) 命令行接口的完整解决方案，灵感来自 Ruby 的 [commander](https://github.com/commander-rb/commander)。
 
+用其他语言阅读：[English](./Readme.md) | 简体中文
+
 - [Commander.js](#commanderjs)
   - [安装](#%e5%ae%89%e8%a3%85)
   - [声明program变量](#%e5%a3%b0%e6%98%8eprogram%e5%8f%98%e9%87%8f)
@@ -15,6 +17,7 @@
     - [默认选项值](#%e9%bb%98%e8%ae%a4%e9%80%89%e9%a1%b9%e5%80%bc)
     - [其他选项类型，可忽略的布尔值和标志值](#%e5%85%b6%e4%bb%96%e9%80%89%e9%a1%b9%e7%b1%bb%e5%9e%8b%e5%8f%af%e5%bf%bd%e7%95%a5%e7%9a%84%e5%b8%83%e5%b0%94%e5%80%bc%e5%92%8c%e6%a0%87%e5%bf%97%e5%80%bc)
     - [自定义选项处理](#%e8%87%aa%e5%ae%9a%e4%b9%89%e9%80%89%e9%a1%b9%e5%a4%84%e7%90%86)
+    - [必需的选项](#%e5%bf%85%e9%9c%80%e7%9a%84%e9%80%89%e9%a1%b9)
     - [版本选项](#%e7%89%88%e6%9c%ac%e9%80%89%e9%a1%b9)
   - [Commands](#commands)
     - [指定参数语法](#%e6%8c%87%e5%ae%9a%e5%8f%82%e6%95%b0%e8%af%ad%e6%b3%95)
@@ -31,6 +34,7 @@
     - [TypeScript](#typescript)
     - [Node 选项例如 `--harmony`](#node-%e9%80%89%e9%a1%b9%e4%be%8b%e5%a6%82---harmony)
     - [Node 调试](#node-%e8%b0%83%e8%af%95)
+    - [重载退出(exit)处理](#%e9%87%8d%e8%bd%bd%e9%80%80%e5%87%baexit%e5%a4%84%e7%90%86)
   - [例子](#%e4%be%8b%e5%ad%90)
   - [许可证](#%e8%ae%b8%e5%8f%af%e8%af%81)
   - [支持](#%e6%94%af%e6%8c%81)
@@ -236,6 +240,24 @@ $ custom -c a -c b -c c
 [ 'a', 'b', 'c' ]
 $ custom --list x,y,z
 [ 'x', 'y', 'z' ]
+```
+
+### 必需的选项
+
+你可以使用`.requiredOption`指定一个必需的(强制性的)选项，这样的选项在命令行的命令中必须被给出，除非它拥有一个默认的值。另外，这个方法在格式上和使用`.option`一样采用标志和说明，以及可选的默认值或自定义处理。
+
+```js
+const program = require('commander');
+
+program
+  .requiredOption('-c, --cheese <type>', 'pizza must have cheese');
+
+program.parse(process.argv);
+```
+
+```
+$ pizza
+error: required option '-c, --cheese <type>' not specified
 ```
 
 ### 版本选项
@@ -545,6 +567,22 @@ node -r ts-node/register pm.ts
 如果你在使用 node inspector的 `node -inspect` 等命令来[调试](https://nodejs.org/en/docs/guides/debugging-getting-started/) git风格的可执行命令，
 对于生成的子命令，inspector端口递增1。
 
+### 重载退出(exit)处理
+
+默认情况下，当检测到错误以及打印出帮助信息或版本信息时Commander将调用`process.exit`方法。你可以重写覆盖这项操作并提供一个可选的回调。默认的实现会抛出一个`CommanderError`。
+
+重载的回调接受一个包含了 Number类型的`exitCode`、String类型的`code`和`message` 属性的`CommanderError`。除了对可执行子命令完成的异步处理之外，默认的实现方法会抛出这个错。正常情况下，打印错误信息以及帮助或版本信息不会被重载所影响，因为重载的调用在打印之后。
+
+``` js
+program.exitOverride();
+
+try {
+  program.parse(process.argv);
+} catch (err) {
+  // 自定义处理...
+}
+```
+
 ## 例子
 
 ```js
@@ -590,13 +628,17 @@ program
 program.parse(process.argv);
 ```
 
- 更多的 [演示](https://github.com/tj/commander.js/tree/master/examples) 可以在这里找到。
+更多的 [演示](https://github.com/tj/commander.js/tree/master/examples) 可以在这里找到。
 
 ## 许可证
 
 [MIT](https://github.com/tj/commander.js/blob/master/LICENSE)
 
 ## 支持
+
+Commander 现在在Node 8以及更高的版本上得到支持。（尽管Commander仍有可能在更低的Node版本上工作，但是Node 8以下版本不再保证相关的测试）
+
+主要的社区支持的免费论坛就在Github上的项目[Issues](https://github.com/tj/commander.js/issues)
 
 [专业支持的commander现在已经可用！](https://tidelift.com/subscription/pkg/npm-commander?utm_source=npm-commander&utm_medium=referral&utm_campaign=readme)
 

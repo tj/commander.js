@@ -7,6 +7,8 @@
 
 The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/commander-rb/commander).
 
+Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
+
 - [Commander.js](#commanderjs)
   - [Installation](#installation)
   - [Declaring _program_ variable](#declaring-program-variable)
@@ -15,6 +17,7 @@ The complete solution for [node.js](http://nodejs.org) command-line interfaces, 
     - [Default option value](#default-option-value)
     - [Other option types, negatable boolean and flag|value](#other-option-types-negatable-boolean-and-flagvalue)
     - [Custom option processing](#custom-option-processing)
+    - [Required option](#required-option)
     - [Version option](#version-option)
   - [Commands](#commands)
     - [Specify the argument syntax](#specify-the-argument-syntax)
@@ -31,9 +34,11 @@ The complete solution for [node.js](http://nodejs.org) command-line interfaces, 
     - [TypeScript](#typescript)
     - [Node options such as `--harmony`](#node-options-such-as---harmony)
     - [Node debugging](#node-debugging)
+    - [Override exit handling](#override-exit-handling)
   - [Examples](#examples)
   - [License](#license)
   - [Support](#support)
+    - [Commander for enterprise](#commander-for-enterprise)
 
 ## Installation
 
@@ -239,6 +244,24 @@ $ custom -c a -c b -c c
 [ 'a', 'b', 'c' ]
 $ custom --list x,y,z
 [ 'x', 'y', 'z' ]
+```
+
+### Required option
+
+You may specify a required (mandatory) option using `.requiredOption`. The option must be specified on the command line, or by having a default value. The method is otherwise the same as `.option` in format, taking flags and description, and optional default value or custom processing.
+
+```js
+const program = require('commander');
+
+program
+  .requiredOption('-c, --cheese <type>', 'pizza must have cheese');
+
+program.parse(process.argv);
+```
+
+```
+$ pizza
+error: required option '-c, --cheese <type>' not specified
 ```
 
 ### Version option
@@ -551,8 +574,26 @@ You can enable `--harmony` option in two ways:
 
 ### Node debugging
 
-If you are using the node inspector for [debugging](https://nodejs.org/en/docs/guides/debugging-getting-started/) git-style executable (sub)commands using `node -inspect` et al,
+If you are using the node inspector for [debugging](https://nodejs.org/en/docs/guides/debugging-getting-started/) git-style executable (sub)commands using `node --inspect` et al,
 the inspector port is incremented by 1 for the spawned subcommand.
+
+### Override exit handling
+
+By default Commander calls `process.exit` when it detects errors, or after displaying the help or version. You can override
+this behaviour and optionally supply a callback. The default override throws a `CommanderError`.
+
+The override callback is passed a `CommanderError` with properties `exitCode` number, `code` string, and `message`. The default override behaviour is to throw the error, except for async handling of executable subcommand completion which carries on. The normal display of error messages or version or help
+is not affected by the override which is called after the display.
+
+``` js
+program.exitOverride();
+
+try {
+  program.parse(process.argv);
+} catch (err) {
+  // custom processing...
+}
+```
 
 ## Examples
 
@@ -607,6 +648,12 @@ More Demos can be found in the [examples](https://github.com/tj/commander.js/tre
 
 ## Support
 
-[Professionally supported commander is now available](https://tidelift.com/subscription/pkg/npm-commander?utm_source=npm-commander&utm_medium=referral&utm_campaign=readme)
+Commander is supported on Node 8 and above. (Commander is likely to still work on older versions of Node, but is not tested below Node 8.)
 
-Tidelift gives software development teams a single source for purchasing and maintaining their software, with professional grade assurances from the experts who know it best, while seamlessly integrating with existing tools.
+The main forum for free and community support is the project [Issues](https://github.com/tj/commander.js/issues) on GitHub.
+
+### Commander for enterprise
+
+Available as part of the Tidelift Subscription
+
+The maintainers of Commander and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/npm-commander?utm_source=npm-commander&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)

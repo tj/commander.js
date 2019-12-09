@@ -20,7 +20,7 @@
 // pizza details:
 // - cheese
 
-const commander = require('commander');
+const commander = require('../');
 const program = new commander.Command();
 
 program
