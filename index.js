@@ -361,8 +361,8 @@ Command.prototype.action = function(fn) {
   };
   var parent = this.parent || this;
   if (parent === this) {
-    parent.on('program-action', listener);
-    parent.on('command:*', listener)
+    parent.on('program-command', listener);
+    parent.on('command:*', listener);
   } else {
     parent.on('command:' + this._name, listener);
   }
@@ -803,7 +803,7 @@ Command.prototype.parseArgs = function(args, unknown) {
     if (this.listeners('command:' + name).length) {
       this.emit('command:' + args.shift(), args, unknown);
     } else {
-      this.emit('program-action', args, unknown);
+      this.emit('program-command', args, unknown);
       this.emit('command:*', args, unknown);
     }
   } else {
@@ -815,7 +815,7 @@ Command.prototype.parseArgs = function(args, unknown) {
     }
     // Call the program action handler, unless it has a (missing) required parameter and signature does not match.
     if (this._args.filter(function(a) { return a.required; }).length === 0) {
-      this.emit('program-action');
+      this.emit('program-command');
     }
   }
 
