@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [4.0.2] (date goes here)
+
+### Fixed
+
+- Remove trailing blanks from wrapped help text ([#1096])
+
+### Changed
+
+- update dependencies
+- extend security coverage for Commander 2.x to 2020-02-03
+- improvements to README
+- improvements to TypeScript definition documentation
+- move old versions out of main CHANGELOG
+
 ## [4.0.1] (2019-11-12)
 
 ### Fixed
@@ -389,6 +403,7 @@ program
 [#1071]: https://github.com/tj/commander.js/pull/1071
 [#1081]: https://github.com/tj/commander.js/pull/1081
 [#1091]: https://github.com/tj/commander.js/pull/1091
+[#1096]: https://github.com/tj/commander.js/pull/1096
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
 [4.0.1]: https://github.com/tj/commander.js/compare/v4.0.0..v4.0.1
