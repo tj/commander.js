@@ -2,11 +2,14 @@
 
 ## Supported Versions
 
-| Version | Supported          |
-| ------- | ------------------ |
-| 4.x     | :white_check_mark: |
-| 3.x     | :white_check_mark: |
-| < 3     | :x:                |
+Old versions receive security updates for six months.
+
+| Version | Supported                                  |
+| ------- | ------------------------------------------ |
+| 4.x     | :white_check_mark:                         |
+| 3.x     | :white_check_mark: support ends 2020-05-01 |
+| 2.x     | :white_check_mark: support ends 2020-02-03 |
+| < 2     | :x:                                        |
 
 ## Reporting a Vulnerability
 

@@ -154,7 +154,7 @@ function Command(name) {
  *      // Command implemented using separate executable file (description is second parameter to `.command`)
  *      program
  *        .command('start <service>', 'start named service')
- *        .command('stop [service]', 'stop named serice, or all if no name supplied');
+ *        .command('stop [service]', 'stop named service, or all if no name supplied');
  *
  * @param {string} nameAndArgs - command name and arguments, args are `<required>` or `[optional]` and last may also be `variadic...`
  * @param {Object|string} [actionOptsOrExecDesc] - configuration options (for action), or description (for executable)
@@ -1119,9 +1119,10 @@ Command.prototype.version = function(str, flags, description) {
   var versionOption = new Option(flags, description);
   this._versionOptionName = versionOption.long.substr(2) || 'version';
   this.options.push(versionOption);
+  var self = this;
   this.on('option:' + this._versionOptionName, function() {
     process.stdout.write(str + '\n');
-    this._exit(0, 'commander.version', str);
+    self._exit(0, 'commander.version', str);
   });
   return this;
 };
