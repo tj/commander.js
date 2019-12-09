@@ -362,6 +362,7 @@ Command.prototype.action = function(fn) {
   var parent = this.parent || this;
   if (parent === this) {
     parent.on('program-action', listener);
+    parent.on('command:*', listener)
   } else {
     parent.on('command:' + this._name, listener);
   }
@@ -797,19 +798,13 @@ Command.prototype.normalize = function(args) {
 Command.prototype.parseArgs = function(args, unknown) {
   var name;
 
-  if (this.listeners('program-action').length && this.listeners('command:*').length) {
-    console.error("Can't have listeners for both command:* and for the main program");
-    this._exit(1);
-  }
-
   if (args.length) {
     name = args[0];
     if (this.listeners('command:' + name).length) {
       this.emit('command:' + args.shift(), args, unknown);
-    } else if (this.listeners('command:*').length) {
-      this.emit('command:*', args, unknown);
     } else {
       this.emit('program-action', args, unknown);
+      this.emit('command:*', args, unknown);
     }
   } else {
     outputHelpIfNecessary(this, unknown);
