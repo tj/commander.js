@@ -362,7 +362,6 @@ Command.prototype.action = function(fn) {
   var parent = this.parent || this;
   if (parent === this) {
     parent.on('program-command', listener);
-    parent.on('command:*', listener);
   } else {
     parent.on('command:' + this._name, listener);
   }
