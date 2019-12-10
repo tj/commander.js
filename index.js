@@ -599,9 +599,8 @@ Command.prototype._setOptionValue = function(key, value) {
 Command.prototype._getOptionValue = function(key) {
   if (this._storeOptionsAsProperties) {
     return this[key];
-  } else {
-    return this._optionValues[key];
   }
+  return this._optionValues[key];
 };
 
 /**
@@ -1019,9 +1018,9 @@ Command.prototype.opts = function() {
       result[key] = key === this._versionOptionName ? this._version : this[key];
     }
     return result;
-  } else {
-    return this._optionValues;
   }
+
+  return this._optionValues;
 };
 
 /**
