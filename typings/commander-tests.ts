@@ -133,4 +133,10 @@ program.exitOverride((err):void => {
 
 program.parse(process.argv);
 
+program.parseAsync(process.argv).then(() => {
+  console.log('parseAsync success');
+}).catch(err => {
+  console.log('parseAsync failed');
+});
+
 console.log('stuff');
