@@ -1,0 +1,2 @@
+# We have not configured eslint for TypeScript so avoid bogus error messages in the test file and typings file.
+**/*.ts

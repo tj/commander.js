@@ -171,6 +171,23 @@ declare namespace commander {
     requiredOption(flags: string, description?: string, fn?: ((arg1: any, arg2: any) => void) | RegExp, defaultValue?: any): Command;
     requiredOption(flags: string, description?: string, defaultValue?: any): Command;
 
+
+    /**
+     * Whether to store option values as properties on command object,
+     * or store separately (specify false). In both cases the option values can be accessed using .opts().
+     *
+     * @return Command for chaining
+     */
+    storeOptionsAsProperties(value?: boolean): Command;
+
+    /**
+     * Whether to pass command to action handler,
+     * or just the options (specify false).
+     * 
+     * @return Command for chaining
+     */
+    passCommandToAction(value?: boolean): Command;
+
     /**
      * Allow unknown options on the command line.
      *

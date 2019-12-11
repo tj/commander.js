@@ -126,6 +126,9 @@ function Command(name) {
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
+  this._optionValues = {};
+  this._storeOptionsAsProperties = true; // backwards compatible by default
+  this._passCommandToAction = true; // backwards compatible by default
 
   this._helpFlags = '-h, --help';
   this._helpDescription = 'output usage information';
@@ -183,6 +186,8 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
   cmd._helpShortFlag = this._helpShortFlag;
   cmd._helpLongFlag = this._helpLongFlag;
   cmd._exitCallback = this._exitCallback;
+  cmd._storeOptionsAsProperties = this._storeOptionsAsProperties;
+  cmd._passCommandToAction = this._passCommandToAction;
 
   cmd._executableFile = opts.executableFile; // Custom name for executable file
   this.commands.push(cmd);
@@ -351,7 +356,11 @@ Command.prototype.action = function(fn) {
     // The .action callback takes an extra parameter which is the command itself.
     var expectedArgsCount = self._args.length;
     var actionArgs = args.slice(0, expectedArgsCount);
-    actionArgs[expectedArgsCount] = self;
+    if (self._passCommandToAction) {
+      actionArgs[expectedArgsCount] = self;
+    } else {
+      actionArgs[expectedArgsCount] = self.opts();
+    }
     // Add the extra arguments so available too.
     if (args.length > expectedArgsCount) {
       actionArgs.push(args.slice(expectedArgsCount));
@@ -405,12 +414,12 @@ Command.prototype._optionEx = function(config, flags, description, fn, defaultVa
   if (option.negate || option.optional || option.required || typeof defaultValue === 'boolean') {
     // when --no-foo we make sure default is true, unless a --foo option is already defined
     if (option.negate) {
-      var opts = self.opts();
-      defaultValue = Object.prototype.hasOwnProperty.call(opts, name) ? opts[name] : true;
+      const positiveLongFlag = option.long.replace(/^--no-/, '--');
+      defaultValue = self.optionFor(positiveLongFlag) ? self._getOptionValue(name) : true;
     }
     // preassign only if we have a default
     if (defaultValue !== undefined) {
-      self[name] = defaultValue;
+      self._setOptionValue(name, defaultValue);
       option.defaultValue = defaultValue;
     }
   }
@@ -423,22 +432,22 @@ Command.prototype._optionEx = function(config, flags, description, fn, defaultVa
   this.on('option:' + oname, function(val) {
     // coercion
     if (val !== null && fn) {
-      val = fn(val, self[name] === undefined ? defaultValue : self[name]);
+      val = fn(val, self._getOptionValue(name) === undefined ? defaultValue : self._getOptionValue(name));
     }
 
     // unassigned or boolean value
-    if (typeof self[name] === 'boolean' || typeof self[name] === 'undefined') {
+    if (typeof self._getOptionValue(name) === 'boolean' || typeof self._getOptionValue(name) === 'undefined') {
       // if no value, negate false, and we have a default, then use it!
       if (val == null) {
-        self[name] = option.negate
+        self._setOptionValue(name, option.negate
           ? false
-          : defaultValue || true;
+          : defaultValue || true);
       } else {
-        self[name] = val;
+        self._setOptionValue(name, val);
       }
     } else if (val !== null) {
       // reassign
-      self[name] = option.negate ? false : val;
+      self._setOptionValue(name, option.negate ? false : val);
     }
   });
 
@@ -529,6 +538,69 @@ Command.prototype.requiredOption = function(flags, description, fn, defaultValue
 Command.prototype.allowUnknownOption = function(arg) {
   this._allowUnknownOption = arguments.length === 0 || arg;
   return this;
+};
+
+/**
+  * Whether to store option values as properties on command object,
+  * or store separately (specify false). In both cases the option values can be accessed using .opts().
+  *
+  * @param {boolean} value
+  * @return {Command} Command for chaining
+  * @api public
+  */
+
+Command.prototype.storeOptionsAsProperties = function(value) {
+  this._storeOptionsAsProperties = (value === undefined) || value;
+  if (this.options.length) {
+    // This is for programmer, not end user.
+    console.error('Commander usage error: call storeOptionsAsProperties before adding options');
+  }
+  return this;
+};
+
+/**
+  * Whether to pass command to action handler,
+  * or just the options (specify false).
+  *
+  * @param {boolean} value
+  * @return {Command} Command for chaining
+  * @api public
+  */
+
+Command.prototype.passCommandToAction = function(value) {
+  this._passCommandToAction = (value === undefined) || value;
+  return this;
+};
+
+/**
+ * Store option value
+ *
+ * @param {String} key
+ * @param {Object} value
+ * @api private
+ */
+
+Command.prototype._setOptionValue = function(key, value) {
+  if (this._storeOptionsAsProperties) {
+    this[key] = value;
+  } else {
+    this._optionValues[key] = value;
+  }
+};
+
+/**
+ * Retrieve option value
+ *
+ * @param {String} key
+ * @return {Object} value
+ * @api private
+ */
+
+Command.prototype._getOptionValue = function(key) {
+  if (this._storeOptionsAsProperties) {
+    return this[key];
+  }
+  return this._optionValues[key];
 };
 
 /**
@@ -843,7 +915,7 @@ Command.prototype._checkForMissingMandatoryOptions = function() {
   // Walk up hierarchy so can call from action handler after checking for displaying help.
   for (var cmd = this; cmd; cmd = cmd.parent) {
     cmd.options.forEach((anOption) => {
-      if (anOption.mandatory && (cmd[anOption.attributeName()] === undefined)) {
+      if (anOption.mandatory && (cmd._getOptionValue(anOption.attributeName()) === undefined)) {
         cmd.missingMandatoryOptionValue(anOption);
       }
     });
@@ -936,14 +1008,19 @@ Command.prototype.parseOptions = function(argv) {
  * @api public
  */
 Command.prototype.opts = function() {
-  var result = {},
-    len = this.options.length;
+  if (this._storeOptionsAsProperties) {
+    // Preserve original behaviour so backwards compatible when still using properties
+    var result = {},
+      len = this.options.length;
 
-  for (var i = 0; i < len; i++) {
-    var key = this.options[i].attributeName();
-    result[key] = key === this._versionOptionName ? this._version : this[key];
+    for (var i = 0; i < len; i++) {
+      var key = this.options[i].attributeName();
+      result[key] = key === this._versionOptionName ? this._version : this[key];
+    }
+    return result;
   }
-  return result;
+
+  return this._optionValues;
 };
 
 /**
