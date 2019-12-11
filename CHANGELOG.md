@@ -7,7 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [4.0.2] (date goes here)
+## [4.1.0] (date goes here)
+
+### Added
+
+- two routines to change how option values are handled, and avoid name clashes with command properties ([#1102])
+  - see storeOptionsAsProperties and passCommandToAction in README
 
 ### Fixed
 
@@ -404,6 +409,7 @@ program
 [#1081]: https://github.com/tj/commander.js/pull/1081
 [#1091]: https://github.com/tj/commander.js/pull/1091
 [#1096]: https://github.com/tj/commander.js/pull/1096
+[#1102]: https://github.com/tj/commander.js/pull/1102
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
 [4.0.1]: https://github.com/tj/commander.js/compare/v4.0.0..v4.0.1
