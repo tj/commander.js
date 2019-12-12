@@ -165,11 +165,12 @@ declare namespace commander {
      *
      * @param {string} flags
      * @param {string} [description]
-     * @param {((arg1: any, arg2: any) => void) | RegExp} [fn] function or default
+     * @param {((value: string, previous: any) => void) | RegExp} [fn] function or default
      * @param {*} [defaultValue]
      * @returns {Command} for chaining
      */
-    option(flags: string, description?: string, fn?: ((arg1: any, arg2: any) => void) | RegExp, defaultValue?: any): Command;
+    option(flags: string, description?: string, regexp?: RegExp, defaultValue?: any): Command;
+    option<T>(flags: string, description?: string, fn?: ((value: string, previous: T) => T), defaultValue?: T): Command;
     option(flags: string, description?: string, defaultValue?: any): Command;
 
     /**
