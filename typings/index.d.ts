@@ -169,9 +169,10 @@ declare namespace commander {
      * @param {*} [defaultValue]
      * @returns {Command} for chaining
      */
-    option(flags: string, description?: string, regexp?: RegExp, defaultValue?: any): Command;
-    option<T>(flags: string, description?: string, fn?: ((value: string, previous: T) => T), defaultValue?: T): Command;
     option(flags: string, description?: string, defaultValue?: any): Command;
+    option(flags: string, description: string, regexp: RegExp, defaultValue?: any): Command;
+    option<T>(flags: string, description: string, fn: (value: string, previous: T) => (T | void), defaultValue?: T): Command;
+    option<T>(flags: string, description: string, fn: (value: string, previous: T) => void, defaultValue: T): Command;
 
     /**
      * Define a required option, which must have a value after parsing. This usually means
