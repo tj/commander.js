@@ -47,10 +47,11 @@ function Option(flags, description) {
   this.optional = flags.indexOf('[') >= 0; // A value is optional when the option is specified.
   this.mandatory = false; // The option must have a value after parsing, which usually means it must be specified on command line.
   this.negate = flags.indexOf('-no-') !== -1;
-  flags = flags.split(/[ ,|]+/);
-  if (flags.length > 1 && !/^[[<]/.test(flags[1])) this.short = flags.shift();
-  this.long = flags.shift();
+  const flagParts = flags.split(/[ ,|]+/);
+  if (flagParts.length > 1 && !/^[[<]/.test(flagParts[1])) this.short = flagParts.shift();
+  this.long = flagParts.shift();
   this.description = description || '';
+  this.defaultValue = undefined;
 }
 
 /**
@@ -107,6 +108,7 @@ class CommanderError extends Error {
     this.name = this.constructor.name;
     this.code = code;
     this.exitCode = exitCode;
+    this.nestedError = undefined;
   }
 }
 
@@ -115,13 +117,14 @@ exports.CommanderError = CommanderError;
 /**
  * Initialize a new `Command`.
  *
- * @param {String} name
+ * @param {String} [name]
  * @api public
  */
 
 function Command(name) {
   this.commands = [];
   this.options = [];
+  this.parent = undefined;
   this._execs = new Set();
   this._allowUnknownOption = false;
   this._args = [];
@@ -129,6 +132,9 @@ function Command(name) {
   this._optionValues = {};
   this._storeOptionsAsProperties = true; // backwards compatible by default
   this._passCommandToAction = true; // backwards compatible by default
+  this._noHelp = false;
+  this._executableFile = undefined;
+  this._alias = undefined;
 
   this._helpFlags = '-h, --help';
   this._helpDescription = 'output usage information';
@@ -694,7 +700,7 @@ Command.prototype.parse = function(argv) {
  * @param {Array} argv
  * @param {Array} args
  * @param {Array} unknown
- * @param {String} specifySubcommand
+ * @param {String} executableFile
  * @api private
  */
 
@@ -927,7 +933,7 @@ Command.prototype._checkForMissingMandatoryOptions = function() {
  * void of these options.
  *
  * @param {Array} argv
- * @return {Array}
+ * @return {{args: Array, unknown: Array}}
  * @api public
  */
 
@@ -963,7 +969,7 @@ Command.prototype.parseOptions = function(argv) {
       // requires arg
       if (option.required) {
         arg = argv[++i];
-        if (arg == null) return this.optionMissingArgument(option);
+        if (arg == null) this.optionMissingArgument(option);
         this.emit('option:' + option.name(), arg);
       // optional arg
       } else if (option.optional) {
@@ -1039,8 +1045,8 @@ Command.prototype.missingArgument = function(name) {
 /**
  * `Option` is missing an argument, but received `flag` or nothing.
  *
- * @param {String} option
- * @param {String} flag
+ * @param {Option} option
+ * @param {String} [flag]
  * @api private
  */
 
@@ -1058,7 +1064,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
 /**
  * `Option` does not have a value, and is a mandatory option.
  *
- * @param {String} option
+ * @param {Option} option
  * @api private
  */
 
@@ -1103,10 +1109,10 @@ Command.prototype.variadicArgNotLast = function(name) {
  *
  * You can optionally supply the  flags and description to override the defaults.
  *
- * @param {String} str
+ * @param {String} [str]
  * @param {String} [flags]
  * @param {String} [description]
- * @return {Command} for chaining
+ * @return {String|Command} for chaining
  * @api public
  */
 
@@ -1130,7 +1136,7 @@ Command.prototype.version = function(str, flags, description) {
  * Set the description to `str`.
  *
  * @param {String} str
- * @param {Object} argsDescription
+ * @param {Object} [argsDescription]
  * @return {String|Command}
  * @api public
  */
@@ -1167,7 +1173,7 @@ Command.prototype.alias = function(alias) {
 /**
  * Set / get the command usage `str`.
  *
- * @param {String} str
+ * @param {String} [str]
  * @return {String|Command}
  * @api public
  */
@@ -1190,7 +1196,7 @@ Command.prototype.usage = function(str) {
 /**
  * Get or set the name of the command
  *
- * @param {String} str
+ * @param {String} [str]
  * @return {String|Command}
  * @api public
  */
@@ -1536,8 +1542,8 @@ function optionalWrap(str, width, indent) {
 /**
  * Output help information if necessary
  *
- * @param {Command} command to output help for
- * @param {Array} array of options to search for -h or --help
+ * @param {Command} cmd - command to output help for
+ * @param {Array} options - array of options to search for -h or --help
  * @api private
  */
 
