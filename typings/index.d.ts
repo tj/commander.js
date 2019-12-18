@@ -165,7 +165,7 @@ declare namespace commander {
      */
     option(flags: string, description: string, regexp: RegExp, defaultValue?: any): Command;
     option<T>(flags: string, description: string, fn: (value: string, previous: T) => void, defaultValue: T): Command;
-    option<T>(flags: string, description: string, fn: (value: string, previous: T) => (T | void), defaultValue?: T): Command;
+    option<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): Command;
     option(flags: string, description?: string, defaultValue?: any): Command;
 
     /**
@@ -176,7 +176,7 @@ declare namespace commander {
      */
     requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: any): Command;
     requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => void, defaultValue: T): Command;
-    requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => (T | void), defaultValue?: T): Command;
+    requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): Command;
     requiredOption(flags: string, description?: string, defaultValue?: any): Command;
 
     /**
