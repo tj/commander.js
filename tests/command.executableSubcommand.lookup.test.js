@@ -89,7 +89,7 @@ testOrSkipOnWindows('when subcommand file is double symlink then lookup succeeds
 });
 
 test('when subcommand suffix is .ts then lookup succeeds', (done) => {
-  // We support looking for ts filesfor ts-node in particular, but don't need to test ts-node itself.
+  // We support looking for ts files for ts-node in particular, but don't need to test ts-node itself.
   // The program and the subcommand `pm-install.ts` are both plain JavaScript code.
   const binLinkTs = path.join(__dirname, 'fixtures-ts', 'pm.ts');
   // childProcess.execFile('node', ['-r', 'ts-node/register', binLinkTs, 'install'], function(_error, stdout, stderr) {
