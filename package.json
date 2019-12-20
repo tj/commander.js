@@ -32,7 +32,6 @@
     "eslint-plugin-jest": "^22.21.0",
     "jest": "^24.8.0",
     "standard": "^14.3.1",
-    "ts-node": "^8.5.2",
     "typescript": "^3.7.2"
   },
   "typings": "typings/index.d.ts",
