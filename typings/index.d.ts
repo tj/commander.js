@@ -211,15 +211,6 @@ declare namespace commander {
      * @returns {Command} which is the subcommand instance
      */
 
-    forwardSubcommands(): Command;
-
-    /**
-     * Add action-like sub command
-     * command name is taken from name() property - must be defined
-     * 
-     * @returns {Command} `this` instance
-     */
-
     useSubcommand(subCommand : Command): Command;
 
     /**
