@@ -406,37 +406,49 @@ If the program is designed to be installed globally, make sure the executables h
 
 ### Sub commands (handlers)
 
-This approach does not spawn a new process in comparison to *'Git-style executable (sub)commands'* above. Instead it creates a new subcommand instance which can be initiated with own actions, options (and further subcommands). Then when upper level command is found it triggers delegates handling to lower levels.
+This approach does not spawn a new process in comparison to *'Git-style executable (sub)commands'* above. Instead it forwards arguments to a subcommand instance which can be initiated with own actions, options (and further subcommands). See also `use-subcommand.js` in `examples` dir.
 
 ```js
-const subCommand = program
-    .command('journal')
-    .description('Journal utils') // this should be separate line
-    .option('-q, --quiet')
-    .forwardSubcommands(); // instead of "action"
+const { Command } = require('commander');
+
+// supposedly sub commands would be defined in a separate module
+const subCommand = new Command();
+
+subCommand
+    // Name is mandatory ! it will be the expected arg to trigger the sub command
+    .name('journal')
+    .description('Journal utils');
 
 subCommand
     .command('list <path>')
-    .action(List);
+    .action(listActionHandler);
 
 subCommand
     .command('delete <path>')
     .option('-f, --force')
-    .action(Delete);
+    .action(deleteActionHandler);
+
+// ... and this is supposedly in the main program ...
+const program = new Command();
+program
+  .option('-q, --quiet');
+  .useSubcommand(subCommand); // forward args, starting with "journal" (subCommand.name()) to this instance
+
 ```
 
+Invocation:
 ```
 $ node myapp journal list myjournal1 
-$ node myapp journal delete myjournal1 
+$ node myapp -q journal delete myjournal1 -f
 ```
 
-Be aware of option handling. In the example above `--force` option is available in the command object passed to action. However, `--quiet` belongs to it's parent. Along with the explicit reach you can use `collectAllOptions` - it collects option values from all levels and returns as an object.
+Be aware of option handling. In the example above `--force` option directly belongs to the command object passed to action handler (in last param). However, `--quiet` belongs to it's parent! Along with the explicit access you can use `collectAllOptions` - it collects option values from all levels and returns as an object.
 
 ```js
 // invoked with "journal --quiet delete xxx --force"
-function Delete(path, cmdInstance) {
-  console.log(cmdInstance.force); // true
-  console.log(cmdInstance.quiet); // false !!!
+function deleteActionHandler(path, cmdInstance) {
+  console.log(cmdInstance.force);        // true
+  console.log(cmdInstance.quiet);        // undefined !
   console.log(cmdInstance.parent.quiet); // true
   console.log(cmdInstance.collectAllOptions()); // { quiet: true, force: true }
 }
