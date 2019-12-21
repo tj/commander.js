@@ -1405,9 +1405,11 @@ Command.prototype.useSubcommand = function(subCommand) {
     unknown = parsed.unknown;
 
     // Output help if necessary
-    const helpRequested    = unknown.includes('--help') || unknown.includes('-h');
-    const noFutherCommands = !args || !subCommand.listeners('command:' + args[0]);
-    if (helpRequested && noFutherCommands) {
+    
+    const helpRequested = unknown.includes(subCommand._helpLongFlag) || unknown.includes(subCommand._helpShortFlag);
+    const noFutherValidCommands = args.length === 0 || !subCommand.listeners('command:' + args[0]);
+    const noFurtherCommandsButExpected = args.length === 0 && unknown.length === 0 && subCommand.commands.length > 0;
+    if (helpRequested && noFutherValidCommands || noFurtherCommandsButExpected) {
       subCommand.outputHelp();
       subCommand._exit(0, 'commander.useSubcommand.listener', `outputHelp(${subCommand._name})`);
     }
