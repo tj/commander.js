@@ -1395,25 +1395,24 @@ Command.prototype.useSubcommand = function(subCommand) {
   if (this._args.length > 0) throw Error('useSubcommand cannot be applied to a command with explicit args');
   if (!subCommand._name) throw Error('subCommand name is not specified');
 
-  var self     = subCommand;
   var listener = function(args, unknown) {
     // Parse any so-far unknown options
     args    = args || [];
     unknown = unknown || [];
 
-    var parsed = self.parseOptions(unknown);
+    var parsed = subCommand.parseOptions(unknown);
     if (parsed.args.length) args = parsed.args.concat(args);
     unknown = parsed.unknown;
 
     // Output help if necessary
     const helpRequested    = unknown.includes('--help') || unknown.includes('-h');
-    const noFutherCommands = !args || !self.listeners('command:' + args[0]);
+    const noFutherCommands = !args || !subCommand.listeners('command:' + args[0]);
     if (helpRequested && noFutherCommands) {
-      self.outputHelp();
-      process.exit(0);
+      subCommand.outputHelp();
+      subCommand._exit(0, 'commander.useSubcommand.listener', `outputHelp(${subCommand._name})`);
     }
 
-    self.parseArgs(args, unknown);
+    subCommand.parseArgs(args, unknown);
   };
 
   for (const label of [subCommand._name, subCommand._alias]) {
