@@ -1387,7 +1387,7 @@ Command.prototype.help = function(cb) {
 /**
  * Add action-like sub command
  * command name is taken from name() property - must be defined
- * 
+ *
  * @returns {Command} `this` instance
  */
 
@@ -1397,7 +1397,7 @@ Command.prototype.useSubcommand = function(subCommand) {
 
   var listener = function(args, unknown) {
     // Parse any so-far unknown options
-    args    = args || [];
+    args = args || [];
     unknown = unknown || [];
 
     var parsed = subCommand.parseOptions(unknown);
@@ -1405,11 +1405,11 @@ Command.prototype.useSubcommand = function(subCommand) {
     unknown = parsed.unknown;
 
     // Output help if necessary
-    
+
     const helpRequested = unknown.includes(subCommand._helpLongFlag) || unknown.includes(subCommand._helpShortFlag);
     const noFutherValidCommands = args.length === 0 || !subCommand.listeners('command:' + args[0]);
     const noFurtherCommandsButExpected = args.length === 0 && unknown.length === 0 && subCommand.commands.length > 0;
-    if (helpRequested && noFutherValidCommands || noFurtherCommandsButExpected) {
+    if ((helpRequested && noFutherValidCommands) || noFurtherCommandsButExpected) {
       subCommand.outputHelp();
       subCommand._exit(0, 'commander.useSubcommand.listener', `outputHelp(${subCommand._name})`);
     }
