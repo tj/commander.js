@@ -1,14 +1,15 @@
 #!/usr/bin/env node
 
 // This is an example of useSubcommand
+// and collectAllOptions
 //
-// $ use-subcommand journal list myjounal
-// $ use-subcommand journal delete myjounal
-//
-// With options
-// $ use-subcommand journal -q delete -f myjounal
+// try
+//   $ use-subcommand journal list myjounal
+//   $ use-subcommand journal delete myjounal
+// or with options
+//   $ use-subcommand journal -q delete -f myjounal
 
-// const { Command } = require('commander');
+// const { Command } = require('commander'); << would be in a real program
 const { Command } = require('..');
 
 function importSubCommand() {
@@ -22,7 +23,9 @@ function importSubCommand() {
     .action((path, cmdInstance) => {
       console.log('List journal');
       console.log('Path is', path);
-      console.log('Quiet =', Boolean(cmdInstance.parent.quiet));
+      console.log('Quiet =', Boolean(cmdInstance.parent.parent.quiet));
+      // list is a child of journal, which is a child of main cmd
+      console.log('collectAllOptions:', cmdInstance.collectAllOptions());
     });
   
   journalCmd
@@ -32,8 +35,9 @@ function importSubCommand() {
     .action((path, cmdInstance) => {
       console.log('List journal');
       console.log('Path is', path);
-      console.log('Quiet =', Boolean(cmdInstance.parent.quiet));
+      console.log('Quiet =', Boolean(cmdInstance.parent.parent.quiet));
       console.log('Force =', Boolean(cmdInstance.force));
+      console.log('collectAllOptions:', cmdInstance.collectAllOptions());
     });
 
   return journalCmd;
@@ -44,8 +48,7 @@ const journalSubCommand = importSubCommand();
 
 const program = new Command();
 program
-  .option('-q, --quiet')
-  .useSubcommand(journalSubCommand);
+  .option('-q, --quiet');
 
 program
   .command('hello <name>')
@@ -54,5 +57,11 @@ program
     console.log(`Hello ${name}!`);
   });
 
-if (process.argv.length <= 2) program.help();
-program.parse(process.argv);
+program
+  .useSubcommand(journalSubCommand);
+
+if (process.argv.length <= 2) {
+  program.help();
+} else {
+  program.parse(process.argv);
+}

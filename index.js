@@ -1463,8 +1463,9 @@ Command.prototype.forwardSubcommands = function() {
 
 /**
  * Returns an object with all options values, including parent options values
- * This makes it especially useful with forwardSubcommands as it collects
- * options from upper levels too
+ * This makes it especially useful with useSubcommand as it collects
+ * options from the whole command chain, including parent levels.
+ * beware that subcommand opts enjoy the priority over the parent ones
  *
  * @returns {Object} dictionary of option values
  */
