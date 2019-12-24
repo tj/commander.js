@@ -13,6 +13,10 @@ function collect(value, previous) {
   return previous.concat([value]);
 }
 
+function collectVoid(value, previous) {
+  previous.concat([value]);
+}
+
 function commaSeparatedList(value, dummyPrevious) {
   return value.split(',');
 }
@@ -130,6 +134,22 @@ test('when collect -c a -c b -c c then value is [a, b, c]', () => {
     .option('-c, --collect <value>', 'repeatable value', collect, []);
   program.parse(['node', 'test', '-c', 'a', '-c', 'b', '-c', 'c']);
   expect(program.collect).toEqual(['a', 'b', 'c']);
+});
+// freeze void returning collector behaviour
+test('when collect returning Void -c a -c b -c c then value is void', () => {
+  const program = new commander.Command();
+  program
+    .option('-c, --collect <value>', 'repeatable value', collectVoid, []);
+  program.parse(['node', 'test', '-c', 'a', '-c', 'b', '-c', 'c']);
+  expect(program.collect).toBeUndefined();
+});
+// freeze void returning collector behaviour
+test('when collect returning Void -c a -c b -c c -c d then value is []', () => {
+  const program = new commander.Command();
+  program
+    .option('-c, --collect <value>', 'repeatable value', collectVoid, []);
+  program.parse(['node', 'test', '-c', 'a', '-c', 'b', '-c', 'c', '-c', 'd']);
+  expect(program.collect).toEqual([]);
 });
 
 test('when commaSeparatedList x,y,z then value is [x, y, z]', () => {
