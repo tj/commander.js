@@ -163,10 +163,10 @@ declare namespace commander {
      *     // optional argument
      *     program.option('-c, --cheese [type]', 'add cheese [marble]');
      */
-    option(flags: string, description: string, regexp: RegExp, defaultValue?: string): Command;
-    // option<T>(flags: string, description: string, fn: (value: string, previous: T) => void, defaultValue: T): Command;
-    option<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): Command;
     option(flags: string, description?: string, defaultValue?: string): Command;
+    option(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): Command;
+    option<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): Command;
+    // option<T>(flags: string, description: string, fn: (value: string, previous: T) => void, defaultValue: T): Command;
 
     /**
      * Define a required option, which must have a value after parsing. This usually means
@@ -174,10 +174,10 @@ declare namespace commander {
      *
      * The `flags` string should contain both the short and long flags, separated by comma, a pipe or space.
      */
-    requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string): Command;
-    // requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => void, defaultValue: T): Command;
-    requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): Command;
     requiredOption(flags: string, description?: string, defaultValue?: string): Command;
+    requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): Command;
+    requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): Command;
+    // requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => void, defaultValue: T): Command;
 
     /**
      * Allow unknown options on the command line.
