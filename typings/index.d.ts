@@ -166,7 +166,6 @@ declare namespace commander {
     option(flags: string, description?: string, defaultValue?: string): Command;
     option(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): Command;
     option<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): Command;
-    // option<T>(flags: string, description: string, fn: (value: string, previous: T) => void, defaultValue: T): Command;
 
     /**
      * Define a required option, which must have a value after parsing. This usually means
@@ -177,7 +176,6 @@ declare namespace commander {
     requiredOption(flags: string, description?: string, defaultValue?: string): Command;
     requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): Command;
     requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): Command;
-    // requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => void, defaultValue: T): Command;
 
     /**
      * Allow unknown options on the command line.
