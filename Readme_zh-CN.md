@@ -31,6 +31,7 @@
     - [.help(cb)](#helpcb)
   - [自定义事件监听](#%e8%87%aa%e5%ae%9a%e4%b9%89%e4%ba%8b%e4%bb%b6%e7%9b%91%e5%90%ac)
   - [零碎知识](#%e9%9b%b6%e7%a2%8e%e7%9f%a5%e8%af%86)
+    - [避免选项命名冲突](#避免选项命名冲突)
     - [TypeScript](#typescript)
     - [Node 选项例如 `--harmony`](#node-%e9%80%89%e9%a1%b9%e4%be%8b%e5%a6%82---harmony)
     - [Node 调试](#node-%e8%b0%83%e8%af%95)
@@ -38,6 +39,7 @@
   - [例子](#%e4%be%8b%e5%ad%90)
   - [许可证](#%e8%ae%b8%e5%8f%af%e8%af%81)
   - [支持](#%e6%94%af%e6%8c%81)
+    - [企业使用Commander](#企业使用Commander)
 
 ## 安装
 
@@ -67,6 +69,8 @@ program.version('0.0.1');
 `.option()` 方法用来定义带选项的 commander，同时也用于这些选项的文档。每个选项可以有一个短标识(单个字符)和一个长名字，它们之间用逗号或空格分开。
 
  选项会被放到 Commander 对象的属性上，多词选项如"--template-engine"会被转为驼峰法`program.templateEngine`。多个短标识可以组合为一个参数，如`-a -b -c`等价于`-abc`。
+
+ 另请参看可选的新功能 [避免命名冲突](#避免选项命名冲突).
 
 ### 常用选项类型，boolean和值
 
@@ -540,6 +544,39 @@ program.on('command:*', function () {
 
 ## 零碎知识
 
+### 避免选项命名冲突
+
+Commander原本和默认的行为是将选项值作为program的属性存储的，并且给操作处理程序(action handler)传递了一个将选项值作为属性存储的command对象。
+这样确实使得编程很方便，但是会带来有可能会和Command对象的属性相冲突的缺点。
+
+这里有两种方法来改变着这样的行为，而且我们有可能在将来改变默认的行为
+
+- `storeOptionsAsProperties`: 是否将选项值作为command对象的属性来存储，亦或者分开地存储(指定 false)并使用`.opts()`来获得。
+- `passCommandToAction`: 是否把command对象传递给操作处理程序，亦或者仅仅传递这些选项(指定 false)
+
+```js
+// 文件: ./examples/storeOptionsAsProperties.action.js
+program
+  .storeOptionsAsProperties(false)
+  .passCommandToAction(false);
+
+program
+  .name('my-program-name')
+  .option('-n,--name <name>');
+
+program
+  .command('show')
+  .option('-a,--action <action>')
+  .action((options) => {
+    console.log(options.action);
+  });
+
+program.parse(process.argv);
+
+const programOptions = program.opts();
+console.log(programOptions.name);
+```
+
 ### TypeScript
 
 包里包含 TypeScript 定义文件，但是需要你自己安装 node types。如：
@@ -636,10 +673,13 @@ program.parse(process.argv);
 
 ## 支持
 
-Commander 现在在Node 8以及更高的版本上得到支持。（尽管Commander仍有可能在更低的Node版本上工作，但是Node 8以下版本不再保证相关的测试）
+Commander 4.x版本现在在Node 8以及更高的版本上得到支持，尽管仍有可能在Node 6版本上工作，但是不再保证相关的测试。
+（对于Node版本低于6的情况，建议使用Commander 3.x 或 2.x版本。）
 
 主要的社区支持的免费论坛就在Github上的项目[Issues](https://github.com/tj/commander.js/issues)
 
-[专业支持的commander现在已经可用！](https://tidelift.com/subscription/pkg/npm-commander?utm_source=npm-commander&utm_medium=referral&utm_campaign=readme)
+### 企业使用Commander
 
-Tidelift为软件开发团队提供了购买和维护其软件的单一来源，并由最了解软件的专家提供专业级保证，同时与现有工具无缝集成。
+作为Tidelift订阅的一部分现在可用
+
+Commander和数以千计的其他包的维护者在与Tidelift合作，提供对于企业用来构筑应用的开源依赖的商业支持与维护。通过向相关依赖包的维护者支付一定费用，从而帮助企业节省时间，降低风险，改进代码运行情况。[了解更多](https://tidelift.com/subscription/pkg/npm-commander?utm_source=npm-commander&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
