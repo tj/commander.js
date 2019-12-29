@@ -314,33 +314,35 @@ Command.prototype._addCommandListener = function() {
 
     var parsed = self.parseOptions(unknown);
 
-    // Output help if necessary
-    outputHelpIfNecessary(self, parsed.unknown);
-    self._checkForMissingMandatoryOptions();
-
-    // If there are still any unknown options, then we simply
-    // die, unless someone asked for help, in which case we give it
-    // to them, and then we die.
-    if (parsed.unknown.length > 0) {
-      self.unknownOption(parsed.unknown[0]);
-    }
-
     // Leftover arguments need to be pushed back. Fixes issue #56
     if (parsed.args.length) args = parsed.args.concat(args);
 
-    self._args.forEach(function(arg, i) {
-      if (arg.required && args[i] == null) {
-        self.missingArgument(arg.name);
-      } else if (arg.variadic) {
-        if (i !== self._args.length - 1) {
-          self.variadicArgNotLast(arg.name);
-        }
+    if (args.length && self.listenerCount(`command:${args[0]}`)) {
+      self.parseArgs(args, parsed.unknown);
+    } else {
+      // Output help if necessary
+      outputHelpIfNecessary(self, parsed.unknown);
+      self._checkForMissingMandatoryOptions();
 
-        args[i] = args.splice(i);
+      // If there are still any unknown options, then we simply die.
+      if (parsed.unknown.length > 0) {
+        self.unknownOption(parsed.unknown[0]);
       }
-    });
 
-    self.emit('action', args);
+      self._args.forEach(function(arg, i) {
+        if (arg.required && args[i] == null) {
+          self.missingArgument(arg.name);
+        } else if (arg.variadic) {
+          if (i !== self._args.length - 1) {
+            self.variadicArgNotLast(arg.name);
+          }
+
+          args[i] = args.splice(i);
+        }
+      });
+
+      self.emit('action', args);
+    }
   };
 
   var parent = this.parent || this;
