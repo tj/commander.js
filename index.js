@@ -302,23 +302,10 @@ Command.prototype._exit = function(exitCode, code, message) {
 };
 
 /**
- * Register callback `fn` for the command.
- *
- * Examples:
- *
- *      program
- *        .command('help')
- *        .description('display verbose help')
- *        .action(function() {
- *           // output help here
- *        });
- *
- * @param {Function} fn
- * @return {Command} for chaining
- * @api public
+ * @api private
  */
 
-Command.prototype.action = function(fn) {
+Command.prototype._addCommandListener = function() {
   var self = this;
   var listener = function(args, unknown) {
     // Parse any so-far unknown options
@@ -353,6 +340,40 @@ Command.prototype.action = function(fn) {
       }
     });
 
+    self.emit('action', args);
+  };
+
+  var parent = this.parent || this;
+  if (parent === this) {
+    parent.on('program-command', listener);
+  } else {
+    parent.on('command:' + this._name, listener);
+  }
+  if (this._alias) parent.on('command:' + this._alias, listener);
+};
+
+/**
+ * Register callback `fn` for the command.
+ *
+ * Examples:
+ *
+ *      program
+ *        .command('help')
+ *        .description('display verbose help')
+ *        .action(function() {
+ *           // output help here
+ *        });
+ *
+ * @param {Function} fn
+ * @return {Command} for chaining
+ * @api public
+ */
+
+Command.prototype.action = function(fn) {
+  var self = this;
+  this._addCommandListener();
+
+  var listener = function(args) {
     // The .action callback takes an extra parameter which is the command itself.
     var expectedArgsCount = self._args.length;
     var actionArgs = args.slice(0, expectedArgsCount);
@@ -368,14 +389,10 @@ Command.prototype.action = function(fn) {
 
     fn.apply(self, actionArgs);
   };
-  var parent = this.parent || this;
-  if (parent === this) {
-    parent.on('program-command', listener);
-  } else {
-    parent.on('command:' + this._name, listener);
-  }
 
-  if (this._alias) parent.on('command:' + this._alias, listener);
+  this.on('action', listener);
+  if (this._alias) this.on('action', listener);
+
   return this;
 };
 
