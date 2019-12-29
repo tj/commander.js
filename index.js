@@ -199,6 +199,18 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
 };
 
 /**
+ * @api public
+ */
+Command.prototype.addCommand = function(cmd) {
+  if (!cmd._name) throw Error('addCommand name is not specified for command');
+
+  this.commands.push(cmd);
+  cmd.parent = this;
+  cmd._addCommandListener();
+  return this;
+};
+
+/**
  * Define argument syntax for the top-level command.
  *
  * @api public
