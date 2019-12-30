@@ -11,7 +11,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
 
 - [Commander.js](#commanderjs)
   - [Installation](#installation)
-  - [Declaring _program_ variable](#declaring-program-variable)
+  - [Declaring program variable](#declaring-program-variable)
   - [Options](#options)
     - [Common option types, boolean and value](#common-option-types-boolean-and-value)
     - [Default option value](#default-option-value)
@@ -33,7 +33,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
   - [Bits and pieces](#bits-and-pieces)
     - [Avoiding option name clashes](#avoiding-option-name-clashes)
     - [TypeScript](#typescript)
-    - [Node options such as `--harmony`](#node-options-such-as---harmony)
+    - [Node options such as --harmony](#node-options-such-as---harmony)
     - [Node debugging](#node-debugging)
     - [Override exit handling](#override-exit-handling)
   - [Examples](#examples)
@@ -375,6 +375,19 @@ program
   })
 
 program.parse(process.argv)
+```
+
+You may supply an `async` action handler, in which case you call `.parseAsync` rather than `.parse`.
+
+```js
+async function run() { /* code goes here */ }
+
+async function main() {
+  program
+    .command('run')
+    .action(run);
+  await program.parseAsync(process.argv);
+}
 ```
 
 A command's options on the command line are validated when the command is used. Any unknown options will be reported as an error. However, if an action-based command does not define an action, then the options are not validated.
