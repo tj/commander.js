@@ -701,7 +701,7 @@ Command.prototype.parse = function(argv) {
  * Use parseAsync instead of parse if any of your action handlers are async. Returns a Promise.
  *
  * @param {Array} argv
- * @return {Promise} Promise
+ * @return {Promise}
  * @api public
  */
 Command.prototype.parseAsync = function(argv) {
