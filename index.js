@@ -193,6 +193,7 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
   this.commands.push(cmd);
   cmd.parseExpectedArgs(args);
   cmd.parent = this;
+  if (!desc) cmd._addCommandListener(); // Add listener to handle nested subcommand
 
   if (desc) return this;
   return cmd;
@@ -357,13 +358,21 @@ Command.prototype._addCommandListener = function() {
     }
   };
 
-  var parent = this.parent || this;
-  if (parent === this) {
-    parent.on('program-command', listener);
-  } else {
-    parent.on('command:' + this._name, listener);
+  // Add listener to parent, or program.
+  let eventEmitter = this.parent;
+  let eventName = `command:${this._name}`;
+  if (!eventEmitter) {
+    eventEmitter = this; // program
+    eventName = 'program-command';
   }
-  if (this._alias) parent.on('command:' + this._alias, listener);
+  // Avoid adding listener twice (currently adding on demand from multiple places).
+  if (eventEmitter.listenerCount(eventName) === 0) {
+    eventEmitter.on(eventName, listener);
+  }
+  const aliasEventName = `command:${this._alias}`;
+  if (this._alias && eventEmitter.listenerCount(aliasEventName) === 0) {
+    eventEmitter.on(aliasEventName, listener);
+  }
 };
 
 /**
