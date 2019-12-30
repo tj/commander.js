@@ -328,7 +328,7 @@ Command.prototype.action = function(fn) {
     var parsed = self.parseOptions(unknown);
 
     // Output help if necessary
-    outputHelpIfNecessary(self, parsed.unknown);
+    outputHelpIfRequested(self, parsed.unknown);
     self._checkForMissingMandatoryOptions();
 
     // If there are still any unknown options, then we simply
@@ -873,7 +873,7 @@ Command.prototype.parseArgs = function(args, unknown) {
       this.emit('command:*', args, unknown);
     }
   } else {
-    outputHelpIfNecessary(this, unknown);
+    outputHelpIfRequested(this, unknown);
 
     // If there were no args and we have unknown options,
     // then they are extraneous and we need to error.
@@ -1534,14 +1534,14 @@ function optionalWrap(str, width, indent) {
 }
 
 /**
- * Output help information if necessary
+ * Output help information if help flags specified
  *
  * @param {Command} command to output help for
  * @param {Array} array of options to search for -h or --help
  * @api private
  */
 
-function outputHelpIfNecessary(cmd, options) {
+function outputHelpIfRequested(cmd, options) {
   options = options || [];
 
   for (var i = 0; i < options.length; i++) {
