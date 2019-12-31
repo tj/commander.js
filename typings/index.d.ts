@@ -163,7 +163,7 @@ declare namespace commander {
      *     // optional argument
      *     program.option('-c, --cheese [type]', 'add cheese [marble]');
      */
-    option(flags: string, description?: string, defaultValue?: string): Command;
+    option(flags: string, description?: string, defaultValue?: string | boolean): Command;
     option(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): Command;
     option<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): Command;
 
@@ -173,7 +173,7 @@ declare namespace commander {
      *
      * The `flags` string should contain both the short and long flags, separated by comma, a pipe or space.
      */
-    requiredOption(flags: string, description?: string, defaultValue?: string): Command;
+    requiredOption(flags: string, description?: string, defaultValue?: string | boolean): Command;
     requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): Command;
     requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): Command;
 
