@@ -94,3 +94,11 @@ test('when command sets noHelp then not displayed in helpInformation', () => {
   const helpInformation = program.helpInformation();
   expect(helpInformation).not.toMatch('secret');
 });
+
+test('when argument name includes space it should be printed correctly in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .arguments('<some argument name>');
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch(/^Usage: +\[options\] <some argument name>$/m);
+});
