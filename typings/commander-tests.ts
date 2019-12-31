@@ -37,12 +37,6 @@ function collect(val: string, memo: string[]) {
     memo.push(val);
     return memo;
 }
-/*
- * Collector without return all so work
- */
-//function collect2(val: string, memo: string[]) {
-//    memo.push(val);
-//}
 
 function increaseVerbosity(v: any, total: number) {
     return total + 1;
