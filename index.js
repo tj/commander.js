@@ -914,8 +914,10 @@ Command.prototype.parseArgs = function(args, unknown) {
     if (this.listeners('command:' + name).length) {
       this.emit('command:' + args.shift(), args, unknown);
     } else {
-      this.emit('program-command', args, unknown);
       this.emit('command:*', args, unknown);
+      if (!this.parent) {
+        this.emit('program-command', args, unknown);
+      }
     }
   } else {
     outputHelpIfNecessary(this, unknown);
@@ -925,7 +927,7 @@ Command.prototype.parseArgs = function(args, unknown) {
       this.unknownOption(unknown[0]);
     }
     // Call the program action handler, unless it has a (missing) required parameter and signature does not match.
-    if (this._args.filter(function(a) { return a.required; }).length === 0) {
+    if (!this.parent && this._args.filter(function(a) { return a.required; }).length === 0) {
       this.emit('program-command');
     }
   }
