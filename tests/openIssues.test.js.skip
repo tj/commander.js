@@ -66,19 +66,4 @@ describe('open issues', () => {
       done();
     });
   });
-
-  // https://github.com/tj/commander.js/pull/1062
-  test.skip('#1062 when .action on program with subcommands and no program argument then program action called', () => {
-    const actionMock = jest.fn();
-    const program = new commander.Command();
-    program
-      .arguments('[file]')
-      .action(actionMock);
-    program
-      .command('subcommand');
-
-    program.parse(['node', 'test']);
-
-    expect(actionMock).toHaveBeenCalledWith(undefined, program);
-  });
 });
