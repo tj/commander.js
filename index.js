@@ -115,7 +115,7 @@ exports.CommanderError = CommanderError;
 /**
  * Initialize a new `Command`.
  *
- * @param {String} name
+ * @param {String} [name]
  * @api public
  */
 
@@ -694,7 +694,7 @@ Command.prototype.parse = function(argv) {
  * @param {Array} argv
  * @param {Array} args
  * @param {Array} unknown
- * @param {String} specifySubcommand
+ * @param {String} executableFile
  * @api private
  */
 
@@ -927,7 +927,7 @@ Command.prototype._checkForMissingMandatoryOptions = function() {
  * void of these options.
  *
  * @param {Array} argv
- * @return {Array}
+ * @return {{args: Array, unknown: Array}}
  * @api public
  */
 
@@ -1039,8 +1039,8 @@ Command.prototype.missingArgument = function(name) {
 /**
  * `Option` is missing an argument, but received `flag` or nothing.
  *
- * @param {String} option
- * @param {String} flag
+ * @param {Option} option
+ * @param {String} [flag]
  * @api private
  */
 
@@ -1058,7 +1058,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
 /**
  * `Option` does not have a value, and is a mandatory option.
  *
- * @param {String} option
+ * @param {Option} option
  * @api private
  */
 
@@ -1130,7 +1130,7 @@ Command.prototype.version = function(str, flags, description) {
  * Set the description to `str`.
  *
  * @param {String} str
- * @param {Object} argsDescription
+ * @param {Object} [argsDescription]
  * @return {String|Command}
  * @api public
  */
@@ -1167,7 +1167,7 @@ Command.prototype.alias = function(alias) {
 /**
  * Set / get the command usage `str`.
  *
- * @param {String} str
+ * @param {String} [str]
  * @return {String|Command}
  * @api public
  */
@@ -1190,7 +1190,7 @@ Command.prototype.usage = function(str) {
 /**
  * Get or set the name of the command
  *
- * @param {String} str
+ * @param {String} [str]
  * @return {String|Command}
  * @api public
  */
@@ -1536,8 +1536,8 @@ function optionalWrap(str, width, indent) {
 /**
  * Output help information if help flags specified
  *
- * @param {Command} command to output help for
- * @param {Array} array of options to search for -h or --help
+ * @param {Command} cmd - command to output help for
+ * @param {Array} options - array of options to search for -h or --help
  * @api private
  */
 
