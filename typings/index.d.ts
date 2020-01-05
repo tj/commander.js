@@ -204,7 +204,15 @@ declare namespace commander {
     parse(argv: string[]): Command;
 
     /**
-     * Parse options from `argv` returning `argv` void of these options.
+     * Parse options from `argv` removing known options,
+     * and return argv split into operands and unknown arguments.
+     *
+     * @example
+     *    argv => operands, unknown
+     *    --known kkk op => [op], []
+     *    sub --unknown uuu op => [sub], [--unknown uuu op]
+     *    sub -- --unknown uuu op => [sub --unknown uuu op], []
+     *    sub --unknown1 1 --unknown 222 op =>  [sub], [-unknown1 1 -- --unknown 222 op]
      */
     parseOptions(argv: string[]): commander.ParseOptionsResult;
 
@@ -286,7 +294,7 @@ declare namespace commander {
     }
 
     interface ParseOptionsResult {
-        args: string[];
+        operands: string[];
         unknown: string[];
     }
 

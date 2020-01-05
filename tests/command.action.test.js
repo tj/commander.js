@@ -20,7 +20,7 @@ test('when .action called then program.args only contains args', () => {
     .command('info <file>')
     .action(() => {});
   program.parse(['node', 'test', 'info', 'my-file']);
-  expect(program.args).toEqual(['my-file']);
+  expect(program.args).toEqual(['info', 'my-file']);
 });
 
 test('when .action called with extra arguments then extras also passed to action', () => {
