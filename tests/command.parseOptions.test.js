@@ -60,8 +60,7 @@ describe('parseOptions', () => {
       .option('--global-flag')
       .option('--global-value <value>')
       .command('sub [args...]')
-      .option('--sub-flag')
-      .option('--sub-value <value>');
+      .option('--sub-flag');
     program
       .action(() => { });
     return program;
@@ -163,5 +162,37 @@ describe('parseOptions', () => {
     const program = createProgram();
     const result = program.parseOptions('--unknown1 -- --unknown2'.split(' '));
     expect(result).toEqual({ operands: [], unknown: ['--unknown1', '--', '--unknown2'] });
+  });
+});
+
+// parse now sets program.args to the result of parseOptions (operands + unknown). Some limited testing.
+describe('parse and program.args', () => {
+  test('when program has known flag and operand then option removed and operand returned', () => {
+    const program = new commander.Command();
+    program
+      .option('--global-flag');
+    program.parse('node test.js --global-flag arg'.split(' '));
+    expect(program.args).toEqual(['arg']);
+  });
+
+  test('when program has mixed arguments then known options removed and rest returned in same order', () => {
+    const program = new commander.Command();
+    program
+      .allowUnknownOption()
+      .option('--global-flag')
+      .option('--global-value <value>');
+    program.parse('node test.js aaa --global-flag bbb --unknown ccc --global-value value'.split(' '));
+    expect(program.args).toEqual(['aaa', 'bbb', '--unknown', 'ccc']);
+  });
+
+  test('when subcommand has mixed arguments then program flags removed and rest returned in same order', () => {
+    const program = new commander.Command();
+    program
+      .option('--global-flag')
+      .option('--global-value <value>')
+      .command('sub [args...]')
+      .option('--sub-flag');
+    program.parse('node test.js --global-flag sub --sub-flag arg --global-value value'.split(' '));
+    expect(program.args).toEqual(['sub', '--sub-flag', 'arg']);
   });
 });
