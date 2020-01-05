@@ -52,3 +52,116 @@ describe('regression tests', () => {
     });
   });
 });
+
+describe('parseOptions', () => {
+  function createProgram() {
+    const program = new commander.Command();
+    program
+      .option('--global-flag')
+      .option('--global-value <value>')
+      .command('sub [args...]')
+      .option('--sub-flag')
+      .option('--sub-value <value>');
+    program
+      .action(() => { });
+    return program;
+  };
+
+  // Subcommands are just another potential operand as far as parseOptions is concerned, so limited testing of subcommand as such.
+
+  test('when empty args then empty results', () => {
+    const program = createProgram();
+    const result = program.parseOptions([]);
+    expect(result).toEqual({ operands: [], unknown: [] });
+  });
+
+  test('when only operands then results has all operands', () => {
+    const program = createProgram();
+    const result = program.parseOptions('one two three'.split(' '));
+    expect(result).toEqual({ operands: ['one', 'two', 'three'], unknown: [] });
+  });
+
+  test('when subcommand and operand then results has subcommand and operand', () => {
+    const program = createProgram();
+    const result = program.parseOptions('sub one'.split(' '));
+    expect(result).toEqual({ operands: ['sub', 'one'], unknown: [] });
+  });
+
+  test('when program has flag then option removed', () => {
+    const program = createProgram();
+    const result = program.parseOptions('--global-flag'.split(' '));
+    expect(result).toEqual({ operands: [], unknown: [] });
+  });
+
+  test('when program has option with value then option removed', () => {
+    const program = createProgram();
+    const result = program.parseOptions('--global-value foo'.split(' '));
+    expect(result).toEqual({ operands: [], unknown: [] });
+  });
+
+  test('when program has flag before operand then option removed', () => {
+    const program = createProgram();
+    const result = program.parseOptions('--global-flag arg'.split(' '));
+    expect(result).toEqual({ operands: ['arg'], unknown: [] });
+  });
+
+  test('when program has flag after operand then option removed', () => {
+    const program = createProgram();
+    const result = program.parseOptions('arg --global-flag'.split(' '));
+    expect(result).toEqual({ operands: ['arg'], unknown: [] });
+  });
+
+  test('when program has flag after subcommand then option removed', () => {
+    const program = createProgram();
+    const result = program.parseOptions('sub --global-flag'.split(' '));
+    expect(result).toEqual({ operands: ['sub'], unknown: [] });
+  });
+
+  test('when program has unknown option then option returned in unknown', () => {
+    const program = createProgram();
+    const result = program.parseOptions('--unknown'.split(' '));
+    expect(result).toEqual({ operands: [], unknown: ['--unknown'] });
+  });
+
+  test('when program has unknown option before operands then all unknown in same order', () => {
+    const program = createProgram();
+    const result = program.parseOptions('--unknown arg'.split(' '));
+    expect(result).toEqual({ operands: [], unknown: ['--unknown', 'arg'] });
+  });
+
+  test('when program has unknown option after operand then option returned in unknown', () => {
+    const program = createProgram();
+    const result = program.parseOptions('arg --unknown'.split(' '));
+    expect(result).toEqual({ operands: ['arg'], unknown: ['--unknown'] });
+  });
+
+  test('when program has flag after unknown option then flag removed', () => {
+    const program = createProgram();
+    const result = program.parseOptions('--unknown --global-flag'.split(' '));
+    expect(result).toEqual({ operands: [], unknown: ['--unknown'] });
+  });
+
+  test('when subcommand has flag then flag returned as unknown', () => {
+    const program = createProgram();
+    const result = program.parseOptions('sub --sub-flag'.split(' '));
+    expect(result).toEqual({ operands: ['sub'], unknown: ['--sub-flag'] });
+  });
+
+  test('when program has literal before known flag then option returned as operand', () => {
+    const program = createProgram();
+    const result = program.parseOptions('-- --global-flag'.split(' '));
+    expect(result).toEqual({ operands: ['--global-flag'], unknown: [] });
+  });
+
+  test('when program has literal before unknown option then option returned as operand', () => {
+    const program = createProgram();
+    const result = program.parseOptions('-- --unknown uuu'.split(' '));
+    expect(result).toEqual({ operands: ['--unknown', 'uuu'], unknown: [] });
+  });
+
+  test('when program has literal after unknown option then literal preserved too', () => {
+    const program = createProgram();
+    const result = program.parseOptions('--unknown1 -- --unknown2'.split(' '));
+    expect(result).toEqual({ operands: [], unknown: ['--unknown1', '--', '--unknown2'] });
+  });
+});
