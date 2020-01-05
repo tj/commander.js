@@ -129,6 +129,7 @@ function Command(name) {
   this._optionValues = {};
   this._storeOptionsAsProperties = true; // backwards compatible by default
   this._passCommandToAction = true; // backwards compatible by default
+  this._actionResults = [];
 
   this._helpFlags = '-h, --help';
   this._helpDescription = 'output usage information';
@@ -366,7 +367,13 @@ Command.prototype.action = function(fn) {
       actionArgs.push(args.slice(expectedArgsCount));
     }
 
-    fn.apply(self, actionArgs);
+    const actionResult = fn.apply(self, actionArgs);
+    // Remember result in case it is async. Assume parseAsync getting called on root.
+    let rootCommand = self;
+    while (rootCommand.parent) {
+      rootCommand = rootCommand.parent;
+    }
+    rootCommand._actionResults.push(actionResult);
   };
   var parent = this.parent || this;
   var name = parent === this ? '*' : this._name;
@@ -604,7 +611,7 @@ Command.prototype._getOptionValue = function(key) {
 };
 
 /**
- * Parse `argv`, settings options and invoking commands when defined.
+ * Parse `argv`, setting options and invoking commands when defined.
  *
  * @param {Array} argv
  * @return {Command} for chaining
@@ -686,6 +693,20 @@ Command.prototype.parse = function(argv) {
   }
 
   return result;
+};
+
+/**
+ * Parse `argv`, setting options and invoking commands when defined.
+ *
+ * Use parseAsync instead of parse if any of your action handlers are async. Returns a Promise.
+ *
+ * @param {Array} argv
+ * @return {Promise}
+ * @api public
+ */
+Command.prototype.parseAsync = function(argv) {
+  this.parse(argv);
+  return Promise.all(this._actionResults);
 };
 
 /**
