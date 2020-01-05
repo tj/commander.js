@@ -11,7 +11,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
 
 - [Commander.js](#commanderjs)
   - [Installation](#installation)
-  - [Declaring _program_ variable](#declaring-program-variable)
+  - [Declaring program variable](#declaring-program-variable)
   - [Options](#options)
     - [Common option types, boolean and value](#common-option-types-boolean-and-value)
     - [Default option value](#default-option-value)
@@ -33,7 +33,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
   - [Bits and pieces](#bits-and-pieces)
     - [Avoiding option name clashes](#avoiding-option-name-clashes)
     - [TypeScript](#typescript)
-    - [Node options such as `--harmony`](#node-options-such-as---harmony)
+    - [Node options such as --harmony](#node-options-such-as---harmony)
     - [Node debugging](#node-debugging)
     - [Override exit handling](#override-exit-handling)
   - [Examples](#examples)
@@ -109,7 +109,7 @@ pizza details:
 - cheese
 ```
 
-`program.parse(arguments)` processes the arguments, leaving any args not consumed by the options as the `program.args` array.
+`program.parse(arguments)` processes the arguments, leaving any args not consumed by the program options in the `program.args` array.
 
 ### Default option value
 
@@ -356,7 +356,7 @@ program
 program.parse(process.argv);
 ```
 
-The variadic argument is passed to the action handler as an array. (And this also applies to `program.args`.)
+The variadic argument is passed to the action handler as an array.
 
 ### Action handler (sub)commands
 
@@ -546,7 +546,7 @@ program.on('option:verbose', function () {
 
 // error on unknown commands
 program.on('command:*', function () {
-  console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
+  console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args[0]]);
   process.exit(1);
 });
 ```
