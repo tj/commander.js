@@ -35,7 +35,7 @@ test('when .action called with extra arguments then extras also passed to action
   expect(actionMock).toHaveBeenCalledWith('my-file', cmd, ['a']);
 });
 
-test('when .action on program with argument then action called', () => {
+test('when .action on program with required argument and argument supplied then action called', () => {
   const actionMock = jest.fn();
   const program = new commander.Command();
   program
@@ -43,6 +43,16 @@ test('when .action on program with argument then action called', () => {
     .action(actionMock);
   program.parse(['node', 'test', 'my-file']);
   expect(actionMock).toHaveBeenCalledWith('my-file', program);
+});
+
+test('when .action on program with required argument and argument not supplied then action not called', () => {
+  const actionMock = jest.fn();
+  const program = new commander.Command();
+  program
+    .arguments('<file>')
+    .action(actionMock);
+  program.parse(['node', 'test']);
+  expect(actionMock).not.toHaveBeenCalled();
 });
 
 // Changes made in #729 to call program action handler
@@ -75,7 +85,7 @@ test('when .action on program without optional argument supplied then action cal
   expect(actionMock).toHaveBeenCalledWith(undefined, program);
 });
 
-test('when .action on program with subcommand and program argument then program action called', () => {
+test('when .action on program with optional argument and subcommand and program argument then program action called', () => {
   const actionMock = jest.fn();
   const program = new commander.Command();
   program
@@ -87,4 +97,19 @@ test('when .action on program with subcommand and program argument then program 
   program.parse(['node', 'test', 'a']);
 
   expect(actionMock).toHaveBeenCalledWith('a', program);
+});
+
+// Changes made in #1062 to allow this case
+test('when .action on program with optional argument and subcommand and no program argument then program action called', () => {
+  const actionMock = jest.fn();
+  const program = new commander.Command();
+  program
+    .arguments('[file]')
+    .action(actionMock);
+  program
+    .command('subcommand');
+
+  program.parse(['node', 'test']);
+
+  expect(actionMock).toHaveBeenCalledWith(undefined, program);
 });
