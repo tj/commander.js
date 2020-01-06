@@ -11,7 +11,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
 
 - [Commander.js](#commanderjs)
   - [Installation](#installation)
-  - [Declaring _program_ variable](#declaring-program-variable)
+  - [Declaring program variable](#declaring-program-variable)
   - [Options](#options)
     - [Common option types, boolean and value](#common-option-types-boolean-and-value)
     - [Default option value](#default-option-value)
@@ -31,8 +31,9 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [.help(cb)](#helpcb)
   - [Custom event listeners](#custom-event-listeners)
   - [Bits and pieces](#bits-and-pieces)
+    - [Avoiding option name clashes](#avoiding-option-name-clashes)
     - [TypeScript](#typescript)
-    - [Node options such as `--harmony`](#node-options-such-as---harmony)
+    - [Node options such as --harmony](#node-options-such-as---harmony)
     - [Node debugging](#node-debugging)
     - [Override exit handling](#override-exit-handling)
   - [Examples](#examples)
@@ -69,6 +70,8 @@ For larger programs which may use commander in multiple ways, including unit tes
 Options are defined with the `.option()` method, also serving as documentation for the options. Each option can have a short flag (single character) and a long name, separated by a comma or space.
 
 The options can be accessed as properties on the Command object. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc. Multiple short flags may be combined as a single arg, for example `-abc` is equivalent to `-a -b -c`.
+
+See also optional new behaviour to [avoid name clashes](#avoiding-option-name-clashes).
 
 ### Common option types, boolean and value
 
@@ -374,6 +377,19 @@ program
 program.parse(process.argv)
 ```
 
+You may supply an `async` action handler, in which case you call `.parseAsync` rather than `.parse`.
+
+```js
+async function run() { /* code goes here */ }
+
+async function main() {
+  program
+    .command('run')
+    .action(run);
+  await program.parseAsync(process.argv);
+}
+```
+
 A command's options on the command line are validated when the command is used. Any unknown options will be reported as an error. However, if an action-based command does not define an action, then the options are not validated.
 
 Configuration options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the command from the generated help output.
@@ -550,6 +566,43 @@ program.on('command:*', function () {
 
 ## Bits and pieces
 
+### Avoiding option name clashes
+
+The original and default behaviour is that the option values are stored
+as properties on the program, and the action handler is passed a
+command object with the options values stored as properties.
+This is very convenient to code, but the downside is possible clashes with
+existing properties of Command.
+
+There are two new routines to change the behaviour, and the default behaviour may change in the future:
+
+- `storeOptionsAsProperties`: whether to store option values as properties on command object, or store separately (specify false) and access using `.opts()`
+- `passCommandToAction`: whether to pass command to action handler,
+or just the options (specify false)
+
+```js
+// file: ./examples/storeOptionsAsProperties.action.js
+program
+  .storeOptionsAsProperties(false)
+  .passCommandToAction(false);
+
+program
+  .name('my-program-name')
+  .option('-n,--name <name>');
+
+program
+  .command('show')
+  .option('-a,--action <action>')
+  .action((options) => {
+    console.log(options.action);
+  });
+
+program.parse(process.argv);
+
+const programOptions = program.opts();
+console.log(programOptions.name);
+```
+
 ### TypeScript
 
 The Commander package includes its TypeScript Definition file, but also requires the node types which you need to install yourself. e.g.
@@ -648,7 +701,8 @@ More Demos can be found in the [examples](https://github.com/tj/commander.js/tre
 
 ## Support
 
-Commander is supported on Node 8 and above. (Commander is likely to still work on older versions of Node, but is not tested below Node 8.)
+Commander 4.x is supported on Node 8 and above, and is likely to work with Node 6 but not tested.
+(For versions of Node below Node 6, use Commander 3.x or 2.x.)
 
 The main forum for free and community support is the project [Issues](https://github.com/tj/commander.js/issues) on GitHub.
 

@@ -1,7 +1,5 @@
-// Type definitions for commander 2.11
-// Project: https://github.com/visionmedia/commander.js
-// Definitions by: Alan Agius <https://github.com/alan-agius4>, Marcelo Dezem <https://github.com/mdezem>, vvakame <https://github.com/vvakame>, Jules Randolph <https://github.com/sveinburne>
-// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
+// Type definitions for commander
+// Original definitions by: Alan Agius <https://github.com/alan-agius4>, Marcelo Dezem <https://github.com/mdezem>, vvakame <https://github.com/vvakame>, Jules Randolph <https://github.com/sveinburne>
 
 ///<reference types="node" />
 
@@ -39,7 +37,6 @@ declare namespace commander {
      * which will print the version number when passed.
      * 
      * You can optionally supply the  flags and description to override the defaults.
-     *
      */
     version(str: string, flags?: string, description?: string): Command;
 
@@ -87,8 +84,7 @@ declare namespace commander {
     /**
      * Define argument syntax for the top-level command.
      *
-     * @param {string} desc
-     * @returns {Command} for chaining
+     * @returns Command for chaining
      */
     arguments(desc: string): Command;
 
@@ -97,8 +93,7 @@ declare namespace commander {
      *
      * For example `["[type]"]` becomes `[{ required: false, name: 'type' }]`.
      *
-     * @param {string[]} args
-     * @returns {Command} for chaining
+     * @returns Command for chaining
      */
      parseExpectedArgs(args: string[]): Command;
 
@@ -118,8 +113,7 @@ declare namespace commander {
      *           // output help here
      *        });
      *
-     * @param {(...args: any[]) => void} fn
-     * @returns {Command} for chaining
+     * @returns Command for chaining
      */
     action(fn: (...args: any[]) => void): Command;
 
@@ -163,11 +157,7 @@ declare namespace commander {
      *     // optional argument
      *     program.option('-c, --cheese [type]', 'add cheese [marble]');
      *
-     * @param {string} flags
-     * @param {string} [description]
-     * @param {((arg1: any, arg2: any) => void) | RegExp} [fn] function or default
-     * @param {*} [defaultValue]
-     * @returns {Command} for chaining
+     * @returns Command for chaining
      */
     option(flags: string, description?: string, fn?: ((arg1: any, arg2: any) => void) | RegExp, defaultValue?: any): Command;
     option(flags: string, description?: string, defaultValue?: any): Command;
@@ -181,77 +171,98 @@ declare namespace commander {
     requiredOption(flags: string, description?: string, fn?: ((arg1: any, arg2: any) => void) | RegExp, defaultValue?: any): Command;
     requiredOption(flags: string, description?: string, defaultValue?: any): Command;
 
+
+    /**
+     * Whether to store option values as properties on command object,
+     * or store separately (specify false). In both cases the option values can be accessed using .opts().
+     *
+     * @return Command for chaining
+     */
+    storeOptionsAsProperties(value?: boolean): Command;
+
+    /**
+     * Whether to pass command to action handler,
+     * or just the options (specify false).
+     * 
+     * @return Command for chaining
+     */
+    passCommandToAction(value?: boolean): Command;
+
     /**
      * Allow unknown options on the command line.
      *
-     * @param {boolean} [arg] if `true` or omitted, no error will be thrown for unknown options.
-     * @returns {Command} for chaining
+     * @param [arg] if `true` or omitted, no error will be thrown for unknown options.
+     * @returns Command for chaining
      */
     allowUnknownOption(arg?: boolean): Command;
 
     /**
-     * Parse `argv`, settings options and invoking commands when defined.
+     * Parse `argv`, setting options and invoking commands when defined.
      *
-     * @param {string[]} argv
-     * @returns {Command} for chaining
+     * @returns Command for chaining
      */
     parse(argv: string[]): Command;
 
     /**
-     * Parse options from `argv` returning `argv` void of these options.
+     * Parse `argv`, setting options and invoking commands when defined.
+     * 
+     * Use parseAsync instead of parse if any of your action handlers are async. Returns a Promise.
      *
-     * @param {string[]} argv
-     * @returns {ParseOptionsResult}
+     * @returns Promise
+     */
+    parseAsync(argv: string[]): Promise<any>;
+
+    /**
+     * Parse options from `argv` returning `argv` void of these options.
      */
     parseOptions(argv: string[]): commander.ParseOptionsResult;
 
     /**
      * Return an object containing options as key-value pairs
-     *
-     * @returns {{[key: string]: any}}
      */
     opts(): { [key: string]: any };
 
     /**
-     * Set the description to `str`.
-     *
-     * @param {string} str
-     * @param {{[argName: string]: string}} argsDescription
-     * @return {(Command | string)}
+     * Set the description.
+     * 
+     * @returns Command for chaining
      */
     description(str: string, argsDescription?: {[argName: string]: string}): Command;
+    /**
+     * Get the description.
+     */
     description(): string;
 
     /**
      * Set an alias for the command.
-     *
-     * @param {string} alias
-     * @return {(Command | string)}
+     * 
+     * @returns Command for chaining
      */
     alias(alias: string): Command;
+    /**
+     * Get alias for the command.
+     */
     alias(): string;
 
     /**
-     * Set or get the command usage.
-     *
-     * @param {string} str
-     * @return {(Command | string)}
+     * Set the command usage.
+     * 
+     * @returns Command for chaining
      */
     usage(str: string): Command;
+    /**
+     * Get the command usage.
+     */
     usage(): string;
 
     /**
      * Set the name of the command.
-     *
-     * @param {string} str
-     * @return {Command}
+     * 
+     * @returns Command for chaining
      */
     name(str: string): Command;
-
     /**
      * Get the name of the command.
-     *
-     * @return {string}
      */
     name(): string;
 
@@ -260,8 +271,6 @@ declare namespace commander {
      *
      * When listener(s) are available for the helpLongFlag
      * those callbacks are invoked.
-     * 
-     * @param {(str: string) => string} [cb]
      */
     outputHelp(cb?: (str: string) => string): void;
 

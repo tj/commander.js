@@ -115,7 +115,7 @@ exports.CommanderError = CommanderError;
 /**
  * Initialize a new `Command`.
  *
- * @param {String} name
+ * @param {String} [name]
  * @api public
  */
 
@@ -126,6 +126,10 @@ function Command(name) {
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
+  this._optionValues = {};
+  this._storeOptionsAsProperties = true; // backwards compatible by default
+  this._passCommandToAction = true; // backwards compatible by default
+  this._actionResults = [];
 
   this._helpFlags = '-h, --help';
   this._helpDescription = 'output usage information';
@@ -151,7 +155,7 @@ function Command(name) {
  *      // Command implemented using separate executable file (description is second parameter to `.command`)
  *      program
  *        .command('start <service>', 'start named service')
- *        .command('stop [service]', 'stop named serice, or all if no name supplied');
+ *        .command('stop [service]', 'stop named service, or all if no name supplied');
  *
  * @param {string} nameAndArgs - command name and arguments, args are `<required>` or `[optional]` and last may also be `variadic...`
  * @param {Object|string} [actionOptsOrExecDesc] - configuration options (for action), or description (for executable)
@@ -183,6 +187,8 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
   cmd._helpShortFlag = this._helpShortFlag;
   cmd._helpLongFlag = this._helpLongFlag;
   cmd._exitCallback = this._exitCallback;
+  cmd._storeOptionsAsProperties = this._storeOptionsAsProperties;
+  cmd._passCommandToAction = this._passCommandToAction;
 
   cmd._executableFile = opts.executableFile; // Custom name for executable file
   this.commands.push(cmd);
@@ -323,7 +329,7 @@ Command.prototype.action = function(fn) {
     var parsed = self.parseOptions(unknown);
 
     // Output help if necessary
-    outputHelpIfNecessary(self, parsed.unknown);
+    outputHelpIfRequested(self, parsed.unknown);
     self._checkForMissingMandatoryOptions();
 
     // If there are still any unknown options, then we simply
@@ -351,13 +357,23 @@ Command.prototype.action = function(fn) {
     // The .action callback takes an extra parameter which is the command itself.
     var expectedArgsCount = self._args.length;
     var actionArgs = args.slice(0, expectedArgsCount);
-    actionArgs[expectedArgsCount] = self;
+    if (self._passCommandToAction) {
+      actionArgs[expectedArgsCount] = self;
+    } else {
+      actionArgs[expectedArgsCount] = self.opts();
+    }
     // Add the extra arguments so available too.
     if (args.length > expectedArgsCount) {
       actionArgs.push(args.slice(expectedArgsCount));
     }
 
-    fn.apply(self, actionArgs);
+    const actionResult = fn.apply(self, actionArgs);
+    // Remember result in case it is async. Assume parseAsync getting called on root.
+    let rootCommand = self;
+    while (rootCommand.parent) {
+      rootCommand = rootCommand.parent;
+    }
+    rootCommand._actionResults.push(actionResult);
   };
   var parent = this.parent || this;
   var name = parent === this ? '*' : this._name;
@@ -405,12 +421,12 @@ Command.prototype._optionEx = function(config, flags, description, fn, defaultVa
   if (option.negate || option.optional || option.required || typeof defaultValue === 'boolean') {
     // when --no-foo we make sure default is true, unless a --foo option is already defined
     if (option.negate) {
-      var opts = self.opts();
-      defaultValue = Object.prototype.hasOwnProperty.call(opts, name) ? opts[name] : true;
+      const positiveLongFlag = option.long.replace(/^--no-/, '--');
+      defaultValue = self.optionFor(positiveLongFlag) ? self._getOptionValue(name) : true;
     }
     // preassign only if we have a default
     if (defaultValue !== undefined) {
-      self[name] = defaultValue;
+      self._setOptionValue(name, defaultValue);
       option.defaultValue = defaultValue;
     }
   }
@@ -423,22 +439,22 @@ Command.prototype._optionEx = function(config, flags, description, fn, defaultVa
   this.on('option:' + oname, function(val) {
     // coercion
     if (val !== null && fn) {
-      val = fn(val, self[name] === undefined ? defaultValue : self[name]);
+      val = fn(val, self._getOptionValue(name) === undefined ? defaultValue : self._getOptionValue(name));
     }
 
     // unassigned or boolean value
-    if (typeof self[name] === 'boolean' || typeof self[name] === 'undefined') {
+    if (typeof self._getOptionValue(name) === 'boolean' || typeof self._getOptionValue(name) === 'undefined') {
       // if no value, negate false, and we have a default, then use it!
       if (val == null) {
-        self[name] = option.negate
+        self._setOptionValue(name, option.negate
           ? false
-          : defaultValue || true;
+          : defaultValue || true);
       } else {
-        self[name] = val;
+        self._setOptionValue(name, val);
       }
     } else if (val !== null) {
       // reassign
-      self[name] = option.negate ? false : val;
+      self._setOptionValue(name, option.negate ? false : val);
     }
   });
 
@@ -532,7 +548,70 @@ Command.prototype.allowUnknownOption = function(arg) {
 };
 
 /**
- * Parse `argv`, settings options and invoking commands when defined.
+  * Whether to store option values as properties on command object,
+  * or store separately (specify false). In both cases the option values can be accessed using .opts().
+  *
+  * @param {boolean} value
+  * @return {Command} Command for chaining
+  * @api public
+  */
+
+Command.prototype.storeOptionsAsProperties = function(value) {
+  this._storeOptionsAsProperties = (value === undefined) || value;
+  if (this.options.length) {
+    // This is for programmer, not end user.
+    console.error('Commander usage error: call storeOptionsAsProperties before adding options');
+  }
+  return this;
+};
+
+/**
+  * Whether to pass command to action handler,
+  * or just the options (specify false).
+  *
+  * @param {boolean} value
+  * @return {Command} Command for chaining
+  * @api public
+  */
+
+Command.prototype.passCommandToAction = function(value) {
+  this._passCommandToAction = (value === undefined) || value;
+  return this;
+};
+
+/**
+ * Store option value
+ *
+ * @param {String} key
+ * @param {Object} value
+ * @api private
+ */
+
+Command.prototype._setOptionValue = function(key, value) {
+  if (this._storeOptionsAsProperties) {
+    this[key] = value;
+  } else {
+    this._optionValues[key] = value;
+  }
+};
+
+/**
+ * Retrieve option value
+ *
+ * @param {String} key
+ * @return {Object} value
+ * @api private
+ */
+
+Command.prototype._getOptionValue = function(key) {
+  if (this._storeOptionsAsProperties) {
+    return this[key];
+  }
+  return this._optionValues[key];
+};
+
+/**
+ * Parse `argv`, setting options and invoking commands when defined.
  *
  * @param {Array} argv
  * @return {Command} for chaining
@@ -617,12 +696,26 @@ Command.prototype.parse = function(argv) {
 };
 
 /**
+ * Parse `argv`, setting options and invoking commands when defined.
+ *
+ * Use parseAsync instead of parse if any of your action handlers are async. Returns a Promise.
+ *
+ * @param {Array} argv
+ * @return {Promise}
+ * @api public
+ */
+Command.prototype.parseAsync = function(argv) {
+  this.parse(argv);
+  return Promise.all(this._actionResults);
+};
+
+/**
  * Execute a sub-command executable.
  *
  * @param {Array} argv
  * @param {Array} args
  * @param {Array} unknown
- * @param {String} specifySubcommand
+ * @param {String} executableFile
  * @api private
  */
 
@@ -801,7 +894,7 @@ Command.prototype.parseArgs = function(args, unknown) {
       this.emit('command:*', args, unknown);
     }
   } else {
-    outputHelpIfNecessary(this, unknown);
+    outputHelpIfRequested(this, unknown);
 
     // If there were no args and we have unknown options,
     // then they are extraneous and we need to error.
@@ -843,7 +936,7 @@ Command.prototype._checkForMissingMandatoryOptions = function() {
   // Walk up hierarchy so can call from action handler after checking for displaying help.
   for (var cmd = this; cmd; cmd = cmd.parent) {
     cmd.options.forEach((anOption) => {
-      if (anOption.mandatory && (cmd[anOption.attributeName()] === undefined)) {
+      if (anOption.mandatory && (cmd._getOptionValue(anOption.attributeName()) === undefined)) {
         cmd.missingMandatoryOptionValue(anOption);
       }
     });
@@ -855,7 +948,7 @@ Command.prototype._checkForMissingMandatoryOptions = function() {
  * void of these options.
  *
  * @param {Array} argv
- * @return {Array}
+ * @return {{args: Array, unknown: Array}}
  * @api public
  */
 
@@ -936,14 +1029,19 @@ Command.prototype.parseOptions = function(argv) {
  * @api public
  */
 Command.prototype.opts = function() {
-  var result = {},
-    len = this.options.length;
+  if (this._storeOptionsAsProperties) {
+    // Preserve original behaviour so backwards compatible when still using properties
+    var result = {},
+      len = this.options.length;
 
-  for (var i = 0; i < len; i++) {
-    var key = this.options[i].attributeName();
-    result[key] = key === this._versionOptionName ? this._version : this[key];
+    for (var i = 0; i < len; i++) {
+      var key = this.options[i].attributeName();
+      result[key] = key === this._versionOptionName ? this._version : this[key];
+    }
+    return result;
   }
-  return result;
+
+  return this._optionValues;
 };
 
 /**
@@ -962,8 +1060,8 @@ Command.prototype.missingArgument = function(name) {
 /**
  * `Option` is missing an argument, but received `flag` or nothing.
  *
- * @param {String} option
- * @param {String} flag
+ * @param {Option} option
+ * @param {String} [flag]
  * @api private
  */
 
@@ -981,7 +1079,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
 /**
  * `Option` does not have a value, and is a mandatory option.
  *
- * @param {String} option
+ * @param {Option} option
  * @api private
  */
 
@@ -1041,9 +1139,10 @@ Command.prototype.version = function(str, flags, description) {
   var versionOption = new Option(flags, description);
   this._versionOptionName = versionOption.long.substr(2) || 'version';
   this.options.push(versionOption);
+  var self = this;
   this.on('option:' + this._versionOptionName, function() {
     process.stdout.write(str + '\n');
-    this._exit(0, 'commander.version', str);
+    self._exit(0, 'commander.version', str);
   });
   return this;
 };
@@ -1052,7 +1151,7 @@ Command.prototype.version = function(str, flags, description) {
  * Set the description to `str`.
  *
  * @param {String} str
- * @param {Object} argsDescription
+ * @param {Object} [argsDescription]
  * @return {String|Command}
  * @api public
  */
@@ -1089,7 +1188,7 @@ Command.prototype.alias = function(alias) {
 /**
  * Set / get the command usage `str`.
  *
- * @param {String} str
+ * @param {String} [str]
  * @return {String|Command}
  * @api public
  */
@@ -1112,7 +1211,7 @@ Command.prototype.usage = function(str) {
 /**
  * Get or set the name of the command
  *
- * @param {String} str
+ * @param {String} [str]
  * @return {String|Command}
  * @api public
  */
@@ -1429,7 +1528,7 @@ function wrap(str, width, indent) {
     if (line.slice(-1) === '\n') {
       line = line.slice(0, line.length - 1);
     }
-    return ((i > 0 && indent) ? Array(indent + 1).join(' ') : '') + line;
+    return ((i > 0 && indent) ? Array(indent + 1).join(' ') : '') + line.trimRight();
   }).join('\n');
 }
 
@@ -1456,14 +1555,14 @@ function optionalWrap(str, width, indent) {
 }
 
 /**
- * Output help information if necessary
+ * Output help information if help flags specified
  *
- * @param {Command} command to output help for
- * @param {Array} array of options to search for -h or --help
+ * @param {Command} cmd - command to output help for
+ * @param {Array} options - array of options to search for -h or --help
  * @api private
  */
 
-function outputHelpIfNecessary(cmd, options) {
+function outputHelpIfRequested(cmd, options) {
   options = options || [];
 
   for (var i = 0; i < options.length; i++) {

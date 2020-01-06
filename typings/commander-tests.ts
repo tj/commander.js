@@ -10,6 +10,9 @@ const errorInstance = new program.CommanderError(1, 'code', 'message');
 
 const name = program.name();
 
+program.storeOptionsAsProperties(true);
+program.passCommandToAction(true);
+
 program
     .name('set name')
     .version('0.0.1')
@@ -129,5 +132,11 @@ program.exitOverride((err):void => {
 });
 
 program.parse(process.argv);
+
+program.parseAsync(process.argv).then(() => {
+  console.log('parseAsync success');
+}).catch(err => {
+  console.log('parseAsync failed');
+});
 
 console.log('stuff');
