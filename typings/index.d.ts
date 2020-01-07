@@ -197,11 +197,20 @@ declare namespace commander {
     allowUnknownOption(arg?: boolean): Command;
 
     /**
-     * Parse `argv`, settings options and invoking commands when defined.
+     * Parse `argv`, setting options and invoking commands when defined.
      *
-     * @returns {Command} for chaining
+     * @returns Command for chaining
      */
     parse(argv: string[]): Command;
+
+    /**
+     * Parse `argv`, setting options and invoking commands when defined.
+     * 
+     * Use parseAsync instead of parse if any of your action handlers are async. Returns a Promise.
+     *
+     * @returns Promise
+     */
+    parseAsync(argv: string[]): Promise<any>;
 
     /**
      * Parse options from `argv` returning `argv` void of these options.

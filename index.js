@@ -117,7 +117,7 @@ exports.CommanderError = CommanderError;
 /**
  * Initialize a new `Command`.
  *
- * @param {String} name
+ * @param {String} [name]
  * @api public
  */
 
@@ -131,6 +131,7 @@ function Command(name) {
   this._optionValues = {};
   this._storeOptionsAsProperties = true; // backwards compatible by default
   this._passCommandToAction = true; // backwards compatible by default
+  this._actionResults = [];
 
   this._helpFlags = '-h, --help';
   this._helpDescription = 'output usage information';
@@ -330,7 +331,7 @@ Command.prototype.action = function(fn) {
     var parsed = self.parseOptions(unknown);
 
     // Output help if necessary
-    outputHelpIfNecessary(self, parsed.unknown);
+    outputHelpIfRequested(self, parsed.unknown);
     self._checkForMissingMandatoryOptions();
 
     // If there are still any unknown options, then we simply
@@ -368,7 +369,13 @@ Command.prototype.action = function(fn) {
       actionArgs.push(args.slice(expectedArgsCount));
     }
 
-    fn.apply(self, actionArgs);
+    const actionResult = fn.apply(self, actionArgs);
+    // Remember result in case it is async. Assume parseAsync getting called on root.
+    let rootCommand = self;
+    while (rootCommand.parent) {
+      rootCommand = rootCommand.parent;
+    }
+    rootCommand._actionResults.push(actionResult);
   };
   var parent = this.parent || this;
   if (parent === this) {
@@ -610,7 +617,7 @@ Command.prototype._getOptionValue = function(key) {
 };
 
 /**
- * Parse `argv`, settings options and invoking commands when defined.
+ * Parse `argv`, setting options and invoking commands when defined.
  *
  * @param {Array} argv
  * @return {Command} for chaining
@@ -695,12 +702,26 @@ Command.prototype.parse = function(argv) {
 };
 
 /**
+ * Parse `argv`, setting options and invoking commands when defined.
+ *
+ * Use parseAsync instead of parse if any of your action handlers are async. Returns a Promise.
+ *
+ * @param {Array} argv
+ * @return {Promise}
+ * @api public
+ */
+Command.prototype.parseAsync = function(argv) {
+  this.parse(argv);
+  return Promise.all(this._actionResults);
+};
+
+/**
  * Execute a sub-command executable.
  *
  * @param {Array} argv
  * @param {Array} args
  * @param {Array} unknown
- * @param {String} specifySubcommand
+ * @param {String} executableFile
  * @api private
  */
 
@@ -880,7 +901,8 @@ Command.prototype.parseArgs = function(args, unknown) {
       this.emit('command:*', args, unknown);
     }
   } else {
-    outputHelpIfNecessary(this, unknown);
+    outputHelpIfRequested(this, unknown);
+
     // If there were no args and we have unknown options,
     // then they are extraneous and we need to error.
     if (unknown.length > 0 && !this.defaultExecutable) {
@@ -933,7 +955,7 @@ Command.prototype._checkForMissingMandatoryOptions = function() {
  * void of these options.
  *
  * @param {Array} argv
- * @return {Array}
+ * @return {{args: Array, unknown: Array}}
  * @api public
  */
 
@@ -1045,8 +1067,8 @@ Command.prototype.missingArgument = function(name) {
 /**
  * `Option` is missing an argument, but received `flag` or nothing.
  *
- * @param {String} option
- * @param {String} flag
+ * @param {Option} option
+ * @param {String} [flag]
  * @api private
  */
 
@@ -1064,7 +1086,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
 /**
  * `Option` does not have a value, and is a mandatory option.
  *
- * @param {String} option
+ * @param {Option} option
  * @api private
  */
 
@@ -1136,7 +1158,7 @@ Command.prototype.version = function(str, flags, description) {
  * Set the description to `str`.
  *
  * @param {String} str
- * @param {Object} argsDescription
+ * @param {Object} [argsDescription]
  * @return {String|Command}
  * @api public
  */
@@ -1173,7 +1195,7 @@ Command.prototype.alias = function(alias) {
 /**
  * Set / get the command usage `str`.
  *
- * @param {String} str
+ * @param {String} [str]
  * @return {String|Command}
  * @api public
  */
@@ -1196,7 +1218,7 @@ Command.prototype.usage = function(str) {
 /**
  * Get or set the name of the command
  *
- * @param {String} str
+ * @param {String} [str]
  * @return {String|Command}
  * @api public
  */
@@ -1540,14 +1562,14 @@ function optionalWrap(str, width, indent) {
 }
 
 /**
- * Output help information if necessary
+ * Output help information if help flags specified
  *
- * @param {Command} command to output help for
- * @param {Array} array of options to search for -h or --help
+ * @param {Command} cmd - command to output help for
+ * @param {Array} options - array of options to search for -h or --help
  * @api private
  */
 
-function outputHelpIfNecessary(cmd, options) {
+function outputHelpIfRequested(cmd, options) {
   options = options || [];
 
   for (var i = 0; i < options.length; i++) {

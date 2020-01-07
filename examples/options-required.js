@@ -10,7 +10,8 @@
 // $ pizza
 // error: required option '-c, --cheese <type>' not specified
 
-const commander = require('..'); // For running direct from git clone of commander repo
+// const commander = require('commander'); // (normal include)
+const commander = require('../'); // include commander in git clone of commander repo
 const program = new commander.Command();
 
 program

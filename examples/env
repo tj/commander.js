@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-var program = require('../');
+// const program = require('commander'); // (normal include)
+const program = require('../'); // include commander in git clone of commander repo
 
 let cmdValue;
 let envValue;
