@@ -417,6 +417,7 @@ program
 [#1118]: https://github.com/tj/commander.js/pull/1118
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[4.1.0]: https://github.com/tj/commander.js/compare/v4.1.0..v4.0.1
 [4.0.1]: https://github.com/tj/commander.js/compare/v4.0.0..v4.0.1
 [4.0.0]: https://github.com/tj/commander.js/compare/v3.0.2..v4.0.0
 [4.0.0-1]: https://github.com/tj/commander.js/compare/v4.0.0-0..v4.0.0-1
