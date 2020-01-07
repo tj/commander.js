@@ -15,7 +15,8 @@
 // $ pizza-options --no-sauce --no-cheese
 // You ordered a pizza with no sauce and no cheese
 
-const commander = require('../');
+// const commander = require('commander'); // (normal include)
+const commander = require('../'); // include commander in git clone of commander repo
 const program = new commander.Command();
 
 program

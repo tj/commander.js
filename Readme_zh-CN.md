@@ -33,7 +33,7 @@
   - [零碎知识](#%e9%9b%b6%e7%a2%8e%e7%9f%a5%e8%af%86)
     - [避免选项命名冲突](#避免选项命名冲突)
     - [TypeScript](#typescript)
-    - [Node 选项例如 `--harmony`](#node-%e9%80%89%e9%a1%b9%e4%be%8b%e5%a6%82---harmony)
+    - [Node 选项例如 --harmony](#node-%e9%80%89%e9%a1%b9%e4%be%8b%e5%a6%82---harmony)
     - [Node 调试](#node-%e8%b0%83%e8%af%95)
     - [重载退出(exit)处理](#%e9%87%8d%e8%bd%bd%e9%80%80%e5%87%baexit%e5%a4%84%e7%90%86)
   - [例子](#%e4%be%8b%e5%ad%90)
@@ -371,6 +371,20 @@ program
 
 program.parse(process.argv)
 ```
+
+你可以自行实现一个`async`操作处理程序，同时调用`.parseAsync`代替`.parse`。
+
+```js
+async function run() { /* 在这里编写代码 */ }
+
+async function main() {
+  program
+    .command('run')
+    .action(run);
+  await program.parseAsync(process.argv);
+}
+```
+
 
 当一个命令在命令行上被使用时，它的选项必须是合法的。使用任何未知的选项会报错。然而如果一个基于操作的命令没有定义任何操作，那么这些选项是不合法的。
 

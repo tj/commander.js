@@ -1,10 +1,7 @@
 #!/usr/bin/env node
 
-/**
- * Module dependencies.
- */
-
-var program = require('../');
+// const program = require('commander'); // (normal include)
+const program = require('../'); // include commander in git clone of commander repo
 
 function list(val) {
   return val.split(',').map(Number);

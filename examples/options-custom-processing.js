@@ -17,7 +17,8 @@
 // $ custom --list x,y,z
 // [ 'x', 'y', 'z' ]
 
-const commander = require('../');
+// const commander = require('commander'); // (normal include)
+const commander = require('../'); // include commander in git clone of commander repo
 const program = new commander.Command();
 
 function myParseInt(value, dummyPrevious) {

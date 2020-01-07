@@ -377,6 +377,19 @@ program
 program.parse(process.argv)
 ```
 
+You may supply an `async` action handler, in which case you call `.parseAsync` rather than `.parse`.
+
+```js
+async function run() { /* code goes here */ }
+
+async function main() {
+  program
+    .command('run')
+    .action(run);
+  await program.parseAsync(process.argv);
+}
+```
+
 A command's options on the command line are validated when the command is used. Any unknown options will be reported as an error. However, if an action-based command does not define an action, then the options are not validated.
 
 Configuration options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the command from the generated help output.

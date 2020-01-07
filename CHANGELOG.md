@@ -7,12 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [4.1.0] (date goes here)
+## [4.1.0] (2020-01-06)
 
 ### Added
 
-- two routines to change how option values are handled, and avoid name clashes with command properties ([#1102])
+- two routines to change how option values are handled, and eliminate name clashes with command properties ([#933] [#1102])
   - see storeOptionsAsProperties and passCommandToAction in README
+- `.parseAsync` to use instead of `.parse` if supply async action handlers ([#806] [#1118])
 
 ### Fixed
 
@@ -25,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - improvements to README
 - improvements to TypeScript definition documentation
 - move old versions out of main CHANGELOG
+- removed explicit use of `ts-node` in tests
 
 ## [4.0.1] (2019-11-12)
 
@@ -383,6 +385,7 @@ program
 [#611]: https://github.com/tj/commander.js/issues/611
 [#697]: https://github.com/tj/commander.js/issues/697
 [#795]: https://github.com/tj/commander.js/issues/795
+[#806]: https://github.com/tj/commander.js/issues/806
 [#915]: https://github.com/tj/commander.js/issues/915
 [#938]: https://github.com/tj/commander.js/issues/938
 [#963]: https://github.com/tj/commander.js/issues/963
@@ -391,6 +394,7 @@ program
 [#987]: https://github.com/tj/commander.js/issues/987
 [#990]: https://github.com/tj/commander.js/issues/990
 [#991]: https://github.com/tj/commander.js/issues/991
+[#993]: https://github.com/tj/commander.js/issues/993
 [#999]: https://github.com/tj/commander.js/issues/999
 [#1010]: https://github.com/tj/commander.js/pull/1010
 [#1018]: https://github.com/tj/commander.js/pull/1018
@@ -410,8 +414,10 @@ program
 [#1091]: https://github.com/tj/commander.js/pull/1091
 [#1096]: https://github.com/tj/commander.js/pull/1096
 [#1102]: https://github.com/tj/commander.js/pull/1102
+[#1118]: https://github.com/tj/commander.js/pull/1118
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[4.1.0]: https://github.com/tj/commander.js/compare/v4.0.1..v4.1.0
 [4.0.1]: https://github.com/tj/commander.js/compare/v4.0.0..v4.0.1
 [4.0.0]: https://github.com/tj/commander.js/compare/v3.0.2..v4.0.0
 [4.0.0-1]: https://github.com/tj/commander.js/compare/v4.0.0-0..v4.0.0-1
