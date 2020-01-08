@@ -245,64 +245,56 @@ describe('Utility Conventions', () => {
 
   test('when program has combo known boolean short flags then arg removed', () => {
     const program = createProgram();
-    const normalized = program.normalize(['-ab']);
-    const result = program.parseOptions(normalized);
+    const result = program.parseOptions(['-ab']);
     expect(result).toEqual({ operands: [], unknown: [] });
     expect(program.opts()).toEqual({ aaa: true, bbb: true });
   });
 
   test('when program has combo unknown short flags then arg preserved', () => {
     const program = createProgram();
-    const normalized = program.normalize(['-pq']);
-    const result = program.parseOptions(normalized);
+    const result = program.parseOptions(['-pq']);
     expect(result).toEqual({ operands: [], unknown: ['-pq'] });
     expect(program.opts()).toEqual({ });
   });
 
   test('when program has combo known short option and required value then arg removed', () => {
     const program = createProgram();
-    const normalized = program.normalize(['-cvalue']);
-    const result = program.parseOptions(normalized);
+    const result = program.parseOptions(['-cvalue']);
     expect(result).toEqual({ operands: [], unknown: [] });
     expect(program.opts()).toEqual({ ccc: 'value' });
   });
 
   test('when program has combo known short option and optional value then arg removed', () => {
     const program = createProgram();
-    const normalized = program.normalize(['-dvalue']);
-    const result = program.parseOptions(normalized);
+    const result = program.parseOptions(['-dvalue']);
     expect(result).toEqual({ operands: [], unknown: [] });
     expect(program.opts()).toEqual({ ddd: 'value' });
   });
 
   test('when program has known combo short boolean flags and required value then arg removed', () => {
     const program = createProgram();
-    const normalized = program.normalize(['-abcvalue']);
-    const result = program.parseOptions(normalized);
+    const result = program.parseOptions(['-abcvalue']);
     expect(result).toEqual({ operands: [], unknown: [] });
     expect(program.opts()).toEqual({ aaa: true, bbb: true, ccc: 'value' });
   });
 
   test('when program has known combo short boolean flags and optional value then arg removed', () => {
     const program = createProgram();
-    const normalized = program.normalize(['-abdvalue']);
-    const result = program.parseOptions(normalized);
+    const result = program.parseOptions(['-abdvalue']);
     expect(result).toEqual({ operands: [], unknown: [] });
     expect(program.opts()).toEqual({ aaa: true, bbb: true, ddd: 'value' });
   });
 
   test('when program has known long flag=value then arg removed', () => {
     const program = createProgram();
-    const normalized = program.normalize(['--ccc=value']);
-    const result = program.parseOptions(normalized);
+    const result = program.parseOptions(['--ccc=value']);
     expect(result).toEqual({ operands: [], unknown: [] });
     expect(program.opts()).toEqual({ ccc: 'value' });
   });
 
   test('when program has unknown long flag=value then arg preserved', () => {
     const program = createProgram();
-    const normalized = program.normalize(['--rrr=value']);
-    const result = program.parseOptions(normalized);
+    const result = program.parseOptions(['--rrr=value']);
     expect(result).toEqual({ operands: [], unknown: ['--rrr=value'] });
     expect(program.opts()).toEqual({ });
   });
