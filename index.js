@@ -911,36 +911,41 @@ Command.prototype.parseOptions = function(argv) {
   let dest = operands;
   const args = argv.slice();
 
+  function maybeOption(arg) {
+    return arg.length > 1 && arg[0] === '-';
+  }
+
   // parse options
   while (args.length) {
     const arg = args.shift();
 
+    // literal
     if (arg === '--') {
       if (dest === unknown) dest.push(arg);
       dest.push(...args);
       break;
     }
 
-    // find matching Option
-    const option = this.optionFor(arg);
-
-    // recognised option, call listener to assign value with possible custom processing
-    if (option) {
-      if (option.required) {
-        const value = args.shift();
-        if (value === undefined) this.optionMissingArgument(option);
-        this.emit('option:' + option.name(), value);
-      } else if (option.optional) {
-        let value = null;
-        // historical behaviour is value is following arg unless an option
-        if (args.length && (args[0][0] !== '-' || args[0] === '-')) {
-          value = args.shift();
+    if (maybeOption(arg)) {
+      const option = this.optionFor(arg);
+      // recognised option, call listener to assign value with possible custom processing
+      if (option) {
+        if (option.required) {
+          const value = args.shift();
+          if (value === undefined) this.optionMissingArgument(option);
+          this.emit('option:' + option.name(), value);
+        } else if (option.optional) {
+          let value = null;
+          // historical behaviour is optional value is following arg unless an option
+          if (args.length > 0 && !maybeOption(args[0])) {
+            value = args.shift();
+          }
+          this.emit('option:' + option.name(), value);
+        } else { // boolean flag
+          this.emit('option:' + option.name());
         }
-        this.emit('option:' + option.name(), value);
-      } else { // boolean flag
-        this.emit('option:' + option.name());
+        continue;
       }
-      continue;
     }
 
     // Look for combo options following single dash, eat first one if known.
