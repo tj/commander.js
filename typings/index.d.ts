@@ -294,7 +294,7 @@ declare namespace commander {
      *         console.log('See web site for more information.');
      *     });
      */
-    on(event: string, listener: (...args: any[]) => void): Command;
+    on(event: string | symbol, listener: (...args: any[]) => void): Command;
   }
   type CommandConstructor = { new (name?: string): Command };
 
