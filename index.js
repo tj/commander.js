@@ -933,16 +933,16 @@ Command.prototype.parseOptions = function(argv) {
         if (option.required) {
           const value = args.shift();
           if (value === undefined) this.optionMissingArgument(option);
-          this.emit('option:' + option.name(), value);
+          this.emit(`option:${option.name()}`, value);
         } else if (option.optional) {
           let value = null;
           // historical behaviour is optional value is following arg unless an option
           if (args.length > 0 && !maybeOption(args[0])) {
             value = args.shift();
           }
-          this.emit('option:' + option.name(), value);
+          this.emit(`option:${option.name()}`, value);
         } else { // boolean flag
-          this.emit('option:' + option.name());
+          this.emit(`option:${option.name()}`);
         }
         continue;
       }
