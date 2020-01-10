@@ -7,20 +7,6 @@ const path = require('path');
 
 // Tests created from reported bugs
 describe('regression tests', () => {
-  // https://github.com/tj/commander.js/issues/1039
-  // https://github.com/tj/commander.js/issues/561
-  test('when unknown option and multiple arguments then unknown option detected', () => {
-    // Optional. Use internal knowledge to suppress output to keep test output clean.
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
-    const program = new commander.Command();
-    program
-      .exitOverride();
-    expect(() => {
-      program.parse(['node', 'text', '--bug', '0', '1', '2', '3']);
-    }).toThrow();
-    consoleErrorSpy.mockRestore();
-  });
-
   // https://github.com/tj/commander.js/issues/1032
   function createProgram1032() {
     const program = new commander.Command();
