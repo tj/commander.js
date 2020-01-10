@@ -78,6 +78,8 @@ You can use `--` to indicate the end of the options, and any remaining arguments
 This is particularly useful for passing options through to another
 command, like: `do -- git --version`.
 
+Options on the command line are not positional, and can be specified before or after other command arguments.
+
 ### Common option types, boolean and value
 
 The two most used option types are a boolean flag, and an option which takes a value (declared using angle brackets). Both are `undefined` unless specified on command line.
