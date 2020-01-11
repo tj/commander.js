@@ -11,22 +11,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- two routines to change how option values are handled, and eliminate name clashes with command properties ([#933] [#1102])
-  - see storeOptionsAsProperties and passCommandToAction in README
-- `.parseAsync` to use instead of `.parse` if supply async action handlers ([#806] [#1118])
+* two routines to change how option values are handled, and eliminate name clashes with command properties ([#933] [#1102])
+  * see storeOptionsAsProperties and passCommandToAction in README
+* `.parseAsync` to use instead of `.parse` if supply async action handlers ([#806] [#1118])
 
 ### Fixed
 
-- Remove trailing blanks from wrapped help text ([#1096])
+* Remove trailing blanks from wrapped help text ([#1096])
 
 ### Changed
 
-- update dependencies
-- extend security coverage for Commander 2.x to 2020-02-03
-- improvements to README
-- improvements to TypeScript definition documentation
-- move old versions out of main CHANGELOG
-- removed explicit use of `ts-node` in tests
+* update dependencies
+* extend security coverage for Commander 2.x to 2020-02-03
+* improvements to README
+* improvements to TypeScript definition documentation
+* move old versions out of main CHANGELOG
+* removed explicit use of `ts-node` in tests
 
 ## [4.0.1] (2019-11-12)
 
