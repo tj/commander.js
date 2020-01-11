@@ -605,12 +605,7 @@ console.log(programOptions.name);
 
 ### TypeScript
 
-The Commander package includes its TypeScript Definition file, but also requires the node types which you need to install yourself. e.g.
-
-```bash
-npm install commander
-npm install --save-dev @types/node
-```
+The Commander package includes its TypeScript Definition file.
 
 If you use `ts-node` and  git-style sub-commands written as `.ts` files, you need to call your program through node to get the sub-commands called correctly. e.g.
 

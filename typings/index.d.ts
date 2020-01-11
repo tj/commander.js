@@ -1,8 +1,6 @@
 // Type definitions for commander
 // Original definitions by: Alan Agius <https://github.com/alan-agius4>, Marcelo Dezem <https://github.com/mdezem>, vvakame <https://github.com/vvakame>, Jules Randolph <https://github.com/sveinburne>
 
-///<reference types="node" />
-
 declare namespace commander {
 
   interface CommanderError extends Error {
@@ -25,7 +23,7 @@ declare namespace commander {
   }
   type OptionConstructor = { new (flags: string, description?: string): Option };
 
-  interface Command extends NodeJS.EventEmitter {
+  interface Command {
     [key: string]: any; // options as properties
 
     args: string[];
@@ -286,6 +284,17 @@ declare namespace commander {
      * Output help information and exit.
      */
     help(cb?: (str: string) => string): never;
+
+    /**
+     * Add a listener (callback) for when events occur. (Implemented using EventEmitter.)
+     * 
+     * @example
+     *     program
+     *       .on('--help', () -> {
+     *         console.log('See web site for more information.');
+     *     });
+     */
+    on(event: string | symbol, listener: (...args: any[]) => void): Command;
   }
   type CommandConstructor = { new (name?: string): Command };
 
