@@ -46,13 +46,19 @@ test('when .action on program with required argument and argument supplied then 
 });
 
 test('when .action on program with required argument and argument not supplied then action not called', () => {
+  // Optional. Use internal knowledge to suppress output to keep test output clean.
+  const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
   const actionMock = jest.fn();
   const program = new commander.Command();
   program
+    .exitOverride()
     .arguments('<file>')
     .action(actionMock);
-  program.parse(['node', 'test']);
+  expect(() => {
+    program.parse(['node', 'test']);
+  }).toThrow();
   expect(actionMock).not.toHaveBeenCalled();
+  consoleErrorSpy.mockRestore();
 });
 
 // Changes made in #729 to call program action handler

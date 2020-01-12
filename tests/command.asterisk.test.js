@@ -10,7 +10,7 @@ const commander = require('../');
 //
 // Historical: the event 'command:*' used to also be shared by the action handler on the program.
 
-describe(".command('*')", () => {
+describe.skip(".command('*')", () => {
   test('when no arguments then asterisk action not called', () => {
     const mockAction = jest.fn();
     const program = new commander.Command();
@@ -58,7 +58,7 @@ describe(".command('*')", () => {
 });
 
 // Test .on explicitly rather than assuming covered by .command
-describe(".on('command:*')", () => {
+describe.skip(".on('command:*')", () => {
   test('when no arguments then listener not called', () => {
     const mockAction = jest.fn();
     const program = new commander.Command();

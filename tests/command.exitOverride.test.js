@@ -135,9 +135,8 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    // This is effectively treated as a deliberate request for help, rather than an error.
     expect(writeSpy).toHaveBeenCalled();
-    expectCommanderError(caughtErr, 0, 'commander.helpDisplayed', '(outputHelp)');
+    expectCommanderError(caughtErr, 1, 'commander.help', '(outputHelp)');
   });
 
   test('when specify --version then throw CommanderError', () => {

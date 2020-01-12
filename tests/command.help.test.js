@@ -11,7 +11,7 @@ test('when call helpInformation for program then help format is as expected (usa
   program
     .command('my-command <file>');
   const expectedHelpInformation =
-`Usage: test [options] [command]
+`Usage: hack [options] [command]
 
 Options:
   -h, --help         output usage information
@@ -20,7 +20,7 @@ Commands:
   my-command <file>
 `;
 
-  program.parse(['node', 'test']);
+  program._name = 'hack';
   const helpInformation = program.helpInformation();
   expect(helpInformation).toBe(expectedHelpInformation);
 });
@@ -30,7 +30,7 @@ test('when use .description for command then help incudes description', () => {
   program
     .command('simple-command')
     .description('custom-description');
-  program.parse(['node', 'test']);
+  program._help = 'test';
   const helpInformation = program.helpInformation();
   expect(helpInformation).toMatch(/simple-command +custom-description/);
 });
