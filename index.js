@@ -607,11 +607,6 @@ Command.prototype.parse = function(argv) {
   // if (args[0] === 'help') {
   //   args[0] = args[1];
   //   args[1] = this._helpLongFlag;
-  // } else {
-  //   // If calling through to executable subcommand we could check for help flags before failing,
-  //   // but a somewhat unlikely case since program options not passed to executable subcommands.
-  //   // Wait for reports to see if check needed and what usage pattern is.
-  //   this._checkForMissingMandatoryOptions();
   // }
 
   return this;
@@ -642,6 +637,9 @@ Command.prototype._executeSubCommand = function(subcommand, args) {
   args = args.slice();
   let launchWithNode = false; // Use node for source targets so do not need to get permissions correct, and on Windows.
   const sourceExt = ['.js', '.ts', '.mjs'];
+
+  // Not checking for help first. Unlikely to have mandatory and executable, and can't robustly test for help flags in external command.
+  this._checkForMissingMandatoryOptions();
 
   // Want the entry script as the reference for command name and directory for searching for other files.
   let scriptPath = this.rawArgs[1];
@@ -832,12 +830,13 @@ Command.prototype._findOption = function(arg) {
 
 /**
  * Display an error message if a mandatory option does not have a value.
+ * Lazy calling after checking for help flags from leaf subcommand.
  *
  * @api private
  */
 
 Command.prototype._checkForMissingMandatoryOptions = function() {
-  // Walk up hierarchy so can call from action handler after checking for displaying help.
+  // Walk up hierarchy so can call in subcommand after checking for displaying help.
   for (var cmd = this; cmd; cmd = cmd.parent) {
     cmd.options.forEach((anOption) => {
       if (anOption.mandatory && (cmd._getOptionValue(anOption.attributeName()) === undefined)) {
@@ -1493,19 +1492,16 @@ function optionalWrap(str, width, indent) {
  * Output help information if help flags specified
  *
  * @param {Command} cmd - command to output help for
- * @param {Array} options - array of options to search for -h or --help
+ * @param {Array} args - array of options to search for help flags
  * @api private
  */
 
-function outputHelpIfRequested(cmd, options) {
-  options = options || [];
-
-  for (var i = 0; i < options.length; i++) {
-    if (options[i] === cmd._helpLongFlag || options[i] === cmd._helpShortFlag) {
-      cmd.outputHelp();
-      // (Do not have all displayed text available so only passing placeholder.)
-      cmd._exit(0, 'commander.helpDisplayed', '(outputHelp)');
-    }
+function outputHelpIfRequested(cmd, args) {
+  const helpOption = args.find(arg => arg === cmd._helpLongFlag || arg === cmd._helpShortFlag);
+  if (helpOption) {
+    cmd.outputHelp();
+    // (Do not have all displayed text available so only passing placeholder.)
+    cmd._exit(0, 'commander.helpDisplayed', '(outputHelp)');
   }
 }
 
