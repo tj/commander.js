@@ -11,7 +11,7 @@ test('when call helpInformation for program then help format is as expected (usa
   program
     .command('my-command <file>');
   const expectedHelpInformation =
-`Usage: hack [options] [command]
+`Usage: test [options] [command]
 
 Options:
   -h, --help         output usage information
@@ -20,7 +20,7 @@ Commands:
   my-command <file>
 `;
 
-  program._name = 'hack';
+  program.name('test');
   const helpInformation = program.helpInformation();
   expect(helpInformation).toBe(expectedHelpInformation);
 });

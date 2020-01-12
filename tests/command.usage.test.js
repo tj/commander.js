@@ -3,10 +3,10 @@ const commander = require('../');
 test('when default usage and check program help then starts with default usage', () => {
   const program = new commander.Command();
 
-  program._name = 'hack';
+  program.name('test');
   const helpInformation = program.helpInformation();
 
-  expect(helpInformation).toMatch(new RegExp('^Usage: hack \\[options\\]'));
+  expect(helpInformation).toMatch(new RegExp('^Usage: test \\[options\\]'));
 });
 
 test('when custom usage and check program help then starts with custom usage', () => {
@@ -15,10 +15,10 @@ test('when custom usage and check program help then starts with custom usage', (
   program
     .usage(myUsage);
 
-  program._name = 'hack';
+  program.name('test');
   const helpInformation = program.helpInformation();
 
-  expect(helpInformation).toMatch(new RegExp(`^Usage: hack ${myUsage}`));
+  expect(helpInformation).toMatch(new RegExp(`^Usage: test ${myUsage}`));
 });
 
 test('when default usage and check subcommand help then starts with default usage including program name', () => {
@@ -26,10 +26,10 @@ test('when default usage and check subcommand help then starts with default usag
   const subCommand = program
     .command('info');
 
-  program._name = 'hack';
+  program.name('test');
   const helpInformation = subCommand.helpInformation();
 
-  expect(helpInformation).toMatch(new RegExp('^Usage: hack info \\[options\\]'));
+  expect(helpInformation).toMatch(new RegExp('^Usage: test info \\[options\\]'));
 });
 
 test('when custom usage and check subcommand help then starts with custom usage including program name', () => {
@@ -39,8 +39,8 @@ test('when custom usage and check subcommand help then starts with custom usage 
     .command('info')
     .usage(myUsage);
 
-  program._name = 'hack';
+  program.name('test');
   const helpInformation = subCommand.helpInformation();
 
-  expect(helpInformation).toMatch(new RegExp(`^Usage: hack info ${myUsage}`));
+  expect(helpInformation).toMatch(new RegExp(`^Usage: test info ${myUsage}`));
 });
