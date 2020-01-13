@@ -204,6 +204,18 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
 };
 
 /**
+  * @api public
+  */
+
+Command.prototype.addCommand = function(cmd) {
+  if (!cmd._name) throw Error('error: addCommand name is not specified for command');
+
+  this.commands.push(cmd);
+  cmd.parent = this;
+  return this;
+};
+
+/**
  * Define argument syntax for the top-level command.
  *
  * @api public
@@ -720,7 +732,7 @@ Command.prototype._executeSubCommand = function(subcommand, args) {
     if (err.code === 'ENOENT') {
       console.error('error: %s(1) does not exist, try --help', bin);
     } else if (err.code === 'EACCES') {
-      console.error('error: %s(1) not executable. try chmod or run with root', bin);
+      console.error('error: %s(1) not executable', bin);
     }
     if (!exitCallback) {
       process.exit(1);
