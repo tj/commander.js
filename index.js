@@ -122,7 +122,6 @@ exports.CommanderError = CommanderError;
 function Command(name) {
   this.commands = [];
   this.options = [];
-  this._execs = new Set();
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
@@ -182,9 +181,9 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
   if (desc) {
     cmd.description(desc);
     cmd._executableHandler = true;
-    this._execs.add(cmd._name);
-    if (opts.isDefault) this._defaultCommandName = cmd._name;
   }
+  if (opts.isDefault) this._defaultCommandName = cmd._name;
+
   cmd._noHelp = !!opts.noHelp;
   cmd._helpFlags = this._helpFlags;
   cmd._helpDescription = this._helpDescription;
@@ -755,6 +754,7 @@ Command.prototype._dispatchSubcommand = function(operands, unknown) {
   if (subCommand) {
     operands = operands.slice(1);
   } else {
+    outputHelpIfRequested(this, unknown); // Run the help for default command from parent rather than passing to subcommand
     subCommand = this._findCommand(this._defaultCommandName);
   }
   if (!subCommand) {
