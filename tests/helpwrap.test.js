@@ -49,6 +49,7 @@ test('when long command description then wrap and indent', () => {
   const program = new commander.Command();
   program
     .option('-x -extra-long-option-switch', 'x')
+    .addImplicitHelpCommand(false)
     .command('alpha', 'Lorem mollit quis dolor ex do eu quis ad insa a commodo esse.');
 
   const expectedOutput =
@@ -74,6 +75,7 @@ test('when not enough room then help not wrapped', () => {
   const program = new commander.Command();
   const commandDescription = 'description text of very long command which should not be automatically be wrapped. Do fugiat eiusmod ipsum laboris excepteur pariatur sint ullamco tempor labore eu.';
   program
+    .addImplicitHelpCommand(false)
     .command('1234567801234567890x', commandDescription);
 
   const expectedOutput =

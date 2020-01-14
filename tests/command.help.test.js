@@ -18,6 +18,7 @@ Options:
 
 Commands:
   my-command <file>
+  help [command]     display help for command
 `;
 
   program.name('test');
