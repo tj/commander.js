@@ -1165,7 +1165,7 @@ Command.prototype.name = function(str) {
  */
 
 Command.prototype.prepareCommands = function() {
-  return this.commands.filter(function(cmd) {
+  const commandDetails = this.commands.filter(function(cmd) {
     return !cmd._noHelp;
   }).map(function(cmd) {
     var args = cmd._args.map(function(arg) {
@@ -1180,6 +1180,11 @@ Command.prototype.prepareCommands = function() {
       cmd._description
     ];
   });
+
+  if (this._hasImplicitHelpCommand()) {
+    commandDetails.push(['help [command]', 'display help for command']);
+  }
+  return commandDetails;
 };
 
 /**
