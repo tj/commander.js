@@ -14,7 +14,7 @@ test('when call helpInformation for program then help format is as expected (usa
 `Usage: test [options] [command]
 
 Options:
-  -h, --help         output usage information
+  -h, --help         display help for command
 
 Commands:
   my-command <file>

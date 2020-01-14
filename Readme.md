@@ -444,7 +444,7 @@ Options:
   -b, --bbq            Add bbq sauce
   -c, --cheese <type>  Add the specified type of cheese (default: "marble")
   -C, --no-cheese      You do not want any cheese
-  -h, --help           output usage information
+  -h, --help           display help for command
 ```
 
 ### Custom help
@@ -488,7 +488,7 @@ Yields the following help output when `node script-name.js -h` or `node script-n
 Usage: custom-help [options]
 
 Options:
-  -h, --help     output usage information
+  -h, --help     display help for command
   -V, --version  output the version number
   -f, --foo      enable some foo
   -b, --bar      enable some bar

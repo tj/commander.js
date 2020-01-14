@@ -135,9 +135,10 @@ function Command(name) {
   this._defaultCommandName = undefined;
 
   this._helpFlags = '-h, --help';
-  this._helpDescription = 'output usage information';
+  this._helpDescription = 'display help for command';
   this._helpShortFlag = '-h';
   this._helpLongFlag = '--help';
+  this._implicitHelpCommand = undefined;
 }
 
 /**
@@ -225,14 +226,27 @@ Command.prototype.arguments = function(desc) {
 };
 
 /**
- * Add an implicit `help [cmd]` subcommand
- * which invokes `--help` for the given command.
+ * Override default decision whether to add implicit help command.
  *
+ * @return {Command} for chaining
+ * @api public
+ */
+
+Command.prototype.addImplicitHelpCommand = function(enable) {
+  this._implicitHelpCommand = (enable === undefined) || !!enable;
+  return this;
+};
+
+/**
+ * @return {boolean}
  * @api private
  */
 
-Command.prototype.addImplicitHelpCommand = function() {
-  this.command('help [cmd]', 'display help for [cmd]');
+Command.prototype._hasImplicitHelpCommand = function() {
+  if (this._implicitHelpCommand === undefined) {
+    this._implicitHelpCommand = this.commands.length && !this._actionHandler && !this._findCommand('help');
+  }
+  return this._implicitHelpCommand;
 };
 
 /**
@@ -599,9 +613,6 @@ Command.prototype._getOptionValue = function(key) {
  */
 
 Command.prototype.parse = function(argv) {
-  // implicit help
-  // if (this._executables) this.addImplicitHelpCommand(); ????
-
   // store raw args
   this.rawArgs = argv;
 
@@ -609,16 +620,6 @@ Command.prototype.parse = function(argv) {
   this._name = this._name || path.basename(argv[1], path.extname(argv[1]));
 
   this._parseCommand([], argv.slice(2));
-
-  // const args = this.args;
-
-  // if (args[0] === 'help' && args.length === 1) this.help();
-
-  // // <cmd> --help
-  // if (args[0] === 'help') {
-  //   args[0] = args[1];
-  //   args[1] = this._helpLongFlag;
-  // }
 
   return this;
 };
@@ -749,18 +750,9 @@ Command.prototype._executeSubCommand = function(subcommand, args) {
 /**
  * @api private
  */
-Command.prototype._dispatchSubcommand = function(operands, unknown) {
-  let subCommand = this._findCommand(operands[0]);
-  if (subCommand) {
-    operands = operands.slice(1);
-  } else {
-    outputHelpIfRequested(this, unknown); // Run the help for default command from parent rather than passing to subcommand
-    subCommand = this._findCommand(this._defaultCommandName);
-  }
-  if (!subCommand) {
-    // ????
-    throw new Error('Failed to find subcommand');
-  }
+Command.prototype._dispatchSubcommand = function(commandName, operands, unknown) {
+  const subCommand = this._findCommand(commandName);
+  if (!subCommand) this._helpAndError();
 
   if (subCommand._executableHandler) {
     this._executeSubCommand(subCommand, operands.concat(unknown));
@@ -781,8 +773,17 @@ Command.prototype._parseCommand = function(operands, unknown) {
   unknown = parsed.unknown;
   this.args = operands.concat(unknown);
 
-  if (this._defaultCommandName || (operands && this._findCommand(operands[0]))) {
-    this._dispatchSubcommand(operands, unknown);
+  if (operands && this._findCommand(operands[0])) {
+    this._dispatchSubcommand(operands[0], operands.slice(1), unknown);
+  } else if (this._hasImplicitHelpCommand() && operands[0] === 'help') {
+    if (operands.length === 1) {
+      this.help();
+    } else {
+      this._dispatchSubcommand(operands[1], [], [this._helpLongFlag]);
+    }
+  } else if (this._defaultCommandName) {
+    outputHelpIfRequested(this, unknown); // Run the help for default command from parent rather than passing to default command
+    this._dispatchSubcommand(this._defaultCommandName, operands, unknown);
   } else {
     if (this.commands.length && this.args.length === 0 && !this._actionHandler && !this._defaultCommandName) {
       // probaby missing subcommand and no handler, user needs help

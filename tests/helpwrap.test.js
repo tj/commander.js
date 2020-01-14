@@ -16,7 +16,7 @@ Options:
   -x -extra-long-option-switch  kjsahdkajshkahd kajhsd akhds kashd kajhs dkha
                                 dkh aksd ka dkha kdh kasd ka kahs dkh sdkh
                                 askdh aksd kashdk ahsd kahs dkha skdh
-  -h, --help                    output usage information
+  -h, --help                    display help for command
 `;
 
   expect(program.helpInformation()).toBe(expectedOutput);
@@ -36,7 +36,7 @@ test('when long option description and default then wrap and indent', () => {
 Options:
   -x -extra-long-option <value>  kjsahdkajshkahd kajhsd akhds (default: "aaa
                                  bbb ccc ddd eee fff ggg")
-  -h, --help                     output usage information
+  -h, --help                     display help for command
 `;
 
   expect(program.helpInformation()).toBe(expectedOutput);
@@ -56,7 +56,7 @@ test('when long command description then wrap and indent', () => {
 
 Options:
   -x -extra-long-option-switch  x
-  -h, --help                    output usage information
+  -h, --help                    display help for command
 
 Commands:
   alpha                         Lorem mollit quis dolor ex do eu quis ad insa
@@ -80,7 +80,7 @@ test('when not enough room then help not wrapped', () => {
 `Usage:  [options] [command]
 
 Options:
-  -h, --help            output usage information
+  -h, --help            display help for command
 
 Commands:
   1234567801234567890x  ${commandDescription}
@@ -112,7 +112,7 @@ Options:
   Time can also be specified using special values:
     "dawn" - From night to sunrise.
   
-  -h, --help          output usage information
+  -h, --help          display help for command
 `;
 
   expect(program.helpInformation()).toBe(expectedOutput);
