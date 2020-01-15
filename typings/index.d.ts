@@ -219,9 +219,9 @@ declare namespace commander {
      * @example
      *    argv => operands, unknown
      *    --known kkk op => [op], []
+     *    op --known kkk => [op], []
      *    sub --unknown uuu op => [sub], [--unknown uuu op]
      *    sub -- --unknown uuu op => [sub --unknown uuu op], []
-     *    sub --unknown1 1 --unknown 222 op =>  [sub], [--unknown1 1 -- --unknown 222 op]
      */
     parseOptions(argv: string[]): commander.ParseOptionsResult;
 
