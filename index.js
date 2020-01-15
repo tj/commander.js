@@ -334,22 +334,19 @@ Command.prototype.action = function(fn) {
     outputHelpIfRequested(self, parsed.unknown);
     self._checkForMissingMandatoryOptions();
 
-    // If there are still any unknown options, then we simply
-    // die, unless someone asked for help, in which case we give it
-    // to them, and then we die.
+    // If there are still any unknown options, then we simply die.
     if (parsed.unknown.length > 0) {
       self.unknownOption(parsed.unknown[0]);
     }
 
-    // Leftover arguments need to be pushed back. Fixes issue #56
-    if (parsed.args.length) args = parsed.args.concat(args);
+    args = args.concat(parsed.operands, parsed.unknown);
 
-    self._args.forEach(function(arg, i) {
-      if (arg.required && args[i] == null) {
-        self.missingArgument(arg.name);
-      } else if (arg.variadic) {
+    self._args.forEach(function(expectedArg, i) {
+      if (expectedArg.required && args[i] == null) {
+        self.missingArgument(expectedArg.name);
+      } else if (expectedArg.variadic) {
         if (i !== self._args.length - 1) {
-          self.variadicArgNotLast(arg.name);
+          self.variadicArgNotLast(expectedArg.name);
         }
 
         args[i] = args.splice(i);
@@ -641,11 +638,12 @@ Command.prototype.parse = function(argv) {
   }
 
   // process argv
-  var normalized = this.normalize(argv.slice(2));
-  var parsed = this.parseOptions(normalized);
-  var args = this.args = parsed.args;
+  const normalized = this.normalize(argv.slice(2));
+  const parsed = this.parseOptions(normalized);
+  const args = parsed.operands.concat(parsed.unknown);
+  this.args = args.slice();
 
-  var result = this.parseArgs(this.args, parsed.unknown);
+  var result = this.parseArgs(parsed.operands, parsed.unknown);
 
   if (args[0] === 'help' && args.length === 1) this.help();
 
@@ -695,7 +693,7 @@ Command.prototype.parse = function(argv) {
   }
 
   if (this._execs.has(name)) {
-    return this.executeSubCommand(argv, args, parsed.unknown, subCommand ? subCommand._executableFile : undefined);
+    return this.executeSubCommand(argv, args, subCommand ? subCommand._executableFile : undefined);
   }
 
   return result;
@@ -725,9 +723,7 @@ Command.prototype.parseAsync = function(argv) {
  * @api private
  */
 
-Command.prototype.executeSubCommand = function(argv, args, unknown, executableFile) {
-  args = args.concat(unknown);
-
+Command.prototype.executeSubCommand = function(argv, args, executableFile) {
   if (!args.length) this.help();
 
   var isExplicitJS = false; // Whether to use node to launch "executable"
@@ -889,16 +885,14 @@ Command.prototype.normalize = function(args) {
  * @api private
  */
 
-Command.prototype.parseArgs = function(args, unknown) {
-  var name;
-
-  if (args.length) {
-    name = args[0];
+Command.prototype.parseArgs = function(operands, unknown) {
+  if (operands.length) {
+    const name = operands[0];
     if (this.listeners('command:' + name).length) {
-      this.emit('command:' + args.shift(), args, unknown);
+      this.emit('command:' + operands[0], operands.slice(1), unknown);
     } else {
-      this.emit('program-command', args, unknown);
-      this.emit('command:*', args, unknown);
+      this.emit('program-command', operands, unknown);
+      this.emit('command:*', operands, unknown);
     }
   } else {
     outputHelpIfRequested(this, unknown);
@@ -926,11 +920,7 @@ Command.prototype.parseArgs = function(args, unknown) {
  */
 
 Command.prototype.optionFor = function(arg) {
-  for (var i = 0, len = this.options.length; i < len; ++i) {
-    if (this.options[i].is(arg)) {
-      return this.options[i];
-    }
-  }
+  return this.options.find(option => option.is(arg));
 };
 
 /**
@@ -951,57 +941,62 @@ Command.prototype._checkForMissingMandatoryOptions = function() {
 };
 
 /**
- * Parse options from `argv` returning `argv`
- * void of these options.
+ * Parse options from `argv` removing known options,
+ * and return argv split into operands and unknown arguments.
  *
- * @param {Array} argv
- * @return {{args: Array, unknown: Array}}
+ * Examples:
+ *
+ *    argv => operands, unknown
+ *    --known kkk op => [op], []
+ *    op --known kkk => [op], []
+ *    sub --unknown uuu op => [sub], [--unknown uuu op]
+ *    sub -- --unknown uuu op => [sub --unknown uuu op], []
+ *
+ * @param {String[]} argv
+ * @return {{operands: String[], unknown: String[]}}
  * @api public
  */
 
 Command.prototype.parseOptions = function(argv) {
-  var args = [],
-    len = argv.length,
-    literal,
-    option,
-    arg;
-
-  var unknownOptions = [];
+  const operands = []; // operands, not options or values
+  const unknown = []; // first unknown option and remaining unknown args
+  let literal = false;
+  let dest = operands;
 
   // parse options
-  for (var i = 0; i < len; ++i) {
-    arg = argv[i];
+  for (var i = 0; i < argv.length; ++i) {
+    const arg = argv[i];
 
     // literal args after --
     if (literal) {
-      args.push(arg);
+      dest.push(arg);
       continue;
     }
 
     if (arg === '--') {
       literal = true;
+      if (dest === unknown) dest.push('--');
       continue;
     }
 
     // find matching Option
-    option = this.optionFor(arg);
+    const option = this.optionFor(arg);
 
-    // option is defined
+    // recognised option, call listener to assign value with possible custom processing
     if (option) {
-      // requires arg
       if (option.required) {
-        arg = argv[++i];
-        if (arg == null) return this.optionMissingArgument(option);
-        this.emit('option:' + option.name(), arg);
-      // optional arg
+        const value = argv[++i];
+        if (value === undefined) this.optionMissingArgument(option);
+        this.emit('option:' + option.name(), value);
       } else if (option.optional) {
-        arg = argv[i + 1];
-        if (arg == null || (arg[0] === '-' && arg !== '-')) {
-          arg = null;
+        let value = argv[i + 1];
+        // do not use a following option as a value
+        if (value === undefined || (value[0] === '-' && value !== '-')) {
+          value = null;
         } else {
           ++i;
         }
-        this.emit('option:' + option.name(), arg);
+        this.emit('option:' + option.name(), value);
       // flag
       } else {
         this.emit('option:' + option.name());
@@ -1009,24 +1004,16 @@ Command.prototype.parseOptions = function(argv) {
       continue;
     }
 
-    // looks like an option
+    // looks like an option, unknowns from here
     if (arg.length > 1 && arg[0] === '-') {
-      unknownOptions.push(arg);
-
-      // If the next argument looks like it might be
-      // an argument for this option, we pass it on.
-      // If it isn't, then it'll simply be ignored
-      if ((i + 1) < argv.length && (argv[i + 1][0] !== '-' || argv[i + 1] === '-')) {
-        unknownOptions.push(argv[++i]);
-      }
-      continue;
+      dest = unknown;
     }
 
     // arg
-    args.push(arg);
+    dest.push(arg);
   }
 
-  return { args: args, unknown: unknownOptions };
+  return { operands, unknown };
 };
 
 /**

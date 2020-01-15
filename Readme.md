@@ -109,7 +109,7 @@ pizza details:
 - cheese
 ```
 
-`program.parse(arguments)` processes the arguments, leaving any args not consumed by the options as the `program.args` array.
+`program.parse(arguments)` processes the arguments, leaving any args not consumed by the program options in the `program.args` array.
 
 ### Default option value
 
@@ -356,7 +356,7 @@ program
 program.parse(process.argv);
 ```
 
-The variadic argument is passed to the action handler as an array. (And this also applies to `program.args`.)
+The variadic argument is passed to the action handler as an array.
 
 ### Action handler (sub)commands
 
@@ -559,7 +559,7 @@ program.on('option:verbose', function () {
 
 // error on unknown commands
 program.on('command:*', function () {
-  console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
+  console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args[0]]);
   process.exit(1);
 });
 ```

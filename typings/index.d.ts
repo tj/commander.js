@@ -204,16 +204,24 @@ declare namespace commander {
     parse(argv: string[]): Command;
 
     /**
-     * Parse `argv`, setting options and invoking commands when defined.
-     * 
-     * Use parseAsync instead of parse if any of your action handlers are async. Returns a Promise.
-     *
-     * @returns Promise
-     */
+    * Parse `argv`, setting options and invoking commands when defined.
+    * 
+    * Use parseAsync instead of parse if any of your action handlers are async. Returns a Promise.
+    *
+    * @returns Promise
+    */
     parseAsync(argv: string[]): Promise<any>;
 
     /**
-     * Parse options from `argv` returning `argv` void of these options.
+     * Parse options from `argv` removing known options,
+     * and return argv split into operands and unknown arguments.
+     *
+     * @example
+     *    argv => operands, unknown
+     *    --known kkk op => [op], []
+     *    op --known kkk => [op], []
+     *    sub --unknown uuu op => [sub], [--unknown uuu op]
+     *    sub -- --unknown uuu op => [sub --unknown uuu op], []
      */
     parseOptions(argv: string[]): commander.ParseOptionsResult;
 
@@ -306,7 +314,7 @@ declare namespace commander {
     }
 
     interface ParseOptionsResult {
-        args: string[];
+        operands: string[];
         unknown: string[];
     }
 
