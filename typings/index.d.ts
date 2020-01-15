@@ -1,8 +1,6 @@
 // Type definitions for commander
 // Original definitions by: Alan Agius <https://github.com/alan-agius4>, Marcelo Dezem <https://github.com/mdezem>, vvakame <https://github.com/vvakame>, Jules Randolph <https://github.com/sveinburne>
 
-///<reference types="node" />
-
 declare namespace commander {
 
   interface CommanderError extends Error {
@@ -25,7 +23,7 @@ declare namespace commander {
   }
   type OptionConstructor = { new (flags: string, description?: string): Option };
 
-  interface Command extends NodeJS.EventEmitter {
+  interface Command {
     [key: string]: any; // options as properties
 
     args: string[];
@@ -159,8 +157,9 @@ declare namespace commander {
      *
      * @returns Command for chaining
      */
-    option(flags: string, description?: string, fn?: ((arg1: any, arg2: any) => void) | RegExp, defaultValue?: any): Command;
-    option(flags: string, description?: string, defaultValue?: any): Command;
+    option(flags: string, description?: string, defaultValue?: string | boolean): Command;
+    option(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): Command;
+    option<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): Command;
 
     /**
      * Define a required option, which must have a value after parsing. This usually means
@@ -168,8 +167,9 @@ declare namespace commander {
      *
      * The `flags` string should contain both the short and long flags, separated by comma, a pipe or space.
      */
-    requiredOption(flags: string, description?: string, fn?: ((arg1: any, arg2: any) => void) | RegExp, defaultValue?: any): Command;
-    requiredOption(flags: string, description?: string, defaultValue?: any): Command;
+    requiredOption(flags: string, description?: string, defaultValue?: string | boolean): Command;
+    requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): Command;
+    requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): Command;
 
 
     /**
@@ -292,6 +292,17 @@ declare namespace commander {
      * Output help information and exit.
      */
     help(cb?: (str: string) => string): never;
+
+    /**
+     * Add a listener (callback) for when events occur. (Implemented using EventEmitter.)
+     * 
+     * @example
+     *     program
+     *       .on('--help', () -> {
+     *         console.log('See web site for more information.');
+     *     });
+     */
+    on(event: string | symbol, listener: (...args: any[]) => void): Command;
   }
   type CommandConstructor = { new (name?: string): Command };
 

@@ -896,9 +896,9 @@ Command.prototype._checkForMissingMandatoryOptions = function() {
  *
  *    argv => operands, unknown
  *    --known kkk op => [op], []
+ *    op --known kkk => [op], []
  *    sub --unknown uuu op => [sub], [--unknown uuu op]
  *    sub -- --unknown uuu op => [sub --unknown uuu op], []
- *    sub --unknown1 1 --unknown 222 op =>  [sub], [-unknown1 1 -- --unknown 222 op]
  *
  * @param {String[]} argv
  * @return {{operands: String[], unknown: String[]}}
