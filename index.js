@@ -138,7 +138,10 @@ function Command(name) {
   this._helpDescription = 'display help for command';
   this._helpShortFlag = '-h';
   this._helpLongFlag = '--help';
-  this._implicitHelpCommand = undefined;
+  this._hasImplicitHelpCommand = undefined;
+  this._helpCommandName = 'help';
+  this._helpCommandnameAndArgs = 'help [command]';
+  this._helpCommandDescription = 'display help for command';
 }
 
 /**
@@ -190,6 +193,9 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
   cmd._helpDescription = this._helpDescription;
   cmd._helpShortFlag = this._helpShortFlag;
   cmd._helpLongFlag = this._helpLongFlag;
+  cmd._helpCommandName = this._helpCommandName;
+  cmd._helpCommandnameAndArgs = this._helpCommandnameAndArgs;
+  cmd._helpCommandDescription = this._helpCommandDescription;
   cmd._exitCallback = this._exitCallback;
   cmd._storeOptionsAsProperties = this._storeOptionsAsProperties;
   cmd._passCommandToAction = this._passCommandToAction;
@@ -228,12 +234,25 @@ Command.prototype.arguments = function(desc) {
 /**
  * Override default decision whether to add implicit help command.
  *
+ *    addHelpCommand() // force on
+ *    addHelpCommand(false); // force off
+ *    addHelpCommand('help [cmd]', 'display help for [cmd]'); // force on with custom detais
+ *
  * @return {Command} for chaining
  * @api public
  */
 
-Command.prototype.addImplicitHelpCommand = function(enable) {
-  this._implicitHelpCommand = (enable === undefined) || !!enable;
+Command.prototype.addHelpCommand = function(enableOrNameAndArgs, description) {
+  if (enableOrNameAndArgs === false) {
+    this._hasImplicitHelpCommand = false;
+  } else {
+    this._hasImplicitHelpCommand = true;
+    if (typeof enableOrNameAndArgs === 'string') {
+      this._helpCommandName = enableOrNameAndArgs.split(' ')[0];
+      this._helpCommandnameAndArgs = enableOrNameAndArgs;
+    }
+    this._helpCommandDescription = description || this._helpCommandDescription;
+  }
   return this;
 };
 
@@ -242,11 +261,11 @@ Command.prototype.addImplicitHelpCommand = function(enable) {
  * @api private
  */
 
-Command.prototype._hasImplicitHelpCommand = function() {
-  if (this._implicitHelpCommand === undefined) {
-    this._implicitHelpCommand = this.commands.length && !this._actionHandler && !this._findCommand('help');
+Command.prototype._lazyHasImplicitHelpCommand = function() {
+  if (this._hasImplicitHelpCommand === undefined) {
+    this._hasImplicitHelpCommand = this.commands.length && !this._actionHandler && !this._findCommand('help');
   }
-  return this._implicitHelpCommand;
+  return this._hasImplicitHelpCommand;
 };
 
 /**
@@ -775,7 +794,7 @@ Command.prototype._parseCommand = function(operands, unknown) {
 
   if (operands && this._findCommand(operands[0])) {
     this._dispatchSubcommand(operands[0], operands.slice(1), unknown);
-  } else if (this._hasImplicitHelpCommand() && operands[0] === 'help') {
+  } else if (this._lazyHasImplicitHelpCommand() && operands[0] === this._helpCommandName) {
     if (operands.length === 1) {
       this.help();
     } else {
@@ -1181,8 +1200,8 @@ Command.prototype.prepareCommands = function() {
     ];
   });
 
-  if (this._hasImplicitHelpCommand()) {
-    commandDetails.push(['help [command]', 'display help for command']);
+  if (this._lazyHasImplicitHelpCommand()) {
+    commandDetails.push([this._helpCommandnameAndArgs, this._helpCommandDescription]);
   }
   return commandDetails;
 };
