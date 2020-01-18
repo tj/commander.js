@@ -824,8 +824,12 @@ Command.prototype._parseCommand = function(operands, unknown) {
       });
 
       this._actionHandler(args);
-      // this.emit('command:' + this.name(), operands, unknown); // still needed????
-    } else {
+      this.emit('command:' + this.name(), operands, unknown); // retain ????
+    } else if (operands.length) {
+      // legacy behaviours, command and listener
+      if (this._findCommand('*')) {
+        this._dispatchSubcommand('*', operands, unknown);
+      }
       this.emit('command:*', operands, unknown);
     }
   }
