@@ -1305,7 +1305,7 @@ Command.prototype.optionHelp = function() {
  */
 
 Command.prototype.commandHelp = function() {
-  if (!this.commands.length) return '';
+  if (!this.commands.length && !this._lazyHasImplicitHelpCommand()) return '';
 
   var commands = this.prepareCommands();
   var width = this.padWidth();
