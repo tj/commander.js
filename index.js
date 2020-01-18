@@ -673,14 +673,7 @@ Command.prototype._executeSubCommand = function(subcommand, args) {
   this._checkForMissingMandatoryOptions();
 
   // Want the entry script as the reference for command name and directory for searching for other files.
-  let scriptPath = this.rawArgs[1];
-  if (!fs.existsSync(scriptPath) || fs.statSync(scriptPath).isDirectory()) {
-    // When launched using "node foo" will be missing file extension, or "node ." will be pointing at module instead of file.
-    // Try process.mainModule.filename as a fallback.
-    if (process.mainModule && process.mainModule.filename) {
-      scriptPath = process.mainModule.filename;
-    }
-  }
+  const scriptPath = this.rawArgs[1];
 
   let baseDir;
   try {
