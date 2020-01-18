@@ -1,6 +1,7 @@
 const commander = require('../');
 
 // Test auto wrap and indent with some manual strings.
+// Fragile tests with complete help output.
 
 test('when long option description then wrap and indent', () => {
   const oldColumns = process.stdout.columns;
@@ -49,7 +50,6 @@ test('when long command description then wrap and indent', () => {
   const program = new commander.Command();
   program
     .option('-x -extra-long-option-switch', 'x')
-    .addHelpCommand(false)
     .command('alpha', 'Lorem mollit quis dolor ex do eu quis ad insa a commodo esse.');
 
   const expectedOutput =
@@ -62,6 +62,7 @@ Options:
 Commands:
   alpha                         Lorem mollit quis dolor ex do eu quis ad insa
                                 a commodo esse.
+  help [command]                display help for command
 `;
 
   expect(program.helpInformation()).toBe(expectedOutput);
@@ -75,7 +76,6 @@ test('when not enough room then help not wrapped', () => {
   const program = new commander.Command();
   const commandDescription = 'description text of very long command which should not be automatically be wrapped. Do fugiat eiusmod ipsum laboris excepteur pariatur sint ullamco tempor labore eu.';
   program
-    .addHelpCommand(false)
     .command('1234567801234567890x', commandDescription);
 
   const expectedOutput =
@@ -86,6 +86,7 @@ Options:
 
 Commands:
   1234567801234567890x  ${commandDescription}
+  help [command]        display help for command
 `;
 
   expect(program.helpInformation()).toBe(expectedOutput);
