@@ -828,11 +828,19 @@ Command.prototype._parseCommand = function(operands, unknown) {
       this._actionHandler(args);
       this.emit('command:' + this.name(), operands, unknown); // retain ????
     } else if (operands.length) {
-      // legacy behaviours, command and listener
       if (this._findCommand('*')) {
         this._dispatchSubcommand('*', operands, unknown);
+      } else if (this.listenerCount('command:*')) {
+        this.emit('command:*', operands, unknown);
+      } else if (this.commands.length) {
+        console.error(`Unrecognised command '${this.args[0]}'`);
+        this._helpAndError();
       }
-      this.emit('command:*', operands, unknown);
+    } else if (this.commands.length) {
+      // This command has subcommands and nothing hooked up at this level, so display help.
+      this._helpAndError();
+    } else {
+      // fall through for caller to handle after calling .parse()
     }
   }
 };

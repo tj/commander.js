@@ -218,7 +218,8 @@ describe('required command option with mandatory value not specified', () => {
       .exitOverride()
       .command('sub')
       .requiredOption('--subby <type>', 'description')
-      .action((cmd) => {})
+      .action((cmd) => {});
+    program
       .command('sub2');
 
     expect(() => {
