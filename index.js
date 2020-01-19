@@ -133,7 +133,9 @@ function Command(name) {
   this._executableHandler = false;
   this._executableFile = undefined; // custom name for executable
   this._defaultCommandName = undefined;
+  this._exitCallback = undefined;
 
+  this._noHelp = false;
   this._helpFlags = '-h, --help';
   this._helpDescription = 'display help for command';
   this._helpShortFlag = '-h';
