@@ -637,9 +637,8 @@ Command.prototype.parse = function(argv) {
     argv.push(this._helpLongFlag);
   }
 
-  // process argv
-  const normalized = this.normalize(argv.slice(2));
-  const parsed = this.parseOptions(normalized);
+  // process argv, leaving off first two args which are app and scriptname.
+  const parsed = this.parseOptions(argv.slice(2));
   const args = parsed.operands.concat(parsed.unknown);
   this.args = args.slice();
 
@@ -823,57 +822,6 @@ Command.prototype.executeSubCommand = function(argv, args, executableFile) {
 };
 
 /**
- * Normalize `args`, splitting joined short flags. For example
- * the arg "-abc" is equivalent to "-a -b -c".
- * This also normalizes equal sign and splits "--abc=def" into "--abc def".
- *
- * @param {Array} args
- * @return {Array}
- * @api private
- */
-
-Command.prototype.normalize = function(args) {
-  var ret = [],
-    arg,
-    lastOpt,
-    index,
-    short,
-    opt;
-
-  for (var i = 0, len = args.length; i < len; ++i) {
-    arg = args[i];
-    if (i > 0) {
-      lastOpt = this.optionFor(args[i - 1]);
-    }
-
-    if (arg === '--') {
-      // Honor option terminator
-      ret = ret.concat(args.slice(i));
-      break;
-    } else if (lastOpt && lastOpt.required) {
-      ret.push(arg);
-    } else if (arg.length > 2 && arg[0] === '-' && arg[1] !== '-') {
-      short = arg.slice(0, 2);
-      opt = this.optionFor(short);
-      if (opt && (opt.required || opt.optional)) {
-        ret.push(short);
-        ret.push(arg.slice(2));
-      } else {
-        arg.slice(1).split('').forEach(function(c) {
-          ret.push('-' + c);
-        });
-      }
-    } else if (/^--/.test(arg) && ~(index = arg.indexOf('='))) {
-      ret.push(arg.slice(0, index), arg.slice(index + 1));
-    } else {
-      ret.push(arg);
-    }
-  }
-
-  return ret;
-};
-
-/**
  * Parse command `args`.
  *
  * When listener(s) are available those
@@ -960,56 +908,78 @@ Command.prototype._checkForMissingMandatoryOptions = function() {
 Command.prototype.parseOptions = function(argv) {
   const operands = []; // operands, not options or values
   const unknown = []; // first unknown option and remaining unknown args
-  let literal = false;
   let dest = operands;
+  const args = argv.slice();
+
+  function maybeOption(arg) {
+    return arg.length > 1 && arg[0] === '-';
+  }
 
   // parse options
-  for (var i = 0; i < argv.length; ++i) {
-    const arg = argv[i];
+  while (args.length) {
+    const arg = args.shift();
 
-    // literal args after --
-    if (literal) {
-      dest.push(arg);
-      continue;
-    }
-
+    // literal
     if (arg === '--') {
-      literal = true;
-      if (dest === unknown) dest.push('--');
-      continue;
+      if (dest === unknown) dest.push(arg);
+      dest.push(...args);
+      break;
     }
 
-    // find matching Option
-    const option = this.optionFor(arg);
-
-    // recognised option, call listener to assign value with possible custom processing
-    if (option) {
-      if (option.required) {
-        const value = argv[++i];
-        if (value === undefined) this.optionMissingArgument(option);
-        this.emit('option:' + option.name(), value);
-      } else if (option.optional) {
-        let value = argv[i + 1];
-        // do not use a following option as a value
-        if (value === undefined || (value[0] === '-' && value !== '-')) {
-          value = null;
-        } else {
-          ++i;
+    if (maybeOption(arg)) {
+      const option = this.optionFor(arg);
+      // recognised option, call listener to assign value with possible custom processing
+      if (option) {
+        if (option.required) {
+          const value = args.shift();
+          if (value === undefined) this.optionMissingArgument(option);
+          this.emit(`option:${option.name()}`, value);
+        } else if (option.optional) {
+          let value = null;
+          // historical behaviour is optional value is following arg unless an option
+          if (args.length > 0 && !maybeOption(args[0])) {
+            value = args.shift();
+          }
+          this.emit(`option:${option.name()}`, value);
+        } else { // boolean flag
+          this.emit(`option:${option.name()}`);
         }
-        this.emit('option:' + option.name(), value);
-      // flag
-      } else {
-        this.emit('option:' + option.name());
+        continue;
       }
-      continue;
     }
 
-    // looks like an option, unknowns from here
+    // Look for combo options following single dash, eat first one if known.
+    if (arg.length > 2 && arg[0] === '-' && arg[1] !== '-') {
+      const option = this.optionFor(`-${arg[1]}`);
+      if (option) {
+        if (option.required || option.optional) {
+          // option with value following in same argument
+          this.emit(`option:${option.name()}`, arg.slice(2));
+        } else {
+          // boolean option, emit and put back remainder of arg for further processing
+          this.emit(`option:${option.name()}`);
+          args.unshift(`-${arg.slice(2)}`);
+        }
+        continue;
+      }
+    }
+
+    // Look for known long flag with value, like --foo=bar
+    if (/^--[^=]+=/.test(arg)) {
+      const index = arg.indexOf('=');
+      const option = this.optionFor(arg.slice(0, index));
+      if (option && (option.required || option.optional)) {
+        this.emit(`option:${option.name()}`, arg.slice(index + 1));
+        continue;
+      }
+    }
+
+    // looks like an option but unknown, unknowns from here
     if (arg.length > 1 && arg[0] === '-') {
       dest = unknown;
     }
 
-    // arg
+    // add arg
     dest.push(arg);
   }
 

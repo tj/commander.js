@@ -1,6 +1,7 @@
 const commander = require('../');
 
 // Test the ways values can be specified for options.
+// See also references on "Utility Conventions" in command.parseOptions.test.js
 
 // options with required values can eat values starting with a dash, including just dash sometimes used as alias for stdin
 //

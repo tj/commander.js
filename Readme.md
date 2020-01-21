@@ -67,11 +67,18 @@ For larger programs which may use commander in multiple ways, including unit tes
 
 ## Options
 
-Options are defined with the `.option()` method, also serving as documentation for the options. Each option can have a short flag (single character) and a long name, separated by a comma or space.
+Options are defined with the `.option()` method, also serving as documentation for the options. Each option can have a short flag (single character) and a long name, separated by a comma or space or vertical bar ('|').
 
-The options can be accessed as properties on the Command object. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc. Multiple short flags may be combined as a single arg, for example `-abc` is equivalent to `-a -b -c`.
+The options can be accessed as properties on the Command object. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc. See also optional new behaviour to [avoid name clashes](#avoiding-option-name-clashes).
 
-See also optional new behaviour to [avoid name clashes](#avoiding-option-name-clashes).
+Multiple short flags may optionally be combined in a single argument following the dash: boolean flags, the last flag may take a value, and the value.
+For example `-a -b -p 80` may be written as `-ab -p80` or even `-abp80`.
+
+You can use `--` to indicate the end of the options, and any remaining arguments will be used without being interpreted.
+This is particularly useful for passing options through to another
+command, like: `do -- git --version`.
+
+Options on the command line are not positional, and can be specified before or after other command arguments.
 
 ### Common option types, boolean and value
 
@@ -251,7 +258,7 @@ $ custom --list x,y,z
 
 ### Required option
 
-You may specify a required (mandatory) option using `.requiredOption`. The option must be specified on the command line, or by having a default value. The method is otherwise the same as `.option` in format, taking flags and description, and optional default value or custom processing.
+You may specify a required (mandatory) option using `.requiredOption`. The option must have a value after parsing, usually specified on the command line, or perhaps from a default value (say from environment). The method is otherwise the same as `.option` in format, taking flags and description, and optional default value or custom processing.
 
 ```js
 const program = require('commander');
