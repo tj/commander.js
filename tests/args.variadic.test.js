@@ -2,7 +2,7 @@ const commander = require('../');
 
 // Testing variadic arguments. Testing all the action arguments, but could test just variadicArg.
 
-describe('.version', () => {
+describe('variadic argument', () => {
   // Optional. Use internal knowledge to suppress output to keep test output clean.
   let consoleErrorSpy;
 

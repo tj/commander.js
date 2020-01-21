@@ -2,7 +2,7 @@ const commander = require('../');
 
 // Not testing output, just testing whether an error is detected.
 
-describe('.version', () => {
+describe('allowUnknownOption', () => {
   // Optional. Use internal knowledge to suppress output to keep test output clean.
   let consoleErrorSpy;
 

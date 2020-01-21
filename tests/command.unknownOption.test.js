@@ -2,7 +2,7 @@ const commander = require('../');
 
 // Checking for detection of unknown options, including regression tests for some past issues.
 
-describe('.version', () => {
+describe('unknownOption', () => {
   // Optional. Use internal knowledge to suppress output to keep test output clean.
   let consoleErrorSpy;
 
