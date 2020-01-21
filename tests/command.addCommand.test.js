@@ -49,3 +49,21 @@ test('when command without name passed to .addCommand then throw', () => {
     program.addCommand(cmd);
   }).toThrow();
 });
+
+test('when executable command without custom executableFile passed to .addCommand then throw', () => {
+  const program = new commander.Command();
+  const cmd = new commander.Command('sub');
+  cmd.command('exec', 'exec description');
+  expect(() => {
+    program.addCommand(cmd);
+  }).toThrow();
+});
+
+test('when executable command with custom executableFile passed to .addCommand then ok', () => {
+  const program = new commander.Command();
+  const cmd = new commander.Command('sub');
+  cmd.command('exec', 'exec description', { executableFile: 'custom' });
+  expect(() => {
+    program.addCommand(cmd);
+  }).not.toThrow();
+});
