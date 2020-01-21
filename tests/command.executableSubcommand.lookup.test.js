@@ -12,7 +12,7 @@ test('when subcommand file missing then error', (done) => {
       // Get uncaught thrown error on Windows
       expect(stderr.length).toBeGreaterThan(0);
     } else {
-      expect(stderr).toBe('error: pm-list(1) does not exist, try --help\n');
+      expect(stderr).toBe('error: pm-list(1) does not exist\n');
     }
     done();
   });
@@ -24,7 +24,7 @@ test('when alias subcommand file missing then error', (done) => {
       // Get uncaught thrown error on Windows
       expect(stderr.length).toBeGreaterThan(0);
     } else {
-      expect(stderr).toBe('error: pm-list(1) does not exist, try --help\n');
+      expect(stderr).toBe('error: pm-list(1) does not exist\n');
     }
     done();
   });

@@ -756,7 +756,7 @@ Command.prototype._executeSubCommand = function(subcommand, args) {
   }
   proc.on('error', function(err) {
     if (err.code === 'ENOENT') {
-      console.error('error: %s(1) does not exist, try --help', bin);
+      console.error('error: %s(1) does not exist', bin);
     } else if (err.code === 'EACCES') {
       console.error('error: %s(1) not executable', bin);
     }
@@ -838,7 +838,7 @@ Command.prototype._parseCommand = function(operands, unknown) {
       });
 
       this._actionHandler(args);
-      this.emit('command:' + this.name(), operands, unknown); // retain ????
+      this.emit('command:' + this.name(), operands, unknown);
     } else if (operands.length) {
       if (this._findCommand('*')) {
         this._dispatchSubcommand('*', operands, unknown);
@@ -1056,7 +1056,7 @@ Command.prototype.optionMissingArgument = function(option, flag) {
  */
 
 Command.prototype.missingMandatoryOptionValue = function(option) {
-  const message = `error: required option '${option.flags}' not specified`;
+  const message = `error: required option '${option.flags}' not specified (try '${this._helpLongFlag}' for more information)`;
   console.error(message);
   this._exit(1, 'commander.missingMandatoryOptionValue', message);
 };
@@ -1070,7 +1070,7 @@ Command.prototype.missingMandatoryOptionValue = function(option) {
 
 Command.prototype.unknownOption = function(flag) {
   if (this._allowUnknownOption) return;
-  const message = `error: unknown option '${flag}'`;
+  const message = `error: unknown option '${flag}' (try '${this._helpLongFlag}' for more information)`;
   console.error(message);
   this._exit(1, 'commander.unknownOption', message);
 };
@@ -1083,7 +1083,7 @@ Command.prototype.unknownOption = function(flag) {
  */
 
 Command.prototype.unknownCommand = function() {
-  const message = `error: unrecognised command '${this.args[0]}' (use '${this._helpLongFlag}' for a list of commands)`;
+  const message = `error: unrecognised command '${this.args[0]}' (try '${this._helpLongFlag}' for more information)`;
   console.error(message);
   this._exit(1, 'commander.unknownCommand', message);
 };
