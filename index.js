@@ -845,8 +845,7 @@ Command.prototype._parseCommand = function(operands, unknown) {
       } else if (this.listenerCount('command:*')) {
         this.emit('command:*', operands, unknown);
       } else if (this.commands.length) {
-        console.error(`Unrecognised command '${this.args[0]}'`);
-        this._helpAndError();
+        this.unknownCommand();
       }
     } else if (this.commands.length) {
       // This command has subcommands and nothing hooked up at this level, so display help.
@@ -1074,6 +1073,19 @@ Command.prototype.unknownOption = function(flag) {
   const message = `error: unknown option '${flag}'`;
   console.error(message);
   this._exit(1, 'commander.unknownOption', message);
+};
+
+/**
+ * Unknown command.
+ *
+ * @param {String} flag
+ * @api private
+ */
+
+Command.prototype.unknownCommand = function() {
+  const message = `error: unrecognised command '${this.args[0]}' (use '${this._helpLongFlag}' for a list of commands)`;
+  console.error(message);
+  this._exit(1, 'commander.unknownCommand', message);
 };
 
 /**
