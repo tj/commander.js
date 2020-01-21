@@ -218,6 +218,18 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
 Command.prototype.addCommand = function(cmd) {
   if (!cmd._name) throw new Error('Command passed to .AddCommand must have a name');
 
+  // To keep things simple, block automatic name generation for deeply nested executables.
+  // Fail fast and detect when adding rather than later when parsing.
+  function checkExplicitNames(commandArray) {
+    commandArray.forEach((cmd) => {
+      if (cmd._executableHandler && !cmd._executableFile) {
+        throw new Error(`Must specify executableFile for deeply nested executable: ${cmd.name()}`);
+      }
+      checkExplicitNames(cmd.commands);
+    });
+  }
+  checkExplicitNames(cmd.commands);
+
   this.commands.push(cmd);
   cmd.parent = this;
   return this;
