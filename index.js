@@ -216,7 +216,7 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
   */
 
 Command.prototype.addCommand = function(cmd) {
-  if (!cmd._name) throw Error('error: addCommand name is not specified for command');
+  if (!cmd._name) throw new Error('Command passed to .AddCommand must have a name');
 
   this.commands.push(cmd);
   cmd.parent = this;

@@ -35,9 +35,17 @@ test('when commands added using .addCommand and .command then internals similar'
       case 'boolean':
       case 'number':
       case 'undefined':
-        // Compare vaues in a way that will make some sense in test failure message.
+        // Compare vaues in a way that will be readable in test failure message.
         expect(`${key}:${cmd1[key]}`).toEqual(`${key}:${cmd2[key]}`);
         break;
     }
   }
+});
+
+test('when command without name passed to .addCommand then throw', () => {
+  const program = new commander.Command();
+  const cmd = new commander.Command();
+  expect(() => {
+    program.addCommand(cmd);
+  }).toThrow();
 });
