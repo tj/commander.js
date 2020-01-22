@@ -668,12 +668,6 @@ program
     console.log('  $ deploy exec async');
   });
 
-program
-  .command('*')
-  .action(function(env){
-    console.log('deploying "%s"', env);
-  });
-
 program.parse(process.argv);
 ```
 

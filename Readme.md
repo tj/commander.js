@@ -581,9 +581,10 @@ program.on('option:verbose', function () {
   process.env.VERBOSE = this.verbose;
 });
 
-// error on unknown commands
-program.on('command:*', function () {
-  console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args[0]]);
+// custom error on unknown command
+program.on('command:*', function (operands) {
+  console.error(`Invalid command '${operands[0]}'. Did you mean:`);
+  console.error(mySuggestions(operands[0]));
   process.exit(1);
 });
 ```
@@ -701,12 +702,6 @@ program
     console.log('');
     console.log('  $ deploy exec sequential');
     console.log('  $ deploy exec async');
-  });
-
-program
-  .command('*')
-  .action(function(env){
-    console.log('deploying "%s"', env);
   });
 
 program.parse(process.argv);
