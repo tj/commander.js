@@ -11,7 +11,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
 
 - [Commander.js](#commanderjs)
   - [Installation](#installation)
-  - [Declaring program variable](#declaring-program-variable)
+  - [Declaring _program_ variable](#declaring-program-variable)
   - [Options](#options)
     - [Common option types, boolean and value](#common-option-types-boolean-and-value)
     - [Default option value](#default-option-value)
@@ -33,7 +33,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
   - [Bits and pieces](#bits-and-pieces)
     - [Avoiding option name clashes](#avoiding-option-name-clashes)
     - [TypeScript](#typescript)
-    - [Node options such as --harmony](#node-options-such-as---harmony)
+    - [Node options such as `--harmony`](#node-options-such-as---harmony)
     - [Node debugging](#node-debugging)
     - [Override exit handling](#override-exit-handling)
   - [Examples](#examples)
@@ -317,6 +317,8 @@ program
   .command('stop [service]', 'stop named service, or all if no name supplied');
 ```
 
+Configuration options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the command from the generated help output. Specifying `true` for `opts.isDefault` will run the subcommand if no other subcommand is specified ([example](./examples/defaultCommand.js)).
+
 ### Specify the argument syntax
 
 You use `.arguments` to specify the arguments for the top-level command, and for subcommands they are included in the `.command` call. Angled brackets (e.g. `<required>`) indicate required input. Square brackets (e.g. `[optional]`) indicate optional input.
@@ -397,13 +399,11 @@ async function main() {
 }
 ```
 
-A command's options on the command line are validated when the command is used. Any unknown options will be reported as an error. However, if an action-based command does not define an action, then the options are not validated.
-
-Configuration options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the command from the generated help output.
+A command's options on the command line are validated when the command is used. Any unknown options will be reported as an error.
 
 ### Git-style executable (sub)commands
 
-When `.command()` is invoked with a description argument, this tells commander that you're going to use separate executables for sub-commands, much like `git(1)` and other popular tools.
+When `.command()` is invoked with a description argument, this tells commander that you're going to use separate executables for sub-commands, much like `git` and other popular tools.
 Commander will search the executables in the directory of the entry script (like `./examples/pm`) with the name `program-subcommand`, like `pm-install`, `pm-search`.
 You can specify a custom name with the `executableFile` configuration option.
 
@@ -421,9 +421,6 @@ program
   .command('list', 'list packages installed', {isDefault: true})
   .parse(process.argv);
 ```
-
-Configuration options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the command from the generated help output. Specifying `true` for `opts.isDefault` will run the subcommand if no other subcommand is specified.
-Specifying a name with `executableFile` will override the default constructed name.
 
 If the program is designed to be installed globally, make sure the executables have proper modes, like `755`.
 
