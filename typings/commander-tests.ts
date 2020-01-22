@@ -111,6 +111,9 @@ program
     .command("name1", "description")
     .command("name2", "description", { isDefault:true })
 
+const preparedCommand = new program.Command('prepared');
+program.addCommand(preparedCommand);
+
 program
     .exitOverride();
 

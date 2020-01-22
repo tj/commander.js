@@ -297,9 +297,11 @@ program.version('0.0.1', '-v, --vers', 'output the current version');
 
 ## Commands
 
-You can specify (sub)commands for your top-level command using `.command`. There are two ways these can be implemented: using an action handler attached to the command, or as a separate executable file (described in more detail later). The subcommands may be nested ([example](./examples/nestedCommands.js)).
+You can specify (sub)commands for your top-level command using `.command()` or `.addCommand()`. There are two ways these can be implemented: using an action handler attached to the command, or as a separate executable file (described in more detail later). The subcommands may be nested ([example](./examples/nestedCommands.js)).
 
-In the first parameter to `.command` you specify the command name and any command arguments. The arguments may be `<required>` or `[optional]`, and the last argument may also be `variadic...`.
+In the first parameter to `.command()` you specify the command name and any command arguments. The arguments may be `<required>` or `[optional]`, and the last argument may also be `variadic...`.
+
+You can use `.addCommand()` to add an already configured subcommand to the program.
 
 For example:
 
@@ -318,6 +320,11 @@ program
 program
   .command('start <service>', 'start named service')
   .command('stop [service]', 'stop named service, or all if no name supplied');
+
+// Command prepared separately.
+// Returns top-level command for adding more commands.
+program
+  .addCommand(build.makeBuildCommand());
 ```
 
 Configuration options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the command from the generated help output. Specifying `true` for `opts.isDefault` will run the subcommand if no other subcommand is specified ([example](./examples/defaultCommand.js)).

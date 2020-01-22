@@ -212,8 +212,12 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
 };
 
 /**
-  * @api public
-  */
+ * Add a prepared subcommand.
+ *
+ * @param {Command} cmd - new subcommand
+ * @return {Command} parent command for chaining
+ * @api public
+ */
 
 Command.prototype.addCommand = function(cmd) {
   if (!cmd._name) throw new Error('Command passed to .AddCommand must have a name');
