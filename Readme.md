@@ -23,11 +23,12 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Specify the argument syntax](#specify-the-argument-syntax)
     - [Action handler (sub)commands](#action-handler-subcommands)
     - [Git-style executable (sub)commands](#git-style-executable-subcommands)
-  - [Automated --help](#automated---help)
+  - [Automated help](#automated-help)
     - [Custom help](#custom-help)
     - [.usage and .name](#usage-and-name)
     - [.outputHelp(cb)](#outputhelpcb)
     - [.helpOption(flags, description)](#helpoptionflags-description)
+    - [.addHelpCommand()](#addhelpcommand)
     - [.help(cb)](#helpcb)
   - [Custom event listeners](#custom-event-listeners)
   - [Bits and pieces](#bits-and-pieces)
@@ -269,7 +270,7 @@ program
 program.parse(process.argv);
 ```
 
-```
+```bash
 $ pizza
 error: required option '-c, --cheese <type>' not specified
 ```
@@ -426,9 +427,10 @@ program
 
 If the program is designed to be installed globally, make sure the executables have proper modes, like `755`.
 
-## Automated --help
+## Automated help
 
- The help information is auto-generated based on the information commander already knows about your program, so the following `--help` info is for free:
+ The help information is auto-generated based on the information commander already knows about your program. The default
+ help option is `-h,--help`.
 
 ```bash
 $ ./examples/pizza --help
@@ -446,14 +448,22 @@ Options:
   -h, --help           display help for command
 ```
 
+A `help` command is added by default if your command has subcommands. It can be used alone, or with a subcommand name to show
+further help for the subcommand. These are effectively the same if the `shell` program has implicit help:
+
+```bash
+shell help
+shell --help
+
+shell help spawn
+shell spawn --help
+```
+
 ### Custom help
 
- You can display arbitrary `-h, --help` information
+ You can display extra `-h, --help` information
  by listening for "--help". Commander will automatically
- exit once you are done so that the remainder of your program
- does not execute causing undesired behaviors, for example
- in the following executable "stuff" will not output when
- `--help` is used.
+ exit after displaying the help.
 
 ```js
 #!/usr/bin/env node
@@ -466,9 +476,7 @@ program
   .option('-b, --bar', 'enable some bar')
   .option('-B, --baz', 'enable some baz');
 
-// must be before .parse() since
-// node's emit() is immediate
-
+// must be before .parse()
 program.on('--help', function(){
   console.log('')
   console.log('Examples:');
@@ -487,11 +495,11 @@ Yields the following help output when `node script-name.js -h` or `node script-n
 Usage: custom-help [options]
 
 Options:
-  -h, --help     display help for command
   -V, --version  output the version number
   -f, --foo      enable some foo
   -b, --bar      enable some bar
   -B, --baz      enable some baz
+  -h, --help     display help for command
 
 Examples:
   $ custom-help --help
@@ -547,6 +555,16 @@ function make_red(txt) {
 ```js
 program
   .helpOption('-e, --HELP', 'read more information');
+```
+
+### .addHelpCommand()
+
+You can explicitly turn on or off the implicit help command with `.addHelpCommand()` and `.addHelpCommand(false)`.
+
+You can both turn on and customise the help command by supplying the name and description:
+
+```js
+program.addHelpCommand('assist [command]', 'show assistance');
 ```
 
 ### .help(cb)
