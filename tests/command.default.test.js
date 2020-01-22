@@ -28,7 +28,7 @@ describe('default executable command', () => {
   });
 });
 
-describe('defaut action command', () => {
+describe('default action command', () => {
   function makeProgram() {
     const program = new commander.Command();
     const actionMock = jest.fn();
