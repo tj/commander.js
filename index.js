@@ -653,7 +653,7 @@ Command.prototype.parse = function(argv) {
   // store raw args
   this.rawArgs = argv;
 
-  // Guess name, used in usage in help. Not trying very hard. See _executeSubCommand for trying hard by checking files.
+  // Guess name, used in usage in help.
   this._name = this._name || path.basename(argv[1], path.extname(argv[1]));
 
   this._parseCommand([], argv.slice(2));
