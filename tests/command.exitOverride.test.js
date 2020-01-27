@@ -48,7 +48,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(consoleErrorSpy).toHaveBeenCalled();
-    expectCommanderError(caughtErr, 1, 'commander.unknownOption', "error: unknown option '-m' (try '--help' for more information)");
+    expectCommanderError(caughtErr, 1, 'commander.unknownOption', "error: unknown option '-m'");
   });
 
   test('when specify unknown command then throw CommanderError', () => {
@@ -65,7 +65,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(consoleErrorSpy).toHaveBeenCalled();
-    expectCommanderError(caughtErr, 1, 'commander.unknownCommand', "error: unrecognised command 'oops' (try '--help' for more information)");
+    expectCommanderError(caughtErr, 1, 'commander.unknownCommand', "error: unrecognised command 'oops'");
   });
 
   // Same error as above, but with custom handler.
@@ -241,6 +241,6 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expectCommanderError(caughtErr, 1, 'commander.missingMandatoryOptionValue', `error: required option '${optionFlags}' not specified (try '--help' for more information)`);
+    expectCommanderError(caughtErr, 1, 'commander.missingMandatoryOptionValue', `error: required option '${optionFlags}' not specified`);
   });
 });
