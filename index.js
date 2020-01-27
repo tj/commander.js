@@ -1087,7 +1087,7 @@ Command.prototype.unknownOption = function(flag) {
  */
 
 Command.prototype.unknownCommand = function() {
-  const message = `error: unrecognised command '${this.args[0]}'`;
+  const message = `error: unknown command '${this.args[0]}'`;
   console.error(message);
   this._exit(1, 'commander.unknownCommand', message);
 };

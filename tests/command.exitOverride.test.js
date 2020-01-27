@@ -65,7 +65,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(consoleErrorSpy).toHaveBeenCalled();
-    expectCommanderError(caughtErr, 1, 'commander.unknownCommand', "error: unrecognised command 'oops'");
+    expectCommanderError(caughtErr, 1, 'commander.unknownCommand', "error: unknown command 'oops'");
   });
 
   // Same error as above, but with custom handler.
