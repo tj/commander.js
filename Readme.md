@@ -630,6 +630,10 @@ You can enable `--harmony` option in two ways:
 If you are using the node inspector for [debugging](https://nodejs.org/en/docs/guides/debugging-getting-started/) git-style executable (sub)commands using `node --inspect` et al,
 the inspector port is incremented by 1 for the spawned subcommand.
 
+### Debugging Sub-Commands in VSCode
+
+If you are using VSCode to debug git-style executable sub(commands) you need to set the `"autoAttachChildProcesses": true` flag in your launch.json configuration as (sub)commands are launched as individual child processes of the top level command.
+
 ### Override exit handling
 
 By default Commander calls `process.exit` when it detects errors, or after displaying the help or version. You can override
