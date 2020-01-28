@@ -129,18 +129,18 @@ function Command(name) {
   this._storeOptionsAsProperties = true; // backwards compatible by default
   this._passCommandToAction = true; // backwards compatible by default
   this._actionResults = [];
-  this._actionHandler = undefined;
+  this._actionHandler = null;
   this._executableHandler = false;
-  this._executableFile = undefined; // custom name for executable
-  this._defaultCommandName = undefined;
-  this._exitCallback = undefined;
+  this._executableFile = null; // custom name for executable
+  this._defaultCommandName = null;
+  this._exitCallback = null;
 
   this._noHelp = false;
   this._helpFlags = '-h, --help';
   this._helpDescription = 'display help for command';
   this._helpShortFlag = '-h';
   this._helpLongFlag = '--help';
-  this._hasImplicitHelpCommand = undefined;
+  this._hasImplicitHelpCommand = undefined; // Deliberately undefined, not decided whether true or false
   this._helpCommandName = 'help';
   this._helpCommandnameAndArgs = 'help [command]';
   this._helpCommandDescription = 'display help for command';
@@ -202,7 +202,7 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
   cmd._storeOptionsAsProperties = this._storeOptionsAsProperties;
   cmd._passCommandToAction = this._passCommandToAction;
 
-  cmd._executableFile = opts.executableFile; // Custom name for executable file
+  cmd._executableFile = opts.executableFile || null; // Custom name for executable file, set missing to null to match constructor
   this.commands.push(cmd);
   cmd._parseExpectedArgs(args);
   cmd.parent = this;
