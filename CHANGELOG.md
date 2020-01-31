@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-* support for nested commands with action-handlers ([#1] [#764] [#1149])
+* support for nested commands with action-handlers ([#1] [#764] [#1149] )
+* [test](https://github.com/tj/commander.js/pull/1149)
 * `.addCommand()` for adding a separately configured command ([#764] [#1149])
 * allow a non-executable to be set as the default command ([#742] [#1149])
 * implicit help command when there are subcommands (previously only if executables) ([#1149])
