@@ -31,15 +31,15 @@
     - [.help(cb)](#helpcb)
   - [自定义事件监听](#%e8%87%aa%e5%ae%9a%e4%b9%89%e4%ba%8b%e4%bb%b6%e7%9b%91%e5%90%ac)
   - [零碎知识](#%e9%9b%b6%e7%a2%8e%e7%9f%a5%e8%af%86)
-    - [避免选项命名冲突](#避免选项命名冲突)
+    - [避免选项命名冲突](#%e9%81%bf%e5%85%8d%e9%80%89%e9%a1%b9%e5%91%bd%e5%90%8d%e5%86%b2%e7%aa%81)
     - [TypeScript](#typescript)
-    - [Node 选项例如 --harmony](#node-%e9%80%89%e9%a1%b9%e4%be%8b%e5%a6%82---harmony)
+    - [Node 选项例如 `--harmony`](#node-%e9%80%89%e9%a1%b9%e4%be%8b%e5%a6%82---harmony)
     - [Node 调试](#node-%e8%b0%83%e8%af%95)
     - [重载退出(exit)处理](#%e9%87%8d%e8%bd%bd%e9%80%80%e5%87%baexit%e5%a4%84%e7%90%86)
   - [例子](#%e4%be%8b%e5%ad%90)
   - [许可证](#%e8%ae%b8%e5%8f%af%e8%af%81)
   - [支持](#%e6%94%af%e6%8c%81)
-    - [企业使用Commander](#企业使用Commander)
+    - [企业使用Commander](#%e4%bc%81%e4%b8%9a%e4%bd%bf%e7%94%a8commander)
 
 ## 安装
 
@@ -435,7 +435,7 @@ Options:
   -b, --bbq            Add bbq sauce
   -c, --cheese <type>  Add the specified type of cheese (default: "marble")
   -C, --no-cheese      You do not want any cheese
-  -h, --help           output usage information
+  -h, --help           display help for command
 ```
 
 ### 自定义帮助
@@ -453,9 +453,7 @@ program
   .option('-b, --bar', 'enable some bar')
   .option('-B, --baz', 'enable some baz');
 
-// must be before .parse() since
-// node's emit() is immediate
-
+// must be before .parse()
 program.on('--help', function(){
   console.log('');
   console.log('Examples:');
@@ -474,7 +472,7 @@ console.log('stuff');
 Usage: custom-help [options]
 
 Options:
-  -h, --help     output usage information
+  -h, --help     display help for command
   -V, --version  output the version number
   -f, --foo      enable some foo
   -b, --bar      enable some bar
@@ -668,12 +666,6 @@ program
     console.log('');
     console.log('  $ deploy exec sequential');
     console.log('  $ deploy exec async');
-  });
-
-program
-  .command('*')
-  .action(function(env){
-    console.log('deploying "%s"', env);
   });
 
 program.parse(process.argv);

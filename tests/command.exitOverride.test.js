@@ -51,6 +51,23 @@ describe('.exitOverride and error details', () => {
     expectCommanderError(caughtErr, 1, 'commander.unknownOption', "error: unknown option '-m'");
   });
 
+  test('when specify unknown command then throw CommanderError', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .command('sub');
+
+    let caughtErr;
+    try {
+      program.parse(['node', 'test', 'oops']);
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expect(consoleErrorSpy).toHaveBeenCalled();
+    expectCommanderError(caughtErr, 1, 'commander.unknownCommand', "error: unknown command 'oops'");
+  });
+
   // Same error as above, but with custom handler.
   test('when supply custom handler then throw custom error', () => {
     const customError = new commander.CommanderError(123, 'custom-code', 'custom-message');
@@ -135,9 +152,8 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    // This is effectively treated as a deliberate request for help, rather than an error.
     expect(writeSpy).toHaveBeenCalled();
-    expectCommanderError(caughtErr, 0, 'commander.helpDisplayed', '(outputHelp)');
+    expectCommanderError(caughtErr, 1, 'commander.help', '(outputHelp)');
   });
 
   test('when specify --version then throw CommanderError', () => {

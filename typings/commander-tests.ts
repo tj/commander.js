@@ -73,9 +73,7 @@ program
     .option('-b, --bar', 'enable some bar')
     .option('-B, --baz', 'enable some baz');
 
-// must be before .parse() since
-// node's emit() is immediate
-
+// must be before .parse()
 program.on('--help', () => {
     console.log('  Examples:');
     console.log('');
@@ -112,6 +110,9 @@ program
 program
     .command("name1", "description")
     .command("name2", "description", { isDefault:true })
+
+const preparedCommand = new program.Command('prepared');
+program.addCommand(preparedCommand);
 
 program
     .exitOverride();

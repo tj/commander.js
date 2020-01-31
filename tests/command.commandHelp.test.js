@@ -7,7 +7,7 @@ test('when program has command then appears in commandHelp', () => {
   program
     .command('bare');
   const commandHelp = program.commandHelp();
-  expect(commandHelp).toBe('Commands:\n  bare\n');
+  expect(commandHelp).toMatch(/Commands:\n +bare\n/);
 });
 
 test('when program has command with optional arg then appears in commandHelp', () => {
@@ -15,5 +15,5 @@ test('when program has command with optional arg then appears in commandHelp', (
   program
     .command('bare [bare-arg]');
   const commandHelp = program.commandHelp();
-  expect(commandHelp).toEqual('Commands:\n  bare [bare-arg]\n');
+  expect(commandHelp).toMatch(/Commands:\n +bare \[bare-arg\]\n/);
 });

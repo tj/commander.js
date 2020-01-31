@@ -3,7 +3,7 @@ const commander = require('../');
 test('when default usage and check program help then starts with default usage', () => {
   const program = new commander.Command();
 
-  program.parse(['node', 'test']);
+  program.name('test');
   const helpInformation = program.helpInformation();
 
   expect(helpInformation).toMatch(new RegExp('^Usage: test \\[options\\]'));
@@ -15,7 +15,7 @@ test('when custom usage and check program help then starts with custom usage', (
   program
     .usage(myUsage);
 
-  program.parse(['node', 'test']);
+  program.name('test');
   const helpInformation = program.helpInformation();
 
   expect(helpInformation).toMatch(new RegExp(`^Usage: test ${myUsage}`));
@@ -26,7 +26,7 @@ test('when default usage and check subcommand help then starts with default usag
   const subCommand = program
     .command('info');
 
-  program.parse(['node', 'test']);
+  program.name('test');
   const helpInformation = subCommand.helpInformation();
 
   expect(helpInformation).toMatch(new RegExp('^Usage: test info \\[options\\]'));
@@ -39,7 +39,7 @@ test('when custom usage and check subcommand help then starts with custom usage 
     .command('info')
     .usage(myUsage);
 
-  program.parse(['node', 'test']);
+  program.name('test');
   const helpInformation = subCommand.helpInformation();
 
   expect(helpInformation).toMatch(new RegExp(`^Usage: test info ${myUsage}`));

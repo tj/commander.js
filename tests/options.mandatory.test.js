@@ -219,9 +219,11 @@ describe('required command option with mandatory value not specified', () => {
       .command('sub')
       .requiredOption('--subby <type>', 'description')
       .action((cmd) => {});
+    program
+      .command('sub2');
 
     expect(() => {
-      program.parse(['node', 'test']);
+      program.parse(['node', 'test', 'sub2']);
     }).not.toThrow();
   });
 });

@@ -5,8 +5,6 @@
 var EventEmitter = require('events').EventEmitter;
 var spawn = require('child_process').spawn;
 var path = require('path');
-var dirname = path.dirname;
-var basename = path.basename;
 var fs = require('fs');
 
 /**
@@ -124,7 +122,6 @@ exports.CommanderError = CommanderError;
 function Command(name) {
   this.commands = [];
   this.options = [];
-  this._execs = new Set();
   this._allowUnknownOption = false;
   this._args = [];
   this._name = name || '';
@@ -132,11 +129,21 @@ function Command(name) {
   this._storeOptionsAsProperties = true; // backwards compatible by default
   this._passCommandToAction = true; // backwards compatible by default
   this._actionResults = [];
+  this._actionHandler = null;
+  this._executableHandler = false;
+  this._executableFile = null; // custom name for executable
+  this._defaultCommandName = null;
+  this._exitCallback = null;
 
+  this._noHelp = false;
   this._helpFlags = '-h, --help';
-  this._helpDescription = 'output usage information';
+  this._helpDescription = 'display help for command';
   this._helpShortFlag = '-h';
   this._helpLongFlag = '--help';
+  this._hasImplicitHelpCommand = undefined; // Deliberately undefined, not decided whether true or false
+  this._helpCommandName = 'help';
+  this._helpCommandnameAndArgs = 'help [command]';
+  this._helpCommandDescription = 'display help for command';
 }
 
 /**
@@ -179,26 +186,57 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
 
   if (desc) {
     cmd.description(desc);
-    this.executables = true;
-    this._execs.add(cmd._name);
-    if (opts.isDefault) this.defaultExecutable = cmd._name;
+    cmd._executableHandler = true;
   }
+  if (opts.isDefault) this._defaultCommandName = cmd._name;
+
   cmd._noHelp = !!opts.noHelp;
   cmd._helpFlags = this._helpFlags;
   cmd._helpDescription = this._helpDescription;
   cmd._helpShortFlag = this._helpShortFlag;
   cmd._helpLongFlag = this._helpLongFlag;
+  cmd._helpCommandName = this._helpCommandName;
+  cmd._helpCommandnameAndArgs = this._helpCommandnameAndArgs;
+  cmd._helpCommandDescription = this._helpCommandDescription;
   cmd._exitCallback = this._exitCallback;
   cmd._storeOptionsAsProperties = this._storeOptionsAsProperties;
   cmd._passCommandToAction = this._passCommandToAction;
 
-  cmd._executableFile = opts.executableFile; // Custom name for executable file
+  cmd._executableFile = opts.executableFile || null; // Custom name for executable file, set missing to null to match constructor
   this.commands.push(cmd);
-  cmd.parseExpectedArgs(args);
+  cmd._parseExpectedArgs(args);
   cmd.parent = this;
 
   if (desc) return this;
   return cmd;
+};
+
+/**
+ * Add a prepared subcommand.
+ *
+ * @param {Command} cmd - new subcommand
+ * @return {Command} parent command for chaining
+ * @api public
+ */
+
+Command.prototype.addCommand = function(cmd) {
+  if (!cmd._name) throw new Error('Command passed to .AddCommand must have a name');
+
+  // To keep things simple, block automatic name generation for deeply nested executables.
+  // Fail fast and detect when adding rather than later when parsing.
+  function checkExplicitNames(commandArray) {
+    commandArray.forEach((cmd) => {
+      if (cmd._executableHandler && !cmd._executableFile) {
+        throw new Error(`Must specify executableFile for deeply nested executable: ${cmd.name()}`);
+      }
+      checkExplicitNames(cmd.commands);
+    });
+  }
+  checkExplicitNames(cmd.commands);
+
+  this.commands.push(cmd);
+  cmd.parent = this;
+  return this;
 };
 
 /**
@@ -208,18 +246,44 @@ Command.prototype.command = function(nameAndArgs, actionOptsOrExecDesc, execOpts
  */
 
 Command.prototype.arguments = function(desc) {
-  return this.parseExpectedArgs(desc.split(/ +/));
+  return this._parseExpectedArgs(desc.split(/ +/));
 };
 
 /**
- * Add an implicit `help [cmd]` subcommand
- * which invokes `--help` for the given command.
+ * Override default decision whether to add implicit help command.
  *
+ *    addHelpCommand() // force on
+ *    addHelpCommand(false); // force off
+ *    addHelpCommand('help [cmd]', 'display help for [cmd]'); // force on with custom detais
+ *
+ * @return {Command} for chaining
+ * @api public
+ */
+
+Command.prototype.addHelpCommand = function(enableOrNameAndArgs, description) {
+  if (enableOrNameAndArgs === false) {
+    this._hasImplicitHelpCommand = false;
+  } else {
+    this._hasImplicitHelpCommand = true;
+    if (typeof enableOrNameAndArgs === 'string') {
+      this._helpCommandName = enableOrNameAndArgs.split(' ')[0];
+      this._helpCommandnameAndArgs = enableOrNameAndArgs;
+    }
+    this._helpCommandDescription = description || this._helpCommandDescription;
+  }
+  return this;
+};
+
+/**
+ * @return {boolean}
  * @api private
  */
 
-Command.prototype.addImplicitHelpCommand = function() {
-  this.command('help [cmd]', 'display help for [cmd]');
+Command.prototype._lazyHasImplicitHelpCommand = function() {
+  if (this._hasImplicitHelpCommand === undefined) {
+    this._hasImplicitHelpCommand = this.commands.length && !this._actionHandler && !this._findCommand('help');
+  }
+  return this._hasImplicitHelpCommand;
 };
 
 /**
@@ -229,10 +293,10 @@ Command.prototype.addImplicitHelpCommand = function() {
  *
  * @param {Array} args
  * @return {Command} for chaining
- * @api public
+ * @api private
  */
 
-Command.prototype.parseExpectedArgs = function(args) {
+Command.prototype._parseExpectedArgs = function(args) {
   if (!args.length) return;
   var self = this;
   args.forEach(function(arg) {
@@ -323,37 +387,8 @@ Command.prototype._exit = function(exitCode, code, message) {
 
 Command.prototype.action = function(fn) {
   var self = this;
-  var listener = function(args, unknown) {
-    // Parse any so-far unknown options
-    args = args || [];
-    unknown = unknown || [];
-
-    var parsed = self.parseOptions(unknown);
-
-    // Output help if necessary
-    outputHelpIfRequested(self, parsed.unknown);
-    self._checkForMissingMandatoryOptions();
-
-    // If there are still any unknown options, then we simply die.
-    if (parsed.unknown.length > 0) {
-      self.unknownOption(parsed.unknown[0]);
-    }
-
-    args = args.concat(parsed.operands, parsed.unknown);
-
-    self._args.forEach(function(expectedArg, i) {
-      if (expectedArg.required && args[i] == null) {
-        self.missingArgument(expectedArg.name);
-      } else if (expectedArg.variadic) {
-        if (i !== self._args.length - 1) {
-          self.variadicArgNotLast(expectedArg.name);
-        }
-
-        args[i] = args.splice(i);
-      }
-    });
-
-    // The .action callback takes an extra parameter which is the command itself.
+  var listener = function(args) {
+    // The .action callback takes an extra parameter which is the command or options.
     var expectedArgsCount = self._args.length;
     var actionArgs = args.slice(0, expectedArgsCount);
     if (self._passCommandToAction) {
@@ -374,14 +409,7 @@ Command.prototype.action = function(fn) {
     }
     rootCommand._actionResults.push(actionResult);
   };
-  var parent = this.parent || this;
-  if (parent === this) {
-    parent.on('program-command', listener);
-  } else {
-    parent.on('command:' + this._name, listener);
-  }
-
-  if (this._alias) parent.on('command:' + this._alias, listener);
+  this._actionHandler = listener;
   return this;
 };
 
@@ -425,7 +453,7 @@ Command.prototype._optionEx = function(config, flags, description, fn, defaultVa
     // when --no-foo we make sure default is true, unless a --foo option is already defined
     if (option.negate) {
       const positiveLongFlag = option.long.replace(/^--no-/, '--');
-      defaultValue = self.optionFor(positiveLongFlag) ? self._getOptionValue(name) : true;
+      defaultValue = self._findOption(positiveLongFlag) ? self._getOptionValue(name) : true;
     }
     // preassign only if we have a default
     if (defaultValue !== undefined) {
@@ -622,80 +650,15 @@ Command.prototype._getOptionValue = function(key) {
  */
 
 Command.prototype.parse = function(argv) {
-  // implicit help
-  if (this.executables) this.addImplicitHelpCommand();
-
   // store raw args
   this.rawArgs = argv;
 
-  // guess name
-  this._name = this._name || basename(argv[1], '.js');
+  // Guess name, used in usage in help.
+  this._name = this._name || path.basename(argv[1], path.extname(argv[1]));
 
-  // github-style sub-commands with no sub-command
-  if (this.executables && argv.length < 3 && !this.defaultExecutable) {
-    // this user needs help
-    argv.push(this._helpLongFlag);
-  }
+  this._parseCommand([], argv.slice(2));
 
-  // process argv, leaving off first two args which are app and scriptname.
-  const parsed = this.parseOptions(argv.slice(2));
-  const args = parsed.operands.concat(parsed.unknown);
-  this.args = args.slice();
-
-  var result = this.parseArgs(parsed.operands, parsed.unknown);
-
-  if (args[0] === 'help' && args.length === 1) this.help();
-
-  // Note for future: we could return early if we found an action handler in parseArgs, as none of following code needed?
-
-  // <cmd> --help
-  if (args[0] === 'help') {
-    args[0] = args[1];
-    args[1] = this._helpLongFlag;
-  } else {
-    // If calling through to executable subcommand we could check for help flags before failing,
-    // but a somewhat unlikely case since program options not passed to executable subcommands.
-    // Wait for reports to see if check needed and what usage pattern is.
-    this._checkForMissingMandatoryOptions();
-  }
-
-  // executable sub-commands
-  // (Debugging note for future: args[0] is not right if an action has been called)
-  var name = result.args[0];
-  var subCommand = null;
-
-  // Look for subcommand
-  if (name) {
-    subCommand = this.commands.find(function(command) {
-      return command._name === name;
-    });
-  }
-
-  // Look for alias
-  if (!subCommand && name) {
-    subCommand = this.commands.find(function(command) {
-      return command.alias() === name;
-    });
-    if (subCommand) {
-      name = subCommand._name;
-      args[0] = name;
-    }
-  }
-
-  // Look for default subcommand
-  if (!subCommand && this.defaultExecutable) {
-    name = this.defaultExecutable;
-    args.unshift(name);
-    subCommand = this.commands.find(function(command) {
-      return command._name === name;
-    });
-  }
-
-  if (this._execs.has(name)) {
-    return this.executeSubCommand(argv, args, subCommand ? subCommand._executableFile : undefined);
-  }
-
-  return result;
+  return this;
 };
 
 /**
@@ -707,6 +670,7 @@ Command.prototype.parse = function(argv) {
  * @return {Promise}
  * @api public
  */
+
 Command.prototype.parseAsync = function(argv) {
   this.parse(argv);
   return Promise.all(this._actionResults);
@@ -715,59 +679,51 @@ Command.prototype.parseAsync = function(argv) {
 /**
  * Execute a sub-command executable.
  *
- * @param {Array} argv
- * @param {Array} args
- * @param {Array} unknown
- * @param {String} executableFile
  * @api private
  */
 
-Command.prototype.executeSubCommand = function(argv, args, executableFile) {
-  if (!args.length) this.help();
+Command.prototype._executeSubCommand = function(subcommand, args) {
+  args = args.slice();
+  let launchWithNode = false; // Use node for source targets so do not need to get permissions correct, and on Windows.
+  const sourceExt = ['.js', '.ts', '.mjs'];
 
-  var isExplicitJS = false; // Whether to use node to launch "executable"
+  // Not checking for help first. Unlikely to have mandatory and executable, and can't robustly test for help flags in external command.
+  this._checkForMissingMandatoryOptions();
 
-  // executable
-  var pm = argv[1];
+  // Want the entry script as the reference for command name and directory for searching for other files.
+  const scriptPath = this.rawArgs[1];
+
+  let baseDir;
+  try {
+    const resolvedLink = fs.realpathSync(scriptPath);
+    baseDir = path.dirname(resolvedLink);
+  } catch (e) {
+    baseDir = '.'; // dummy, probably not going to find executable!
+  }
+
   // name of the subcommand, like `pm-install`
-  var bin = basename(pm, path.extname(pm)) + '-' + args[0];
-  if (executableFile != null) {
-    bin = executableFile;
-    // Check for same extensions as we scan for below so get consistent launch behaviour.
-    var executableExt = path.extname(executableFile);
-    isExplicitJS = executableExt === '.js' || executableExt === '.ts' || executableExt === '.mjs';
+  let bin = path.basename(scriptPath, path.extname(scriptPath)) + '-' + subcommand._name;
+  if (subcommand._executableFile) {
+    bin = subcommand._executableFile;
   }
 
-  // In case of globally installed, get the base dir where executable
-  //  subcommand file should be located at
-  var baseDir;
-
-  var resolvedLink = fs.realpathSync(pm);
-
-  baseDir = dirname(resolvedLink);
-
-  // prefer local `./<bin>` to bin in the $PATH
-  var localBin = path.join(baseDir, bin);
-
-  // whether bin file is a js script with explicit `.js` or `.ts` extension
-  if (exists(localBin + '.js')) {
-    bin = localBin + '.js';
-    isExplicitJS = true;
-  } else if (exists(localBin + '.ts')) {
-    bin = localBin + '.ts';
-    isExplicitJS = true;
-  } else if (exists(localBin + '.mjs')) {
-    bin = localBin + '.mjs';
-    isExplicitJS = true;
-  } else if (exists(localBin)) {
+  const localBin = path.join(baseDir, bin);
+  if (fs.existsSync(localBin)) {
+    // prefer local `./<bin>` to bin in the $PATH
     bin = localBin;
+  } else {
+    // Look for source files.
+    sourceExt.forEach((ext) => {
+      if (fs.existsSync(`${localBin}${ext}`)) {
+        bin = `${localBin}${ext}`;
+      }
+    });
   }
+  launchWithNode = sourceExt.includes(path.extname(bin));
 
-  args = args.slice(1);
-
-  var proc;
+  let proc;
   if (process.platform !== 'win32') {
-    if (isExplicitJS) {
+    if (launchWithNode) {
       args.unshift(bin);
       // add executable arguments to spawn
       args = incrementNodeInspectorPort(process.execArgv).concat(args);
@@ -783,7 +739,7 @@ Command.prototype.executeSubCommand = function(argv, args, executableFile) {
     proc = spawn(process.execPath, args, { stdio: 'inherit' });
   }
 
-  var signals = ['SIGUSR1', 'SIGUSR2', 'SIGTERM', 'SIGINT', 'SIGHUP'];
+  const signals = ['SIGUSR1', 'SIGUSR2', 'SIGTERM', 'SIGINT', 'SIGHUP'];
   signals.forEach(function(signal) {
     process.on(signal, function() {
       if (proc.killed === false && proc.exitCode === null) {
@@ -804,9 +760,9 @@ Command.prototype.executeSubCommand = function(argv, args, executableFile) {
   }
   proc.on('error', function(err) {
     if (err.code === 'ENOENT') {
-      console.error('error: %s(1) does not exist, try --help', bin);
+      console.error('error: %s(1) does not exist', bin);
     } else if (err.code === 'EACCES') {
-      console.error('error: %s(1) not executable. try chmod or run with root', bin);
+      console.error('error: %s(1) not executable', bin);
     }
     if (!exitCallback) {
       process.exit(1);
@@ -822,41 +778,96 @@ Command.prototype.executeSubCommand = function(argv, args, executableFile) {
 };
 
 /**
- * Parse command `args`.
+ * @api private
+ */
+Command.prototype._dispatchSubcommand = function(commandName, operands, unknown) {
+  const subCommand = this._findCommand(commandName);
+  if (!subCommand) this._helpAndError();
+
+  if (subCommand._executableHandler) {
+    this._executeSubCommand(subCommand, operands.concat(unknown));
+  } else {
+    subCommand._parseCommand(operands, unknown);
+  }
+};
+
+/**
+ * Process arguments in context of this command.
  *
- * When listener(s) are available those
- * callbacks are invoked, otherwise the "*"
- * event is emitted and those actions are invoked.
- *
- * @param {Array} args
- * @return {Command} for chaining
  * @api private
  */
 
-Command.prototype.parseArgs = function(operands, unknown) {
-  if (operands.length) {
-    const name = operands[0];
-    if (this.listeners('command:' + name).length) {
-      this.emit('command:' + operands[0], operands.slice(1), unknown);
-    } else {
-      this.emit('program-command', operands, unknown);
-      this.emit('command:*', operands, unknown);
-    }
-  } else {
-    outputHelpIfRequested(this, unknown);
+Command.prototype._parseCommand = function(operands, unknown) {
+  const parsed = this.parseOptions(unknown);
+  operands = operands.concat(parsed.operands);
+  unknown = parsed.unknown;
+  this.args = operands.concat(unknown);
 
-    // If there were no args and we have unknown options,
-    // then they are extraneous and we need to error.
-    if (unknown.length > 0 && !this.defaultExecutable) {
-      this.unknownOption(unknown[0]);
+  if (operands && this._findCommand(operands[0])) {
+    this._dispatchSubcommand(operands[0], operands.slice(1), unknown);
+  } else if (this._lazyHasImplicitHelpCommand() && operands[0] === this._helpCommandName) {
+    if (operands.length === 1) {
+      this.help();
+    } else {
+      this._dispatchSubcommand(operands[1], [], [this._helpLongFlag]);
     }
-    // Call the program action handler, unless it has a (missing) required parameter and signature does not match.
-    if (this._args.filter(function(a) { return a.required; }).length === 0) {
-      this.emit('program-command');
+  } else if (this._defaultCommandName) {
+    outputHelpIfRequested(this, unknown); // Run the help for default command from parent rather than passing to default command
+    this._dispatchSubcommand(this._defaultCommandName, operands, unknown);
+  } else {
+    if (this.commands.length && this.args.length === 0 && !this._actionHandler && !this._defaultCommandName) {
+      // probaby missing subcommand and no handler, user needs help
+      this._helpAndError();
+    }
+
+    outputHelpIfRequested(this, parsed.unknown);
+    this._checkForMissingMandatoryOptions();
+    if (parsed.unknown.length > 0) {
+      this.unknownOption(parsed.unknown[0]);
+    }
+
+    if (this._actionHandler) {
+      const self = this;
+      const args = this.args.slice();
+      this._args.forEach(function(arg, i) {
+        if (arg.required && args[i] == null) {
+          self.missingArgument(arg.name);
+        } else if (arg.variadic) {
+          if (i !== self._args.length - 1) {
+            self.variadicArgNotLast(arg.name);
+          }
+
+          args[i] = args.splice(i);
+        }
+      });
+
+      this._actionHandler(args);
+      this.emit('command:' + this.name(), operands, unknown);
+    } else if (operands.length) {
+      if (this._findCommand('*')) {
+        this._dispatchSubcommand('*', operands, unknown);
+      } else if (this.listenerCount('command:*')) {
+        this.emit('command:*', operands, unknown);
+      } else if (this.commands.length) {
+        this.unknownCommand();
+      }
+    } else if (this.commands.length) {
+      // This command has subcommands and nothing hooked up at this level, so display help.
+      this._helpAndError();
+    } else {
+      // fall through for caller to handle after calling .parse()
     }
   }
+};
 
-  return this;
+/**
+ * Find matching command.
+ *
+ * @api private
+ */
+Command.prototype._findCommand = function(name) {
+  if (!name) return undefined;
+  return this.commands.find(cmd => cmd._name === name || cmd._alias === name);
 };
 
 /**
@@ -867,18 +878,19 @@ Command.prototype.parseArgs = function(operands, unknown) {
  * @api private
  */
 
-Command.prototype.optionFor = function(arg) {
+Command.prototype._findOption = function(arg) {
   return this.options.find(option => option.is(arg));
 };
 
 /**
  * Display an error message if a mandatory option does not have a value.
+ * Lazy calling after checking for help flags from leaf subcommand.
  *
  * @api private
  */
 
 Command.prototype._checkForMissingMandatoryOptions = function() {
-  // Walk up hierarchy so can call from action handler after checking for displaying help.
+  // Walk up hierarchy so can call in subcommand after checking for displaying help.
   for (var cmd = this; cmd; cmd = cmd.parent) {
     cmd.options.forEach((anOption) => {
       if (anOption.mandatory && (cmd._getOptionValue(anOption.attributeName()) === undefined)) {
@@ -927,7 +939,7 @@ Command.prototype.parseOptions = function(argv) {
     }
 
     if (maybeOption(arg)) {
-      const option = this.optionFor(arg);
+      const option = this._findOption(arg);
       // recognised option, call listener to assign value with possible custom processing
       if (option) {
         if (option.required) {
@@ -950,7 +962,7 @@ Command.prototype.parseOptions = function(argv) {
 
     // Look for combo options following single dash, eat first one if known.
     if (arg.length > 2 && arg[0] === '-' && arg[1] !== '-') {
-      const option = this.optionFor(`-${arg[1]}`);
+      const option = this._findOption(`-${arg[1]}`);
       if (option) {
         if (option.required || option.optional) {
           // option with value following in same argument
@@ -967,7 +979,7 @@ Command.prototype.parseOptions = function(argv) {
     // Look for known long flag with value, like --foo=bar
     if (/^--[^=]+=/.test(arg)) {
       const index = arg.indexOf('=');
-      const option = this.optionFor(arg.slice(0, index));
+      const option = this._findOption(arg.slice(0, index));
       if (option && (option.required || option.optional)) {
         this.emit(`option:${option.name()}`, arg.slice(index + 1));
         continue;
@@ -1065,6 +1077,19 @@ Command.prototype.unknownOption = function(flag) {
   const message = `error: unknown option '${flag}'`;
   console.error(message);
   this._exit(1, 'commander.unknownOption', message);
+};
+
+/**
+ * Unknown command.
+ *
+ * @param {String} flag
+ * @api private
+ */
+
+Command.prototype.unknownCommand = function() {
+  const message = `error: unknown command '${this.args[0]}'`;
+  console.error(message);
+  this._exit(1, 'commander.unknownCommand', message);
 };
 
 /**
@@ -1194,7 +1219,7 @@ Command.prototype.name = function(str) {
  */
 
 Command.prototype.prepareCommands = function() {
-  return this.commands.filter(function(cmd) {
+  const commandDetails = this.commands.filter(function(cmd) {
     return !cmd._noHelp;
   }).map(function(cmd) {
     var args = cmd._args.map(function(arg) {
@@ -1209,6 +1234,11 @@ Command.prototype.prepareCommands = function() {
       cmd._description
     ];
   });
+
+  if (this._lazyHasImplicitHelpCommand()) {
+    commandDetails.push([this._helpCommandnameAndArgs, this._helpCommandDescription]);
+  }
+  return commandDetails;
 };
 
 /**
@@ -1310,7 +1340,7 @@ Command.prototype.optionHelp = function() {
  */
 
 Command.prototype.commandHelp = function() {
-  if (!this.commands.length) return '';
+  if (!this.commands.length && !this._lazyHasImplicitHelpCommand()) return '';
 
   var commands = this.prepareCommands();
   var width = this.padWidth();
@@ -1448,6 +1478,18 @@ Command.prototype.help = function(cb) {
 };
 
 /**
+ * Output help information and exit. Display for error situations.
+ *
+ * @api private
+ */
+
+Command.prototype._helpAndError = function() {
+  this.outputHelp();
+  // message: do not have all displayed text available so only passing placeholder.
+  this._exit(1, 'commander.help', '(outputHelp)');
+};
+
+/**
  * Camel-case the given `flag`
  *
  * @param {String} flag
@@ -1522,19 +1564,16 @@ function optionalWrap(str, width, indent) {
  * Output help information if help flags specified
  *
  * @param {Command} cmd - command to output help for
- * @param {Array} options - array of options to search for -h or --help
+ * @param {Array} args - array of options to search for help flags
  * @api private
  */
 
-function outputHelpIfRequested(cmd, options) {
-  options = options || [];
-
-  for (var i = 0; i < options.length; i++) {
-    if (options[i] === cmd._helpLongFlag || options[i] === cmd._helpShortFlag) {
-      cmd.outputHelp();
-      // (Do not have all displayed text available so only passing placeholder.)
-      cmd._exit(0, 'commander.helpDisplayed', '(outputHelp)');
-    }
+function outputHelpIfRequested(cmd, args) {
+  const helpOption = args.find(arg => arg === cmd._helpLongFlag || arg === cmd._helpShortFlag);
+  if (helpOption) {
+    cmd.outputHelp();
+    // (Do not have all displayed text available so only passing placeholder.)
+    cmd._exit(0, 'commander.helpDisplayed', '(outputHelp)');
   }
 }
 
@@ -1552,17 +1591,6 @@ function humanReadableArgName(arg) {
   return arg.required
     ? '<' + nameOutput + '>'
     : '[' + nameOutput + ']';
-}
-
-// for versions before node v0.8 when there weren't `fs.existsSync`
-function exists(file) {
-  try {
-    if (fs.statSync(file).isFile()) {
-      return true;
-    }
-  } catch (e) {
-    return false;
-  }
 }
 
 /**

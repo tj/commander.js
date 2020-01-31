@@ -34,10 +34,4 @@ program
     console.log();
   });
 
-program
-  .command('*')
-  .action(function(env) {
-    console.log('deploying "%s"', env);
-  });
-
 program.parse(process.argv);

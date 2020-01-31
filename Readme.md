@@ -11,7 +11,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
 
 - [Commander.js](#commanderjs)
   - [Installation](#installation)
-  - [Declaring program variable](#declaring-program-variable)
+  - [Declaring _program_ variable](#declaring-program-variable)
   - [Options](#options)
     - [Common option types, boolean and value](#common-option-types-boolean-and-value)
     - [Default option value](#default-option-value)
@@ -23,17 +23,18 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Specify the argument syntax](#specify-the-argument-syntax)
     - [Action handler (sub)commands](#action-handler-subcommands)
     - [Git-style executable (sub)commands](#git-style-executable-subcommands)
-  - [Automated --help](#automated---help)
+  - [Automated help](#automated-help)
     - [Custom help](#custom-help)
     - [.usage and .name](#usage-and-name)
     - [.outputHelp(cb)](#outputhelpcb)
     - [.helpOption(flags, description)](#helpoptionflags-description)
+    - [.addHelpCommand()](#addhelpcommand)
     - [.help(cb)](#helpcb)
   - [Custom event listeners](#custom-event-listeners)
   - [Bits and pieces](#bits-and-pieces)
     - [Avoiding option name clashes](#avoiding-option-name-clashes)
     - [TypeScript](#typescript)
-    - [Node options such as --harmony](#node-options-such-as---harmony)
+    - [Node options such as `--harmony`](#node-options-such-as---harmony)
     - [Node debugging](#node-debugging)
     - [Override exit handling](#override-exit-handling)
   - [Examples](#examples)
@@ -269,7 +270,7 @@ program
 program.parse(process.argv);
 ```
 
-```
+```bash
 $ pizza
 error: required option '-c, --cheese <type>' not specified
 ```
@@ -296,7 +297,11 @@ program.version('0.0.1', '-v, --vers', 'output the current version');
 
 ## Commands
 
-You can specify (sub)commands for your top-level command using `.command`. There are two ways these can be implemented: using an action handler attached to the command, or as a separate executable file (described in more detail later). In the first parameter to `.command` you specify the command name and any command arguments. The arguments may be `<required>` or `[optional]`, and the last argument may also be `variadic...`.
+You can specify (sub)commands for your top-level command using `.command()` or `.addCommand()`. There are two ways these can be implemented: using an action handler attached to the command, or as a separate executable file (described in more detail later). The subcommands may be nested ([example](./examples/nestedCommands.js)).
+
+In the first parameter to `.command()` you specify the command name and any command arguments. The arguments may be `<required>` or `[optional]`, and the last argument may also be `variadic...`.
+
+You can use `.addCommand()` to add an already configured subcommand to the program.
 
 For example:
 
@@ -315,7 +320,14 @@ program
 program
   .command('start <service>', 'start named service')
   .command('stop [service]', 'stop named service, or all if no name supplied');
+
+// Command prepared separately.
+// Returns top-level command for adding more commands.
+program
+  .addCommand(build.makeBuildCommand());
 ```
+
+Configuration options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the command from the generated help output. Specifying `true` for `opts.isDefault` will run the subcommand if no other subcommand is specified ([example](./examples/defaultCommand.js)).
 
 ### Specify the argument syntax
 
@@ -397,13 +409,11 @@ async function main() {
 }
 ```
 
-A command's options on the command line are validated when the command is used. Any unknown options will be reported as an error. However, if an action-based command does not define an action, then the options are not validated.
-
-Configuration options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the command from the generated help output.
+A command's options on the command line are validated when the command is used. Any unknown options will be reported as an error.
 
 ### Git-style executable (sub)commands
 
-When `.command()` is invoked with a description argument, this tells commander that you're going to use separate executables for sub-commands, much like `git(1)` and other popular tools.
+When `.command()` is invoked with a description argument, this tells commander that you're going to use separate executables for sub-commands, much like `git` and other popular tools.
 Commander will search the executables in the directory of the entry script (like `./examples/pm`) with the name `program-subcommand`, like `pm-install`, `pm-search`.
 You can specify a custom name with the `executableFile` configuration option.
 
@@ -422,14 +432,12 @@ program
   .parse(process.argv);
 ```
 
-Configuration options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the command from the generated help output. Specifying `true` for `opts.isDefault` will run the subcommand if no other subcommand is specified.
-Specifying a name with `executableFile` will override the default constructed name.
-
 If the program is designed to be installed globally, make sure the executables have proper modes, like `755`.
 
-## Automated --help
+## Automated help
 
- The help information is auto-generated based on the information commander already knows about your program, so the following `--help` info is for free:
+ The help information is auto-generated based on the information commander already knows about your program. The default
+ help option is `-h,--help`.
 
 ```bash
 $ ./examples/pizza --help
@@ -444,17 +452,25 @@ Options:
   -b, --bbq            Add bbq sauce
   -c, --cheese <type>  Add the specified type of cheese (default: "marble")
   -C, --no-cheese      You do not want any cheese
-  -h, --help           output usage information
+  -h, --help           display help for command
+```
+
+A `help` command is added by default if your command has subcommands. It can be used alone, or with a subcommand name to show
+further help for the subcommand. These are effectively the same if the `shell` program has implicit help:
+
+```bash
+shell help
+shell --help
+
+shell help spawn
+shell spawn --help
 ```
 
 ### Custom help
 
- You can display arbitrary `-h, --help` information
+ You can display extra `-h, --help` information
  by listening for "--help". Commander will automatically
- exit once you are done so that the remainder of your program
- does not execute causing undesired behaviors, for example
- in the following executable "stuff" will not output when
- `--help` is used.
+ exit after displaying the help.
 
 ```js
 #!/usr/bin/env node
@@ -467,9 +483,7 @@ program
   .option('-b, --bar', 'enable some bar')
   .option('-B, --baz', 'enable some baz');
 
-// must be before .parse() since
-// node's emit() is immediate
-
+// must be before .parse()
 program.on('--help', function(){
   console.log('')
   console.log('Examples:');
@@ -488,11 +502,11 @@ Yields the following help output when `node script-name.js -h` or `node script-n
 Usage: custom-help [options]
 
 Options:
-  -h, --help     output usage information
   -V, --version  output the version number
   -f, --foo      enable some foo
   -b, --bar      enable some bar
   -B, --baz      enable some baz
+  -h, --help     display help for command
 
 Examples:
   $ custom-help --help
@@ -550,6 +564,16 @@ program
   .helpOption('-e, --HELP', 'read more information');
 ```
 
+### .addHelpCommand()
+
+You can explicitly turn on or off the implicit help command with `.addHelpCommand()` and `.addHelpCommand(false)`.
+
+You can both turn on and customise the help command by supplying the name and description:
+
+```js
+program.addHelpCommand('assist [command]', 'show assistance');
+```
+
 ### .help(cb)
 
   Output help information and exit immediately.
@@ -564,9 +588,10 @@ program.on('option:verbose', function () {
   process.env.VERBOSE = this.verbose;
 });
 
-// error on unknown commands
-program.on('command:*', function () {
-  console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args[0]]);
+// custom error on unknown command
+program.on('command:*', function (operands) {
+  console.error(`Invalid command '${operands[0]}'. Did you mean:`);
+  console.error(mySuggestions(operands[0]));
   process.exit(1);
 });
 ```
@@ -684,12 +709,6 @@ program
     console.log('');
     console.log('  $ deploy exec sequential');
     console.log('  $ deploy exec async');
-  });
-
-program
-  .command('*')
-  .action(function(env){
-    console.log('deploying "%s"', env);
   });
 
 program.parse(process.argv);

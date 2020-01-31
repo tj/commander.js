@@ -80,20 +80,18 @@ declare namespace commander {
     command(nameAndArgs: string, description: string, opts?: commander.CommandOptions): Command;
 
     /**
+     * Add a prepared subcommand.
+     * 
+     * @returns parent command for chaining
+     */
+    addCommand(cmd: Command): Command;
+
+    /**
      * Define argument syntax for the top-level command.
      *
      * @returns Command for chaining
      */
     arguments(desc: string): Command;
-
-    /**
-    * Parse expected `args`.
-     *
-     * For example `["[type]"]` becomes `[{ required: false, name: 'type' }]`.
-     *
-     * @returns Command for chaining
-     */
-     parseExpectedArgs(args: string[]): Command;
 
     /**
      * Register callback to use as replacement for calling process.exit.
