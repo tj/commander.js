@@ -11,8 +11,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-* support for nested commands with action-handlers ([#1] [#764] [#1149] )
-* [test](https://github.com/tj/commander.js/pull/1149)
+* support for nested commands with action-handlers ([#1] [#764] [#1149])
 * `.addCommand()` for adding a separately configured command ([#764] [#1149])
 * allow a non-executable to be set as the default command ([#742] [#1149])
 * implicit help command when there are subcommands (previously only if executables) ([#1149])
@@ -435,7 +434,22 @@ program
 * [1.x](./changelogs/CHANGELOG-1.md)
 * [0.x](./changelogs/CHANGELOG-0.md)
 
-
+[#1]: https://github.com/tj/commander.js/issues/1
+[#432]: https://github.com/tj/commander.js/issues/432
+[#508]: https://github.com/tj/commander.js/issues/508
+[#599]: https://github.com/tj/commander.js/issues/599
+[#611]: https://github.com/tj/commander.js/issues/611
+[#697]: https://github.com/tj/commander.js/issues/697
+[#742]: https://github.com/tj/commander.js/issues/742
+[#764]: https://github.com/tj/commander.js/issues/764
+[#795]: https://github.com/tj/commander.js/issues/795
+[#802]: https://github.com/tj/commander.js/issues/802
+[#806]: https://github.com/tj/commander.js/issues/806
+[#809]: https://github.com/tj/commander.js/issues/809
+[#915]: https://github.com/tj/commander.js/issues/915
+[#938]: https://github.com/tj/commander.js/issues/938
+[#948]: https://github.com/tj/commander.js/issues/948
+[#962]: https://github.com/tj/commander.js/issues/962
 [#963]: https://github.com/tj/commander.js/issues/963
 [#974]: https://github.com/tj/commander.js/issues/974
 [#980]: https://github.com/tj/commander.js/issues/980
