@@ -7,26 +7,77 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [5.0.0-0] (2020-02-01)
+
+### Added
+
+* combined short options as single argument may include boolean flags and value flag and value (e.g. `-a -b -p 80` can be written as `-abp80`) (#1145)
+* `.parseOption()` includes short flag and long flag expansions (#1145)
+* allow a non-executable to be set as the default command (#742 #1149)
+* support nested sub-commands with action-handlers (#1 #764 #1149)
+* automatic implicit help command for all subcommands (not just executables) (#1149)
+* customise implicit help command with `.addHelpCommand()` (#1149)
+* _Breaking_ display error message for unknown subcommand (#432 #1088 #1149)
+* _Breaking_ display help for missing subcommand (#1088 #1149)
+
+### Fixed
+
+* action handler called whether or not there are arguments operands (#1062)
+* preserve argument order in subcommands (#508 #962 #1138)
+* program.args has arguments with just top level options removed (#1032 #1138)
+* unknown options included in .args and action handler arguments (#802 #1138)
+* combining option short flag and value in single argument now work for subcommands (e.g. `-p80`) (#1145)
+* only add implicit help command when it will not conflict with other arguments (#1153 #1149)
+* do not emit `command:*` for executable subcommands (#809 #1149)
+* implicit help command works with aliases (#948 #1149)
+* options are validated whether or not there is an action handler (#1149)
+
+### Changed
+
+* refactor Option from prototype to class (#1133)
+* tighten TypeScript description of custom option processing parameter to `.option()` (#1119)
+* *Breaking* `.args` contains command arguments with just recognised options removed (#1138)
+* *Breaking* `.parseOptions()` (#1138)
+  * `args` in returned result renamed `operands` and does not include anything after first unknown option
+  * `unknown` in returned result has arguments after first unknown option including operands, not just options and values
+* *Breaking* `.on('command:*', callback)` and other command events passed (changed) results from `.parseOptions`, i.e. operands and unknown  (#1138)
+* *Breaking* when `.allowUnknownOption()` used, any unknown options are included in arguments passed to command action handler (#1138)
+* only recognised option short flags and long flags are expanded (e.g. `-ab` or `--foo=bar`) (#1145)
+* _Breaking_  display error if required argument for command is missing (#995 #1149)
+
+### Removed
+
+* private function `normalize` (the functionality has been integrated into `parseOptions`) (#1145)
+* `parseExpectedArgs` is now private (#1149)
+
+### Migration tips
+
+If you use `.on('command:*')` or more complicated tests to detect an unrecognised subcommand, you may be able to delete the code and rely on the default behaviour.
+
+If you use `program.args` or more complicated tests to detect a missing subcommand, you may be able to delete the code and rely on the default behaviour.
+
+If you use `.command('*')` to add a default command, you may be be able to use `isDefault:true` with a normal command instead.
+
 ## [4.1.0] (2020-01-06)
 
 ### Added
 
-- two routines to change how option values are handled, and eliminate name clashes with command properties ([#933] [#1102])
-  - see storeOptionsAsProperties and passCommandToAction in README
-- `.parseAsync` to use instead of `.parse` if supply async action handlers ([#806] [#1118])
+* two routines to change how option values are handled, and eliminate name clashes with command properties ([#933] [#1102])
+  * see storeOptionsAsProperties and passCommandToAction in README
+* `.parseAsync` to use instead of `.parse` if supply async action handlers ([#806] [#1118])
 
 ### Fixed
 
-- Remove trailing blanks from wrapped help text ([#1096])
+* Remove trailing blanks from wrapped help text ([#1096])
 
 ### Changed
 
-- update dependencies
-- extend security coverage for Commander 2.x to 2020-02-03
-- improvements to README
-- improvements to TypeScript definition documentation
-- move old versions out of main CHANGELOG
-- removed explicit use of `ts-node` in tests
+* update dependencies
+* extend security coverage for Commander 2.x to 2020-02-03
+* improvements to README
+* improvements to TypeScript definition documentation
+* move old versions out of main CHANGELOG
+* removed explicit use of `ts-node` in tests
 
 ## [4.0.1] (2019-11-12)
 
@@ -417,6 +468,7 @@ program
 [#1118]: https://github.com/tj/commander.js/pull/1118
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[5.0.0-0]: https://github.com/tj/commander.js/compare/v4.2.o..v5.0.0-0
 [4.1.0]: https://github.com/tj/commander.js/compare/v4.0.1..v4.1.0
 [4.0.1]: https://github.com/tj/commander.js/compare/v4.0.0..v4.0.1
 [4.0.0]: https://github.com/tj/commander.js/compare/v3.0.2..v4.0.0
