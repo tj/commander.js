@@ -7,56 +7,58 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [5.0.0-0] (2020-02-01)
+## [5.0.0-0] (2020-02-02)
 
 ### Added
 
+* support for nested commands with action-handlers (#1 #764 #1149)
+* `.addCommand()` for adding a separately configured command (#764 #1149)
+* allow a non-executable to be set as the default command (#742 #1149)
+* implicit help command when there are subcommands (previously only if executables) (#1149)
+* customise implicit help command with `.addHelpCommand()` (#1149)
+* display error message for unknown subcommand, by default (#432 #1088 #1149)
+* display help for missing subcommand, by default (#1088 #1149)
 * combined short options as single argument may include boolean flags and value flag and value (e.g. `-a -b -p 80` can be written as `-abp80`) (#1145)
 * `.parseOption()` includes short flag and long flag expansions (#1145)
-* allow a non-executable to be set as the default command (#742 #1149)
-* support nested sub-commands with action-handlers (#1 #764 #1149)
-* automatic implicit help command for all subcommands (not just executables) (#1149)
-* customise implicit help command with `.addHelpCommand()` (#1149)
-* _Breaking_ display error message for unknown subcommand (#432 #1088 #1149)
-* _Breaking_ display help for missing subcommand (#1088 #1149)
 
 ### Fixed
 
-* action handler called whether or not there are arguments operands (#1062)
 * preserve argument order in subcommands (#508 #962 #1138)
-* program.args has arguments with just top level options removed (#1032 #1138)
-* unknown options included in .args and action handler arguments (#802 #1138)
-* combining option short flag and value in single argument now work for subcommands (e.g. `-p80`) (#1145)
-* only add implicit help command when it will not conflict with other arguments (#1153 #1149)
 * do not emit `command:*` for executable subcommands (#809 #1149)
-* implicit help command works with aliases (#948 #1149)
+* action handler called whether or not there are non-option arguments (#1062 #1149)
+* combining option short flag and value in single argument now works for subcommands (#1145)
+* only add implicit help command when it will not conflict with other uses of argument (#1153 #1149)
+* implicit help command works with command aliases (#948 #1149)
 * options are validated whether or not there is an action handler (#1149)
 
 ### Changed
 
-* refactor Option from prototype to class (#1133)
-* tighten TypeScript description of custom option processing parameter to `.option()` (#1119)
-* *Breaking* `.args` contains command arguments with just recognised options removed (#1138)
+* *Breaking* `.args` contains command arguments with just recognised options removed (#1032 #1138)
+* *Breaking* display error if required argument for command is missing (#995 #1149)
+* tighten TypeScript definition of custom option processing function passed to `.option()` (#1119)
+* *Breaking* `.allowUnknownOption()` (#802 #1138)
+  * unknown options included in arguments passed to command action handler
+  * unknown options included in `.args`
+* only recognised option short flags and long flags are expanded (e.g. `-ab` or `--foo=bar`) (#1145)
 * *Breaking* `.parseOptions()` (#1138)
   * `args` in returned result renamed `operands` and does not include anything after first unknown option
   * `unknown` in returned result has arguments after first unknown option including operands, not just options and values
 * *Breaking* `.on('command:*', callback)` and other command events passed (changed) results from `.parseOptions`, i.e. operands and unknown  (#1138)
-* *Breaking* when `.allowUnknownOption()` used, any unknown options are included in arguments passed to command action handler (#1138)
-* only recognised option short flags and long flags are expanded (e.g. `-ab` or `--foo=bar`) (#1145)
-* _Breaking_  display error if required argument for command is missing (#995 #1149)
+* refactor Option from prototype to class (#1133)
+* refactor Command from prototype to class (#1159)
 
 ### Removed
 
-* private function `normalize` (the functionality has been integrated into `parseOptions`) (#1145)
+* removed private function `normalize` (the functionality has been integrated into `parseOptions`) (#1145)
 * `parseExpectedArgs` is now private (#1149)
 
-### Migration tips
+### Migration Tips
 
 If you use `.on('command:*')` or more complicated tests to detect an unrecognised subcommand, you may be able to delete the code and rely on the default behaviour.
 
 If you use `program.args` or more complicated tests to detect a missing subcommand, you may be able to delete the code and rely on the default behaviour.
 
-If you use `.command('*')` to add a default command, you may be be able to use `isDefault:true` with a normal command instead.
+If you use `.command('*')` to add a default command, you may be be able to switch to `isDefault:true` with a named command.
 
 ## [4.1.0] (2020-01-06)
 
