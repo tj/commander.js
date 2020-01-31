@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var program = require('../../');
+const program = require('../../');
 
 program
   .command('sub', 'install one or more packages')

@@ -20,7 +20,7 @@ describeOrSkipOnWindows.each([['SIGINT'], ['SIGHUP'], ['SIGTERM'], ['SIGUSR1'], 
       const pmPath = path.join(__dirname, './fixtures/pm');
 
       // The child process writes to stdout.
-      var proc = childProcess.spawn(pmPath, ['listen'], {});
+      const proc = childProcess.spawn(pmPath, ['listen'], {});
 
       let processOutput = '';
       proc.stdout.on('data', (data) => {

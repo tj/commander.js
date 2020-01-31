@@ -7,7 +7,7 @@ program
   .option('-f, --force', 'force installation')
   .parse(process.argv);
 
-var pkgs = program.args;
+const pkgs = program.args;
 
 if (!pkgs.length) {
   console.error('packages required');
