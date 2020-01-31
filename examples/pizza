@@ -18,7 +18,7 @@ if (program.peppers) console.log('  - peppers');
 if (program.pineapple) console.log('  - pineapple');
 if (program.bbq) console.log('  - bbq');
 
-var cheese = !program.cheese ? 'no' : program.cheese;
+const cheese = !program.cheese ? 'no' : program.cheese;
 
 console.log('  - %s cheese', cheese);
 console.log(program.args);

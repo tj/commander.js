@@ -2,10 +2,10 @@
  * Module dependencies.
  */
 
-var EventEmitter = require('events').EventEmitter;
-var spawn = require('child_process').spawn;
-var path = require('path');
-var fs = require('fs');
+const EventEmitter = require('events').EventEmitter;
+const spawn = require('child_process').spawn;
+const path = require('path');
+const fs = require('fs');
 
 class Option {
   /**
@@ -150,15 +150,15 @@ class Command extends EventEmitter {
    */
 
   command(nameAndArgs, actionOptsOrExecDesc, execOpts) {
-    var desc = actionOptsOrExecDesc;
-    var opts = execOpts;
+    let desc = actionOptsOrExecDesc;
+    let opts = execOpts;
     if (typeof desc === 'object' && desc !== null) {
       opts = desc;
       desc = null;
     }
     opts = opts || {};
-    var args = nameAndArgs.split(/ +/);
-    var cmd = new Command(args.shift());
+    const args = nameAndArgs.split(/ +/);
+    const cmd = new Command(args.shift());
 
     if (desc) {
       cmd.description(desc);
@@ -274,9 +274,9 @@ class Command extends EventEmitter {
 
   _parseExpectedArgs(args) {
     if (!args.length) return;
-    var self = this;
+    const self = this;
     args.forEach(function(arg) {
-      var argDetails = {
+      const argDetails = {
         required: false,
         name: '',
         variadic: false
@@ -362,11 +362,11 @@ class Command extends EventEmitter {
    */
 
   action(fn) {
-    var self = this;
-    var listener = function(args) {
+    const self = this;
+    const listener = function(args) {
       // The .action callback takes an extra parameter which is the command or options.
-      var expectedArgsCount = self._args.length;
-      var actionArgs = args.slice(0, expectedArgsCount);
+      const expectedArgsCount = self._args.length;
+      const actionArgs = args.slice(0, expectedArgsCount);
       if (self._passCommandToAction) {
         actionArgs[expectedArgsCount] = self;
       } else {
@@ -402,10 +402,10 @@ class Command extends EventEmitter {
    */
 
   _optionEx(config, flags, description, fn, defaultValue) {
-    var self = this,
-      option = new Option(flags, description),
-      oname = option.name(),
-      name = option.attributeName();
+    const self = this;
+    const option = new Option(flags, description);
+    const oname = option.name();
+    const name = option.attributeName();
     option.mandatory = !!config.mandatory;
 
     // default as 3rd arg
@@ -413,9 +413,9 @@ class Command extends EventEmitter {
       if (fn instanceof RegExp) {
         // This is a bit simplistic (especially no error messages), and probably better handled by caller using custom option processing.
         // No longer documented in README, but still present for backwards compatibility.
-        var regex = fn;
+        const regex = fn;
         fn = function(val, def) {
-          var m = regex.exec(val);
+          const m = regex.exec(val);
           return m ? m[0] : def;
         };
       } else {
@@ -867,7 +867,7 @@ class Command extends EventEmitter {
 
   _checkForMissingMandatoryOptions() {
     // Walk up hierarchy so can call in subcommand after checking for displaying help.
-    for (var cmd = this; cmd; cmd = cmd.parent) {
+    for (let cmd = this; cmd; cmd = cmd.parent) {
       cmd.options.forEach((anOption) => {
         if (anOption.mandatory && (cmd._getOptionValue(anOption.attributeName()) === undefined)) {
           cmd.missingMandatoryOptionValue(anOption);
@@ -983,11 +983,11 @@ class Command extends EventEmitter {
   opts() {
     if (this._storeOptionsAsProperties) {
       // Preserve original behaviour so backwards compatible when still using properties
-      var result = {},
-        len = this.options.length;
+      const result = {};
+      const len = this.options.length;
 
-      for (var i = 0; i < len; i++) {
-        var key = this.options[i].attributeName();
+      for (let i = 0; i < len; i++) {
+        const key = this.options[i].attributeName();
         result[key] = key === this._versionOptionName ? this._version : this[key];
       }
       return result;
@@ -1101,10 +1101,10 @@ class Command extends EventEmitter {
     this._version = str;
     flags = flags || '-V, --version';
     description = description || 'output the version number';
-    var versionOption = new Option(flags, description);
+    const versionOption = new Option(flags, description);
     this._versionOptionName = versionOption.long.substr(2) || 'version';
     this.options.push(versionOption);
-    var self = this;
+    const self = this;
     this.on('option:' + this._versionOptionName, function() {
       process.stdout.write(str + '\n');
       self._exit(0, 'commander.version', str);
@@ -1137,7 +1137,7 @@ class Command extends EventEmitter {
    */
 
   alias(alias) {
-    var command = this;
+    let command = this;
     if (this.commands.length !== 0) {
       command = this.commands[this.commands.length - 1];
     }
@@ -1159,11 +1159,11 @@ class Command extends EventEmitter {
    */
 
   usage(str) {
-    var args = this._args.map(function(arg) {
+    const args = this._args.map(function(arg) {
       return humanReadableArgName(arg);
     });
 
-    var usage = '[options]' +
+    const usage = '[options]' +
       (this.commands.length ? ' [command]' : '') +
       (this._args.length ? ' ' + args.join(' ') : '');
 
@@ -1198,7 +1198,7 @@ class Command extends EventEmitter {
     const commandDetails = this.commands.filter(function(cmd) {
       return !cmd._noHelp;
     }).map(function(cmd) {
-      var args = cmd._args.map(function(arg) {
+      const args = cmd._args.map(function(arg) {
         return humanReadableArgName(arg);
       }).join(' ');
 
@@ -1225,7 +1225,7 @@ class Command extends EventEmitter {
    */
 
   largestCommandLength() {
-    var commands = this.prepareCommands();
+    const commands = this.prepareCommands();
     return commands.reduce(function(max, command) {
       return Math.max(max, command[0].length);
     }, 0);
@@ -1239,7 +1239,7 @@ class Command extends EventEmitter {
    */
 
   largestOptionLength() {
-    var options = [].slice.call(this.options);
+    const options = [].slice.call(this.options);
     options.push({
       flags: this._helpFlags
     });
@@ -1270,7 +1270,7 @@ class Command extends EventEmitter {
    */
 
   padWidth() {
-    var width = this.largestOptionLength();
+    let width = this.largestOptionLength();
     if (this._argsDescription && this._args.length) {
       if (this.largestArgLength() > width) {
         width = this.largestArgLength();
@@ -1294,10 +1294,10 @@ class Command extends EventEmitter {
    */
 
   optionHelp() {
-    var width = this.padWidth();
+    const width = this.padWidth();
 
-    var columns = process.stdout.columns || 80;
-    var descriptionWidth = columns - width - 4;
+    const columns = process.stdout.columns || 80;
+    const descriptionWidth = columns - width - 4;
 
     // Append the help information
     return this.options.map(function(option) {
@@ -1318,16 +1318,16 @@ class Command extends EventEmitter {
   commandHelp() {
     if (!this.commands.length && !this._lazyHasImplicitHelpCommand()) return '';
 
-    var commands = this.prepareCommands();
-    var width = this.padWidth();
+    const commands = this.prepareCommands();
+    const width = this.padWidth();
 
-    var columns = process.stdout.columns || 80;
-    var descriptionWidth = columns - width - 4;
+    const columns = process.stdout.columns || 80;
+    const descriptionWidth = columns - width - 4;
 
     return [
       'Commands:',
       commands.map(function(cmd) {
-        var desc = cmd[1] ? '  ' + cmd[1] : '';
+        const desc = cmd[1] ? '  ' + cmd[1] : '';
         return (desc ? pad(cmd[0], width) : cmd[0]) + optionalWrap(desc, descriptionWidth, width + 2);
       }).join('\n').replace(/^/gm, '  '),
       ''
@@ -1342,18 +1342,18 @@ class Command extends EventEmitter {
    */
 
   helpInformation() {
-    var desc = [];
+    let desc = [];
     if (this._description) {
       desc = [
         this._description,
         ''
       ];
 
-      var argsDescription = this._argsDescription;
+      const argsDescription = this._argsDescription;
       if (argsDescription && this._args.length) {
-        var width = this.padWidth();
-        var columns = process.stdout.columns || 80;
-        var descriptionWidth = columns - width - 5;
+        const width = this.padWidth();
+        const columns = process.stdout.columns || 80;
+        const descriptionWidth = columns - width - 5;
         desc.push('Arguments:');
         desc.push('');
         this._args.forEach(function(arg) {
@@ -1363,24 +1363,24 @@ class Command extends EventEmitter {
       }
     }
 
-    var cmdName = this._name;
+    let cmdName = this._name;
     if (this._alias) {
       cmdName = cmdName + '|' + this._alias;
     }
-    var parentCmdNames = '';
-    for (var parentCmd = this.parent; parentCmd; parentCmd = parentCmd.parent) {
+    let parentCmdNames = '';
+    for (let parentCmd = this.parent; parentCmd; parentCmd = parentCmd.parent) {
       parentCmdNames = parentCmd.name() + ' ' + parentCmdNames;
     }
-    var usage = [
+    const usage = [
       'Usage: ' + parentCmdNames + cmdName + ' ' + this.usage(),
       ''
     ];
 
-    var cmds = [];
-    var commandHelp = this.commandHelp();
+    let cmds = [];
+    const commandHelp = this.commandHelp();
     if (commandHelp) cmds = [commandHelp];
 
-    var options = [
+    const options = [
       'Options:',
       '' + this.optionHelp().replace(/^/gm, '  '),
       ''
@@ -1430,7 +1430,7 @@ class Command extends EventEmitter {
     this._helpFlags = flags || this._helpFlags;
     this._helpDescription = description || this._helpDescription;
 
-    var splitFlags = this._helpFlags.split(/[ ,|]+/);
+    const splitFlags = this._helpFlags.split(/[ ,|]+/);
 
     if (splitFlags.length > 1) this._helpShortFlag = splitFlags.shift();
 
@@ -1504,7 +1504,7 @@ function camelcase(flag) {
  */
 
 function pad(str, width) {
-  var len = Math.max(0, width - str.length);
+  const len = Math.max(0, width - str.length);
   return str + Array(len + 1).join(' ');
 }
 
@@ -1519,8 +1519,8 @@ function pad(str, width) {
  * @api private
  */
 function wrap(str, width, indent) {
-  var regex = new RegExp('.{1,' + (width - 1) + '}([\\s\u200B]|$)|[^\\s\u200B]+?([\\s\u200B]|$)', 'g');
-  var lines = str.match(regex) || [];
+  const regex = new RegExp('.{1,' + (width - 1) + '}([\\s\u200B]|$)|[^\\s\u200B]+?([\\s\u200B]|$)', 'g');
+  const lines = str.match(regex) || [];
   return lines.map(function(line, i) {
     if (line.slice(-1) === '\n') {
       line = line.slice(0, line.length - 1);
@@ -1577,7 +1577,7 @@ function outputHelpIfRequested(cmd, args) {
  */
 
 function humanReadableArgName(arg) {
-  var nameOutput = arg.name + (arg.variadic === true ? '...' : '');
+  const nameOutput = arg.name + (arg.variadic === true ? '...' : '');
 
   return arg.required
     ? '<' + nameOutput + '>'
@@ -1598,12 +1598,12 @@ function incrementNodeInspectorPort(args) {
   //  --inspect-brk[=[host:]port]
   //  --inspect-port=[host:]port
   return args.map((arg) => {
-    var result = arg;
+    let result = arg;
     if (arg.indexOf('--inspect') === 0) {
-      var debugOption;
-      var debugHost = '127.0.0.1';
-      var debugPort = '9229';
-      var match;
+      let debugOption;
+      let debugHost = '127.0.0.1';
+      let debugPort = '9229';
+      let match;
       if ((match = arg.match(/^(--inspect(-brk)?)$/)) !== null) {
         // e.g. --inspect
         debugOption = match[1];
