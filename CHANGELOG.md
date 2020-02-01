@@ -49,6 +49,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Removed
 
+* removed EventEmitter from TypeScript definition for Command, eliminating implicit peer dependency on `@types/node` ([#1146])
 * removed private function `normalize` (the functionality has been integrated into `parseOptions`) ([#1145])
 * `parseExpectedArgs` is now private ([#1149])
 
@@ -485,6 +486,7 @@ program
 [#1133]: https://github.com/tj/commander.js/pull/1133
 [#1138]: https://github.com/tj/commander.js/pull/1138
 [#1145]: https://github.com/tj/commander.js/pull/1145
+[#1146]: https://github.com/tj/commander.js/pull/1146
 [#1149]: https://github.com/tj/commander.js/pull/1149
 [#1153]: https://github.com/tj/commander.js/issues/1153
 [#1159]: https://github.com/tj/commander.js/pull/1159
