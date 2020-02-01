@@ -196,7 +196,7 @@ class Command extends EventEmitter {
    */
 
   addCommand(cmd) {
-    if (!cmd._name) throw new Error('Command passed to .AddCommand must have a name');
+    if (!cmd._name) throw new Error('Command passed to .addCommand() must have a name');
 
     // To keep things simple, block automatic name generation for deeply nested executables.
     // Fail fast and detect when adding rather than later when parsing.
@@ -298,6 +298,11 @@ class Command extends EventEmitter {
       }
       if (argDetails.name) {
         self._args.push(argDetails);
+      }
+    });
+    this._args.forEach(function(arg, i) {
+      if (arg.variadic && i < self._args.length - 1) {
+        throw new Error(`only the last argument can be variadic '${arg.name}'`);
       }
     });
     return this;
@@ -566,8 +571,7 @@ class Command extends EventEmitter {
   storeOptionsAsProperties(value) {
     this._storeOptionsAsProperties = (value === undefined) || value;
     if (this.options.length) {
-      // This is for programmer, not end user.
-      console.error('Commander usage error: call storeOptionsAsProperties before adding options');
+      throw new Error('call .storeOptionsAsProperties() before adding options');
     }
     return this;
   };
@@ -736,9 +740,12 @@ class Command extends EventEmitter {
     }
     proc.on('error', function(err) {
       if (err.code === 'ENOENT') {
-        console.error('error: %s(1) does not exist', bin);
+        const executableMissing = `'${bin}' does not exist
+ - if '${subcommand._name}' is not meant to be an executable command, remove description parameter from '.command()' and use '.description()' instead
+ - if the default executable name is not suitable, use the executableFile option to supply a custom name`;
+        throw new Error(executableMissing);
       } else if (err.code === 'EACCES') {
-        console.error('error: %s(1) not executable', bin);
+        throw new Error(`'${bin}' not executable`);
       }
       if (!exitCallback) {
         process.exit(1);
@@ -809,10 +816,6 @@ class Command extends EventEmitter {
           if (arg.required && args[i] == null) {
             self.missingArgument(arg.name);
           } else if (arg.variadic) {
-            if (i !== self._args.length - 1) {
-              self.variadicArgNotLast(arg.name);
-            }
-
             args[i] = args.splice(i);
           }
         });
@@ -1066,19 +1069,6 @@ class Command extends EventEmitter {
     const message = `error: unknown command '${this.args[0]}'`;
     console.error(message);
     this._exit(1, 'commander.unknownCommand', message);
-  };
-
-  /**
-   * Variadic argument with `name` is not the last argument as required.
-   *
-   * @param {String} name
-   * @api private
-   */
-
-  variadicArgNotLast(name) {
-    const message = `error: variadic arguments must be last '${name}'`;
-    console.error(message);
-    this._exit(1, 'commander.variadicArgNotLast', message);
   };
 
   /**
