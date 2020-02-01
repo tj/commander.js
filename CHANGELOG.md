@@ -7,26 +7,80 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [5.0.0-0] (2020-02-02)
+
+### Added
+
+* support for nested commands with action-handlers ([#1] [#764] [#1149])
+* `.addCommand()` for adding a separately configured command ([#764] [#1149])
+* allow a non-executable to be set as the default command ([#742] [#1149])
+* implicit help command when there are subcommands (previously only if executables) ([#1149])
+* customise implicit help command with `.addHelpCommand()` ([#1149])
+* display error message for unknown subcommand, by default ([#432] [#1088] [#1149])
+* display help for missing subcommand, by default ([#1088] [#1149])
+* combined short options as single argument may include boolean flags and value flag and value (e.g. `-a -b -p 80` can be written as `-abp80`) ([#1145])
+* `.parseOption()` includes short flag and long flag expansions ([#1145])
+
+### Fixed
+
+* preserve argument order in subcommands ([#508] [#962] [#1138])
+* do not emit `command:*` for executable subcommands ([#809] [#1149])
+* action handler called whether or not there are non-option arguments ([#1062] [#1149])
+* combining option short flag and value in single argument now works for subcommands ([#1145])
+* only add implicit help command when it will not conflict with other uses of argument ([#1153] [#1149])
+* implicit help command works with command aliases ([#948] [#1149])
+* options are validated whether or not there is an action handler ([#1149])
+
+### Changed
+
+* *Breaking* `.args` contains command arguments with just recognised options removed ([#1032] [#1138])
+* *Breaking* display error if required argument for command is missing ([#995] [#1149])
+* tighten TypeScript definition of custom option processing function passed to `.option()` ([#1119])
+* *Breaking* `.allowUnknownOption()` ([#802] [#1138])
+  * unknown options included in arguments passed to command action handler
+  * unknown options included in `.args`
+* only recognised option short flags and long flags are expanded (e.g. `-ab` or `--foo=bar`) ([#1145])
+* *Breaking* `.parseOptions()` ([#1138])
+  * `args` in returned result renamed `operands` and does not include anything after first unknown option
+  * `unknown` in returned result has arguments after first unknown option including operands, not just options and values
+* *Breaking* `.on('command:*', callback)` and other command events passed (changed) results from `.parseOptions`, i.e. operands and unknown  ([#1138])
+* refactor Option from prototype to class ([#1133])
+* refactor Command from prototype to class ([#1159])
+
+### Removed
+
+* removed EventEmitter from TypeScript definition for Command, eliminating implicit peer dependency on `@types/node` ([#1146])
+* removed private function `normalize` (the functionality has been integrated into `parseOptions`) ([#1145])
+* `parseExpectedArgs` is now private ([#1149])
+
+### Migration Tips
+
+If you use `.on('command:*')` or more complicated tests to detect an unrecognised subcommand, you may be able to delete the code and rely on the default behaviour.
+
+If you use `program.args` or more complicated tests to detect a missing subcommand, you may be able to delete the code and rely on the default behaviour.
+
+If you use `.command('*')` to add a default command, you may be be able to switch to `isDefault:true` with a named command.
+
 ## [4.1.0] (2020-01-06)
 
 ### Added
 
-- two routines to change how option values are handled, and eliminate name clashes with command properties ([#933] [#1102])
-  - see storeOptionsAsProperties and passCommandToAction in README
-- `.parseAsync` to use instead of `.parse` if supply async action handlers ([#806] [#1118])
+* two routines to change how option values are handled, and eliminate name clashes with command properties ([#933] [#1102])
+  * see storeOptionsAsProperties and passCommandToAction in README
+* `.parseAsync` to use instead of `.parse` if supply async action handlers ([#806] [#1118])
 
 ### Fixed
 
-- Remove trailing blanks from wrapped help text ([#1096])
+* Remove trailing blanks from wrapped help text ([#1096])
 
 ### Changed
 
-- update dependencies
-- extend security coverage for Commander 2.x to 2020-02-03
-- improvements to README
-- improvements to TypeScript definition documentation
-- move old versions out of main CHANGELOG
-- removed explicit use of `ts-node` in tests
+* update dependencies
+* extend security coverage for Commander 2.x to 2020-02-03
+* improvements to README
+* improvements to TypeScript definition documentation
+* move old versions out of main CHANGELOG
+* removed explicit use of `ts-node` in tests
 
 ## [4.0.1] (2019-11-12)
 
@@ -381,13 +435,22 @@ program
 * [1.x](./changelogs/CHANGELOG-1.md)
 * [0.x](./changelogs/CHANGELOG-0.md)
 
+[#1]: https://github.com/tj/commander.js/issues/1
+[#432]: https://github.com/tj/commander.js/issues/432
+[#508]: https://github.com/tj/commander.js/issues/508
 [#599]: https://github.com/tj/commander.js/issues/599
 [#611]: https://github.com/tj/commander.js/issues/611
 [#697]: https://github.com/tj/commander.js/issues/697
+[#742]: https://github.com/tj/commander.js/issues/742
+[#764]: https://github.com/tj/commander.js/issues/764
 [#795]: https://github.com/tj/commander.js/issues/795
+[#802]: https://github.com/tj/commander.js/issues/802
 [#806]: https://github.com/tj/commander.js/issues/806
+[#809]: https://github.com/tj/commander.js/issues/809
 [#915]: https://github.com/tj/commander.js/issues/915
 [#938]: https://github.com/tj/commander.js/issues/938
+[#948]: https://github.com/tj/commander.js/issues/948
+[#962]: https://github.com/tj/commander.js/issues/962
 [#963]: https://github.com/tj/commander.js/issues/963
 [#974]: https://github.com/tj/commander.js/issues/974
 [#980]: https://github.com/tj/commander.js/issues/980
@@ -395,12 +458,14 @@ program
 [#990]: https://github.com/tj/commander.js/issues/990
 [#991]: https://github.com/tj/commander.js/issues/991
 [#993]: https://github.com/tj/commander.js/issues/993
+[#995]: https://github.com/tj/commander.js/issues/995
 [#999]: https://github.com/tj/commander.js/issues/999
 [#1010]: https://github.com/tj/commander.js/pull/1010
 [#1018]: https://github.com/tj/commander.js/pull/1018
 [#1026]: https://github.com/tj/commander.js/pull/1026
 [#1027]: https://github.com/tj/commander.js/pull/1027
 [#1028]: https://github.com/tj/commander.js/pull/1028
+[#1032]: https://github.com/tj/commander.js/issues/1032
 [#1035]: https://github.com/tj/commander.js/pull/1035
 [#1040]: https://github.com/tj/commander.js/pull/1040
 [#1047]: https://github.com/tj/commander.js/pull/1047
@@ -409,14 +474,25 @@ program
 [#1051]: https://github.com/tj/commander.js/pull/1051
 [#1052]: https://github.com/tj/commander.js/pull/1052
 [#1053]: https://github.com/tj/commander.js/pull/1053
+[#1062]: https://github.com/tj/commander.js/pull/1062
 [#1071]: https://github.com/tj/commander.js/pull/1071
 [#1081]: https://github.com/tj/commander.js/pull/1081
+[#1088]: https://github.com/tj/commander.js/issues/1088
 [#1091]: https://github.com/tj/commander.js/pull/1091
 [#1096]: https://github.com/tj/commander.js/pull/1096
 [#1102]: https://github.com/tj/commander.js/pull/1102
 [#1118]: https://github.com/tj/commander.js/pull/1118
+[#1119]: https://github.com/tj/commander.js/pull/1119
+[#1133]: https://github.com/tj/commander.js/pull/1133
+[#1138]: https://github.com/tj/commander.js/pull/1138
+[#1145]: https://github.com/tj/commander.js/pull/1145
+[#1146]: https://github.com/tj/commander.js/pull/1146
+[#1149]: https://github.com/tj/commander.js/pull/1149
+[#1153]: https://github.com/tj/commander.js/issues/1153
+[#1159]: https://github.com/tj/commander.js/pull/1159
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[5.0.0-0]: https://github.com/tj/commander.js/compare/v4.2.o..v5.0.0-0
 [4.1.0]: https://github.com/tj/commander.js/compare/v4.0.1..v4.1.0
 [4.0.1]: https://github.com/tj/commander.js/compare/v4.0.0..v4.0.1
 [4.0.0]: https://github.com/tj/commander.js/compare/v3.0.2..v4.0.0
