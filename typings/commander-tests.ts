@@ -45,6 +45,14 @@ function increaseVerbosity(v: any, total: number) {
     return total + 1;
 }
 
+function syncCall() {
+    console.log("Sync success!");
+}
+
+async function asyncCall() {
+    return;
+}
+
 program
     .version('0.0.1')
     .usage('[options] <file ...>')
@@ -109,7 +117,11 @@ program
 
 program
     .command("name1", "description")
-    .command("name2", "description", { isDefault:true })
+    .command("name2", "description", { isDefault:true });
+
+program
+    .command("name3").action(syncCall)
+    .command("name4").action(asyncCall);
 
 const preparedCommand = new program.Command('prepared');
 program.addCommand(preparedCommand);

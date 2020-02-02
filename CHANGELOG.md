@@ -61,6 +61,12 @@ If you use `program.args` or more complicated tests to detect a missing subcomma
 
 If you use `.command('*')` to add a default command, you may be be able to switch to `isDefault:true` with a named command.
 
+## [4.1.1] (2020-02-02)
+
+### Fixed
+
+* TypeScript definition for `.action()` should include Promise for async ([#1157])
+
 ## [4.1.0] (2020-01-06)
 
 ### Added
@@ -489,10 +495,12 @@ program
 [#1146]: https://github.com/tj/commander.js/pull/1146
 [#1149]: https://github.com/tj/commander.js/pull/1149
 [#1153]: https://github.com/tj/commander.js/issues/1153
+[#1157]: https://github.com/tj/commander.js/pull/1157
 [#1159]: https://github.com/tj/commander.js/pull/1159
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
 [5.0.0-0]: https://github.com/tj/commander.js/compare/v4.2.o..v5.0.0-0
+[4.1.1]: https://github.com/tj/commander.js/compare/v4.0.0..v4.1.1
 [4.1.0]: https://github.com/tj/commander.js/compare/v4.0.1..v4.1.0
 [4.0.1]: https://github.com/tj/commander.js/compare/v4.0.0..v4.0.1
 [4.0.0]: https://github.com/tj/commander.js/compare/v3.0.2..v4.0.0
