@@ -115,7 +115,7 @@ declare namespace commander {
      *
      * @returns Command for chaining
      */
-    action(fn: (...args: any[]) => void): Command;
+    action(fn: (...args: any[]) => void | Promise<void>): Command;
 
     /**
      * Define option with `flags`, `description` and optional
