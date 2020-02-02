@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [4.1.1] (2020-02-02)
+
+### Fixed
+
+* TypeScript definition for `.action()` should include Promise for async ([#1157])
+
 ## [4.1.0] (2020-01-06)
 
 ### Added
@@ -415,8 +421,10 @@ program
 [#1096]: https://github.com/tj/commander.js/pull/1096
 [#1102]: https://github.com/tj/commander.js/pull/1102
 [#1118]: https://github.com/tj/commander.js/pull/1118
+[#1157]: https://github.com/tj/commander.js/pull/1157
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[4.1.1]: https://github.com/tj/commander.js/compare/v4.0.0..v4.1.1
 [4.1.0]: https://github.com/tj/commander.js/compare/v4.0.1..v4.1.0
 [4.0.1]: https://github.com/tj/commander.js/compare/v4.0.0..v4.0.1
 [4.0.0]: https://github.com/tj/commander.js/compare/v3.0.2..v4.0.0
