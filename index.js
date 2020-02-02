@@ -100,6 +100,8 @@ class Command extends EventEmitter {
     this.options = [];
     this._allowUnknownOption = false;
     this._args = [];
+    this.rawArgs = null;
+    this._scriptPath = null;
     this._name = name || '';
     this._optionValues = {};
     this._storeOptionsAsProperties = true; // backwards compatible by default
@@ -620,19 +622,59 @@ class Command extends EventEmitter {
   /**
    * Parse `argv`, setting options and invoking commands when defined.
    *
-   * @param {Array} argv
+   * @param {string[]} [argv]
+   * @param {Object} [parseOptions]
+   * @param {string} parseOptions.from - where the args are from: 'node', 'user', 'electron'
    * @return {Command} for chaining
    * @api public
    */
 
-  parse(argv) {
-    // store raw args
-    this.rawArgs = argv;
+  parse(argv, parseOptions) {
+    if (argv !== undefined && !Array.isArray(argv)) {
+      throw new Error('first parameter to parse must be array or undefined');
+    }
+    parseOptions = parseOptions || {};
+
+    // Default to using process.argv
+    if (argv === undefined) {
+      argv = process.argv;
+      if (process.versions && process.versions.electron) {
+        parseOptions.from = 'electron';
+      }
+    }
+    this.rawArgs = argv.slice();
+
+    // make it a little easier for callers by supporting various argv conventions
+    let userArgs;
+    switch (parseOptions.from) {
+      case undefined:
+      case 'node':
+        this._scriptPath = argv[1];
+        userArgs = argv.slice(2);
+        break;
+      case 'electron':
+        if (process.defaultApp) {
+          this._scriptPath = argv[1];
+          userArgs = argv.slice(2);
+        } else {
+          userArgs = argv.slice(1);
+        }
+        break;
+      case 'user':
+        userArgs = argv.slice(0);
+        break;
+      default:
+        throw new Error(`unexpected parse option { from: '${parseOptions.from}' }`);
+    }
+    if (!this._scriptPath && process.mainModule) {
+      this._scriptPath = process.mainModule.filename;
+    }
 
     // Guess name, used in usage in help.
-    this._name = this._name || path.basename(argv[1], path.extname(argv[1]));
+    this._name = this._name || (this._scriptPath && path.basename(this._scriptPath, path.extname(this._scriptPath)));
 
-    this._parseCommand([], argv.slice(2));
+    // Let's go!
+    this._parseCommand([], userArgs);
 
     return this;
   };
@@ -642,13 +684,15 @@ class Command extends EventEmitter {
    *
    * Use parseAsync instead of parse if any of your action handlers are async. Returns a Promise.
    *
-   * @param {Array} argv
+   * @param {string[]} [argv]
+   * @param {Object} [parseOptions]
+   * @param {string} parseOptions.from - where the args are from: 'node', 'user', 'electron'
    * @return {Promise}
    * @api public
    */
 
-  parseAsync(argv) {
-    this.parse(argv);
+  parseAsync(argv, parseOptions) {
+    this.parse(argv, parseOptions);
     return Promise.all(this._actionResults);
   };
 
@@ -667,7 +711,7 @@ class Command extends EventEmitter {
     this._checkForMissingMandatoryOptions();
 
     // Want the entry script as the reference for command name and directory for searching for other files.
-    const scriptPath = this.rawArgs[1];
+    const scriptPath = this._scriptPath;
 
     let baseDir;
     try {
