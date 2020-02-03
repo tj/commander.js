@@ -26,13 +26,13 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "@types/jest": "^24.0.23",
-    "@types/node": "^12.12.11",
-    "eslint": "^6.7.0",
-    "eslint-plugin-jest": "^22.21.0",
-    "jest": "^24.8.0",
+    "@types/jest": "^25.1.1",
+    "@types/node": "^12.12.26",
+    "eslint": "^6.8.0",
+    "eslint-plugin-jest": "^23.6.0",
+    "jest": "^25.1.0",
     "standard": "^14.3.1",
-    "typescript": "^3.7.2"
+    "typescript": "^3.7.5"
   },
   "typings": "typings/index.d.ts",
   "engines": {

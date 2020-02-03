@@ -3,6 +3,9 @@ const path = require('path');
 
 // Calling node explicitly so pm works without file suffix cross-platform.
 
+// Get false positives due to use of testOrSkipOnWindows
+/* eslint-disable jest/no-standalone-expect */
+
 const testOrSkipOnWindows = (process.platform === 'win32') ? test.skip : test;
 const pm = path.join(__dirname, './fixtures/pm');
 

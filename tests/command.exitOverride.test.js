@@ -6,6 +6,8 @@ const path = require('path');
 // semver minor versions. For now, also testing the error.message and that output occured
 // to detect accidental changes in behaviour.
 
+/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["expect", "expectCommanderError"] }] */
+
 function expectCommanderError(err, exitCode, code, message) {
   expect(err).toBeInstanceOf(commander.CommanderError);
   expect(err.exitCode).toBe(exitCode);
@@ -13,12 +15,15 @@ function expectCommanderError(err, exitCode, code, message) {
   expect(err.message).toBe(message);
 }
 
+// Get false positives due to use of testOrSkipOnWindows
+/* eslint-disable jest/no-standalone-expect */
+
 const testOrSkipOnWindows = (process.platform === 'win32') ? test.skip : test;
 
 describe('.exitOverride and error details', () => {
   // Use internal knowledge to suppress output to keep test output clean.
   let consoleErrorSpy;
-  let writeSpy;
+  let writeSpy; // used for help [sic] and version
 
   beforeAll(() => {
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });

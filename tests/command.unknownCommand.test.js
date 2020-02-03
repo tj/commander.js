@@ -18,23 +18,34 @@ describe('unknownOption', () => {
 
   test('when unknown argument in simple program then no error', () => {
     const program = new commander.Command();
-    program.parse('node test.js unknown'.split(' '));
+    program.exitOverride();
+    expect(() => {
+      program.parse('node test.js unknown'.split(' '));
+    }).not.toThrow();
   });
 
   test('when unknown command but action handler then no error', () => {
     const program = new commander.Command();
-    program.command('sub');
+    program
+      .exitOverride()
+      .command('sub');
     program
       .action(() => { });
-    program.parse('node test.js unknown'.split(' '));
+    expect(() => {
+      program.parse('node test.js unknown'.split(' '));
+    }).not.toThrow();
   });
 
   test('when unknown command but listener then no error', () => {
     const program = new commander.Command();
-    program.command('sub');
+    program
+      .exitOverride()
+      .command('sub');
     program
       .on('command:*', () => { });
-    program.parse('node test.js unknown'.split(' '));
+    expect(() => {
+      program.parse('node test.js unknown'.split(' '));
+    }).not.toThrow();
   });
 
   test('when unknown command then error', () => {
