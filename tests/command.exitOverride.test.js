@@ -198,6 +198,8 @@ describe('.exitOverride and error details', () => {
     expectCommanderError(caughtErr, 1, 'commander.variadicArgNotLast', "error: variadic arguments must be last 'myVariadicArg'");
   });
 
+  // Have not worked out a cleaner way to do this, so suppress warning.
+  // eslint-disable-next-line jest/no-test-callback
   test('when executableSubcommand succeeds then call exitOverride', (done) => {
     const pm = path.join(__dirname, 'fixtures/pm');
     const program = new commander.Command();
