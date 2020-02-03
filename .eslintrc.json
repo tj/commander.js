@@ -6,7 +6,6 @@
     "no-var": "warn",
     "semi": ["error", "always"],
     "space-before-function-paren": ["error", "never"],
-    "no-else-return": ["error", { "allowElseIf": false }],
-    "jest/no-test-callback": "off"
+    "no-else-return": ["error", { "allowElseIf": false }]
   }
 }
