@@ -1,6 +1,9 @@
-const commander = require('../');
 const childProcess = require('child_process');
+const commander = require('../');
 const path = require('path');
+const util = require('util');
+
+const execFileAsync = util.promisify(childProcess.execFile);
 
 // Combination of parse and parseOptions tests which are are more about details
 // than high level behaviours which are tested elsewhere.
@@ -33,12 +36,10 @@ describe('regression tests', () => {
   });
 
   // https://github.com/tj/commander.js/issues/508
-  test('when arguments to executable include option flags then argument order preserved', (done) => {
+  test('when arguments to executable include option flags then argument order preserved', async() => {
     const pm = path.join(__dirname, 'fixtures/pm');
-    childProcess.execFile('node', [pm, 'echo', '1', '2', '--dry-run', '3', '4', '5', '6'], function(_error, stdout, stderr) {
-      expect(stdout).toBe("[ '1', '2', '--dry-run', '3', '4', '5', '6' ]\n");
-      done();
-    });
+    const { stdout } = await execFileAsync('node', [pm, 'echo', '1', '2', '--dry-run', '3', '4', '5', '6']);
+    expect(stdout).toBe("[ '1', '2', '--dry-run', '3', '4', '5', '6' ]\n");
   });
 });
 
