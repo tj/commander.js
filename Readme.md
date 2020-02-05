@@ -26,10 +26,11 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
   - [Automated help](#automated-help)
     - [Custom help](#custom-help)
     - [.usage and .name](#usage-and-name)
+    - [.help(cb)](#helpcb)
     - [.outputHelp(cb)](#outputhelpcb)
+    - [.helpInformation()](#helpinformation)
     - [.helpOption(flags, description)](#helpoptionflags-description)
     - [.addHelpCommand()](#addhelpcommand)
-    - [.help(cb)](#helpcb)
   - [Custom event listeners](#custom-event-listeners)
   - [Bits and pieces](#bits-and-pieces)
     - [Avoiding option name clashes](#avoiding-option-name-clashes)
@@ -436,11 +437,11 @@ If the program is designed to be installed globally, make sure the executables h
 
 ## Automated help
 
- The help information is auto-generated based on the information commander already knows about your program. The default
- help option is `-h,--help`.
+The help information is auto-generated based on the information commander already knows about your program. The default
+help option is `-h,--help`. ([example](./examples/pizza))
 
 ```bash
-$ ./examples/pizza --help
+$ node ./examples/pizza --help
 Usage: pizza [options]
 
 An application for pizzas ordering
@@ -448,8 +449,6 @@ An application for pizzas ordering
 Options:
   -V, --version        output the version number
   -p, --peppers        Add peppers
-  -P, --pineapple      Add pineapple
-  -b, --bbq            Add bbq sauce
   -c, --cheese <type>  Add the specified type of cheese (default: "marble")
   -C, --no-cheese      You do not want any cheese
   -h, --help           display help for command
@@ -468,49 +467,31 @@ shell spawn --help
 
 ### Custom help
 
- You can display extra `-h, --help` information
- by listening for "--help". Commander will automatically
- exit after displaying the help.
+You can display extra information by listening for "--help". ([example](./examples/custom-help))
 
 ```js
-#!/usr/bin/env node
-
-const program = require('commander');
-
 program
-  .version('0.1.0')
-  .option('-f, --foo', 'enable some foo')
-  .option('-b, --bar', 'enable some bar')
-  .option('-B, --baz', 'enable some baz');
+  .option('-f, --foo', 'enable some foo');
 
 // must be before .parse()
-program.on('--help', function(){
-  console.log('')
-  console.log('Examples:');
+program.on('--help', () => {
+  console.log('');
+  console.log('Example call:');
   console.log('  $ custom-help --help');
-  console.log('  $ custom-help -h');
 });
-
-program.parse(process.argv);
-
-console.log('stuff');
 ```
 
-Yields the following help output when `node script-name.js -h` or `node script-name.js --help` are run:
+Yields the following help output:
 
 ```Text
 Usage: custom-help [options]
 
 Options:
-  -V, --version  output the version number
-  -f, --foo      enable some foo
-  -b, --bar      enable some bar
-  -B, --baz      enable some baz
-  -h, --help     display help for command
+  -f, --foo   enable some foo
+  -h, --help  display help for command
 
-Examples:
+Example call:
   $ custom-help --help
-  $ custom-help -h
 ```
 
 ### .usage and .name
@@ -530,34 +511,23 @@ The help will start with:
 Usage: my-command [global options] command
 ```
 
+### .help(cb)
+
+Output help information and exit immediately. Optional callback cb allows post-processing of help text before it is displayed.
+
 ### .outputHelp(cb)
 
 Output help information without exiting.
 Optional callback cb allows post-processing of help text before it is displayed.
 
-If you want to display help by default (e.g. if no command was provided), you can use something like:
+### .helpInformation()
 
-```js
-const program = require('commander');
-const colors = require('colors');
-
-program
-  .version('0.1.0')
-  .command('getstream [url]', 'get stream URL')
-  .parse(process.argv);
-
-if (!process.argv.slice(2).length) {
-  program.outputHelp(make_red);
-}
-
-function make_red(txt) {
-  return colors.red(txt); //display the help text in red on the console
-}
-```
+Get the command help information as a string for processing or displaying yourself. (The text does not include the custom help
+from `--help` listeners.)
 
 ### .helpOption(flags, description)
 
-  Override the default help flags and description.
+Override the default help flags and description.
 
 ```js
 program
@@ -574,14 +544,9 @@ You can both turn on and customise the help command by supplying the name and de
 program.addHelpCommand('assist [command]', 'show assistance');
 ```
 
-### .help(cb)
-
-  Output help information and exit immediately.
-  Optional callback cb allows post-processing of help text before it is displayed.
-
 ## Custom event listeners
 
- You can execute custom actions by listening to command and option events.
+You can execute custom actions by listening to command and option events.
 
 ```js
 program.on('option:verbose', function () {
@@ -612,8 +577,9 @@ There are two new routines to change the behaviour, and the default behaviour ma
 - `passCommandToAction`: whether to pass command to action handler,
 or just the options (specify false)
 
+([example](./examples/storeOptionsAsProperties-action.js))
+
 ```js
-// file: ./examples/storeOptionsAsProperties.action.js
 program
   .storeOptionsAsProperties(false)
   .passCommandToAction(false);
