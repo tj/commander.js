@@ -274,8 +274,7 @@ class Command extends EventEmitter {
 
   _parseExpectedArgs(args) {
     if (!args.length) return;
-    const self = this;
-    args.forEach(function(arg) {
+    args.forEach((arg) => {
       const argDetails = {
         required: false,
         name: '',
@@ -297,7 +296,7 @@ class Command extends EventEmitter {
         argDetails.name = argDetails.name.slice(0, -3);
       }
       if (argDetails.name) {
-        self._args.push(argDetails);
+        this._args.push(argDetails);
       }
     });
     return this;
@@ -315,7 +314,7 @@ class Command extends EventEmitter {
     if (fn) {
       this._exitCallback = fn;
     } else {
-      this._exitCallback = function(err) {
+      this._exitCallback = (err) => {
         if (err.code !== 'commander.executeSubCommandAsync') {
           throw err;
         } else {
@@ -362,24 +361,23 @@ class Command extends EventEmitter {
    */
 
   action(fn) {
-    const self = this;
-    const listener = function(args) {
+    const listener = (args) => {
       // The .action callback takes an extra parameter which is the command or options.
-      const expectedArgsCount = self._args.length;
+      const expectedArgsCount = this._args.length;
       const actionArgs = args.slice(0, expectedArgsCount);
-      if (self._passCommandToAction) {
-        actionArgs[expectedArgsCount] = self;
+      if (this._passCommandToAction) {
+        actionArgs[expectedArgsCount] = this;
       } else {
-        actionArgs[expectedArgsCount] = self.opts();
+        actionArgs[expectedArgsCount] = this.opts();
       }
       // Add the extra arguments so available too.
       if (args.length > expectedArgsCount) {
         actionArgs.push(args.slice(expectedArgsCount));
       }
 
-      const actionResult = fn.apply(self, actionArgs);
+      const actionResult = fn.apply(this, actionArgs);
       // Remember result in case it is async. Assume parseAsync getting called on root.
-      let rootCommand = self;
+      let rootCommand = this;
       while (rootCommand.parent) {
         rootCommand = rootCommand.parent;
       }
@@ -402,7 +400,6 @@ class Command extends EventEmitter {
    */
 
   _optionEx(config, flags, description, fn, defaultValue) {
-    const self = this;
     const option = new Option(flags, description);
     const oname = option.name();
     const name = option.attributeName();
@@ -414,7 +411,7 @@ class Command extends EventEmitter {
         // This is a bit simplistic (especially no error messages), and probably better handled by caller using custom option processing.
         // No longer documented in README, but still present for backwards compatibility.
         const regex = fn;
-        fn = function(val, def) {
+        fn = (val, def) => {
           const m = regex.exec(val);
           return m ? m[0] : def;
         };
@@ -429,11 +426,11 @@ class Command extends EventEmitter {
       // when --no-foo we make sure default is true, unless a --foo option is already defined
       if (option.negate) {
         const positiveLongFlag = option.long.replace(/^--no-/, '--');
-        defaultValue = self._findOption(positiveLongFlag) ? self._getOptionValue(name) : true;
+        defaultValue = this._findOption(positiveLongFlag) ? this._getOptionValue(name) : true;
       }
       // preassign only if we have a default
       if (defaultValue !== undefined) {
-        self._setOptionValue(name, defaultValue);
+        this._setOptionValue(name, defaultValue);
         option.defaultValue = defaultValue;
       }
     }
@@ -443,25 +440,25 @@ class Command extends EventEmitter {
 
     // when it's passed assign the value
     // and conditionally invoke the callback
-    this.on('option:' + oname, function(val) {
+    this.on('option:' + oname, (val) => {
       // coercion
       if (val !== null && fn) {
-        val = fn(val, self._getOptionValue(name) === undefined ? defaultValue : self._getOptionValue(name));
+        val = fn(val, this._getOptionValue(name) === undefined ? defaultValue : this._getOptionValue(name));
       }
 
       // unassigned or boolean value
-      if (typeof self._getOptionValue(name) === 'boolean' || typeof self._getOptionValue(name) === 'undefined') {
+      if (typeof this._getOptionValue(name) === 'boolean' || typeof this._getOptionValue(name) === 'undefined') {
         // if no value, negate false, and we have a default, then use it!
         if (val == null) {
-          self._setOptionValue(name, option.negate
+          this._setOptionValue(name, option.negate
             ? false
             : defaultValue || true);
         } else {
-          self._setOptionValue(name, val);
+          this._setOptionValue(name, val);
         }
       } else if (val !== null) {
         // reassign
-        self._setOptionValue(name, option.negate ? false : val);
+        this._setOptionValue(name, option.negate ? false : val);
       }
     });
 
@@ -716,8 +713,8 @@ class Command extends EventEmitter {
     }
 
     const signals = ['SIGUSR1', 'SIGUSR2', 'SIGTERM', 'SIGINT', 'SIGHUP'];
-    signals.forEach(function(signal) {
-      process.on(signal, function() {
+    signals.forEach((signal) => {
+      process.on(signal, () => {
         if (proc.killed === false && proc.exitCode === null) {
           proc.kill(signal);
         }
@@ -734,7 +731,7 @@ class Command extends EventEmitter {
         exitCallback(new CommanderError(process.exitCode || 0, 'commander.executeSubCommandAsync', '(close)'));
       });
     }
-    proc.on('error', function(err) {
+    proc.on('error', (err) => {
       if (err.code === 'ENOENT') {
         console.error('error: %s(1) does not exist', bin);
       } else if (err.code === 'EACCES') {
@@ -803,14 +800,13 @@ class Command extends EventEmitter {
       }
 
       if (this._actionHandler) {
-        const self = this;
         const args = this.args.slice();
-        this._args.forEach(function(arg, i) {
+        this._args.forEach((arg, i) => {
           if (arg.required && args[i] == null) {
-            self.missingArgument(arg.name);
+            this.missingArgument(arg.name);
           } else if (arg.variadic) {
-            if (i !== self._args.length - 1) {
-              self.variadicArgNotLast(arg.name);
+            if (i !== this._args.length - 1) {
+              this.variadicArgNotLast(arg.name);
             }
 
             args[i] = args.splice(i);
@@ -1104,10 +1100,9 @@ class Command extends EventEmitter {
     const versionOption = new Option(flags, description);
     this._versionOptionName = versionOption.long.substr(2) || 'version';
     this.options.push(versionOption);
-    const self = this;
-    this.on('option:' + this._versionOptionName, function() {
+    this.on('option:' + this._versionOptionName, () => {
       process.stdout.write(str + '\n');
-      self._exit(0, 'commander.version', str);
+      this._exit(0, 'commander.version', str);
     });
     return this;
   };
@@ -1159,7 +1154,7 @@ class Command extends EventEmitter {
    */
 
   usage(str) {
-    const args = this._args.map(function(arg) {
+    const args = this._args.map((arg) => {
       return humanReadableArgName(arg);
     });
 
@@ -1195,10 +1190,10 @@ class Command extends EventEmitter {
    */
 
   prepareCommands() {
-    const commandDetails = this.commands.filter(function(cmd) {
+    const commandDetails = this.commands.filter((cmd) => {
       return !cmd._noHelp;
-    }).map(function(cmd) {
-      const args = cmd._args.map(function(arg) {
+    }).map((cmd) => {
+      const args = cmd._args.map((arg) => {
         return humanReadableArgName(arg);
       }).join(' ');
 
@@ -1226,7 +1221,7 @@ class Command extends EventEmitter {
 
   largestCommandLength() {
     const commands = this.prepareCommands();
-    return commands.reduce(function(max, command) {
+    return commands.reduce((max, command) => {
       return Math.max(max, command[0].length);
     }, 0);
   };
@@ -1244,7 +1239,7 @@ class Command extends EventEmitter {
       flags: this._helpFlags
     });
 
-    return options.reduce(function(max, option) {
+    return options.reduce((max, option) => {
       return Math.max(max, option.flags.length);
     }, 0);
   };
@@ -1257,7 +1252,7 @@ class Command extends EventEmitter {
    */
 
   largestArgLength() {
-    return this._args.reduce(function(max, arg) {
+    return this._args.reduce((max, arg) => {
       return Math.max(max, arg.name.length);
     }, 0);
   };
@@ -1300,7 +1295,7 @@ class Command extends EventEmitter {
     const descriptionWidth = columns - width - 4;
 
     // Append the help information
-    return this.options.map(function(option) {
+    return this.options.map((option) => {
       const fullDesc = option.description +
         ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
       return pad(option.flags, width) + '  ' + optionalWrap(fullDesc, descriptionWidth, width + 2);
@@ -1326,7 +1321,7 @@ class Command extends EventEmitter {
 
     return [
       'Commands:',
-      commands.map(function(cmd) {
+      commands.map((cmd) => {
         const desc = cmd[1] ? '  ' + cmd[1] : '';
         return (desc ? pad(cmd[0], width) : cmd[0]) + optionalWrap(desc, descriptionWidth, width + 2);
       }).join('\n').replace(/^/gm, '  '),
@@ -1356,7 +1351,7 @@ class Command extends EventEmitter {
         const descriptionWidth = columns - width - 5;
         desc.push('Arguments:');
         desc.push('');
-        this._args.forEach(function(arg) {
+        this._args.forEach((arg) => {
           desc.push('  ' + pad(arg.name, width) + '  ' + wrap(argsDescription[arg.name], descriptionWidth, width + 4));
         });
         desc.push('');
@@ -1404,7 +1399,7 @@ class Command extends EventEmitter {
 
   outputHelp(cb) {
     if (!cb) {
-      cb = function(passthru) {
+      cb = (passthru) => {
         return passthru;
       };
     }
@@ -1489,7 +1484,7 @@ exports.CommanderError = CommanderError;
  */
 
 function camelcase(flag) {
-  return flag.split('-').reduce(function(str, word) {
+  return flag.split('-').reduce((str, word) => {
     return str + word[0].toUpperCase() + word.slice(1);
   });
 }
@@ -1521,7 +1516,7 @@ function pad(str, width) {
 function wrap(str, width, indent) {
   const regex = new RegExp('.{1,' + (width - 1) + '}([\\s\u200B]|$)|[^\\s\u200B]+?([\\s\u200B]|$)', 'g');
   const lines = str.match(regex) || [];
-  return lines.map(function(line, i) {
+  return lines.map((line, i) => {
     if (line.slice(-1) === '\n') {
       line = line.slice(0, line.length - 1);
     }
