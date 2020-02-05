@@ -18,7 +18,7 @@ test('when subcommand file missing then error', () => {
       // Get uncaught thrown error on Windows
       expect(err.stderr).toBeDefined();
     } else {
-      expect(err.stderr).toBe('error: pm-list(1) does not exist\n');
+      expect(err.stderr).toMatch(new RegExp(/Error: 'pm-list' does not exist/));
     }
   });
 });
@@ -30,7 +30,7 @@ test('when alias subcommand file missing then error', () => {
       // Get uncaught thrown error on Windows
       expect(err.stderr).toBeDefined();
     } else {
-      expect(err.stderr).toBe('error: pm-list(1) does not exist\n');
+      expect(err.stderr).toMatch(new RegExp(/Error: 'pm-list' does not exist/));
     }
   });
 });
