@@ -13,8 +13,6 @@ function expectCommanderError(err, exitCode, code, message) {
   expect(err.message).toBe(message);
 }
 
-const testOrSkipOnWindows = (process.platform === 'win32') ? test.skip : test;
-
 describe('.exitOverride and error details', () => {
   // Use internal knowledge to suppress output to keep test output clean.
   let consoleErrorSpy;
@@ -174,25 +172,6 @@ describe('.exitOverride and error details', () => {
     expectCommanderError(caughtErr, 0, 'commander.version', myVersion);
   });
 
-  test('when program variadic argument not last then throw CommanderError', () => {
-    // Note: this error is notified during parse, although could have been detected at declaration.
-    const program = new commander.Command();
-    program
-      .exitOverride()
-      .arguments('<myVariadicArg...> [optionalArg]')
-      .action(jest.fn);
-
-    let caughtErr;
-    try {
-      program.parse(['node', 'test', 'a']);
-    } catch (err) {
-      caughtErr = err;
-    }
-
-    expect(consoleErrorSpy).toHaveBeenCalled();
-    expectCommanderError(caughtErr, 1, 'commander.variadicArgNotLast', "error: variadic arguments must be last 'myVariadicArg'");
-  });
-
   test('when executableSubcommand succeeds then call exitOverride', (done) => {
     const pm = path.join(__dirname, 'fixtures/pm');
     const program = new commander.Command();
@@ -204,27 +183,6 @@ describe('.exitOverride and error details', () => {
       .command('silent', 'description');
 
     program.parse(['node', pm, 'silent']);
-  });
-
-  // Throws directly on Windows
-  testOrSkipOnWindows('when executableSubcommand fails then call exitOverride', (done) => {
-    // Tricky for override, get called for `error` event then `exit` event.
-    const exitCallback = jest.fn()
-      .mockImplementationOnce((err) => {
-        expectCommanderError(err, 1, 'commander.executeSubCommandAsync', '(error)');
-        expect(err.nestedError.code).toBe('ENOENT');
-      })
-      .mockImplementation((err) => {
-        expectCommanderError(err, 0, 'commander.executeSubCommandAsync', '(close)');
-        done();
-      });
-    const pm = path.join(__dirname, 'fixtures/pm');
-    const program = new commander.Command();
-    program
-      .exitOverride(exitCallback)
-      .command('does-not-exist', 'fail');
-
-    program.parse(['node', pm, 'does-not-exist']);
   });
 
   test('when mandatory program option missing then throw CommanderError', () => {
