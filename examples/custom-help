@@ -4,20 +4,13 @@
 const program = require('../'); // include commander in git clone of commander repo
 
 program
-  .version('0.0.1')
-  .option('-f, --foo', 'enable some foo')
-  .option('-b, --bar', 'enable some bar')
-  .option('-B, --baz', 'enable some baz');
+  .option('-f, --foo', 'enable some foo');
 
 // must be before .parse()
-program.on('--help', function() {
+program.on('--help', () => {
   console.log('');
-  console.log('Examples:');
-  console.log('');
+  console.log('Example call:');
   console.log('  $ custom-help --help');
-  console.log('  $ custom-help -h');
 });
 
 program.parse(process.argv);
-
-program.help();
