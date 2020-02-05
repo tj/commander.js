@@ -6,6 +6,8 @@ const path = require('path');
 // semver minor versions. For now, also testing the error.message and that output occured
 // to detect accidental changes in behaviour.
 
+/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["expect", "expectCommanderError"] }] */
+
 function expectCommanderError(err, exitCode, code, message) {
   expect(err).toBeInstanceOf(commander.CommanderError);
   expect(err.exitCode).toBe(exitCode);
@@ -16,7 +18,7 @@ function expectCommanderError(err, exitCode, code, message) {
 describe('.exitOverride and error details', () => {
   // Use internal knowledge to suppress output to keep test output clean.
   let consoleErrorSpy;
-  let writeSpy;
+  let writeSpy; // used for help [sic] and version
 
   beforeAll(() => {
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
@@ -172,6 +174,8 @@ describe('.exitOverride and error details', () => {
     expectCommanderError(caughtErr, 0, 'commander.version', myVersion);
   });
 
+  // Have not worked out a cleaner way to do this, so suppress warning.
+  // eslint-disable-next-line jest/no-test-callback
   test('when executableSubcommand succeeds then call exitOverride', (done) => {
     const pm = path.join(__dirname, 'fixtures/pm');
     const program = new commander.Command();
