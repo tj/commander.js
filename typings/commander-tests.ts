@@ -152,4 +152,8 @@ program.parseAsync(process.argv).then(() => {
   console.log('parseAsync failed');
 });
 
+program.help();
+program.outputHelp();
+const info = program.helpInformation();
+
 console.log('stuff');
