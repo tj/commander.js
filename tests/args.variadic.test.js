@@ -70,25 +70,17 @@ describe('variadic argument', () => {
 
   test('when program variadic argument not last then error', () => {
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .arguments('<variadicArg...> [optionalArg]')
-      .action(jest.fn);
 
     expect(() => {
-      program.parse(['node', 'test', 'a']);
-    }).toThrow("error: variadic arguments must be last 'variadicArg'");
+      program.arguments('<variadicArg...> [optionalArg]');
+    }).toThrow("only the last argument can be variadic 'variadicArg'");
   });
 
   test('when command variadic argument not last then error', () => {
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .command('sub <variadicArg...> [optionalArg]')
-      .action(jest.fn);
 
     expect(() => {
-      program.parse(['node', 'test', 'sub', 'a']);
-    }).toThrow("error: variadic arguments must be last 'variadicArg'");
+      program.command('sub <variadicArg...> [optionalArg]');
+    }).toThrow("only the last argument can be variadic 'variadicArg'");
   });
 });
