@@ -1323,7 +1323,7 @@ class Command extends EventEmitter {
    * Return program help documentation.
    *
    * @return {String}
-   * @api private
+   * @api public
    */
 
   helpInformation() {
