@@ -299,8 +299,8 @@ class Command extends EventEmitter {
         this._args.push(argDetails);
       }
     });
-    this._args.forEach(function(arg, i) {
-      if (arg.variadic && i < self._args.length - 1) {
+    this._args.forEach((arg, i) => {
+      if (arg.variadic && i < this._args.length - 1) {
         throw new Error(`only the last argument can be variadic '${arg.name}'`);
       }
     });
