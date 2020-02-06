@@ -281,6 +281,11 @@ declare namespace commander {
     outputHelp(cb?: (str: string) => string): void;
 
     /**
+     * Return command help documentation.
+     */
+    helpInformation(): string;
+    
+    /**
      * You can pass in flags and a description to override the help
      * flags and help description for your command.
      */
