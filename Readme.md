@@ -617,7 +617,6 @@ program.parse(); // Implicit, and auto-detect electron
 program.parse(['-f', 'filename'], { from: 'user' });
 ```
 
-
 ### Avoiding option name clashes
 
 The original and default behaviour is that the option values are stored
