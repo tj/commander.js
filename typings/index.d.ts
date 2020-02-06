@@ -206,8 +206,8 @@ declare namespace commander {
      *
      * Examples:
      *
-     *      program.parse(); // implicitly use process.argv and auto-detect node vs electron conventions
      *      program.parse(process.argv);
+     *      program.parse(); // implicitly use process.argv and auto-detect node vs electron conventions
      *      program.parse(my-args, { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
      * 
      * @returns Command for chaining
@@ -215,14 +215,21 @@ declare namespace commander {
     parse(argv?: string[], options?: ParseOptions): Command;
 
     /**
-    * Parse `argv`, setting options and invoking commands when defined.
-    * 
-    * Use parseAsync instead of parse if any of your action handlers are async. Returns a Promise.
-    * 
-    * (See .parse for additional details and examples.)
-    *
-    * @returns Promise
-    */
+     * Parse `argv`, setting options and invoking commands when defined.
+     * 
+     * Use parseAsync instead of parse if any of your action handlers are async. Returns a Promise.
+     * 
+     * The default expectation is that the arguments are from node and have the application as argv[0]
+     * and the script being run in argv[1], with user parameters after that.
+     *
+     * Examples:
+     *
+     *      program.parseAsync(process.argv);
+     *      program.parseAsync(); // implicitly use process.argv and auto-detect node vs electron conventions
+     *      program.parseAsync(my-args, { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
+     *
+     * @returns Promise
+     */
     parseAsync(argv?: string[], options?: ParseOptions): Promise<any>;
 
     /**

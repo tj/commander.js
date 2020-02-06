@@ -627,8 +627,8 @@ class Command extends EventEmitter {
    *
    * Examples:
    *
-   *      program.parse(); // implicitly use process.argv and auto-detect node vs electron conventions
    *      program.parse(process.argv);
+   *      program.parse(); // implicitly use process.argv and auto-detect node vs electron conventions
    *      program.parse(my-args, { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
    *
    * @param {string[]} [argv] - optional, defaults to process.argv
@@ -693,7 +693,14 @@ class Command extends EventEmitter {
    *
    * Use parseAsync instead of parse if any of your action handlers are async. Returns a Promise.
    *
-   * (See .parse for additional details and examples.)
+   * The default expectation is that the arguments are from node and have the application as argv[0]
+   * and the script being run in argv[1], with user parameters after that.
+   *
+   * Examples:
+   *
+   *      program.parseAsync(process.argv);
+   *      program.parseAsync(); // implicitly use process.argv and auto-detect node vs electron conventions
+   *      program.parseAsync(my-args, { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
    *
    * @param {string[]} [argv]
    * @param {Object} [parseOptions]
