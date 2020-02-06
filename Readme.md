@@ -22,7 +22,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
   - [Commands](#commands)
     - [Specify the argument syntax](#specify-the-argument-syntax)
     - [Action handler (sub)commands](#action-handler-subcommands)
-    - [Git-style executable (sub)commands](#git-style-executable-subcommands)
+    - [Stand-alone executable (sub)commands](#stand-alone-executable-subcommands)
   - [Automated help](#automated-help)
     - [Custom help](#custom-help)
     - [.usage and .name](#usage-and-name)
@@ -36,7 +36,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Avoiding option name clashes](#avoiding-option-name-clashes)
     - [TypeScript](#typescript)
     - [Node options such as `--harmony`](#node-options-such-as---harmony)
-    - [Debugging executable subcommands](#debugging-executable-subcommands)
+    - [Debugging stand-alone executable subcommands](#debugging-stand-alone-executable-subcommands)
     - [Override exit handling](#override-exit-handling)
   - [Examples](#examples)
   - [License](#license)
@@ -298,7 +298,7 @@ program.version('0.0.1', '-v, --vers', 'output the current version');
 
 ## Commands
 
-You can specify (sub)commands for your top-level command using `.command()` or `.addCommand()`. There are two ways these can be implemented: using an action handler attached to the command, or as a separate executable file (described in more detail later). The subcommands may be nested ([example](./examples/nestedCommands.js)).
+You can specify (sub)commands for your top-level command using `.command()` or `.addCommand()`. There are two ways these can be implemented: using an action handler attached to the command, or as a stand-alone executable file (described in more detail later). The subcommands may be nested ([example](./examples/nestedCommands.js)).
 
 In the first parameter to `.command()` you specify the command name and any command arguments. The arguments may be `<required>` or `[optional]`, and the last argument may also be `variadic...`.
 
@@ -316,7 +316,7 @@ program
     console.log('clone command called');
   });
 
-// Command implemented using separate executable file (description is second parameter to `.command`)
+// Command implemented using stand-alone executable file (description is second parameter to `.command`)
 // Returns top-level command for adding more commands.
 program
   .command('start <service>', 'start named service')
@@ -412,9 +412,9 @@ async function main() {
 
 A command's options on the command line are validated when the command is used. Any unknown options will be reported as an error.
 
-### Git-style executable (sub)commands
+### Stand-alone executable (sub)commands
 
-When `.command()` is invoked with a description argument, this tells commander that you're going to use separate executables for sub-commands, much like `git` and other popular tools.
+When `.command()` is invoked with a description argument, this tells Commander that you're going to use stand-alone executables for sub-commands.
 Commander will search the executables in the directory of the entry script (like `./examples/pm`) with the name `program-subcommand`, like `pm-install`, `pm-search`.
 You can specify a custom name with the `executableFile` configuration option.
 
@@ -605,7 +605,7 @@ console.log(programOptions.name);
 
 The Commander package includes its TypeScript Definition file.
 
-If you use `ts-node` and  git-style sub-commands written as `.ts` files, you need to call your program through node to get the sub-commands called correctly. e.g.
+If you use `ts-node` and  stand-alone executable sub-commands written as `.ts` files, you need to call your program through node to get the sub-commands called correctly. e.g.
 
 ```bash
 node -r ts-node/register pm.ts
@@ -618,7 +618,7 @@ You can enable `--harmony` option in two ways:
 - Use `#! /usr/bin/env node --harmony` in the sub-commands scripts. (Note Windows does not support this pattern.)
 - Use the `--harmony` option when call the command, like `node --harmony examples/pm publish`. The `--harmony` option will be preserved when spawning sub-command process.
 
-### Debugging executable subcommands
+### Debugging stand-alone executable subcommands
 
 An executable subcommand is launched as a separate child process.
 
