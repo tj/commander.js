@@ -6,7 +6,7 @@ const commander = require('../');
 // and put work in elsewhere for new code (e.g. evolving behaviour for program action handler).
 //
 // The event 'command:*' is also listened for directly for testing for unknown commands
-// due to an example in the README, although this is not robust (e.g. sent for git-style commands).
+// due to an example in the README.
 //
 // Historical: the event 'command:*' used to also be shared by the action handler on the program.
 
