@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 * `.helpInformation()` returns help text as a string, previously a private routine ([#1169])
+* `.parse()` implicitly uses `process.argv` if arguments not specified ([#1172])
+* optionally specify where `.parse()` arguments "from", if not following node conventions ([#512] [#1172])
 
 ### Changed
 
@@ -249,6 +251,7 @@ program
 [#1]: https://github.com/tj/commander.js/issues/1
 [#432]: https://github.com/tj/commander.js/issues/432
 [#508]: https://github.com/tj/commander.js/issues/508
+[#512]: https://github.com/tj/commander.js/issues/512
 [#599]: https://github.com/tj/commander.js/issues/599
 [#611]: https://github.com/tj/commander.js/issues/611
 [#697]: https://github.com/tj/commander.js/issues/697
@@ -304,9 +307,11 @@ program
 [#1159]: https://github.com/tj/commander.js/pull/1159
 [#1165]: https://github.com/tj/commander.js/pull/1165
 [#1169]: https://github.com/tj/commander.js/pull/1169
+[#1172]: https://github.com/tj/commander.js/pull/1172
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
-[5.0.0-0]: https://github.com/tj/commander.js/compare/v4.2.o..v5.0.0-0
+[5.0.0-1]: https://github.com/tj/commander.js/compare/v5.0.0-0..v5.0.0-1
+[5.0.0-0]: https://github.com/tj/commander.js/compare/v4.1.1..v5.0.0-0
 [4.1.1]: https://github.com/tj/commander.js/compare/v4.0.0..v4.1.1
 [4.1.0]: https://github.com/tj/commander.js/compare/v4.0.1..v4.1.0
 [4.0.1]: https://github.com/tj/commander.js/compare/v4.0.0..v4.0.1
