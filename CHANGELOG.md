@@ -13,6 +13,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 * `.helpInformation()` returns help text as a string, previously a private routine ([#1169])
 
+### Changed
+
+* throw for author errors, preflight for variadic error, add tips to missing subcommand executable ([#1165])
+
 ## [5.0.0-0] (2020-02-02)
 
 ### Added
@@ -298,6 +302,7 @@ program
 [#1153]: https://github.com/tj/commander.js/issues/1153
 [#1157]: https://github.com/tj/commander.js/pull/1157
 [#1159]: https://github.com/tj/commander.js/pull/1159
+[#1165]: https://github.com/tj/commander.js/pull/1165
 [#1169]: https://github.com/tj/commander.js/pull/1169
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
