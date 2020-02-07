@@ -33,6 +33,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [.addHelpCommand()](#addhelpcommand)
   - [Custom event listeners](#custom-event-listeners)
   - [Bits and pieces](#bits-and-pieces)
+    - [.parse() and .parseAsync()](#parse-and-parseasync)
     - [Avoiding option name clashes](#avoiding-option-name-clashes)
     - [TypeScript](#typescript)
     - [Node options such as `--harmony`](#node-options-such-as---harmony)
@@ -562,6 +563,24 @@ program.on('command:*', function (operands) {
 ```
 
 ## Bits and pieces
+
+### .parse() and .parseAsync()
+
+The first argument to `.parse` is the array of strings to parse. You may omit the parameter to implicitly use `process.argv`.
+
+If the arguments follow different conventions than node you can pass a `from` option in the second parameter:
+
+- 'node': default, `argv[0]` is the application and `argv[1]` is the script being run, with user parameters after that
+- 'electron': `argv[1]` varies depending on whether the electron application is packaged
+- 'user': all of the arguments from the user
+
+For example:
+
+```js
+program.parse(process.argv); // Explicit, node conventions
+program.parse(); // Implicit, and auto-detect electron
+program.parse(['-f', 'filename'], { from: 'user' });
+```
 
 ### Avoiding option name clashes
 

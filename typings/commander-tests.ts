@@ -145,6 +145,8 @@ program.exitOverride((err):void => {
 });
 
 program.parse(process.argv);
+program.parse();
+program.parse(["foo"], { from: "user" });
 
 program.parseAsync(process.argv).then(() => {
   console.log('parseAsync success');

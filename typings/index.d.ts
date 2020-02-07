@@ -23,6 +23,10 @@ declare namespace commander {
   }
   type OptionConstructor = { new (flags: string, description?: string): Option };
 
+  interface ParseOptions {
+    from: "node" | "electron" | "user";
+  }
+
   interface Command {
     [key: string]: any; // options as properties
 
@@ -196,19 +200,37 @@ declare namespace commander {
 
     /**
      * Parse `argv`, setting options and invoking commands when defined.
+     * 
+     * The default expectation is that the arguments are from node and have the application as argv[0]
+     * and the script being run in argv[1], with user parameters after that.
      *
+     * Examples:
+     *
+     *      program.parse(process.argv);
+     *      program.parse(); // implicitly use process.argv and auto-detect node vs electron conventions
+     *      program.parse(my-args, { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
+     * 
      * @returns Command for chaining
      */
-    parse(argv: string[]): Command;
+    parse(argv?: string[], options?: ParseOptions): Command;
 
     /**
-    * Parse `argv`, setting options and invoking commands when defined.
-    * 
-    * Use parseAsync instead of parse if any of your action handlers are async. Returns a Promise.
-    *
-    * @returns Promise
-    */
-    parseAsync(argv: string[]): Promise<any>;
+     * Parse `argv`, setting options and invoking commands when defined.
+     * 
+     * Use parseAsync instead of parse if any of your action handlers are async. Returns a Promise.
+     * 
+     * The default expectation is that the arguments are from node and have the application as argv[0]
+     * and the script being run in argv[1], with user parameters after that.
+     *
+     * Examples:
+     *
+     *      program.parseAsync(process.argv);
+     *      program.parseAsync(); // implicitly use process.argv and auto-detect node vs electron conventions
+     *      program.parseAsync(my-args, { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
+     *
+     * @returns Promise
+     */
+    parseAsync(argv?: string[], options?: ParseOptions): Promise<any>;
 
     /**
      * Parse options from `argv` removing known options,
