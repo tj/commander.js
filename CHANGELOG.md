@@ -17,7 +17,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-* throw for author errors, preflight for variadic error, add tips to missing subcommand executable ([#1165])
+* changes to error handling ([#1165])
+  * throw for author error, not just display message
+  * preflight for variadic error
+  * add tips to missing subcommand executable
+* update dependencies
 
 ## [5.0.0-0] (2020-02-02)
 
