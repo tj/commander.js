@@ -554,11 +554,13 @@ program.on('option:verbose', function () {
   process.env.VERBOSE = this.verbose;
 });
 
-// custom error on unknown command
 program.on('command:*', function (operands) {
-  console.error(`Invalid command '${operands[0]}'. Did you mean:`);
-  console.error(mySuggestions(operands[0]));
-  process.exit(1);
+  console.error(`error: unknown command '${operands[0]}'`);
+  const availableCommands = program.commands.map(cmd => cmd.name());
+  const suggestion = didYouMean(operands[0], availableCommands);
+  if (suggestion)
+    console.error(`Did you mean '${suggestion}'?`);
+  process.exitCode = 1;
 });
 ```
 
