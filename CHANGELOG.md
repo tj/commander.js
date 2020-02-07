@@ -316,7 +316,7 @@ program
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
 [5.0.0-1]: https://github.com/tj/commander.js/compare/v5.0.0-0..v5.0.0-1
 [5.0.0-0]: https://github.com/tj/commander.js/compare/v4.1.1..v5.0.0-0
-[4.1.1]: https://github.com/tj/commander.js/compare/v4.0.0..v4.1.1
+[4.1.1]: https://github.com/tj/commander.js/compare/v4.1.0..v4.1.1
 [4.1.0]: https://github.com/tj/commander.js/compare/v4.0.1..v4.1.0
 [4.0.1]: https://github.com/tj/commander.js/compare/v4.0.0..v4.0.1
 [4.0.0]: https://github.com/tj/commander.js/compare/v3.0.2..v4.0.0
