@@ -54,6 +54,7 @@ describe('.exitOverride and error details', () => {
   test('when specify unknown command then throw CommanderError', () => {
     const program = new commander.Command();
     program
+      .name('prog')
       .exitOverride()
       .command('sub');
 
@@ -65,7 +66,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(consoleErrorSpy).toHaveBeenCalled();
-    expectCommanderError(caughtErr, 1, 'commander.unknownCommand', "error: unknown command 'oops'");
+    expectCommanderError(caughtErr, 1, 'commander.unknownCommand', "error: unknown command 'oops'. See 'prog --help'.");
   });
 
   // Same error as above, but with custom handler.
