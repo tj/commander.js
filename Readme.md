@@ -550,6 +550,8 @@ program.addHelpCommand('assist [command]', 'show assistance');
 You can execute custom actions by listening to command and option events.
 
 ```js
+const didYouMean = require('didyoumean');
+
 program.on('option:verbose', function () {
   process.env.VERBOSE = this.verbose;
 });
