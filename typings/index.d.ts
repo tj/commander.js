@@ -40,7 +40,7 @@ declare namespace commander {
      * 
      * You can optionally supply the  flags and description to override the defaults.
      */
-    version(str: string, flags?: string, description?: string): Command;
+    version(str: string, flags?: string, description?: string): this;
 
     /**
      * Define a command, implemented using an action handler.
@@ -81,26 +81,26 @@ declare namespace commander {
      * @param opts - configuration options
      * @returns top level command for chaining more command definitions
      */
-    command(nameAndArgs: string, description: string, opts?: commander.CommandOptions): Command;
+    command(nameAndArgs: string, description: string, opts?: commander.CommandOptions): this;
 
     /**
      * Add a prepared subcommand.
      * 
      * @returns parent command for chaining
      */
-    addCommand(cmd: Command): Command;
+    addCommand(cmd: Command): this;
 
     /**
      * Define argument syntax for the top-level command.
      *
      * @returns Command for chaining
      */
-    arguments(desc: string): Command;
+    arguments(desc: string): this;
 
     /**
      * Register callback to use as replacement for calling process.exit.
      */
-    exitOverride(callback?: (err: CommanderError) => never|void): Command;
+    exitOverride(callback?: (err: CommanderError) => never|void): this;
 
     /**
      * Register callback `fn` for the command.
@@ -115,7 +115,7 @@ declare namespace commander {
      *
      * @returns Command for chaining
      */
-    action(fn: (...args: any[]) => void | Promise<void>): Command;
+    action(fn: (...args: any[]) => void | Promise<void>): this;
 
     /**
      * Define option with `flags`, `description` and optional
@@ -159,9 +159,9 @@ declare namespace commander {
      *
      * @returns Command for chaining
      */
-    option(flags: string, description?: string, defaultValue?: string | boolean): Command;
-    option(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): Command;
-    option<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): Command;
+    option(flags: string, description?: string, defaultValue?: string | boolean): this;
+    option(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
+    option<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
 
     /**
      * Define a required option, which must have a value after parsing. This usually means
@@ -169,9 +169,9 @@ declare namespace commander {
      *
      * The `flags` string should contain both the short and long flags, separated by comma, a pipe or space.
      */
-    requiredOption(flags: string, description?: string, defaultValue?: string | boolean): Command;
-    requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): Command;
-    requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): Command;
+    requiredOption(flags: string, description?: string, defaultValue?: string | boolean): this;
+    requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
+    requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
 
 
     /**
@@ -180,7 +180,7 @@ declare namespace commander {
      *
      * @return Command for chaining
      */
-    storeOptionsAsProperties(value?: boolean): Command;
+    storeOptionsAsProperties(value?: boolean): this;
 
     /**
      * Whether to pass command to action handler,
@@ -188,7 +188,7 @@ declare namespace commander {
      * 
      * @return Command for chaining
      */
-    passCommandToAction(value?: boolean): Command;
+    passCommandToAction(value?: boolean): this;
 
     /**
      * Allow unknown options on the command line.
@@ -196,7 +196,7 @@ declare namespace commander {
      * @param [arg] if `true` or omitted, no error will be thrown for unknown options.
      * @returns Command for chaining
      */
-    allowUnknownOption(arg?: boolean): Command;
+    allowUnknownOption(arg?: boolean): this;
 
     /**
      * Parse `argv`, setting options and invoking commands when defined.
@@ -212,7 +212,7 @@ declare namespace commander {
      * 
      * @returns Command for chaining
      */
-    parse(argv?: string[], options?: ParseOptions): Command;
+    parse(argv?: string[], options?: ParseOptions): this;
 
     /**
      * Parse `argv`, setting options and invoking commands when defined.
@@ -230,7 +230,7 @@ declare namespace commander {
      *
      * @returns Promise
      */
-    parseAsync(argv?: string[], options?: ParseOptions): Promise<any>;
+    parseAsync(argv?: string[], options?: ParseOptions): Promise<this>;
 
     /**
      * Parse options from `argv` removing known options,
@@ -255,7 +255,7 @@ declare namespace commander {
      * 
      * @returns Command for chaining
      */
-    description(str: string, argsDescription?: {[argName: string]: string}): Command;
+    description(str: string, argsDescription?: {[argName: string]: string}): this;
     /**
      * Get the description.
      */
@@ -266,7 +266,7 @@ declare namespace commander {
      * 
      * @returns Command for chaining
      */
-    alias(alias: string): Command;
+    alias(alias: string): this;
     /**
      * Get alias for the command.
      */
@@ -277,7 +277,7 @@ declare namespace commander {
      * 
      * @returns Command for chaining
      */
-    usage(str: string): Command;
+    usage(str: string): this;
     /**
      * Get the command usage.
      */
@@ -288,7 +288,7 @@ declare namespace commander {
      * 
      * @returns Command for chaining
      */
-    name(str: string): Command;
+    name(str: string): this;
     /**
      * Get the name of the command.
      */
@@ -311,7 +311,7 @@ declare namespace commander {
      * You can pass in flags and a description to override the help
      * flags and help description for your command.
      */
-    helpOption(flags?: string, description?: string): Command;
+    helpOption(flags?: string, description?: string): this;
 
     /** 
      * Output help information and exit.
@@ -327,7 +327,7 @@ declare namespace commander {
      *         console.log('See web site for more information.');
      *     });
      */
-    on(event: string | symbol, listener: (...args: any[]) => void): Command;
+    on(event: string | symbol, listener: (...args: any[]) => void): this;
   }
   type CommandConstructor = { new (name?: string): Command };
 

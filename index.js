@@ -712,7 +712,7 @@ class Command extends EventEmitter {
 
   parseAsync(argv, parseOptions) {
     this.parse(argv, parseOptions);
-    return Promise.all(this._actionResults);
+    return Promise.all(this._actionResults).then(() => this);
   };
 
   /**
