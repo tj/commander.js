@@ -415,7 +415,7 @@ A command's options on the command line are validated when the command is used. 
 
 ### Stand-alone executable (sub)commands
 
-When `.command()` is invoked with a description argument, this tells Commander that you're going to use stand-alone executables for sub-commands.
+When `.command()` is invoked with a description argument, this tells Commander that you're going to use stand-alone executables for subcommands.
 Commander will search the executables in the directory of the entry script (like `./examples/pm`) with the name `program-subcommand`, like `pm-install`, `pm-search`.
 You can specify a custom name with the `executableFile` configuration option.
 
@@ -626,7 +626,7 @@ console.log(programOptions.name);
 
 The Commander package includes its TypeScript Definition file.
 
-If you use `ts-node` and  stand-alone executable sub-commands written as `.ts` files, you need to call your program through node to get the sub-commands called correctly. e.g.
+If you use `ts-node` and  stand-alone executable subcommands written as `.ts` files, you need to call your program through node to get the subcommands called correctly. e.g.
 
 ```bash
 node -r ts-node/register pm.ts
@@ -636,8 +636,8 @@ node -r ts-node/register pm.ts
 
 You can enable `--harmony` option in two ways:
 
-- Use `#! /usr/bin/env node --harmony` in the sub-commands scripts. (Note Windows does not support this pattern.)
-- Use the `--harmony` option when call the command, like `node --harmony examples/pm publish`. The `--harmony` option will be preserved when spawning sub-command process.
+- Use `#! /usr/bin/env node --harmony` in the subcommands scripts. (Note Windows does not support this pattern.)
+- Use the `--harmony` option when call the command, like `node --harmony examples/pm publish`. The `--harmony` option will be preserved when spawning subcommand process.
 
 ### Debugging stand-alone executable subcommands
 
