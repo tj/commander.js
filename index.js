@@ -1129,7 +1129,7 @@ class Command extends EventEmitter {
       partCommands.unshift(parentCmd.name());
     }
     const fullCommand = partCommands.join(' ');
-    const message = `error: unknown command '${this.args[0]}'. See '${fullCommand} --help'.`;
+    const message = `error: unknown command '${this.args[0]}'. See '${fullCommand} ${this._helpLongFlag}'.`;
     console.error(message);
     this._exit(1, 'commander.unknownCommand', message);
   };
