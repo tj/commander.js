@@ -336,6 +336,7 @@ declare namespace commander {
         noHelp?: boolean;
         isDefault?: boolean;
         executableFile?: string;
+        construct?: (name: string) => Command;
     }
 
     interface ParseOptionsResult {

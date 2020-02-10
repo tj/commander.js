@@ -160,7 +160,8 @@ class Command extends EventEmitter {
     }
     opts = opts || {};
     const args = nameAndArgs.split(/ +/);
-    const cmd = new Command(args.shift());
+    const name = args.shift();
+    const cmd = opts.construct ? opts.construct(name) : new Command(name);
 
     if (desc) {
       cmd.description(desc);
