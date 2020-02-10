@@ -1124,7 +1124,12 @@ class Command extends EventEmitter {
    */
 
   unknownCommand() {
-    const message = `error: unknown command '${this.args[0]}'`;
+    const partCommands = [this.name()];
+    for (let parentCmd = this.parent; parentCmd; parentCmd = parentCmd.parent) {
+      partCommands.unshift(parentCmd.name());
+    }
+    const fullCommand = partCommands.join(' ');
+    const message = `error: unknown command '${this.args[0]}'. See '${fullCommand} ${this._helpLongFlag}'.`;
     console.error(message);
     this._exit(1, 'commander.unknownCommand', message);
   };
