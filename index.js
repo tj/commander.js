@@ -11,8 +11,8 @@ class Option {
   /**
    * Initialize a new `Option` with the given `flags` and `description`.
    *
-   * @param {String} flags
-   * @param {String} description
+   * @param {string} flags
+   * @param {string} description
    * @api public
    */
 
@@ -31,7 +31,7 @@ class Option {
   /**
    * Return option name.
    *
-   * @return {String}
+   * @return {string}
    * @api private
    */
 
@@ -43,7 +43,7 @@ class Option {
    * Return option name, in a camelcase format that can be used
    * as a object attribute key.
    *
-   * @return {String}
+   * @return {string}
    * @api private
    */
 
@@ -54,8 +54,8 @@ class Option {
   /**
    * Check if `arg` matches the short or long flag.
    *
-   * @param {String} arg
-   * @return {Boolean}
+   * @param {string} arg
+   * @return {boolean}
    * @api private
    */
 
@@ -71,9 +71,9 @@ class Option {
 class CommanderError extends Error {
   /**
    * Constructs the CommanderError class
-   * @param {Number} exitCode suggested exit code which could be used with process.exit
-   * @param {String} code an id string representing the error
-   * @param {String} message human-readable description of the error
+   * @param {number} exitCode suggested exit code which could be used with process.exit
+   * @param {string} code an id string representing the error
+   * @param {string} message human-readable description of the error
    * @constructor
    */
   constructor(exitCode, code, message) {
@@ -90,7 +90,7 @@ class Command extends EventEmitter {
   /**
    * Initialize a new `Command`.
    *
-   * @param {String} [name]
+   * @param {string} [name]
    * @api public
    */
 
@@ -335,9 +335,9 @@ class Command extends EventEmitter {
   /**
    * Call process.exit, and _exitCallback if defined.
    *
-   * @param {Number} exitCode exit code for using with process.exit
-   * @param {String} code an id string representing the error
-   * @param {String} message human-readable description of the error
+   * @param {number} exitCode exit code for using with process.exit
+   * @param {string} code an id string representing the error
+   * @param {string} message human-readable description of the error
    * @return never
    * @api private
    */
@@ -398,8 +398,8 @@ class Command extends EventEmitter {
    * Internal implementation shared by .option() and .requiredOption()
    *
    * @param {Object} config
-   * @param {String} flags
-   * @param {String} description
+   * @param {string} flags
+   * @param {string} description
    * @param {Function|*} [fn] - custom option processing function or default vaue
    * @param {*} [defaultValue]
    * @return {Command} for chaining
@@ -516,8 +516,8 @@ class Command extends EventEmitter {
    *     // optional argument
    *     program.option('-c, --cheese [type]', 'add cheese [marble]');
    *
-   * @param {String} flags
-   * @param {String} description
+   * @param {string} flags
+   * @param {string} description
    * @param {Function|*} [fn] - custom option processing function or default vaue
    * @param {*} [defaultValue]
    * @return {Command} for chaining
@@ -534,8 +534,8 @@ class Command extends EventEmitter {
   *
   * The `flags` string should contain both the short and long flags, separated by comma, a pipe or space.
   *
-  * @param {String} flags
-  * @param {String} description
+  * @param {string} flags
+  * @param {string} description
   * @param {Function|*} [fn] - custom option processing function or default vaue
   * @param {*} [defaultValue]
   * @return {Command} for chaining
@@ -549,7 +549,7 @@ class Command extends EventEmitter {
   /**
    * Allow unknown options on the command line.
    *
-   * @param {Boolean} arg if `true` or omitted, no error will be thrown
+   * @param {Boolean} [arg] - if `true` or omitted, no error will be thrown
    * for unknown options.
    * @api public
    */
@@ -592,7 +592,7 @@ class Command extends EventEmitter {
   /**
    * Store option value
    *
-   * @param {String} key
+   * @param {string} key
    * @param {Object} value
    * @api private
    */
@@ -608,7 +608,7 @@ class Command extends EventEmitter {
   /**
    * Retrieve option value
    *
-   * @param {String} key
+   * @param {string} key
    * @return {Object} value
    * @api private
    */
@@ -910,7 +910,7 @@ class Command extends EventEmitter {
   /**
    * Return an option matching `arg` if any.
    *
-   * @param {String} arg
+   * @param {string} arg
    * @return {Option}
    * @api private
    */
@@ -1060,7 +1060,7 @@ class Command extends EventEmitter {
   /**
    * Argument `name` is missing.
    *
-   * @param {String} name
+   * @param {string} name
    * @api private
    */
 
@@ -1074,7 +1074,7 @@ class Command extends EventEmitter {
    * `Option` is missing an argument, but received `flag` or nothing.
    *
    * @param {Option} option
-   * @param {String} [flag]
+   * @param {string} [flag]
    * @api private
    */
 
@@ -1105,7 +1105,7 @@ class Command extends EventEmitter {
   /**
    * Unknown option `flag`.
    *
-   * @param {String} flag
+   * @param {string} flag
    * @api private
    */
 
@@ -1119,7 +1119,7 @@ class Command extends EventEmitter {
   /**
    * Unknown command.
    *
-   * @param {String} flag
+   * @param {string} flag
    * @api private
    */
 
@@ -1142,9 +1142,9 @@ class Command extends EventEmitter {
    *
    * You can optionally supply the  flags and description to override the defaults.
    *
-   * @param {String} str
-   * @param {String} [flags]
-   * @param {String} [description]
+   * @param {string} str
+   * @param {string} [flags]
+   * @param {string} [description]
    * @return {Command} for chaining
    * @api public
    */
@@ -1167,7 +1167,7 @@ class Command extends EventEmitter {
   /**
    * Set the description to `str`.
    *
-   * @param {String} str
+   * @param {string} str
    * @param {Object} [argsDescription]
    * @return {String|Command}
    * @api public
@@ -1183,7 +1183,7 @@ class Command extends EventEmitter {
   /**
    * Set an alias for the command
    *
-   * @param {String} alias
+   * @param {string} alias
    * @return {String|Command}
    * @api public
    */
@@ -1205,7 +1205,7 @@ class Command extends EventEmitter {
   /**
    * Set / get the command usage `str`.
    *
-   * @param {String} [str]
+   * @param {string} [str]
    * @return {String|Command}
    * @api public
    */
@@ -1228,7 +1228,7 @@ class Command extends EventEmitter {
   /**
    * Get or set the name of the command
    *
-   * @param {String} [str]
+   * @param {string} [str]
    * @return {String|Command}
    * @api public
    */
@@ -1272,7 +1272,7 @@ class Command extends EventEmitter {
   /**
    * Return the largest command length.
    *
-   * @return {Number}
+   * @return {number}
    * @api private
    */
 
@@ -1286,7 +1286,7 @@ class Command extends EventEmitter {
   /**
    * Return the largest option length.
    *
-   * @return {Number}
+   * @return {number}
    * @api private
    */
 
@@ -1304,7 +1304,7 @@ class Command extends EventEmitter {
   /**
    * Return the largest arg length.
    *
-   * @return {Number}
+   * @return {number}
    * @api private
    */
 
@@ -1317,7 +1317,7 @@ class Command extends EventEmitter {
   /**
    * Return the pad width.
    *
-   * @return {Number}
+   * @return {number}
    * @api private
    */
 
@@ -1341,7 +1341,7 @@ class Command extends EventEmitter {
   /**
    * Return help for options.
    *
-   * @return {String}
+   * @return {string}
    * @api private
    */
 
@@ -1363,7 +1363,7 @@ class Command extends EventEmitter {
   /**
    * Return command help documentation.
    *
-   * @return {String}
+   * @return {string}
    * @api private
    */
 
@@ -1389,7 +1389,7 @@ class Command extends EventEmitter {
   /**
    * Return program help documentation.
    *
-   * @return {String}
+   * @return {string}
    * @api public
    */
 
@@ -1472,8 +1472,8 @@ class Command extends EventEmitter {
    * You can pass in flags and a description to override the help
    * flags and help description for your command.
    *
-   * @param {String} [flags]
-   * @param {String} [description]
+   * @param {string} [flags]
+   * @param {string} [description]
    * @return {Command}
    * @api public
    */
@@ -1535,8 +1535,8 @@ exports.CommanderError = CommanderError;
 /**
  * Camel-case the given `flag`
  *
- * @param {String} flag
- * @return {String}
+ * @param {string} flag
+ * @return {string}
  * @api private
  */
 
@@ -1549,9 +1549,9 @@ function camelcase(flag) {
 /**
  * Pad `str` to `width`.
  *
- * @param {String} str
- * @param {Number} width
- * @return {String}
+ * @param {string} str
+ * @param {number} width
+ * @return {string}
  * @api private
  */
 
@@ -1564,10 +1564,10 @@ function pad(str, width) {
  * Wraps the given string with line breaks at the specified width while breaking
  * words and indenting every but the first line on the left.
  *
- * @param {String} str
- * @param {Number} width
- * @param {Number} indent
- * @return {String}
+ * @param {string} str
+ * @param {number} width
+ * @param {number} indent
+ * @return {string}
  * @api private
  */
 function wrap(str, width, indent) {
@@ -1586,10 +1586,10 @@ function wrap(str, width, indent) {
  * while indenting with indent spaces. Do not wrap if insufficient width or
  * string is manually formatted.
  *
- * @param {String} str
- * @param {Number} width
- * @param {Number} indent
- * @return {String}
+ * @param {string} str
+ * @param {number} width
+ * @param {number} indent
+ * @return {string}
  * @api private
  */
 function optionalWrap(str, width, indent) {
@@ -1624,7 +1624,7 @@ function outputHelpIfRequested(cmd, args) {
  * Takes an argument and returns its human readable equivalent for help usage.
  *
  * @param {Object} arg
- * @return {String}
+ * @return {string}
  * @api private
  */
 
