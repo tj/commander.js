@@ -11,11 +11,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- suggest help option along with unknown command error ([#1179])
+* suggest help option along with unknown command error ([#1179])
 
 ### Changed
 
-- TypeScript fluent return types changed to be more subclass friendly, return `this` rather than `Command` ([#1180])
+* TypeScript fluent return types changed to be more subclass friendly, return `this` rather than `Command` ([#1180])
 
 ## [5.0.0-1] (2020-02-08)
 
