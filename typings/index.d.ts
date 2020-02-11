@@ -32,6 +32,8 @@ declare namespace commander {
 
     args: string[];
 
+    commands: Command[];
+
     /**
      * Set the program version to `str`. 
      *
