@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [5.0.0-2] (2020-02-10)
+
+### Added
+
+- suggest help option along with unknown command error ([#1179])
+
+### Changed
+
+- TypeScript fluent return types changed to be more subclass friendly, return `this` rather than `Command` ([#1180])
+
 ## [5.0.0-1] (2020-02-08)
 
 ### Added
@@ -312,8 +322,11 @@ program
 [#1165]: https://github.com/tj/commander.js/pull/1165
 [#1169]: https://github.com/tj/commander.js/pull/1169
 [#1172]: https://github.com/tj/commander.js/pull/1172
+[#1179]: https://github.com/tj/commander.js/pull/1179
+[#1180]: https://github.com/tj/commander.js/pull/1180
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[5.0.0-2]: https://github.com/tj/commander.js/compare/v5.0.0-1..v5.0.0-2
 [5.0.0-1]: https://github.com/tj/commander.js/compare/v5.0.0-0..v5.0.0-1
 [5.0.0-0]: https://github.com/tj/commander.js/compare/v4.1.1..v5.0.0-0
 [4.1.1]: https://github.com/tj/commander.js/compare/v4.1.0..v4.1.1
