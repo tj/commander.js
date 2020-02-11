@@ -90,7 +90,7 @@ declare namespace commander {
      * 
      * @returns parent command for chaining
      */
-    addCommand(cmd: Command): this;
+    addCommand(cmd: Command, opts?: commander.AddCommandOptions): this;
 
     /**
      * Define argument syntax for the top-level command.
@@ -338,6 +338,13 @@ declare namespace commander {
         noHelp?: boolean;
         isDefault?: boolean;
         executableFile?: string;
+    }
+
+    interface AddCommandOptions {
+        noHelp?: boolean;
+        isDefault?: boolean;
+        inheritHelp?: boolean;
+        inheritExit?: boolean;
     }
 
     interface ParseOptionsResult {

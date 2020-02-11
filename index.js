@@ -162,30 +162,23 @@ class Command extends EventEmitter {
     const args = nameAndArgs.split(/ +/);
     const cmd = new Command(args.shift());
 
-    if (desc) {
-      cmd.description(desc);
-      cmd._executableHandler = true;
-    }
-    if (opts.isDefault) this._defaultCommandName = cmd._name;
+    this.addCommand(cmd, {
+      noHelp: opts.noHelp,
+      isDefault: opts.isDefault,
+      inheritHelp: true,
+      inheritExit: true
+    });
 
-    cmd._noHelp = !!opts.noHelp;
-    cmd._helpFlags = this._helpFlags;
-    cmd._helpDescription = this._helpDescription;
-    cmd._helpShortFlag = this._helpShortFlag;
-    cmd._helpLongFlag = this._helpLongFlag;
-    cmd._helpCommandName = this._helpCommandName;
-    cmd._helpCommandnameAndArgs = this._helpCommandnameAndArgs;
-    cmd._helpCommandDescription = this._helpCommandDescription;
-    cmd._exitCallback = this._exitCallback;
+    cmd._parseExpectedArgs(args);
     cmd._storeOptionsAsProperties = this._storeOptionsAsProperties;
     cmd._passCommandToAction = this._passCommandToAction;
 
-    cmd._executableFile = opts.executableFile || null; // Custom name for executable file, set missing to null to match constructor
-    this.commands.push(cmd);
-    cmd._parseExpectedArgs(args);
-    cmd.parent = this;
-
-    if (desc) return this;
+    if (desc) {
+      cmd.description(desc);
+      cmd._executableHandler = true;
+      cmd._executableFile = opts.executableFile || null; // Custom name for executable file, set missing to null to match constructor
+      return this;
+    }
     return cmd;
   };
 
@@ -197,20 +190,46 @@ class Command extends EventEmitter {
    * @api public
    */
 
-  addCommand(cmd) {
+  addCommand(cmd, opts) {
     if (!cmd._name) throw new Error('Command passed to .addCommand() must have a name');
+    opts = opts || {};
+
+    function iterate(cmd, iteratee, nested) {
+      iteratee(cmd, nested);
+      cmd.commands.forEach((cmd) => {
+        iterate(cmd, iteratee, true);
+      });
+    }
 
     // To keep things simple, block automatic name generation for deeply nested executables.
     // Fail fast and detect when adding rather than later when parsing.
-    function checkExplicitNames(commandArray) {
-      commandArray.forEach((cmd) => {
-        if (cmd._executableHandler && !cmd._executableFile) {
-          throw new Error(`Must specify executableFile for deeply nested executable: ${cmd.name()}`);
-        }
-        checkExplicitNames(cmd.commands);
+    iterate(cmd, (cmd, nested) => {
+      if (nested && cmd._executableHandler && !cmd._executableFile) {
+        throw new Error(`Must specify executableFile for deeply nested executable: ${cmd.name()}`);
+      }
+    });
+
+    if (opts.isDefault) this._defaultCommandName = cmd._name;
+
+    cmd._noHelp = !!opts.noHelp;
+
+    if (opts.inheritHelp) {
+      iterate(cmd, (cmd) => {
+        cmd._helpFlags = this._helpFlags;
+        cmd._helpDescription = this._helpDescription;
+        cmd._helpShortFlag = this._helpShortFlag;
+        cmd._helpLongFlag = this._helpLongFlag;
+        cmd._helpCommandName = this._helpCommandName;
+        cmd._helpCommandnameAndArgs = this._helpCommandnameAndArgs;
+        cmd._helpCommandDescription = this._helpCommandDescription;
       });
     }
-    checkExplicitNames(cmd.commands);
+
+    if (opts.inheritExit) {
+      iterate(cmd, (cmd) => {
+        cmd._exitCallback = this._exitCallback;
+      });
+    }
 
     this.commands.push(cmd);
     cmd.parent = this;
