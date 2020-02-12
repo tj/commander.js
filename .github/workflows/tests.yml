@@ -7,6 +7,7 @@ jobs:
     name: Test on node ${{ matrix.node-version }} and ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
         node-version: [8.x, 10.x, 12.x]
         os: [ubuntu-latest, windows-latest, macos-latest]
