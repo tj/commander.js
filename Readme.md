@@ -557,9 +557,7 @@ program.on('option:verbose', function () {
 program.on('command:*', function (operands) {
   console.error(`error: unknown command '${operands[0]}'`);
   const availableCommands = program.commands.map(cmd => cmd.name());
-  const suggestion = didYouMean(operands[0], availableCommands);
-  if (suggestion)
-    console.error(`Did you mean '${suggestion}'?`);
+  mySuggestBestMatch(operands[0], availableCommands);
   process.exitCode = 1;
 });
 ```
