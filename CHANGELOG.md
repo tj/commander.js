@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 * TypeScript fluent return types changed to be more subclass friendly, return `this` rather than `Command` ([#1180])
+* `.parseAsync` returns `Promise<this>` to be consistent with `.parse()` ([#1180])
 
 ## [5.0.0-1] (2020-02-08)
 

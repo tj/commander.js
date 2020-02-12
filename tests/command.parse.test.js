@@ -52,3 +52,23 @@ describe('.parse() user args', () => {
     expect(program.args).toEqual(['user']);
   });
 });
+
+describe('return type', () => {
+  test('when call .parse then returns program', () => {
+    const program = new commander.Command();
+    program
+      .action(() => { });
+
+    const result = program.parse(['node', 'test']);
+    expect(result).toBe(program);
+  });
+
+  test('when await .parseAsync then returns program', async() => {
+    const program = new commander.Command();
+    program
+      .action(() => { });
+
+    const result = await program.parseAsync(['node', 'test']);
+    expect(result).toBe(program);
+  });
+});
