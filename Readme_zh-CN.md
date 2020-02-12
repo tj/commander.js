@@ -11,7 +11,7 @@
 
 - [Commander.js](#commanderjs)
   - [安装](#%e5%ae%89%e8%a3%85)
-  - [声明program变量](#%e5%a3%b0%e6%98%8eprogram%e5%8f%98%e9%87%8f)
+  - [声明_program_变量](#%e5%a3%b0%e6%98%8eprogram%e5%8f%98%e9%87%8f)
   - [选项](#%e9%80%89%e9%a1%b9)
     - [常用选项类型，boolean和值](#%e5%b8%b8%e7%94%a8%e9%80%89%e9%a1%b9%e7%b1%bb%e5%9e%8bboolean%e5%92%8c%e5%80%bc)
     - [默认选项值](#%e9%bb%98%e8%ae%a4%e9%80%89%e9%a1%b9%e5%80%bc)
@@ -22,19 +22,22 @@
   - [Commands](#commands)
     - [指定参数语法](#%e6%8c%87%e5%ae%9a%e5%8f%82%e6%95%b0%e8%af%ad%e6%b3%95)
     - [操作处理程序(Action handler) (子)命令](#%e6%93%8d%e4%bd%9c%e5%a4%84%e7%90%86%e7%a8%8b%e5%ba%8faction-handler-%e5%ad%90%e5%91%bd%e4%bb%a4)
-    - [Git 风格的子命令](#git-%e9%a3%8e%e6%a0%bc%e7%9a%84%e5%ad%90%e5%91%bd%e4%bb%a4)
-  - [自动化帮助信息 --help](#%e8%87%aa%e5%8a%a8%e5%8c%96%e5%b8%ae%e5%8a%a9%e4%bf%a1%e6%81%af---help)
+    - [独立的可执行(子)命令](#独立的可执行(子)命令)
+  - [自动化帮助信息 help](#%e8%87%aa%e5%8a%a8%e5%8c%96%e5%b8%ae%e5%8a%a9%e4%bf%a1%e6%81%af-help)
     - [自定义帮助](#%e8%87%aa%e5%ae%9a%e4%b9%89%e5%b8%ae%e5%8a%a9)
     - [.usage 和 .name](#usage-%e5%92%8c-name)
-    - [.outputHelp(cb)](#outputhelpcb)
-    - [.helpOption(flags, description)](#helpoptionflags-description)
     - [.help(cb)](#helpcb)
+    - [.outputHelp(cb)](#outputhelpcb)
+    - [.helpInformation()](#helpinformation)
+    - [.helpOption(flags, description)](#helpoptionflags-description)
+    - [.addHelpCommand()](#addhelpcommand)
   - [自定义事件监听](#%e8%87%aa%e5%ae%9a%e4%b9%89%e4%ba%8b%e4%bb%b6%e7%9b%91%e5%90%ac)
   - [零碎知识](#%e9%9b%b6%e7%a2%8e%e7%9f%a5%e8%af%86)
+    - [.parse() and .parseAsync()](#parse-和-parseasync)
     - [避免选项命名冲突](#%e9%81%bf%e5%85%8d%e9%80%89%e9%a1%b9%e5%91%bd%e5%90%8d%e5%86%b2%e7%aa%81)
     - [TypeScript](#typescript)
     - [Node 选项例如 `--harmony`](#node-%e9%80%89%e9%a1%b9%e4%be%8b%e5%a6%82---harmony)
-    - [Node 调试](#node-%e8%b0%83%e8%af%95)
+    - [Debugging stand-alone executable subcommands](#调试独立可执行子命令)
     - [重载退出(exit)处理](#%e9%87%8d%e8%bd%bd%e9%80%80%e5%87%baexit%e5%a4%84%e7%90%86)
   - [例子](#%e4%be%8b%e5%ad%90)
   - [许可证](#%e8%ae%b8%e5%8f%af%e8%af%81)
@@ -66,11 +69,18 @@ program.version('0.0.1');
 
 ## 选项
 
-`.option()` 方法用来定义带选项的 commander，同时也用于这些选项的文档。每个选项可以有一个短标识(单个字符)和一个长名字，它们之间用逗号或空格分开。
+`.option()` 方法用来定义带选项的 commander，同时也用于这些选项的文档。每个选项可以有一个短标识(单个字符)和一个长名字，它们之间用逗号或空格或'|'分开。
 
- 选项会被放到 Commander 对象的属性上，多词选项如"--template-engine"会被转为驼峰法`program.templateEngine`。多个短标识可以组合为一个参数，如`-a -b -c`等价于`-abc`。
+ 选项会被放到 Commander 对象的属性上，多词选项如"--template-engine"会被转为驼峰法`program.templateEngine`。另请参看可选的新功能[避免选项命名冲突](#%e9%81%bf%e5%85%8d%e9%80%89%e9%a1%b9%e5%91%bd%e5%90%8d%e5%86%b2%e7%aa%81)
+ 
+ 
+ 多个短标识可以组合为一个破折号开头的参数：布尔标识和值，并且最后一个标识可以附带一个值。
+ 例如，`-a -b -p 80` 也可以写作 `-ab -p80` 甚至 `-abp80`。
 
- 另请参看可选的新功能 [避免命名冲突](#避免选项命名冲突).
+你可以使用`--`来指示选项的结束，任何剩余的参数会正常使用，而不会被命令解释
+这点对于通过另一个命令来传递选项值的情况尤其适用，如:`do -- git --version`
+
+命令行中的选项位置不是固定的，可以在别的命令参数之前或之后指定
 
 ### 常用选项类型，boolean和值
 
@@ -108,7 +118,7 @@ pizza details:
 - cheese
 ```
 
-`program.parse(arguments)`会处理参数，没有被使用的选项会被存放在`program.args`数组中。
+`program.parse(arguments)`会处理参数，没有被使用的`program`选项会被存放在`program.args`数组中。
 
 ### 默认选项值
 
@@ -248,7 +258,7 @@ $ custom --list x,y,z
 
 ### 必需的选项
 
-你可以使用`.requiredOption`指定一个必需的(强制性的)选项，这样的选项在命令行的命令中必须被给出，除非它拥有一个默认的值。另外，这个方法在格式上和使用`.option`一样采用标志和说明，以及可选的默认值或自定义处理。
+你可以使用`.requiredOption`指定一个必需的(强制性的)选项，这样的选项在被解析后必须有一个值，通常情况下这个值在命令行中被指定，或者也许它拥有一个默认的值(可以说，来自环境)。另外，这个方法在格式上和使用`.option`一样采用标志和说明，以及可选的默认值或自定义处理。
 
 ```js
 const program = require('commander');
@@ -259,7 +269,7 @@ program
 program.parse(process.argv);
 ```
 
-```
+```bash
 $ pizza
 error: required option '-c, --cheese <type>' not specified
 ```
@@ -285,10 +295,14 @@ program.version('0.0.1', '-v, --vers', 'output the current version');
 
 ## Commands
 
-你可以使用 `.command` 为你的最高层命令指定子命令。
-这里我们有两种方法可以实现：为命令绑定一个操作处理程序(action handler)，或者将命令单独写成一个可执行文件(稍后我们会详细讨论)。在 `.command` 的第一个参数你可以指定命令的名字以及任何参数。参数可以是 `<required>`(必须的) or `[optional]`(可选的) , 并且最后一个参数也可以是 `variadic...`(可变的).
+你可以使用 `.command` 或者 `.addCommand()` 为你的最高层命令指定子命令。
+这里我们有两种方法可以实现：为命令绑定一个操作处理程序(action handler)，或者将命令单独写成一个可执行文件(稍后我们会详细讨论)。这样的子命令是可以嵌套的([样例](./examples/nestedCommands.js))。
 
-For example:
+在 `.command` 的第一个参数你可以指定命令的名字以及任何参数。参数可以是 `<required>`(必须的) or `[optional]`(可选的) , 并且最后一个参数也可以是 `variadic...`(可变的).
+
+你可以使用 `.addCommand()` 来向`program`增加一个已经配置好的子命令
+
+例如:
 
 ```js
 // 通过绑定操作处理程序实现命令 (这里description的定义和 `.command` 是分开的)
@@ -300,12 +314,19 @@ program
     console.log('clone command called');
   });
 
-// 通过单独分离的可执行文件实现命令 (注意这里description是作为 `.command` 的第二个参数)
+// 通过独立的的可执行文件实现命令 (注意这里description是作为 `.command` 的第二个参数)
 // 返回最顶层的命令以供继续添加子命令
 program
   .command('start <service>', 'start named service')
   .command('stop [service]', 'stop named service, or all if no name supplied');
+
+// 分别装配命令
+// 返回最顶层的命令以供继续添加子命令
+program
+  .addCommand(build.makeBuildCommand());  
 ```
+
+可以通过调用 `.command()` 来传递配置的选项。为`opts.noHelp`指定`true` 则该命令不会出现生成的帮助输出里。为`opts.isDefault`指定`true`会在没有别的指定子命令的时候执行这个命令([样例](./examples/defaultCommand.js))。
 
 ### 指定参数语法
 
@@ -352,7 +373,7 @@ program
 program.parse(process.argv);
 ```
 
-可变参数的值以 `数组` 的形式传递给操作处理程序。(这点同样适用于 `program.args` )
+可变参数的值以 `数组` 的形式传递给操作处理程序。
 
 ### 操作处理程序(Action handler) (子)命令
 
@@ -386,14 +407,11 @@ async function main() {
 ```
 
 
-当一个命令在命令行上被使用时，它的选项必须是合法的。使用任何未知的选项会报错。然而如果一个基于操作的命令没有定义任何操作，那么这些选项是不合法的。
+当一个命令在命令行上被使用时，它的选项必须是合法的。使用任何未知的选项会报错。
 
-定义配置选项可以随着调用 `.command()` 传递。
-为 `opts.noHelp` 指定 `true` 则该命令不会出现生成的帮助输出里。
+### 独立的可执行(子)命令
 
-### Git 风格的子命令
-
-当 `.command()` 带有描述参数时，不能采用 `.action(callback)` 来处理子命令，否则会出错。这告诉 commander，你将采用单独的可执行文件作为子命令，就像 `git(1)` 和其他流行的工具一样。
+当 `.command()` 带有描述参数时，不能采用 `.action(callback)` 来处理子命令，否则会出错。这告诉 Commander，你将采用独立的可执行文件作为子命令。
 Commander 将会尝试在入口脚本（例如 `./examples/pm`）的目录中搜索 `program-command` 形式的可执行文件，例如 `pm-install`, `pm-search`。
 你可以使用配置选项 `executableFile` 来指定一个自定义的名字
 
@@ -412,75 +430,63 @@ program
   .parse(process.argv);
 ```
 
-定义配置选项可以随着调用 `.command()` 传递。为 `opts.noHelp` 指定 `true` 则该命令不会出现生成的帮助输出里。指定 `opts.isDefault` 为 `true` 将会在没有其它子命令指定的情况下，执行该子命令。
-
-使用 `executableFile` 指定一个名字会覆盖默认构造的名称
-
 如果你打算全局安装该命令，请确保可执行文件有对应的权限，例如 `755`。
 
-## 自动化帮助信息 --help
+## 自动化帮助信息 help
 
- 帮助信息是 commander 基于你的程序自动生成的，下面是 `--help` 生成的帮助信息：
+帮助信息是 commander 基于你的程序自动生成的，默认的帮助选项是`-h,--help` ([样例](./examples/pizza))。
 
 ```bash
-$ ./examples/pizza --help
+$ node ./examples/pizza --help
 Usage: pizza [options]
 
-An application for pizzas ordering
+一个用于下单订购披萨的应用
 
 Options:
-  -V, --version        output the version number
-  -p, --peppers        Add peppers
-  -P, --pineapple      Add pineapple
-  -b, --bbq            Add bbq sauce
-  -c, --cheese <type>  Add the specified type of cheese (default: "marble")
-  -C, --no-cheese      You do not want any cheese
-  -h, --help           display help for command
+  -V, --version        输出版本号
+  -p, --peppers        增加peppers
+  -c, --cheese <type>  指定增加特殊种类的cheese (默认: "marble")
+  -C, --no-cheese      你不想要任何cheese
+  -h, --help           展示命令的帮助信息
+```
+
+如果你的命令中包含了子命令，`help`命令默认会被添加，它可以单独使用或者通过一个子命令名字来展示子命令的进一步帮助信息。实际上这和有隐式帮助信息的`shell`程序一样:
+
+```bash
+shell help
+shell --help
+
+shell help spawn
+shell spawn --help
 ```
 
 ### 自定义帮助
 
- 你可以通过监听 `--help` 来控制 `-h, --help` 显示任何信息。一旦调用完成， Commander 将自动退出，你的程序的其余部分不会展示。例如在下面的 “stuff” 将不会在执行 `--help` 时输出。
+你可以通过监听 `--help` 来显示额外信息。一旦调用完成([样例](./examples/custom-help))。
 
 ```js
-#!/usr/bin/env node
-
-const program = require('commander');
-
 program
-  .version('0.0.1')
-  .option('-f, --foo', 'enable some foo')
-  .option('-b, --bar', 'enable some bar')
-  .option('-B, --baz', 'enable some baz');
+  .option('-f, --foo', 'enable some foo');
 
-// must be before .parse()
-program.on('--help', function(){
+// 必须在.parse()之前
+program.on('--help', () => {
   console.log('');
-  console.log('Examples:');
+  console.log('Example call:');
   console.log('  $ custom-help --help');
-  console.log('  $ custom-help -h');
 });
-
-program.parse(process.argv);
-
-console.log('stuff');
 ```
 
-下列帮助信息是运行 `node script-name.js -h` or `node script-name.js --help` 时输出的:
+生成输出以下的帮助信息
 
 ```Text
 Usage: custom-help [options]
 
 Options:
-  -h, --help     display help for command
-  -V, --version  output the version number
-  -f, --foo      enable some foo
-  -b, --bar      enable some bar
-  -B, --baz      enable some baz
+  -f, --foo   enable some foo
+  -h, --help  display help for command
 
-Examples:
+Example call:
   $ custom-help --help
-  $ custom-help -h
 ```
 
 ### .usage 和 .name
@@ -498,63 +504,76 @@ program
 ```Text
 Usage: my-command [global options] command
 ```
+### .help(cb)
+
+输出帮助信息并立即退出。
+可选的回调可在显示帮助文本后处理。
 
 ### .outputHelp(cb)
 
 输出帮助信息的同时不退出。
 可选的回调可在显示帮助文本后处理。
-如果你想显示默认的帮助（例如，如果没有提供命令），你可以使用类似的东西：
 
-```js
-const program = require('commander');
-const colors = require('colors');
+### .helpInformation()
 
-program
-  .version('0.1.0')
-  .command('getstream [url]', 'get stream URL')
-  .parse(process.argv);
-
-if (!process.argv.slice(2).length) {
-  program.outputHelp(make_red);
-}
-
-function make_red(txt) {
-  return colors.red(txt); //display the help text in red on the console
-}
-```
+Get the command help information as a string for processing or displaying yourself. (The text does not include the custom help
+from `--help` listeners.)
 
 ### .helpOption(flags, description)
 
-  重写覆盖默认的帮助标识和描述
+重写覆盖默认的帮助标识和描述
 
 ```js
 program
   .helpOption('-e, --HELP', 'read more information');
 ```
 
-### .help(cb)
+### .addHelpCommand()
 
- 输出帮助信息并立即退出。
- 可选的回调可在显示帮助文本后处理。
+你可以使用 `.addHelpCommand()` 和 `.addHelpCommand(false)` 明确打开或关闭隐式的帮助命令
+
+你可以提供名字和描述，以同时打并自定义帮助命令:
+
+```js
+program.addHelpCommand('assist [command]', 'show assistance');
+```
 
 ## 自定义事件监听
 
- 你可以通过监听命令和选项来执行自定义函数。
+你可以通过监听命令和选项来执行自定义函数。
 
 ```js
-// 当有选项verbose时会执行函数
 program.on('option:verbose', function () {
   process.env.VERBOSE = this.verbose;
 });
 
-// 未知命令会报错
-program.on('command:*', function () {
-  console.error('Invalid command: %s\nSee --help for a list of available commands.', program.args.join(' '));
-  process.exit(1);
+program.on('command:*', function (operands) {
+  console.error(`error: unknown command '${operands[0]}'`);
+  const availableCommands = program.commands.map(cmd => cmd.name());
+  mySuggestBestMatch(operands[0], availableCommands);
+  process.exitCode = 1;
 });
 ```
 
 ## 零碎知识
+
+### .parse() 和 .parseAsync()
+
+`.parse`的第一个参数是要解析的字符串组，你可以省略参数以隐式使用`process.argv`
+
+如果参数遵循与node不同的约定，你可以在第二个参数中传递`from`选项：
+
+- 'node': 默认的, `argv[0]`是应用，`argv[1]`是要跑的脚本，紧随着的是用户参数
+- 'electron': `argv[1]` 根据electron应用是否打包而变化
+- 'user': 来自用户的所有参数
+
+比如:
+
+```js
+program.parse(process.argv); // 显式的node约定
+program.parse(); // 隐式的，自动监测的electron
+program.parse(['-f', 'filename'], { from: 'user' });
+```
 
 ### 避免选项命名冲突
 
@@ -566,8 +585,9 @@ Commander原本和默认的行为是将选项值作为program的属性存储的�
 - `storeOptionsAsProperties`: 是否将选项值作为command对象的属性来存储，亦或者分开地存储(指定 false)并使用`.opts()`来获得。
 - `passCommandToAction`: 是否把command对象传递给操作处理程序，亦或者仅仅传递这些选项(指定 false)
 
+([样例](./examples/storeOptionsAsProperties-action.js))
+
 ```js
-// 文件: ./examples/storeOptionsAsProperties.action.js
 program
   .storeOptionsAsProperties(false)
   .passCommandToAction(false);
@@ -591,14 +611,9 @@ console.log(programOptions.name);
 
 ### TypeScript
 
-包里包含 TypeScript 定义文件，但是需要你自己安装 node types。如：
+Commander包里包含 TypeScript 定义文件
 
-```bash
-npm install commander
-npm install --save-dev @types/node
-```
-
-如果你使用 `ts-node` 和 git风格子命令编写 `.ts` 文件, 你需要使用 node 来执行程序以保证正确执行子命令。如：
+如果你使用 `ts-node` 和独立可执行的字命令编写 `.ts` 文件, 你需要使用 node 来执行程序以保证正确执行子命令。如：
 
 ```bash
 node -r ts-node/register pm.ts
@@ -611,10 +626,14 @@ node -r ts-node/register pm.ts
 - 在子命令脚本中加上 `#!/usr/bin/env node --harmony`。注意一些系统版本不支持此模式。
 - 在指令调用时加上 `--harmony` 参数，例如 `node --harmony examples/pm publish`。`--harmony` 选项在开启子进程时会被保留。
 
-### Node 调试
+### 调试独立可执行子命令
 
-如果你在使用 node inspector的 `node -inspect` 等命令来[调试](https://nodejs.org/en/docs/guides/debugging-getting-started/) git风格的可执行命令，
+一个可执行的子命令作为一个单独的子进程执行
+
+如果你在使用 node inspector的 `node -inspect` 等命令来[调试](https://nodejs.org/en/docs/guides/debugging-getting-started/) 可执行命令，
 对于生成的子命令，inspector端口递增1。
+
+如果你在使用VSCode来调试可执行子命令，你需要在你的launch.json配置文件里设置`"autoAttachChildProcesses": true`标识
 
 ### 重载退出(exit)处理
 
@@ -671,7 +690,7 @@ program
 program.parse(process.argv);
 ```
 
-更多的 [演示](https://github.com/tj/commander.js/tree/master/examples) 可以在这里找到。
+更多的[演示](https://github.com/tj/commander.js/tree/master/examples) 可以在这里找到。
 
 ## 许可证
 
