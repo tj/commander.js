@@ -126,6 +126,9 @@ program
 const preparedCommand = new program.Command('prepared');
 program.addCommand(preparedCommand);
 
+const c1 = program.createCommand();
+const c2 = c1.createCommand();
+
 program
     .exitOverride();
 

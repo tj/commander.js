@@ -86,6 +86,14 @@ declare namespace commander {
     command(nameAndArgs: string, description: string, opts?: commander.CommandOptions): this;
 
     /**
+     * Factory routine to create a new command.
+     *
+     * Used internally to create subcommands. May be overridden to
+     * customise subcommands.
+     */
+    createCommand(name?: string): this;
+    
+    /**
      * Add a prepared subcommand.
      * 
      * @returns parent command for chaining

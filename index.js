@@ -160,7 +160,7 @@ class Command extends EventEmitter {
     }
     opts = opts || {};
     const args = nameAndArgs.split(/ +/);
-    const cmd = new Command(args.shift());
+    const cmd = this.createCommand(args.shift());
 
     if (desc) {
       cmd.description(desc);
@@ -187,6 +187,21 @@ class Command extends EventEmitter {
 
     if (desc) return this;
     return cmd;
+  };
+
+  /**
+   * Factory routine to create a new command.
+   *
+   * Used internally to create subcommands. May be overridden to
+   * customise subcommands.
+   *
+   * @param {string} [name]
+   * @return {Command} parent command for chaining
+   * @api public
+   */
+
+  createCommand(name) {
+    return new Command(name);
   };
 
   /**
