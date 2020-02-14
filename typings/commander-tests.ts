@@ -127,7 +127,29 @@ const preparedCommand = new program.Command('prepared');
 program.addCommand(preparedCommand);
 
 const c1 = program.createCommand();
-const c2 = c1.createCommand();
+c1.version('1.2.3');
+
+class MyCommand extends program.Command {
+  constructor(name?: string) {
+    super(name);
+  }
+
+  createCommand(name?: string) {
+    return new MyCommand(name);
+  }
+  myFunction() {}
+
+  // Modify return type for command (experimenting)
+  command(nameAndArgs: string, opts?: program.CommandOptions): MyCommand;
+  command(nameAndArgs: string, description: string, opts?: program.CommandOptions): this;
+  command(nameAndArgs: string, actionOptsOrExecDesc?: any, execOpts?: program.CommandOptions): MyCommand | this {
+    return super.command(nameAndArgs, actionOptsOrExecDesc, execOpts);
+  }
+}
+const myProgram = new MyCommand();
+myProgram.myFunction();
+const mySub = myProgram.command('sub');
+mySub.myFunction();
 
 program
     .exitOverride();

@@ -91,7 +91,7 @@ declare namespace commander {
      * Used internally to create subcommands. May be overridden to
      * customise subcommands.
      */
-    createCommand(name?: string): this;
+    createCommand(name?: string): Command;
     
     /**
      * Add a prepared subcommand.
