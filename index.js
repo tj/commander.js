@@ -196,7 +196,7 @@ class Command extends EventEmitter {
    * customise subcommands.
    *
    * @param {string} [name]
-   * @return {Command} parent command for chaining
+   * @return {Command} new command
    * @api public
    */
 
