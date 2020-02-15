@@ -56,7 +56,7 @@ Commander exports a global object which is convenient for quick programs.
 This is used in the examples in this README for brevity.
 
 ```js
-const program = require('commander');
+const program = require('commander').program;
 program.version('0.0.1');
 ```
 
