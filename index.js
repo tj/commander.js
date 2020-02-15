@@ -1533,6 +1533,7 @@ class Command extends EventEmitter {
  */
 
 exports = module.exports = new Command();
+exports.program = exports; // More explicit access to global command.
 
 /**
  * Expose classes
