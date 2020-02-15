@@ -7,6 +7,8 @@ const spawn = require('child_process').spawn;
 const path = require('path');
 const fs = require('fs');
 
+// @ts-check
+
 class Option {
   /**
    * Initialize a new `Option` with the given `flags` and `description`.
@@ -22,10 +24,11 @@ class Option {
     this.optional = flags.indexOf('[') >= 0; // A value is optional when the option is specified.
     this.mandatory = false; // The option must have a value after parsing, which usually means it must be specified on command line.
     this.negate = flags.indexOf('-no-') !== -1;
-    flags = flags.split(/[ ,|]+/);
-    if (flags.length > 1 && !/^[[<]/.test(flags[1])) this.short = flags.shift();
-    this.long = flags.shift();
+    const flagParts = flags.split(/[ ,|]+/);
+    if (flagParts.length > 1 && !/^[[<]/.test(flagParts[1])) this.short = flagParts.shift();
+    this.long = flagParts.shift();
     this.description = description || '';
+    this.defaultValue = undefined;
   }
 
   /**
@@ -83,6 +86,7 @@ class CommanderError extends Error {
     this.name = this.constructor.name;
     this.code = code;
     this.exitCode = exitCode;
+    this.nestedError = undefined;
   }
 }
 
@@ -98,6 +102,7 @@ class Command extends EventEmitter {
     super();
     this.commands = [];
     this.options = [];
+    this.parent = null;
     this._allowUnknownOption = false;
     this._args = [];
     this.rawArgs = null;
@@ -112,6 +117,7 @@ class Command extends EventEmitter {
     this._executableFile = null; // custom name for executable
     this._defaultCommandName = null;
     this._exitCallback = null;
+    this._alias = null;
 
     this._noHelp = false;
     this._helpFlags = '-h, --help';
@@ -634,7 +640,7 @@ class Command extends EventEmitter {
    *
    * @param {string[]} [argv] - optional, defaults to process.argv
    * @param {Object} [parseOptions] - optionally specify style of options with from: node/user/electron
-   * @param {string} parseOptions.from - where the args are from: 'node', 'user', 'electron'
+   * @param {string} [parseOptions.from] - where the args are from: 'node', 'user', 'electron'
    * @return {Command} for chaining
    * @api public
    */
@@ -648,6 +654,7 @@ class Command extends EventEmitter {
     // Default to using process.argv
     if (argv === undefined) {
       argv = process.argv;
+      // @ts-ignore
       if (process.versions && process.versions.electron) {
         parseOptions.from = 'electron';
       }
@@ -663,6 +670,7 @@ class Command extends EventEmitter {
         userArgs = argv.slice(2);
         break;
       case 'electron':
+        // @ts-ignore
         if (process.defaultApp) {
           this._scriptPath = argv[1];
           userArgs = argv.slice(2);
@@ -780,6 +788,7 @@ class Command extends EventEmitter {
 
     const signals = ['SIGUSR1', 'SIGUSR2', 'SIGTERM', 'SIGINT', 'SIGHUP'];
     signals.forEach((signal) => {
+      // @ts-ignore
       process.on(signal, () => {
         if (proc.killed === false && proc.exitCode === null) {
           proc.kill(signal);
@@ -798,11 +807,13 @@ class Command extends EventEmitter {
       });
     }
     proc.on('error', (err) => {
+      // @ts-ignore
       if (err.code === 'ENOENT') {
         const executableMissing = `'${bin}' does not exist
  - if '${subcommand._name}' is not meant to be an executable command, remove description parameter from '.command()' and use '.description()' instead
  - if the default executable name is not suitable, use the executableFile option to supply a custom name`;
         throw new Error(executableMissing);
+      // @ts-ignore
       } else if (err.code === 'EACCES') {
         throw new Error(`'${bin}' not executable`);
       }
@@ -1119,7 +1130,6 @@ class Command extends EventEmitter {
   /**
    * Unknown command.
    *
-   * @param {string} flag
    * @api private
    */
 
@@ -1145,7 +1155,7 @@ class Command extends EventEmitter {
    * @param {string} str
    * @param {string} [flags]
    * @param {string} [description]
-   * @return {Command} for chaining
+   * @return {Command | string} this for chaining
    * @api public
    */
 
