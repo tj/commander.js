@@ -1,5 +1,19 @@
 import * as program from './index';
 
+// ToDo use commander as namespace, not program.
+
+// Defined stricter type, as the options as properties `[key: string]: any`
+// makes the type checking very weak. 
+// https://github.com/Microsoft/TypeScript/issues/25987#issuecomment-441224690
+type KnownKeys<T> = {
+  [K in keyof T]: string extends K ? never : number extends K ? never : K
+} extends {[_ in keyof T]: infer U} ? ({} extends U ? never : U) : never;
+
+type CommandWithoutOptionsAsProperties = Pick<program.Command, KnownKeys<program.Command>>;
+
+const strictCmd: CommandWithoutOptionsAsProperties = new program.Command;
+// strictCmd.silly; <-- Error, hurrah!
+
 interface ExtendedOptions extends program.CommandOptions {
     isNew: any;
 }
