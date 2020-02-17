@@ -1,6 +1,7 @@
-import * as program from './index';
+import * as commander from './index';
 
-// ToDo use commander as namespace, not program.
+// Test supported Commander usage in TypeScript.
+// This is NOT a usable program! Just used to check for compile errors.
 
 // Defined stricter type, as the options as properties `[key: string]: any`
 // makes the type checking very weak. 
@@ -8,19 +9,23 @@ import * as program from './index';
 type KnownKeys<T> = {
   [K in keyof T]: string extends K ? never : number extends K ? never : K
 } extends {[_ in keyof T]: infer U} ? ({} extends U ? never : U) : never;
+type CommandWithoutOptionsAsProperties = Pick<commander.Command, KnownKeys<commander.Command>>;
 
-type CommandWithoutOptionsAsProperties = Pick<program.Command, KnownKeys<program.Command>>;
+const program: CommandWithoutOptionsAsProperties = commander.program;
+const programWithOptions = commander.program;
+// program.silly; // <-- Error, hurrah!
 
-const strictCmd: CommandWithoutOptionsAsProperties = new program.Command;
-// strictCmd.silly; <-- Error, hurrah!
+// Check for exported global Command objects
+const importedDefaultProgram: commander.Command = commander;
+const importedExplicitProgram: commander.Command = commander.program;
 
-interface ExtendedOptions extends program.CommandOptions {
+interface ExtendedOptions extends commander.CommandOptions {
     isNew: any;
 }
 
-const commandInstance = new program.Command('-f');
-const optionsInstance = new program.Option('-f');
-const errorInstance = new program.CommanderError(1, 'code', 'message');
+const commandInstance = new commander.Command('clone');
+const optionsInstance = new commander.Option('-f');
+const errorInstance = new commander.CommanderError(1, 'code', 'message');
 
 const name = program.name();
 
@@ -37,10 +42,10 @@ program
     .parse(process.argv);
 
 console.log('you ordered a pizza with:');
-if (program['peppers']) console.log('  - peppers');
-if (program['pineapple']) console.log('  - pineapple');
-if (program['bbq']) console.log('  - bbq');
-console.log('  - %s cheese', program['cheese']);
+if (programWithOptions['peppers']) console.log('  - peppers');
+if (programWithOptions['pineapple']) console.log('  - pineapple');
+if (programWithOptions['bbq']) console.log('  - bbq');
+console.log('  - %s cheese', programWithOptions['cheese']);
 
 function range(val: string) {
     return val.split('..').map(Number);
@@ -79,15 +84,15 @@ program
     .option('-v, --verbose', 'A value that can be increased', increaseVerbosity, 0)
     .parse(process.argv);
 
-console.log(' int: %j', program['integer']);
-console.log(' float: %j', program['float']);
-console.log(' optional: %j', program['optional']);
-program['range'] = program['range'] || [];
-console.log(' range: %j..%j', program['range'][0], program['range'][1]);
-console.log(' list: %j', program['list']);
-console.log(' collect: %j', program['collect']);
-console.log(' verbosity: %j', program['verbose']);
-console.log(' args: %j', program['args']);
+console.log(' int: %j', programWithOptions['integer']);
+console.log(' float: %j', programWithOptions['float']);
+console.log(' optional: %j', programWithOptions['optional']);
+programWithOptions['range'] = programWithOptions['range'] || [];
+console.log(' range: %j..%j', programWithOptions['range'][0], programWithOptions['range'][1]);
+console.log(' list: %j', programWithOptions['list']);
+console.log(' collect: %j', programWithOptions['collect']);
+console.log(' verbosity: %j', programWithOptions['verbose']);
+console.log(' args: %j', programWithOptions['args']);
 
 program
     .version('0.0.1')
@@ -137,7 +142,7 @@ program
     .command("name3").action(syncCall)
     .command("name4").action(asyncCall);
 
-const preparedCommand = new program.Command('prepared');
+const preparedCommand = new commander.Command('prepared');
 program.addCommand(preparedCommand);
 
 program
