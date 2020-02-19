@@ -609,7 +609,7 @@ class Command extends EventEmitter {
   /**
    * Store option value
    *
-   * @param {String} key
+   * @param {string} key
    * @param {Object} value
    * @param {boolean} multiple
    * @api private
@@ -629,7 +629,7 @@ class Command extends EventEmitter {
   /**
    * Remove option value from storage
    *
-   * @param {String} key
+   * @param {string} key
    * @param {Object} value
    * @api private
    */
@@ -846,7 +846,7 @@ class Command extends EventEmitter {
  - if '${subcommand._name}' is not meant to be an executable command, remove description parameter from '.command()' and use '.description()' instead
  - if the default executable name is not suitable, use the executableFile option to supply a custom name`;
         throw new Error(executableMissing);
-        // @ts-ignore
+      // @ts-ignore
       } else if (err.code === 'EACCES') {
         throw new Error(`'${bin}' not executable`);
       }
@@ -1299,9 +1299,9 @@ class Command extends EventEmitter {
 
       return [
         cmd._name +
-        (cmd._alias ? '|' + cmd._alias : '') +
-        (cmd.options.length ? ' [options]' : '') +
-        (args ? ' ' + args : ''),
+          (cmd._alias ? '|' + cmd._alias : '') +
+          (cmd.options.length ? ' [options]' : '') +
+          (args ? ' ' + args : ''),
         cmd._description
       ];
     });
