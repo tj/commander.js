@@ -24,6 +24,7 @@ class Option {
     this.optional = flags.indexOf('[') >= 0; // A value is optional when the option is specified.
     this.mandatory = false; // The option must have a value after parsing, which usually means it must be specified on command line.
     this.negate = flags.indexOf('-no-') !== -1;
+    this.multiple = flags.endsWith('>+') || flags.endsWith(']+');
     const flagParts = flags.split(/[ ,|]+/);
     if (flagParts.length > 1 && !/^[[<]/.test(flagParts[1])) this.short = flagParts.shift();
     this.long = flagParts.shift();
@@ -443,7 +444,7 @@ class Command extends EventEmitter {
       }
       // preassign only if we have a default
       if (defaultValue !== undefined) {
-        this._setOptionValue(name, defaultValue);
+        this._setOptionValue(name, defaultValue, option.multiple);
         option.defaultValue = defaultValue;
       }
     }
@@ -459,19 +460,29 @@ class Command extends EventEmitter {
         val = fn(val, this._getOptionValue(name) === undefined ? defaultValue : this._getOptionValue(name));
       }
 
+      let valueSet = false;
+
       // unassigned or boolean value
       if (typeof this._getOptionValue(name) === 'boolean' || typeof this._getOptionValue(name) === 'undefined') {
         // if no value, negate false, and we have a default, then use it!
         if (val == null) {
           this._setOptionValue(name, option.negate
             ? false
-            : defaultValue || true);
+            : defaultValue || true, option.multiple);
+          valueSet = true;
         } else {
-          this._setOptionValue(name, val);
+          this._setOptionValue(name, option.negate ? false : val, option.multiple);
+          valueSet = true;
         }
       } else if (val !== null) {
         // reassign
-        this._setOptionValue(name, option.negate ? false : val);
+        this._setOptionValue(name, option.negate ? false : val, option.multiple);
+        valueSet = true;
+      }
+
+      // if we previously set a default value but now have a _real_ value: Remove this now in multiple mode
+      if (valueSet && option.defaultValue && option.multiple) {
+        this._removeOptionValue(name, option.defaultValue);
       }
     });
 
@@ -598,18 +609,40 @@ class Command extends EventEmitter {
   /**
    * Store option value
    *
-   * @param {string} key
+   * @param {String} key
+   * @param {Object} value
+   * @param {boolean} multiple
+   * @api private
+   */
+
+  _setOptionValue(key, value, multiple) {
+    let newValue = value;
+    if (this._storeOptionsAsProperties) {
+      if (multiple) newValue = (this[key] || []).concat(value);
+      this[key] = newValue;
+    } else {
+      if (multiple) newValue = (this._optionValues[key] || []).concat(value);
+      this._optionValues[key] = newValue;
+    }
+  }
+
+  /**
+   * Remove option value from storage
+   *
+   * @param {String} key
    * @param {Object} value
    * @api private
    */
 
-  _setOptionValue(key, value) {
+  _removeOptionValue(key, value) {
     if (this._storeOptionsAsProperties) {
-      this[key] = value;
+      this[key] = (this[key] || []);
+      this[key].splice(this[key].indexOf(value), 1);
     } else {
-      this._optionValues[key] = value;
+      this._optionValues[key] = (this._optionValues[key] || []);
+      this._optionValues[key].splice(this._optionValues[key].indexOf(value), 1);
     }
-  };
+  }
 
   /**
    * Retrieve option value
@@ -813,7 +846,7 @@ class Command extends EventEmitter {
  - if '${subcommand._name}' is not meant to be an executable command, remove description parameter from '.command()' and use '.description()' instead
  - if the default executable name is not suitable, use the executableFile option to supply a custom name`;
         throw new Error(executableMissing);
-      // @ts-ignore
+        // @ts-ignore
       } else if (err.code === 'EACCES') {
         throw new Error(`'${bin}' not executable`);
       }
@@ -1266,9 +1299,9 @@ class Command extends EventEmitter {
 
       return [
         cmd._name +
-          (cmd._alias ? '|' + cmd._alias : '') +
-          (cmd.options.length ? ' [options]' : '') +
-          (args ? ' ' + args : ''),
+        (cmd._alias ? '|' + cmd._alias : '') +
+        (cmd.options.length ? ' [options]' : '') +
+        (args ? ' ' + args : ''),
         cmd._description
       ];
     });
