@@ -56,15 +56,15 @@ Commander exports a global object which is convenient for quick programs.
 This is used in the examples in this README for brevity.
 
 ```js
-const program = require('commander').program;
+const { program } = require('commander');
 program.version('0.0.1');
 ```
 
 For larger programs which may use commander in multiple ways, including unit testing, it is better to create a local Command object to use.
 
  ```js
- const commander = require('commander');
- const program = new commander.Command();
+ const { Command } = require('commander');
+ const program = new Command();
  program.version('0.0.1');
  ```
 
@@ -88,7 +88,7 @@ Options on the command line are not positional, and can be specified before or a
 The two most used option types are a boolean flag, and an option which takes a value (declared using angle brackets). Both are `undefined` unless specified on command line.
 
 ```js
-const program = require('commander');
+const { program } = require('commander');
 
 program
   .option('-d, --debug', 'output extra debugging')
@@ -126,7 +126,7 @@ pizza details:
 You can specify a default value for an option which takes a value.
 
 ```js
-const program = require('commander');
+const { program } = require('commander');
 
 program
   .option('-c, --cheese <type>', 'add the specified type of cheese', 'blue');
@@ -152,7 +152,7 @@ If you define `--foo` first, adding `--no-foo` does not change the default value
 otherwise be. You can specify a default boolean value for a boolean flag and it can be overridden on command line.
 
 ```js
-const program = require('commander');
+const { program } = require('commander');
 
 program
   .option('--no-sauce', 'Remove sauce')
@@ -179,7 +179,7 @@ You ordered a pizza with no sauce and no cheese
 You can specify an option which functions as a flag but may also take a value (declared using square brackets).
 
 ```js
-const program = require('commander');
+const { program } = require('commander');
 
 program
   .option('-c, --cheese [type]', 'Add cheese with optional type');
@@ -210,7 +210,7 @@ This allows you to coerce the option value to the desired type, or accumulate va
 You can optionally specify the default/starting value for the option after the function.
 
 ```js
-const program = require('commander');
+const { program } = require('commander');
 
 function myParseInt(value, dummyPrevious) {
   // parseInt takes a string and an optional radix
@@ -264,7 +264,7 @@ $ custom --list x,y,z
 You may specify a required (mandatory) option using `.requiredOption`. The option must have a value after parsing, usually specified on the command line, or perhaps from a default value (say from environment). The method is otherwise the same as `.option` in format, taking flags and description, and optional default value or custom processing.
 
 ```js
-const program = require('commander');
+const { program } = require('commander');
 
 program
   .requiredOption('-c, --cheese <type>', 'pizza must have cheese');
@@ -336,7 +336,7 @@ Configuration options can be passed with the call to `.command()`. Specifying `t
 You use `.arguments` to specify the arguments for the top-level command, and for subcommands they are included in the `.command` call. Angled brackets (e.g. `<required>`) indicate required input. Square brackets (e.g. `[optional]`) indicate optional input.
 
 ```js
-const program = require('commander');
+const { program } = require('commander');
 
 program
   .version('0.1.0')
@@ -360,7 +360,7 @@ console.log('environment:', envValue || "no environment given");
  append `...` to the argument name. For example:
 
 ```js
-const program = require('commander');
+const { program } = require('commander');
 
 program
   .version('0.1.0')
@@ -386,7 +386,7 @@ The action handler gets passed a parameter for each argument you declared, and o
 command object itself. This command argument has the values for the command-specific options added as properties.
 
 ```js
-const program = require('commander');
+const { program } = require('commander');
 
 program
   .command('rm <dir>')
@@ -423,7 +423,7 @@ You handle the options for an executable (sub)command in the executable, and don
 
 ```js
 // file: ./examples/pm
-const program = require('commander');
+const { program } = require('commander');
 
 program
   .version('0.1.0')
@@ -667,7 +667,7 @@ try {
 ## Examples
 
 ```js
-const program = require('commander');
+const { program } = require('commander');
 
 program
   .version('0.1.0')
