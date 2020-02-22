@@ -188,7 +188,8 @@ const onThis: commander.Command = program.on('--help', () => { })
 
 // createCommand
 
-const createInstance: commander.Command = program.createCommand();
+const createInstance1: commander.Command = program.createCommand();
+const createInstance2: commander.Command = program.createCommand('name');
 
 class MyCommand extends commander.Command {
    createCommand(name?: string) {
