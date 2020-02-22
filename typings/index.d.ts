@@ -354,6 +354,7 @@ declare namespace commander {
     }
 
     interface CommanderStatic extends Command {
+        program: Command;
         Command: CommandConstructor;
         Option: OptionConstructor;
         CommanderError:CommanderErrorConstructor;

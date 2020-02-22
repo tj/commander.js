@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [5.0.0-3] (2020-02-20)
+
+### Added
+
+- TypeScript definition for `commands` property of `Command` ([#1184])
+- export `program` property ([#1195])
+
 ## [5.0.0-2] (2020-02-10)
 
 ### Added
@@ -325,8 +332,11 @@ program
 [#1172]: https://github.com/tj/commander.js/pull/1172
 [#1179]: https://github.com/tj/commander.js/pull/1179
 [#1180]: https://github.com/tj/commander.js/pull/1180
+[#1184]: https://github.com/tj/commander.js/pull/1184
+[#1195]: https://github.com/tj/commander.js/pull/1195
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[5.0.0-3]: https://github.com/tj/commander.js/compare/v5.0.0-2..v5.0.0-3
 [5.0.0-2]: https://github.com/tj/commander.js/compare/v5.0.0-1..v5.0.0-2
 [5.0.0-1]: https://github.com/tj/commander.js/compare/v5.0.0-0..v5.0.0-1
 [5.0.0-0]: https://github.com/tj/commander.js/compare/v4.1.1..v5.0.0-0
