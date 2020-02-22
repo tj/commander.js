@@ -198,7 +198,7 @@ class Command extends EventEmitter {
   /**
    * Factory routine to create a new unattached command.
    *
-   * See .command() for creating an attached subcommand, which uses this routine to 
+   * See .command() for creating an attached subcommand, which uses this routine to
    * create the command. You can override createCommand to customise subcommands.
    *
    * @param {string} [name]
