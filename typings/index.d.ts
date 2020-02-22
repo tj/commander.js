@@ -64,7 +64,7 @@ declare namespace commander {
      * @param opts - configuration options
      * @returns new command
      */
-    command(nameAndArgs: string, opts?: CommandOptions): Command;
+    command(nameAndArgs: string, opts?: CommandOptions): ReturnType< this[ 'createCommand' ] >;
     /**
      * Define a command, implemented in a separate executable file.
      * 

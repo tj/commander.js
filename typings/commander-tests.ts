@@ -191,10 +191,6 @@ const onThis: commander.Command = program.on('--help', () => { })
 const createInstance: commander.Command = program.createCommand();
 
 class MyCommand extends commander.Command {
-  constructor(name?: string) {
-    super(name);
-  }
-
    createCommand(name?: string) {
     return new MyCommand(name);
   }
@@ -202,5 +198,5 @@ class MyCommand extends commander.Command {
 }
 const myProgram = new MyCommand();
 myProgram.myFunction();
-const mySub: CommandWithoutOptionsAsProperties = myProgram.command('sub');
+const mySub = myProgram.command('sub');
 mySub.myFunction();

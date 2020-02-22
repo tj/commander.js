@@ -4,7 +4,7 @@ test('when createCommand then unattached', () => {
   const program = new commander.Command();
   const cmd = program.createCommand();
   expect(program.commands.length).toBe(0);
-  expect(cmd.parent).toBeUndefined();
+  expect(cmd.parent).toBeFalsy(); // (actually null, but use weaker test for unattached)
 });
 
 test('when subclass overrides createCommand then subcommand is subclass', () => {
