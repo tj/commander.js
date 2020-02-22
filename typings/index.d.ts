@@ -86,10 +86,10 @@ declare namespace commander {
     command(nameAndArgs: string, description: string, opts?: commander.CommandOptions): this;
 
     /**
-     * Factory routine to create a new command.
+     * Factory routine to create a new unattached command.
      *
-     * Used internally to create subcommands. May be overridden to
-     * customise subcommands.
+     * See .command() for creating an attached subcommand, which uses this routine to 
+     * create the command. You can override createCommand to customise subcommands.
      */
     createCommand(name?: string): Command;
     
