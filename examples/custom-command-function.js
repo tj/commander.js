@@ -3,6 +3,9 @@
 // const commander = require('commander'); // (normal include)
 const commander = require('../'); // include commander in git clone of commander repo
 
+// Override createCommand directly to customise subcommands,
+// in this example by adding --debug option.
+
 const program = commander.createCommand();
 
 // Customise subcommand creation
@@ -13,7 +16,7 @@ program.createCommand = (name) => {
 };
 
 program
-  .command('demo')
+  .command('serve')
   .option('--port <port-number>', 'specify port number', 80)
   .action((cmd) => {
     if (cmd.debug) {
@@ -28,6 +31,6 @@ program
 program.parse();
 
 // Try the following:
-//    node custom-command-function.js help demo
-//    node custom-command-function.js demo --debug
-//    node custom-command-function.js demo --debug --port 8080
+//    node custom-command-function.js help serve
+//    node custom-command-function.js serve --debug
+//    node custom-command-function.js serve --debug --port 8080
