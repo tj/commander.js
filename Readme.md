@@ -633,14 +633,14 @@ node -r ts-node/register pm.ts
 
 ### createCommand()
 
-This factory function creates a new command rather than a subcommand. It is exported and may be used instead of using `new`, like:
+This factory function creates a new command. It is exported and may be used instead of using `new`, like:
 
 ```js
 const { createCommand } = require('commander');
 const program = createCommand();
 ```
 
-`createCommand` is also a method of the Command object. This gets used internally
+`createCommand` is also a method of the Command object, and creates a new command rather than a subcommand. This gets used internally
 when creating subcommands using `.command()`, and you may override it to
 customise the new subcommand (examples using [subclass](./examples/custom-command-class.js) and [function](./examples/custom-command-function.js)).
 
