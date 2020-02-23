@@ -96,6 +96,8 @@ declare namespace commander {
     /**
      * Add a prepared subcommand.
      * 
+     * See .command() for creating an attached subcommand which inherits settings from its parent.
+     * 
      * @returns parent command for chaining
      */
     addCommand(cmd: Command): this;

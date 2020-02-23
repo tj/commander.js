@@ -213,6 +213,8 @@ class Command extends EventEmitter {
   /**
    * Add a prepared subcommand.
    *
+   * See .command() for creating an attached subcommand which inherits settings from its parent.
+   *
    * @param {Command} cmd - new subcommand
    * @return {Command} parent command for chaining
    * @api public
