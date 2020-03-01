@@ -711,7 +711,7 @@ More Demos can be found in the [examples](https://github.com/tj/commander.js/tre
 
 ## Support
 
-Commander 4.x is supported on Node 8 and above, and is likely to work with Node 6 but not tested.
+Commander 5.x is fully supported on Long Term Support versions of Node, and is likely to work with Node 6 but not tested.
 (For versions of Node below Node 6, use Commander 3.x or 2.x.)
 
 The main forum for free and community support is the project [Issues](https://github.com/tj/commander.js/issues) on GitHub.
