@@ -9,5 +9,7 @@ const { Option } = require('./lib/option');
 /**
  * Expose the root command.
  */
-module.exports = new Command();
-module.exports = { Command, CommanderError, Option };
+exports = module.exports = new Command();
+exports.Command = Command;
+exports.CommanderError = CommanderError;
+exports.Option = Option;
