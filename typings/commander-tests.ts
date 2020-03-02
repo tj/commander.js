@@ -185,3 +185,19 @@ const helpOptionThis3: commander.Command = program.helpOption(undefined, 'custom
 
 // on
 const onThis: commander.Command = program.on('--help', () => { })
+
+// createCommand
+
+const createInstance1: commander.Command = program.createCommand();
+const createInstance2: commander.Command = program.createCommand('name');
+
+class MyCommand extends commander.Command {
+   createCommand(name?: string) {
+    return new MyCommand(name);
+  }
+  myFunction() {}
+}
+const myProgram = new MyCommand();
+myProgram.myFunction();
+const mySub = myProgram.command('sub');
+mySub.myFunction();

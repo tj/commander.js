@@ -24,7 +24,7 @@ declare namespace commander {
   type OptionConstructor = { new (flags: string, description?: string): Option };
 
   interface ParseOptions {
-    from: "node" | "electron" | "user";
+    from: 'node' | 'electron' | 'user';
   }
 
   interface Command {
@@ -64,7 +64,7 @@ declare namespace commander {
      * @param opts - configuration options
      * @returns new command
      */
-    command(nameAndArgs: string, opts?: CommandOptions): Command;
+    command(nameAndArgs: string, opts?: CommandOptions): ReturnType<this['createCommand']>;
     /**
      * Define a command, implemented in a separate executable file.
      * 
@@ -86,7 +86,17 @@ declare namespace commander {
     command(nameAndArgs: string, description: string, opts?: commander.CommandOptions): this;
 
     /**
+     * Factory routine to create a new unattached command.
+     *
+     * See .command() for creating an attached subcommand, which uses this routine to
+     * create the command. You can override createCommand to customise subcommands.
+     */
+    createCommand(name?: string): Command;
+    
+    /**
      * Add a prepared subcommand.
+     * 
+     * See .command() for creating an attached subcommand which inherits settings from its parent.
      * 
      * @returns parent command for chaining
      */

@@ -166,7 +166,7 @@ class Command extends EventEmitter {
     }
     opts = opts || {};
     const args = nameAndArgs.split(/ +/);
-    const cmd = new Command(args.shift());
+    const cmd = this.createCommand(args.shift());
 
     if (desc) {
       cmd.description(desc);
@@ -196,7 +196,24 @@ class Command extends EventEmitter {
   };
 
   /**
+   * Factory routine to create a new unattached command.
+   *
+   * See .command() for creating an attached subcommand, which uses this routine to
+   * create the command. You can override createCommand to customise subcommands.
+   *
+   * @param {string} [name]
+   * @return {Command} new command
+   * @api public
+   */
+
+  createCommand(name) {
+    return new Command(name);
+  };
+
+  /**
    * Add a prepared subcommand.
+   *
+   * See .command() for creating an attached subcommand which inherits settings from its parent.
    *
    * @param {Command} cmd - new subcommand
    * @return {Command} parent command for chaining
