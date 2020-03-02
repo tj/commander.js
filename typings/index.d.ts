@@ -24,7 +24,7 @@ declare namespace commander {
   type OptionConstructor = { new (flags: string, description?: string): Option };
 
   interface ParseOptions {
-    from: "node" | "electron" | "user";
+    from: 'node' | 'electron' | 'user';
   }
 
   interface Command {
@@ -64,7 +64,7 @@ declare namespace commander {
      * @param opts - configuration options
      * @returns new command
      */
-    command(nameAndArgs: string, opts?: CommandOptions): ReturnType< this[ 'createCommand' ] >;
+    command(nameAndArgs: string, opts?: CommandOptions): ReturnType<this['createCommand']>;
     /**
      * Define a command, implemented in a separate executable file.
      * 
