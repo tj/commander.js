@@ -5,23 +5,29 @@ const path = require('path');
 
 const pm = path.join(__dirname, './fixtures/pm');
 
-test('when default subcommand and no command then call default', (done) => {
-  childProcess.exec(`node ${pm}`, function(_error, stdout, stderr) {
-    expect(stdout).toBe('default\n');
-    done();
+test('when default subcommand and no command then call default', () => {
+  return new Promise((resolve) => {
+    childProcess.exec(`node ${pm}`, function(_error, stdout, stderr) {
+      expect(stdout).toBe('default\n');
+      resolve();
+    });
   });
 });
 
-test('when default subcommand and unrecognised argument then call default with argument', (done) => {
-  childProcess.exec(`node ${pm} an-argument`, function(_error, stdout, stderr) {
-    expect(stdout).toBe("default\n[ 'an-argument' ]\n");
-    done();
+test('when default subcommand and unrecognised argument then call default with argument', () => {
+  return new Promise((resolve) => {
+    childProcess.exec(`node ${pm} an-argument`, function(_error, stdout, stderr) {
+      expect(stdout).toBe("default\n[ 'an-argument' ]\n");
+      resolve();
+    });
   });
 });
 
-test('when default subcommand and unrecognised option then call default with option', (done) => {
-  childProcess.exec(`node ${pm} --an-option`, function(_error, stdout, stderr) {
-    expect(stdout).toBe("default\n[ '--an-option' ]\n");
-    done();
+test('when default subcommand and unrecognised option then call default with option', () => {
+  return new Promise((resolve) => {
+    childProcess.exec(`node ${pm} --an-option`, function(_error, stdout, stderr) {
+      expect(stdout).toBe("default\n[ '--an-option' ]\n");
+      resolve();
+    });
   });
 });

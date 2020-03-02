@@ -16,22 +16,24 @@ const describeOrSkipOnWindows = (process.platform === 'win32') ? describe.skip :
 
 describeOrSkipOnWindows.each([['SIGINT'], ['SIGHUP'], ['SIGTERM'], ['SIGUSR1'], ['SIGUSR2']])(
   'test signal handling in executableSubcommand', (value) => {
-    test(`when command killed with ${value} then executableSubcommand receieves ${value}`, (done) => {
-      const pmPath = path.join(__dirname, './fixtures/pm');
+    test(`when command killed with ${value} then executableSubcommand receieves ${value}`, () => {
+      return new Promise((resolve) => {
+        const pmPath = path.join(__dirname, './fixtures/pm');
 
-      // The child process writes to stdout.
-      var proc = childProcess.spawn(pmPath, ['listen'], {});
+        // The child process writes to stdout.
+        var proc = childProcess.spawn(pmPath, ['listen'], {});
 
-      let processOutput = '';
-      proc.stdout.on('data', (data) => {
-        if (processOutput.length === 0) {
-          proc.kill(`${value}`);
-        }
-        processOutput += data.toString();
-      });
-      proc.on('close', (code) => {
-        expect(processOutput).toBe(`Listening for signal...${value}`);
-        done();
+        let processOutput = '';
+        proc.stdout.on('data', (data) => {
+          if (processOutput.length === 0) {
+            proc.kill(`${value}`);
+          }
+          processOutput += data.toString();
+        });
+        proc.on('close', (code) => {
+          expect(processOutput).toBe(`Listening for signal...${value}`);
+          resolve();
+        });
       });
     });
   });

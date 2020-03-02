@@ -177,21 +177,23 @@ describe('.exitOverride and error details', () => {
     expectCommanderError(caughtErr, 1, 'commander.variadicArgNotLast', "error: variadic arguments must be last 'myVariadicArg'");
   });
 
-  test('when executableSubcommand succeeds then call exitOverride', (done) => {
-    const pm = path.join(__dirname, 'fixtures/pm');
-    const program = new commander.Command();
-    program
-      .exitOverride((err) => {
-        expectCommanderError(err, 0, 'commander.executeSubCommandAsync', '(close)');
-        done();
-      })
-      .command('silent', 'description');
+  test('when executableSubcommand succeeds then call exitOverride', () => {
+    return new Promise((resolve) => {
+      const pm = path.join(__dirname, 'fixtures/pm');
+      const program = new commander.Command();
+      program
+        .exitOverride((err) => {
+          expectCommanderError(err, 0, 'commander.executeSubCommandAsync', '(close)');
+          resolve();
+        })
+        .command('silent', 'description');
 
-    program.parse(['node', pm, 'silent']);
+      program.parse(['node', pm, 'silent']);
+    });
   });
 
   // Throws directly on Windows
-  testOrSkipOnWindows('when executableSubcommand fails then call exitOverride', (done) => {
+  testOrSkipOnWindows('when executableSubcommand fails then call exitOverride', (resolve) => {
     // Tricky for override, get called for `error` event then `exit` event.
     const exitCallback = jest.fn()
       .mockImplementationOnce((err) => {
@@ -200,7 +202,7 @@ describe('.exitOverride and error details', () => {
       })
       .mockImplementation((err) => {
         expectCommanderError(err, 0, 'commander.executeSubCommandAsync', '(close)');
-        done();
+        resolve();
       });
     const pm = path.join(__dirname, 'fixtures/pm');
     const program = new commander.Command();
