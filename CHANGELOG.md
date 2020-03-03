@@ -7,12 +7,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [5.0.0-4] (2020-03-03)
+
+### Added
+
+* `createCommand` factory method to simplify subclassing ([#1191])
+
 ## [5.0.0-3] (2020-02-20)
 
 ### Added
 
-- TypeScript definition for `commands` property of `Command` ([#1184])
-- export `program` property ([#1195])
+* TypeScript definition for `commands` property of `Command` ([#1184])
+* export `program` property ([#1195])
 
 ## [5.0.0-2] (2020-02-10)
 
@@ -333,9 +339,11 @@ program
 [#1179]: https://github.com/tj/commander.js/pull/1179
 [#1180]: https://github.com/tj/commander.js/pull/1180
 [#1184]: https://github.com/tj/commander.js/pull/1184
+[#1191]: https://github.com/tj/commander.js/pull/1191
 [#1195]: https://github.com/tj/commander.js/pull/1195
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[5.0.0-4]: https://github.com/tj/commander.js/compare/v5.0.0-3..v5.0.0-4
 [5.0.0-3]: https://github.com/tj/commander.js/compare/v5.0.0-2..v5.0.0-3
 [5.0.0-2]: https://github.com/tj/commander.js/compare/v5.0.0-1..v5.0.0-2
 [5.0.0-1]: https://github.com/tj/commander.js/compare/v5.0.0-0..v5.0.0-1
