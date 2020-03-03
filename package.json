@@ -16,7 +16,7 @@
   },
   "scripts": {
     "lint": "eslint index.js \"tests/**/*.js\"",
-    "typescript-lint": "eslint --no-ignore -c ./.typescript-eslintrc.js typings/index.d.ts",
+    "typescript-lint": "eslint typings/index.d.ts",
     "test": "jest && npm run test-typings",
     "test-typings": "tsc -p tsconfig.json"
   },
