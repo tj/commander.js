@@ -16,6 +16,7 @@
   },
   "scripts": {
     "lint": "eslint index.js \"tests/**/*.js\"",
+    "typescript-lint": "eslint typings/*.ts",
     "test": "jest && npm run test-typings",
     "test-typings": "tsc -p tsconfig.json"
   },
@@ -28,7 +29,9 @@
   "devDependencies": {
     "@types/jest": "^25.1.1",
     "@types/node": "^12.12.26",
+    "@typescript-eslint/eslint-plugin": "^2.22.0",
     "eslint": "^6.8.0",
+    "eslint-config-standard-with-typescript": "^14.0.0",
     "eslint-plugin-jest": "^23.6.0",
     "jest": "^25.1.0",
     "standard": "^14.3.1",
