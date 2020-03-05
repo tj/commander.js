@@ -362,5 +362,7 @@ declare namespace commander {
 
 }
 
+// Declaring namespace AND global
+// eslint-disable-next-line no-redeclare
 declare const commander: commander.CommanderStatic;
 export = commander;
