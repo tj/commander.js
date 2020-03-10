@@ -7,47 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
-## [5.0.0-4] (2020-03-03)
-
-### Added
-
-* `createCommand` factory method to simplify subclassing ([#1191])
-
-## [5.0.0-3] (2020-02-20)
-
-### Added
-
-* TypeScript definition for `commands` property of `Command` ([#1184])
-* export `program` property ([#1195])
-
-## [5.0.0-2] (2020-02-10)
-
-### Added
-
-* suggest help option along with unknown command error ([#1179])
-
-### Changed
-
-* TypeScript fluent return types changed to be more subclass friendly, return `this` rather than `Command` ([#1180])
-* `.parseAsync` returns `Promise<this>` to be consistent with `.parse()` ([#1180])
-
-## [5.0.0-1] (2020-02-08)
-
-### Added
-
-* `.helpInformation()` returns help text as a string, previously a private routine ([#1169])
-* `.parse()` implicitly uses `process.argv` if arguments not specified ([#1172])
-* optionally specify where `.parse()` arguments "from", if not following node conventions ([#512] [#1172])
-
-### Changed
-
-* changes to error handling ([#1165])
-  * throw for author error, not just display message
-  * preflight for variadic error
-  * add tips to missing subcommand executable
-* update dependencies
-
-## [5.0.0-0] (2020-02-02)
+## [5.0.0] (2020-03-14)
 
 ### Added
 
@@ -60,6 +20,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * display help for missing subcommand, by default ([#1088] [#1149])
 * combined short options as single argument may include boolean flags and value flag and value (e.g. `-a -b -p 80` can be written as `-abp80`) ([#1145])
 * `.parseOption()` includes short flag and long flag expansions ([#1145])
+* `.helpInformation()` returns help text as a string, previously a private routine ([#1169])
+* `.parse()` implicitly uses `process.argv` if arguments not specified ([#1172])
+* optionally specify where `.parse()` arguments "from", if not following node conventions ([#512] [#1172])
+* suggest help option along with unknown command error ([#1179])
+* TypeScript definition for `commands` property of `Command` ([#1184])
+* export `program` property ([#1195])
+* `createCommand` factory method to simplify subclassing ([#1191])
 
 ### Fixed
 
@@ -86,6 +53,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * *Breaking* `.on('command:*', callback)` and other command events passed (changed) results from `.parseOptions`, i.e. operands and unknown  ([#1138])
 * refactor Option from prototype to class ([#1133])
 * refactor Command from prototype to class ([#1159])
+* changes to error handling ([#1165])
+  * throw for author error, not just display message
+  * preflight for variadic error
+  * add tips to missing subcommand executable
+* TypeScript fluent return types changed to be more subclass friendly, return `this` rather than `Command` ([#1180])
+* `.parseAsync` returns `Promise<this>` to be consistent with `.parse()` ([#1180])
+* update dependencies
 
 ### Removed
 
@@ -100,6 +74,26 @@ If you use `.on('command:*')` or more complicated tests to detect an unrecognise
 If you use `program.args` or more complicated tests to detect a missing subcommand, you may be able to delete the code and rely on the default behaviour.
 
 If you use `.command('*')` to add a default command, you may be be able to switch to `isDefault:true` with a named command.
+
+## [5.0.0-4] (2020-03-03)
+
+(Released in 5.0.0)
+
+## [5.0.0-3] (2020-02-20)
+
+(Released in 5.0.0)
+
+## [5.0.0-2] (2020-02-10)
+
+(Released in 5.0.0)
+
+## [5.0.0-1] (2020-02-08)
+
+(Released in 5.0.0)
+
+## [5.0.0-0] (2020-02-02)
+
+(Released in 5.0.0)
 
 ## [4.1.1] (2020-02-02)
 
@@ -343,6 +337,7 @@ program
 [#1195]: https://github.com/tj/commander.js/pull/1195
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[5.0.0]: https://github.com/tj/commander.js/compare/v4.1.1..v5.0.0
 [5.0.0-4]: https://github.com/tj/commander.js/compare/v5.0.0-3..v5.0.0-4
 [5.0.0-3]: https://github.com/tj/commander.js/compare/v5.0.0-2..v5.0.0-3
 [5.0.0-2]: https://github.com/tj/commander.js/compare/v5.0.0-1..v5.0.0-2
