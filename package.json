@@ -7,7 +7,10 @@
     "command",
     "option",
     "parser",
-    "cli"
+    "cli",
+    "argument",
+    "args",
+    "argv"
   ],
   "author": "TJ Holowaychuk <tj@vision-media.ca>",
   "license": "MIT",
