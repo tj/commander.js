@@ -31,12 +31,12 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "@types/jest": "^25.1.1",
+    "@types/jest": "^25.1.4",
     "@types/node": "^12.12.26",
-    "@typescript-eslint/eslint-plugin": "^2.22.0",
+    "@typescript-eslint/eslint-plugin": "^2.23.0",
     "eslint": "^6.8.0",
     "eslint-config-standard-with-typescript": "^14.0.0",
-    "eslint-plugin-jest": "^23.6.0",
+    "eslint-plugin-jest": "^23.8.2",
     "jest": "^25.1.0",
     "standard": "^14.3.1",
     "typescript": "^3.7.5"
