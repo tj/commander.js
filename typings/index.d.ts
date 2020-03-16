@@ -9,7 +9,7 @@ declare namespace commander {
     message: string;
     nestedError?: string;
   }
-  type CommanderErrorConstructor = new (exitCode: number, code: string, message: string)=> CommanderError;
+  type CommanderErrorConstructor = new (exitCode: number, code: string, message: string) => CommanderError;
 
   interface Option {
     flags: string;
@@ -21,7 +21,7 @@ declare namespace commander {
     long: string;
     description: string;
   }
-  type OptionConstructor = new (flags: string, description?: string)=> Option;
+  type OptionConstructor = new (flags: string, description?: string) => Option;
 
   interface ParseOptions {
     from: 'node' | 'electron' | 'user';
@@ -340,7 +340,7 @@ declare namespace commander {
      */
     on(event: string | symbol, listener: (...args: any[]) => void): this;
   }
-  type CommandConstructor = new (name?: string)=> Command;
+  type CommandConstructor = new (name?: string) => Command;
 
   interface CommandOptions {
     noHelp?: boolean;
