@@ -4,7 +4,7 @@ const program = new commander.Command();
 
 // Commander supports nested subcommands.
 // .command() can add a subcommand with an action handler or an executable.
-// .addCommand() adds a prepared command with an actiomn handler.
+// .addCommand() adds a prepared command with an action handler.
 
 // Example output:
 //
@@ -21,9 +21,9 @@ brew
     console.log('brew tea');
   });
 brew
-  .command('tea')
+  .command('coffee')
   .action(() => {
-    console.log('brew tea');
+    console.log('brew coffee');
   });
 
 // Add nested commands using `.addCommand().
