@@ -9,7 +9,7 @@ declare namespace commander {
     message: string;
     nestedError?: string;
   }
-  type CommanderErrorConstructor = { new (exitCode: number, code: string, message: string): CommanderError };
+  type CommanderErrorConstructor = new (exitCode: number, code: string, message: string) => CommanderError;
 
   interface Option {
     flags: string;
@@ -21,7 +21,7 @@ declare namespace commander {
     long: string;
     description: string;
   }
-  type OptionConstructor = { new (flags: string, description?: string): Option };
+  type OptionConstructor = new (flags: string, description?: string) => Option;
 
   interface ParseOptions {
     from: 'node' | 'electron' | 'user';
@@ -35,21 +35,21 @@ declare namespace commander {
     commands: Command[];
 
     /**
-     * Set the program version to `str`. 
+     * Set the program version to `str`.
      *
      * This method auto-registers the "-V, --version" flag
      * which will print the version number when passed.
-     * 
+     *
      * You can optionally supply the  flags and description to override the defaults.
      */
     version(str: string, flags?: string, description?: string): this;
 
     /**
      * Define a command, implemented using an action handler.
-     * 
+     *
      * @remarks
      * The command description is supplied using `.description`, not as a parameter to `.command`.
-     * 
+     *
      * @example
      * ```ts
      *  program
@@ -59,7 +59,7 @@ declare namespace commander {
      *      console.log('clone command called');
      *    });
      * ```
-     * 
+     *
      * @param nameAndArgs - command name and arguments, args are  `<required>` or `[optional]` and last may also be `variadic...`
      * @param opts - configuration options
      * @returns new command
@@ -67,17 +67,17 @@ declare namespace commander {
     command(nameAndArgs: string, opts?: CommandOptions): ReturnType<this['createCommand']>;
     /**
      * Define a command, implemented in a separate executable file.
-     * 
+     *
      * @remarks
      * The command description is supplied as the second parameter to `.command`.
-     * 
+     *
      * @example
      * ```ts
      *  program
      *    .command('start <service>', 'start named service')
      *    .command('stop [service]', 'stop named serice, or all if no name supplied');
      * ```
-     * 
+     *
      * @param nameAndArgs - command name and arguments, args are  `<required>` or `[optional]` and last may also be `variadic...`
      * @param description - description of executable command
      * @param opts - configuration options
@@ -92,12 +92,12 @@ declare namespace commander {
      * create the command. You can override createCommand to customise subcommands.
      */
     createCommand(name?: string): Command;
-    
+
     /**
      * Add a prepared subcommand.
-     * 
+     *
      * See .command() for creating an attached subcommand which inherits settings from its parent.
-     * 
+     *
      * @returns parent command for chaining
      */
     addCommand(cmd: Command): this;
@@ -185,7 +185,6 @@ declare namespace commander {
     requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
     requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
 
-
     /**
      * Whether to store option values as properties on command object,
      * or store separately (specify false). In both cases the option values can be accessed using .opts().
@@ -197,7 +196,7 @@ declare namespace commander {
     /**
      * Whether to pass command to action handler,
      * or just the options (specify false).
-     * 
+     *
      * @return Command for chaining
      */
     passCommandToAction(value?: boolean): this;
@@ -212,7 +211,7 @@ declare namespace commander {
 
     /**
      * Parse `argv`, setting options and invoking commands when defined.
-     * 
+     *
      * The default expectation is that the arguments are from node and have the application as argv[0]
      * and the script being run in argv[1], with user parameters after that.
      *
@@ -221,16 +220,16 @@ declare namespace commander {
      *      program.parse(process.argv);
      *      program.parse(); // implicitly use process.argv and auto-detect node vs electron conventions
      *      program.parse(my-args, { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
-     * 
+     *
      * @returns Command for chaining
      */
     parse(argv?: string[], options?: ParseOptions): this;
 
     /**
      * Parse `argv`, setting options and invoking commands when defined.
-     * 
+     *
      * Use parseAsync instead of parse if any of your action handlers are async. Returns a Promise.
-     * 
+     *
      * The default expectation is that the arguments are from node and have the application as argv[0]
      * and the script being run in argv[1], with user parameters after that.
      *
@@ -264,7 +263,7 @@ declare namespace commander {
 
     /**
      * Set the description.
-     * 
+     *
      * @returns Command for chaining
      */
     description(str: string, argsDescription?: {[argName: string]: string}): this;
@@ -275,7 +274,7 @@ declare namespace commander {
 
     /**
      * Set an alias for the command.
-     * 
+     *
      * @returns Command for chaining
      */
     alias(alias: string): this;
@@ -286,7 +285,7 @@ declare namespace commander {
 
     /**
      * Set the command usage.
-     * 
+     *
      * @returns Command for chaining
      */
     usage(str: string): this;
@@ -297,7 +296,7 @@ declare namespace commander {
 
     /**
      * Set the name of the command.
-     * 
+     *
      * @returns Command for chaining
      */
     name(str: string): this;
@@ -318,21 +317,21 @@ declare namespace commander {
      * Return command help documentation.
      */
     helpInformation(): string;
-    
+
     /**
      * You can pass in flags and a description to override the help
      * flags and help description for your command.
      */
     helpOption(flags?: string, description?: string): this;
 
-    /** 
+    /**
      * Output help information and exit.
      */
     help(cb?: (str: string) => string): never;
 
     /**
      * Add a listener (callback) for when events occur. (Implemented using EventEmitter.)
-     * 
+     *
      * @example
      *     program
      *       .on('--help', () -> {
@@ -341,28 +340,29 @@ declare namespace commander {
      */
     on(event: string | symbol, listener: (...args: any[]) => void): this;
   }
-  type CommandConstructor = { new (name?: string): Command };
+  type CommandConstructor = new (name?: string) => Command;
 
+  interface CommandOptions {
+    noHelp?: boolean;
+    isDefault?: boolean;
+    executableFile?: string;
+  }
 
-    interface CommandOptions {
-        noHelp?: boolean;
-        isDefault?: boolean;
-        executableFile?: string;
-    }
+  interface ParseOptionsResult {
+    operands: string[];
+    unknown: string[];
+  }
 
-    interface ParseOptionsResult {
-        operands: string[];
-        unknown: string[];
-    }
-
-    interface CommanderStatic extends Command {
-        program: Command;
-        Command: CommandConstructor;
-        Option: OptionConstructor;
-        CommanderError:CommanderErrorConstructor;
-      }
+  interface CommanderStatic extends Command {
+    program: Command;
+    Command: CommandConstructor;
+    Option: OptionConstructor;
+    CommanderError: CommanderErrorConstructor;
+  }
 
 }
 
+// Declaring namespace AND global
+// eslint-disable-next-line no-redeclare
 declare const commander: commander.CommanderStatic;
 export = commander;
