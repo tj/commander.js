@@ -216,7 +216,7 @@ class Command extends EventEmitter {
    * See .command() for creating an attached subcommand which inherits settings from its parent.
    *
    * @param {Command} cmd - new subcommand
-   * @return {Command} parent command for chaining
+   * @return {Command} `this` command for chaining
    * @api public
    */
 
@@ -257,7 +257,7 @@ class Command extends EventEmitter {
    *    addHelpCommand(false); // force off
    *    addHelpCommand('help [cmd]', 'display help for [cmd]'); // force on with custom detais
    *
-   * @return {Command} for chaining
+   * @return {Command} `this` command for chaining
    * @api public
    */
 
@@ -293,7 +293,7 @@ class Command extends EventEmitter {
    * For example `["[type]"]` becomes `[{ required: false, name: 'type' }]`.
    *
    * @param {Array} args
-   * @return {Command} for chaining
+   * @return {Command} `this` command for chaining
    * @api private
    */
 
@@ -336,7 +336,7 @@ class Command extends EventEmitter {
    * Register callback to use as replacement for calling process.exit.
    *
    * @param {Function} [fn] optional callback which will be passed a CommanderError, defaults to throwing
-   * @return {Command} for chaining
+   * @return {Command} `this` command for chaining
    * @api public
    */
 
@@ -386,7 +386,7 @@ class Command extends EventEmitter {
    *        });
    *
    * @param {Function} fn
-   * @return {Command} for chaining
+   * @return {Command} `this` command for chaining
    * @api public
    */
 
@@ -425,7 +425,7 @@ class Command extends EventEmitter {
    * @param {string} description
    * @param {Function|*} [fn] - custom option processing function or default vaue
    * @param {*} [defaultValue]
-   * @return {Command} for chaining
+   * @return {Command} `this` command for chaining
    * @api private
    */
 
@@ -543,7 +543,7 @@ class Command extends EventEmitter {
    * @param {string} description
    * @param {Function|*} [fn] - custom option processing function or default vaue
    * @param {*} [defaultValue]
-   * @return {Command} for chaining
+   * @return {Command} `this` command for chaining
    * @api public
    */
 
@@ -561,7 +561,7 @@ class Command extends EventEmitter {
   * @param {string} description
   * @param {Function|*} [fn] - custom option processing function or default vaue
   * @param {*} [defaultValue]
-  * @return {Command} for chaining
+  * @return {Command} `this` command for chaining
   * @api public
   */
 
@@ -586,7 +586,7 @@ class Command extends EventEmitter {
     * or store separately (specify false). In both cases the option values can be accessed using .opts().
     *
     * @param {boolean} value
-    * @return {Command} Command for chaining
+    * @return {Command} `this` command for chaining
     * @api public
     */
 
@@ -603,7 +603,7 @@ class Command extends EventEmitter {
     * or just the options (specify false).
     *
     * @param {boolean} value
-    * @return {Command} Command for chaining
+    * @return {Command} `this` command for chaining
     * @api public
     */
 
@@ -658,7 +658,7 @@ class Command extends EventEmitter {
    * @param {string[]} [argv] - optional, defaults to process.argv
    * @param {Object} [parseOptions] - optionally specify style of options with from: node/user/electron
    * @param {string} [parseOptions.from] - where the args are from: 'node', 'user', 'electron'
-   * @return {Command} for chaining
+   * @return {Command} `this` command for chaining
    * @api public
    */
 
@@ -1172,7 +1172,7 @@ class Command extends EventEmitter {
    * @param {string} str
    * @param {string} [flags]
    * @param {string} [description]
-   * @return {Command | string} this for chaining
+   * @return {this | string} `this` command for chaining, or version string if no arguments
    * @api public
    */
 
@@ -1501,7 +1501,7 @@ class Command extends EventEmitter {
    *
    * @param {string} [flags]
    * @param {string} [description]
-   * @return {Command}
+   * @return {Command} `this` command for chaining
    * @api public
    */
 
