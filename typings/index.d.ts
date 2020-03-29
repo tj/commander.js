@@ -103,7 +103,7 @@ declare namespace commander {
     addCommand(cmd: Command): this;
 
     /**
-     * Define argument syntax for the top-level command.
+     * Define argument syntax for command.
      *
      * @returns Command for chaining
      */
