@@ -44,13 +44,47 @@ describe('default action command', () => {
     expect(actionMock).toHaveBeenCalled();
   });
 
-  test('when default subcommand and unrecognised argument then call default with argument', () => {
+  test('when default subcommand and unrecognised argument then call default', () => {
     const { program, actionMock } = makeProgram();
     program.parse('node test.js an-argument'.split(' '));
     expect(actionMock).toHaveBeenCalled();
   });
 
-  test('when default subcommand and unrecognised option then call default with option', () => {
+  test('when default subcommand and unrecognised option then call default', () => {
+    const { program, actionMock } = makeProgram();
+    program.parse('node test.js --an-option'.split(' '));
+    expect(actionMock).toHaveBeenCalled();
+  });
+});
+
+describe('default added command', () => {
+  function makeProgram() {
+    const actionMock = jest.fn();
+    const defaultCmd = new commander.Command('default')
+      .allowUnknownOption()
+      .action(actionMock);
+
+    const program = new commander.Command();
+    program
+      .command('other');
+    program
+      .addCommand(defaultCmd, { isDefault: true });
+    return { program, actionMock };
+  }
+
+  test('when default subcommand and no command then call default', () => {
+    const { program, actionMock } = makeProgram();
+    program.parse('node test.js'.split(' '));
+    expect(actionMock).toHaveBeenCalled();
+  });
+
+  test('when default subcommand and unrecognised argument then call default', () => {
+    const { program, actionMock } = makeProgram();
+    program.parse('node test.js an-argument'.split(' '));
+    expect(actionMock).toHaveBeenCalled();
+  });
+
+  test('when default subcommand and unrecognised option then call default', () => {
     const { program, actionMock } = makeProgram();
     program.parse('node test.js --an-option'.split(' '));
     expect(actionMock).toHaveBeenCalled();
