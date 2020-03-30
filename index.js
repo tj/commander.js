@@ -153,7 +153,7 @@ class Command extends EventEmitter {
    * @param {string} nameAndArgs - command name and arguments, args are `<required>` or `[optional]` and last may also be `variadic...`
    * @param {Object|string} [actionOptsOrExecDesc] - configuration options (for action), or description (for executable)
    * @param {Object} [execOpts] - configuration options (for executable)
-   * @return {Command} returns new command for action handler, or top-level command for executable command
+   * @return {Command} returns new command for action handler, or `this` for executable command
    * @api public
    */
 
@@ -241,7 +241,7 @@ class Command extends EventEmitter {
   };
 
   /**
-   * Define argument syntax for the top-level command.
+   * Define argument syntax for the command.
    *
    * @api public
    */
