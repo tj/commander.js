@@ -330,7 +330,7 @@ program
   .addCommand(build.makeBuildCommand());
 ```
 
-Configuration options can be passed with the call to `.command()`. Specifying `true` for `opts.noHelp` will remove the command from the generated help output. Specifying `true` for `opts.isDefault` will run the subcommand if no other subcommand is specified ([example](./examples/defaultCommand.js)).
+Configuration options can be passed with the call to `.command()` and `.addCommand()`. Specifying `true` for `opts.hidden` will remove the command from the generated help output. Specifying `true` for `opts.isDefault` will run the subcommand if no other subcommand is specified ([example](./examples/defaultCommand.js)).
 
 ### Specify the argument syntax
 

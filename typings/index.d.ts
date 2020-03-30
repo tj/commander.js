@@ -83,7 +83,7 @@ declare namespace commander {
      * @param opts - configuration options
      * @returns `this` command for chaining
      */
-    command(nameAndArgs: string, description: string, opts?: commander.CommandOptions): this;
+    command(nameAndArgs: string, description: string, opts?: commander.ExecutableCommandOptions): this;
 
     /**
      * Factory routine to create a new unattached command.
@@ -100,7 +100,7 @@ declare namespace commander {
      *
      * @returns `this` command for chaining
      */
-    addCommand(cmd: Command): this;
+    addCommand(cmd: Command, opts?: CommandOptions): this;
 
     /**
      * Define argument syntax for command.
@@ -343,8 +343,11 @@ declare namespace commander {
   type CommandConstructor = new (name?: string) => Command;
 
   interface CommandOptions {
-    noHelp?: boolean;
+    noHelp?: boolean; // old name for hidden
+    hidden?: boolean;
     isDefault?: boolean;
+  }
+  interface ExecutableCommandOptions extends CommandOptions {
     executableFile?: string;
   }
 

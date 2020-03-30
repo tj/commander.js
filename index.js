@@ -119,7 +119,7 @@ class Command extends EventEmitter {
     this._exitCallback = null;
     this._alias = null;
 
-    this._noHelp = false;
+    this._hidden = false;
     this._helpFlags = '-h, --help';
     this._helpDescription = 'display help for command';
     this._helpShortFlag = '-h';
@@ -174,7 +174,7 @@ class Command extends EventEmitter {
     }
     if (opts.isDefault) this._defaultCommandName = cmd._name;
 
-    cmd._noHelp = !!opts.noHelp;
+    cmd._hidden = !!(opts.noHelp || opts.hidden);
     cmd._helpFlags = this._helpFlags;
     cmd._helpDescription = this._helpDescription;
     cmd._helpShortFlag = this._helpShortFlag;
@@ -216,11 +216,12 @@ class Command extends EventEmitter {
    * See .command() for creating an attached subcommand which inherits settings from its parent.
    *
    * @param {Command} cmd - new subcommand
+   * @param {Object} [opts] - configuration options
    * @return {Command} `this` command for chaining
    * @api public
    */
 
-  addCommand(cmd) {
+  addCommand(cmd, opts) {
     if (!cmd._name) throw new Error('Command passed to .addCommand() must have a name');
 
     // To keep things simple, block automatic name generation for deeply nested executables.
@@ -234,6 +235,10 @@ class Command extends EventEmitter {
       });
     }
     checkExplicitNames(cmd.commands);
+
+    opts = opts || {};
+    if (opts.isDefault) this._defaultCommandName = cmd._name;
+    if (opts.noHelp || opts.hidden) cmd._hidden = true; // modifying passed command due to existing implementation
 
     this.commands.push(cmd);
     cmd.parent = this;
@@ -1275,7 +1280,7 @@ class Command extends EventEmitter {
 
   prepareCommands() {
     const commandDetails = this.commands.filter((cmd) => {
-      return !cmd._noHelp;
+      return !cmd._hidden;
     }).map((cmd) => {
       const args = cmd._args.map((arg) => {
         return humanReadableArgName(arg);

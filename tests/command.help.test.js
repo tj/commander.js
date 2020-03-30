@@ -88,10 +88,29 @@ test('when call outputHelp(cb) then display cb output', () => {
   writeSpy.mockClear();
 });
 
+// noHelp is now named hidden, not officially deprecated yet
 test('when command sets noHelp then not displayed in helpInformation', () => {
   const program = new commander.Command();
   program
     .command('secret', 'secret description', { noHelp: true });
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).not.toMatch('secret');
+});
+
+test('when command sets hidden then not displayed in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .command('secret', 'secret description', { hidden: true });
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).not.toMatch('secret');
+});
+
+test('when addCommand with hidden:true then not displayed in helpInformation', () => {
+  const secretCmd = new commander.Command('secret');
+
+  const program = new commander.Command();
+  program
+    .addCommand(secretCmd, { hidden: true });
   const helpInformation = program.helpInformation();
   expect(helpInformation).not.toMatch('secret');
 });

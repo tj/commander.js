@@ -45,9 +45,9 @@ const versionThis3: commander.Command = program.version('1.2.3', '-r,--revision'
 
 // command (and CommandOptions)
 const commandNew1: commander.Command = program.command('action');
-const commandNew2: commander.Command = program.command('action', { isDefault: true, noHelp: true });
+const commandNew2: commander.Command = program.command('action', { isDefault: true, hidden: true, noHelp: true });
 const commandThis1: commander.Command = program.command('exec', 'exec description');
-const commandThis2: commander.Command = program.command('exec', 'exec description', { isDefault: true, noHelp: true, executableFile: 'foo' });
+const commandThis2: commander.Command = program.command('exec', 'exec description', { isDefault: true, hidden: true, noHelp: true, executableFile: 'foo' });
 
 // addCommand
 const addCommandThis: commander.Command = program.addCommand(new commander.Command('abc'));
