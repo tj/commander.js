@@ -117,7 +117,7 @@ class Command extends EventEmitter {
     this._executableFile = null; // custom name for executable
     this._defaultCommandName = null;
     this._exitCallback = null;
-    this._alias = null;
+    this._alias = [];
 
     this._hidden = false;
     this._helpFlags = '-h, --help';
@@ -937,7 +937,7 @@ class Command extends EventEmitter {
    */
   _findCommand(name) {
     if (!name) return undefined;
-    return this.commands.find(cmd => cmd._name === name || cmd._alias === name);
+    return this.commands.find(cmd => cmd._name === name || cmd._alias.includes(name));
   };
 
   /**
@@ -1201,7 +1201,7 @@ class Command extends EventEmitter {
    *
    * @param {string} str
    * @param {Object} [argsDescription]
-   * @return {String|Command}
+   * @return {string|Command}
    * @api public
    */
 
@@ -1213,10 +1213,12 @@ class Command extends EventEmitter {
   };
 
   /**
-   * Set an alias for the command
+   * Set an alias for the command.
    *
-   * @param {string} alias
-   * @return {String|Command}
+   * You may call more than once to add multiple aliases, Only the first alias is shown in the auto-generated help.
+   *
+   * @param {string} [alias]
+   * @return {string|Command}
    * @api public
    */
 
@@ -1226,11 +1228,11 @@ class Command extends EventEmitter {
       command = this.commands[this.commands.length - 1];
     }
 
-    if (arguments.length === 0) return command._alias;
+    if (arguments.length === 0) return command._alias[0]; // just return first, and return string not array for backwards compatibility
 
     if (alias === command._name) throw new Error('Command alias can\'t be the same as its name');
 
-    command._alias = alias;
+    command._alias.push(alias);
     return this;
   };
 
@@ -1288,7 +1290,7 @@ class Command extends EventEmitter {
 
       return [
         cmd._name +
-          (cmd._alias ? '|' + cmd._alias : '') +
+          (cmd._alias[0] ? '|' + cmd._alias[0] : '') +
           (cmd.options.length ? ' [options]' : '') +
           (args ? ' ' + args : ''),
         cmd._description
@@ -1448,8 +1450,8 @@ class Command extends EventEmitter {
     }
 
     let cmdName = this._name;
-    if (this._alias) {
-      cmdName = cmdName + '|' + this._alias;
+    if (this._alias[0]) {
+      cmdName = cmdName + '|' + this._alias[0];
     }
     let parentCmdNames = '';
     for (let parentCmd = this.parent; parentCmd; parentCmd = parentCmd.parent) {

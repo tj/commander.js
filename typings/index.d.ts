@@ -275,6 +275,8 @@ declare namespace commander {
     /**
      * Set an alias for the command.
      *
+     * You may call more than once to add multiple aliases, Only the first alias is shown in the auto-generated help.
+     *
      * @returns `this` command for chaining
      */
     alias(alias: string): this;
