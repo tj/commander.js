@@ -582,7 +582,7 @@ class Command extends EventEmitter {
    * @api public
    */
   allowUnknownOption(arg) {
-    this._allowUnknownOption = arguments.length === 0 || arg;
+    this._allowUnknownOption = (arg === undefined) || arg;
     return this;
   };
 
@@ -1182,7 +1182,7 @@ class Command extends EventEmitter {
    */
 
   version(str, flags, description) {
-    if (arguments.length === 0) return this._version;
+    if (str === undefined) return this._version;
     this._version = str;
     flags = flags || '-V, --version';
     description = description || 'output the version number';
@@ -1206,7 +1206,7 @@ class Command extends EventEmitter {
    */
 
   description(str, argsDescription) {
-    if (arguments.length === 0) return this._description;
+    if (str === undefined && argsDescription === undefined) return this._description;
     this._description = str;
     this._argsDescription = argsDescription;
     return this;
@@ -1221,12 +1221,13 @@ class Command extends EventEmitter {
    */
 
   alias(alias) {
+    if (alias === undefined) return this._alias;
+
     let command = this;
-    if (this.commands.length !== 0) {
+    if (this.commands.length !== 0 && this.commands[this.commands.length - 1]._executableHandler) {
+      // assume adding alias for last added executable subcommand, rather than this
       command = this.commands[this.commands.length - 1];
     }
-
-    if (arguments.length === 0) return command._alias;
 
     if (alias === command._name) throw new Error('Command alias can\'t be the same as its name');
 
@@ -1243,17 +1244,18 @@ class Command extends EventEmitter {
    */
 
   usage(str) {
-    const args = this._args.map((arg) => {
-      return humanReadableArgName(arg);
-    });
+    if (str === undefined) {
+      if (this._usage) return this._usage;
 
-    const usage = '[options]' +
-      (this.commands.length ? ' [command]' : '') +
-      (this._args.length ? ' ' + args.join(' ') : '');
+      const args = this._args.map((arg) => {
+        return humanReadableArgName(arg);
+      });
+      return '[options]' +
+        (this.commands.length ? ' [command]' : '') +
+        (this._args.length ? ' ' + args.join(' ') : '');
+    }
 
-    if (arguments.length === 0) return this._usage || usage;
     this._usage = str;
-
     return this;
   };
 
@@ -1266,7 +1268,7 @@ class Command extends EventEmitter {
    */
 
   name(str) {
-    if (arguments.length === 0) return this._name;
+    if (str === undefined) return this._name;
     this._name = str;
     return this;
   };
