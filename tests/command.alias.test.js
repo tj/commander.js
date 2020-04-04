@@ -68,7 +68,7 @@ test('when use second of aliases then action handler called', () => {
   const actionMock = jest.fn();
   program
     .command('list')
-    .alias(['ls', 'dir'])
+    .aliases(['ls', 'dir'])
     .action(actionMock);
   program.parse(['dir'], { from: 'user' });
   expect(actionMock).toHaveBeenCalled();
