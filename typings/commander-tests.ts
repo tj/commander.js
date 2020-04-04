@@ -169,6 +169,10 @@ const descriptionValue: string = program.description();
 const aliasThis: commander.Command = program.alias('my alias');
 const aliasValue: string = program.alias();
 
+// aliases
+const aliasesThis: commander.Command = program.aliases(['first-alias', 'second-alias']);
+const aliasesValue: string[] = program.aliases();
+
 // usage
 const usageThis: commander.Command = program.usage('my usage');
 const usageValue: string = program.usage();

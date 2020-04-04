@@ -12,12 +12,21 @@ test('when command has alias then appears in help', () => {
   expect(helpInformation).toMatch('info|i');
 });
 
-test('when command has more than one alias then only first appears in help', () => {
+test('when command has aliases added separately then only first appears in help', () => {
   const program = new commander.Command();
   program
     .command('list [thing]')
     .alias('ls')
     .alias('dir');
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch('list|ls ');
+});
+
+test('when command has aliases then only first appears in help', () => {
+  const program = new commander.Command();
+  program
+    .command('list [thing]')
+    .aliases(['ls', 'dir']);
   const helpInformation = program.helpInformation();
   expect(helpInformation).toMatch('list|ls ');
 });
@@ -42,13 +51,24 @@ test('when use alias then action handler called', () => {
   expect(actionMock).toHaveBeenCalled();
 });
 
-test('when use second alias then action handler called', () => {
+test('when use second alias added separately then action handler called', () => {
   const program = new commander.Command();
   const actionMock = jest.fn();
   program
     .command('list')
     .alias('ls')
     .alias('dir')
+    .action(actionMock);
+  program.parse(['dir'], { from: 'user' });
+  expect(actionMock).toHaveBeenCalled();
+});
+
+test('when use second of aliases then action handler called', () => {
+  const program = new commander.Command();
+  const actionMock = jest.fn();
+  program
+    .command('list')
+    .alias(['ls', 'dir'])
     .action(actionMock);
   program.parse(['dir'], { from: 'user' });
   expect(actionMock).toHaveBeenCalled();
