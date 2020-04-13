@@ -791,8 +791,8 @@ class Command extends EventEmitter {
         args.unshift(bin);
         // add executable arguments to spawn
         args = incrementNodeInspectorPort(process.execArgv).concat(args);
-
-        proc = spawn(process.argv[0], args, { stdio: 'inherit' });
+        
+        proc = spawn(args.shift(), args, { stdio: 'inherit' });
       } else {
         proc = spawn(bin, args, { stdio: 'inherit' });
       }
