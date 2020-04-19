@@ -125,3 +125,22 @@ describe('variadic option with optional value', () => {
     expect(program.opts().optional).toEqual(['one', 'two']);
   });
 });
+
+describe('variadic special cases', () => {
+  test('when option flags has word character before dots then is variadic', () => {
+    const program = new commander.Command();
+    program
+      .option('-c,--comma [value...]');
+
+    expect(program.options[0].variadic).toBeTruthy();
+  });
+
+  test('when option flags has special characters before dots then not variadic', () => {
+    // This might be used to describe coercion for comma separated values, and is not variadic.
+    const program = new commander.Command();
+    program
+      .option('-c,--comma [value,...]');
+
+    expect(program.options[0].variadic).toBeFalsy();
+  });
+});
