@@ -22,7 +22,8 @@ class Option {
     this.flags = flags;
     this.required = flags.indexOf('<') >= 0; // A value must be supplied when the option is specified.
     this.optional = flags.indexOf('[') >= 0; // A value is optional when the option is specified.
-    this.variadic = /((\.\.\.)|…)[>\]]/.test(flags); // The option can take multiple values.
+    // variadic test ignores <value,...> et al which might be used to describe custom splitting of single argument
+    this.variadic = /\w\.\.\.[>\]]$/.test(flags); // The option can take multiple values.
     this.mandatory = false; // The option must have a value after parsing, which usually means it must be specified on command line.
     this.negate = flags.indexOf('-no-') !== -1;
     const flagParts = flags.split(/[ ,|]+/);
