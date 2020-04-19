@@ -22,6 +22,7 @@ class Option {
     this.flags = flags;
     this.required = flags.indexOf('<') >= 0; // A value must be supplied when the option is specified.
     this.optional = flags.indexOf('[') >= 0; // A value is optional when the option is specified.
+    this.variadic = /((\.\.\.)|…)[>\]]/.test(flags); // The option can take multiple values.
     this.mandatory = false; // The option must have a value after parsing, which usually means it must be specified on command line.
     this.negate = flags.indexOf('-no-') !== -1;
     const flagParts = flags.split(/[ ,|]+/);
@@ -476,13 +477,24 @@ class Command extends EventEmitter {
     // when it's passed assign the value
     // and conditionally invoke the callback
     this.on('option:' + oname, (val) => {
-      // coercion
+      const oldValue = this._getOptionValue(name);
+
+      // custom processing
       if (val !== null && fn) {
-        val = fn(val, this._getOptionValue(name) === undefined ? defaultValue : this._getOptionValue(name));
+        val = fn(val, oldValue === undefined ? defaultValue : oldValue);
+      }
+
+      // variadic processing
+      if (option.variadic) {
+        if (oldValue === defaultValue || !Array.isArray(oldValue)) {
+          val = [val];
+        } else {
+          val = oldValue.concat(val);
+        }
       }
 
       // unassigned or boolean value
-      if (typeof this._getOptionValue(name) === 'boolean' || typeof this._getOptionValue(name) === 'undefined') {
+      if (typeof oldValue === 'boolean' || typeof oldValue === 'undefined') {
         // if no value, negate false, and we have a default, then use it!
         if (val == null) {
           this._setOptionValue(name, option.negate
@@ -998,6 +1010,7 @@ class Command extends EventEmitter {
     }
 
     // parse options
+    let activeVariadicOption = null;
     while (args.length) {
       const arg = args.shift();
 
@@ -1007,6 +1020,12 @@ class Command extends EventEmitter {
         dest.push(...args);
         break;
       }
+
+      if (activeVariadicOption && !maybeOption(arg)) {
+        this.emit(`option:${activeVariadicOption.name()}`, arg);
+        continue;
+      }
+      activeVariadicOption = null;
 
       if (maybeOption(arg)) {
         const option = this._findOption(arg);
@@ -1026,6 +1045,7 @@ class Command extends EventEmitter {
           } else { // boolean flag
             this.emit(`option:${option.name()}`);
           }
+          activeVariadicOption = option.variadic ? option : null;
           continue;
         }
       }
