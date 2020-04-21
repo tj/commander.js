@@ -1538,6 +1538,7 @@ class Command extends EventEmitter {
 
     const splitFlags = this._helpFlags.split(/[ ,|]+/);
 
+    this._helpShortFlag = undefined;
     if (splitFlags.length > 1) this._helpShortFlag = splitFlags.shift();
 
     this._helpLongFlag = splitFlags.shift();
