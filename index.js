@@ -117,7 +117,7 @@ class Command extends EventEmitter {
     this._executableFile = null; // custom name for executable
     this._defaultCommandName = null;
     this._exitCallback = null;
-    this._alias = null;
+    this._aliases = [];
 
     this._hidden = false;
     this._helpFlags = '-h, --help';
@@ -937,7 +937,7 @@ class Command extends EventEmitter {
    */
   _findCommand(name) {
     if (!name) return undefined;
-    return this.commands.find(cmd => cmd._name === name || cmd._alias === name);
+    return this.commands.find(cmd => cmd._name === name || cmd._aliases.includes(name));
   };
 
   /**
@@ -1201,7 +1201,7 @@ class Command extends EventEmitter {
    *
    * @param {string} str
    * @param {Object} [argsDescription]
-   * @return {String|Command}
+   * @return {string|Command}
    * @api public
    */
 
@@ -1213,15 +1213,17 @@ class Command extends EventEmitter {
   };
 
   /**
-   * Set an alias for the command
+   * Set an alias for the command.
    *
-   * @param {string} alias
-   * @return {String|Command}
+   * You may call more than once to add multiple aliases. Only the first alias is shown in the auto-generated help.
+   *
+   * @param {string} [alias]
+   * @return {string|Command}
    * @api public
    */
 
   alias(alias) {
-    if (alias === undefined) return this._alias;
+    if (alias === undefined) return this._aliases[0]; // just return first, for backwards compatibility
 
     let command = this;
     if (this.commands.length !== 0 && this.commands[this.commands.length - 1]._executableHandler) {
@@ -1231,7 +1233,25 @@ class Command extends EventEmitter {
 
     if (alias === command._name) throw new Error('Command alias can\'t be the same as its name');
 
-    command._alias = alias;
+    command._aliases.push(alias);
+    return this;
+  };
+
+  /**
+   * Set aliases for the command.
+   *
+   * Only the first alias is shown in the auto-generated help.
+   *
+   * @param {string[]} [aliases]
+   * @return {string[]|Command}
+   * @api public
+   */
+
+  aliases(aliases) {
+    // Getter for the array of aliases is the main reason for having aliases() in addition to alias().
+    if (aliases === undefined) return this._aliases;
+
+    aliases.forEach((alias) => this.alias(alias));
     return this;
   };
 
@@ -1290,7 +1310,7 @@ class Command extends EventEmitter {
 
       return [
         cmd._name +
-          (cmd._alias ? '|' + cmd._alias : '') +
+          (cmd._aliases[0] ? '|' + cmd._aliases[0] : '') +
           (cmd.options.length ? ' [options]' : '') +
           (args ? ' ' + args : ''),
         cmd._description
@@ -1450,8 +1470,8 @@ class Command extends EventEmitter {
     }
 
     let cmdName = this._name;
-    if (this._alias) {
-      cmdName = cmdName + '|' + this._alias;
+    if (this._aliases[0]) {
+      cmdName = cmdName + '|' + this._aliases[0];
     }
     let parentCmdNames = '';
     for (let parentCmd = this.parent; parentCmd; parentCmd = parentCmd.parent) {
