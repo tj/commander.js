@@ -114,3 +114,19 @@ test('when addCommand with hidden:true then not displayed in helpInformation', (
   const helpInformation = program.helpInformation();
   expect(helpInformation).not.toMatch('secret');
 });
+
+test('when help short flag masked then not displayed in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .option('-h, --host', 'select host');
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).not.toMatch(/\W-h\W.*display help/);
+});
+
+test('when both help flags masked then not displayed in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .option('-h, --help', 'custom');
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).not.toMatch('display help');
+});

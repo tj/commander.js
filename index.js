@@ -1401,17 +1401,33 @@ class Command extends EventEmitter {
 
   optionHelp() {
     const width = this.padWidth();
-
     const columns = process.stdout.columns || 80;
     const descriptionWidth = columns - width - 4;
+    function padOptionDetails(flags, description) {
+      return pad(flags, width) + '  ' + optionalWrap(description, descriptionWidth, width + 2);
+    };
 
-    // Append the help information
-    return this.options.map((option) => {
+    // Explicit options (including version)
+    const help = this.options.map((option) => {
       const fullDesc = option.description +
         ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
-      return pad(option.flags, width) + '  ' + optionalWrap(fullDesc, descriptionWidth, width + 2);
-    }).concat([pad(this._helpFlags, width) + '  ' + optionalWrap(this._helpDescription, descriptionWidth, width + 2)])
-      .join('\n');
+      return padOptionDetails(option.flags, fullDesc);
+    });
+
+    // Implicit help
+    const showShortHelpFlag = this._helpShortFlag && !this._findOption(this._helpShortFlag);
+    const showLongHelpFlag = !this._findOption(this._helpLongFlag);
+    if (showShortHelpFlag || showLongHelpFlag) {
+      let helpFlags = this._helpFlags;
+      if (!showShortHelpFlag) {
+        helpFlags = this._helpLongFlag;
+      } else if (!showLongHelpFlag) {
+        helpFlags = this._helpShortFlag;
+      }
+      help.push(padOptionDetails(helpFlags, this._helpDescription));
+    }
+
+    return help.join('\n');
   };
 
   /**
