@@ -24,9 +24,9 @@ class Option {
     this.optional = flags.indexOf('[') >= 0; // A value is optional when the option is specified.
     this.mandatory = false; // The option must have a value after parsing, which usually means it must be specified on command line.
     this.negate = flags.indexOf('-no-') !== -1;
-    const flagParts = flags.split(/[ ,|]+/);
-    if (flagParts.length > 1 && !/^[[<]/.test(flagParts[1])) this.short = flagParts.shift();
-    this.long = flagParts.shift();
+    const optionFlags = _parseOptionFlags(flags);
+    this.short = optionFlags.shortFlag;
+    this.long = optionFlags.longFlag;
     this.description = description || '';
     this.defaultValue = undefined;
   }
@@ -39,7 +39,10 @@ class Option {
    */
 
   name() {
-    return this.long.replace(/^--/, '');
+    if (this.long) {
+      return this.long.replace(/^--/, '');
+    }
+    return this.short.replace(/^-/, '');
   };
 
   /**
@@ -1552,12 +1555,9 @@ class Command extends EventEmitter {
     this._helpFlags = flags || this._helpFlags;
     this._helpDescription = description || this._helpDescription;
 
-    const splitFlags = this._helpFlags.split(/[ ,|]+/);
-
-    this._helpShortFlag = undefined;
-    if (splitFlags.length > 1) this._helpShortFlag = splitFlags.shift();
-
-    this._helpLongFlag = splitFlags.shift();
+    const helpFlags = _parseOptionFlags(this._helpFlags);
+    this._helpShortFlag = helpFlags.shortFlag;
+    this._helpLongFlag = helpFlags.longFlag;
 
     return this;
   };
@@ -1706,6 +1706,23 @@ function humanReadableArgName(arg) {
   return arg.required
     ? '<' + nameOutput + '>'
     : '[' + nameOutput + ']';
+}
+
+/**
+ * Pulling the flags out of something like '-m,--mixed <value>'
+ * @api private
+ */
+
+function _parseOptionFlags(flags) {
+  let shortFlag;
+  let longFlag;
+  const flagParts = flags.split(/[ |,]+/);
+  // single character after '-'
+  if (flagParts.length > 0 && /^-[^-]$/.test(flagParts[0])) shortFlag = flagParts.shift();
+  // long flag after '--'
+  if (flagParts.length > 0 && /^--[^-]/.test(flagParts[0])) longFlag = flagParts.shift();
+  if (!shortFlag && !longFlag) throw new Error(`option flags not in expected format: ${flags}`);
+  return { shortFlag, longFlag };
 }
 
 /**

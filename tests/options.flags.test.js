@@ -7,7 +7,7 @@ test('when only short flag defined and specified then value is true', () => {
   program
     .option('-p', 'add pepper');
   program.parse(['node', 'test', '-p']);
-  expect(program.P).toBe(true);
+  expect(program.p).toBe(true);
 });
 
 // Sanity check that pepper is not true normally, as otherwise all the following tests would pass for thr wrong reasons!
