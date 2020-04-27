@@ -1709,19 +1709,24 @@ function humanReadableArgName(arg) {
 }
 
 /**
- * Pulling the flags out of something like '-m,--mixed <value>'
+ * Parse the short and long flag out of something like '-m,--mixed <value>'
+ *
  * @api private
  */
 
 function _parseOptionFlags(flags) {
   let shortFlag;
   let longFlag;
+  // Use original very loose parsing to maintain backwards compatibility for now,
+  // which allowed for example unintended `-sw, --short-word` [sic].
   const flagParts = flags.split(/[ |,]+/);
-  // single character after '-'
-  if (flagParts.length > 0 && /^-[^-]$/.test(flagParts[0])) shortFlag = flagParts.shift();
-  // long flag after '--'
-  if (flagParts.length > 0 && /^--[^-]/.test(flagParts[0])) longFlag = flagParts.shift();
-  if (!shortFlag && !longFlag) throw new Error(`option flags not in expected format: ${flags}`);
+  if (flagParts.length > 1 && !/^[[<]/.test(flagParts[1])) shortFlag = flagParts.shift();
+  longFlag = flagParts.shift();
+  // Add support for lone short flag without significantly changing parsing!
+  if (!shortFlag && /^-[^-]$/.test(longFlag)) {
+    shortFlag = longFlag;
+    longFlag = undefined;
+  }
   return { shortFlag, longFlag };
 }
 
