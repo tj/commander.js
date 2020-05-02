@@ -292,7 +292,7 @@ $ ./examples/pizza -V
 ```
 
 You may change the flags and description by passing additional parameters to the `version` method, using
-the same syntax for flags as the `option` method. The version flags can be named anything, but a long name is required.
+the same syntax for flags as the `option` method.
 
 ```js
 program.version('0.0.1', '-v, --vers', 'output the current version');

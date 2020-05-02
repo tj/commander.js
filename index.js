@@ -1190,9 +1190,9 @@ class Command extends EventEmitter {
     flags = flags || '-V, --version';
     description = description || 'output the version number';
     const versionOption = new Option(flags, description);
-    this._versionOptionName = versionOption.long.substr(2) || 'version';
+    this._versionOptionName = versionOption.attributeName();
     this.options.push(versionOption);
-    this.on('option:' + this._versionOptionName, () => {
+    this.on('option:' + versionOption.name(), () => {
       process.stdout.write(str + '\n');
       this._exit(0, 'commander.version', str);
     });
