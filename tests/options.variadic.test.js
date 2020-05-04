@@ -86,13 +86,14 @@ describe('variadic option with required value', () => {
     expect(program.opts().required).toEqual('default');
   });
 
-  test('when variadic with coercion then coerced value set in array', () => {
+  test('when variadic with coercion then coercion sets value', () => {
     const program = new commander.Command();
     program
       .option('-r,--required <value...>', 'variadic description', parseFloat);
 
-    program.parse(['--required', '1e2'], { from: 'user' });
-    expect(program.opts().required).toEqual([100]);
+    // variadic processing reads the multiple values, but up to custom coercion what it does.
+    program.parse(['--required', '1e2', '1e3'], { from: 'user' });
+    expect(program.opts().required).toEqual(1000);
   });
 });
 

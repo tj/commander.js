@@ -483,10 +483,7 @@ class Command extends EventEmitter {
       // custom processing
       if (val !== null && fn) {
         val = fn(val, oldValue === undefined ? defaultValue : oldValue);
-      }
-
-      // variadic processing
-      if (option.variadic) {
+      } else if (option.variadic) {
         if (oldValue === defaultValue || !Array.isArray(oldValue)) {
           val = [val];
         } else {
