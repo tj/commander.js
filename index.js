@@ -1722,7 +1722,7 @@ function incrementNodeInspectorPort(args) {
   //  --inspect-brk[=[host:]port]
   //  --inspect-port=[host:]port
   return args.map((arg) => {
-    if (!arg.includes('--inspect')) {
+    if (!arg.startsWith('--inspect')) {
       return arg;
     }
     let debugOption;
