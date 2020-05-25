@@ -9,41 +9,42 @@ The complete solution for [node.js](http://nodejs.org) command-line interfaces, 
 
 Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
 
-- [Commander.js](#commanderjs)
-  - [Installation](#installation)
-  - [Declaring _program_ variable](#declaring-program-variable)
-  - [Options](#options)
-    - [Common option types, boolean and value](#common-option-types-boolean-and-value)
-    - [Default option value](#default-option-value)
-    - [Other option types, negatable boolean and flag|value](#other-option-types-negatable-boolean-and-flagvalue)
-    - [Custom option processing](#custom-option-processing)
-    - [Required option](#required-option)
-    - [Version option](#version-option)
-  - [Commands](#commands)
-    - [Specify the argument syntax](#specify-the-argument-syntax)
-    - [Action handler (sub)commands](#action-handler-subcommands)
-    - [Stand-alone executable (sub)commands](#stand-alone-executable-subcommands)
-  - [Automated help](#automated-help)
-    - [Custom help](#custom-help)
-    - [.usage and .name](#usage-and-name)
-    - [.help(cb)](#helpcb)
-    - [.outputHelp(cb)](#outputhelpcb)
-    - [.helpInformation()](#helpinformation)
-    - [.helpOption(flags, description)](#helpoptionflags-description)
-    - [.addHelpCommand()](#addhelpcommand)
-  - [Custom event listeners](#custom-event-listeners)
-  - [Bits and pieces](#bits-and-pieces)
-    - [.parse() and .parseAsync()](#parse-and-parseasync)
-    - [Avoiding option name clashes](#avoiding-option-name-clashes)
-    - [TypeScript](#typescript)
-    - [createCommand()](#createcommand)
-    - [Node options such as `--harmony`](#node-options-such-as---harmony)
-    - [Debugging stand-alone executable subcommands](#debugging-stand-alone-executable-subcommands)
-    - [Override exit handling](#override-exit-handling)
-  - [Examples](#examples)
-  - [License](#license)
-  - [Support](#support)
-    - [Commander for enterprise](#commander-for-enterprise)
+-   [Commander.js](#commanderjs)
+    -   [Installation](#installation)
+    -   [Declaring _program_ variable](#declaring-program-variable)
+    -   [Options](#options)
+        -   [Common option types, boolean and value](#common-option-types-boolean-and-value)
+        -   [Default option value](#default-option-value)
+        -   [Environment variables and options](#environment-variables-and-options)
+        -   [Other option types, negatable boolean and flag|value](#other-option-types-negatable-boolean-and-flagvalue)
+        -   [Custom option processing](#custom-option-processing)
+        -   [Required option](#required-option)
+        -   [Version option](#version-option)
+    -   [Commands](#commands)
+        -   [Specify the argument syntax](#specify-the-argument-syntax)
+        -   [Action handler (sub)commands](#action-handler-subcommands)
+        -   [Stand-alone executable (sub)commands](#stand-alone-executable-subcommands)
+    -   [Automated help](#automated-help)
+        -   [Custom help](#custom-help)
+        -   [.usage and .name](#usage-and-name)
+        -   [.help(cb)](#helpcb)
+        -   [.outputHelp(cb)](#outputhelpcb)
+        -   [.helpInformation()](#helpinformation)
+        -   [.helpOption(flags, description)](#helpoptionflags-description)
+        -   [.addHelpCommand()](#addhelpcommand)
+    -   [Custom event listeners](#custom-event-listeners)
+    -   [Bits and pieces](#bits-and-pieces)
+        -   [.parse() and .parseAsync()](#parse-and-parseasync)
+        -   [Avoiding option name clashes](#avoiding-option-name-clashes)
+        -   [TypeScript](#typescript)
+        -   [createCommand()](#createcommand)
+        -   [Node options such as `--harmony`](#node-options-such-as---harmony)
+        -   [Debugging stand-alone executable subcommands](#debugging-stand-alone-executable-subcommands)
+        -   [Override exit handling](#override-exit-handling)
+    -   [Examples](#examples)
+    -   [License](#license)
+    -   [Support](#support)
+        -   [Commander for enterprise](#commander-for-enterprise)
 
 ## Installation
 
@@ -63,15 +64,15 @@ program.version('0.0.1');
 
 For larger programs which may use commander in multiple ways, including unit testing, it is better to create a local Command object to use.
 
- ```js
- const { Command } = require('commander');
- const program = new Command();
- program.version('0.0.1');
- ```
+```js
+const { Command } = require('commander');
+const program = new Command();
+program.version('0.0.1');
+```
 
 ## Options
 
-Options are defined with the `.option()` method, also serving as documentation for the options. Each option can have a short flag (single character) and a long name, separated by a comma or space or vertical bar ('|').
+Options are defined with the `.option()` method, also serving as documentation for the options. Each option can have a short flag (single character) and a long name, separated by a comma or space or vertical bar ('|'). It is also possible to specify that an option's value may [be passed in via environment variables](#environment-variables-and-options).
 
 The options can be accessed as properties on the Command object. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc. See also optional new behaviour to [avoid name clashes](#avoiding-option-name-clashes).
 
@@ -143,6 +144,54 @@ cheese: blue
 $ pizza-options --cheese stilton
 cheese: stilton
 ```
+
+### Environment variables and options
+
+Options can derive their value from an environment variable if a third `env:*` flag is specified. Any value present in the corresponding environment variable will become the option's initial value, overriding a default value if one is specified.
+
+When supplying values via environment variables, any value passed on the command line takes precedence.
+
+```js
+const { program } = require('commander');
+const program = new commander.Command();
+
+program
+  // environment variables can be declared alone
+  .option('env:DEBUG_LEVEL', 'debug level from environment')
+  .option('-s, --small', 'small pizza size')
+  // environment variables are more interesting when they relate to a command line option
+  .option('-p, --pizza-type <type>, env:FAVOURITE_PIZZA', 'flavour of pizza');
+
+program.parse(process.argv);
+
+if (program.DEBUG_LEVEL) console.log(program.opts());
+console.log('pizza details:');
+if (program.small) console.log('- small pizza size');
+if (program.pizzaType) console.log(`- ${program.pizzaType}`);
+```
+
+```bash
+$ DEBUG_LEVEL=verbose pizza-options
+{ DEBUG_LEVEL: 'verbose', small: undefined, pizzaType: undefined }
+pizza details:
+$ pizza-options -p
+error: option '-p, --pizza-type <type>, env:FAVOURITE_PIZZA' argument missing
+$ DEBUG_LEVEL=info pizza-options -s -p vegetarian
+{ DEBUG_LEVEL=info, small: true, pizzaType: 'vegetarian' }
+pizza details:
+- small pizza size
+- vegetarian
+$ FAVOURITE_PIZZA=pepperoni pizza-options --small
+pizza details:
+- small pizza size
+- pepperoni
+$ FAVOURITE_PIZZA=pepperoni pizza-options -s -p cheese
+pizza details:
+- small pizza size
+- cheese
+```
+
+Environment variables are set as initial values while options are being prepared, so if using another module that pre-prepares the `process.env`, such as [dotenv](https://www.npmjs.com/package/dotenv), make sure it has completed before specifying the program's options.
 
 ### Other option types, negatable boolean and flag|value
 
@@ -571,9 +620,9 @@ The first argument to `.parse` is the array of strings to parse. You may omit th
 
 If the arguments follow different conventions than node you can pass a `from` option in the second parameter:
 
-- 'node': default, `argv[0]` is the application and `argv[1]` is the script being run, with user parameters after that
-- 'electron': `argv[1]` varies depending on whether the electron application is packaged
-- 'user': all of the arguments from the user
+-   'node': default, `argv[0]` is the application and `argv[1]` is the script being run, with user parameters after that
+-   'electron': `argv[1]` varies depending on whether the electron application is packaged
+-   'user': all of the arguments from the user
 
 For example:
 
@@ -593,9 +642,9 @@ existing properties of Command.
 
 There are two new routines to change the behaviour, and the default behaviour may change in the future:
 
-- `storeOptionsAsProperties`: whether to store option values as properties on command object, or store separately (specify false) and access using `.opts()`
-- `passCommandToAction`: whether to pass command to action handler,
-or just the options (specify false)
+-   `storeOptionsAsProperties`: whether to store option values as properties on command object, or store separately (specify false) and access using `.opts()`
+-   `passCommandToAction`: whether to pass command to action handler,
+    or just the options (specify false)
 
 ([example](./examples/storeOptionsAsProperties-action.js))
 
@@ -648,8 +697,8 @@ customise the new subcommand (examples using [subclass](./examples/custom-comman
 
 You can enable `--harmony` option in two ways:
 
-- Use `#! /usr/bin/env node --harmony` in the subcommands scripts. (Note Windows does not support this pattern.)
-- Use the `--harmony` option when call the command, like `node --harmony examples/pm publish`. The `--harmony` option will be preserved when spawning subcommand process.
+-   Use `#! /usr/bin/env node --harmony` in the subcommands scripts. (Note Windows does not support this pattern.)
+-   Use the `--harmony` option when call the command, like `node --harmony examples/pm publish`. The `--harmony` option will be preserved when spawning subcommand process.
 
 ### Debugging stand-alone executable subcommands
 
@@ -668,7 +717,7 @@ this behaviour and optionally supply a callback. The default override throws a `
 The override callback is passed a `CommanderError` with properties `exitCode` number, `code` string, and `message`. The default override behaviour is to throw the error, except for async handling of executable subcommand completion which carries on. The normal display of error messages or version or help
 is not affected by the override which is called after the display.
 
-``` js
+```js
 program.exitOverride();
 
 try {

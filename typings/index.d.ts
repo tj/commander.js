@@ -19,6 +19,7 @@ declare namespace commander {
     bool: boolean;
     short?: string;
     long: string;
+    env?: string;
     description: string;
   }
   type OptionConstructor = new (flags: string, description?: string) => Option;
@@ -75,7 +76,7 @@ declare namespace commander {
      * ```ts
      *  program
      *    .command('start <service>', 'start named service')
-     *    .command('stop [service]', 'stop named serice, or all if no name supplied');
+     *    .command('stop [service]', 'stop named service, or all if no name supplied');
      * ```
      *
      * @param nameAndArgs - command name and arguments, args are  `<required>` or `[optional]` and last may also be `variadic...`
@@ -133,13 +134,20 @@ declare namespace commander {
      * Define option with `flags`, `description` and optional
      * coercion `fn`.
      *
-     * The `flags` string should contain both the short and long flags,
-     * separated by comma, a pipe or space. The following are all valid
-     * all will output this way when `--help` is used.
+     * The `flags` string should contain both short and long flags, and
+     * may contain an environment variable flag, separated by comma, a pipe
+     * or space. The following are all valid all will output this way
+     * when `--help` is used.
      *
      *    "-p, --pepper"
      *    "-p|--pepper"
      *    "-p --pepper"
+     *
+     * With optional environment variables flag:
+     *
+     *    "-p, --pepper, env:PEPPER"
+     *    "-p|--pepper|env:PEPPER"
+     *    "-p --pepper env:PEPPER"
      *
      * @example
      *     // simple boolean defaulting to false
@@ -165,6 +173,9 @@ declare namespace commander {
      *     --chdir /tmp
      *     program.chdir
      *     // => "/tmp"
+     *
+     *     // required argument, possibly supplied from the environment
+     *     program.option('-C, --chdir <path>, env:MY_WORK_DIR', 'change the working directory');
      *
      *     // optional argument
      *     program.option('-c, --cheese [type]', 'add cheese [marble]');

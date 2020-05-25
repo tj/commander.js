@@ -24,9 +24,19 @@ class Option {
     this.optional = flags.indexOf('[') >= 0; // A value is optional when the option is specified.
     this.mandatory = false; // The option must have a value after parsing, which usually means it must be specified on command line.
     this.negate = flags.indexOf('-no-') !== -1;
-    const flagParts = flags.split(/[ ,|]+/);
-    if (flagParts.length > 1 && !/^[[<]/.test(flagParts[1])) this.short = flagParts.shift();
-    this.long = flagParts.shift();
+    for (const part of flags.split(/[ ,|]+/)) {
+      if (/^-\w+/.test(part)) {
+        this.short = part;
+      } else if (/^--[\w-]+/.test(part)) {
+        this.long = part;
+      } else if (/^env:[\w-]+/.test(part)) {
+        this.env = part.substr(4);
+      }
+    }
+    if (!this.long && this.short) {
+      // compatibility with prior
+      this.long = this.short;
+    }
     this.description = description || '';
     this.defaultValue = undefined;
   }
@@ -39,7 +49,9 @@ class Option {
    */
 
   name() {
-    return this.long.replace(/^--/, '');
+    return this.long ? this.long.replace(/^--/, '')
+      // : this.short ? this.short.replace(/^-/, '')
+      : this.env;
   };
 
   /**
@@ -470,6 +482,12 @@ class Command extends EventEmitter {
       }
     }
 
+    // if option.env is defined and value present in environment, use value
+    if (option.env && process.env[option.env]) {
+      const env = process.env[option.env];
+      this._setOptionValue(name, fn ? fn(env, defaultValue) : env);
+    }
+
     // register the option
     this.options.push(option);
 
@@ -556,7 +574,7 @@ class Command extends EventEmitter {
     return this._optionEx({}, flags, description, fn, defaultValue);
   };
 
-  /*
+  /**
   * Add a required option which must have a value after parsing. This usually means
   * the option must be specified on the command line. (Otherwise the same as .option().)
   *
@@ -891,7 +909,7 @@ class Command extends EventEmitter {
       this._dispatchSubcommand(this._defaultCommandName, operands, unknown);
     } else {
       if (this.commands.length && this.args.length === 0 && !this._actionHandler && !this._defaultCommandName) {
-        // probaby missing subcommand and no handler, user needs help
+        // probably missing subcommand and no handler, user needs help
         this._helpAndError();
       }
 
