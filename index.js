@@ -20,13 +20,16 @@ class Option {
 
   constructor(flags, description) {
     this.flags = flags;
-    this.required = flags.indexOf('<') >= 0; // A value must be supplied when the option is specified.
-    this.optional = flags.indexOf('[') >= 0; // A value is optional when the option is specified.
+    this.required = flags.includes('<'); // A value must be supplied when the option is specified.
+    this.optional = flags.includes('['); // A value is optional when the option is specified.
     this.mandatory = false; // The option must have a value after parsing, which usually means it must be specified on command line.
-    this.negate = flags.indexOf('-no-') !== -1;
     const optionFlags = _parseOptionFlags(flags);
     this.short = optionFlags.shortFlag;
     this.long = optionFlags.longFlag;
+    this.negate = false;
+    if (this.long) {
+      this.negate = this.long.startsWith('--no-');
+    }
     this.description = description || '';
     this.defaultValue = undefined;
   }
@@ -1744,35 +1747,35 @@ function incrementNodeInspectorPort(args) {
   //  --inspect-brk[=[host:]port]
   //  --inspect-port=[host:]port
   return args.map((arg) => {
-    let result = arg;
-    if (arg.indexOf('--inspect') === 0) {
-      let debugOption;
-      let debugHost = '127.0.0.1';
-      let debugPort = '9229';
-      let match;
-      if ((match = arg.match(/^(--inspect(-brk)?)$/)) !== null) {
-        // e.g. --inspect
-        debugOption = match[1];
-      } else if ((match = arg.match(/^(--inspect(-brk|-port)?)=([^:]+)$/)) !== null) {
-        debugOption = match[1];
-        if (/^\d+$/.test(match[3])) {
-          // e.g. --inspect=1234
-          debugPort = match[3];
-        } else {
-          // e.g. --inspect=localhost
-          debugHost = match[3];
-        }
-      } else if ((match = arg.match(/^(--inspect(-brk|-port)?)=([^:]+):(\d+)$/)) !== null) {
-        // e.g. --inspect=localhost:1234
-        debugOption = match[1];
-        debugHost = match[3];
-        debugPort = match[4];
-      }
-
-      if (debugOption && debugPort !== '0') {
-        result = `${debugOption}=${debugHost}:${parseInt(debugPort) + 1}`;
-      }
+    if (!arg.startsWith('--inspect')) {
+      return arg;
     }
-    return result;
+    let debugOption;
+    let debugHost = '127.0.0.1';
+    let debugPort = '9229';
+    let match;
+    if ((match = arg.match(/^(--inspect(-brk)?)$/)) !== null) {
+      // e.g. --inspect
+      debugOption = match[1];
+    } else if ((match = arg.match(/^(--inspect(-brk|-port)?)=([^:]+)$/)) !== null) {
+      debugOption = match[1];
+      if (/^\d+$/.test(match[3])) {
+        // e.g. --inspect=1234
+        debugPort = match[3];
+      } else {
+        // e.g. --inspect=localhost
+        debugHost = match[3];
+      }
+    } else if ((match = arg.match(/^(--inspect(-brk|-port)?)=([^:]+):(\d+)$/)) !== null) {
+      // e.g. --inspect=localhost:1234
+      debugOption = match[1];
+      debugHost = match[3];
+      debugPort = match[4];
+    }
+
+    if (debugOption && debugPort !== '0') {
+      return `${debugOption}=${debugHost}:${parseInt(debugPort) + 1}`;
+    }
+    return arg;
   });
 }

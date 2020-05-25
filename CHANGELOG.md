@@ -7,6 +7,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 <!-- markdownlint-disable MD024 -->
 
+## [5.1.0] (2020-04-25)
+
+### Added
+
+- support for multiple command aliases, the first of which is shown in the auto-generated help ([#531], [#1236])
+- configuration support in `addCommand()` for `hidden` and `isDefault` ([#1232])
+
+### Fixed
+
+- omit masked help flags from the displayed help ([#645], [#1247])
+- remove old short help flag when change help flags using `helpOption` ([#1248])
+
+### Changed
+
+- remove use of `arguments` to improve auto-generated help in editors ([#1235])
+- rename `.command()` configuration `noHelp` to `hidden` (but not remove old support) ([#1232])
+- improvements to documentation
+- update dependencies
+- update tested versions of node
+- eliminate lint errors in TypeScript ([#1208])
+
 ## [5.0.0] (2020-03-14)
 
 ### Added
@@ -274,8 +295,10 @@ program
 [#432]: https://github.com/tj/commander.js/issues/432
 [#508]: https://github.com/tj/commander.js/issues/508
 [#512]: https://github.com/tj/commander.js/issues/512
+[#531]: https://github.com/tj/commander.js/issues/531
 [#599]: https://github.com/tj/commander.js/issues/599
 [#611]: https://github.com/tj/commander.js/issues/611
+[#645]: https://github.com/tj/commander.js/issues/645
 [#697]: https://github.com/tj/commander.js/issues/697
 [#742]: https://github.com/tj/commander.js/issues/742
 [#764]: https://github.com/tj/commander.js/issues/764
@@ -335,8 +358,15 @@ program
 [#1184]: https://github.com/tj/commander.js/pull/1184
 [#1191]: https://github.com/tj/commander.js/pull/1191
 [#1195]: https://github.com/tj/commander.js/pull/1195
+[#1208]: https://github.com/tj/commander.js/pull/1208
+[#1232]: https://github.com/tj/commander.js/pull/1232
+[#1235]: https://github.com/tj/commander.js/pull/1235
+[#1236]: https://github.com/tj/commander.js/pull/1236
+[#1247]: https://github.com/tj/commander.js/pull/1247
+[#1248]: https://github.com/tj/commander.js/pull/1248
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[5.1.0]: https://github.com/tj/commander.js/compare/v5.0.0..v5.1.0
 [5.0.0]: https://github.com/tj/commander.js/compare/v4.1.1..v5.0.0
 [5.0.0-4]: https://github.com/tj/commander.js/compare/v5.0.0-3..v5.0.0-4
 [5.0.0-3]: https://github.com/tj/commander.js/compare/v5.0.0-2..v5.0.0-3
