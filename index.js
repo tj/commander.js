@@ -23,10 +23,13 @@ class Option {
     this.required = flags.includes('<'); // A value must be supplied when the option is specified.
     this.optional = flags.includes('['); // A value is optional when the option is specified.
     this.mandatory = false; // The option must have a value after parsing, which usually means it must be specified on command line.
-    this.negate = flags.includes('-no-');
-    const flagParts = flags.split(/[ ,|]+/);
-    if (flagParts.length > 1 && !/^[[<]/.test(flagParts[1])) this.short = flagParts.shift();
-    this.long = flagParts.shift();
+    const optionFlags = _parseOptionFlags(flags);
+    this.short = optionFlags.shortFlag;
+    this.long = optionFlags.longFlag;
+    this.negate = false;
+    if (this.long) {
+      this.negate = this.long.startsWith('--no-');
+    }
     this.description = description || '';
     this.defaultValue = undefined;
   }
@@ -39,7 +42,10 @@ class Option {
    */
 
   name() {
-    return this.long.replace(/^--/, '');
+    if (this.long) {
+      return this.long.replace(/^--/, '');
+    }
+    return this.short.replace(/^-/, '');
   };
 
   /**
@@ -1187,9 +1193,9 @@ class Command extends EventEmitter {
     flags = flags || '-V, --version';
     description = description || 'output the version number';
     const versionOption = new Option(flags, description);
-    this._versionOptionName = versionOption.long.substr(2) || 'version';
+    this._versionOptionName = versionOption.attributeName();
     this.options.push(versionOption);
-    this.on('option:' + this._versionOptionName, () => {
+    this.on('option:' + versionOption.name(), () => {
       process.stdout.write(str + '\n');
       this._exit(0, 'commander.version', str);
     });
@@ -1552,12 +1558,9 @@ class Command extends EventEmitter {
     this._helpFlags = flags || this._helpFlags;
     this._helpDescription = description || this._helpDescription;
 
-    const splitFlags = this._helpFlags.split(/[ ,|]+/);
-
-    this._helpShortFlag = undefined;
-    if (splitFlags.length > 1) this._helpShortFlag = splitFlags.shift();
-
-    this._helpLongFlag = splitFlags.shift();
+    const helpFlags = _parseOptionFlags(this._helpFlags);
+    this._helpShortFlag = helpFlags.shortFlag;
+    this._helpLongFlag = helpFlags.longFlag;
 
     return this;
   };
@@ -1706,6 +1709,28 @@ function humanReadableArgName(arg) {
   return arg.required
     ? '<' + nameOutput + '>'
     : '[' + nameOutput + ']';
+}
+
+/**
+ * Parse the short and long flag out of something like '-m,--mixed <value>'
+ *
+ * @api private
+ */
+
+function _parseOptionFlags(flags) {
+  let shortFlag;
+  let longFlag;
+  // Use original very loose parsing to maintain backwards compatibility for now,
+  // which allowed for example unintended `-sw, --short-word` [sic].
+  const flagParts = flags.split(/[ |,]+/);
+  if (flagParts.length > 1 && !/^[[<]/.test(flagParts[1])) shortFlag = flagParts.shift();
+  longFlag = flagParts.shift();
+  // Add support for lone short flag without significantly changing parsing!
+  if (!shortFlag && /^-[^-]$/.test(longFlag)) {
+    shortFlag = longFlag;
+    longFlag = undefined;
+  }
+  return { shortFlag, longFlag };
 }
 
 /**
