@@ -1542,7 +1542,7 @@ class Command extends EventEmitter {
     }
     const globalBodyListeners = globalEventEmitter.listeners(this._helpBody);
     const bodyListeners = this.listeners(this._helpBody);
-    if (bodyListeners.length === 0 || globalBodyListeners.length === 0) {
+    if (bodyListeners.length === 0 && globalBodyListeners.length === 0) {
       process.stdout.write(cbOutput);
     } else {
       globalEventEmitter.emit(this._helpBody, this);
