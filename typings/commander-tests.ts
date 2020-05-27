@@ -220,3 +220,8 @@ const myProgram = new MyCommand();
 myProgram.myFunction();
 const mySub = myProgram.command('sub');
 mySub.myFunction();
+
+// globalEventEmitter
+const onGlobal: commander.GlobalEventEmitter = commander.globalEventEmitter.on('help:body', () => {
+  // do nothing.
+});

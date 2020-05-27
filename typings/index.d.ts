@@ -27,6 +27,15 @@ declare namespace commander {
     from: 'node' | 'electron' | 'user';
   }
 
+  // (string & {}) is sort of a hack so we able to show the string types autocompletion
+  // as well as allow any string to be used
+  export type Event =
+  | 'help:header'
+  | 'help:body'
+  | 'help:footer'
+  | (string & {})
+  | symbol
+
   interface Command {
     [key: string]: any; // options as properties
 
@@ -353,7 +362,7 @@ declare namespace commander {
      *         console.log('See web site for more information.');
      *     });
      */
-    on(event: string | symbol, listener: (...args: any[]) => void): this;
+    on(event: Event, listener: (...args: any[]) => void): this;
   }
   type CommandConstructor = new (name?: string) => Command;
 
@@ -371,13 +380,26 @@ declare namespace commander {
     unknown: string[];
   }
 
+  interface GlobalEventEmitter {
+    /**
+     * Add a listener (callback) for when events occur. (Implemented using EventEmitter.)
+     *
+     * @example
+     *     program
+     *       .on('help:body', () -> {
+     *         console.log('See web site for more information.');
+     *     });
+     */
+    on(event: Event, listener: (...args: any[]) => void): this;
+  }
+
   interface CommanderStatic extends Command {
     program: Command;
+    globalEventEmitter: GlobalEventEmitter;
     Command: CommandConstructor;
     Option: OptionConstructor;
     CommanderError: CommanderErrorConstructor;
   }
-
 }
 
 // Declaring namespace AND global
