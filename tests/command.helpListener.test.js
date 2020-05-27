@@ -1,6 +1,6 @@
 const commander = require('../');
 
-jest.spyOn(global.console, 'log').mockImplementation()
+jest.spyOn(global.console, 'log').mockImplementation();
 
 // Testing help listeners, both "local" and global
 
@@ -33,7 +33,7 @@ Commands:
 
 test('when listening for the help:header the listener should be called correctly', () => {
   const program = new commander.Command();
-  const listenerCall = jest.fn()
+  const listenerCall = jest.fn();
   program
     .on('help:header', listenerCall)
     .on('help:body', () => {}) // to prevent printing to console
@@ -45,7 +45,7 @@ test('when listening for the help:header the listener should be called correctly
 
 test('when listening for the help:footer the listener should be called correctly', () => {
   const program = new commander.Command();
-  const listenerCall = jest.fn()
+  const listenerCall = jest.fn();
   program
     .on('help:footer', listenerCall)
     .on('help:body', () => {}) // to prevent printing to console
@@ -57,22 +57,21 @@ test('when listening for the help:footer the listener should be called correctly
 
 test('when listening for help:header, help:body and help:footer they should be called in the correct order', () => {
   const program = new commander.Command();
-  const callOrder = []
+  const callOrder = [];
   program
     .on('help:footer', () => {
-      callOrder.push('help:footer')
+      callOrder.push('help:footer');
     })
     .on('help:header', () => {
-      callOrder.push('help:header')
+      callOrder.push('help:header');
     })
     .on('help:body', () => {
-      callOrder.push('help:body')
+      callOrder.push('help:body');
     })
     .command('my-command <file>');
 
   program.outputHelp();
-  expect(callOrder[0]).toBe('help:header')
-  expect(callOrder[1]).toBe('help:body')
-  expect(callOrder[2]).toBe('help:footer')
+  expect(callOrder[0]).toBe('help:header');
+  expect(callOrder[1]).toBe('help:body');
+  expect(callOrder[2]).toBe('help:footer');
 });
-
