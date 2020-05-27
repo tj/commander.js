@@ -380,7 +380,7 @@ declare namespace commander {
     unknown: string[];
   }
 
-  interface GlobalEventEmitter {
+  interface CommanderGlobalEmitter {
     /**
      * Add a listener (callback) for when events occur. (Implemented using EventEmitter.)
      *
@@ -395,7 +395,7 @@ declare namespace commander {
 
   interface CommanderStatic extends Command {
     program: Command;
-    globalEventEmitter: GlobalEventEmitter;
+    commanderGlobalEmitter: CommanderGlobalEmitter;
     Command: CommandConstructor;
     Option: OptionConstructor;
     CommanderError: CommanderErrorConstructor;

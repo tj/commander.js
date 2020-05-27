@@ -222,6 +222,6 @@ const mySub = myProgram.command('sub');
 mySub.myFunction();
 
 // globalEventEmitter
-const onGlobal: commander.GlobalEventEmitter = commander.globalEventEmitter.on('help:body', () => {
+const onGlobal: commander.CommanderGlobalEmitter = commander.commanderGlobalEmitter.on('help:body', () => {
   // do nothing.
 });
