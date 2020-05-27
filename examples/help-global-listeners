@@ -1,0 +1,35 @@
+#!/usr/bin/env node
+
+// const program = require('commander'); // (normal include)
+const program = require('../'); // include commander in git clone of commander repo
+const { commanderGlobalEmitter } = require('../')
+
+commanderGlobalEmitter
+  .on('help:header', () => {
+    console.log('Global Header\n');
+  })
+  .on('help:body', (instace) => {
+    console.log('++++++++++++');
+    console.log(instace.helpInformation().replace(/\n$/, '\n++++++++++++\n'));
+  })
+  .on('help:footer', () => {
+    console.log(`The End.`);
+  })
+
+
+program
+  .version('0.0.1')
+  .option('-b, --bar', 'enable some bar')
+  .on('help:header', () => {
+    console.log('Custom Header\n');
+  })
+  .on('help:body', (instace) => {
+    console.log('------------');
+    console.log(instace.helpInformation().replace(/\n$/, '\n------------\n'));
+  })
+  .on('help:footer', () => {
+    console.log(`Commander - ${new Date().getFullYear()}`);
+  })
+  .parse(process.argv);
+
+if (!program.args.length) program.help();
