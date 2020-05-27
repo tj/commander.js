@@ -6,6 +6,7 @@ const EventEmitter = require('events').EventEmitter;
 const spawn = require('child_process').spawn;
 const path = require('path');
 const fs = require('fs');
+const globalEventEmitter = new EventEmitter();
 
 // @ts-check
 
@@ -128,6 +129,9 @@ class Command extends EventEmitter {
     this._helpCommandName = 'help';
     this._helpCommandnameAndArgs = 'help [command]';
     this._helpCommandDescription = 'display help for command';
+    this._helpHeader = 'help:header';
+    this._helpBody = 'help:body';
+    this._helpFooter = 'help:footer';
   }
 
   /**
@@ -1530,12 +1534,23 @@ class Command extends EventEmitter {
         return passthru;
       };
     }
+    globalEventEmitter.emit(this._helpHeader, this);
+    this.emit(this._helpHeader, this);
     const cbOutput = cb(this.helpInformation());
     if (typeof cbOutput !== 'string' && !Buffer.isBuffer(cbOutput)) {
       throw new Error('outputHelp callback must return a string or a Buffer');
     }
-    process.stdout.write(cbOutput);
-    this.emit(this._helpLongFlag);
+    const globalBodyListeners = globalEventEmitter.listeners(this._helpBody);
+    const bodyListeners = this.listeners(this._helpBody);
+    if (bodyListeners.length === 0 || globalBodyListeners.length === 0) {
+      process.stdout.write(cbOutput);
+    } else {
+      globalEventEmitter.emit(this._helpBody, this);
+      this.emit(this._helpBody, this);
+    }
+    this.emit(this._helpLongFlag); // Leave .on('--help') in for compatibility
+    this.emit(this._helpFooter, this);
+    globalEventEmitter.emit(this._helpFooter, this);
   };
 
   /**
@@ -1603,6 +1618,12 @@ exports.program = exports; // More explicit access to global command.
 exports.Command = Command;
 exports.Option = Option;
 exports.CommanderError = CommanderError;
+
+/**
+ * Expose Global Emiter
+ */
+
+exports.commanderGlobalEmitter = globalEventEmitter;
 
 /**
  * Camel-case the given `flag`
