@@ -9,9 +9,9 @@ program
   .on('help:header', () => {
     console.log('Custom Header\n');
   })
-  .on('help:body', (instace) => {
+  .on('help:body', (instance) => {
     console.log('------------');
-    console.log(instace.helpInformation().replace(/\n$/, '\n------------\n'));
+    console.log(instance.helpInformation().replace(/\n$/, '\n------------\n'));
   })
   .on('help:footer', () => {
     console.log(`Commander - ${new Date().getFullYear()}`);

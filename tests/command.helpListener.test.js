@@ -5,7 +5,7 @@ jest.spyOn(global.console, 'log').mockImplementation();
 // Testing help listeners, both "local" and global
 
 // Avoid doing many full format tests as will be broken by any layout changes!
-test('when listening for the help:body the default help command should be overriden', () => {
+test('when listening for the help:body the default help command should be overridden', () => {
   const program = new commander.Command();
   program
     .on('help:body', (instance) => {

@@ -8,9 +8,9 @@ commanderGlobalEmitter
   .on('help:header', () => {
     console.log('Global Header\n');
   })
-  .on('help:body', (instace) => {
+  .on('help:body', (instance) => {
     console.log('++++++global++++++');
-    console.log(instace.helpInformation().replace(/\n$/, '\n++++++global++++++\n'));
+    console.log(instance.helpInformation().replace(/\n$/, '\n++++++global++++++\n'));
   })
   .on('help:footer', () => {
     console.log(`The End.`);
@@ -25,9 +25,9 @@ program
   .on('help:header', () => {
     console.log('Custom Header\n');
   })
-  .on('help:body', (instace) => {
+  .on('help:body', (instance) => {
     console.log('------local------');
-    console.log(instace.helpInformation().replace(/\n$/, '\n------local------\n'));
+    console.log(instance.helpInformation().replace(/\n$/, '\n------local------\n'));
   })
   .on('help:footer', () => {
     console.log(`Commander - ${new Date().getFullYear()}`);
@@ -41,11 +41,11 @@ program
 /**
  * examples/help-global-listeners -h
  * 
- * Should display both global and "local" emiter messages
+ * Should display both global and "local" emitter messages
  */
 
 /**
  * examples/help-global-listeners foo -h
  * 
- * Should display only global emiter messages
+ * Should display only global emitter messages
  */
