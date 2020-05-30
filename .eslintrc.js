@@ -9,7 +9,7 @@ const javascriptSettings = {
     'no-var': 'warn',
     'one-var': 'off',
     'space-before-function-paren': ['error', 'never'],
-    semi: ['error', 'always']
+    'semi': ['error', 'always']
   },
 }
 
@@ -24,7 +24,8 @@ const typescriptSettings = {
     'no-var': 'warn',
     'one-var': 'off',
     'space-before-function-paren': ['error', 'never'],
-    semi: ['error', 'always'],
+    'semi': 'off',
+    '@typescript-eslint/semi': ['error', 'always'],
     '@typescript-eslint/member-delimiter-style': [
       'error',
       {
