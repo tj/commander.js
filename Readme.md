@@ -63,11 +63,11 @@ program.version('0.0.1');
 
 For larger programs which may use commander in multiple ways, including unit testing, it is better to create a local Command object to use.
 
- ```js
- const { Command } = require('commander');
- const program = new Command();
- program.version('0.0.1');
- ```
+```js
+const { Command } = require('commander');
+const program = new Command();
+program.version('0.0.1');
+```
 
 ## Options
 
@@ -668,7 +668,7 @@ this behaviour and optionally supply a callback. The default override throws a `
 The override callback is passed a `CommanderError` with properties `exitCode` number, `code` string, and `message`. The default override behaviour is to throw the error, except for async handling of executable subcommand completion which carries on. The normal display of error messages or version or help
 is not affected by the override which is called after the display.
 
-``` js
+```js
 program.exitOverride();
 
 try {

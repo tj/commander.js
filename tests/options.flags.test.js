@@ -10,7 +10,6 @@ test('when only short flag defined and not specified then value is undefined', (
   expect(program.p).toBeUndefined();
 });
 
-// Sanity check that pepper is not true normally, as otherwise all the following tests would pass for thr wrong reasons!
 test('when only short flag defined and specified then value is true', () => {
   const program = new commander.Command();
   program

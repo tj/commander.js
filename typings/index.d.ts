@@ -75,7 +75,7 @@ declare namespace commander {
      * ```ts
      *  program
      *    .command('start <service>', 'start named service')
-     *    .command('stop [service]', 'stop named serice, or all if no name supplied');
+     *    .command('stop [service]', 'stop named service, or all if no name supplied');
      * ```
      *
      * @param nameAndArgs - command name and arguments, args are  `<required>` or `[optional]` and last may also be `variadic...`

@@ -1,6 +1,6 @@
 const commander = require('../');
 
-// Test the `.opts()` way of accesing option values.
+// Test the `.opts()` way of accessing option values.
 // Basic coverage of the main option types (leaving out negatable flags and options with optional values).
 
 test('when .version used then version in opts', () => {
