@@ -75,7 +75,7 @@ declare namespace commander {
      * ```ts
      *  program
      *    .command('start <service>', 'start named service')
-     *    .command('stop [service]', 'stop named serice, or all if no name supplied');
+     *    .command('stop [service]', 'stop named service, or all if no name supplied');
      * ```
      *
      * @param nameAndArgs - command name and arguments, args are  `<required>` or `[optional]` and last may also be `variadic...`
@@ -275,6 +275,8 @@ declare namespace commander {
     /**
      * Set an alias for the command.
      *
+     * You may call more than once to add multiple aliases. Only the first alias is shown in the auto-generated help.
+     *
      * @returns `this` command for chaining
      */
     alias(alias: string): this;
@@ -282,6 +284,19 @@ declare namespace commander {
      * Get alias for the command.
      */
     alias(): string;
+
+    /**
+     * Set aliases for the command.
+     *
+     * Only the first alias is shown in the auto-generated help.
+     *
+     * @returns `this` command for chaining
+     */
+    aliases(aliases: string[]): this;
+    /**
+     * Get aliases for the command.
+     */
+    aliases(): string[];
 
     /**
      * Set the command usage.

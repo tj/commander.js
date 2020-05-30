@@ -20,15 +20,18 @@ class Option {
 
   constructor(flags, description) {
     this.flags = flags;
-    this.required = flags.indexOf('<') >= 0; // A value must be supplied when the option is specified.
-    this.optional = flags.indexOf('[') >= 0; // A value is optional when the option is specified.
+    this.required = flags.includes('<'); // A value must be supplied when the option is specified.
+    this.optional = flags.includes('['); // A value is optional when the option is specified.
     // variadic test ignores <value,...> et al which might be used to describe custom splitting of single argument
     this.variadic = /\w\.\.\.[>\]]$/.test(flags); // The option can take multiple values.
     this.mandatory = false; // The option must have a value after parsing, which usually means it must be specified on command line.
-    this.negate = flags.indexOf('-no-') !== -1;
-    const flagParts = flags.split(/[ ,|]+/);
-    if (flagParts.length > 1 && !/^[[<]/.test(flagParts[1])) this.short = flagParts.shift();
-    this.long = flagParts.shift();
+    const optionFlags = _parseOptionFlags(flags);
+    this.short = optionFlags.shortFlag;
+    this.long = optionFlags.longFlag;
+    this.negate = false;
+    if (this.long) {
+      this.negate = this.long.startsWith('--no-');
+    }
     this.description = description || '';
     this.defaultValue = undefined;
   }
@@ -41,7 +44,10 @@ class Option {
    */
 
   name() {
-    return this.long.replace(/^--/, '');
+    if (this.long) {
+      return this.long.replace(/^--/, '');
+    }
+    return this.short.replace(/^-/, '');
   };
 
   /**
@@ -119,7 +125,7 @@ class Command extends EventEmitter {
     this._executableFile = null; // custom name for executable
     this._defaultCommandName = null;
     this._exitCallback = null;
-    this._alias = null;
+    this._aliases = [];
 
     this._hidden = false;
     this._helpFlags = '-h, --help';
@@ -566,7 +572,7 @@ class Command extends EventEmitter {
     return this._optionEx({}, flags, description, fn, defaultValue);
   };
 
-  /*
+  /**
   * Add a required option which must have a value after parsing. This usually means
   * the option must be specified on the command line. (Otherwise the same as .option().)
   *
@@ -901,7 +907,7 @@ class Command extends EventEmitter {
       this._dispatchSubcommand(this._defaultCommandName, operands, unknown);
     } else {
       if (this.commands.length && this.args.length === 0 && !this._actionHandler && !this._defaultCommandName) {
-        // probaby missing subcommand and no handler, user needs help
+        // probably missing subcommand and no handler, user needs help
         this._helpAndError();
       }
 
@@ -947,7 +953,7 @@ class Command extends EventEmitter {
    */
   _findCommand(name) {
     if (!name) return undefined;
-    return this.commands.find(cmd => cmd._name === name || cmd._alias === name);
+    return this.commands.find(cmd => cmd._name === name || cmd._aliases.includes(name));
   };
 
   /**
@@ -1205,9 +1211,9 @@ class Command extends EventEmitter {
     flags = flags || '-V, --version';
     description = description || 'output the version number';
     const versionOption = new Option(flags, description);
-    this._versionOptionName = versionOption.long.substr(2) || 'version';
+    this._versionOptionName = versionOption.attributeName();
     this.options.push(versionOption);
-    this.on('option:' + this._versionOptionName, () => {
+    this.on('option:' + versionOption.name(), () => {
       process.stdout.write(str + '\n');
       this._exit(0, 'commander.version', str);
     });
@@ -1219,7 +1225,7 @@ class Command extends EventEmitter {
    *
    * @param {string} str
    * @param {Object} [argsDescription]
-   * @return {String|Command}
+   * @return {string|Command}
    * @api public
    */
 
@@ -1231,15 +1237,17 @@ class Command extends EventEmitter {
   };
 
   /**
-   * Set an alias for the command
+   * Set an alias for the command.
    *
-   * @param {string} alias
-   * @return {String|Command}
+   * You may call more than once to add multiple aliases. Only the first alias is shown in the auto-generated help.
+   *
+   * @param {string} [alias]
+   * @return {string|Command}
    * @api public
    */
 
   alias(alias) {
-    if (alias === undefined) return this._alias;
+    if (alias === undefined) return this._aliases[0]; // just return first, for backwards compatibility
 
     let command = this;
     if (this.commands.length !== 0 && this.commands[this.commands.length - 1]._executableHandler) {
@@ -1249,7 +1257,25 @@ class Command extends EventEmitter {
 
     if (alias === command._name) throw new Error('Command alias can\'t be the same as its name');
 
-    command._alias = alias;
+    command._aliases.push(alias);
+    return this;
+  };
+
+  /**
+   * Set aliases for the command.
+   *
+   * Only the first alias is shown in the auto-generated help.
+   *
+   * @param {string[]} [aliases]
+   * @return {string[]|Command}
+   * @api public
+   */
+
+  aliases(aliases) {
+    // Getter for the array of aliases is the main reason for having aliases() in addition to alias().
+    if (aliases === undefined) return this._aliases;
+
+    aliases.forEach((alias) => this.alias(alias));
     return this;
   };
 
@@ -1308,7 +1334,7 @@ class Command extends EventEmitter {
 
       return [
         cmd._name +
-          (cmd._alias ? '|' + cmd._alias : '') +
+          (cmd._aliases[0] ? '|' + cmd._aliases[0] : '') +
           (cmd.options.length ? ' [options]' : '') +
           (args ? ' ' + args : ''),
         cmd._description
@@ -1399,17 +1425,33 @@ class Command extends EventEmitter {
 
   optionHelp() {
     const width = this.padWidth();
-
     const columns = process.stdout.columns || 80;
     const descriptionWidth = columns - width - 4;
+    function padOptionDetails(flags, description) {
+      return pad(flags, width) + '  ' + optionalWrap(description, descriptionWidth, width + 2);
+    };
 
-    // Append the help information
-    return this.options.map((option) => {
+    // Explicit options (including version)
+    const help = this.options.map((option) => {
       const fullDesc = option.description +
         ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
-      return pad(option.flags, width) + '  ' + optionalWrap(fullDesc, descriptionWidth, width + 2);
-    }).concat([pad(this._helpFlags, width) + '  ' + optionalWrap(this._helpDescription, descriptionWidth, width + 2)])
-      .join('\n');
+      return padOptionDetails(option.flags, fullDesc);
+    });
+
+    // Implicit help
+    const showShortHelpFlag = this._helpShortFlag && !this._findOption(this._helpShortFlag);
+    const showLongHelpFlag = !this._findOption(this._helpLongFlag);
+    if (showShortHelpFlag || showLongHelpFlag) {
+      let helpFlags = this._helpFlags;
+      if (!showShortHelpFlag) {
+        helpFlags = this._helpLongFlag;
+      } else if (!showLongHelpFlag) {
+        helpFlags = this._helpShortFlag;
+      }
+      help.push(padOptionDetails(helpFlags, this._helpDescription));
+    }
+
+    return help.join('\n');
   };
 
   /**
@@ -1468,8 +1510,8 @@ class Command extends EventEmitter {
     }
 
     let cmdName = this._name;
-    if (this._alias) {
-      cmdName = cmdName + '|' + this._alias;
+    if (this._aliases[0]) {
+      cmdName = cmdName + '|' + this._aliases[0];
     }
     let parentCmdNames = '';
     for (let parentCmd = this.parent; parentCmd; parentCmd = parentCmd.parent) {
@@ -1534,11 +1576,9 @@ class Command extends EventEmitter {
     this._helpFlags = flags || this._helpFlags;
     this._helpDescription = description || this._helpDescription;
 
-    const splitFlags = this._helpFlags.split(/[ ,|]+/);
-
-    if (splitFlags.length > 1) this._helpShortFlag = splitFlags.shift();
-
-    this._helpLongFlag = splitFlags.shift();
+    const helpFlags = _parseOptionFlags(this._helpFlags);
+    this._helpShortFlag = helpFlags.shortFlag;
+    this._helpLongFlag = helpFlags.longFlag;
 
     return this;
   };
@@ -1690,6 +1730,28 @@ function humanReadableArgName(arg) {
 }
 
 /**
+ * Parse the short and long flag out of something like '-m,--mixed <value>'
+ *
+ * @api private
+ */
+
+function _parseOptionFlags(flags) {
+  let shortFlag;
+  let longFlag;
+  // Use original very loose parsing to maintain backwards compatibility for now,
+  // which allowed for example unintended `-sw, --short-word` [sic].
+  const flagParts = flags.split(/[ |,]+/);
+  if (flagParts.length > 1 && !/^[[<]/.test(flagParts[1])) shortFlag = flagParts.shift();
+  longFlag = flagParts.shift();
+  // Add support for lone short flag without significantly changing parsing!
+  if (!shortFlag && /^-[^-]$/.test(longFlag)) {
+    shortFlag = longFlag;
+    longFlag = undefined;
+  }
+  return { shortFlag, longFlag };
+}
+
+/**
  * Scan arguments and increment port number for inspect calls (to avoid conflicts when spawning new command).
  *
  * @param {string[]} args - array of arguments from node.execArgv
@@ -1703,35 +1765,35 @@ function incrementNodeInspectorPort(args) {
   //  --inspect-brk[=[host:]port]
   //  --inspect-port=[host:]port
   return args.map((arg) => {
-    let result = arg;
-    if (arg.indexOf('--inspect') === 0) {
-      let debugOption;
-      let debugHost = '127.0.0.1';
-      let debugPort = '9229';
-      let match;
-      if ((match = arg.match(/^(--inspect(-brk)?)$/)) !== null) {
-        // e.g. --inspect
-        debugOption = match[1];
-      } else if ((match = arg.match(/^(--inspect(-brk|-port)?)=([^:]+)$/)) !== null) {
-        debugOption = match[1];
-        if (/^\d+$/.test(match[3])) {
-          // e.g. --inspect=1234
-          debugPort = match[3];
-        } else {
-          // e.g. --inspect=localhost
-          debugHost = match[3];
-        }
-      } else if ((match = arg.match(/^(--inspect(-brk|-port)?)=([^:]+):(\d+)$/)) !== null) {
-        // e.g. --inspect=localhost:1234
-        debugOption = match[1];
-        debugHost = match[3];
-        debugPort = match[4];
-      }
-
-      if (debugOption && debugPort !== '0') {
-        result = `${debugOption}=${debugHost}:${parseInt(debugPort) + 1}`;
-      }
+    if (!arg.startsWith('--inspect')) {
+      return arg;
     }
-    return result;
+    let debugOption;
+    let debugHost = '127.0.0.1';
+    let debugPort = '9229';
+    let match;
+    if ((match = arg.match(/^(--inspect(-brk)?)$/)) !== null) {
+      // e.g. --inspect
+      debugOption = match[1];
+    } else if ((match = arg.match(/^(--inspect(-brk|-port)?)=([^:]+)$/)) !== null) {
+      debugOption = match[1];
+      if (/^\d+$/.test(match[3])) {
+        // e.g. --inspect=1234
+        debugPort = match[3];
+      } else {
+        // e.g. --inspect=localhost
+        debugHost = match[3];
+      }
+    } else if ((match = arg.match(/^(--inspect(-brk|-port)?)=([^:]+):(\d+)$/)) !== null) {
+      // e.g. --inspect=localhost:1234
+      debugOption = match[1];
+      debugHost = match[3];
+      debugPort = match[4];
+    }
+
+    if (debugOption && debugPort !== '0') {
+      return `${debugOption}=${debugHost}:${parseInt(debugPort) + 1}`;
+    }
+    return arg;
   });
 }
