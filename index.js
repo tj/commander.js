@@ -556,7 +556,7 @@ class Command extends EventEmitter {
     return this._optionEx({}, flags, description, fn, defaultValue);
   };
 
-  /*
+  /**
   * Add a required option which must have a value after parsing. This usually means
   * the option must be specified on the command line. (Otherwise the same as .option().)
   *
@@ -891,7 +891,7 @@ class Command extends EventEmitter {
       this._dispatchSubcommand(this._defaultCommandName, operands, unknown);
     } else {
       if (this.commands.length && this.args.length === 0 && !this._actionHandler && !this._defaultCommandName) {
-        // probaby missing subcommand and no handler, user needs help
+        // probably missing subcommand and no handler, user needs help
         this._helpAndError();
       }
 

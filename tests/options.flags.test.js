@@ -10,7 +10,7 @@ test('when only short flag defined and specified then value is true', () => {
   expect(program.P).toBe(true);
 });
 
-// Sanity check that pepper is not true normally, as otherwise all the following tests would pass for thr wrong reasons!
+// Sanity check that pepper is not true normally, as otherwise all the following tests would pass for the wrong reasons!
 test('when only long flag defined and not specified then value is undefined', () => {
   const program = new commander.Command();
   program
