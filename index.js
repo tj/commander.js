@@ -268,7 +268,7 @@ class Command extends EventEmitter {
    *
    *    addHelpCommand() // force on
    *    addHelpCommand(false); // force off
-   *    addHelpCommand('help [cmd]', 'display help for [cmd]'); // force on with custom detais
+   *    addHelpCommand('help [cmd]', 'display help for [cmd]'); // force on with custom details
    *
    * @return {Command} `this` command for chaining
    * @api public
@@ -436,7 +436,7 @@ class Command extends EventEmitter {
    * @param {Object} config
    * @param {string} flags
    * @param {string} description
-   * @param {Function|*} [fn] - custom option processing function or default vaue
+   * @param {Function|*} [fn] - custom option processing function or default value
    * @param {*} [defaultValue]
    * @return {Command} `this` command for chaining
    * @api private
@@ -562,7 +562,7 @@ class Command extends EventEmitter {
    *
    * @param {string} flags
    * @param {string} description
-   * @param {Function|*} [fn] - custom option processing function or default vaue
+   * @param {Function|*} [fn] - custom option processing function or default value
    * @param {*} [defaultValue]
    * @return {Command} `this` command for chaining
    * @api public
@@ -580,7 +580,7 @@ class Command extends EventEmitter {
   *
   * @param {string} flags
   * @param {string} description
-  * @param {Function|*} [fn] - custom option processing function or default vaue
+  * @param {Function|*} [fn] - custom option processing function or default value
   * @param {*} [defaultValue]
   * @return {Command} `this` command for chaining
   * @api public

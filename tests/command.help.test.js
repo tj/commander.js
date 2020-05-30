@@ -26,7 +26,7 @@ Commands:
   expect(helpInformation).toBe(expectedHelpInformation);
 });
 
-test('when use .description for command then help incudes description', () => {
+test('when use .description for command then help includes description', () => {
   const program = new commander.Command();
   program
     .command('simple-command')

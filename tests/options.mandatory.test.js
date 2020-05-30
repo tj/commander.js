@@ -199,7 +199,7 @@ describe('required command option with mandatory value not specified', () => {
     consoleErrorSpy.mockRestore();
   });
 
-  test('when command has required value not specified then eror', () => {
+  test('when command has required value not specified then error', () => {
     const program = new commander.Command();
     program
       .exitOverride()
