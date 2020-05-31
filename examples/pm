@@ -20,8 +20,8 @@ program.parse(process.argv);
 // executables for sub-commands, much like git(1) and other
 // popular tools.
 
-// here only ./pm-install(1) is implemented, however you
-// would define ./pm-search(1) and ./pm-list(1) etc.
+// here only ./pm-install(1) and ./pm-list(1) are implemented, however you
+// would define ./pm-search(1) etc.
 
 // Try the following:
 //   ./examples/pm
