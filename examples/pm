@@ -10,8 +10,9 @@ program
   .command('install [name]', 'install one or more packages').alias('i')
   .command('search [query]', 'search with optional query').alias('s')
   .command('list', 'list packages installed')
-  .command('publish', 'publish the package').alias('p')
-  .parse(process.argv);
+  .command('publish', 'publish the package').alias('p');
+
+program.parse(process.argv);
 
 // here .command() is invoked with a description,
 // and no .action(callback) calls to handle sub-commands.

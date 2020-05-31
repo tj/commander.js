@@ -9,8 +9,9 @@ program
   .description('An application for pizzas ordering')
   .option('-p, --peppers', 'Add peppers')
   .option('-c, --cheese <type>', 'Add the specified type of cheese', 'marble')
-  .option('-C, --no-cheese', 'You do not want any cheese')
-  .parse(process.argv);
+  .option('-C, --no-cheese', 'You do not want any cheese');
+
+program.parse(process.argv);
 
 console.log('you ordered a pizza with:');
 if (program.peppers) console.log('  - peppers');

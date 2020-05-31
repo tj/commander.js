@@ -5,8 +5,9 @@ const { Command } = require('../'); // include commander in git clone of command
 const program = new Command();
 
 program
-  .option('-f, --force', 'force installation')
-  .parse(process.argv);
+  .option('-f, --force', 'force installation');
+
+program.parse(process.argv);
 
 const pkgs = program.args;
 
