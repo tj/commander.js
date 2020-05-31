@@ -284,7 +284,7 @@ error: required option '-c, --cheese <type>' not specified
 You may make an option variadic by appending `...` to the value placeholder when declaring the option. On the command line you
 can then specify multiple option arguments, and the parsed option value will be an array. The extra arguments
 are read until the first argument starting with a dash. The special argument `--` stops option processing entirely. If a value
-in specified in the same argument as the option then no further values are read.
+is specified in the same argument as the option then no further values are read.
 
 Example file: [options-variadic.js](./examples/options-variadic.js)
 
