@@ -99,7 +99,7 @@ describe('variadic option with required value', () => {
 
 // Not retesting everything, but do some tests on variadic with optional
 describe('variadic option with optional value', () => {
-  test('when option not specified then value undefined', () => {
+  test('when variadic not specified then value undefined', () => {
     const program = new commander.Command();
     program
       .option('-o,--optional [value...]');
@@ -108,7 +108,7 @@ describe('variadic option with optional value', () => {
     expect(program.opts().optional).toBeUndefined();
   });
 
-  test('when option used as boolean flag then value true', () => {
+  test('when variadic used as boolean flag then value true', () => {
     const program = new commander.Command();
     program
       .option('-o,--optional [value...]');
