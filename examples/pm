@@ -9,8 +9,8 @@ program
   .description('Fake package manager')
   .command('install [name]', 'install one or more packages').alias('i')
   .command('search [query]', 'search with optional query').alias('s')
-  .command('list', 'list packages installed')
-  .command('publish', 'publish the package').alias('p');
+  .command('update', 'update installed packages', { executableFile: 'myUpdateSubCommand' })
+  .command('list', 'list packages installed', { isDefault: true });
 
 program.parse(process.argv);
 
