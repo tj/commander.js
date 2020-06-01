@@ -42,7 +42,6 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Debugging stand-alone executable subcommands](#debugging-stand-alone-executable-subcommands)
     - [Override exit handling](#override-exit-handling)
   - [Examples](#examples)
-  - [License](#license)
   - [Support](#support)
     - [Commander for enterprise](#commander-for-enterprise)
 
@@ -89,9 +88,9 @@ Options on the command line are not positional, and can be specified before or a
 
 The two most used option types are a boolean flag, and an option which takes a value (declared using angle brackets). Both are `undefined` unless specified on command line.
 
-```js
-const { program } = require('commander');
+Example file: [options-common.js](./examples/options-common.js)
 
+```js
 program
   .option('-d, --debug', 'output extra debugging')
   .option('-s, --small', 'small pizza size')
@@ -127,9 +126,9 @@ pizza details:
 
 You can specify a default value for an option which takes a value.
 
-```js
-const { program } = require('commander');
+Example file: [options-defaults.js](./examples/options-defaults.js)
 
+```js
 program
   .option('-c, --cheese <type>', 'add the specified type of cheese', 'blue');
 
@@ -153,9 +152,9 @@ Defined alone this also makes the option true by default.
 If you define `--foo` first, adding `--no-foo` does not change the default value from what it would
 otherwise be. You can specify a default boolean value for a boolean flag and it can be overridden on command line.
 
-```js
-const { program } = require('commander');
+Example file: [options-negatable.js](./examples/options-negatable.js)
 
+```js
 program
   .option('--no-sauce', 'Remove sauce')
   .option('--cheese <flavour>', 'cheese flavour', 'mozzarella')
@@ -180,9 +179,9 @@ You ordered a pizza with no sauce and no cheese
 
 You can specify an option which functions as a flag but may also take a value (declared using square brackets).
 
-```js
-const { program } = require('commander');
+Example file: [options-flag-or-value.js](./examples/options-flag-or-value.js)
 
+```js
 program
   .option('-c, --cheese [type]', 'Add cheese with optional type');
 
@@ -211,9 +210,9 @@ This allows you to coerce the option value to the desired type, or accumulate va
 
 You can optionally specify the default/starting value for the option after the function.
 
-```js
-const { program } = require('commander');
+Example file: [options-custom-processing.js](./examples/options-custom-processing.js)
 
+```js
 function myParseInt(value, dummyPrevious) {
   // parseInt takes a string and an optional radix
   return parseInt(value);
@@ -265,9 +264,9 @@ $ custom --list x,y,z
 
 You may specify a required (mandatory) option using `.requiredOption`. The option must have a value after parsing, usually specified on the command line, or perhaps from a default value (say from environment). The method is otherwise the same as `.option` in format, taking flags and description, and optional default value or custom processing.
 
-```js
-const { program } = require('commander');
+Example file: [options-required.js](./examples/options-required.js)
 
+```js
 program
   .requiredOption('-c, --cheese <type>', 'pizza must have cheese');
 
@@ -369,9 +368,9 @@ Configuration options can be passed with the call to `.command()` and `.addComma
 
 You use `.arguments` to specify the arguments for the top-level command, and for subcommands they are usually included in the `.command` call. Angled brackets (e.g. `<required>`) indicate required input. Square brackets (e.g. `[optional]`) indicate optional input.
 
-```js
-const { program } = require('commander');
+Example file: [env](./examples/env)
 
+```js
 program
   .version('0.1.0')
   .arguments('<cmd> [env]')
@@ -455,17 +454,17 @@ You can specify a custom name with the `executableFile` configuration option.
 
 You handle the options for an executable (sub)command in the executable, and don't declare them at the top-level.
 
-```js
-// file: ./examples/pm
-const { program } = require('commander');
+Example file: [pm](./examples/pm)
 
+```js
 program
   .version('0.1.0')
   .command('install [name]', 'install one or more packages')
   .command('search [query]', 'search with optional query')
-  .command('update', 'update installed packages', {executableFile: 'myUpdateSubCommand'})
-  .command('list', 'list packages installed', {isDefault: true})
-  .parse(process.argv);
+  .command('update', 'update installed packages', { executableFile: 'myUpdateSubCommand' })
+  .command('list', 'list packages installed', { isDefault: true });
+
+program.parse(process.argv);
 ```
 
 If the program is designed to be installed globally, make sure the executables have proper modes, like `755`.
@@ -473,7 +472,9 @@ If the program is designed to be installed globally, make sure the executables h
 ## Automated help
 
 The help information is auto-generated based on the information commander already knows about your program. The default
-help option is `-h,--help`. ([example](./examples/pizza))
+help option is `-h,--help`.
+
+Example file: [pizza](./examples/pizza)
 
 ```bash
 $ node ./examples/pizza --help
@@ -502,7 +503,9 @@ shell spawn --help
 
 ### Custom help
 
-You can display extra information by listening for "--help". ([example](./examples/custom-help))
+You can display extra information by listening for "--help".
+
+Example file: [custom-help](./examples/custom-help)
 
 ```js
 program
@@ -630,7 +633,7 @@ There are two new routines to change the behaviour, and the default behaviour ma
 - `passCommandToAction`: whether to pass command to action handler,
 or just the options (specify false)
 
-([example](./examples/storeOptionsAsProperties-action.js))
+Example file: [storeOptionsAsProperties-action.js](./examples/storeOptionsAsProperties-action.js)
 
 ```js
 program
@@ -713,6 +716,8 @@ try {
 
 ## Examples
 
+Example file: [deploy](./examples/deploy)
+
 ```js
 const { program } = require('commander');
 
@@ -751,10 +756,6 @@ program.parse(process.argv);
 ```
 
 More Demos can be found in the [examples](https://github.com/tj/commander.js/tree/master/examples) directory.
-
-## License
-
-[MIT](https://github.com/tj/commander.js/blob/master/LICENSE)
 
 ## Support
 
