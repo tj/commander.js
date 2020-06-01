@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 
-// const program = require('commander'); // (normal include)
-const program = require('../'); // include commander in git clone of commander repo
+// This example shows changing the flags and description for the help option.
+
+// const { Command } = require('commander'); // (normal include)
+const { Command } = require('../'); // include commander in git clone of commander repo
+const program = new Command();
 
 program
   .helpOption('-c, --HELP', 'custom help message')

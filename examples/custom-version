@@ -1,10 +1,14 @@
 #!/usr/bin/env node
 
-// const program = require('commander'); // (normal include)
-const program = require('../'); // include commander in git clone of commander repo
+// This example shows changing the flags and description for the version option.
+
+// const { Command } = require('commander'); // (normal include)
+const { Command } = require('../'); // include commander in git clone of commander repo
+const program = new Command();
 
 program
   .version('0.0.1', '-v, --VERSION', 'new version message')
   .option('-s, --sessions', 'add session support')
-  .option('-t, --template <engine>', 'specify template engine (jade|ejs) [jade]', 'jade')
-  .parse(process.argv);
+  .option('-t, --template <engine>', 'specify template engine (jade|ejs) [jade]', 'jade');
+
+program.parse(process.argv);
