@@ -18,6 +18,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Other option types, negatable boolean and flag|value](#other-option-types-negatable-boolean-and-flagvalue)
     - [Custom option processing](#custom-option-processing)
     - [Required option](#required-option)
+    - [Variadic option](#variadic-option)
     - [Version option](#version-option)
   - [Commands](#commands)
     - [Specify the argument syntax](#specify-the-argument-syntax)
@@ -276,6 +277,38 @@ program.parse(process.argv);
 ```bash
 $ pizza
 error: required option '-c, --cheese <type>' not specified
+```
+
+### Variadic option
+
+You may make an option variadic by appending `...` to the value placeholder when declaring the option. On the command line you
+can then specify multiple option arguments, and the parsed option value will be an array. The extra arguments
+are read until the first argument starting with a dash. The special argument `--` stops option processing entirely. If a value
+is specified in the same argument as the option then no further values are read.
+
+Example file: [options-variadic.js](./examples/options-variadic.js)
+
+```js
+program
+  .option('-n, --number <numbers...>', 'specify numbers')
+  .option('-l, --letter [letters...]', 'specify letters');
+
+program.parse();
+
+console.log('Options: ', program.opts());
+console.log('Remaining arguments: ', program.args);
+```
+
+```bash
+$ collect -n 1 2 3 --letter a b c
+Options:  { number: [ '1', '2', '3' ], letter: [ 'a', 'b', 'c' ] }
+Remaining arguments:  []
+$ collect --letter=A -n80 operand
+Options:  { number: [ '80' ], letter: [ 'A' ] }
+Remaining arguments:  [ 'operand' ]
+$ collect --letter -n 1 -n 2 3 -- operand
+Options:  { number: [ '1', '2', '3' ], letter: true }
+Remaining arguments:  [ 'operand' ]
 ```
 
 ### Version option

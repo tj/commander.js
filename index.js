@@ -22,6 +22,8 @@ class Option {
     this.flags = flags;
     this.required = flags.includes('<'); // A value must be supplied when the option is specified.
     this.optional = flags.includes('['); // A value is optional when the option is specified.
+    // variadic test ignores <value,...> et al which might be used to describe custom splitting of single argument
+    this.variadic = /\w\.\.\.[>\]]$/.test(flags); // The option can take multiple values.
     this.mandatory = false; // The option must have a value after parsing, which usually means it must be specified on command line.
     const optionFlags = _parseOptionFlags(flags);
     this.short = optionFlags.shortFlag;
@@ -266,7 +268,7 @@ class Command extends EventEmitter {
    *
    *    addHelpCommand() // force on
    *    addHelpCommand(false); // force off
-   *    addHelpCommand('help [cmd]', 'display help for [cmd]'); // force on with custom detais
+   *    addHelpCommand('help [cmd]', 'display help for [cmd]'); // force on with custom details
    *
    * @return {Command} `this` command for chaining
    * @api public
@@ -434,7 +436,7 @@ class Command extends EventEmitter {
    * @param {Object} config
    * @param {string} flags
    * @param {string} description
-   * @param {Function|*} [fn] - custom option processing function or default vaue
+   * @param {Function|*} [fn] - custom option processing function or default value
    * @param {*} [defaultValue]
    * @return {Command} `this` command for chaining
    * @api private
@@ -482,13 +484,21 @@ class Command extends EventEmitter {
     // when it's passed assign the value
     // and conditionally invoke the callback
     this.on('option:' + oname, (val) => {
-      // coercion
+      const oldValue = this._getOptionValue(name);
+
+      // custom processing
       if (val !== null && fn) {
-        val = fn(val, this._getOptionValue(name) === undefined ? defaultValue : this._getOptionValue(name));
+        val = fn(val, oldValue === undefined ? defaultValue : oldValue);
+      } else if (val !== null && option.variadic) {
+        if (oldValue === defaultValue || !Array.isArray(oldValue)) {
+          val = [val];
+        } else {
+          val = oldValue.concat(val);
+        }
       }
 
       // unassigned or boolean value
-      if (typeof this._getOptionValue(name) === 'boolean' || typeof this._getOptionValue(name) === 'undefined') {
+      if (typeof oldValue === 'boolean' || typeof oldValue === 'undefined') {
         // if no value, negate false, and we have a default, then use it!
         if (val == null) {
           this._setOptionValue(name, option.negate
@@ -552,7 +562,7 @@ class Command extends EventEmitter {
    *
    * @param {string} flags
    * @param {string} description
-   * @param {Function|*} [fn] - custom option processing function or default vaue
+   * @param {Function|*} [fn] - custom option processing function or default value
    * @param {*} [defaultValue]
    * @return {Command} `this` command for chaining
    * @api public
@@ -570,7 +580,7 @@ class Command extends EventEmitter {
   *
   * @param {string} flags
   * @param {string} description
-  * @param {Function|*} [fn] - custom option processing function or default vaue
+  * @param {Function|*} [fn] - custom option processing function or default value
   * @param {*} [defaultValue]
   * @return {Command} `this` command for chaining
   * @api public
@@ -1004,6 +1014,7 @@ class Command extends EventEmitter {
     }
 
     // parse options
+    let activeVariadicOption = null;
     while (args.length) {
       const arg = args.shift();
 
@@ -1013,6 +1024,12 @@ class Command extends EventEmitter {
         dest.push(...args);
         break;
       }
+
+      if (activeVariadicOption && !maybeOption(arg)) {
+        this.emit(`option:${activeVariadicOption.name()}`, arg);
+        continue;
+      }
+      activeVariadicOption = null;
 
       if (maybeOption(arg)) {
         const option = this._findOption(arg);
@@ -1032,6 +1049,7 @@ class Command extends EventEmitter {
           } else { // boolean flag
             this.emit(`option:${option.name()}`);
           }
+          activeVariadicOption = option.variadic ? option : null;
           continue;
         }
       }
