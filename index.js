@@ -110,6 +110,7 @@ class Command extends EventEmitter {
     this._name = name || '';
     this._optionValues = {};
     this._storeOptionsAsProperties = true; // backwards compatible by default
+    this._storeOptionsAsPropertiesCalled = false;
     this._passCommandToAction = true; // backwards compatible by default
     this._actionResults = [];
     this._actionHandler = null;
@@ -440,6 +441,12 @@ class Command extends EventEmitter {
     const name = option.attributeName();
     option.mandatory = !!config.mandatory;
 
+    if (!this._storeOptionsAsPropertiesCalled && this[oname] !== undefined && !option.negate) {
+      throw new Error(`option name '${oname}' clashes with existing property on Command
+  - either call storeOptionsAsProperties(false) and use .opts() for option values,
+  - or call storeOptionsAsProperties(true) to suppress this error and continue storing option values as properties on Command`);
+    }
+
     // default as 3rd arg
     if (typeof fn !== 'function') {
       if (fn instanceof RegExp) {
@@ -596,6 +603,7 @@ class Command extends EventEmitter {
     */
 
   storeOptionsAsProperties(value) {
+    this._storeOptionsAsPropertiesCalled = true;
     this._storeOptionsAsProperties = (value === undefined) || value;
     if (this.options.length) {
       throw new Error('call .storeOptionsAsProperties() before adding options');
