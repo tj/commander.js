@@ -441,8 +441,8 @@ class Command extends EventEmitter {
     const name = option.attributeName();
     option.mandatory = !!config.mandatory;
 
-    if (!this._storeOptionsAsPropertiesCalled && this[oname] !== undefined && !option.negate) {
-      throw new Error(`option name '${oname}' clashes with existing property on Command
+    if (!this._storeOptionsAsPropertiesCalled && this[name] !== undefined && !option.negate) {
+      throw new Error(`option name '${name}' clashes with existing property on Command
   - either call storeOptionsAsProperties(false) and use .opts() for option values,
   - or call storeOptionsAsProperties(true) to suppress this error and continue storing option values as properties on Command`);
     }
