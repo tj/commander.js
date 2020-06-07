@@ -466,7 +466,7 @@ class Command extends EventEmitter {
 
     if (foundClash) {
       throw new Error(`option '${option.name()}' clashes with existing property '${option.attributeName()}' on Command
-- either call storeOptionsAsProperties(false) and use .opts() to access option values,
+- call storeOptionsAsProperties(false) to store option values safely,
 - or call storeOptionsAsProperties(true) to suppress this check,
 - or change option name`);
     }
