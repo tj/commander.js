@@ -187,6 +187,7 @@ class Command extends EventEmitter {
     cmd._passCommandToAction = this._passCommandToAction;
 
     cmd._executableFile = opts.executableFile || null; // Custom name for executable file, set missing to null to match constructor
+    cmd._actionHandler = opts.action || null; // A handler for sub commands.
     this.commands.push(cmd);
     cmd._parseExpectedArgs(args);
     cmd.parent = this;
@@ -228,8 +229,8 @@ class Command extends EventEmitter {
     // Fail fast and detect when adding rather than later when parsing.
     function checkExplicitNames(commandArray) {
       commandArray.forEach((cmd) => {
-        if (cmd._executableHandler && !cmd._executableFile) {
-          throw new Error(`Must specify executableFile for deeply nested executable: ${cmd.name()}`);
+        if (cmd._executableHandler && !cmd._executableFile && !cmd._actionHandler) {
+          throw new Error(`Must specify executableFile or action for deeply nested executable: ${cmd.name()}`);
         }
         checkExplicitNames(cmd.commands);
       });
@@ -668,6 +669,11 @@ class Command extends EventEmitter {
    */
 
   parse(argv, parseOptions) {
+    this._parseProgram(argv, parseOptions);
+    return this;
+  }
+
+  _parseProgram(argv, parseOptions) {
     if (argv !== undefined && !Array.isArray(argv)) {
       throw new Error('first parameter to parse must be array or undefined');
     }
@@ -714,9 +720,7 @@ class Command extends EventEmitter {
     this._name = this._name || (this._scriptPath && path.basename(this._scriptPath, path.extname(this._scriptPath)));
 
     // Let's go!
-    this._parseCommand([], userArgs);
-
-    return this;
+    return this.parseCommand([], userArgs);
   };
 
   /**
@@ -736,13 +740,14 @@ class Command extends EventEmitter {
    * @param {string[]} [argv]
    * @param {Object} [parseOptions]
    * @param {string} parseOptions.from - where the args are from: 'node', 'user', 'electron'
-   * @return {Promise}
+   * @return {Promise} promise `this`
    * @api public
    */
 
   parseAsync(argv, parseOptions) {
-    this.parse(argv, parseOptions);
-    return Promise.all(this._actionResults).then(() => this);
+    return this._parseProgram(argv, parseOptions).then(() => {
+      return Promise.all(this._actionResults).then(() => this);
+    });
   };
 
   /**
@@ -850,9 +855,11 @@ class Command extends EventEmitter {
 
     // Store the reference to the child process
     this.runningCommand = proc;
+    return Promise.resolve();
   };
 
   /**
+   * @return {Promise}
    * @api private
    */
   _dispatchSubcommand(commandName, operands, unknown) {
@@ -860,35 +867,46 @@ class Command extends EventEmitter {
     if (!subCommand) this._helpAndError();
 
     if (subCommand._executableHandler) {
-      this._executeSubCommand(subCommand, operands.concat(unknown));
-    } else {
-      subCommand._parseCommand(operands, unknown);
+      if (subCommand._actionHandler) {
+        const actionPromise = subCommand._actionHandler({ command: this, operands, unknown });
+        if (actionPromise instanceof Promise) {
+          return actionPromise;
+        }
+        return Promise.resolve(actionPromise);
+      }
+      return this._executeSubCommand(subCommand, operands.concat(unknown));
     }
+    return subCommand.parseCommand(operands, unknown);
   };
 
   /**
    * Process arguments in context of this command.
    *
-   * @api private
+   * @param {string[]} [operands]
+   * @param {string[]} [unknown]
+   * @return {Promise}
    */
 
-  _parseCommand(operands, unknown) {
+  parseCommand(operands = [], unknown = []) {
     const parsed = this.parseOptions(unknown);
     operands = operands.concat(parsed.operands);
     unknown = parsed.unknown;
     this.args = operands.concat(unknown);
 
+    this.emit('commandParsed:' + this.name(), this);
+
+    let commandPromise = Promise.resolve();
     if (operands && this._findCommand(operands[0])) {
-      this._dispatchSubcommand(operands[0], operands.slice(1), unknown);
+      commandPromise = this._dispatchSubcommand(operands[0], operands.slice(1), unknown);
     } else if (this._lazyHasImplicitHelpCommand() && operands[0] === this._helpCommandName) {
       if (operands.length === 1) {
         this.help();
       } else {
-        this._dispatchSubcommand(operands[1], [], [this._helpLongFlag]);
+        commandPromise = this._dispatchSubcommand(operands[1], [], [this._helpLongFlag]);
       }
     } else if (this._defaultCommandName) {
       outputHelpIfRequested(this, unknown); // Run the help for default command from parent rather than passing to default command
-      this._dispatchSubcommand(this._defaultCommandName, operands, unknown);
+      commandPromise = this._dispatchSubcommand(this._defaultCommandName, operands, unknown);
     } else {
       if (this.commands.length && this.args.length === 0 && !this._actionHandler && !this._defaultCommandName) {
         // probably missing subcommand and no handler, user needs help
@@ -928,6 +946,7 @@ class Command extends EventEmitter {
         // fall through for caller to handle after calling .parse()
       }
     }
+    return commandPromise;
   };
 
   /**
