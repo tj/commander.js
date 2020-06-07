@@ -424,6 +424,38 @@ class Command extends EventEmitter {
   };
 
   /**
+   * Internal routine to check whether there is a clash storing option value with a Command property.
+   *
+   * @param {Option} option
+   * @api private
+   */
+
+  _checkForOptionNameClash(option) {
+    if (!this._storeOptionsAsProperties || this._storeOptionsAsPropertiesCalled) {
+      // Storing options safely, or user has been explicit and up to them.
+      return;
+    }
+    // User may override help, and hard to tell if worth warning.
+    if (option.name() === 'help') {
+      return;
+    }
+
+    const commandProperty = this._getOptionValue(option.attributeName());
+    if (commandProperty === undefined) {
+      return;
+    }
+
+    let foundClash = false;
+    foundClash = true;
+
+    if (foundClash) {
+      throw new Error(`option '${option.name()}' clashes with existing property on Command
+- either call storeOptionsAsProperties(false) and use .opts() for option values,
+- or call storeOptionsAsProperties(true) to suppress this error and continue storing option values as properties on Command`);
+    }
+  };
+
+  /**
    * Internal implementation shared by .option() and .requiredOption()
    *
    * @param {Object} config
@@ -441,11 +473,7 @@ class Command extends EventEmitter {
     const name = option.attributeName();
     option.mandatory = !!config.mandatory;
 
-    if (!this._storeOptionsAsPropertiesCalled && this[name] !== undefined && !option.negate) {
-      throw new Error(`option name '${name}' clashes with existing property on Command
-  - either call storeOptionsAsProperties(false) and use .opts() for option values,
-  - or call storeOptionsAsProperties(true) to suppress this error and continue storing option values as properties on Command`);
-    }
+    this._checkForOptionNameClash(option);
 
     // default as 3rd arg
     if (typeof fn !== 'function') {
