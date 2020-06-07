@@ -450,16 +450,25 @@ class Command extends EventEmitter {
 
     const commandProperty = this._getOptionValue(option.attributeName());
     if (commandProperty === undefined) {
+      // no clash
       return;
     }
 
-    let foundClash = false;
-    foundClash = true;
+    let foundClash = true;
+    if (option.negate) {
+      // It is ok if define foo before --no-foo.
+      const positiveLongFlag = option.long.replace(/^--no-/, '--');
+      foundClash = !this._findOption(positiveLongFlag);
+    } else if (option.long) {
+      const negativeLongFlag = option.long.replace(/^--/, '--no-');
+      foundClash = !this._findOption(negativeLongFlag);
+    }
 
     if (foundClash) {
-      throw new Error(`option '${option.name()}' clashes with existing property on Command
-- either call storeOptionsAsProperties(false) and use .opts() for option values,
-- or call storeOptionsAsProperties(true) to suppress this error and continue storing option values as properties on Command`);
+      throw new Error(`option '${option.name()}' clashes with existing property '${option.attributeName()}' on Command
+- either call storeOptionsAsProperties(false) and use .opts() to access option values,
+- or call storeOptionsAsProperties(true) to suppress this check,
+- or change option name`);
     }
   };
 
