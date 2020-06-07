@@ -89,12 +89,36 @@ describe('.version', () => {
     }).toThrow(myVersion);
   });
 
+  test('when specify just custom short flag then display version', () => {
+    const myVersion = '1.2.3';
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .version(myVersion, '-r');
+
+    expect(() => {
+      program.parse(['node', 'test', '-r']);
+    }).toThrow(myVersion);
+  });
+
   test('when specify custom long flag then display version', () => {
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
       .exitOverride()
       .version(myVersion, '-r, --revision');
+
+    expect(() => {
+      program.parse(['node', 'test', '--revision']);
+    }).toThrow(myVersion);
+  });
+
+  test('when specify just custom long flag then display version', () => {
+    const myVersion = '1.2.3';
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .version(myVersion, '--revision');
 
     expect(() => {
       program.parse(['node', 'test', '--revision']);

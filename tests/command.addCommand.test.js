@@ -35,7 +35,7 @@ test('when commands added using .addCommand and .command then internals similar'
       case 'boolean':
       case 'number':
       case 'undefined':
-        // Compare vaues in a way that will be readable in test failure message.
+        // Compare values in a way that will be readable in test failure message.
         expect(`${key}:${cmd1[key]}`).toEqual(`${key}:${cmd2[key]}`);
         break;
     }
