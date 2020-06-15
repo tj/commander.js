@@ -118,6 +118,7 @@ class Command extends EventEmitter {
     this._name = name || '';
     this._optionValues = {};
     this._storeOptionsAsProperties = true; // backwards compatible by default
+    this._storeOptionsAsPropertiesCalled = false;
     this._passCommandToAction = true; // backwards compatible by default
     this._actionResults = [];
     this._actionHandler = null;
@@ -431,6 +432,47 @@ class Command extends EventEmitter {
   };
 
   /**
+   * Internal routine to check whether there is a clash storing option value with a Command property.
+   *
+   * @param {Option} option
+   * @api private
+   */
+
+  _checkForOptionNameClash(option) {
+    if (!this._storeOptionsAsProperties || this._storeOptionsAsPropertiesCalled) {
+      // Storing options safely, or user has been explicit and up to them.
+      return;
+    }
+    // User may override help, and hard to tell if worth warning.
+    if (option.name() === 'help') {
+      return;
+    }
+
+    const commandProperty = this._getOptionValue(option.attributeName());
+    if (commandProperty === undefined) {
+      // no clash
+      return;
+    }
+
+    let foundClash = true;
+    if (option.negate) {
+      // It is ok if define foo before --no-foo.
+      const positiveLongFlag = option.long.replace(/^--no-/, '--');
+      foundClash = !this._findOption(positiveLongFlag);
+    } else if (option.long) {
+      const negativeLongFlag = option.long.replace(/^--/, '--no-');
+      foundClash = !this._findOption(negativeLongFlag);
+    }
+
+    if (foundClash) {
+      throw new Error(`option '${option.name()}' clashes with existing property '${option.attributeName()}' on Command
+- call storeOptionsAsProperties(false) to store option values safely,
+- or call storeOptionsAsProperties(true) to suppress this check,
+- or change option name`);
+    }
+  };
+
+  /**
    * Internal implementation shared by .option() and .requiredOption()
    *
    * @param {Object} config
@@ -447,6 +489,8 @@ class Command extends EventEmitter {
     const oname = option.name();
     const name = option.attributeName();
     option.mandatory = !!config.mandatory;
+
+    this._checkForOptionNameClash(option);
 
     // default as 3rd arg
     if (typeof fn !== 'function') {
@@ -612,6 +656,7 @@ class Command extends EventEmitter {
     */
 
   storeOptionsAsProperties(value) {
+    this._storeOptionsAsPropertiesCalled = true;
     this._storeOptionsAsProperties = (value === undefined) || value;
     if (this.options.length) {
       throw new Error('call .storeOptionsAsProperties() before adding options');
