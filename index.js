@@ -1525,17 +1525,38 @@ class Command extends EventEmitter {
    */
 
   outputHelp(cb) {
-    if (!cb) {
-      cb = (passthru) => {
-        return passthru;
-      };
+    const groupListeners = [];
+    let command = this;
+    while (command) {
+      groupListeners.push(command); // ordered from current command to root
+      command = command.parent;
     }
-    const cbOutput = cb(this.helpInformation());
-    if (typeof cbOutput !== 'string' && !Buffer.isBuffer(cbOutput)) {
-      throw new Error('outputHelp callback must return a string or a Buffer');
+
+    groupListeners.slice().reverse().forEach(command => command.emit('preGroupHelp', this));
+    this.emit('preHelp', this);
+
+    // 'help' listener is an override
+    if (this.listenerCount('help') > 0) {
+      this.emit('help', this);
+    } else {
+      const nearestGroupListener = groupListeners.find(command => command.listenerCount('help') > 0);
+      if (nearestGroupListener) {
+        nearestGroupListener.emit('help', this);
+      } else {
+        let helpInformation = this.helpInformation();
+        if (cb) {
+          helpInformation = cb(helpInformation);
+          if (typeof helpInformation !== 'string' && !Buffer.isBuffer(helpInformation)) {
+            throw new Error('outputHelp callback must return a string or a Buffer');
+          }
+        }
+        process.stdout.write(helpInformation);
+      }
     }
-    process.stdout.write(cbOutput);
-    this.emit(this._helpLongFlag);
+
+    this.emit(this._helpLongFlag); // Leave in for backwards compatibility
+    this.emit('postHelp', this);
+    groupListeners.forEach(command => command.emit('postGroupHelp', this));
   };
 
   /**
