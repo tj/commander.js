@@ -144,6 +144,7 @@ describe('.exitOverride and error details', () => {
     const program = new commander.Command();
     program
       .exitOverride()
+      .on('help', () => {})
       .command('compress', 'compress description');
 
     let caughtErr;
@@ -153,7 +154,6 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expect(writeSpy).toHaveBeenCalled();
     expectCommanderError(caughtErr, 1, 'commander.help', '(outputHelp)');
   });
 
