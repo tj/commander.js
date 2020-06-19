@@ -1515,6 +1515,24 @@ class Command extends EventEmitter {
       .join('\n');
   };
 
+  _getOutputContext(options) {
+    const contextOptions = options || {};
+    const context = { error: !!contextOptions.error };
+    let write;
+    let log;
+    if (context.error) {
+      log = (...args) => console.error(...args);
+      write = (...args) => process.stderr.write(...args);
+    } else {
+      log = (...args) => console.log(...args);
+      write = (...args) => process.stdout.write(...args);
+    }
+    context.log = contextOptions.log || log;
+    context.write = contextOptions.write || write;
+    context.command = this;
+    return context;
+  }
+
   /**
    * Output help information for this command.
    *
@@ -1524,7 +1542,16 @@ class Command extends EventEmitter {
    * @api public
    */
 
-  outputHelp(cb) {
+  outputHelp(custom) {
+    let options;
+    let legacyCallback;
+    if (typeof custom === 'function') {
+      legacyCallback = custom;
+    } else {
+      options = custom;
+    }
+    const context = this._getOutputContext(options);
+
     const groupListeners = [];
     let command = this;
     while (command) {
@@ -1532,20 +1559,20 @@ class Command extends EventEmitter {
       command = command.parent;
     }
 
-    groupListeners.slice().reverse().forEach(command => command.emit('preGroupHelp', this));
-    this.emit('preHelp', this);
+    groupListeners.slice().reverse().forEach(command => command.emit('preGroupHelp', context));
+    this.emit('preHelp', context);
 
     // 'help' listener is an override
     if (this.listenerCount('help') > 0) {
-      this.emit('help', this);
+      this.emit('help', context);
     } else {
       const nearestGroupListener = groupListeners.find(command => command.listenerCount('help') > 0);
       if (nearestGroupListener) {
-        nearestGroupListener.emit('help', this);
+        nearestGroupListener.emit('help', context);
       } else {
         let helpInformation = this.helpInformation();
-        if (cb) {
-          helpInformation = cb(helpInformation);
+        if (legacyCallback) {
+          helpInformation = legacyCallback(helpInformation);
           if (typeof helpInformation !== 'string' && !Buffer.isBuffer(helpInformation)) {
             throw new Error('outputHelp callback must return a string or a Buffer');
           }
@@ -1555,8 +1582,8 @@ class Command extends EventEmitter {
     }
 
     this.emit(this._helpLongFlag); // Leave in for backwards compatibility
-    this.emit('postHelp', this);
-    groupListeners.forEach(command => command.emit('postGroupHelp', this));
+    this.emit('postHelp', context);
+    groupListeners.forEach(command => command.emit('postGroupHelp', context));
   };
 
   /**
@@ -1604,7 +1631,7 @@ class Command extends EventEmitter {
    */
 
   _helpAndError() {
-    this.outputHelp();
+    this.outputHelp({ error: true });
     // message: do not have all displayed text available so only passing placeholder.
     this._exit(1, 'commander.help', '(outputHelp)');
   };
