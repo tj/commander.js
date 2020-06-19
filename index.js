@@ -1515,7 +1515,7 @@ class Command extends EventEmitter {
       .join('\n');
   };
 
-  _getOutputContext(options) {
+  _getHelpContext(options) {
     const contextOptions = options || {};
     const context = { error: !!contextOptions.error };
     let write;
@@ -1550,7 +1550,7 @@ class Command extends EventEmitter {
     } else {
       options = custom;
     }
-    const context = this._getOutputContext(options);
+    const context = this._getHelpContext(options);
 
     const groupListeners = [];
     let command = this;
@@ -1577,7 +1577,7 @@ class Command extends EventEmitter {
             throw new Error('outputHelp callback must return a string or a Buffer');
           }
         }
-        process.stdout.write(helpInformation);
+        context.write(helpInformation);
       }
     }
 
