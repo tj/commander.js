@@ -377,6 +377,7 @@ program
 [#1275]: https://github.com/tj/commander.js/pull/1275
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[6.0.0-0]: https://github.com/tj/commander.js/compare/v5.1.0..v6.0.0-0
 [5.1.0]: https://github.com/tj/commander.js/compare/v5.0.0..v5.1.0
 [5.0.0]: https://github.com/tj/commander.js/compare/v4.1.1..v5.0.0
 [5.0.0-4]: https://github.com/tj/commander.js/compare/v5.0.0-3..v5.0.0-4
