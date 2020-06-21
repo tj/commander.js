@@ -76,3 +76,17 @@ describe('listeners for "help" and "groupHelp"', () => {
     writeSpy.mockClear();
   });
 });
+
+test('when listen to lots then emitted in order"', () => {
+  const program = new commander.Command();
+  const eventsOrder = [];
+  // Mix up the order added
+  program
+    .on('postGroupHelp', () => eventsOrder.push('postGroupHelp'))
+    .on('preGroupHelp', () => eventsOrder.push('preGroupHelp'))
+    .on('preHelp', () => eventsOrder.push('preHelp'))
+    .on('postHelp', () => eventsOrder.push('postHelp'))
+    .on('help', () => eventsOrder.push('help'));
+  program.outputHelp();
+  expect(eventsOrder).toEqual(['preGroupHelp', 'preHelp', 'help', 'postHelp', 'postGroupHelp']);
+});
