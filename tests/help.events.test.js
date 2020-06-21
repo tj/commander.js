@@ -90,3 +90,67 @@ test('when listen to lots then emitted in order"', () => {
   program.outputHelp();
   expect(eventsOrder).toEqual(['preGroupHelp', 'preHelp', 'help', 'postHelp', 'postGroupHelp']);
 });
+
+describe('event context', () => {
+  test('when error:undefined then write is stdout.write', () => {
+    const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
+    const program = new commander.Command();
+    program
+      .on('help', (context) => context.write('test'))
+      .outputHelp();
+    expect(writeSpy).toHaveBeenCalledWith('test');
+    writeSpy.mockClear();
+  });
+
+  test('when error:true then write is stderr.write', () => {
+    const writeSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
+    const program = new commander.Command();
+    program
+      .on('help', (context) => context.write('test'))
+      .outputHelp({ error: true });
+    expect(writeSpy).toHaveBeenCalledWith('test');
+    writeSpy.mockClear();
+  });
+
+  test('when error:undefined then log is console.log', () => {
+    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
+    const program = new commander.Command();
+    program
+      .on('help', (context) => context.log('test'))
+      .outputHelp();
+    expect(logSpy).toHaveBeenCalledWith('test');
+    logSpy.mockClear();
+  });
+
+  test('when error:true then log is console.error', () => {
+    const logSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+    const program = new commander.Command();
+    program
+      .on('help', (context) => context.log('test'))
+      .outputHelp({ error: true });
+    expect(logSpy).toHaveBeenCalledWith('test');
+    logSpy.mockClear();
+  });
+
+  test('when help called on program then context.command for groupHelp is program', () => {
+    let contextCommand;
+    const program = new commander.Command();
+    program
+      .on('groupHelp', (context) => { contextCommand = context.command; })
+      .outputHelp();
+    expect(contextCommand).toBe(program);
+  });
+
+  test('when help called on subcommand then context.command for groupHelp is subcommand', () => {
+    let contextCommand;
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .on('groupHelp', (context) => { contextCommand = context.command; })
+    const sub = program.command('sub');
+    expect(() => {
+      program.parse(['sub', '--help'], { from: 'user' });
+    }).toThrow('(outputHelp)');
+    expect(contextCommand).toBe(sub);
+  });
+});
