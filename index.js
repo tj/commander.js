@@ -857,7 +857,7 @@ class Command extends EventEmitter {
    */
   _dispatchSubcommand(commandName, operands, unknown) {
     const subCommand = this._findCommand(commandName);
-    if (!subCommand) this._helpAndError();
+    if (!subCommand) this.help({ error: true });
 
     if (subCommand._executableHandler) {
       this._executeSubCommand(subCommand, operands.concat(unknown));
@@ -892,7 +892,7 @@ class Command extends EventEmitter {
     } else {
       if (this.commands.length && this.args.length === 0 && !this._actionHandler && !this._defaultCommandName) {
         // probably missing subcommand and no handler, user needs help
-        this._helpAndError();
+        this.help({ error: true });
       }
 
       outputHelpIfRequested(this, parsed.unknown);
@@ -923,7 +923,7 @@ class Command extends EventEmitter {
         }
       } else if (this.commands.length) {
         // This command has subcommands and nothing hooked up at this level, so display help.
-        this._helpAndError();
+        this.help({ error: true });
       } else {
         // fall through for caller to handle after calling .parse()
       }
@@ -1519,8 +1519,8 @@ class Command extends EventEmitter {
    * @api private
    */
 
-  _getHelpContext(options) {
-    const contextOptions = options || {};
+  _getHelpContext(contextOptions) {
+    contextOptions = contextOptions || {};
     const context = { error: !!contextOptions.error };
     let write;
     let log;
@@ -1612,27 +1612,17 @@ class Command extends EventEmitter {
   /**
    * Output help information and exit.
    *
-   * @param {Function} [cb]
    * @api public
    */
 
-  help(cb) {
-    this.outputHelp(cb);
-    // exitCode: preserving original behaviour which was calling process.exit()
+  help(contextOptions) {
+    this.outputHelp(contextOptions);
+    let exitCode = process.exitCode || 0;
+    if (exitCode === 0 && contextOptions && typeof contextOptions !== 'function' && contextOptions.error) {
+      exitCode = 1;
+    }
     // message: do not have all displayed text available so only passing placeholder.
-    this._exit(process.exitCode || 0, 'commander.help', '(outputHelp)');
-  };
-
-  /**
-   * Output help information and exit. Display for error situations.
-   *
-   * @api private
-   */
-
-  _helpAndError() {
-    this.outputHelp({ error: true });
-    // message: do not have all displayed text available so only passing placeholder.
-    this._exit(1, 'commander.help', '(outputHelp)');
+    this._exit(exitCode, 'commander.help', '(outputHelp)');
   };
 };
 
