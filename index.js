@@ -1515,6 +1515,10 @@ class Command extends EventEmitter {
       .join('\n');
   };
 
+  /**
+   * @api private
+   */
+
   _getHelpContext(options) {
     const contextOptions = options || {};
     const context = { error: !!contextOptions.error };
@@ -1536,21 +1540,16 @@ class Command extends EventEmitter {
   /**
    * Output help information for this command.
    *
-   * When listener(s) are available for the helpLongFlag
-   * those callbacks are invoked.
-   *
    * @api public
    */
 
-  outputHelp(custom) {
-    let options;
+  outputHelp(contextOptions) {
     let legacyCallback;
-    if (typeof custom === 'function') {
-      legacyCallback = custom;
-    } else {
-      options = custom;
+    if (typeof contextOptions === 'function') {
+      legacyCallback = contextOptions;
+      contextOptions = {};
     }
-    const context = this._getHelpContext(options);
+    const context = this._getHelpContext(contextOptions);
 
     const groupListeners = [];
     let command = this;
