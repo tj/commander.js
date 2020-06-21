@@ -1565,9 +1565,9 @@ class Command extends EventEmitter {
     if (this.listenerCount('help') > 0) {
       this.emit('help', context);
     } else {
-      const nearestGroupListener = groupListeners.find(command => command.listenerCount('help') > 0);
+      const nearestGroupListener = groupListeners.find(command => command.listenerCount('groupHelp') > 0);
       if (nearestGroupListener) {
-        nearestGroupListener.emit('help', context);
+        nearestGroupListener.emit('groupHelp', context);
       } else {
         let helpInformation = this.helpInformation();
         if (legacyCallback) {
