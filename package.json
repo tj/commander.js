@@ -31,15 +31,15 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "@types/jest": "^25.2.1",
-    "@types/node": "^12.12.38",
-    "@typescript-eslint/eslint-plugin": "^2.31.0",
+    "@types/jest": "^26.0.0",
+    "@types/node": "^14.0.13",
+    "@typescript-eslint/eslint-plugin": "^2.34.0",
     "eslint": "^6.8.0",
     "eslint-config-standard-with-typescript": "^16.0.0",
-    "eslint-plugin-jest": "^23.10.0",
+    "eslint-plugin-jest": "^23.14.0",
     "jest": "^26.0.1",
-    "standard": "^14.3.3",
-    "typescript": "^3.7.5"
+    "standard": "^14.3.4",
+    "typescript": "^3.9.5"
   },
   "typings": "typings/index.d.ts",
   "engines": {
