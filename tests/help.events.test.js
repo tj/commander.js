@@ -146,7 +146,7 @@ describe('event context', () => {
     const program = new commander.Command();
     program
       .exitOverride()
-      .on('groupHelp', (context) => { contextCommand = context.command; })
+      .on('groupHelp', (context) => { contextCommand = context.command; });
     const sub = program.command('sub');
     expect(() => {
       program.parse(['sub', '--help'], { from: 'user' });
