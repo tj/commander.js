@@ -153,4 +153,22 @@ describe('event context', () => {
     }).toThrow('(outputHelp)');
     expect(contextCommand).toBe(sub);
   });
+
+  test('when error:undefined then context error is false', () => {
+    let contextError;
+    const program = new commander.Command();
+    program
+      .on('help', (context) => { contextError = context.error; })
+      .outputHelp();
+    expect(contextError).toBe(false);
+  });
+
+  test('when error:true then context error is true', () => {
+    let contextError;
+    const program = new commander.Command();
+    program
+      .on('help', (context) => { contextError = context.error; })
+      .outputHelp({ error: true });
+    expect(contextError).toBe(true);
+  });
 });
