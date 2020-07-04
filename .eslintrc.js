@@ -25,7 +25,7 @@ const typescriptSettings = {
     'one-var': 'off',
     'space-before-function-paren': ['error', 'never'],
     semi: 'off',
-    // Using methods rather than properties in next line, as listing method overloads separately.
+    // Using method rather than property for method-signature-style, as listing method overloads separately.
     '@typescript-eslint/method-signature-style': ['warn', 'method'],
     '@typescript-eslint/semi': ['error', 'always'],
     '@typescript-eslint/member-delimiter-style': [
