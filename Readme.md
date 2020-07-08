@@ -38,6 +38,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Avoiding option name clashes](#avoiding-option-name-clashes)
     - [TypeScript](#typescript)
     - [createCommand()](#createcommand)
+    - [ECMAScript Modules](#ecmascript-modules)
     - [Node options such as `--harmony`](#node-options-such-as---harmony)
     - [Debugging stand-alone executable subcommands](#debugging-stand-alone-executable-subcommands)
     - [Override exit handling](#override-exit-handling)
@@ -679,6 +680,17 @@ const program = createCommand();
 `createCommand` is also a method of the Command object, and creates a new command rather than a subcommand. This gets used internally
 when creating subcommands using `.command()`, and you may override it to
 customise the new subcommand (examples using [subclass](./examples/custom-command-class.js) and [function](./examples/custom-command-function.js)).
+
+### ECMAScript Modules
+
+Commander is currently a CommonJS package, and the default export can be imported into an ES Module (esm):
+
+```js
+// index.mjs
+import commander from 'commander';
+const program = commander.program;
+const newCommand = new commander.Command();
+```
 
 ### Node options such as `--harmony`
 
