@@ -1,5 +1,15 @@
 # Changelog for 2.x
 
+## [2.20.1] (2019-09-29)
+
+### Fixed
+
+* Improve tracking of executable subcommands.
+
+### Changed
+
+* update development dependencies
+
 ## 2.20.0 / 2019-04-02
 
 * fix: resolve symbolic links completely when hunting for subcommands (#935)
@@ -205,3 +215,5 @@
 ## 2.0.0 / 2013-07-18
 
 * remove input methods (.prompt, .confirm, etc)
+
+[2.20.1]: https://github.com/tj/commander.js/compare/v2.20.0...v2.20.1
