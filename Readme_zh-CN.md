@@ -38,6 +38,7 @@
     - [避免选项命名冲突](#%e9%81%bf%e5%85%8d%e9%80%89%e9%a1%b9%e5%91%bd%e5%90%8d%e5%86%b2%e7%aa%81)
     - [TypeScript](#typescript)
     - [createCommand()](#createCommand)
+    - [导入到 ES 模块](#%e5%af%bc%e5%85%a5%e5%88%b0+ES+%e6%a8%a1%e5%9d%97)
     - [Node 选项 --harmony](#node-%e9%80%89%e9%a1%b9---harmony)
     - [调试子命令](#%e8%b0%83%e8%af%95%e5%ad%90%e5%91%bd%e4%bb%a4)
     - [重写退出](#%e9%87%8d%e5%86%99%e9%80%80%e5%87%ba)
@@ -654,6 +655,17 @@ const program = createCommand();
 ```
 
 `createCommand`是 command 对象的一个方法，可以创建一个新的命令（而非子命令），使用`command()`创建子命令时内部会调用该方法，具体使用方式可参考[子类](./examples/custom-command-class.js)和[方法重写](./examples/custom-command-function.js)。
+
+### 导入到 ES 模块
+
+Commander 是一个 CommonJS 包，支持导入到 ES 模块中去。
+
+```js
+// index.mjs
+import commander from 'commander';
+const program = commander.program;
+const newCommand = new commander.Command();
+```
 
 ### Node 选项 --harmony
 
