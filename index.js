@@ -23,7 +23,7 @@ class Option {
     this.required = flags.indexOf('<') >= 0; // A value must be supplied when the option is specified.
     this.optional = flags.indexOf('[') >= 0; // A value is optional when the option is specified.
     this.mandatory = false; // The option must have a value after parsing, which usually means it must be specified on command line.
-    this.negate = flags.indexOf('-no-') !== -1;
+    this.negate = flags.indexOf('--no-') !== -1;
     const flagParts = flags.split(/[ ,|]+/);
     if (flagParts.length > 1 && !/^[[<]/.test(flagParts[1])) this.short = flagParts.shift();
     this.long = flagParts.shift();

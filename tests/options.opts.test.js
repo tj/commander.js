@@ -70,4 +70,13 @@ describe.each([true, false])('storeOptionsAsProperties is %s', (storeOptionsAsPr
     program.parse(['node', 'test']);
     expect(program.opts()).toEqual({ pepper: pepperDefault });
   });
+
+  test('when option with name including no- is specified then it should not have default value as true', () => {
+    const program = new commander.Command();
+    program.storeOptionsAsProperties(storeOptionsAsProperties);
+    program
+      .option('--module-no-parse <value>', 'test description');
+    program.parse(['node', 'test']);
+    expect(program.opts()).toEqual({});
+  });
 });
