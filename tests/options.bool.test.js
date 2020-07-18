@@ -107,3 +107,22 @@ describe('boolean flag with non-boolean default', () => {
     expect(program.olives).toBe(flagValue);
   });
 });
+
+// Regression test for #1301 with `-no-` in middle of option
+describe('regression test for -no- in middle of option flag', () => {
+  test('when flag not specified then value is undefined', () => {
+    const program = new commander.Command();
+    program
+      .option('--module-no-parse');
+    program.parse(['node', 'test']);
+    expect(program.moduleNoParse).toBeUndefined();
+  });
+
+  test('when flag specified then value is true', () => {
+    const program = new commander.Command();
+    program
+      .option('--module-no-parse');
+    program.parse(['node', 'test', '--module-no-parse']);
+    expect(program.moduleNoParse).toEqual(true);
+  });
+});
