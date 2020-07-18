@@ -8,13 +8,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
-## [6.0.0-0] (2020-06-20)
+## [6.0.0] (2020-07-21)
 
 ### Added
 
 - add support for variadic options ([#1250])
 - allow options to be added with just a short flag ([#1256])
 - throw an error if there might be a clash between option name and a Command property, with advice on how to resolve ([#1275])
+
+## [6.0.0-0] (2020-06-20)
+
+(Released in 6.0.0)
 
 ## [5.1.0] (2020-04-25)
 
@@ -274,6 +278,7 @@ if (program.rawArgs.length < 3) ...
 [#1275]: https://github.com/tj/commander.js/pull/1275
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[6.0.0]: https://github.com/tj/commander.js/compare/v5.1.0..v6.0.0
 [6.0.0-0]: https://github.com/tj/commander.js/compare/v5.1.0..v6.0.0-0
 [5.1.0]: https://github.com/tj/commander.js/compare/v5.0.0..v5.1.0
 [5.0.0]: https://github.com/tj/commander.js/compare/v4.1.1..v5.0.0
