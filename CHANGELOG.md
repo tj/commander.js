@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - allow options to be added with just a short flag ([#1256])
 - throw an error if there might be a clash between option name and a Command property, with advice on how to resolve ([#1275])
 
+### Fixed
+
+- Options which contain -no- in the middle of the option flag should not be treated as negatable. ([#1301])
+
 ## [6.0.0-0] (2020-06-20)
 
 (Released in 6.0.0)
@@ -276,6 +280,7 @@ if (program.rawArgs.length < 3) ...
 [#1250]: https://github.com/tj/commander.js/pull/1250
 [#1256]: https://github.com/tj/commander.js/pull/1256
 [#1275]: https://github.com/tj/commander.js/pull/1275
+[#1301]: https://github.com/tj/commander.js/issues/1301
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
 [6.0.0]: https://github.com/tj/commander.js/compare/v5.1.0..v6.0.0
