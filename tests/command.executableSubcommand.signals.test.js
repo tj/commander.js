@@ -8,7 +8,7 @@ const path = require('path');
 //  https://nodejs.org/api/process.html#process_signal_events
 const describeOrSkipOnWindows = (process.platform === 'win32') ? describe.skip : describe;
 
-// Note: the previous (sinon) test had custom code for SIGUSR1, revist if required:
+// Note: the previous (sinon) test had custom code for SIGUSR1, revisit if required:
 //    As described at https://nodejs.org/api/process.html#process_signal_events
 //    this signal will start a debugger and thus the process might output an
 //    additional error message:

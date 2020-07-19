@@ -6,6 +6,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html). (Format adopted after v3.0.0.)
 
 <!-- markdownlint-disable MD024 -->
+<!-- markdownlint-disable MD004 -->
+
+## [6.0.0] (2020-07-21)
+
+### Added
+
+- add support for variadic options ([#1250])
+- allow options to be added with just a short flag ([#1256])
+- throw an error if there might be a clash between option name and a Command property, with advice on how to resolve ([#1275])
+
+### Fixed
+
+- Options which contain -no- in the middle of the option flag should not be treated as negatable. ([#1301])
+
+## [6.0.0-0] (2020-06-20)
+
+(Released in 6.0.0)
 
 ## [5.1.0] (2020-04-25)
 
@@ -198,95 +215,9 @@ if (program.rawArgs.length < 3) ...
 
 (Released in 4.0.0)
 
-## [2.20.1] (2019-09-29)
-
-### Fixed
-
-* Improve tracking of executable subcommands.
-
-### Changed
-
-* update development dependencies
-
-## [3.0.2] (2019-09-27)
-
-### Fixed
-
-* Improve tracking of executable subcommands.
-
-### Changed
-
-* update development dependencies
-
-## [3.0.1] (2019-08-30)
-
-### Added
-
-* .name and .usage to README ([#1010])
-* Table of Contents to README ([#1010])
-* TypeScript definition for `executableFile` in CommandOptions ([#1028])
-
-### Changed
-
-* consistently use `const` rather than `var` in README ([#1026])
-
-### Fixed
-
-* help for sub commands with custom executableFile ([#1018])
-
-## [3.0.0] / 2019-08-08
-
-* Add option to specify executable file name ([#999])
-  * e.g. `.command('clone', 'clone description', { executableFile: 'myClone' })`
-* Change docs for `.command` to contrast action handler vs git-style executable. ([#938] [#990])
-* **Breaking** Change TypeScript to use overloaded function for `.command`. ([#938] [#990])
-* Change to use straight quotes around strings in error messages (like 'this' instead of `this') ([#915])
-* Add TypeScript "reference types" for node ([#974])
-* Add support for hyphen as an option argument in subcommands ([#697])
-* Add support for a short option flag and its value to be concatenated for action handler subcommands ([#599])
-  * e.g. `-p 80` can also be supplied as `-p80`
-* Add executable arguments to spawn in win32, for git-style executables ([#611])
-  * e.g. `node --harmony myCommand.js clone`
-* Add parent command as prefix of subcommand in help ([#980])
-* Add optional custom description to `.version` ([#963])
-  * e.g. `program.version('0.0.1', '-v, --vers', 'output the current version')`
-* Add `.helpOption(flags, description)` routine to customise help flags and description ([#963])
-  * e.g. `.helpOption('-e, --HELP', 'read more information')`
-* Fix behavior of --no-* options ([#795])
-  * can now define both `--foo` and `--no-foo`
-  * **Breaking** custom event listeners: `--no-foo` on cli now emits `option:no-foo` (previously `option:foo`)
-  * **Breaking** default value: defining `--no-foo` after defining `--foo` leaves the default value unchanged (previously set it to false)
-  * allow boolean default value, such as from environment ([#987])
-* Increment inspector port for spawned subcommands ([#991])
-  * e.g. `node --inspect myCommand.js clone`
-
-### Migration Tips
-
-The custom event for a negated option like `--no-foo` is `option:no-foo` (previously `option:foo`).
-
-```js
-program
-  .option('--no-foo')
-  .on('option:no-foo', () => {
-    console.log('removing foo');
-  });
-```
-
-When using TypeScript, adding a command does not allow an explicit `undefined` for an unwanted executable description (e.g
-for a command with an action handler).
-
-```js
-program
-  .command('action1', undefined, { noHelp: true }) // No longer valid
-  .command('action2', { noHelp: true }) // Correct
-```
-
-## 3.0.0-0 Prerelease / 2019-07-28
-
-(Released as 3.0.0)
-
 ## Older versions
 
+* [3.x](./changelogs/CHANGELOG-3.md)
 * [2.x](./changelogs/CHANGELOG-2.md)
 * [1.x](./changelogs/CHANGELOG-1.md)
 * [0.x](./changelogs/CHANGELOG-0.md)
@@ -296,34 +227,16 @@ program
 [#508]: https://github.com/tj/commander.js/issues/508
 [#512]: https://github.com/tj/commander.js/issues/512
 [#531]: https://github.com/tj/commander.js/issues/531
-[#599]: https://github.com/tj/commander.js/issues/599
-[#611]: https://github.com/tj/commander.js/issues/611
 [#645]: https://github.com/tj/commander.js/issues/645
-[#697]: https://github.com/tj/commander.js/issues/697
 [#742]: https://github.com/tj/commander.js/issues/742
 [#764]: https://github.com/tj/commander.js/issues/764
-[#795]: https://github.com/tj/commander.js/issues/795
 [#802]: https://github.com/tj/commander.js/issues/802
 [#806]: https://github.com/tj/commander.js/issues/806
 [#809]: https://github.com/tj/commander.js/issues/809
-[#915]: https://github.com/tj/commander.js/issues/915
-[#938]: https://github.com/tj/commander.js/issues/938
 [#948]: https://github.com/tj/commander.js/issues/948
 [#962]: https://github.com/tj/commander.js/issues/962
-[#963]: https://github.com/tj/commander.js/issues/963
-[#974]: https://github.com/tj/commander.js/issues/974
-[#980]: https://github.com/tj/commander.js/issues/980
-[#987]: https://github.com/tj/commander.js/issues/987
-[#990]: https://github.com/tj/commander.js/issues/990
-[#991]: https://github.com/tj/commander.js/issues/991
-[#993]: https://github.com/tj/commander.js/issues/993
 [#995]: https://github.com/tj/commander.js/issues/995
-[#999]: https://github.com/tj/commander.js/issues/999
-[#1010]: https://github.com/tj/commander.js/pull/1010
-[#1018]: https://github.com/tj/commander.js/pull/1018
-[#1026]: https://github.com/tj/commander.js/pull/1026
 [#1027]: https://github.com/tj/commander.js/pull/1027
-[#1028]: https://github.com/tj/commander.js/pull/1028
 [#1032]: https://github.com/tj/commander.js/issues/1032
 [#1035]: https://github.com/tj/commander.js/pull/1035
 [#1040]: https://github.com/tj/commander.js/pull/1040
@@ -364,8 +277,14 @@ program
 [#1236]: https://github.com/tj/commander.js/pull/1236
 [#1247]: https://github.com/tj/commander.js/pull/1247
 [#1248]: https://github.com/tj/commander.js/pull/1248
+[#1250]: https://github.com/tj/commander.js/pull/1250
+[#1256]: https://github.com/tj/commander.js/pull/1256
+[#1275]: https://github.com/tj/commander.js/pull/1275
+[#1301]: https://github.com/tj/commander.js/issues/1301
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[6.0.0]: https://github.com/tj/commander.js/compare/v5.1.0..v6.0.0
+[6.0.0-0]: https://github.com/tj/commander.js/compare/v5.1.0..v6.0.0-0
 [5.1.0]: https://github.com/tj/commander.js/compare/v5.0.0..v5.1.0
 [5.0.0]: https://github.com/tj/commander.js/compare/v4.1.1..v5.0.0
 [5.0.0-4]: https://github.com/tj/commander.js/compare/v5.0.0-3..v5.0.0-4
@@ -379,7 +298,3 @@ program
 [4.0.0]: https://github.com/tj/commander.js/compare/v3.0.2..v4.0.0
 [4.0.0-1]: https://github.com/tj/commander.js/compare/v4.0.0-0..v4.0.0-1
 [4.0.0-0]: https://github.com/tj/commander.js/compare/v3.0.2...v4.0.0-0
-[3.0.2]: https://github.com/tj/commander.js/compare/v3.0.1...v3.0.2
-[3.0.1]: https://github.com/tj/commander.js/compare/v3.0.0...v3.0.1
-[3.0.0]: https://github.com/tj/commander.js/compare/v2.20.1...v3.0.0
-[2.20.1]: https://github.com/tj/commander.js/compare/v2.20.0...v2.20.1

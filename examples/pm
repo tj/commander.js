@@ -1,16 +1,18 @@
 #!/usr/bin/env node
 
-// const program = require('commander'); // (normal include)
-const program = require('../'); // include commander in git clone of commander repo
+// const { Command } = require('commander'); // (normal include)
+const { Command } = require('../'); // include commander in git clone of commander repo
+const program = new Command();
 
 program
   .version('0.0.1')
   .description('Fake package manager')
   .command('install [name]', 'install one or more packages').alias('i')
   .command('search [query]', 'search with optional query').alias('s')
-  .command('list', 'list packages installed')
-  .command('publish', 'publish the package').alias('p')
-  .parse(process.argv);
+  .command('update', 'update installed packages', { executableFile: 'myUpdateSubCommand' })
+  .command('list', 'list packages installed', { isDefault: true });
+
+program.parse(process.argv);
 
 // here .command() is invoked with a description,
 // and no .action(callback) calls to handle sub-commands.
@@ -18,8 +20,8 @@ program
 // executables for sub-commands, much like git(1) and other
 // popular tools.
 
-// here only ./pm-install(1) is implemented, however you
-// would define ./pm-search(1) and ./pm-list(1) etc.
+// here only ./pm-install(1) and ./pm-list(1) are implemented, however you
+// would define ./pm-search(1) etc.
 
 // Try the following:
 //   ./examples/pm

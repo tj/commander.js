@@ -8,16 +8,16 @@ test('when long option description then wrap and indent', () => {
   process.stdout.columns = 80;
   const program = new commander.Command();
   program
-    .option('-x -extra-long-option-switch', 'kjsahdkajshkahd kajhsd akhds kashd kajhs dkha dkh aksd ka dkha kdh kasd ka kahs dkh sdkh askdh aksd kashdk ahsd kahs dkha skdh');
+    .option('-x --extra-long-option-switch', 'kjsahdkajshkahd kajhsd akhds kashd kajhs dkha dkh aksd ka dkha kdh kasd ka kahs dkh sdkh askdh aksd kashdk ahsd kahs dkha skdh');
 
   const expectedOutput =
 `Usage:  [options]
 
 Options:
-  -x -extra-long-option-switch  kjsahdkajshkahd kajhsd akhds kashd kajhs dkha
-                                dkh aksd ka dkha kdh kasd ka kahs dkh sdkh
-                                askdh aksd kashdk ahsd kahs dkha skdh
-  -h, --help                    display help for command
+  -x --extra-long-option-switch  kjsahdkajshkahd kajhsd akhds kashd kajhs dkha
+                                 dkh aksd ka dkha kdh kasd ka kahs dkh sdkh
+                                 askdh aksd kashdk ahsd kahs dkha skdh
+  -h, --help                     display help for command
 `;
 
   expect(program.helpInformation()).toBe(expectedOutput);
@@ -29,15 +29,15 @@ test('when long option description and default then wrap and indent', () => {
   process.stdout.columns = 80;
   const program = new commander.Command();
   program
-    .option('-x -extra-long-option <value>', 'kjsahdkajshkahd kajhsd akhds', 'aaa bbb ccc ddd eee fff ggg');
+    .option('-x --extra-long-option <value>', 'kjsahdkajshkahd kajhsd akhds', 'aaa bbb ccc ddd eee fff ggg');
 
   const expectedOutput =
 `Usage:  [options]
 
 Options:
-  -x -extra-long-option <value>  kjsahdkajshkahd kajhsd akhds (default: "aaa
-                                 bbb ccc ddd eee fff ggg")
-  -h, --help                     display help for command
+  -x --extra-long-option <value>  kjsahdkajshkahd kajhsd akhds (default: "aaa
+                                  bbb ccc ddd eee fff ggg")
+  -h, --help                      display help for command
 `;
 
   expect(program.helpInformation()).toBe(expectedOutput);
@@ -49,20 +49,20 @@ test('when long command description then wrap and indent', () => {
   process.stdout.columns = 80;
   const program = new commander.Command();
   program
-    .option('-x -extra-long-option-switch', 'x')
+    .option('-x --extra-long-option-switch', 'x')
     .command('alpha', 'Lorem mollit quis dolor ex do eu quis ad insa a commodo esse.');
 
   const expectedOutput =
 `Usage:  [options] [command]
 
 Options:
-  -x -extra-long-option-switch  x
-  -h, --help                    display help for command
+  -x --extra-long-option-switch  x
+  -h, --help                     display help for command
 
 Commands:
-  alpha                         Lorem mollit quis dolor ex do eu quis ad insa
-                                a commodo esse.
-  help [command]                display help for command
+  alpha                          Lorem mollit quis dolor ex do eu quis ad
+                                 insa a commodo esse.
+  help [command]                 display help for command
 `;
 
   expect(program.helpInformation()).toBe(expectedOutput);

@@ -20,13 +20,18 @@ class Option {
 
   constructor(flags, description) {
     this.flags = flags;
-    this.required = flags.indexOf('<') >= 0; // A value must be supplied when the option is specified.
-    this.optional = flags.indexOf('[') >= 0; // A value is optional when the option is specified.
+    this.required = flags.includes('<'); // A value must be supplied when the option is specified.
+    this.optional = flags.includes('['); // A value is optional when the option is specified.
+    // variadic test ignores <value,...> et al which might be used to describe custom splitting of single argument
+    this.variadic = /\w\.\.\.[>\]]$/.test(flags); // The option can take multiple values.
     this.mandatory = false; // The option must have a value after parsing, which usually means it must be specified on command line.
-    this.negate = flags.indexOf('-no-') !== -1;
-    const flagParts = flags.split(/[ ,|]+/);
-    if (flagParts.length > 1 && !/^[[<]/.test(flagParts[1])) this.short = flagParts.shift();
-    this.long = flagParts.shift();
+    const optionFlags = _parseOptionFlags(flags);
+    this.short = optionFlags.shortFlag;
+    this.long = optionFlags.longFlag;
+    this.negate = false;
+    if (this.long) {
+      this.negate = this.long.startsWith('--no-');
+    }
     this.description = description || '';
     this.defaultValue = undefined;
   }
@@ -39,7 +44,10 @@ class Option {
    */
 
   name() {
-    return this.long.replace(/^--/, '');
+    if (this.long) {
+      return this.long.replace(/^--/, '');
+    }
+    return this.short.replace(/^-/, '');
   };
 
   /**
@@ -110,6 +118,7 @@ class Command extends EventEmitter {
     this._name = name || '';
     this._optionValues = {};
     this._storeOptionsAsProperties = true; // backwards compatible by default
+    this._storeOptionsAsPropertiesCalled = false;
     this._passCommandToAction = true; // backwards compatible by default
     this._actionResults = [];
     this._actionHandler = null;
@@ -260,7 +269,7 @@ class Command extends EventEmitter {
    *
    *    addHelpCommand() // force on
    *    addHelpCommand(false); // force off
-   *    addHelpCommand('help [cmd]', 'display help for [cmd]'); // force on with custom detais
+   *    addHelpCommand('help [cmd]', 'display help for [cmd]'); // force on with custom details
    *
    * @return {Command} `this` command for chaining
    * @api public
@@ -423,12 +432,53 @@ class Command extends EventEmitter {
   };
 
   /**
+   * Internal routine to check whether there is a clash storing option value with a Command property.
+   *
+   * @param {Option} option
+   * @api private
+   */
+
+  _checkForOptionNameClash(option) {
+    if (!this._storeOptionsAsProperties || this._storeOptionsAsPropertiesCalled) {
+      // Storing options safely, or user has been explicit and up to them.
+      return;
+    }
+    // User may override help, and hard to tell if worth warning.
+    if (option.name() === 'help') {
+      return;
+    }
+
+    const commandProperty = this._getOptionValue(option.attributeName());
+    if (commandProperty === undefined) {
+      // no clash
+      return;
+    }
+
+    let foundClash = true;
+    if (option.negate) {
+      // It is ok if define foo before --no-foo.
+      const positiveLongFlag = option.long.replace(/^--no-/, '--');
+      foundClash = !this._findOption(positiveLongFlag);
+    } else if (option.long) {
+      const negativeLongFlag = option.long.replace(/^--/, '--no-');
+      foundClash = !this._findOption(negativeLongFlag);
+    }
+
+    if (foundClash) {
+      throw new Error(`option '${option.name()}' clashes with existing property '${option.attributeName()}' on Command
+- call storeOptionsAsProperties(false) to store option values safely,
+- or call storeOptionsAsProperties(true) to suppress this check,
+- or change option name`);
+    }
+  };
+
+  /**
    * Internal implementation shared by .option() and .requiredOption()
    *
    * @param {Object} config
    * @param {string} flags
    * @param {string} description
-   * @param {Function|*} [fn] - custom option processing function or default vaue
+   * @param {Function|*} [fn] - custom option processing function or default value
    * @param {*} [defaultValue]
    * @return {Command} `this` command for chaining
    * @api private
@@ -439,6 +489,8 @@ class Command extends EventEmitter {
     const oname = option.name();
     const name = option.attributeName();
     option.mandatory = !!config.mandatory;
+
+    this._checkForOptionNameClash(option);
 
     // default as 3rd arg
     if (typeof fn !== 'function') {
@@ -476,13 +528,21 @@ class Command extends EventEmitter {
     // when it's passed assign the value
     // and conditionally invoke the callback
     this.on('option:' + oname, (val) => {
-      // coercion
+      const oldValue = this._getOptionValue(name);
+
+      // custom processing
       if (val !== null && fn) {
-        val = fn(val, this._getOptionValue(name) === undefined ? defaultValue : this._getOptionValue(name));
+        val = fn(val, oldValue === undefined ? defaultValue : oldValue);
+      } else if (val !== null && option.variadic) {
+        if (oldValue === defaultValue || !Array.isArray(oldValue)) {
+          val = [val];
+        } else {
+          val = oldValue.concat(val);
+        }
       }
 
       // unassigned or boolean value
-      if (typeof this._getOptionValue(name) === 'boolean' || typeof this._getOptionValue(name) === 'undefined') {
+      if (typeof oldValue === 'boolean' || typeof oldValue === 'undefined') {
         // if no value, negate false, and we have a default, then use it!
         if (val == null) {
           this._setOptionValue(name, option.negate
@@ -546,7 +606,7 @@ class Command extends EventEmitter {
    *
    * @param {string} flags
    * @param {string} description
-   * @param {Function|*} [fn] - custom option processing function or default vaue
+   * @param {Function|*} [fn] - custom option processing function or default value
    * @param {*} [defaultValue]
    * @return {Command} `this` command for chaining
    * @api public
@@ -556,7 +616,7 @@ class Command extends EventEmitter {
     return this._optionEx({}, flags, description, fn, defaultValue);
   };
 
-  /*
+  /**
   * Add a required option which must have a value after parsing. This usually means
   * the option must be specified on the command line. (Otherwise the same as .option().)
   *
@@ -564,7 +624,7 @@ class Command extends EventEmitter {
   *
   * @param {string} flags
   * @param {string} description
-  * @param {Function|*} [fn] - custom option processing function or default vaue
+  * @param {Function|*} [fn] - custom option processing function or default value
   * @param {*} [defaultValue]
   * @return {Command} `this` command for chaining
   * @api public
@@ -596,6 +656,7 @@ class Command extends EventEmitter {
     */
 
   storeOptionsAsProperties(value) {
+    this._storeOptionsAsPropertiesCalled = true;
     this._storeOptionsAsProperties = (value === undefined) || value;
     if (this.options.length) {
       throw new Error('call .storeOptionsAsProperties() before adding options');
@@ -891,7 +952,7 @@ class Command extends EventEmitter {
       this._dispatchSubcommand(this._defaultCommandName, operands, unknown);
     } else {
       if (this.commands.length && this.args.length === 0 && !this._actionHandler && !this._defaultCommandName) {
-        // probaby missing subcommand and no handler, user needs help
+        // probably missing subcommand and no handler, user needs help
         this._helpAndError();
       }
 
@@ -998,6 +1059,7 @@ class Command extends EventEmitter {
     }
 
     // parse options
+    let activeVariadicOption = null;
     while (args.length) {
       const arg = args.shift();
 
@@ -1007,6 +1069,12 @@ class Command extends EventEmitter {
         dest.push(...args);
         break;
       }
+
+      if (activeVariadicOption && !maybeOption(arg)) {
+        this.emit(`option:${activeVariadicOption.name()}`, arg);
+        continue;
+      }
+      activeVariadicOption = null;
 
       if (maybeOption(arg)) {
         const option = this._findOption(arg);
@@ -1026,6 +1094,7 @@ class Command extends EventEmitter {
           } else { // boolean flag
             this.emit(`option:${option.name()}`);
           }
+          activeVariadicOption = option.variadic ? option : null;
           continue;
         }
       }
@@ -1187,9 +1256,9 @@ class Command extends EventEmitter {
     flags = flags || '-V, --version';
     description = description || 'output the version number';
     const versionOption = new Option(flags, description);
-    this._versionOptionName = versionOption.long.substr(2) || 'version';
+    this._versionOptionName = versionOption.attributeName();
     this.options.push(versionOption);
-    this.on('option:' + this._versionOptionName, () => {
+    this.on('option:' + versionOption.name(), () => {
       process.stdout.write(str + '\n');
       this._exit(0, 'commander.version', str);
     });
@@ -1552,12 +1621,9 @@ class Command extends EventEmitter {
     this._helpFlags = flags || this._helpFlags;
     this._helpDescription = description || this._helpDescription;
 
-    const splitFlags = this._helpFlags.split(/[ ,|]+/);
-
-    this._helpShortFlag = undefined;
-    if (splitFlags.length > 1) this._helpShortFlag = splitFlags.shift();
-
-    this._helpLongFlag = splitFlags.shift();
+    const helpFlags = _parseOptionFlags(this._helpFlags);
+    this._helpShortFlag = helpFlags.shortFlag;
+    this._helpLongFlag = helpFlags.longFlag;
 
     return this;
   };
@@ -1709,6 +1775,28 @@ function humanReadableArgName(arg) {
 }
 
 /**
+ * Parse the short and long flag out of something like '-m,--mixed <value>'
+ *
+ * @api private
+ */
+
+function _parseOptionFlags(flags) {
+  let shortFlag;
+  let longFlag;
+  // Use original very loose parsing to maintain backwards compatibility for now,
+  // which allowed for example unintended `-sw, --short-word` [sic].
+  const flagParts = flags.split(/[ |,]+/);
+  if (flagParts.length > 1 && !/^[[<]/.test(flagParts[1])) shortFlag = flagParts.shift();
+  longFlag = flagParts.shift();
+  // Add support for lone short flag without significantly changing parsing!
+  if (!shortFlag && /^-[^-]$/.test(longFlag)) {
+    shortFlag = longFlag;
+    longFlag = undefined;
+  }
+  return { shortFlag, longFlag };
+}
+
+/**
  * Scan arguments and increment port number for inspect calls (to avoid conflicts when spawning new command).
  *
  * @param {string[]} args - array of arguments from node.execArgv
@@ -1722,35 +1810,35 @@ function incrementNodeInspectorPort(args) {
   //  --inspect-brk[=[host:]port]
   //  --inspect-port=[host:]port
   return args.map((arg) => {
-    let result = arg;
-    if (arg.indexOf('--inspect') === 0) {
-      let debugOption;
-      let debugHost = '127.0.0.1';
-      let debugPort = '9229';
-      let match;
-      if ((match = arg.match(/^(--inspect(-brk)?)$/)) !== null) {
-        // e.g. --inspect
-        debugOption = match[1];
-      } else if ((match = arg.match(/^(--inspect(-brk|-port)?)=([^:]+)$/)) !== null) {
-        debugOption = match[1];
-        if (/^\d+$/.test(match[3])) {
-          // e.g. --inspect=1234
-          debugPort = match[3];
-        } else {
-          // e.g. --inspect=localhost
-          debugHost = match[3];
-        }
-      } else if ((match = arg.match(/^(--inspect(-brk|-port)?)=([^:]+):(\d+)$/)) !== null) {
-        // e.g. --inspect=localhost:1234
-        debugOption = match[1];
-        debugHost = match[3];
-        debugPort = match[4];
-      }
-
-      if (debugOption && debugPort !== '0') {
-        result = `${debugOption}=${debugHost}:${parseInt(debugPort) + 1}`;
-      }
+    if (!arg.startsWith('--inspect')) {
+      return arg;
     }
-    return result;
+    let debugOption;
+    let debugHost = '127.0.0.1';
+    let debugPort = '9229';
+    let match;
+    if ((match = arg.match(/^(--inspect(-brk)?)$/)) !== null) {
+      // e.g. --inspect
+      debugOption = match[1];
+    } else if ((match = arg.match(/^(--inspect(-brk|-port)?)=([^:]+)$/)) !== null) {
+      debugOption = match[1];
+      if (/^\d+$/.test(match[3])) {
+        // e.g. --inspect=1234
+        debugPort = match[3];
+      } else {
+        // e.g. --inspect=localhost
+        debugHost = match[3];
+      }
+    } else if ((match = arg.match(/^(--inspect(-brk|-port)?)=([^:]+):(\d+)$/)) !== null) {
+      // e.g. --inspect=localhost:1234
+      debugOption = match[1];
+      debugHost = match[3];
+      debugPort = match[4];
+    }
+
+    if (debugOption && debugPort !== '0') {
+      return `${debugOption}=${debugHost}:${parseInt(debugPort) + 1}`;
+    }
+    return arg;
   });
 }

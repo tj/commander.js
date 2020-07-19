@@ -3,7 +3,7 @@ const path = require('path');
 
 // Test details of the exitOverride errors.
 // The important checks are the exitCode and code which are intended to be stable for
-// semver minor versions. For now, also testing the error.message and that output occured
+// semver minor versions. For now, also testing the error.message and that output occurred
 // to detect accidental changes in behaviour.
 
 /* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["expect", "expectCommanderError"] }] */
