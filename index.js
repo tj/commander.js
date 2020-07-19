@@ -468,7 +468,9 @@ class Command extends EventEmitter {
       throw new Error(`option '${option.name()}' clashes with existing property '${option.attributeName()}' on Command
 - call storeOptionsAsProperties(false) to store option values safely,
 - or call storeOptionsAsProperties(true) to suppress this check,
-- or change option name`);
+- or change option name
+
+Read more on https://git.io/JJc0W`);
     }
   };
 
