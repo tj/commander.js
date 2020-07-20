@@ -104,6 +104,10 @@ function commaSeparatedList(value: string, dummyPrevious: string[]): string[] {
   return value.split(',');
 }
 
+function parseObject(value: string): object {
+  return JSON.parse(value);
+}
+
 const optionThis5: commander.Command = program.option('-f, --float <number>', 'float argument', parseFloat);
 const optionThis6: commander.Command = program.option('-f, --float <number>', 'float argument', parseFloat, 3.2);
 const optionThis7: commander.Command = program.option('-i, --integer <number>', 'integer argument', myParseInt);
@@ -111,6 +115,8 @@ const optionThis8: commander.Command = program.option('-i, --integer <number>', 
 const optionThis9: commander.Command = program.option('-v, --verbose', 'verbosity that can be increased', increaseVerbosity, 0);
 const optionThis10: commander.Command = program.option('-c, --collect <value>', 'repeatable value', collect, []);
 const optionThis11: commander.Command = program.option('-l, --list <items>', 'comma separated list', commaSeparatedList);
+const optionThis12: commander.Command = program.option('-o, --object <value>', 'object argument', parseObject, {});
+const optionThis13: commander.Command = program.option('-o, --object <value>', 'object argument', parseObject, null);
 
 // requiredOption, same tests as option
 const requiredOptionThis1: commander.Command = program.requiredOption('-a,--alpha');
@@ -125,6 +131,8 @@ const requiredOptionThis8: commander.Command = program.requiredOption('-i, --int
 const requiredOptionThis9: commander.Command = program.requiredOption('-v, --verbose', 'verbosity that can be increased', increaseVerbosity, 0);
 const requiredOptionThis10: commander.Command = program.requiredOption('-c, --collect <value>', 'repeatable value', collect, []);
 const requiredOptionThis11: commander.Command = program.requiredOption('-l, --list <items>', 'comma separated list', commaSeparatedList);
+const requiredOptionThis12: commander.Command = program.requiredOption('-o, --object <value>', 'object argument', parseObject, {});
+const requiredOptionThis13: commander.Command = program.requiredOption('-o, --object <value>', 'object argument', parseObject, null);
 
 // storeOptionsAsProperties
 const storeOptionsAsPropertiesThis1: commander.Command = program.storeOptionsAsProperties();

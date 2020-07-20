@@ -1462,6 +1462,29 @@ class Command extends EventEmitter {
   };
 
   /**
+   * Convert value to a string for help
+   *
+   * @param {number|object|null} value
+   * @return {string}
+   */
+
+  _stringify(value) {
+    if (typeof value === 'object' && value !== null) {
+      // For arrays, simply execute this same method
+      if (Array.isArray(value)) {
+        return value.map((item) => this._stringify(item)).join(',');
+      }
+
+      // Use the `toString` method for objects that don't use the default
+      if (typeof value.toString === 'function' && Object.getPrototypeOf(value).toString !== Object.prototype.toString) {
+        return value.toString();
+      }
+    }
+
+    return JSON.stringify(value);
+  }
+
+  /**
    * Return help for options.
    *
    * @return {string}
@@ -1479,7 +1502,7 @@ class Command extends EventEmitter {
     // Explicit options (including version)
     const help = this.options.map((option) => {
       const fullDesc = option.description +
-        ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
+        ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + this._stringify(option.defaultValue) + ')' : '');
       return padOptionDetails(option.flags, fullDesc);
     });
 

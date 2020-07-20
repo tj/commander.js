@@ -130,3 +130,62 @@ test('when both help flags masked then not displayed in helpInformation', () => 
   const helpInformation = program.helpInformation();
   expect(helpInformation).not.toMatch('display help');
 });
+
+test('when default value is object with custom toString then custom string displays in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .option('--host <host>', 'select host', new URL('http://example.com/'));
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toContain('default: http://example.com/');
+});
+
+test('when default value is object without custom toString then json displays in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .option('--host <host>', 'select host', { host: 'example.com' });
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).not.toContain('[object Object]');
+  expect(helpInformation).toContain('default: {"host":"example.com"}');
+});
+
+test('when default value is null then null displays in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .option('--host <host>', 'select host', null);
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toContain('default: null');
+});
+
+test('when default value is null prototype then null displays in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .option('--host <host>', 'select host', Object.create(null));
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toContain('default: {}');
+});
+
+test('when default value is array of object with custom toString then custom string displays in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .option('--host <host>', 'select host', [new URL('http://example.com/'), new URL('http://example.org/')]);
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toContain('default: http://example.com/,http://example.org/');
+});
+
+test('when default value is array of object without custom toString then json displays in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .option('--host <host>', 'select host', [{ host: 'example.com' }, { host: 'example.org' }]);
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).not.toContain('[object Object]');
+  expect(helpInformation).toContain('{"host":"example.com"},{"host":"example.org"}');
+});
+
+test('when default value is array of object with mix of custom toString then custom string or json displays in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .option('--host <host>', 'select host', [new URL('http://example.com/'), { host: 'example.com' }]);
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).not.toContain('[object Object]');
+  expect(helpInformation).toContain('http://example.com/,{"host":"example.com"}');
+});
