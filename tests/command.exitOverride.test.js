@@ -175,19 +175,19 @@ describe('.exitOverride and error details', () => {
     expectCommanderError(caughtErr, 0, 'commander.version', myVersion);
   });
 
-  // Have not worked out a cleaner way to do this, so suppress warning.
-  // eslint-disable-next-line jest/no-test-callback
-  test('when executableSubcommand succeeds then call exitOverride', (done) => {
+  test('when executableSubcommand succeeds then call exitOverride', async() => {
+    expect.hasAssertions();
     const pm = path.join(__dirname, 'fixtures/pm');
     const program = new commander.Command();
-    program
-      .exitOverride((err) => {
-        expectCommanderError(err, 0, 'commander.executeSubCommandAsync', '(close)');
-        done();
-      })
-      .command('silent', 'description');
-
-    program.parse(['node', pm, 'silent']);
+    await new Promise((resolve) => {
+      program
+        .exitOverride((err) => {
+          expectCommanderError(err, 0, 'commander.executeSubCommandAsync', '(close)');
+          resolve();
+        })
+        .command('silent', 'description');
+      program.parse(['node', pm, 'silent']);
+    });
   });
 
   test('when mandatory program option missing then throw CommanderError', () => {
