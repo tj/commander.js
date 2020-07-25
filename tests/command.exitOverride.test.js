@@ -176,6 +176,7 @@ describe('.exitOverride and error details', () => {
   });
 
   test('when executableSubcommand succeeds then call exitOverride', async() => {
+    expect.hasAssertions();
     const pm = path.join(__dirname, 'fixtures/pm');
     const program = new commander.Command();
     await new Promise((resolve) => {
