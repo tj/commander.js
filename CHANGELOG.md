@@ -14,7 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - add support for variadic options ([#1250])
 - allow options to be added with just a short flag ([#1256])
-- throw an error if there might be a clash between option name and a Command property, with advice on how to resolve ([#1275])
+  - *Breaking* the option property has same case as flag. e.g. flag `-n` accessed as `opts().n` (previously uppercase)
+- *Breaking* throw an error if there might be a clash between option name and a Command property, with advice on how to resolve ([#1275])
 
 ### Fixed
 
