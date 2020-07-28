@@ -376,18 +376,11 @@ program
   .version('0.1.0')
   .arguments('<cmd> [env]')
   .action(function (cmd, env) {
-    cmdValue = cmd;
-    envValue = env;
+    console.log('command:', cmdValue);
+    console.log('environment:', envValue || 'no environment given');
   });
 
 program.parse(process.argv);
-
-if (typeof cmdValue === 'undefined') {
-  console.error('no command given!');
-  process.exit(1);
-}
-console.log('command:', cmdValue);
-console.log('environment:', envValue || "no environment given");
 ```
 
  The last argument of a command can be variadic, and only the last argument.  To make an argument variadic you
