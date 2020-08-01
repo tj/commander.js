@@ -1550,7 +1550,7 @@ Read more on https://git.io/JJc0W`);
         desc.push('Arguments:');
         desc.push('');
         this._args.forEach((arg) => {
-          desc.push('  ' + pad(arg.name, width) + '  ' + wrap(argsDescription[arg.name], descriptionWidth, width + 4));
+          desc.push('  ' + pad(arg.name, width) + '  ' + wrap(argsDescription[arg.name] || '', descriptionWidth, width + 4));
         });
         desc.push('');
       }
