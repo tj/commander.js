@@ -824,7 +824,7 @@ Read more on https://git.io/JJc0W`);
 
     // Want the entry script as the reference for command name and directory for searching for other files.
     let scriptPath = this._scriptPath;
-    // Fallback in case not set, due to how subcommand created.
+    // Fallback in case not set, due to how Command created or called.
     if (!scriptPath && process.mainModule) {
       scriptPath = process.mainModule.filename;
     }
