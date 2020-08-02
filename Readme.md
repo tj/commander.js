@@ -27,8 +27,8 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
   - [Automated help](#automated-help)
     - [Custom help](#custom-help)
     - [.usage and .name](#usage-and-name)
-    - [.help(cb)](#helpcb)
-    - [.outputHelp(cb)](#outputhelpcb)
+    - [.help()](#help)
+    - [.outputHelp()](#outputhelp)
     - [.helpInformation()](#helpinformation)
     - [.helpOption(flags, description)](#helpoptionflags-description)
     - [.addHelpCommand()](#addhelpcommand)
@@ -497,7 +497,14 @@ shell spawn --help
 
 ### Custom help
 
-You can display extra information by listening for "--help".
+You can display extra information or even replace the built-in help by listening for special help events. There are three events just for the single command, and three "group" events which occur for the command as well as any of its subcommands.
+In the order the events are emitted:
+
+- `preGroupHelp`: use for adding a global banner or header
+- `preHelp`: display extra information before built-in help
+- `help` | `groupHelp`: if there is a listener, the event is emitted _instead_ of displaying the built-in help
+- `postHelp`: display extra information after built-in help
+- `postGroupHelp`: use for adding a global footer (sometimes called an epilog)
 
 Example file: [custom-help](./examples/custom-help)
 
@@ -505,8 +512,8 @@ Example file: [custom-help](./examples/custom-help)
 program
   .option('-f, --foo', 'enable some foo');
 
-// must be before .parse()
-program.on('--help', () => {
+// must be added before calling .parse()
+program.on('postHelp', () => {
   console.log('');
   console.log('Example call:');
   console.log('  $ custom-help --help');
@@ -526,6 +533,21 @@ Example call:
   $ custom-help --help
 ```
 
+The help listeners are passed a context object for your convenience. The properties are:
+
+- error: a boolean whether the help is being displayed due to a usage error
+- command: the Command which is displaying the help
+- write: either `process.stdout.write()` or `.process.stderr.write()`, depending on `error`
+- log: either `console.log()` or `console.error()`, depending on `error`
+
+As an example, the built-in help can be replaced like this:
+
+```js
+program.on('groupHelp', (context) => {
+  context.write(context.command.helpInformation());
+});
+```
+
 ### .usage and .name
 
 These allow you to customise the usage description in the first line of the help. The name is otherwise
@@ -543,14 +565,13 @@ The help will start with:
 Usage: my-command [global options] command
 ```
 
-### .help(cb)
+### .help()
 
-Output help information and exit immediately. Optional callback cb allows post-processing of help text before it is displayed.
+Output help information and exit immediately.
 
-### .outputHelp(cb)
+### .outputHelp()
 
 Output help information without exiting.
-Optional callback cb allows post-processing of help text before it is displayed.
 
 ### .helpInformation()
 

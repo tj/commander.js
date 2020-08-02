@@ -1616,6 +1616,7 @@ Read more on https://git.io/JJc0W`);
    * Output help information for this command.
    *
    * @api public
+   * @param {Object} [contextOptions] - Can optionally pass in `{ error: true }` (and other context properties for help events)
    */
 
   outputHelp(contextOptions) {
@@ -1651,7 +1652,7 @@ Read more on https://git.io/JJc0W`);
             throw new Error('outputHelp callback must return a string or a Buffer');
           }
         }
-        context.write(helpInformation);
+        context.write(helpInformation); // switch to this in next major version
       }
     }
 
@@ -1684,6 +1685,7 @@ Read more on https://git.io/JJc0W`);
   /**
    * Output help information and exit.
    *
+   * @param {Object} [contextOptions] - Can optionally pass in `{ error: true }` (and other context properties for help events)
    * @api public
    */
 
