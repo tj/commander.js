@@ -26,6 +26,17 @@ declare namespace commander {
   interface ParseOptions {
     from: 'node' | 'electron' | 'user';
   }
+  interface HelpContext { // optional parameter for .help() and .outputHelp()
+    error: boolean;
+    write?: (message: string) => boolean; // e.g. process.stdout.write
+    log?: (message?: any, ...optionalParams: any[]) => void; // e.g. console.log
+  }
+  interface HelpEventContext { // passed to help event listeners
+    error: boolean;
+    write: (message: string) => boolean; // e.g. process.stdout.write
+    log: (message?: any, ...optionalParams: any[]) => void; // e.g. console.log
+    command: Command;
+  }
 
   interface Command {
     [key: string]: any; // options as properties
@@ -323,10 +334,11 @@ declare namespace commander {
     /**
      * Output help information for this command.
      *
-     * When listener(s) are available for the helpLongFlag
-     * those callbacks are invoked.
+     * Outputs built-in help, and customised by adding help event listeners.
+     *
      */
-    outputHelp(cb?: (str: string) => string): void;
+    outputHelp(context?: HelpContext): void;
+    outputHelp(cb?: (str: string) => string): void; // callback deprecated
 
     /**
      * Return command help documentation.
@@ -341,8 +353,12 @@ declare namespace commander {
 
     /**
      * Output help information and exit.
+     *
+     * Outputs built-in help, and customised by adding help event listeners.
+     *
      */
-    help(cb?: (str: string) => string): never;
+    help(context?: HelpContext): never;
+    help(cb?: (str: string) => string): never; // callback deprecated
 
     /**
      * Add a listener (callback) for when events occur. (Implemented using EventEmitter.)

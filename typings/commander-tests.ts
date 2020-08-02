@@ -184,10 +184,14 @@ const nameValue: string = program.name();
 // outputHelp
 program.outputHelp();
 program.outputHelp((str: string) => { return str; });
+program.help({ error: true });
+program.help({ error: true, write: process.stderr.write, log: console.error });
 
 // help
 program.help();
-program.help((str: string) => { return str; });
+program.help((str: string) => { return str; }); // Deprecated
+program.help({ error: true });
+program.help({ error: false, write: process.stdout.write, log: console.log });
 
 // helpInformation
 const helpInformnationValue: string = program.helpInformation();

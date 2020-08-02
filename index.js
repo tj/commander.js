@@ -1615,6 +1615,8 @@ Read more on https://git.io/JJc0W`);
   /**
    * Output help information for this command.
    *
+   * Outputs built-in help, and customised by adding help event listeners.
+   *
    * @api public
    * @param {Object} [contextOptions] - Can optionally pass in `{ error: true }` (and other context properties for help events)
    */
@@ -1685,7 +1687,9 @@ Read more on https://git.io/JJc0W`);
   /**
    * Output help information and exit.
    *
-   * @param {Object} [contextOptions] - Can optionally pass in `{ error: true }` (and other context properties for help events)
+   * Outputs built-in help, and customised by adding help event listeners.
+   *
+   * @param {Object} [contextOptions] - optionally pass in `{ error: true }` (and other context properties for help events)
    * @api public
    */
 
