@@ -202,7 +202,7 @@ const helpOptionThis2: commander.Command = program.helpOption('-h,--help', 'cust
 const helpOptionThis3: commander.Command = program.helpOption(undefined, 'custom description');
 
 // on
-const onThis: commander.Command = program.on('--help', () => {
+const onThis: commander.Command = program.on('postHelp', () => {
   // do nothing.
 });
 

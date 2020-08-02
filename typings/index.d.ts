@@ -365,7 +365,7 @@ declare namespace commander {
      *
      * @example
      *     program
-     *       .on('--help', () -> {
+     *       .on('postHelp', () -> {
      *         console.log('See web site for more information.');
      *     });
      */

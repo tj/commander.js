@@ -770,7 +770,7 @@ program
   .option("-e, --exec_mode <mode>", "Which exec mode to use")
   .action(function(cmd, options){
     console.log('exec "%s" using %s mode', cmd, options.exec_mode);
-  }).on('--help', function() {
+  }).on('postHelp', function() {
     console.log('');
     console.log('Examples:');
     console.log('');
