@@ -18,6 +18,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Other option types, negatable boolean and flag|value](#other-option-types-negatable-boolean-and-flagvalue)
     - [Custom option processing](#custom-option-processing)
     - [Required option](#required-option)
+    - [Variadic option](#variadic-option)
     - [Version option](#version-option)
   - [Commands](#commands)
     - [Specify the argument syntax](#specify-the-argument-syntax)
@@ -37,6 +38,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Avoiding option name clashes](#avoiding-option-name-clashes)
     - [TypeScript](#typescript)
     - [createCommand()](#createcommand)
+    - [Import into ECMAScript Module](#import-into-ecmascript-module)
     - [Node options such as `--harmony`](#node-options-such-as---harmony)
     - [Debugging stand-alone executable subcommands](#debugging-stand-alone-executable-subcommands)
     - [Override exit handling](#override-exit-handling)
@@ -277,6 +279,38 @@ $ pizza
 error: required option '-c, --cheese <type>' not specified
 ```
 
+### Variadic option
+
+You may make an option variadic by appending `...` to the value placeholder when declaring the option. On the command line you
+can then specify multiple option arguments, and the parsed option value will be an array. The extra arguments
+are read until the first argument starting with a dash. The special argument `--` stops option processing entirely. If a value
+is specified in the same argument as the option then no further values are read.
+
+Example file: [options-variadic.js](./examples/options-variadic.js)
+
+```js
+program
+  .option('-n, --number <numbers...>', 'specify numbers')
+  .option('-l, --letter [letters...]', 'specify letters');
+
+program.parse();
+
+console.log('Options: ', program.opts());
+console.log('Remaining arguments: ', program.args);
+```
+
+```bash
+$ collect -n 1 2 3 --letter a b c
+Options:  { number: [ '1', '2', '3' ], letter: [ 'a', 'b', 'c' ] }
+Remaining arguments:  []
+$ collect --letter=A -n80 operand
+Options:  { number: [ '80' ], letter: [ 'A' ] }
+Remaining arguments:  [ 'operand' ]
+$ collect --letter -n 1 -n 2 3 -- operand
+Options:  { number: [ '1', '2', '3' ], letter: true }
+Remaining arguments:  [ 'operand' ]
+```
+
 ### Version option
 
 The optional `version` method adds handling for displaying the command version. The default option flags are `-V` and `--version`, and when present the command prints the version number and exits.
@@ -291,7 +325,7 @@ $ ./examples/pizza -V
 ```
 
 You may change the flags and description by passing additional parameters to the `version` method, using
-the same syntax for flags as the `option` method. The version flags can be named anything, but a long name is required.
+the same syntax for flags as the `option` method.
 
 ```js
 program.version('0.0.1', '-v, --vers', 'output the current version');
@@ -342,18 +376,11 @@ program
   .version('0.1.0')
   .arguments('<cmd> [env]')
   .action(function (cmd, env) {
-    cmdValue = cmd;
-    envValue = env;
+    console.log('command:', cmdValue);
+    console.log('environment:', envValue || 'no environment given');
   });
 
 program.parse(process.argv);
-
-if (typeof cmdValue === 'undefined') {
-  console.error('no command given!');
-  process.exit(1);
-}
-console.log('command:', cmdValue);
-console.log('environment:', envValue || "no environment given");
 ```
 
  The last argument of a command can be variadic, and only the last argument.  To make an argument variadic you
@@ -647,6 +674,17 @@ const program = createCommand();
 when creating subcommands using `.command()`, and you may override it to
 customise the new subcommand (examples using [subclass](./examples/custom-command-class.js) and [function](./examples/custom-command-function.js)).
 
+### Import into ECMAScript Module
+
+Commander is currently a CommonJS package, and the default export can be imported into an ES Module:
+
+```js
+// index.mjs
+import commander from 'commander';
+const program = commander.program;
+const newCommand = new commander.Command();
+```
+
 ### Node options such as `--harmony`
 
 You can enable `--harmony` option in two ways:
@@ -726,7 +764,7 @@ More Demos can be found in the [examples](https://github.com/tj/commander.js/tre
 
 ## Support
 
-Commander 5.x is fully supported on Long Term Support versions of Node, and is likely to work with Node 6 but not tested.
+The current version of Commander is fully supported on Long Term Support versions of Node, and is likely to work with Node 6 but not tested.
 (For versions of Node below Node 6, use Commander 3.x or 2.x.)
 
 The main forum for free and community support is the project [Issues](https://github.com/tj/commander.js/issues) on GitHub.

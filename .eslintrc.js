@@ -44,6 +44,9 @@ const typescriptSettings = {
 
 module.exports = {
   plugins: ['jest'],
+  parserOptions: {
+    ecmaVersion: 8
+  },
   overrides: [
     javascriptSettings,
     typescriptSettings
