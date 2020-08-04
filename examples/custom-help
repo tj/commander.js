@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
-// This example displays some custom help text after the built-in help.
+// This example shows the various help event listeners.
+// This is used as an example in the README.
 
 // const { Command } = require('commander'); // (normal include)
 const { Command } = require('../'); // include commander in git clone of commander repo
@@ -10,10 +11,13 @@ program
   .option('-f, --foo', 'enable some foo');
 
 // must be before .parse()
-program.on('--help', () => {
+program.on('postHelp', () => {
   console.log('');
   console.log('Example call:');
   console.log('  $ custom-help --help');
 });
 
 program.parse(process.argv);
+
+// Try the following:
+//  node custom-help --help
