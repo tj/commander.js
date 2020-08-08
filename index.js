@@ -1580,11 +1580,14 @@ Read more on https://git.io/JJc0W`);
     const commandHelp = this.commandHelp();
     if (commandHelp) cmds = [commandHelp];
 
-    const options = [
-      'Options:',
-      '' + this.optionHelp().replace(/^/gm, '  '),
-      ''
-    ];
+    let options = '';
+    if (this._hasHelpOption || this.options.length > 0) {
+      options = [
+        'Options:',
+        '' + this.optionHelp().replace(/^/gm, '  '),
+        ''
+      ];
+    }
 
     return usage
       .concat(desc)

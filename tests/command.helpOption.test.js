@@ -73,7 +73,7 @@ describe('helpOption', () => {
     program
       .helpOption(false);
     const helpInformation = program.helpInformation();
-    expect(helpInformation).not.toMatch(/--help/);
+    expect(helpInformation).not.toMatch('--help');
   });
 
   test('when helpOption(false) then --help is an unknown option', () => {
