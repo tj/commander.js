@@ -6,21 +6,29 @@
 const { Command } = require('../'); // include commander in git clone of commander repo
 const program = new Command();
 
+program.name('awesome');
+
 program
   .on('preGroupHelp', (context) => {
-    context.log('Custom preGroupHelp: global banner');
+    context.log('A W E S O M E');
+    context.log();
   })
   .on('postGroupHelp', (context) => {
-    context.log('Custom postGroupHelp: global epilog');
+    context.log();
+    context.log('See web site for further help');
   });
 
 program
   .command('extra')
   .on('preHelp', (context) => {
-    context.log('Custom preHelp: header');
+    context.log('Note: the extra command does not do anything');
+    context.log();
   })
   .on('postHelp', (context) => {
-    context.log('Custom postHelp: trailer');
+    context.log();
+    context.log('Examples:');
+    context.log('  awesome extra --help');
+    context.log('  awesome help extra');
   });
 
 program
