@@ -196,6 +196,7 @@ const helpInformnationValue: string = program.helpInformation();
 const helpOptionThis1: commander.Command = program.helpOption('-h,--help');
 const helpOptionThis2: commander.Command = program.helpOption('-h,--help', 'custom description');
 const helpOptionThis3: commander.Command = program.helpOption(undefined, 'custom description');
+const helpOptionThis4: commander.Command = program.helpOption(false);
 
 // on
 const onThis: commander.Command = program.on('--help', () => {

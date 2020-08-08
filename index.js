@@ -129,6 +129,7 @@ class Command extends EventEmitter {
     this._aliases = [];
 
     this._hidden = false;
+    this._hasHelpOption = true;
     this._helpFlags = '-h, --help';
     this._helpDescription = 'display help for command';
     this._helpShortFlag = '-h';
@@ -184,6 +185,7 @@ class Command extends EventEmitter {
     if (opts.isDefault) this._defaultCommandName = cmd._name;
 
     cmd._hidden = !!(opts.noHelp || opts.hidden);
+    cmd._hasHelpOption = this._hasHelpOption;
     cmd._helpFlags = this._helpFlags;
     cmd._helpDescription = this._helpDescription;
     cmd._helpShortFlag = this._helpShortFlag;
@@ -1236,7 +1238,8 @@ Read more on https://git.io/JJc0W`);
       partCommands.unshift(parentCmd.name());
     }
     const fullCommand = partCommands.join(' ');
-    const message = `error: unknown command '${this.args[0]}'. See '${fullCommand} ${this._helpLongFlag}'.`;
+    const message = `error: unknown command '${this.args[0]}'.` +
+      (this._hasHelpOption ? ` See '${fullCommand} ${this._helpLongFlag}'.` : '');
     console.error(message);
     this._exit(1, 'commander.unknownCommand', message);
   };
@@ -1490,8 +1493,8 @@ Read more on https://git.io/JJc0W`);
     });
 
     // Implicit help
-    const showShortHelpFlag = this._helpShortFlag && !this._findOption(this._helpShortFlag);
-    const showLongHelpFlag = !this._findOption(this._helpLongFlag);
+    const showShortHelpFlag = this._hasHelpOption && this._helpShortFlag && !this._findOption(this._helpShortFlag);
+    const showLongHelpFlag = this._hasHelpOption && !this._findOption(this._helpLongFlag);
     if (showShortHelpFlag || showLongHelpFlag) {
       let helpFlags = this._helpFlags;
       if (!showShortHelpFlag) {
@@ -1615,15 +1618,20 @@ Read more on https://git.io/JJc0W`);
 
   /**
    * You can pass in flags and a description to override the help
-   * flags and help description for your command.
+   * flags and help description for your command. Pass in false to
+   * disable the built-in help option.
    *
-   * @param {string} [flags]
+   * @param {string | boolean} [flags]
    * @param {string} [description]
    * @return {Command} `this` command for chaining
    * @api public
    */
 
   helpOption(flags, description) {
+    if (typeof flags === 'boolean') {
+      this._hasHelpOption = flags;
+      return this;
+    }
     this._helpFlags = flags || this._helpFlags;
     this._helpDescription = description || this._helpDescription;
 
@@ -1756,7 +1764,7 @@ function optionalWrap(str, width, indent) {
  */
 
 function outputHelpIfRequested(cmd, args) {
-  const helpOption = args.find(arg => arg === cmd._helpLongFlag || arg === cmd._helpShortFlag);
+  const helpOption = cmd._hasHelpOption && args.find(arg => arg === cmd._helpLongFlag || arg === cmd._helpShortFlag);
   if (helpOption) {
     cmd.outputHelp();
     // (Do not have all displayed text available so only passing placeholder.)

@@ -559,7 +559,7 @@ from `--help` listeners.)
 
 ### .helpOption(flags, description)
 
-Override the default help flags and description.
+Override the default help flags and description. Pass false to disable the built-in help option.
 
 ```js
 program
