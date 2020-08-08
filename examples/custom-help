@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// This example shows the various help event listeners.
+// This example shows the postHelp event listener.
 // This is used as an example in the README.
 
 // const { Command } = require('commander'); // (normal include)
@@ -10,7 +10,7 @@ const program = new Command();
 program
   .option('-f, --foo', 'enable some foo');
 
-// must be before .parse()
+// must be added before calling .parse()
 program.on('postHelp', () => {
   console.log('');
   console.log('Example call:');
