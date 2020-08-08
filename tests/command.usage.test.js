@@ -44,3 +44,56 @@ test('when custom usage and check subcommand help then starts with custom usage 
 
   expect(helpInformation).toMatch(new RegExp(`^Usage: test info ${myUsage}`));
 });
+
+test('when has option then [options] included in usage', () => {
+  const program = new commander.Command();
+
+  program
+    .option('--foo');
+
+  expect(program.usage()).toMatch('[options]');
+});
+
+test('when no options then [options] not included in usage', () => {
+  const program = new commander.Command();
+
+  program
+    .helpOption(false);
+
+  expect(program.usage()).not.toMatch('[options]');
+});
+
+test('when has command then [command] included in usage', () => {
+  const program = new commander.Command();
+
+  program
+    .command('foo');
+
+  expect(program.usage()).toMatch('[command]');
+});
+
+test('when no commands then [command] not included in usage', () => {
+  const program = new commander.Command();
+
+  expect(program.usage()).not.toMatch('[command]');
+});
+
+test('when arguments then arguments included in usage', () => {
+  const program = new commander.Command();
+
+  program
+    .arguments('<file>');
+
+  expect(program.usage()).toMatch('<file>');
+});
+
+test('when options and command and arguments then all three included in usage', () => {
+  const program = new commander.Command();
+
+  program
+    .arguments('<file>')
+    .option('--alpha')
+    .command('beta');
+
+  expect(program.usage()).toEqual('[options] [command] <file>');
+});
