@@ -1348,9 +1348,11 @@ Read more on https://git.io/JJc0W`);
       const args = this._args.map((arg) => {
         return humanReadableArgName(arg);
       });
-      return '[options]' +
-        (this.commands.length ? ' [command]' : '') +
-        (this._args.length ? ' ' + args.join(' ') : '');
+      return [].concat(
+        (this.options.length || this._hasHelpOption ? '[options]' : []),
+        (this.commands.length ? '[command]' : []),
+        (this._args.length ? args : [])
+      ).join(' ');
     }
 
     this._usage = str;
