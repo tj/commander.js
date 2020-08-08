@@ -1580,7 +1580,7 @@ Read more on https://git.io/JJc0W`);
     const commandHelp = this.commandHelp();
     if (commandHelp) cmds = [commandHelp];
 
-    let options = '';
+    let options = [];
     if (this._hasHelpOption || this.options.length > 0) {
       options = [
         'Options:',
