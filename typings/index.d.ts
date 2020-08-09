@@ -206,8 +206,8 @@ declare namespace commander {
      *
      * @example
      *    // for `.option('-f,--flag [value]'):
-     *   .combineFlagAndOptionalValue(false) // `-fb` is treated like `-f -b`
      *   .combineFlagAndOptionalValue(true)  // `-f80` is treated like `--flag=80`, this is the default behaviour
+     *   .combineFlagAndOptionalValue(false) // `-fb` is treated like `-f -b`
      *
      * @returns `this` command for chaining
      */
