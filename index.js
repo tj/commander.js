@@ -498,7 +498,7 @@ Read more on https://git.io/JJc0W`);
     if (typeof fn !== 'function') {
       if (fn instanceof RegExp) {
         // This is a bit simplistic (especially no error messages), and probably better handled by caller using custom option processing.
-        // No longer documented in README, but still present for backwards compatibility.
+        // Deprecated.
         const regex = fn;
         fn = (val, def) => {
           const m = regex.exec(val);
@@ -1665,7 +1665,7 @@ Read more on https://git.io/JJc0W`);
  * Expose the root command.
  */
 
-exports = module.exports = new Command();
+exports = module.exports = new Command(); // Deprecated.
 exports.program = exports; // More explicit access to global command.
 
 /**
