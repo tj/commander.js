@@ -1,6 +1,7 @@
 # Unloved Features
 
-You may come across these features in existing programs, or mentioned in issues, or by inspecting the Commander code.
+You may come across features that are not described in the README: in existing programs, or mentioned in issues, or by inspecting the Commander code. Check here
+to find out more, and whether they could be used or should be avoided.
 
 ## Deprecated
 
@@ -9,7 +10,7 @@ They are currently still available for backwards compatibility, but should not b
 
 ### RegExp Option Parameter
 
-The option method allowed a RegExp as the third parameter to restrict what values were accepted.
+The option method allowed a RegExp as the third parameter to restrict what values were accepted. Removed from README from Commander v3.
 
 ```js
 program.option('-c,--coffee <type>', 'coffee', /short-white|long-black/);
@@ -25,7 +26,7 @@ This was called when the command was not known:
 program.command('*')
 ```
 
-The newer functionality is setting a command as the default command using the `isDefault` option in the `.command()` parameters.
+The newer functionality is setting a command as the default command using the `isDefault` option in the `.command()` parameters. Available for action handlers from Commander v5.
 
 You can also use a listener for `.on('command:*', handler)` for custom processing for unknown commands.
 
@@ -37,8 +38,24 @@ This was an option passed to `.command()` to hide the command from the built-in 
 program.command('example', 'examnple command', { noHelp: true });
 ```
 
-The option has been renamed `hidden`.
+The option has been renamed `hidden` from Commander v5.1.
 
+### Default Import
+
+The default import was a global Command object.
+
+```js
+const program = require('commander');
+```
+
+The global Command object is exported as `program` from Commander v5, or import the Command object.
+
+```js
+const { program } = require('commander');
+// or
+const { Command } = require('commander');
+comnst program = new Command()
+```
 
 ## Unloved
 
