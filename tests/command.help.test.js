@@ -130,3 +130,12 @@ test('when both help flags masked then not displayed in helpInformation', () => 
   const helpInformation = program.helpInformation();
   expect(helpInformation).not.toMatch('display help');
 });
+
+test('when no options then Options not includes in helpInformation', () => {
+  const program = new commander.Command();
+  // No custom options, no version option, no help option
+  program
+    .helpOption(false);
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).not.toMatch('Options');
+});

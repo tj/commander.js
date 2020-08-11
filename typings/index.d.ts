@@ -335,9 +335,10 @@ declare namespace commander {
 
     /**
      * You can pass in flags and a description to override the help
-     * flags and help description for your command.
+     * flags and help description for your command. Pass in false
+     * to disable the built-in help option.
      */
-    helpOption(flags?: string, description?: string): this;
+    helpOption(flags?: string | boolean, description?: string): this;
 
     /**
      * Output help information and exit.
