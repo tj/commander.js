@@ -134,6 +134,10 @@ const storeOptionsAsPropertiesThis2: commander.Command = program.storeOptionsAsP
 const passCommandToActionThis1: commander.Command = program.passCommandToAction();
 const passCommandToActionThis2: commander.Command = program.passCommandToAction(false);
 
+// combineFlagAndOptionalValue
+const combineFlagAndOptionalValueThis1: commander.Command = program.combineFlagAndOptionalValue();
+const combineFlagAndOptionalValueThis2: commander.Command = program.combineFlagAndOptionalValue(false);
+
 // allowUnknownOption
 const allowUnknownOptionThis1: commander.Command = program.allowUnknownOption();
 const allowUnknownOptionThis2: commander.Command = program.allowUnknownOption(false);

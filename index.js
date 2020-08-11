@@ -127,6 +127,7 @@ class Command extends EventEmitter {
     this._defaultCommandName = null;
     this._exitCallback = null;
     this._aliases = [];
+    this._combineFlagAndOptionalValue = true;
 
     this._hidden = false;
     this._hasHelpOption = true;
@@ -196,6 +197,7 @@ class Command extends EventEmitter {
     cmd._exitCallback = this._exitCallback;
     cmd._storeOptionsAsProperties = this._storeOptionsAsProperties;
     cmd._passCommandToAction = this._passCommandToAction;
+    cmd._combineFlagAndOptionalValue = this._combineFlagAndOptionalValue;
 
     cmd._executableFile = opts.executableFile || null; // Custom name for executable file, set missing to null to match constructor
     this.commands.push(cmd);
@@ -636,6 +638,23 @@ Read more on https://git.io/JJc0W`);
 
   requiredOption(flags, description, fn, defaultValue) {
     return this._optionEx({ mandatory: true }, flags, description, fn, defaultValue);
+  };
+
+  /**
+   * Alter parsing of short flags with optional values.
+   *
+   * Examples:
+   *
+   *    // for `.option('-f,--flag [value]'):
+   *    .combineFlagAndOptionalValue(true)  // `-f80` is treated like `--flag=80`, this is the default behaviour
+   *    .combineFlagAndOptionalValue(false) // `-fb` is treated like `-f -b`
+   *
+   * @param {Boolean} [arg] - if `true` or omitted, an optional value can be specified directly after the flag.
+   * @api public
+   */
+  combineFlagAndOptionalValue(arg) {
+    this._combineFlagAndOptionalValue = (arg === undefined) || arg;
+    return this;
   };
 
   /**
@@ -1111,7 +1130,7 @@ Read more on https://git.io/JJc0W`);
       if (arg.length > 2 && arg[0] === '-' && arg[1] !== '-') {
         const option = this._findOption(`-${arg[1]}`);
         if (option) {
-          if (option.required || option.optional) {
+          if (option.required || (option.optional && this._combineFlagAndOptionalValue)) {
             // option with value following in same argument
             this.emit(`option:${option.name()}`, arg.slice(2));
           } else {

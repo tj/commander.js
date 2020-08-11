@@ -202,6 +202,18 @@ declare namespace commander {
     passCommandToAction(value?: boolean): this;
 
     /**
+     * Alter parsing of short flags with optional values.
+     *
+     * @example
+     *    // for `.option('-f,--flag [value]'):
+     *   .combineFlagAndOptionalValue(true)  // `-f80` is treated like `--flag=80`, this is the default behaviour
+     *   .combineFlagAndOptionalValue(false) // `-fb` is treated like `-f -b`
+     *
+     * @returns `this` command for chaining
+     */
+    combineFlagAndOptionalValue(arg?: boolean): this;
+
+    /**
      * Allow unknown options on the command line.
      *
      * @param [arg] if `true` or omitted, no error will be thrown for unknown options.

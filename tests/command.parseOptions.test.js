@@ -288,4 +288,25 @@ describe('Utility Conventions', () => {
     expect(result).toEqual({ operands: [], unknown: ['--rrr=value'] });
     expect(program.opts()).toEqual({ });
   });
+
+  test('when program has combo optional and combineFlagAndOptionalValue() then treat as value', () => {
+    const program = createProgram();
+    program.combineFlagAndOptionalValue();
+    program.parseOptions(['-db']);
+    expect(program.opts()).toEqual({ ddd: 'b' });
+  });
+
+  test('when program has combo optional and combineFlagAndOptionalValue(true) then treat as value', () => {
+    const program = createProgram();
+    program.combineFlagAndOptionalValue(true);
+    program.parseOptions(['-db']);
+    expect(program.opts()).toEqual({ ddd: 'b' });
+  });
+
+  test('when program has combo optional and combineFlagAndOptionalValue(false) then treat as boolean', () => {
+    const program = createProgram();
+    program.combineFlagAndOptionalValue(false);
+    program.parseOptions(['-db']);
+    expect(program.opts()).toEqual({ ddd: true, bbb: true });
+  });
 });

@@ -114,6 +114,9 @@ If you use `program.args` or more complicated tests to detect a missing subcomma
 
 If you use `.command('*')` to add a default command, you may be be able to switch to `isDefault:true` with a named command.
 
+If you want to continue combining short options with optional values as though they were boolean flags, set `combineFlagAndOptionalValue(false)`
+to expand `-fb` to `-f -b` rather than `-f b`.
+
 ## [5.0.0-4] (2020-03-03)
 
 (Released in 5.0.0)
