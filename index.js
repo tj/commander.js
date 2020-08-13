@@ -290,6 +290,32 @@ class Command extends EventEmitter {
   };
 
   /**
+   * Emit a general event and a sub-event to this command and all of its
+   * parents in the command hierarchy, proceeding bottom-up. The number of
+   * events emitted at each level increases by one so that a given command
+   * can select for events on any of its sub-command trees. Probably overkill,
+   * but given that the depth is usually one it doesn't seem harmful.
+   */
+  _emitToTree(eventName, subEvent, args) {
+    let cmd;
+    let subEvents = [subEvent, '*'];
+    for (cmd = this; cmd; cmd = cmd.parent) {
+      subEvents.map((e) => {
+        cmd.emit(eventName + ':' + e, args);
+      });
+      // cmd.emit(eventName + ':*', args);
+      // console.log('Emitting for ' + subEvent);
+      // cmd.emit(eventName + ':' + subEvent, args);
+      if (cmd.parent) {
+        subEvents = subEvents.map((e) => {
+          return cmd.parent._name + '.' + e;
+        });
+        subEvents.push('*');
+      }
+    }
+  }
+
+  /**
    * @return {boolean}
    * @api private
    */
@@ -858,14 +884,17 @@ class Command extends EventEmitter {
         // add executable arguments to spawn
         args = incrementNodeInspectorPort(process.execArgv).concat(args);
 
+        this._emitToTree('beforeSpawn', this.name(), { command: this, bin: process.argv[0], args: args });
         proc = spawn(process.argv[0], args, { stdio: 'inherit' });
       } else {
+        this._emitToTree('beforeSpawn', this.name(), { command: this, cmd: bin, args: args });
         proc = spawn(bin, args, { stdio: 'inherit' });
       }
     } else {
       args.unshift(bin);
       // add executable arguments to spawn
       args = incrementNodeInspectorPort(process.execArgv).concat(args);
+      this._emitToTree('beforeSpawn', this.name(), { command: this, cmd: process.execPath, args: args });
       proc = spawn(process.execPath, args, { stdio: 'inherit' });
     }
 
@@ -972,6 +1001,7 @@ class Command extends EventEmitter {
           }
         });
 
+        this._emitToTree('beforeAction', this.name(), { command: this, cmd: this.name(), args: args });
         this._actionHandler(args);
         this.emit('command:' + this.name(), operands, unknown);
       } else if (operands.length) {
