@@ -81,14 +81,14 @@ class Option {
   };
 
   /**
-   * Set whether the option is mandatory, and must have a value after parsing
+   * Whether the option is mandatory and must have a value after parsing
    *
    * @param {boolean} [value]
-   * @return {Option}
+   * @return {boolean|Option}
    * @api public
    */
 
-  mandatory(value) {
+  setMandatory(value) {
     this._mandatory = (value === undefined) || value;
     return this;
   };
@@ -101,7 +101,7 @@ class Option {
    * @api public
    */
 
-  hidden(value) {
+  setHidden(value) {
     this._hidden = (value === undefined) || value;
     return this;
   };
@@ -700,7 +700,7 @@ Read more on https://git.io/JJc0W`);
     } else {
       option.defaultValue(fn);
     }
-    option.mandatory(true);
+    option.setMandatory();
 
     return this.addOption(option);
   };
