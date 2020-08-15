@@ -14,7 +14,7 @@ class Option {
    * Initialize a new `Option` with the given `flags` and `description`.
    *
    * @param {string} flags
-   * @param {string} description
+   * @param {string} [description]
    * @api public
    */
 
@@ -97,7 +97,7 @@ class Option {
    * Return option name.
    *
    * @return {string}
-   * @api private
+   * @api public
    */
 
   name() {
