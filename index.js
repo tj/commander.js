@@ -35,6 +35,7 @@ class Option {
     this._description = description || '';
     this._defaultValue = undefined;
     this._valueHandler = undefined;
+    this._hidden = false;
   }
 
   /**
@@ -80,16 +81,28 @@ class Option {
   };
 
   /**
-   * Get or set whether the option is mandatory, and must have a value after parsing
+   * Set whether the option is mandatory, and must have a value after parsing
    *
    * @param {boolean} [value]
-   * @return {boolean|Option}
+   * @return {Option}
    * @api public
    */
 
   mandatory(value) {
-    if (value === undefined) return this._mandatory;
-    this._mandatory = value;
+    this._mandatory = (value === undefined) || value;
+    return this;
+  };
+
+  /**
+   * Hide option in help.
+   *
+   * @param {boolean} [value]
+   * @return {Option}
+   * @api public
+   */
+
+  hidden(value) {
+    this._hidden = (value === undefined) || value;
     return this;
   };
 
@@ -1544,6 +1557,16 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
+   * Any visible options?
+   *
+   * @return {boolean}
+   * @api private
+   */
+  _hasVisibleOptions() {
+    return this._hasHelpOption || this.options.some((option) => !option._hidden);
+  }
+
+  /**
    * Return help for options.
    *
    * @return {string}
@@ -1559,7 +1582,8 @@ Read more on https://git.io/JJc0W`);
     };
 
     // Explicit options (including version)
-    const help = this.options.map((option) => {
+    const visibleOptions = this.options.filter((option) => !option._hidden);
+    const help = visibleOptions.map((option) => {
       const fullDesc = option._description +
         ((!option._negate && option._defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option._defaultValue) + ')' : '');
       return padOptionDetails(option._flags, fullDesc);
@@ -1654,7 +1678,7 @@ Read more on https://git.io/JJc0W`);
     if (commandHelp) cmds = [commandHelp];
 
     let options = [];
-    if (this._hasHelpOption || this.options.length > 0) {
+    if (this._hasVisibleOptions()) {
       options = [
         'Options:',
         '' + this.optionHelp().replace(/^/gm, '  '),
