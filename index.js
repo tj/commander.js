@@ -19,22 +19,79 @@ class Option {
    */
 
   constructor(flags, description) {
-    this.flags = flags;
-    this.required = flags.includes('<'); // A value must be supplied when the option is specified.
-    this.optional = flags.includes('['); // A value is optional when the option is specified.
+    this._flags = flags;
+    this._required = flags.includes('<'); // A value must be supplied when the option is specified.
+    this._optional = flags.includes('['); // A value is optional when the option is specified.
     // variadic test ignores <value,...> et al which might be used to describe custom splitting of single argument
-    this.variadic = /\w\.\.\.[>\]]$/.test(flags); // The option can take multiple values.
-    this.mandatory = false; // The option must have a value after parsing, which usually means it must be specified on command line.
+    this._variadic = /\w\.\.\.[>\]]$/.test(flags); // The option can take multiple values.
+    this._mandatory = false; // The option must have a value after parsing, which usually means it must be specified on command line.
     const optionFlags = _parseOptionFlags(flags);
-    this.short = optionFlags.shortFlag;
-    this.long = optionFlags.longFlag;
-    this.negate = false;
-    if (this.long) {
-      this.negate = this.long.startsWith('--no-');
+    this._short = optionFlags.shortFlag;
+    this._long = optionFlags.longFlag;
+    this._negate = false;
+    if (this._long) {
+      this._negate = this._long.startsWith('--no-');
     }
-    this.description = description || '';
-    this.defaultValue = undefined;
+    this._description = description || '';
+    this._defaultValue = undefined;
+    this._valueHandler = undefined;
   }
+
+  /**
+   * Get or set the description
+   *
+   * @param {string} [str]
+   * @return {string|Option}
+   * @api public
+   */
+
+  description(str) {
+    if (str === undefined) return this._description;
+    this._description = str;
+    return this;
+  };
+
+  /**
+   * Get or set the default value
+   *
+   * @param {any} [value]
+   * @return {any|Option}
+   * @api public
+   */
+
+  defaultValue(value) {
+    if (value === undefined) return this._defaultValue;
+    this._defaultValue = value;
+    return this;
+  };
+
+  /**
+   * Get or set the custom value handler
+   *
+   * @param {Function} [fn]
+   * @return {Function|Option}
+   * @api public
+   */
+
+  valueHandler(fn) {
+    if (fn === undefined) return this._valueHandler;
+    this._valueHandler = fn;
+    return this;
+  };
+
+  /**
+   * Get or set whether the option is mandatory, and must have a value after parsing
+   *
+   * @param {boolean} [value]
+   * @return {boolean|Option}
+   * @api public
+   */
+
+  mandatory(value) {
+    if (value === undefined) return this._mandatory;
+    this._mandatory = value;
+    return this;
+  };
 
   /**
    * Return option name.
@@ -44,10 +101,10 @@ class Option {
    */
 
   name() {
-    if (this.long) {
-      return this.long.replace(/^--/, '');
+    if (this._long) {
+      return this._long.replace(/^--/, '');
     }
-    return this.short.replace(/^-/, '');
+    return this._short.replace(/^-/, '');
   };
 
   /**
@@ -71,7 +128,7 @@ class Option {
    */
 
   is(arg) {
-    return this.short === arg || this.long === arg;
+    return this._short === arg || this._long === arg;
   };
 }
 
@@ -326,7 +383,7 @@ class Command extends EventEmitter {
 
       switch (arg[0]) {
         case '<':
-          argDetails.required = true;
+          argDetails._required = true;
           argDetails.name = arg.slice(1, -1);
           break;
         case '[':
@@ -335,7 +392,7 @@ class Command extends EventEmitter {
       }
 
       if (argDetails.name.length > 3 && argDetails.name.slice(-3) === '...') {
-        argDetails.variadic = true;
+        argDetails._variadic = true;
         argDetails.name = argDetails.name.slice(0, -3);
       }
       if (argDetails.name) {
@@ -343,7 +400,7 @@ class Command extends EventEmitter {
       }
     });
     this._args.forEach((arg, i) => {
-      if (arg.variadic && i < this._args.length - 1) {
+      if (arg._variadic && i < this._args.length - 1) {
         throw new Error(`only the last argument can be variadic '${arg.name}'`);
       }
     });
@@ -459,12 +516,12 @@ class Command extends EventEmitter {
     }
 
     let foundClash = true;
-    if (option.negate) {
+    if (option._negate) {
       // It is ok if define foo before --no-foo.
-      const positiveLongFlag = option.long.replace(/^--no-/, '--');
+      const positiveLongFlag = option._long.replace(/^--no-/, '--');
       foundClash = !this._findOption(positiveLongFlag);
-    } else if (option.long) {
-      const negativeLongFlag = option.long.replace(/^--/, '--no-');
+    } else if (option._long) {
+      const negativeLongFlag = option._long.replace(/^--/, '--no-');
       foundClash = !this._findOption(negativeLongFlag);
     }
 
@@ -479,52 +536,30 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
-   * Internal implementation shared by .option() and .requiredOption()
+   * Add an option.
    *
-   * @param {Object} config
-   * @param {string} flags
-   * @param {string} description
-   * @param {Function|*} [fn] - custom option processing function or default value
-   * @param {*} [defaultValue]
+   * @param {Option} option
    * @return {Command} `this` command for chaining
-   * @api private
    */
-
-  _optionEx(config, flags, description, fn, defaultValue) {
-    const option = new Option(flags, description);
+  addOption(option) {
     const oname = option.name();
     const name = option.attributeName();
-    option.mandatory = !!config.mandatory;
 
     this._checkForOptionNameClash(option);
 
-    // default as 3rd arg
-    if (typeof fn !== 'function') {
-      if (fn instanceof RegExp) {
-        // This is a bit simplistic (especially no error messages), and probably better handled by caller using custom option processing.
-        // No longer documented in README, but still present for backwards compatibility.
-        const regex = fn;
-        fn = (val, def) => {
-          const m = regex.exec(val);
-          return m ? m[0] : def;
-        };
-      } else {
-        defaultValue = fn;
-        fn = null;
-      }
-    }
+    let defaultValue = option._defaultValue;
+    const fn = option._valueHandler;
 
     // preassign default value for --no-*, [optional], <required>, or plain flag if boolean value
-    if (option.negate || option.optional || option.required || typeof defaultValue === 'boolean') {
+    if (option._negate || option._optional || option._required || typeof defaultValue === 'boolean') {
       // when --no-foo we make sure default is true, unless a --foo option is already defined
-      if (option.negate) {
-        const positiveLongFlag = option.long.replace(/^--no-/, '--');
+      if (option._negate) {
+        const positiveLongFlag = option._long.replace(/^--no-/, '--');
         defaultValue = this._findOption(positiveLongFlag) ? this._getOptionValue(name) : true;
       }
       // preassign only if we have a default
       if (defaultValue !== undefined) {
         this._setOptionValue(name, defaultValue);
-        option.defaultValue = defaultValue;
       }
     }
 
@@ -539,7 +574,7 @@ Read more on https://git.io/JJc0W`);
       // custom processing
       if (val !== null && fn) {
         val = fn(val, oldValue === undefined ? defaultValue : oldValue);
-      } else if (val !== null && option.variadic) {
+      } else if (val !== null && option._variadic) {
         if (oldValue === defaultValue || !Array.isArray(oldValue)) {
           val = [val];
         } else {
@@ -551,7 +586,7 @@ Read more on https://git.io/JJc0W`);
       if (typeof oldValue === 'boolean' || typeof oldValue === 'undefined') {
         // if no value, negate false, and we have a default, then use it!
         if (val == null) {
-          this._setOptionValue(name, option.negate
+          this._setOptionValue(name, option._negate
             ? false
             : defaultValue || true);
         } else {
@@ -559,12 +594,12 @@ Read more on https://git.io/JJc0W`);
         }
       } else if (val !== null) {
         // reassign
-        this._setOptionValue(name, option.negate ? false : val);
+        this._setOptionValue(name, option._negate ? false : val);
       }
     });
 
     return this;
-  };
+  }
 
   /**
    * Define option with `flags`, `description` and optional
@@ -619,7 +654,15 @@ Read more on https://git.io/JJc0W`);
    */
 
   option(flags, description, fn, defaultValue) {
-    return this._optionEx({}, flags, description, fn, defaultValue);
+    const option = new Option(flags, description);
+    if (typeof fn === 'function') {
+      option.valueHandler(fn);
+      option.defaultValue(defaultValue);
+    } else {
+      option.defaultValue(fn);
+    }
+
+    return this.addOption(option);
   };
 
   /**
@@ -637,7 +680,16 @@ Read more on https://git.io/JJc0W`);
   */
 
   requiredOption(flags, description, fn, defaultValue) {
-    return this._optionEx({ mandatory: true }, flags, description, fn, defaultValue);
+    const option = new Option(flags, description);
+    if (typeof fn === 'function') {
+      option.valueHandler(fn);
+      option.defaultValue(defaultValue);
+    } else {
+      option.defaultValue(fn);
+    }
+    option.mandatory(true);
+
+    return this.addOption(option);
   };
 
   /**
@@ -992,9 +1044,9 @@ Read more on https://git.io/JJc0W`);
       if (this._actionHandler) {
         const args = this.args.slice();
         this._args.forEach((arg, i) => {
-          if (arg.required && args[i] == null) {
+          if (arg._required && args[i] == null) {
             this.missingArgument(arg.name);
-          } else if (arg.variadic) {
+          } else if (arg._variadic) {
             args[i] = args.splice(i);
           }
         });
@@ -1051,7 +1103,7 @@ Read more on https://git.io/JJc0W`);
     // Walk up hierarchy so can call in subcommand after checking for displaying help.
     for (let cmd = this; cmd; cmd = cmd.parent) {
       cmd.options.forEach((anOption) => {
-        if (anOption.mandatory && (cmd._getOptionValue(anOption.attributeName()) === undefined)) {
+        if (anOption._mandatory && (cmd._getOptionValue(anOption.attributeName()) === undefined)) {
           cmd.missingMandatoryOptionValue(anOption);
         }
       });
@@ -1107,11 +1159,11 @@ Read more on https://git.io/JJc0W`);
         const option = this._findOption(arg);
         // recognised option, call listener to assign value with possible custom processing
         if (option) {
-          if (option.required) {
+          if (option._required) {
             const value = args.shift();
             if (value === undefined) this.optionMissingArgument(option);
             this.emit(`option:${option.name()}`, value);
-          } else if (option.optional) {
+          } else if (option._optional) {
             let value = null;
             // historical behaviour is optional value is following arg unless an option
             if (args.length > 0 && !maybeOption(args[0])) {
@@ -1121,7 +1173,7 @@ Read more on https://git.io/JJc0W`);
           } else { // boolean flag
             this.emit(`option:${option.name()}`);
           }
-          activeVariadicOption = option.variadic ? option : null;
+          activeVariadicOption = option._variadic ? option : null;
           continue;
         }
       }
@@ -1130,7 +1182,7 @@ Read more on https://git.io/JJc0W`);
       if (arg.length > 2 && arg[0] === '-' && arg[1] !== '-') {
         const option = this._findOption(`-${arg[1]}`);
         if (option) {
-          if (option.required || (option.optional && this._combineFlagAndOptionalValue)) {
+          if (option._required || (option._optional && this._combineFlagAndOptionalValue)) {
             // option with value following in same argument
             this.emit(`option:${option.name()}`, arg.slice(2));
           } else {
@@ -1146,7 +1198,7 @@ Read more on https://git.io/JJc0W`);
       if (/^--[^=]+=/.test(arg)) {
         const index = arg.indexOf('=');
         const option = this._findOption(arg.slice(0, index));
-        if (option && (option.required || option.optional)) {
+        if (option && (option._required || option._optional)) {
           this.emit(`option:${option.name()}`, arg.slice(index + 1));
           continue;
         }
@@ -1210,9 +1262,9 @@ Read more on https://git.io/JJc0W`);
   optionMissingArgument(option, flag) {
     let message;
     if (flag) {
-      message = `error: option '${option.flags}' argument missing, got '${flag}'`;
+      message = `error: option '${option._flags}' argument missing, got '${flag}'`;
     } else {
-      message = `error: option '${option.flags}' argument missing`;
+      message = `error: option '${option._flags}' argument missing`;
     }
     console.error(message);
     this._exit(1, 'commander.optionMissingArgument', message);
@@ -1226,7 +1278,7 @@ Read more on https://git.io/JJc0W`);
    */
 
   missingMandatoryOptionValue(option) {
-    const message = `error: required option '${option.flags}' not specified`;
+    const message = `error: required option '${option._flags}' not specified`;
     console.error(message);
     this._exit(1, 'commander.missingMandatoryOptionValue', message);
   };
@@ -1446,11 +1498,11 @@ Read more on https://git.io/JJc0W`);
   largestOptionLength() {
     const options = [].slice.call(this.options);
     options.push({
-      flags: this._helpFlags
+      _flags: this._helpFlags
     });
 
     return options.reduce((max, option) => {
-      return Math.max(max, option.flags.length);
+      return Math.max(max, option._flags.length);
     }, 0);
   };
 
@@ -1508,9 +1560,9 @@ Read more on https://git.io/JJc0W`);
 
     // Explicit options (including version)
     const help = this.options.map((option) => {
-      const fullDesc = option.description +
-        ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
-      return padOptionDetails(option.flags, fullDesc);
+      const fullDesc = option._description +
+        ((!option._negate && option._defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option._defaultValue) + ')' : '');
+      return padOptionDetails(option._flags, fullDesc);
     });
 
     // Implicit help
@@ -1623,6 +1675,7 @@ Read more on https://git.io/JJc0W`);
    * When listener(s) are available for the helpLongFlag
    * those callbacks are invoked.
    *
+   * @param {Function} [cb]
    * @api public
    */
 
@@ -1805,9 +1858,9 @@ function outputHelpIfRequested(cmd, args) {
  */
 
 function humanReadableArgName(arg) {
-  const nameOutput = arg.name + (arg.variadic === true ? '...' : '');
+  const nameOutput = arg.name + (arg._variadic === true ? '...' : '');
 
-  return arg.required
+  return arg._required
     ? '<' + nameOutput + '>'
     : '[' + nameOutput + ']';
 }
