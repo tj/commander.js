@@ -143,7 +143,7 @@ test('when no options then Options not included in helpInformation', () => {
 test('when option hidden then option not included in helpInformation', () => {
   const program = new commander.Command();
   program
-    .addOption(new commander.Option('-s,--secret', 'secret option').hidden());
+    .addOption(new commander.Option('-s,--secret', 'secret option').setHidden());
   const helpInformation = program.helpInformation();
   expect(helpInformation).not.toMatch('secret');
 });
