@@ -35,6 +35,7 @@ class Option {
       this.negate = this.long.startsWith('--no-');
     }
     this.defaultValue = undefined;
+    this.defaultValueDescription = undefined;
     this._valueHandler = undefined;
     this.hidden = false;
   }
@@ -43,13 +44,36 @@ class Option {
    * Set the default value
    *
    * @param {any} [value]
+   * @param {string} [description]
    * @return {any|Option}
    * @api public
    */
 
-  default(value) {
+  default(value, description) {
     this.defaultValue = value;
+    this.defaultValueDescription = description;
     return this;
+  };
+
+  /**
+   * Calculate the description for the default value
+   *
+   * @return {string}
+   * @api public
+   */
+
+  getDefaultDescription() {
+    if (this.negate) {
+      return undefined;
+    }
+    if (this.defaultValueDescription !== undefined) {
+      return this.defaultValueDescription;
+    }
+    if (this.defaultValue !== undefined) {
+      return JSON.stringify(this.defaultValue);
+    }
+
+    return undefined;
   };
 
   /**
@@ -1569,7 +1593,7 @@ Read more on https://git.io/JJc0W`);
     const visibleOptions = this.options.filter((option) => !option.hidden);
     const help = visibleOptions.map((option) => {
       const fullDesc = option.description +
-        ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
+        (option.getDefaultDescription() ? ' (default: ' + option.getDefaultDescription() + ')' : '');
       return padOptionDetails(option.flags, fullDesc);
     });
 

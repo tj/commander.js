@@ -147,3 +147,19 @@ test('when option hidden then option not included in helpInformation', () => {
   const helpInformation = program.helpInformation();
   expect(helpInformation).not.toMatch('secret');
 });
+
+test('when option has default value then default included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .option('-p, --port <portNumber>', 'port number', 80);
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch('(default: 80)');
+});
+
+test('when option has default value description then default description included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .addOption(new commander.Option('-a, --address <dotted>', 'ip address').default('127.0.0.1', 'home'));
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch('(default: home)');
+});
