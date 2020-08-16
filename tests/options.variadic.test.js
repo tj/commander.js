@@ -142,7 +142,7 @@ describe('variadic special cases', () => {
     program
       .option('-c,--comma [value...]');
 
-    expect(program.options[0]._variadic).toBeTruthy();
+    expect(program.options[0].variadic).toBeTruthy();
   });
 
   test('when option flags has special characters before dots then not variadic', () => {
@@ -151,6 +151,6 @@ describe('variadic special cases', () => {
     program
       .option('-c,--comma [value,...]');
 
-    expect(program.options[0]._variadic).toBeFalsy();
+    expect(program.options[0].variadic).toBeFalsy();
   });
 });
