@@ -590,7 +590,6 @@ Read more on https://git.io/JJc0W`);
     this._checkForOptionNameClash(option);
 
     let defaultValue = option.defaultValue;
-    const fn = option._valueHandler;
 
     // preassign default value for --no-*, [optional], <required>, or plain flag if boolean value
     if (option.negate || option.optional || option.required || typeof defaultValue === 'boolean') {
@@ -614,8 +613,16 @@ Read more on https://git.io/JJc0W`);
       const oldValue = this._getOptionValue(name);
 
       // custom processing
-      if (val !== null && fn) {
-        val = fn(val, oldValue === undefined ? defaultValue : oldValue);
+      if (val !== null && option._valueHandler) {
+        try {
+          val = option._valueHandler(val, oldValue === undefined ? defaultValue : oldValue);
+        } catch (err) {
+          if (err.code === 'commander.optionArgumentRejected') {
+            console.error(err.message);
+            this._exit(err.exitCode, err.code, err.message);
+          }
+          throw err;
+        }
       } else if (val !== null && option.variadic) {
         if (oldValue === defaultValue || !Array.isArray(oldValue)) {
           val = [val];
