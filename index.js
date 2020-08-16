@@ -117,6 +117,24 @@ class Option {
   };
 
   /**
+   * Only allow option value to be one of choices.
+   *
+   * @param {string[]} values
+   * @return {Option}
+   * @api public
+   */
+
+  choices(values) {
+    this._valueHandler = (value) => {
+      if (values.includes(value)) {
+        return value;
+      }
+      throw new Error(`option '${this.flags}' argument of '${value}' not in allowed choices: ${values.join(', ')}`);
+    };
+    return this;
+  };
+
+  /**
    * Return option name.
    *
    * @return {string}
