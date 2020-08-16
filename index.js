@@ -888,7 +888,9 @@ Read more on https://git.io/JJc0W`);
       default:
         throw new Error(`unexpected parse option { from: '${parseOptions.from}' }`);
     }
+    // @ts-ignore
     if (!this._scriptPath && process.mainModule) {
+      // @ts-ignore
       this._scriptPath = process.mainModule.filename;
     }
 
@@ -944,7 +946,9 @@ Read more on https://git.io/JJc0W`);
     // Want the entry script as the reference for command name and directory for searching for other files.
     let scriptPath = this._scriptPath;
     // Fallback in case not set, due to how Command created or called.
+    // @ts-ignore
     if (!scriptPath && process.mainModule) {
+      // @ts-ignore
       scriptPath = process.mainModule.filename;
     }
 

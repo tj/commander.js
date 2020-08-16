@@ -22,7 +22,8 @@
     "lint": "eslint index.js \"tests/**/*.js\"",
     "typescript-lint": "eslint typings/*.ts",
     "test": "jest && npm run test-typings",
-    "test-typings": "tsc -p tsconfig.json"
+    "test-typings": "tsc -p tsconfig.json",
+    "typescript-checkJS": "tsc --allowJS --checkJS index.js --noEmit"
   },
   "main": "index",
   "files": [
