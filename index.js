@@ -94,7 +94,7 @@ class Option {
    * Whether the option is mandatory and must have a value after parsing
    *
    * @param {boolean} [value]
-   * @return {boolean|Option}
+   * @return {Option}
    * @api public
    */
 
