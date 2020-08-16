@@ -34,22 +34,21 @@ class Option {
     if (this.long) {
       this.negate = this.long.startsWith('--no-');
     }
-    this._defaultValue = undefined;
+    this.defaultValue = undefined;
     this._valueHandler = undefined;
     this.hidden = false;
   }
 
   /**
-   * Get or set the default value
+   * Set the default value
    *
    * @param {any} [value]
    * @return {any|Option}
    * @api public
    */
 
-  defaultValue(value) {
-    if (value === undefined) return this._defaultValue;
-    this._defaultValue = value;
+  default(value) {
+    this.defaultValue = value;
     return this;
   };
 
@@ -547,7 +546,7 @@ Read more on https://git.io/JJc0W`);
 
     this._checkForOptionNameClash(option);
 
-    let defaultValue = option._defaultValue;
+    let defaultValue = option.defaultValue;
     const fn = option._valueHandler;
 
     // preassign default value for --no-*, [optional], <required>, or plain flag if boolean value
@@ -656,10 +655,9 @@ Read more on https://git.io/JJc0W`);
   option(flags, description, fn, defaultValue) {
     const option = new Option(flags, description);
     if (typeof fn === 'function') {
-      option.valueHandler(fn);
-      option.defaultValue(defaultValue);
+      option.default(defaultValue).valueHandler(fn);
     } else {
-      option.defaultValue(fn);
+      option.default(fn);
     }
 
     return this.addOption(option);
@@ -682,10 +680,9 @@ Read more on https://git.io/JJc0W`);
   requiredOption(flags, description, fn, defaultValue) {
     const option = new Option(flags, description);
     if (typeof fn === 'function') {
-      option.valueHandler(fn);
-      option.defaultValue(defaultValue);
+      option.default(defaultValue).valueHandler(fn);
     } else {
-      option.defaultValue(fn);
+      option.default(fn);
     }
     option.makeOptionMandatory();
 
@@ -1572,7 +1569,7 @@ Read more on https://git.io/JJc0W`);
     const visibleOptions = this.options.filter((option) => !option.hidden);
     const help = visibleOptions.map((option) => {
       const fullDesc = option.description +
-        ((!option.negate && option._defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option._defaultValue) + ')' : '');
+        ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
       return padOptionDetails(option.flags, fullDesc);
     });
 
