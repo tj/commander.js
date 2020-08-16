@@ -125,11 +125,12 @@ class Option {
    */
 
   choices(values) {
-    this._valueHandler = (value) => {
-      if (values.includes(value)) {
-        return value;
+    this._valueHandler = (arg) => {
+      if (!values.includes(arg)) {
+        throw new CommanderError(1, 'commander.optionArgumentRejected',
+          `error: option '${this.flags}' argument of '${arg}' not in allowed choices: ${values.join(', ')}`);
       }
-      throw new Error(`option '${this.flags}' argument of '${value}' not in allowed choices: ${values.join(', ')}`);
+      return arg;
     };
     return this;
   };
