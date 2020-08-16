@@ -75,7 +75,7 @@ class Option {
    * @api public
    */
 
-  setMandatory(value) {
+  makeOptionMandatory(value) {
     this.mandatory = (value === undefined) || value;
     return this;
   };
@@ -88,7 +88,7 @@ class Option {
    * @api public
    */
 
-  setHidden(value) {
+  hideHelp(value) {
     this.hidden = (value === undefined) || value;
     return this;
   };
@@ -687,7 +687,7 @@ Read more on https://git.io/JJc0W`);
     } else {
       option.defaultValue(fn);
     }
-    option.setMandatory();
+    option.makeOptionMandatory();
 
     return this.addOption(option);
   };
