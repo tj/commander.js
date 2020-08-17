@@ -36,7 +36,7 @@ class Option {
     }
     this.defaultValue = undefined;
     this.defaultValueDescription = undefined;
-    this.transformHandler = undefined;
+    this.parseArg = undefined;
     this.hidden = false;
   }
 
@@ -77,15 +77,15 @@ class Option {
   };
 
   /**
-   * Set the custom value handler
+   * Set the custom handler for processing CLI option arguments into option values
    *
    * @param {Function} [fn]
    * @return {Function|Option}
    * @api public
    */
 
-  transformArg(fn) {
-    this.transformHandler = fn;
+  parseArgWith(fn) {
+    this.parseArg = fn;
     return this;
   };
 
@@ -124,7 +124,7 @@ class Option {
    */
 
   choices(values) {
-    this.transformHandler = (arg) => {
+    this.parseArg = (arg) => {
       if (!values.includes(arg)) {
         throw new CommanderError(1, 'commander.optionArgumentRejected',
           `error: option '${this.flags}' argument of '${arg}' not in allowed choices: ${values.join(', ')}`);
@@ -612,9 +612,9 @@ Read more on https://git.io/JJc0W`);
       const oldValue = this._getOptionValue(name);
 
       // custom processing
-      if (val !== null && option.transformHandler) {
+      if (val !== null && option.parseArg) {
         try {
-          val = option.transformHandler(val, oldValue === undefined ? defaultValue : oldValue);
+          val = option.parseArg(val, oldValue === undefined ? defaultValue : oldValue);
         } catch (err) {
           if (err.code === 'commander.optionArgumentRejected') {
             console.error(err.message);
@@ -704,7 +704,7 @@ Read more on https://git.io/JJc0W`);
   option(flags, description, fn, defaultValue) {
     const option = new Option(flags, description);
     if (typeof fn === 'function') {
-      option.default(defaultValue).transformArg(fn);
+      option.default(defaultValue).parseArgWith(fn);
     } else {
       option.default(fn);
     }
@@ -729,7 +729,7 @@ Read more on https://git.io/JJc0W`);
   requiredOption(flags, description, fn, defaultValue) {
     const option = new Option(flags, description);
     if (typeof fn === 'function') {
-      option.default(defaultValue).transformArg(fn);
+      option.default(defaultValue).parseArgWith(fn);
     } else {
       option.default(fn);
     }
