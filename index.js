@@ -38,6 +38,7 @@ class Option {
     this.defaultValueDescription = undefined;
     this.parseArg = undefined;
     this.hidden = false;
+    this.argChoices = undefined;
   }
 
   /**
@@ -56,24 +57,29 @@ class Option {
   };
 
   /**
-   * Calculate the description for the default value
+   * Calculate the full description, including defaultValue etc.
    *
    * @return {string}
    * @api public
    */
 
-  getDefaultDescription() {
+  getFullDescription() {
     if (this.negate) {
-      return undefined;
+      return this.description;
     }
-    if (this.defaultValueDescription !== undefined) {
-      return this.defaultValueDescription;
+    const extraInfo = [];
+    if (this.argChoices) {
+      extraInfo.push(
+        // use stringify to match the display of the default value
+        `choices: ${this.argChoices.map((choice) => JSON.stringify(choice)).join(', ')}`);
     }
     if (this.defaultValue !== undefined) {
-      return JSON.stringify(this.defaultValue);
+      extraInfo.push(`default: ${this.defaultValueDescription || JSON.stringify(this.defaultValue)}`);
     }
-
-    return undefined;
+    if (extraInfo.length > 0) {
+      return `${this.description} (${extraInfo.join(', ')})`;
+    }
+    return this.description;
   };
 
   /**
@@ -124,6 +130,7 @@ class Option {
    */
 
   choices(values) {
+    this.argChoices = values;
     this.parseArg = (arg) => {
       if (!values.includes(arg)) {
         throw new CommanderError(1, 'commander.optionArgumentRejected',
@@ -1621,9 +1628,7 @@ Read more on https://git.io/JJc0W`);
     // Explicit options (including version)
     const visibleOptions = this.options.filter((option) => !option.hidden);
     const help = visibleOptions.map((option) => {
-      const fullDesc = option.description +
-        (option.getDefaultDescription() ? ' (default: ' + option.getDefaultDescription() + ')' : '');
-      return padOptionDetails(option.flags, fullDesc);
+      return padOptionDetails(option.flags, option.getFullDescription());
     });
 
     // Implicit help

@@ -163,3 +163,19 @@ test('when option has default value description then default description include
   const helpInformation = program.helpInformation();
   expect(helpInformation).toMatch('(default: home)');
 });
+
+test('when option has choices then choices included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .addOption(new commander.Option('-c, --colour <colour>').choices(['red', 'blue']));
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch('(choices: "red", "blue")');
+});
+
+test('when option has choices and default then both included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .addOption(new commander.Option('-c, --colour <colour>').choices(['red', 'blue']).default('red'));
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch('(choices: "red", "blue", default: "red")');
+});
