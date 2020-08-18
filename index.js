@@ -46,7 +46,7 @@ class Option {
    *
    * @param {any} value
    * @param {string} [description]
-   * @return {any|Option}
+   * @return {Option}
    * @api public
    */
 
@@ -86,7 +86,7 @@ class Option {
    * Set the custom handler for processing CLI option arguments into option values
    *
    * @param {Function} [fn]
-   * @return {Function|Option}
+   * @return {Option}
    * @api public
    */
 
