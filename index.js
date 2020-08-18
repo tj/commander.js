@@ -44,7 +44,7 @@ class Option {
   /**
    * Set the default value
    *
-   * @param {any} [value]
+   * @param {any} value
    * @param {string} [description]
    * @return {any|Option}
    * @api public
