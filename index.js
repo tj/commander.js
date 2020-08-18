@@ -296,21 +296,26 @@ class Command extends EventEmitter {
    * can select for events on any of its sub-command trees. Probably overkill,
    * but given that the depth is usually one it doesn't seem harmful.
    */
-  _emitToTree(eventName, subEvent, args) {
+  _emitToTree(eventName, args) {
+    let val = {
+      command: this,
+      name: this.name(),
+      cmdPath: this.name(), // initially
+      execArg: args.execArg,
+      args: args.args
+    };
+
     let cmd;
-    let subEvents = [subEvent, '*'];
+
     for (cmd = this; cmd; cmd = cmd.parent) {
-      subEvents.map((e) => {
-        cmd.emit(eventName + ':' + e, args);
-      });
-      // cmd.emit(eventName + ':*', args);
-      // console.log('Emitting for ' + subEvent);
-      // cmd.emit(eventName + ':' + subEvent, args);
+      cmd.emit(eventName, val);
+
       if (cmd.parent) {
-        subEvents = subEvents.map((e) => {
-          return cmd.parent._name + '.' + e;
-        });
-        subEvents.push('*');
+        const newCmdPath = cmd.parent.name() + '.' + val.cmdPath;
+
+        // Use spread to make a new emitted value, because the event structure
+        // is supposed to be read-only.
+        val = { ...val, cmdPath: newCmdPath };
       }
     }
   }
@@ -884,17 +889,17 @@ class Command extends EventEmitter {
         // add executable arguments to spawn
         args = incrementNodeInspectorPort(process.execArgv).concat(args);
 
-        this._emitToTree('beforeSpawn', this.name(), { command: this, bin: process.argv[0], args: args });
+        this._emitToTree('preSpawn', { execArg: process.argv[0], args: args });
         proc = spawn(process.argv[0], args, { stdio: 'inherit' });
       } else {
-        this._emitToTree('beforeSpawn', this.name(), { command: this, cmd: bin, args: args });
+        this._emitToTree('preSpawn', { execArg: bin, args: args });
         proc = spawn(bin, args, { stdio: 'inherit' });
       }
     } else {
       args.unshift(bin);
       // add executable arguments to spawn
       args = incrementNodeInspectorPort(process.execArgv).concat(args);
-      this._emitToTree('beforeSpawn', this.name(), { command: this, cmd: process.execPath, args: args });
+      this._emitToTree('preSpawn', { execArg: process.execPath, args: args });
       proc = spawn(process.execPath, args, { stdio: 'inherit' });
     }
 
@@ -1001,8 +1006,9 @@ class Command extends EventEmitter {
           }
         });
 
-        this._emitToTree('beforeAction', this.name(), { command: this, cmd: this.name(), args: args });
+        this._emitToTree('preAction', { execArg: this.name(), args: args });
         this._actionHandler(args);
+        this._emitToTree('postAction', { execArg: this.name(), args: args });
         this.emit('command:' + this.name(), operands, unknown);
       } else if (operands.length) {
         if (this._findCommand('*')) {
