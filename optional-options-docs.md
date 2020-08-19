@@ -1,6 +1,6 @@
 # Tricks and traps when using options with optional values
 
-There potential challenges using options with optional values. They seem quite attractive and the README used to use them more than options with require values but in practice, they are a bit tricky and aren't a free choice.
+There are potential challenges using options with optional values. They seem quite attractive and the README used to use them more than options with require values but in practice, they are a bit tricky and aren't a free choice.
 
 ## Parsing ambiguity
 
@@ -30,7 +30,7 @@ $ example -o nextArg
 option: nextArg
 ```
 
-For example, the user may intend `brew` to be passed as a subcommand. Instead, it will be read as the passed in value for `-o`. Likewise, the user may intend `nextArg` to be passed as an argument but it too, will be read as the passed in value for `-o`
+For example, you may intend `brew` to be passed as a subcommand. Instead, it will be read as the passed in value for `-o`. Likewise, you may intend `nextArg` to be passed as an argument but it too, will be read as the passed in value for `-o`
 
 ### Possible workarounds
 
@@ -44,12 +44,12 @@ To reduce such ambiguity, you can do the following:
 
 ```
 program
-  .option("-a, --any [count]", "any servings")
+  .option("-o, --others [count]", "others servings")
   .option("-v, --vegan [count]", "vegan servings")
   .option("-l, --halal [count]", "halal servings");
 program.parse(process.argv);
 
-if (program.any) console.log(`any servings: ${program.any}`);
+if (program.others) console.log(`others servings: ${program.others}`);
 if (program.vegan) console.log(`vegan servings: ${program.vegan}`);
 if (program.halal) console.log(`halal servings: ${program.halal}`);
 
@@ -70,3 +70,9 @@ any servings: true
 vegan servings: true
 halal servings: true
 ```
+
+### Behaviour change from v5 to v6
+
+Before Commander v5, `-ob` expanded to `-o -b`, which is different from the current behaviour in Commander v6 as explained above.
+
+This new behaviour may be an issue for people upgrading from older versions of Commander but we do have plans to prioritise combining flags over combining flag-and-value in the future.
