@@ -722,6 +722,14 @@ Read more on https://git.io/JJc0W`);
     const option = new Option(flags, description);
     if (typeof fn === 'function') {
       option.default(defaultValue).parseArgWith(fn);
+    } else if (fn instanceof RegExp) {
+      // Obsolete
+      const regex = fn;
+      fn = (val, def) => {
+        const m = regex.exec(val);
+        return m ? m[0] : def;
+      };
+      option.default(defaultValue).parseArgWith(fn);
     } else {
       option.default(fn);
     }
@@ -746,6 +754,14 @@ Read more on https://git.io/JJc0W`);
   requiredOption(flags, description, fn, defaultValue) {
     const option = new Option(flags, description);
     if (typeof fn === 'function') {
+      option.default(defaultValue).parseArgWith(fn);
+    } else if (fn instanceof RegExp) {
+      // Obsolete
+      const regex = fn;
+      fn = (val, def) => {
+        const m = regex.exec(val);
+        return m ? m[0] : def;
+      };
       option.default(defaultValue).parseArgWith(fn);
     } else {
       option.default(fn);
