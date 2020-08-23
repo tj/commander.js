@@ -126,6 +126,9 @@ const requiredOptionThis9: commander.Command = program.requiredOption('-v, --ver
 const requiredOptionThis10: commander.Command = program.requiredOption('-c, --collect <value>', 'repeatable value', collect, []);
 const requiredOptionThis11: commander.Command = program.requiredOption('-l, --list <items>', 'comma separated list', commaSeparatedList);
 
+// addOption
+const addOptionThis: commander.Command = program.addOption(new commander.Option('-s,--simple'));
+
 // storeOptionsAsProperties
 const storeOptionsAsPropertiesThis1: commander.Command = program.storeOptionsAsProperties();
 const storeOptionsAsPropertiesThis2: commander.Command = program.storeOptionsAsProperties(false);
@@ -225,3 +228,37 @@ const myProgram = new MyCommand();
 myProgram.myFunction();
 const mySub = myProgram.command('sub');
 mySub.myFunction();
+
+// Option methods
+
+const baseOption = new commander.Option('-f,--foo', 'foo description');
+
+// default
+const myOptionThis1: commander.Option = baseOption.default(3);
+const myOptionThis2: commander.Option = baseOption.default(60, 'one minute');
+
+// getFullDescription
+const optionDescription: string = baseOption.getFullDescription();
+
+// parseArgWith
+const myOptionThis3: commander.Option = baseOption.parseArgWith((value: string) => parseInt(value));
+const myOptionThis4: commander.Option = baseOption.parseArgWith((value: string, previous: string[]) => { return previous.concat(value); });
+
+// makeOptionMandatory
+const myOptionThis5: commander.Option = baseOption.makeOptionMandatory();
+const myOptionThis6: commander.Option = baseOption.makeOptionMandatory(true);
+
+// hideHelp
+const myOptionThis7: commander.Option = baseOption.hideHelp();
+const myOptionThis8: commander.Option = baseOption.hideHelp(true);
+
+// argumentRejected
+function goodbye(): never {
+  return baseOption.argumentRejected('failed');
+};
+
+// choices
+const myOptionThis9: commander.Option = baseOption.choices(['a', 'b']);
+
+// name
+const optionName: string = baseOption.name();

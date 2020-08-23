@@ -13,13 +13,62 @@ declare namespace commander {
 
   interface Option {
     flags: string;
+    description: string;
+
     required: boolean; // A value must be supplied when the option is specified.
     optional: boolean; // A value is optional when the option is specified.
+    variadic: boolean;
     mandatory: boolean; // The option must have a value after parsing, which usually means it must be specified on command line.
-    bool: boolean;
+    optionFlags: string;
     short?: string;
-    long: string;
-    description: string;
+    long?: string;
+    negate: boolean;
+    defaultValue?: any;
+    defaultValueDescription?: string;
+    parseArg?: <T>(value: string, previous: T) => T;
+    hidden: boolean;
+    argChoices?: string[];
+
+    /**
+     * Set the default value, and optionally supply the description to be displayed in the help.
+     */
+    default(value: any, description?: string): this;
+
+    /**
+     * Calculate the full description, including defaultValue etc.
+     */
+    getFullDescription(): string;
+
+    /**
+     * Set the custom handler for processing CLI option arguments into option values.
+     */
+    parseArgWith<T>(fn: (value: string, previous: T) => T): this;
+
+    /**
+     * Whether the option is mandatory and must have a value after parsing.
+     */
+    makeOptionMandatory(value?: boolean): this;
+
+    /**
+     * Hide option in help.
+     */
+    hideHelp(value?: boolean): this;
+
+    /**
+     * Validation of option argument failed.
+     * Intended for use from custom argument processing functions.
+     */
+    argumentRejected(messsage: string): never;
+
+    /**
+     * Only allow option value to be one of choices.
+     */
+    choices(values: string[]): this;
+
+    /**
+     * Return option name.
+     */
+    name(): string;
   }
   type OptionConstructor = new (flags: string, description?: string) => Option;
 
@@ -184,6 +233,13 @@ declare namespace commander {
     requiredOption(flags: string, description?: string, defaultValue?: string | boolean): this;
     requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
     requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
+
+    /**
+     * Add a prepared Option.
+     *
+     * See .option() and .requiredOption() for creating and attaching an option in a single call.
+     */
+    addOption(option: Option): this;
 
     /**
      * Whether to store option values as properties on command object,

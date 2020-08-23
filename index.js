@@ -42,7 +42,7 @@ class Option {
   }
 
   /**
-   * Set the default value
+   * Set the default value, and optionally supply the description to be displayed in the help.
    *
    * @param {any} value
    * @param {string} [description]
@@ -83,7 +83,7 @@ class Option {
   };
 
   /**
-   * Set the custom handler for processing CLI option arguments into option values
+   * Set the custom handler for processing CLI option arguments into option values.
    *
    * @param {Function} [fn]
    * @return {Option}
@@ -96,7 +96,7 @@ class Option {
   };
 
   /**
-   * Whether the option is mandatory and must have a value after parsing
+   * Whether the option is mandatory and must have a value after parsing.
    *
    * @param {boolean} [value]
    * @return {Option}
