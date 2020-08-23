@@ -213,6 +213,18 @@ declare namespace commander {
     passCommandToAction(value?: boolean): this;
 
     /**
+     * Alter parsing of short flags with optional values.
+     *
+     * @example
+     *    // for `.option('-f,--flag [value]'):
+     *   .combineFlagAndOptionalValue(true)  // `-f80` is treated like `--flag=80`, this is the default behaviour
+     *   .combineFlagAndOptionalValue(false) // `-fb` is treated like `-f -b`
+     *
+     * @returns `this` command for chaining
+     */
+    combineFlagAndOptionalValue(arg?: boolean): this;
+
+    /**
      * Allow unknown options on the command line.
      *
      * @param [arg] if `true` or omitted, no error will be thrown for unknown options.
@@ -347,9 +359,10 @@ declare namespace commander {
 
     /**
      * You can pass in flags and a description to override the help
-     * flags and help description for your command.
+     * flags and help description for your command. Pass in false
+     * to disable the built-in help option.
      */
-    helpOption(flags?: string, description?: string): this;
+    helpOption(flags?: string | boolean, description?: string): this;
 
     /**
      * Output help information and exit.

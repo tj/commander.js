@@ -154,3 +154,12 @@ test('when call .help with { error: true } then output on stderr', () => {
   expect(writeSpy).toHaveBeenCalledWith(program.helpInformation());
   writeSpy.mockClear();
 });
+
+test('when no options then Options not includes in helpInformation', () => {
+  const program = new commander.Command();
+  // No custom options, no version option, no help option
+  program
+    .helpOption(false);
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).not.toMatch('Options');
+});

@@ -134,6 +134,10 @@ const storeOptionsAsPropertiesThis2: commander.Command = program.storeOptionsAsP
 const passCommandToActionThis1: commander.Command = program.passCommandToAction();
 const passCommandToActionThis2: commander.Command = program.passCommandToAction(false);
 
+// combineFlagAndOptionalValue
+const combineFlagAndOptionalValueThis1: commander.Command = program.combineFlagAndOptionalValue();
+const combineFlagAndOptionalValueThis2: commander.Command = program.combineFlagAndOptionalValue(false);
+
 // allowUnknownOption
 const allowUnknownOptionThis1: commander.Command = program.allowUnknownOption();
 const allowUnknownOptionThis2: commander.Command = program.allowUnknownOption(false);
@@ -200,6 +204,7 @@ const helpInformnationValue: string = program.helpInformation();
 const helpOptionThis1: commander.Command = program.helpOption('-h,--help');
 const helpOptionThis2: commander.Command = program.helpOption('-h,--help', 'custom description');
 const helpOptionThis3: commander.Command = program.helpOption(undefined, 'custom description');
+const helpOptionThis4: commander.Command = program.helpOption(false);
 
 // on
 const onThis: commander.Command = program.on('postHelp', () => {
