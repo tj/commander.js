@@ -723,7 +723,7 @@ Read more on https://git.io/JJc0W`);
     if (typeof fn === 'function') {
       option.default(defaultValue).parseArgWith(fn);
     } else if (fn instanceof RegExp) {
-      // Obsolete
+      // deprecated
       const regex = fn;
       fn = (val, def) => {
         const m = regex.exec(val);
@@ -756,7 +756,7 @@ Read more on https://git.io/JJc0W`);
     if (typeof fn === 'function') {
       option.default(defaultValue).parseArgWith(fn);
     } else if (fn instanceof RegExp) {
-      // Obsolete
+      // deprecated
       const regex = fn;
       fn = (val, def) => {
         const m = regex.exec(val);

@@ -1,6 +1,6 @@
 const commander = require('../');
 
-// Test for backwards compatible behaviour of obsolete features. We keep them working
+// Test for backwards compatible behaviour of deprecated features. We keep them working
 // (when not too difficult) to avoid breaking existing code and reduce barriers to updating
 // to latest version of Commander.
 
