@@ -62,13 +62,64 @@ $ collect -avl
 any servings: vl
 ```
 
-If you wish to use optional options as boolean options, you need to explicity list them as individual options.
+If you wish to use optional options as boolean options, you need to explicitly list them as individual options.
 
 ```
 $ collect -a -v -l
 any servings: true
 vegan servings: true
 halal servings: true
+```
+
+Likewise for variadic options. While options can have a single optional value, variadic options can take in multiple optional values and have the same parsing complications.
+
+```
+program
+  .option("-c, --citizenship <countries...>", "countries you hold passport of") // 1 or more value(s)
+  .option("-i, --illness [illness...]", "known illness before travel") // 0 or more value(s)
+  .option("-s, --visa-approved [status]", "status of visa if not approved"); // 0 ir 1 value
+
+program.parse();
+
+console.log(`Citizen of: `, program.citizenship);
+console.log(`Known illness(es): `, program.illness);
+console.log(`visa approved: ${program.visaApproved}`);
+```
+
+Optional options consume the value after the short flag and you will experience the following behaviour:
+
+```
+$ node opt.js -si
+Known illness(es):  undefined
+visa approved: i
+
+$ node opt.js -is
+Known illness(es):  [ 's' ]
+visa approved: undefined
+```
+
+If you wish to use variadic optional options as booleans, you will need to state them explicitly as follows:
+
+```
+$ node opt.js -i -s
+Known illness(es):  true
+visa approved: true
+```
+
+You should also be careful when you mix variadic optional options with variadic required options. A required option **always** consumes a value and so, you will not get any errors when the first value passed to it contains a '-' like so:
+
+```
+$ node opt.js -c -si
+Citizen of:  [ '-si' ] // Does not throw error
+```
+
+```
+$ node opt.js -c -si -x
+error: unknown option '-x'
+
+$ node opt.js -c -si -i
+Citizen of:  [ '-si' ]
+Known illness(es):  true
 ```
 
 ### Behaviour change from v5 to v6
