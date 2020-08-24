@@ -2,6 +2,15 @@
 
 There are potential challenges using options with optional values. They seem quite attractive and the README used to use them more than options with require values but in practice, they are a bit tricky and aren't a free choice.
 
+## Terminology
+
+| Term(s)                                    | Explanation                                                                                                                                                                                                                                          | code example (if any)                        |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| option(s), flags, non-positional arguments | The term options consist of hyphen-minus characters <br />(that is ‘-’) followed by letters or digits. <br /> options can take an argument or choose not to. <br/>options that do not take an argument are term boolean flag(s) or boolean option(s) | `.option('-s, --small', 'small pizza size')` |
+| optional value(s), option argument(s)      | options are followed by an option argument. <br /> If they are enclosed with square brackets `[]`, these option arguments are optional.                                                                                                              | `.option('-o, --option [optionalValue]')`    |
+| operand(s), non-option argument(s)         | arguments following the last options and option-arguments are named “operands”                                                                                                                                                                       | `.arguments('[file]')`                       |
+| optional options                           | flags that take in optional argument                                                                                                                                                                                                                 |
+
 ## Parsing ambiguity
 
 There is parsing ambiguity when using option as boolean flag and also having it accept operands and subcommands.
@@ -38,7 +47,7 @@ To reduce such ambiguity, you can do the following:
 
 1. always use `--` before operands
 2. add your options after operands
-3. convert arguments into options! Options work pretty nicely together.
+3. convert operands into options! Options work pretty nicely together.
 
 ## Combining short flags with optional values
 
