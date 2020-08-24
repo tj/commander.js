@@ -1649,9 +1649,9 @@ Read more on https://git.io/JJc0W`);
    */
 
   outputHelp(contextOptions) {
-    let legacyCallback;
+    let deprecatedCallback;
     if (typeof contextOptions === 'function') {
-      legacyCallback = contextOptions;
+      deprecatedCallback = contextOptions;
       contextOptions = {};
     }
     const context = this._getHelpContext(contextOptions);
@@ -1675,8 +1675,8 @@ Read more on https://git.io/JJc0W`);
         nearestGroupListener.emit('groupHelp', context);
       } else {
         let helpInformation = this.helpInformation();
-        if (legacyCallback) {
-          helpInformation = legacyCallback(helpInformation);
+        if (deprecatedCallback) {
+          helpInformation = deprecatedCallback(helpInformation);
           if (typeof helpInformation !== 'string' && !Buffer.isBuffer(helpInformation)) {
             throw new Error('outputHelp callback must return a string or a Buffer');
           }
