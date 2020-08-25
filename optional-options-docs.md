@@ -49,6 +49,8 @@ To reduce such ambiguity, you can do the following:
 2. add your options after operands
 3. convert operands into options! Options work pretty nicely together.
 
+The POSIX convention is that options always come before operands. The GNU utility convention allows options to come before or after the operands. Commander follows the GNU convention and allows options before or after the operands. So by putting the options last, the option values do not get confused with the operands.
+
 ## Combining short flags with optional values
 
 ```
