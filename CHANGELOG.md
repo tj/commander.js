@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [6.1.0] (2020-08-28)
+
+### Added
+
+- include URL to relevant section of README for error for potential conflict between Command properties and option values ([#1306])
+- `.combineFlagAndOptionalValue(false)` to ease upgrade path from older versions of Commander ([#1326])
+- allow disabling the built-in help option using `.helpOption(false)` ([#1325])
+- allow just some arguments in `argumentDescription` to `.description()` ([#1323])
+
+### Changed
+
+- tidy async test and remove lint override ([#1312])
+
+### Fixed
+
+- executable subcommand launching when script path not known ([#1322])
+
 ## [6.0.0] (2020-07-21)
 
 ### Added
@@ -285,8 +302,15 @@ if (program.rawArgs.length < 3) ...
 [#1256]: https://github.com/tj/commander.js/pull/1256
 [#1275]: https://github.com/tj/commander.js/pull/1275
 [#1301]: https://github.com/tj/commander.js/issues/1301
+[#1306]: https://github.com/tj/commander.js/pull/1306
+[#1312]: https://github.com/tj/commander.js/pull/1312
+[#1322]: https://github.com/tj/commander.js/pull/1322
+[#1323]: https://github.com/tj/commander.js/pull/1323
+[#1325]: https://github.com/tj/commander.js/pull/1325
+[#1326]: https://github.com/tj/commander.js/pull/1326
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[6.1.0]: https://github.com/tj/commander.js/compare/v6.0.0..v6.1.0
 [6.0.0]: https://github.com/tj/commander.js/compare/v5.1.0..v6.0.0
 [6.0.0-0]: https://github.com/tj/commander.js/compare/v5.1.0..v6.0.0-0
 [5.1.0]: https://github.com/tj/commander.js/compare/v5.0.0..v5.1.0
