@@ -7,13 +7,12 @@ There are potential challenges using options with optional values. They seem qui
 | Term(s)                                    | Explanation                                                                                                                                                                                                                                          | code example (if any)                        |
 | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
 | option(s), flags, non-positional arguments | The term options consist of hyphen-minus characters <br />(that is ‘-’) followed by letters or digits. <br /> options can take an argument or choose not to. <br/>options that do not take an argument are term boolean flag(s) or boolean option(s) | `.option('-s, --small', 'small pizza size')` |
-| optional value(s), option argument(s)      | options are followed by an option argument. <br /> If they are enclosed with square brackets `[]`, these option arguments are optional.                                                                                                              | `.option('-o, --option [optionalValue]')`    |
+| option argument(s)                         | options are followed by an option argument. <br /> If they are enclosed with square brackets `[]`, these option arguments are optional.                                                                                                              | `.option('-o, --option [optionalValue]')`    |
 | operand(s), non-option argument(s)         | arguments following the last options and option-arguments are named “operands”                                                                                                                                                                       | `.arguments('[file]')`                       |
-| optional options                           | flags that take in optional argument                                                                                                                                                                                                                 |
 
 ## Parsing ambiguity
 
-There is parsing ambiguity when using option as boolean flag and also having it accept operands and subcommands.
+There is parsing ambiguity when using option as boolean flag and also having it accept operands(sometimes called a positional argument or command argument, referring to `Command.arguments()`) and subcommands.
 
 ```
 program.command('example')
@@ -52,6 +51,10 @@ To reduce such ambiguity, you can do the following:
 The POSIX convention is that options always come before operands. The GNU utility convention allows options to come before or after the operands. Commander follows the GNU convention and allows options before or after the operands. So by putting the options last, the option values do not get confused with the operands.
 
 ## Combining short flags with optional values
+
+optional options are option(s) which functions as a flag but may also take a value (declared using square brackets).
+
+optional values (sometimes called option arguments) are values of these optional flag.
 
 ```
 program
