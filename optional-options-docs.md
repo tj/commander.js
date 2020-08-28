@@ -12,33 +12,39 @@ There are potential challenges using options with optional values. They seem qui
 
 ## Parsing ambiguity
 
-There is parsing ambiguity when using option as boolean flag and also having it accept operands(sometimes called a positional argument or command argument, referring to `Command.arguments()`) and subcommands.
+There is parsing ambiguity when using option as boolean flag and also having it accept operands (sometimes called a positional argument or command argument, referring to `Command.arguments()`) and subcommands.
 
 ```
-program.command('example')
-      .option("-o, --option [optionalValue]")
-      .command('brew')
-      .action(() => {
-        console.log("example brew");
-      })
+program
+  .arguments("[technique]")
+  .option("-i, --ingredient [ingredient]")
+  .action((args, cmdObj) => {
+    console.log(args);
+    console.log(cmdObj.opts());
+  });
 
-program.parse(process.argv);
-
-if (program.option) console.log(`option: ${program.option}`);
+program.parse();
 ```
 
 ```
-$ example -o
-option: true
-$ example -o thisValueIsPassedToOption
-option: thisValueIsPassedToOption
-$ example -o brew
-option: brew
-$ example -o nextArg
-option: nextArg
+$ cook scrambled
+scrambled
+{ ingredient: undefined }
+
+$ cook -i
+undefined
+{ ingredient: true }
+
+$ cook -i egg
+undefined
+{ ingredient: egg }
+
+$ cook -i scrambled
+undefined
+{ ingredient: scrambled }
 ```
 
-For example, you may intend `brew` to be passed as a subcommand. Instead, it will be read as the passed in value for `-o`. Likewise, you may intend `nextArg` to be passed as an argument but it too, will be read as the passed in value for `-o`
+For example, you may intend `scrambled` to be passed as a non-option argument. Instead, it will be read as the passed in value for ingredient.
 
 ### Possible workarounds
 
