@@ -1499,34 +1499,7 @@ Read more on https://git.io/JJc0W`);
    */
 
   optionHelp() {
-    const width = this.padWidth();
-    const columns = process.stdout.columns || 80;
-    const descriptionWidth = columns - width - 4;
-    function padOptionDetails(flags, description) {
-      return pad(flags, width) + '  ' + optionalWrap(description, descriptionWidth, width + 2);
-    };
-
-    // Explicit options (including version)
-    const help = this.options.map((option) => {
-      const fullDesc = option.description +
-        ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
-      return padOptionDetails(option.flags, fullDesc);
-    });
-
-    // Implicit help
-    const showShortHelpFlag = this._hasHelpOption && this._helpShortFlag && !this._findOption(this._helpShortFlag);
-    const showLongHelpFlag = this._hasHelpOption && !this._findOption(this._helpLongFlag);
-    if (showShortHelpFlag || showLongHelpFlag) {
-      let helpFlags = this._helpFlags;
-      if (!showShortHelpFlag) {
-        helpFlags = this._helpLongFlag;
-      } else if (!showLongHelpFlag) {
-        helpFlags = this._helpShortFlag;
-      }
-      help.push(padOptionDetails(helpFlags, this._helpDescription));
-    }
-
-    return help.join('\n');
+    return this.helpData().options.join('\n');
   };
 
   /**
@@ -1539,18 +1512,9 @@ Read more on https://git.io/JJc0W`);
   commandHelp() {
     if (!this.commands.length && !this._lazyHasImplicitHelpCommand()) return '';
 
-    const commands = this.prepareCommands();
-    const width = this.padWidth();
-
-    const columns = process.stdout.columns || 80;
-    const descriptionWidth = columns - width - 4;
-
     return [
       'Commands:',
-      commands.map((cmd) => {
-        const desc = cmd[1] ? '  ' + cmd[1] : '';
-        return (desc ? pad(cmd[0], width) : cmd[0]) + optionalWrap(desc, descriptionWidth, width + 2);
-      }).join('\n').replace(/^/gm, '  '),
+      this.helpData().commands.join('\n'),
       ''
     ].join('\n');
   };
@@ -1558,31 +1522,95 @@ Read more on https://git.io/JJc0W`);
   /**
    * Return program help documentation.
    *
+   * @param {Object} params
    * @return {string}
    * @api public
    */
 
-  helpInformation() {
-    let desc = [];
-    if (this._description) {
-      desc = [
-        this._description,
-        ''
-      ];
+  helpInformation(params) {
+    params = params || {};
 
-      const argsDescription = this._argsDescription;
-      if (argsDescription && this._args.length) {
-        const width = this.padWidth();
-        const columns = process.stdout.columns || 80;
-        const descriptionWidth = columns - width - 5;
-        desc.push('Arguments:');
-        desc.push('');
-        this._args.forEach((arg) => {
-          desc.push('  ' + pad(arg.name, width) + '  ' + wrap(argsDescription[arg.name] || '', descriptionWidth, width + 4));
-        });
-        desc.push('');
-      }
+    const help = this.helpData(params);
+
+    let output = [
+      'Usage: ' + help.usage,
+      ''
+    ];
+
+    if (help.description) {
+      output = output.concat([
+        help.description,
+        ''
+      ]);
     }
+
+    if (help.args.length) {
+      output = output.concat([
+        'Arguments:',
+        help.args.join('\n'),
+        ''
+      ]);
+    }
+
+    if (help.options.length) {
+      output = output.concat([
+        'Options:',
+        help.options.join('\n'),
+        ''
+      ]);
+    }
+
+    if (help.commands.length) {
+      output = output.concat([
+        'Commands:',
+        help.commands.join('\n'),
+        ''
+      ]);
+    }
+
+    const baseIndent = params.baseIndent || 0;
+    const baseIndentStr = Array(baseIndent + 1).join(' ');
+
+    return output.join('\n').replace(/^/gm, baseIndentStr).trimEnd() + '\n';
+  };
+
+  /**
+   * Return program help data.
+   *
+   * @param {Object} params
+   * @return {Object}
+   * @api public
+   */
+
+  helpData(params) {
+    params = params || {};
+
+    const baseIndent = params.baseIndent || 0;
+    const valueIndent = params.valueIndent || 2;
+    const separatorWidth = params.separatorWidth || 2;
+
+    const width = this.padWidth() + baseIndent;
+    const columns = process.stdout.columns || 80;
+    const descriptionWidth = columns - width - baseIndent - (valueIndent + separatorWidth);
+
+    const valueIndentStr = Array(valueIndent + 1).join(' ');
+    const separatorStr = Array(separatorWidth + 1).join(' ');
+
+    const utils = {
+      pad: val => pad(val, width),
+      wrap: val => optionalWrap(val, descriptionWidth, width + separatorWidth)
+    };
+
+    const renderDetails = params.renderDetails || ((value, description, utils) => {
+      const data = description ? [utils.pad(value), utils.wrap(description)] : [value];
+      return data.join(separatorStr).replace(/^/gm, valueIndentStr);
+    });
+
+    function prepareDetails(value, description) {
+      return renderDetails(value, description, utils);
+    };
+
+    // USAGE
 
     let cmdName = this._name;
     if (this._aliases[0]) {
@@ -1592,29 +1620,57 @@ Read more on https://git.io/JJc0W`);
     for (let parentCmd = this.parent; parentCmd; parentCmd = parentCmd.parent) {
       parentCmdNames = parentCmd.name() + ' ' + parentCmdNames;
     }
-    const usage = [
-      'Usage: ' + parentCmdNames + cmdName + ' ' + this.usage(),
-      ''
-    ];
+    const usage = parentCmdNames + cmdName + ' ' + this.usage();
 
-    let cmds = [];
-    const commandHelp = this.commandHelp();
-    if (commandHelp) cmds = [commandHelp];
+    // DESCRIPTION
 
-    let options = [];
-    if (this._hasHelpOption || this.options.length > 0) {
-      options = [
-        'Options:',
-        '' + this.optionHelp().replace(/^/gm, '  '),
-        ''
-      ];
+    const description = this._description ? optionalWrap(this._description, width + descriptionWidth) : '';
+
+    // ARGUMENTS DESCRIPTION
+
+    const args = [];
+    if (this._argsDescription && this._args.length) {
+      this._args.forEach((arg) => {
+        args.push(prepareDetails(arg.name, this._argsDescription[arg.name] || ''));
+      });
     }
 
-    return usage
-      .concat(desc)
-      .concat(options)
-      .concat(cmds)
-      .join('\n');
+    // OPTIONS
+
+    // Explicit options (including version)
+    const options = this.options.map((option) => {
+      const fullDesc = option.description + (
+        (!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : ''
+      );
+      return prepareDetails(option.flags, fullDesc);
+    });
+
+    // Implicit help
+    const showShortHelpFlag = this._hasHelpOption && this._helpShortFlag && !this._findOption(this._helpShortFlag);
+    const showLongHelpFlag = this._hasHelpOption && !this._findOption(this._helpLongFlag);
+    if (showShortHelpFlag || showLongHelpFlag) {
+      let helpFlags = this._helpFlags;
+      if (!showShortHelpFlag) {
+        helpFlags = this._helpLongFlag;
+      } else if (!showLongHelpFlag) {
+        helpFlags = this._helpShortFlag;
+      }
+      options.push(prepareDetails(helpFlags, this._helpDescription));
+    }
+
+    // COMMANDS
+
+    const commands = this.prepareCommands().map((cmd) => {
+      return prepareDetails(cmd[0], cmd[1]);
+    });
+
+    return {
+      usage,
+      description,
+      args,
+      options,
+      commands
+    };
   };
 
   /**
