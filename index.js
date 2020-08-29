@@ -220,7 +220,7 @@ class Command extends EventEmitter {
    */
 
   createCommand(name) {
-    return new Command(name);
+    return new this.constructor(name);
   };
 
   /**
