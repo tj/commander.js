@@ -752,8 +752,8 @@ Read more on https://git.io/JJc0W`);
    */
 
   parse(argv, parseOptions) {
-    if (argv !== undefined && !Array.isArray(argv)) {
-      throw new Error('first parameter to parse must be array or undefined');
+    if (argv !== undefined && !Array.isArray(argv) && argv.constructor.name !== 'EventEmitter') {
+      throw new Error('first parameter to parse must be array, undefined or an "express" server app');
     }
     parseOptions = parseOptions || {};
 
@@ -765,7 +765,10 @@ Read more on https://git.io/JJc0W`);
         parseOptions.from = 'electron';
       }
     }
-    this.rawArgs = argv.slice();
+
+    if (argv.constructor.name !== 'EventEmitter') {
+      this.rawArgs = argv.slice();
+    }
 
     // make it a little easier for callers by supporting various argv conventions
     let userArgs;
@@ -787,9 +790,15 @@ Read more on https://git.io/JJc0W`);
       case 'user':
         userArgs = argv.slice(0);
         break;
+      case 'express':
+        // @NOTE: argv is app from express
+        argv.use(_expressParse.bind(this));
+        argv.listen(parseOptions.port);
+        break;
       default:
         throw new Error(`unexpected parse option { from: '${parseOptions.from}' }`);
     }
+
     if (!this._scriptPath && process.mainModule) {
       this._scriptPath = process.mainModule.filename;
     }
@@ -798,10 +807,12 @@ Read more on https://git.io/JJc0W`);
     this._name = this._name || (this._scriptPath && path.basename(this._scriptPath, path.extname(this._scriptPath)));
 
     // Let's go!
-    this._parseCommand([], userArgs);
+    if (parseOptions.from !== 'express') {
+      this._parseCommand([], userArgs);
+    }
 
     return this;
-  };
+  }
 
   /**
    * Parse `argv`, setting options and invoking commands when defined.
@@ -946,6 +957,7 @@ Read more on https://git.io/JJc0W`);
   _dispatchSubcommand(commandName, operands, unknown) {
     const subCommand = this._findCommand(commandName);
     if (!subCommand) this._helpAndError();
+    if (this._express) subCommand._express = this._express;
 
     if (subCommand._executableHandler) {
       this._executeSubCommand(subCommand, operands.concat(unknown));
@@ -1287,7 +1299,7 @@ Read more on https://git.io/JJc0W`);
     this._versionOptionName = versionOption.attributeName();
     this.options.push(versionOption);
     this.on('option:' + versionOption.name(), () => {
-      process.stdout.write(str + '\n');
+      this._write(str + '\n');
       this._exit(0, 'commander.version', str);
     });
     return this;
@@ -1636,7 +1648,7 @@ Read more on https://git.io/JJc0W`);
     if (typeof cbOutput !== 'string' && !Buffer.isBuffer(cbOutput)) {
       throw new Error('outputHelp callback must return a string or a Buffer');
     }
-    process.stdout.write(cbOutput);
+    this._write(cbOutput);
     this.emit(this._helpLongFlag);
   };
 
@@ -1691,6 +1703,14 @@ Read more on https://git.io/JJc0W`);
     // message: do not have all displayed text available so only passing placeholder.
     this._exit(1, 'commander.help', '(outputHelp)');
   };
+
+  _write(msg) {
+    if (this._express) {
+      this._express.send(msg);
+    } else {
+      process.stdout.write(msg);
+    }
+  }
 };
 
 /**
@@ -1879,4 +1899,10 @@ function incrementNodeInspectorPort(args) {
     }
     return arg;
   });
+}
+
+function _expressParse(req, res) {
+  const userArgs = req.path.split('/').filter(e => e); // remove falsies.
+  this._express = res;
+  this._parseCommand([], userArgs);
 }
