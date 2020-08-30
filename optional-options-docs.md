@@ -21,7 +21,7 @@ The command line arguments are made up of options, option-arguments, commands, a
 
 | Term | Explanation |
 | --- | --- |
-| option | an argument which begins with a dash and a character, or a double-dash and a word |
+| option | an argument which begins with a dash and a character, or a double-dash and a string |
 | option-argument| some options can take an argument |
 | command | a program or command can have subcommands |
 | command-argument | argument for the command (and not an option or option-argument) |
@@ -123,7 +123,7 @@ ingredient: cheese
 
 ### Alternative: Put options last
 
-Commander allows options before or after the command-arguments, or even intermixed (like GNU program argument conventions).
+Commander allows options before or after the command-arguments, or even intermixed (like [GNU program argument conventions](https://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html)).
 So by putting the options last, the command-arguments do not get confused with the option-arguments.
 
 ```js
