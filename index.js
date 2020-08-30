@@ -128,6 +128,7 @@ class Command extends EventEmitter {
     this._exitCallback = null;
     this._aliases = [];
     this._combineFlagAndOptionalValue = true;
+    this._statuses = { error: 500, warn: 219, info: 201 };
 
     this._hidden = false;
     this._hasHelpOption = true;
@@ -1299,7 +1300,7 @@ Read more on https://git.io/JJc0W`);
     this._versionOptionName = versionOption.attributeName();
     this.options.push(versionOption);
     this.on('option:' + versionOption.name(), () => {
-      this._write(str + '\n');
+      this.write(str + '\n');
       this._exit(0, 'commander.version', str);
     });
     return this;
@@ -1648,7 +1649,7 @@ Read more on https://git.io/JJc0W`);
     if (typeof cbOutput !== 'string' && !Buffer.isBuffer(cbOutput)) {
       throw new Error('outputHelp callback must return a string or a Buffer');
     }
-    this._write(cbOutput);
+    this.write(cbOutput);
     this.emit(this._helpLongFlag);
   };
 
@@ -1704,11 +1705,19 @@ Read more on https://git.io/JJc0W`);
     this._exit(1, 'commander.help', '(outputHelp)');
   };
 
-  _write(msg) {
+  write(msg, debugLevel) {
     if (this._express) {
-      this._express.send(msg);
+      if (debugLevel && debugLevel !== 'log') {
+        this._express.status(this._statuses[debugLevel]).send(msg);
+      } else {
+        this._express.send(msg);
+      }
     } else {
-      process.stdout.write(msg);
+      if (debugLevel && debugLevel !== 'log') {
+        console[debugLevel](msg);
+      } else {
+        process.stdout.write(msg);
+      }
     }
   }
 };
@@ -1901,8 +1910,19 @@ function incrementNodeInspectorPort(args) {
   });
 }
 
+function __parseBody(body) {
+  let key, args = []; // eslint-disable-line
+  for (key in body) {
+    args.push(key);
+    args.push(body[key]);
+  }
+
+  return args;
+}
+
 function _expressParse(req, res) {
-  const userArgs = req.path.split('/').filter(e => e); // remove falsies.
+  let userArgs = req.path.split('/').filter(e => e); // remove falsies.
+  userArgs = userArgs.concat(__parseBody(req.body));
   this._express = res;
   this._parseCommand([], userArgs);
 }
