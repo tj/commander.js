@@ -1,60 +1,170 @@
-# Tricks and traps when using options with optional values
+# More About Options
 
-There are potential challenges using options with optional values. They seem quite attractive and the README used to use them more than options with require values but in practice, they are a bit tricky and aren't a free choice.
+The README covers declaring and using options, and mostly parsing will work the way you and your users expect. This page covers some special cases
+and subtle issues in depth.
+
+- [More About Options](#more-about-options)
+  - [Terminology](#terminology)
+  - [Options taking varying numbers of option-arguments](#options-taking-varying-numbers-of-option-arguments)
+    - [Parsing ambiguity](#parsing-ambiguity)
+    - [Alternative: Make  `--` part of your syntax](#alternative-make----part-of-your-syntax)
+    - [Alternative: Put options last](#alternative-put-options-last)
+    - [Alternative: Use options instead of command-arguments](#alternative-use-options-instead-of-command-arguments)
+  - [Combining short flags with optional values](#combining-short-flags-with-optional-values)
+    - [Behaviour change from v5 to v6](#behaviour-change-from-v5-to-v6)
 
 ## Terminology
 
-| Term(s)                                    | Explanation                                                                                                                                                                                                                                          | code example (if any)                        |
-| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| option(s), flags, non-positional arguments | The term options consist of hyphen-minus characters <br />(that is ‘-’) followed by letters or digits. <br /> options can take an argument or choose not to. <br/>options that do not take an argument are term boolean flag(s) or boolean option(s) | `.option('-s, --small', 'small pizza size')` |
-| option argument(s)                         | options are followed by an option argument. <br /> If they are enclosed with square brackets `[]`, these option arguments are optional.                                                                                                              | `.option('-o, --option [optionalValue]')`    |
-| operand(s), non-option argument(s)         | arguments following the last options and option-arguments are named “operands”                                                                                                                                                                       | `.arguments('[file]')`                       |
+_Work in progress: this section may move to the main README, or a page of its own._
 
-## Parsing ambiguity
+The command line arguments are made up of options, option-arguments, commands, and command-arguments.
 
-There is parsing ambiguity when using option as boolean flag and also having it accept operands (sometimes called a positional argument or command argument, referring to `Command.arguments()`) and subcommands.
+| Term | Explanation |
+| --- | --- |
+| option | an argument which begins with a dash and a character, or a double-dash and a word |
+| option-argument| some options can take an argument |
+| command | a program or command can have subcommands |
+| command-argument | argument for the command (and not an option or option-argument) |
 
+For example:
+
+```sh
+my-utility command -o --option option-argument command-argument-1 command-argument-2
 ```
+
+In other references options are sometimes called flags, and command-arguments are sometimes called positional arguments.
+
+## Options taking varying numbers of option-arguments
+
+Certain options take a varying number of option-arguments:
+
+```js
 program
-  .arguments("[technique]")
-  .option("-i, --ingredient [ingredient]")
-  .action((args, cmdObj) => {
-    console.log(args);
-    console.log(cmdObj.opts());
+   .option('-c, --compress [percentage]') // 0 or 1
+   .option('--preprocess <file...>') // 1 or more
+   .option('--test [name...]') // 0 or more
+```
+
+### Parsing ambiguity
+
+There is a potential downside to be aware of. If a command has both
+command-arguments and options with varying option-arguments, this introduces a parsing ambiguity which may affect the user of your program.
+Commander looks for option-arguments first, but the user may
+intend the argument following the option as a command or command-argument.
+
+```js
+program
+  .name('cook')
+  .arguments('[technique]')
+  .option('-i, --ingredient [ingredient]', 'add cheese or given ingredient')
+  .action((technique, options) => {
+    console.log(`technique: ${technique}`);
+    const ingredient = (options.ingredient === true) ? 'cheese' : options.ingredient;
+    console.log(`ingredient: ${ingredient}`);
   });
 
 program.parse();
 ```
 
-```
+```sh
 $ cook scrambled
-scrambled
-{ ingredient: undefined }
+technique: scrambled
+ingredient: undefined
 
 $ cook -i
-undefined
-{ ingredient: true }
+technique: undefined
+ingredient: cheese
 
 $ cook -i egg
-undefined
-{ ingredient: egg }
+technique: undefined
+ingredient: egg
 
-$ cook -i scrambled
-undefined
-{ ingredient: scrambled }
+$ cook -i scrambled # oops
+technique: undefined
+ingredient: scrambled
 ```
 
-For example, you may intend `scrambled` to be passed as a non-option argument. Instead, it will be read as the passed in value for ingredient.
+The explicit way to resolve this is use `--` to indicate the end of the options and option-arguments:
 
-### Possible workarounds
+```sh
+$ node cook.js -i -- egg
+technique: egg
+ingredient: cheese
+```
 
-To reduce such ambiguity, you can do the following:
+If you want to avoid your users needing to learn when to use `--`, there are a few approaches you could take.
 
-1. always use `--` before operands
-2. add your options after operands
-3. convert operands into options! Options work pretty nicely together.
+### Alternative: Make  `--` part of your syntax
 
-The POSIX convention is that options always come before operands. The GNU utility convention allows options to come before or after the operands. Commander follows the GNU convention and allows options before or after the operands. So by putting the options last, the option values do not get confused with the operands.
+Rather than trying to teach your users what `--` does, you could just make it part of your syntax.
+
+```js
+program.usage('[options] -- [technique]');
+```
+
+```sh
+$ cook --help
+Usage: cook [options] -- [technique]
+
+Options:
+  -i, --ingredient [ingredient]  add cheese or given ingredient
+  -h, --help                     display help for command
+
+$ cook -- scrambled
+technique: scrambled
+ingredient: undefined
+
+$ cook -i -- scrambled
+technique: scrambled
+ingredient: cheese
+```
+
+### Alternative: Put options last
+
+Commander follows the GNU convention for parsing and allows options before or after the command-arguments, or intermingled.
+So by putting the options last, the command-arguments do not get confused with the option-arguments.
+
+```js
+program.usage('[technique] [options]');
+```
+
+```sh
+$ cook --help
+Usage: cook [technique] [options]
+
+Options:
+  -i, --ingredient [ingredient]  add cheese or given ingredient
+  -h, --help                     display help for command
+
+$ node cook.js scrambled -i
+technique: scrambled
+ingredient: cheese
+```
+
+### Alternative: Use options instead of command-arguments
+
+This is a bit more radical, but completely avoids the parsing ambiguity!
+
+```js
+program
+  .name('cook')
+  .option('-t, --technique <technique>', 'cooking technique')
+  .option('-i, --ingredient [ingredient]', 'add cheese or given ingredient')
+  .action((options) => {
+    console.log(`technique: ${options.technique}`);
+    const ingredient = (options.ingredient === true) ? 'cheese' : options.ingredient;
+    console.log(`ingredient: ${ingredient}`);
+  });
+```
+
+```sh
+$ cook -i -t scrambled
+technique: scrambled
+ingredient: cheese
+```
+
+------
+_Work in progress: unreviewed from here down._
 
 ## Combining short flags with optional values
 
