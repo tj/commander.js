@@ -99,7 +99,9 @@ If you want to avoid your users needing to learn when to use `--`, there are a f
 Rather than trying to teach your users what `--` does, you could just make it part of your syntax.
 
 ```js
+// ...
 program.usage('[options] -- [technique]');
+program.parse();
 ```
 
 ```sh
@@ -121,11 +123,13 @@ ingredient: cheese
 
 ### Alternative: Put options last
 
-Commander follows the GNU convention for parsing and allows options before or after the command-arguments, or intermingled.
+Commander allows options before or after the command-arguments, or even intermixed (like GNU program argument conventions).
 So by putting the options last, the command-arguments do not get confused with the option-arguments.
 
 ```js
+// ...
 program.usage('[technique] [options]');
+program.parse();
 ```
 
 ```sh
@@ -155,6 +159,8 @@ program
     const ingredient = (options.ingredient === true) ? 'cheese' : options.ingredient;
     console.log(`ingredient: ${ingredient}`);
   });
+
+program.parse();
 ```
 
 ```sh
