@@ -1208,7 +1208,7 @@ Read more on https://git.io/JJc0W`);
 
   missingArgument(name) {
     const message = `error: missing required argument '${name}'`;
-    console.error(message);
+    this.write(message, 'error');
     this._exit(1, 'commander.missingArgument', message);
   };
 
@@ -1227,7 +1227,7 @@ Read more on https://git.io/JJc0W`);
     } else {
       message = `error: option '${option.flags}' argument missing`;
     }
-    console.error(message);
+    this.write(message, 'error');
     this._exit(1, 'commander.optionMissingArgument', message);
   };
 
@@ -1240,7 +1240,7 @@ Read more on https://git.io/JJc0W`);
 
   missingMandatoryOptionValue(option) {
     const message = `error: required option '${option.flags}' not specified`;
-    console.error(message);
+    this.write(message, 'error');
     this._exit(1, 'commander.missingMandatoryOptionValue', message);
   };
 
@@ -1254,7 +1254,7 @@ Read more on https://git.io/JJc0W`);
   unknownOption(flag) {
     if (this._allowUnknownOption) return;
     const message = `error: unknown option '${flag}'`;
-    console.error(message);
+    this.write(message, 'error');
     this._exit(1, 'commander.unknownOption', message);
   };
 
@@ -1272,7 +1272,7 @@ Read more on https://git.io/JJc0W`);
     const fullCommand = partCommands.join(' ');
     const message = `error: unknown command '${this.args[0]}'.` +
       (this._hasHelpOption ? ` See '${fullCommand} ${this._helpLongFlag}'.` : '');
-    console.error(message);
+    this.write(message, 'error');
     this._exit(1, 'commander.unknownCommand', message);
   };
 
