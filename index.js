@@ -1734,6 +1734,37 @@ Read more on https://git.io/JJc0W`);
     // message: do not have all displayed text available so only passing placeholder.
     this._exit(exitCode, 'commander.help', '(outputHelp)');
   };
+
+  /**
+   * Add additional text to be displayed with the built-in help,
+   * or add an override to replace the built-in help.
+   *
+   * Position is 'before' or 'after' or 'override' to affect just this command,
+   * and 'beforeAll' or 'afterAll' or 'overrideAll' to affect this command and all its subcommands.
+   *
+   * @param {string} position - before or after or override built-in help
+   * @param {string | Function} text - string to add, or a function returning a string
+   * @return {Command} `this` command for chaining
+   */
+  addHelp(position, text) {
+    const whereValues = ['before', 'beforeAll', 'after', 'afterAll', 'override', 'overrideAll'];
+    if (!whereValues.includes(position)) {
+      throw new Error(`Unexpected value for position to addHelp.
+Expecting one of '${whereValues.join("', '")}'`);
+    }
+    // temporary while decide on where strings
+    const helpEvents = ['preHelp', 'preGroupHelp', 'postHelp', 'postGroupHelp', 'help', 'groupHelp'];
+    const helpEvent = helpEvents[whereValues.indexOf(position)];
+
+    this.on(helpEvent, (context) => {
+      if (typeof text === 'function') {
+        context.log(text({ error: context.error, command: context.command }));
+      } else {
+        context.log(text);
+      }
+    });
+    return this;
+  }
 };
 
 /**
