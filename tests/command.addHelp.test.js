@@ -179,6 +179,108 @@ describe('program and subcommand calls to addHelpText', () => {
   });
 });
 
-test.todo('addHelpText with error goes to stderr');
-test.todo('addHelpText function passed error correctly');
-test.todo('addHelpText function passed command correctly');
+describe('context checks with full parse', () => {
+  let stdoutSpy;
+  let stderrSpy;
+
+  beforeAll(() => {
+    stdoutSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
+    stderrSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
+  });
+
+  afterEach(() => {
+    stdoutSpy.mockClear();
+    stderrSpy.mockClear();
+  });
+
+  afterAll(() => {
+    stdoutSpy.mockRestore();
+    stderrSpy.mockRestore();
+  });
+
+  test('when help requested then text is on stdout', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .addHelpText('before', 'text');
+    expect(() => {
+      program.parse(['--help'], { from: 'user' });
+    }).toThrow();
+    expect(stdoutSpy).toHaveBeenCalledWith('text\n');
+  });
+
+  test('when help for error then text is on stderr', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .addHelpText('before', 'text')
+      .command('sub');
+    expect(() => {
+      program.parse([], { from: 'user' });
+    }).toThrow();
+    expect(stderrSpy).toHaveBeenCalledWith('text\n');
+  });
+
+  test('when help requested then context.error is false', () => {
+    let context = {};
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .addHelpText('override', (contextParam) => { context = contextParam; });
+    expect(() => {
+      program.parse(['--help'], { from: 'user' });
+    }).toThrow();
+    expect(context.error).toBe(false);
+  });
+
+  test('when help for error then context.error is true', () => {
+    let context = {};
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .addHelpText('override', (contextParam) => { context = contextParam; })
+      .command('sub');
+    expect(() => {
+      program.parse([], { from: 'user' });
+    }).toThrow();
+    expect(context.error).toBe(true);
+  });
+
+  test('when help on program then context.command is program', () => {
+    let context = {};
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .addHelpText('override', (contextParam) => { context = contextParam; });
+    expect(() => {
+      program.parse(['--help'], { from: 'user' });
+    }).toThrow();
+    expect(context.command).toBe(program);
+  });
+
+  test('when help on subcommand and override on subcommand then context.command is subcommand', () => {
+    let context = {};
+    const program = new commander.Command();
+    program
+      .exitOverride();
+    const sub = program.command('sub')
+      .addHelpText('override', (contextParam) => { context = contextParam; });
+    expect(() => {
+      program.parse(['sub', '--help'], { from: 'user' });
+    }).toThrow();
+    expect(context.command).toBe(sub);
+  });
+
+  test('when help on subcommand and overrideAll on program then context.command is subcommand', () => {
+    let context = {};
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .addHelpText('overrideAll', (contextParam) => { context = contextParam; });
+    const sub = program.command('sub');
+    expect(() => {
+      program.parse(['sub', '--help'], { from: 'user' });
+    }).toThrow();
+    expect(context.command).toBe(sub);
+  });
+});
