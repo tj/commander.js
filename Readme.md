@@ -376,8 +376,8 @@ program
   .version('0.1.0')
   .arguments('<cmd> [env]')
   .action(function (cmd, env) {
-    console.log('command:', cmdValue);
-    console.log('environment:', envValue || 'no environment given');
+    console.log('command:', cmd);
+    console.log('environment:', env || 'no environment given');
   });
 
 program.parse(process.argv);
