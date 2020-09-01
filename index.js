@@ -1746,10 +1746,10 @@ Read more on https://git.io/JJc0W`);
    * @param {string | Function} text - string to add, or a function returning a string
    * @return {Command} `this` command for chaining
    */
-  addHelp(position, text) {
+  addHelpText(position, text) {
     const whereValues = ['before', 'beforeAll', 'after', 'afterAll', 'override', 'overrideAll'];
     if (!whereValues.includes(position)) {
-      throw new Error(`Unexpected value for position to addHelp.
+      throw new Error(`Unexpected value for position to addHelpText.
 Expecting one of '${whereValues.join("', '")}'`);
     }
     // temporary while decide on where strings
@@ -1757,11 +1757,13 @@ Expecting one of '${whereValues.join("', '")}'`);
     const helpEvent = helpEvents[whereValues.indexOf(position)];
 
     this.on(helpEvent, (context) => {
+      let helpStr;
       if (typeof text === 'function') {
-        context.log(text({ error: context.error, command: context.command }));
+        helpStr = text({ error: context.error, command: context.command });
       } else {
-        context.log(text);
+        helpStr = text;
       }
+      context.write(`${helpStr}\n`);
     });
     return this;
   }
