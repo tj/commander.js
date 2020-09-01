@@ -1759,7 +1759,10 @@ Expecting one of '${whereValues.join("', '")}'`);
       } else {
         helpStr = text;
       }
-      context.write(`${helpStr}\n`);
+      // Ignore falsy value when nothing to output.
+      if (helpStr) {
+        context.write(`${helpStr}\n`);
+      }
     });
     return this;
   }
