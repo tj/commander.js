@@ -1626,9 +1626,9 @@ Read more on https://git.io/JJc0W`);
     const context = { error: !!contextOptions.error };
     let write;
     if (context.error) {
-      write = (...args) => process.stderr.write(...args);
+      write = process.stderr.write;
     } else {
-      write = (...args) => process.stdout.write(...args);
+      write = process.stdout.write;
     }
     context.write = contextOptions.write || write;
     context.command = this;
