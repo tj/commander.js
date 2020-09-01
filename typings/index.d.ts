@@ -28,13 +28,11 @@ declare namespace commander {
   }
   interface HelpContext { // optional parameter for .help() and .outputHelp()
     error: boolean;
-    write?: (message: string) => boolean; // e.g. process.stdout.write
-    log?: (message?: any, ...optionalParams: any[]) => void; // e.g. console.log
+    write?: (message: string) => void;
   }
   interface HelpEventContext { // passed to help event listeners
     error: boolean;
-    write: (message: string) => boolean; // e.g. process.stdout.write
-    log: (message?: any, ...optionalParams: any[]) => void; // e.g. console.log
+    write: (message: string) => void;
     command: Command;
   }
 

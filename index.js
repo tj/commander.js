@@ -1625,15 +1625,11 @@ Read more on https://git.io/JJc0W`);
     contextOptions = contextOptions || {};
     const context = { error: !!contextOptions.error };
     let write;
-    let log;
     if (context.error) {
-      log = (...args) => console.error(...args);
       write = (...args) => process.stderr.write(...args);
     } else {
-      log = (...args) => console.log(...args);
       write = (...args) => process.stdout.write(...args);
     }
-    context.log = contextOptions.log || log;
     context.write = contextOptions.write || write;
     context.command = this;
     return context;

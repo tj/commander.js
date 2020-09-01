@@ -189,13 +189,13 @@ const nameValue: string = program.name();
 program.outputHelp();
 program.outputHelp((str: string) => { return str; });
 program.help({ error: true });
-program.help({ error: true, write: process.stderr.write, log: console.error });
+program.help({ error: true, write: process.stderr.write });
 
 // help
 program.help();
 program.help((str: string) => { return str; }); // Deprecated
 program.help({ error: true });
-program.help({ error: false, write: process.stdout.write, log: console.log });
+program.help({ error: false, write: process.stdout.write });
 
 // helpInformation
 const helpInformnationValue: string = program.helpInformation();

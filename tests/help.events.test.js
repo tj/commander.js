@@ -112,26 +112,6 @@ describe('event context', () => {
     writeSpy.mockClear();
   });
 
-  test('when error:undefined then log is console.log', () => {
-    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
-    const program = new commander.Command();
-    program
-      .on('help', (context) => context.log('test'))
-      .outputHelp();
-    expect(logSpy).toHaveBeenCalledWith('test');
-    logSpy.mockClear();
-  });
-
-  test('when error:true then log is console.error', () => {
-    const logSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
-    const program = new commander.Command();
-    program
-      .on('help', (context) => context.log('test'))
-      .outputHelp({ error: true });
-    expect(logSpy).toHaveBeenCalledWith('test');
-    logSpy.mockClear();
-  });
-
   test('when help called on program then context.command for groupHelp is program', () => {
     let contextCommand;
     const program = new commander.Command();

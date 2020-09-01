@@ -538,7 +538,6 @@ The help listeners are passed a context object for your convenience. The propert
 - error: a boolean whether the help is being displayed due to a usage error
 - command: the Command which is displaying the help
 - write: either `process.stdout.write()` or `.process.stderr.write()`, depending on `error`
-- log: either `console.log()` or `console.error()`, depending on `error`
 
 As an example, the built-in help can be replaced like this:
 
