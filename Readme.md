@@ -761,9 +761,8 @@ program
     console.log('exec "%s" using %s mode', cmd, options.exec_mode);
   }).addHelpText('after', `
 Examples:
-
   $ deploy exec sequential
-  $ deploy exec async
+  $ deploy exec async`
   );
 
 program.parse(process.argv);

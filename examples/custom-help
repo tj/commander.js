@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// This example shows the postHelp event listener.
+// This example shows a simple use of addHelpText.
 // This is used as an example in the README.
 
 // const { Command } = require('commander'); // (normal include)
