@@ -28,13 +28,13 @@ declare namespace commander {
   }
   interface HelpContext { // optional parameter for .help() and .outputHelp()
     error: boolean;
-    write?: (message: string) => void;
   }
-  interface HelpEventContext { // passed to help event listeners
+  interface AddHelpTextContext { // passed to text function used with .addHelpText()
     error: boolean;
-    write: (message: string) => void;
     command: Command;
   }
+
+  type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
 
   interface Command {
     [key: string]: any; // options as properties
@@ -366,19 +366,22 @@ declare namespace commander {
      * Output help information and exit.
      *
      * Outputs built-in help, and customised by adding help event listeners.
-     *
      */
     help(context?: HelpContext): never;
     help(cb?: (str: string) => string): never; // callback deprecated
 
     /**
-     * Add a listener (callback) for when events occur. (Implemented using EventEmitter.)
+     * Add additional text to be displayed with the built-in help,
+     * or add an override to replace the built-in help.
      *
-     * @example
-     *     program
-     *       .on('postHelp', () -> {
-     *         console.log('See web site for more information.');
-     *     });
+     * Position is 'before' or 'after' to affect just this command,
+     * and 'beforeAll' or 'afterAll'to affect this command and all its subcommands.
+     */
+    addHelpText(position: AddHelpTextPosition, text: string): this;
+    addHelpText(position: AddHelpTextPosition, text: (context: AddHelpTextContext) => string | void): this;
+
+    /**
+     * Add a listener (callback) for when events occur. (Implemented using EventEmitter.)
      */
     on(event: string | symbol, listener: (...args: any[]) => void): this;
   }

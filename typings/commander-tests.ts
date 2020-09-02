@@ -187,15 +187,13 @@ const nameValue: string = program.name();
 
 // outputHelp
 program.outputHelp();
-program.outputHelp((str: string) => { return str; });
-program.help({ error: true });
-program.help({ error: true, write: process.stderr.write });
+program.outputHelp((str: string) => { return str; }); // deprecated
+program.outputHelp({ error: true });
 
 // help
 program.help();
 program.help((str: string) => { return str; }); // Deprecated
 program.help({ error: true });
-program.help({ error: false, write: process.stdout.write });
 
 // helpInformation
 const helpInformnationValue: string = program.helpInformation();
@@ -206,8 +204,19 @@ const helpOptionThis2: commander.Command = program.helpOption('-h,--help', 'cust
 const helpOptionThis3: commander.Command = program.helpOption(undefined, 'custom description');
 const helpOptionThis4: commander.Command = program.helpOption(false);
 
+// addHelpText
+const addHelpTextThis1: commander.Command = program.addHelpText('after', 'text');
+const addHelpTextThis2: commander.Command = program.addHelpText('afterAll', 'text');
+const addHelpTextThis3: commander.Command = program.addHelpText('before', () => 'before');
+const addHelpTextThis4: commander.Command = program.addHelpText('beforeAll', (context: commander.AddHelpTextContext) => {
+  if (context.error) {
+    return; // Can return nothing to skip display
+  }
+  return context.command.name();
+});
+
 // on
-const onThis: commander.Command = program.on('postHelp', () => {
+const onThis: commander.Command = program.on('command:foo', () => {
   // do nothing.
 });
 

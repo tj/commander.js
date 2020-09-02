@@ -1641,7 +1641,7 @@ Read more on https://git.io/JJc0W`);
    * Outputs built-in help, and customised by adding help event listeners.
    *
    * @api public
-   * @param {Object} [contextOptions] - Can optionally pass in `{ error: true }` (and other context properties for help events)
+   * @param {Object} [contextOptions] - Can optionally pass in `{ error: true }` to write to stderr
    */
 
   outputHelp(contextOptions) {
@@ -1659,31 +1659,21 @@ Read more on https://git.io/JJc0W`);
       command = command.parent;
     }
 
-    groupListeners.slice().reverse().forEach(command => command.emit('preGroupHelp', context));
-    this.emit('preHelp', context);
+    groupListeners.slice().reverse().forEach(command => command.emit('beforeAllHelp', context));
+    this.emit('beforeHelp', context);
 
-    // 'help' listener is an override
-    if (this.listenerCount('help') > 0) {
-      this.emit('help', context);
-    } else {
-      const nearestGroupListener = groupListeners.find(command => command.listenerCount('groupHelp') > 0);
-      if (nearestGroupListener) {
-        nearestGroupListener.emit('groupHelp', context);
-      } else {
-        let helpInformation = this.helpInformation();
-        if (deprecatedCallback) {
-          helpInformation = deprecatedCallback(helpInformation);
-          if (typeof helpInformation !== 'string' && !Buffer.isBuffer(helpInformation)) {
-            throw new Error('outputHelp callback must return a string or a Buffer');
-          }
-        }
-        context.write(helpInformation); // switch to this in next major version
+    let helpInformation = this.helpInformation();
+    if (deprecatedCallback) {
+      helpInformation = deprecatedCallback(helpInformation);
+      if (typeof helpInformation !== 'string' && !Buffer.isBuffer(helpInformation)) {
+        throw new Error('outputHelp callback must return a string or a Buffer');
       }
     }
+    context.write(helpInformation);
 
     this.emit(this._helpLongFlag); // Leave in for backwards compatibility
-    this.emit('postHelp', context);
-    groupListeners.forEach(command => command.emit('postGroupHelp', context));
+    this.emit('afterHelp', context);
+    groupListeners.forEach(command => command.emit('afterAllHelp', context));
   };
 
   /**
@@ -1717,7 +1707,7 @@ Read more on https://git.io/JJc0W`);
    *
    * Outputs built-in help, and customised by adding help event listeners.
    *
-   * @param {Object} [contextOptions] - optionally pass in `{ error: true }` (and other context properties for help events)
+   * @param {Object} [contextOptions] - optionally pass in `{ error: true }` to write to stderr
    * @api public
    */
 
@@ -1736,22 +1726,19 @@ Read more on https://git.io/JJc0W`);
    * or add an override to replace the built-in help.
    *
    * Position is 'before' or 'after' or 'override' to affect just this command,
-   * and 'beforeAll' or 'afterAll' or 'overrideAll' to affect this command and all its subcommands.
+   * and 'beforeAll' or 'afterAll' to affect this command and all its subcommands.
    *
    * @param {string} position - before or after or override built-in help
    * @param {string | Function} text - string to add, or a function returning a string
    * @return {Command} `this` command for chaining
    */
   addHelpText(position, text) {
-    const whereValues = ['before', 'beforeAll', 'after', 'afterAll', 'override', 'overrideAll'];
-    if (!whereValues.includes(position)) {
+    const allowedValues = ['beforeAll', 'before', 'after', 'afterAll'];
+    if (!allowedValues.includes(position)) {
       throw new Error(`Unexpected value for position to addHelpText.
-Expecting one of '${whereValues.join("', '")}'`);
+Expecting one of '${allowedValues.join("', '")}'`);
     }
-    // temporary while decide on where strings
-    const helpEvents = ['preHelp', 'preGroupHelp', 'postHelp', 'postGroupHelp', 'help', 'groupHelp'];
-    const helpEvent = helpEvents[whereValues.indexOf(position)];
-
+    const helpEvent = `${position}Help`;
     this.on(helpEvent, (context) => {
       let helpStr;
       if (typeof text === 'function') {
