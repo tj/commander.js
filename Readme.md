@@ -557,16 +557,15 @@ Usage: my-command [global options] command
 
 ### .help()
 
-Output help information and exit immediately.
+Output help information and exit immediately. You can optionally pass `{ error: true }` to display on stderr and exit with an error status.
 
 ### .outputHelp()
 
-Output help information without exiting.
+Output help information without exiting. You can optionally pass `{ error: true }` to display on stderr.
 
 ### .helpInformation()
 
-Get the command help information as a string for processing or displaying yourself. (The text does not include the custom help
-from `--help` listeners.)
+Get the built-in command help information as a string for processing or displaying yourself.
 
 ### .helpOption(flags, description)
 

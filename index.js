@@ -1671,7 +1671,7 @@ Read more on https://git.io/JJc0W`);
     }
     context.write(helpInformation);
 
-    this.emit(this._helpLongFlag); // Leave in for backwards compatibility
+    this.emit(this._helpLongFlag); // deprecated
     this.emit('afterHelp', context);
     groupListeners.forEach(command => command.emit('afterAllHelp', context));
   };
