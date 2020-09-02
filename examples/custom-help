@@ -10,12 +10,10 @@ const program = new Command();
 program
   .option('-f, --foo', 'enable some foo');
 
-// must be added before calling .parse()
-program.on('postHelp', () => {
-  console.log('');
-  console.log('Example call:');
-  console.log('  $ custom-help --help');
-});
+program.addHelpText('after', `
+
+Example call:
+  $ custom-help --help`);
 
 program.parse(process.argv);
 

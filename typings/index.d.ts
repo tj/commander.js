@@ -375,7 +375,7 @@ declare namespace commander {
      * or add an override to replace the built-in help.
      *
      * Position is 'before' or 'after' to affect just this command,
-     * and 'beforeAll' or 'afterAll'to affect this command and all its subcommands.
+     * and 'beforeAll' or 'afterAll' to affect this command and all its subcommands.
      */
     addHelpText(position: AddHelpTextPosition, text: string): this;
     addHelpText(position: AddHelpTextPosition, text: (context: AddHelpTextContext) => string | void): this;

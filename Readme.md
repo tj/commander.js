@@ -497,14 +497,7 @@ shell spawn --help
 
 ### Custom help
 
-You can display extra information or even replace the built-in help by listening for special help events. There are three events just for the single command, and three "group" events which occur for the command as well as any of its subcommands.
-In the order the events are emitted:
-
-- `preGroupHelp`: use for adding a global banner or header
-- `preHelp`: display extra information before built-in help
-- `help` | `groupHelp`: if there is a listener, the event is emitted _instead_ of displaying the built-in help
-- `postHelp`: display extra information after built-in help
-- `postGroupHelp`: use for adding a global footer (sometimes called an epilog)
+You can add extra text to be displayed along with the built-in help. 
 
 Example file: [custom-help](./examples/custom-help)
 
@@ -512,12 +505,10 @@ Example file: [custom-help](./examples/custom-help)
 program
   .option('-f, --foo', 'enable some foo');
 
-// must be added before calling .parse()
-program.on('postHelp', () => {
-  console.log('');
-  console.log('Example call:');
-  console.log('  $ custom-help --help');
-});
+program.addHelpText('after', `
+
+Example call:
+  $ custom-help --help`);
 ```
 
 Yields the following help output:
@@ -533,19 +524,19 @@ Example call:
   $ custom-help --help
 ```
 
-The help listeners are passed a context object for your convenience. The properties are:
+The positions in order displayed are:
 
-- error: a boolean whether the help is being displayed due to a usage error
+- `beforeAll`: add to the program for a global banner or header
+- `before`: display extra information before built-in help
+- `after`: display extra information after built-in help
+- `afterAll`: add to the program for a global footer ( epilog)
+
+The positions "beforeAll" and "afterAll" apply to the command and all its subcommands. 
+
+The second parameter can be a string, or a function returning a string. The function is passed a context object for your convenience. The properties are:
+
+- error: a boolean for whether the help is being displayed due to a usage error
 - command: the Command which is displaying the help
-- write: either `process.stdout.write()` or `.process.stderr.write()`, depending on `error`
-
-As an example, the built-in help can be replaced like this:
-
-```js
-program.on('groupHelp', (context) => {
-  context.write(context.command.helpInformation());
-});
-```
 
 ### .usage and .name
 
@@ -769,13 +760,12 @@ program
   .option("-e, --exec_mode <mode>", "Which exec mode to use")
   .action(function(cmd, options){
     console.log('exec "%s" using %s mode', cmd, options.exec_mode);
-  }).on('postHelp', function() {
-    console.log('');
-    console.log('Examples:');
-    console.log('');
-    console.log('  $ deploy exec sequential');
-    console.log('  $ deploy exec async');
-  });
+  }).addHelpText('after', `
+Examples:
+
+  $ deploy exec sequential
+  $ deploy exec async
+  );
 
 program.parse(process.argv);
 ```
