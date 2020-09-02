@@ -529,7 +529,7 @@ The positions in order displayed are:
 - `beforeAll`: add to the program for a global banner or header
 - `before`: display extra information before built-in help
 - `after`: display extra information after built-in help
-- `afterAll`: add to the program for a global footer ( epilog)
+- `afterAll`: add to the program for a global footer (epilog)
 
 The positions "beforeAll" and "afterAll" apply to the command and all its subcommands. 
 
