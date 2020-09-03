@@ -37,6 +37,19 @@ class Option {
   }
 
   /**
+   * Return option full description.
+   *
+   * @return {string}
+   * @api public
+   */
+
+  fullDescription() {
+    return this.description + (
+      (!this.negate && this.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(this.defaultValue) + ')' : ''
+    );
+  };
+
+  /**
    * Return option name.
    *
    * @return {string}
@@ -1639,10 +1652,7 @@ Read more on https://git.io/JJc0W`);
 
     // Explicit options (including version)
     const options = this.options.map((option) => {
-      const fullDesc = option.description + (
-        (!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : ''
-      );
-      return prepareDetails(option.flags, fullDesc);
+      return prepareDetails(option.flags, option.fullDescription());
     });
 
     // Implicit help
