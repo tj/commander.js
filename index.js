@@ -1638,7 +1638,7 @@ Read more on https://git.io/JJc0W`);
   /**
    * Output help information for this command.
    *
-   * Outputs built-in help, and customised by adding help event listeners.
+   * Outputs built-in help, and custom text added using `.addHelpText()`.
    *
    * @api public
    * @param {Object} [contextOptions] - Can optionally pass in `{ error: true }` to write to stderr
@@ -1705,7 +1705,7 @@ Read more on https://git.io/JJc0W`);
   /**
    * Output help information and exit.
    *
-   * Outputs built-in help, and customised by adding help event listeners.
+   * Outputs built-in help, and custom text added using `.addHelpText()`.
    *
    * @param {Object} [contextOptions] - optionally pass in `{ error: true }` to write to stderr
    * @api public

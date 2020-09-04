@@ -344,7 +344,7 @@ declare namespace commander {
     /**
      * Output help information for this command.
      *
-     * Outputs built-in help, and customised by adding help event listeners.
+     * Outputs built-in help, and custom text added using `.addHelpText()`.
      *
      */
     outputHelp(context?: HelpContext): void;
@@ -365,7 +365,7 @@ declare namespace commander {
     /**
      * Output help information and exit.
      *
-     * Outputs built-in help, and customised by adding help event listeners.
+     * Outputs built-in help, and custom text added using `.addHelpText()`.
      */
     help(context?: HelpContext): never;
     help(cb?: (str: string) => string): never; // callback deprecated
