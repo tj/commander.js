@@ -1722,13 +1722,12 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
-   * Add additional text to be displayed with the built-in help,
-   * or add an override to replace the built-in help.
+   * Add additional text to be displayed with the built-in help.
    *
-   * Position is 'before' or 'after' or 'override' to affect just this command,
+   * Position is 'before' or 'after' to affect just this command,
    * and 'beforeAll' or 'afterAll' to affect this command and all its subcommands.
    *
-   * @param {string} position - before or after or override built-in help
+   * @param {string} position - before or after built-in help
    * @param {string | Function} text - string to add, or a function returning a string
    * @return {Command} `this` command for chaining
    */

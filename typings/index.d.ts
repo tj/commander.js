@@ -371,8 +371,7 @@ declare namespace commander {
     help(cb?: (str: string) => string): never; // callback deprecated
 
     /**
-     * Add additional text to be displayed with the built-in help,
-     * or add an override to replace the built-in help.
+     * Add additional text to be displayed with the built-in help.
      *
      * Position is 'before' or 'after' to affect just this command,
      * and 'beforeAll' or 'afterAll' to affect this command and all its subcommands.
