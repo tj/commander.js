@@ -1950,7 +1950,7 @@ function outputHelpIfRequested(cmd, args) {
  */
 
 function humanReadableArgName(arg) {
-  const nameOutput = arg.name + (arg._variadic === true ? '...' : '');
+  const nameOutput = arg.name + (arg.variadic === true ? '...' : '');
 
   return arg.required
     ? '<' + nameOutput + '>'
