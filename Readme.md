@@ -223,7 +223,7 @@ Usage: help [options]
 
 Options:
   -t, --timeout <delay>  timeout in seconds (default: one minute)
-  -s, --size <value>     drink size (choices: "big", "little")
+  -d, --drink <size>     drink cup size (choices: "small", "medium", "large")
   -h, --help             display help for command
 
 $ extra --drink huge
