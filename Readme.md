@@ -16,6 +16,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Common option types, boolean and value](#common-option-types-boolean-and-value)
     - [Default option value](#default-option-value)
     - [Other option types, negatable boolean and flag|value](#other-option-types-negatable-boolean-and-flagvalue)
+    - [Extra option features](#extra-option-features)
     - [Custom option processing](#custom-option-processing)
     - [Required option](#required-option)
     - [Variadic option](#variadic-option)
@@ -202,6 +203,33 @@ $ pizza-options --cheese mozzarella
 add cheese type mozzarella
 ```
 
+### Extra option features
+
+You can add most options using the `.option()` method, but there are some additional features available
+by constructing an `Option` explicitly for less common cases.
+
+Example file: [options-extra.js](./examples/options-extra.js)
+
+```
+program
+  .addOption(new Option('-s, --secret').hideHelp())
+  .addOption(new Option('-t, --timeout <delay>', 'timeout in seconds').default(60, 'one minute'))
+  .addOption(new Option('-d, --drink <size>', 'drink size').choices(['small', 'medium', 'large']));
+```
+
+```
+$ extra --help
+Usage: help [options]
+
+Options:
+  -t, --timeout <delay>  timeout in seconds (default: one minute)
+  -s, --size <value>     drink size (choices: "big", "little")
+  -h, --help             display help for command
+
+$ extra --drink huge
+error: option '-d, --drink <size>' argument of 'huge' not in allowed choices: small, medium, large
+```
+
 ### Custom option processing
 
 You may specify a function to do custom processing of option values. The callback function receives two parameters, the user specified value and the
@@ -210,6 +238,8 @@ previous value for the option. It returns the new value for the option.
 This allows you to coerce the option value to the desired type, or accumulate values, or do entirely custom processing.
 
 You can optionally specify the default/starting value for the option after the function.
+
+There is a pre-built processing function available for restricted the option-argument to a list of choices.
 
 Example file: [options-custom-processing.js](./examples/options-custom-processing.js)
 
@@ -246,6 +276,7 @@ if (program.integer !== undefined) console.log(`integer: ${program.integer}`);
 if (program.verbose > 0) console.log(`verbosity: ${program.verbose}`);
 if (program.collect.length > 0) console.log(program.collect);
 if (program.list !== undefined) console.log(program.list);
+if (program.size !== undefined) console.log(program.size);
 ```
 
 ```bash
@@ -259,6 +290,8 @@ $ custom -c a -c b -c c
 [ 'a', 'b', 'c' ]
 $ custom --list x,y,z
 [ 'x', 'y', 'z' ]
+$ custom --size huge
+error: option '-s, --size <size>' argument of 'huge' not in allowed choices: small, medium, large
 ```
 
 ### Required option
