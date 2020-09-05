@@ -1,6 +1,7 @@
 const { Command, Option } = require('../');
 
-// Testing parse and parseAsync in command.parse.test.js
+// Testing the functions which should chain.
+// parse and parseAsync are tested in command.parse.test.js
 
 describe('Command methods that should return this for chaining', () => {
   test('when call .command() with description for stand-alone executable then returns this', () => {
