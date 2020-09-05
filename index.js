@@ -1392,6 +1392,26 @@ Read more on https://git.io/JJc0W`);
     return this;
   };
 
+  /* WIP */
+  visibleCommands() {
+    const visibleCommands = this.commands.filter(cmd => !cmd._hidden);
+    if (this._lazyHasImplicitHelpCommand()) {
+      const helpCommand = new Command(this._helpCommandnameAndArgs)
+        .description(this._helpCommandDescription);
+      visibleCommands.push(helpCommand);
+    }
+    return visibleCommands;
+  }
+
+  /* WIP */
+  commandSynopsis() {
+    const args = this._args.map(arg => humanReadableArgName(arg)).join(' ');
+    return this._name +
+      (this._aliases[0] ? '|' + this._aliases[0] : '') +
+      (this.options.length ? ' [options]' : '') + // simple check for non-help option
+      (args ? ' ' + args : '');
+  }
+
   /**
    * Return prepared commands.
    *
@@ -1530,29 +1550,26 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
-   * Return command help documentation.
+   * Return command help documentation, minus header.
    *
    * @return {string}
    * @api private
    */
 
   commandHelp() {
-    if (!this.commands.length && !this._lazyHasImplicitHelpCommand()) return '';
+    const visibleCommands = this.visibleCommands();
+    if (!visibleCommands.length) return '';
 
-    const commands = this.prepareCommands();
     const width = this.padWidth();
-
     const columns = process.stdout.columns || 80;
     const descriptionWidth = columns - width - 4;
 
-    return [
-      'Commands:',
-      commands.map((cmd) => {
-        const desc = cmd[1] ? '  ' + cmd[1] : '';
-        return (desc ? pad(cmd[0], width) : cmd[0]) + optionalWrap(desc, descriptionWidth, width + 2);
-      }).join('\n').replace(/^/gm, '  '),
-      ''
-    ].join('\n');
+    return visibleCommands.map((cmd) => {
+      if (cmd._description) {
+        return pad(cmd.commandSynopsis(), width) + optionalWrap('  ' + cmd._description, descriptionWidth, width + 2);
+      }
+      return cmd.commandSynopsis();
+    }).join('\n').replace(/^/gm, '  ');
   };
 
   /**
@@ -1599,7 +1616,14 @@ Read more on https://git.io/JJc0W`);
 
     let cmds = [];
     const commandHelp = this.commandHelp();
-    if (commandHelp) cmds = [commandHelp];
+    // if (commandHelp) cmds = [commandHelp];
+    if (commandHelp) {
+      cmds = [
+        'Commands:',
+        commandHelp,
+        ''
+      ];
+    }
 
     let options = [];
     if (this._hasHelpOption || this.options.length > 0) {
