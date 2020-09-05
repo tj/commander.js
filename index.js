@@ -1564,11 +1564,19 @@ Read more on https://git.io/JJc0W`);
     const columns = process.stdout.columns || 80;
     const descriptionWidth = columns - width - 4;
 
-    return visibleCommands.map((cmd) => {
-      if (cmd._description) {
-        return pad(cmd.commandSynopsis(), width) + optionalWrap('  ' + cmd._description, descriptionWidth, width + 2);
+    function formatline(synopsis, description) {
+      if (description) {
+        return pad(synopsis, width) + '  ' + optionalWrap(description, descriptionWidth, width + 2);
       }
-      return cmd.commandSynopsis();
+      return synopsis;
+    };
+
+    return visibleCommands.map((cmd) => {
+      // if (cmd._description) {
+      //   return pad(cmd.commandSynopsis(), width) + optionalWrap('  ' + cmd._description, descriptionWidth, width + 2);
+      // }
+      // return cmd.commandSynopsis();
+      return formatline(cmd.commandSynopsis(), cmd._description);
     }).join('\n').replace(/^/gm, '  ');
   };
 
@@ -1580,6 +1588,16 @@ Read more on https://git.io/JJc0W`);
    */
 
   helpInformation() {
+    const width = this.padWidth();
+    const columns = process.stdout.columns || 80;
+    const descriptionWidth = columns - width - 4;
+    function formatline(synopsis, description) {
+      if (description) {
+        return pad(synopsis, width) + '  ' + optionalWrap(description, descriptionWidth, width + 2);
+      }
+      return synopsis;
+    };
+
     let desc = [];
     if (this._description) {
       desc = [
@@ -1589,9 +1607,6 @@ Read more on https://git.io/JJc0W`);
 
       const argsDescription = this._argsDescription;
       if (argsDescription && this._args.length) {
-        const width = this.padWidth();
-        const columns = process.stdout.columns || 80;
-        const descriptionWidth = columns - width - 5;
         desc.push('Arguments:');
         desc.push('');
         this._args.forEach((arg) => {
@@ -1615,14 +1630,12 @@ Read more on https://git.io/JJc0W`);
     ];
 
     let cmds = [];
-    const commandHelp = this.commandHelp();
-    // if (commandHelp) cmds = [commandHelp];
-    if (commandHelp) {
-      cmds = [
-        'Commands:',
-        commandHelp,
-        ''
-      ];
+    const visibleCommands = this.visibleCommands();
+    if (visibleCommands.length) {
+      const commandBlock = visibleCommands.map((cmd) => {
+        return formatline(cmd.commandSynopsis(), cmd._description);
+      }).join('\n').replace(/^/gm, '  ');
+      cmds = ['Commands:', commandBlock, ''];
     }
 
     let options = [];
