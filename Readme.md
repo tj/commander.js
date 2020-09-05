@@ -210,14 +210,14 @@ by constructing an `Option` explicitly for less common cases.
 
 Example file: [options-extra.js](./examples/options-extra.js)
 
-```
+```js
 program
   .addOption(new Option('-s, --secret').hideHelp())
   .addOption(new Option('-t, --timeout <delay>', 'timeout in seconds').default(60, 'one minute'))
   .addOption(new Option('-d, --drink <size>', 'drink size').choices(['small', 'medium', 'large']));
 ```
 
-```
+```bash
 $ extra --help
 Usage: help [options]
 
