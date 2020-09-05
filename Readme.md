@@ -239,8 +239,6 @@ This allows you to coerce the option value to the desired type, or accumulate va
 
 You can optionally specify the default/starting value for the option after the function.
 
-There is a pre-built processing function available for restricted the option-argument to a list of choices.
-
 Example file: [options-custom-processing.js](./examples/options-custom-processing.js)
 
 ```js
@@ -276,7 +274,6 @@ if (program.integer !== undefined) console.log(`integer: ${program.integer}`);
 if (program.verbose > 0) console.log(`verbosity: ${program.verbose}`);
 if (program.collect.length > 0) console.log(program.collect);
 if (program.list !== undefined) console.log(program.list);
-if (program.size !== undefined) console.log(program.size);
 ```
 
 ```bash
@@ -290,8 +287,6 @@ $ custom -c a -c b -c c
 [ 'a', 'b', 'c' ]
 $ custom --list x,y,z
 [ 'x', 'y', 'z' ]
-$ custom --size huge
-error: option '-s, --size <size>' argument of 'huge' not in allowed choices: small, medium, large
 ```
 
 ### Required option
