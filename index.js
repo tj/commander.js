@@ -1521,7 +1521,7 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
-   * Return program help documentation.
+   * Return command help documentation.
    *
    * @return {string}
    * @api public
