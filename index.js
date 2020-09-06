@@ -1437,7 +1437,7 @@ Read more on https://git.io/JJc0W`);
   visibleArguments() {
     if (this._argsDescription && this._args.length) {
       return this._args.map((argument) => {
-        return { item: argument.name, description: this._argsDescription[argument.name] || '' };
+        return { term: argument.name, description: this._argsDescription[argument.name] || '' };
       }, 0);
     }
     return [];
@@ -1488,7 +1488,7 @@ Read more on https://git.io/JJc0W`);
 
   largestArgLength() {
     return this.visibleArguments().reduce((max, argument) => {
-      return Math.max(max, argument.item.length);
+      return Math.max(max, argument.term.length);
     }, 0);
   };
 
@@ -1549,7 +1549,7 @@ Read more on https://git.io/JJc0W`);
     const visibleArguments = this.visibleArguments();
     if (visibleArguments.length) {
       const argumentsList = visibleArguments.map((argument) => {
-        return formatItem(argument.item, argument.description);
+        return formatItem(argument.term, argument.description);
       });
       output = output.concat(['Arguments:', formatList(argumentsList), '']);
     }
