@@ -1397,14 +1397,16 @@ Read more on https://git.io/JJc0W`);
     const visibleCommands = this.commands.filter(cmd => !cmd._hidden);
     if (this._lazyHasImplicitHelpCommand()) {
       const helpCommand = new Command(this._helpCommandnameAndArgs)
-        .description(this._helpCommandDescription);
+        .description(this._helpCommandDescription)
+        .helpOption(false);
       visibleCommands.push(helpCommand);
     }
     return visibleCommands;
   }
 
-  /* WIP */
-  commandSynopsis() {
+  /* WIP: */
+  helpTerm() {
+    // Why not just use usage?!
     const args = this._args.map(arg => humanReadableArgName(arg)).join(' ');
     return this._name +
       (this._aliases[0] ? '|' + this._aliases[0] : '') +
@@ -1450,9 +1452,8 @@ Read more on https://git.io/JJc0W`);
    */
 
   largestCommandLength() {
-    const commands = this.prepareCommands();
-    return commands.reduce((max, command) => {
-      return Math.max(max, command[0].length);
+    return this.visibleCommands().reduce((max, command) => {
+      return Math.max(max, command.helpTerm().length);
     }, 0);
   };
 
@@ -1550,37 +1551,6 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
-   * Return command help documentation, minus header.
-   *
-   * @return {string}
-   * @api private
-   */
-
-  commandHelp() {
-    const visibleCommands = this.visibleCommands();
-    if (!visibleCommands.length) return '';
-
-    const width = this.padWidth();
-    const columns = process.stdout.columns || 80;
-    const descriptionWidth = columns - width - 4;
-
-    function formatline(synopsis, description) {
-      if (description) {
-        return pad(synopsis, width) + '  ' + optionalWrap(description, descriptionWidth, width + 2);
-      }
-      return synopsis;
-    };
-
-    return visibleCommands.map((cmd) => {
-      // if (cmd._description) {
-      //   return pad(cmd.commandSynopsis(), width) + optionalWrap('  ' + cmd._description, descriptionWidth, width + 2);
-      // }
-      // return cmd.commandSynopsis();
-      return formatline(cmd.commandSynopsis(), cmd._description);
-    }).join('\n').replace(/^/gm, '  ');
-  };
-
-  /**
    * Return program help documentation.
    *
    * @return {string}
@@ -1591,11 +1561,12 @@ Read more on https://git.io/JJc0W`);
     const width = this.padWidth();
     const columns = process.stdout.columns || 80;
     const descriptionWidth = columns - width - 4;
-    function formatline(synopsis, description) {
+    const listIndent = '  ';
+    function formatline(element, description) {
       if (description) {
-        return pad(synopsis, width) + '  ' + optionalWrap(description, descriptionWidth, width + 2);
+        return pad(element, width) + '  ' + optionalWrap(description, descriptionWidth, width + 2);
       }
-      return synopsis;
+      return element;
     };
 
     let desc = [];
@@ -1633,8 +1604,8 @@ Read more on https://git.io/JJc0W`);
     const visibleCommands = this.visibleCommands();
     if (visibleCommands.length) {
       const commandBlock = visibleCommands.map((cmd) => {
-        return formatline(cmd.commandSynopsis(), cmd._description);
-      }).join('\n').replace(/^/gm, '  ');
+        return formatline(cmd.helpTerm(), cmd.description());
+      }).join('\n').replace(/^/gm, listIndent);
       cmds = ['Commands:', commandBlock, ''];
     }
 
@@ -1642,7 +1613,7 @@ Read more on https://git.io/JJc0W`);
     if (this._hasHelpOption || this.options.length > 0) {
       options = [
         'Options:',
-        '' + this.optionHelp().replace(/^/gm, '  '),
+        '' + this.optionHelp().replace(/^/gm, listIndent),
         ''
       ];
     }
