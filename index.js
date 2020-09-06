@@ -1415,36 +1415,6 @@ Read more on https://git.io/JJc0W`);
   }
 
   /**
-   * Return prepared commands.
-   *
-   * @return {Array}
-   * @api private
-   */
-
-  prepareCommands() {
-    const commandDetails = this.commands.filter((cmd) => {
-      return !cmd._hidden;
-    }).map((cmd) => {
-      const args = cmd._args.map((arg) => {
-        return humanReadableArgName(arg);
-      }).join(' ');
-
-      return [
-        cmd._name +
-          (cmd._aliases[0] ? '|' + cmd._aliases[0] : '') +
-          (cmd.options.length ? ' [options]' : '') +
-          (args ? ' ' + args : ''),
-        cmd._description
-      ];
-    });
-
-    if (this._lazyHasImplicitHelpCommand()) {
-      commandDetails.push([this._helpCommandnameAndArgs, this._helpCommandDescription]);
-    }
-    return commandDetails;
-  };
-
-  /**
    * Return the largest command length.
    *
    * @return {number}
