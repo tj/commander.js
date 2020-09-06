@@ -1418,7 +1418,7 @@ Read more on https://git.io/JJc0W`);
    * Return the largest command length.
    *
    * @return {number}
-   * @api private
+   * @api public
    */
 
   largestCommandHelpTermLength() {
