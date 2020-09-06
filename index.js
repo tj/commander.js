@@ -1531,13 +1531,16 @@ Read more on https://git.io/JJc0W`);
     const width = this.padWidth();
     const columns = process.stdout.columns || 80;
     const descriptionWidth = columns - width - 4;
-    const listIndent = '  ';
-    function formatline(element, description) {
+
+    function formatItem(term, description) {
       if (description) {
-        return pad(element, width) + '  ' + optionalWrap(description, descriptionWidth, width + 2);
+        return pad(term, width) + '  ' + optionalWrap(description, descriptionWidth, width + 2);
       }
-      return element;
+      return term;
     };
+    function formatList(text) {
+      return text.join('\n').replace(/^/gm, '  ');
+    }
 
     let desc = [];
     if (this._description) {
@@ -1573,17 +1576,17 @@ Read more on https://git.io/JJc0W`);
     let cmds = [];
     const visibleCommands = this.visibleCommands();
     if (visibleCommands.length) {
-      const commandBlock = visibleCommands.map((cmd) => {
-        return formatline(cmd.helpTerm(), cmd.description());
-      }).join('\n').replace(/^/gm, listIndent);
-      cmds = ['Commands:', commandBlock, ''];
+      const commandList = visibleCommands.map((cmd) => {
+        return formatItem(cmd.helpTerm(), cmd.description());
+      });
+      cmds = ['Commands:', formatList(commandList), ''];
     }
 
     let options = [];
     if (this._hasHelpOption || this.options.length > 0) {
       options = [
         'Options:',
-        '' + this.optionHelp().replace(/^/gm, listIndent),
+        '' + this.optionHelp().replace(/^/gm, '  '),
         ''
       ];
     }
