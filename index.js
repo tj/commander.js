@@ -1433,6 +1433,16 @@ Read more on https://git.io/JJc0W`);
     return visibleOptions;
   }
 
+  /* WIP */
+  visibleArguments() {
+    if (this._argsDescription && this._args.length) {
+      return this._args.map((argument) => {
+        return { item: argument.name, description: this._argsDescription[argument.name] || '' };
+      }, 0);
+    }
+    return [];
+  }
+
   /* WIP: */
   helpTerm() {
     // Why not just use usage?!
@@ -1460,7 +1470,7 @@ Read more on https://git.io/JJc0W`);
    * Return the largest option length.
    *
    * @return {number}
-   * @api private
+   * @api public
    */
 
   largestOptionLength() {
@@ -1473,12 +1483,12 @@ Read more on https://git.io/JJc0W`);
    * Return the largest arg length.
    *
    * @return {number}
-   * @api private
+   * @api public
    */
 
   largestArgLength() {
-    return this._args.reduce((max, arg) => {
-      return Math.max(max, arg.name.length);
+    return this.visibleArguments().reduce((max, argument) => {
+      return Math.max(max, argument.item.length);
     }, 0);
   };
 
@@ -1490,16 +1500,11 @@ Read more on https://git.io/JJc0W`);
    */
 
   padWidth() {
-    let width = this.largestOptionLength();
-    if (this._argsDescription && this._args.length) {
-      if (this.largestArgLength() > width) {
-        width = this.largestArgLength();
-      }
-    }
-
-    width = Math.max(width, this.largestCommandHelpTermLength());
-
-    return width;
+    return Math.max(
+      this.largestOptionLength(),
+      this.largestCommandHelpTermLength(),
+      this.largestArgLength()
+    );
   };
 
   /**
@@ -1541,13 +1546,12 @@ Read more on https://git.io/JJc0W`);
     }
 
     // Arguments
-    if (this._argsDescription && this._args.length) {
-      output.push('Arguments:');
-      output.push('');
-      this._args.forEach((arg) => {
-        output.push('  ' + pad(arg.name, width) + '  ' + wrap(this._argsDescription[arg.name] || '', descriptionWidth, width + 4));
+    const visibleArguments = this.visibleArguments();
+    if (visibleArguments.length) {
+      const argumentsList = visibleArguments.map((argument) => {
+        return formatItem(argument.item, argument.description);
       });
-      output.push('');
+      output = output.concat(['Arguments:', formatList(argumentsList), '']);
     }
 
     // Optioms
