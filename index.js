@@ -73,6 +73,13 @@ class Option {
   is(arg) {
     return this.short === arg || this.long === arg;
   };
+
+  /* WIP */
+  fullDescription() {
+    return this.description + (
+      (!this.negate && this.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(this.defaultValue) + ')' : ''
+    );
+  };
 }
 
 /**
@@ -1404,6 +1411,28 @@ Read more on https://git.io/JJc0W`);
     return visibleCommands;
   }
 
+  /* WIP */
+  visibleOptions() {
+    const visibleOptions = this.options; // Hidden not added until PR #1331 lands
+
+    // Implicit help
+    const showShortHelpFlag = this._hasHelpOption && this._helpShortFlag && !this._findOption(this._helpShortFlag);
+    const showLongHelpFlag = this._hasHelpOption && !this._findOption(this._helpLongFlag);
+    if (showShortHelpFlag || showLongHelpFlag) {
+      let helpOption;
+      if (!showShortHelpFlag) {
+        helpOption = new Option(this._helpLongFlag, this._helpDescription);
+      } else if (!showLongHelpFlag) {
+        helpOption = new Option(this._helpShortFlag, this._helpDescription);
+      } else {
+        helpOption = new Option(this._helpFlags, this._helpDescription);
+      }
+      visibleOptions.push(helpOption);
+    }
+
+    return visibleOptions;
+  }
+
   /* WIP: */
   helpTerm() {
     // Why not just use usage?!
@@ -1435,12 +1464,7 @@ Read more on https://git.io/JJc0W`);
    */
 
   largestOptionLength() {
-    const options = [].slice.call(this.options);
-    options.push({
-      flags: this._helpFlags
-    });
-
-    return options.reduce((max, option) => {
+    return this.visibleOptions().reduce((max, option) => {
       return Math.max(max, option.flags.length);
     }, 0);
   };
@@ -1476,44 +1500,6 @@ Read more on https://git.io/JJc0W`);
     width = Math.max(width, this.largestCommandHelpTermLength());
 
     return width;
-  };
-
-  /**
-   * Return help for options.
-   *
-   * @return {string}
-   * @api private
-   */
-
-  optionHelp() {
-    const width = this.padWidth();
-    const columns = process.stdout.columns || 80;
-    const descriptionWidth = columns - width - 4;
-    function padOptionDetails(flags, description) {
-      return pad(flags, width) + '  ' + optionalWrap(description, descriptionWidth, width + 2);
-    };
-
-    // Explicit options (including version)
-    const help = this.options.map((option) => {
-      const fullDesc = option.description +
-        ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
-      return padOptionDetails(option.flags, fullDesc);
-    });
-
-    // Implicit help
-    const showShortHelpFlag = this._hasHelpOption && this._helpShortFlag && !this._findOption(this._helpShortFlag);
-    const showLongHelpFlag = this._hasHelpOption && !this._findOption(this._helpLongFlag);
-    if (showShortHelpFlag || showLongHelpFlag) {
-      let helpFlags = this._helpFlags;
-      if (!showShortHelpFlag) {
-        helpFlags = this._helpLongFlag;
-      } else if (!showLongHelpFlag) {
-        helpFlags = this._helpShortFlag;
-      }
-      help.push(padOptionDetails(helpFlags, this._helpDescription));
-    }
-
-    return help.join('\n');
   };
 
   /**
@@ -1565,12 +1551,12 @@ Read more on https://git.io/JJc0W`);
     }
 
     // Optioms
-    if (this._hasHelpOption || this.options.length > 0) {
-      output = output.concat([
-        'Options:',
-        '' + this.optionHelp().replace(/^/gm, '  '),
-        ''
-      ]);
+    const visibleOptions = this.visibleOptions();
+    if (visibleOptions.length) {
+      const optionList = visibleOptions.map((option) => {
+        return formatItem(option.flags, option.fullDescription());
+      });
+      output = output.concat(['Options:', formatList(optionList), '']);
     }
 
     // Commands
