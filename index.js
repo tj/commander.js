@@ -1421,7 +1421,7 @@ Read more on https://git.io/JJc0W`);
    * @api private
    */
 
-  largestCommandLength() {
+  largestCommandHelpTermLength() {
     return this.visibleCommands().reduce((max, command) => {
       return Math.max(max, command.helpTerm().length);
     }, 0);
@@ -1473,11 +1473,7 @@ Read more on https://git.io/JJc0W`);
       }
     }
 
-    if (this.commands && this.commands.length) {
-      if (this.largestCommandLength() > width) {
-        width = this.largestCommandLength();
-      }
-    }
+    width = Math.max(width, this.largestCommandHelpTermLength());
 
     return width;
   };
