@@ -1413,7 +1413,7 @@ Read more on https://git.io/JJc0W`);
 
   /* WIP */
   visibleOptions() {
-    const visibleOptions = this.options; // Hidden not added until PR #1331 lands
+    const visibleOptions = this.options.slice(); // Hidden not added until PR #1331 lands
 
     // Implicit help
     const showShortHelpFlag = this._hasHelpOption && this._helpShortFlag && !this._findOption(this._helpShortFlag);
