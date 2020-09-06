@@ -63,7 +63,7 @@ class Option {
    * @api public
    */
 
-  getFullDescription() {
+  fullDescription() {
     if (this.negate) {
       return this.description;
     }
@@ -1654,7 +1654,7 @@ Read more on https://git.io/JJc0W`);
     // Explicit options (including version)
     const visibleOptions = this.options.filter((option) => !option.hidden);
     const help = visibleOptions.map((option) => {
-      return padOptionDetails(option.flags, option.getFullDescription());
+      return padOptionDetails(option.flags, option.fullDescription());
     });
 
     // Implicit help

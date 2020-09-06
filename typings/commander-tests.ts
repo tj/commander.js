@@ -237,8 +237,8 @@ const baseOption = new commander.Option('-f,--foo', 'foo description');
 const myOptionThis1: commander.Option = baseOption.default(3);
 const myOptionThis2: commander.Option = baseOption.default(60, 'one minute');
 
-// getFullDescription
-const optionDescription: string = baseOption.getFullDescription();
+// fullDescription
+const optionDescription: string = baseOption.fullDescription();
 
 // parseArgWith
 const myOptionThis3: commander.Option = baseOption.parseArgWith((value: string) => parseInt(value));
