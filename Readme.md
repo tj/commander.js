@@ -5,6 +5,7 @@
 
 * [Re-use help, options and command in HTTP CLI.](#parse-and-parseasync)
 * [De-attached mode.](#webcli-usage)
+* [Uniq output fuction - write](#programwritestring-message-string-loglevel)
 
 # Commander.js
 
@@ -657,6 +658,29 @@ Examples:
   ./index --pizza-type cheese # translate to
   curl -s -X POST -H "Content-Type: application/json" -d "{\"--pizza-type\": \"cheese\"}" localhost:8080
 ```
+
+To write either in the `console` object or the `response` use the `program.write` method as exampled above:
+
+```js
+program
+  .option('-d, --debug', 'output extra debugging')
+  .option('-s, --small', 'small pizza size')
+  .option('-p, --pizza-type <type>', 'flavour of pizza');
+
+program.parse(process.argv);
+
+if (program.debug) console.log(program.opts());
+program.write('pizza details:');
+if (program.small) program.write('- small pizza size');
+if (program.pizzaType) program.write(`- ${program.pizzaType}`);
+```
+
+#### program.write(String message, String logLevel)
+write function take two arguments: `(String: message, String: logLevel)`:
+  * *Message* The string message to be passed to either _console_ or _response_ objects.
+  * *logLevel* Default Lot. The verbosity level of the message, in the case of console it will call the corresponding log
+      function (console.error when 'error' is passed); and in the case of webCLI it will set a status code for each
+      log-level type `{ error: 500, warn: 219, info: 201, log: 200 }`.
 
 ### Avoiding option name clashes
 
