@@ -794,7 +794,6 @@ Read more on https://git.io/JJc0W`);
       case 'express':
         // @NOTE: argv is app from express
         argv.use(_expressParse.bind(this));
-        argv.listen(parseOptions.port);
         break;
       default:
         throw new Error(`unexpected parse option { from: '${parseOptions.from}' }`);

@@ -1,3 +1,11 @@
+## Fork Info
+> This fork has been rejected due to being off track of the main commander.js purpose, so I'm keeping this fork alive in hopes it provides value to others and for future posible inclusion as a plugin. See the original discussion [here](https://github.com/tj/commander.js/pull/1340)
+
+### New Feature -> HTTP Web CLI
+
+* [Re-use help, options and command in HTTP CLI.](#parse-and-parseasync)
+* [De-attached mode.](#webcli-usage)
+
 # Commander.js
 
 [![Build Status](https://api.travis-ci.org/tj/commander.js.svg?branch=master)](http://travis-ci.org/tj/commander.js)
@@ -604,6 +612,7 @@ If the arguments follow different conventions than node you can pass a `from` op
 - 'node': default, `argv[0]` is the application and `argv[1]` is the script being run, with user parameters after that
 - 'electron': `argv[1]` varies depending on whether the electron application is packaged
 - 'user': all of the arguments from the user
+- 'express': to enable the I/O to be via HTTP.
 
 For example:
 
@@ -611,6 +620,42 @@ For example:
 program.parse(process.argv); // Explicit, node conventions
 program.parse(); // Implicit, and auto-detect electron
 program.parse(['-f', 'filename'], { from: 'user' });
+```
+
+To enable the express HTTP-web-CLI:
+
+```js
+  app.use(express.json());
+  program.parse(app, {from: "express"});
+  app.listen(8080);
+```
+```bash
+  curl -s -X POST -H "Content-Type: application/json" localhost:8080/help
+```
+
+#### WebCLI Usage
+To be able to parse the commands and parameters from a HTTP/XHR request, all verbs are being parsed.
+The _options_ should be sent as parameters, and commands and sub-command should be sent in the PATH of the URL.
+
+Examples:
+```bash
+  ./index help # translate to
+  curl -s -X POST -H "Content-Type: application/json" localhost:8080/help
+
+  ./index help subcommand # translate to
+  curl -s -X POST -H "Content-Type: application/json" localhost:8080/help/subcommand
+
+  ./index -h # translate to
+  curl -s -X POST -H "Content-Type: application/json" -d "{\"-h\": \"\"}" localhost:8080
+
+  ./index subcommand -h # translate to
+  curl -s -X POST -H "Content-Type: application/json" -d "{\"-h\": \"\"}" localhost:8080/subcommand
+
+  ./index -p vegetarian # translate to
+  curl -s -X POST -H "Content-Type: application/json" -d "{\"-p\": \"vegetarian\"}" localhost:8080
+
+  ./index --pizza-type cheese # translate to
+  curl -s -X POST -H "Content-Type: application/json" -d "{\"--pizza-type\": \"cheese\"}" localhost:8080
 ```
 
 ### Avoiding option name clashes
