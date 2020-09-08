@@ -627,6 +627,8 @@ There are two new routines to change the behaviour, and the default behaviour ma
 - `passCommandToAction`: whether to pass command to action handler,
 or just the options (specify false)
 
+> It's important to note that those options must be specified before other options that would be affected by this change in behavior, such as `.version(), .option(), etc`
+
 Example file: [storeOptionsAsProperties-action.js](./examples/storeOptionsAsProperties-action.js)
 
 ```js
