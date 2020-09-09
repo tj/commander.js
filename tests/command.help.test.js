@@ -131,6 +131,30 @@ test('when both help flags masked then not displayed in helpInformation', () => 
   expect(helpInformation).not.toMatch('display help');
 });
 
+test('when call .help then output on stdout', () => {
+  const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
+  const program = new commander.Command();
+  program
+    .exitOverride();
+  expect(() => {
+    program.help();
+  }).toThrow('(outputHelp)');
+  expect(writeSpy).toHaveBeenCalledWith(program.helpInformation());
+  writeSpy.mockClear();
+});
+
+test('when call .help with { error: true } then output on stderr', () => {
+  const writeSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
+  const program = new commander.Command();
+  program
+    .exitOverride();
+  expect(() => {
+    program.help({ error: true });
+  }).toThrow('(outputHelp)');
+  expect(writeSpy).toHaveBeenCalledWith(program.helpInformation());
+  writeSpy.mockClear();
+});
+
 test('when no options then Options not includes in helpInformation', () => {
   const program = new commander.Command();
   // No custom options, no version option, no help option

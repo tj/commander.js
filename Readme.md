@@ -27,8 +27,8 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
   - [Automated help](#automated-help)
     - [Custom help](#custom-help)
     - [.usage and .name](#usage-and-name)
-    - [.help(cb)](#helpcb)
-    - [.outputHelp(cb)](#outputhelpcb)
+    - [.help()](#help)
+    - [.outputHelp()](#outputhelp)
     - [.helpInformation()](#helpinformation)
     - [.helpOption(flags, description)](#helpoptionflags-description)
     - [.addHelpCommand()](#addhelpcommand)
@@ -497,7 +497,7 @@ shell spawn --help
 
 ### Custom help
 
-You can display extra information by listening for "--help".
+You can add extra text to be displayed along with the built-in help. 
 
 Example file: [custom-help](./examples/custom-help)
 
@@ -505,12 +505,10 @@ Example file: [custom-help](./examples/custom-help)
 program
   .option('-f, --foo', 'enable some foo');
 
-// must be before .parse()
-program.on('--help', () => {
-  console.log('');
-  console.log('Example call:');
-  console.log('  $ custom-help --help');
-});
+program.addHelpText('after', `
+
+Example call:
+  $ custom-help --help`);
 ```
 
 Yields the following help output:
@@ -525,6 +523,20 @@ Options:
 Example call:
   $ custom-help --help
 ```
+
+The positions in order displayed are:
+
+- `beforeAll`: add to the program for a global banner or header
+- `before`: display extra information before built-in help
+- `after`: display extra information after built-in help
+- `afterAll`: add to the program for a global footer (epilog)
+
+The positions "beforeAll" and "afterAll" apply to the command and all its subcommands. 
+
+The second parameter can be a string, or a function returning a string. The function is passed a context object for your convenience. The properties are:
+
+- error: a boolean for whether the help is being displayed due to a usage error
+- command: the Command which is displaying the help
 
 ### .usage and .name
 
@@ -543,19 +555,17 @@ The help will start with:
 Usage: my-command [global options] command
 ```
 
-### .help(cb)
+### .help()
 
-Output help information and exit immediately. Optional callback cb allows post-processing of help text before it is displayed.
+Output help information and exit immediately. You can optionally pass `{ error: true }` to display on stderr and exit with an error status.
 
-### .outputHelp(cb)
+### .outputHelp()
 
-Output help information without exiting.
-Optional callback cb allows post-processing of help text before it is displayed.
+Output help information without exiting. You can optionally pass `{ error: true }` to display on stderr.
 
 ### .helpInformation()
 
-Get the command help information as a string for processing or displaying yourself. (The text does not include the custom help
-from `--help` listeners.)
+Get the built-in command help information as a string for processing or displaying yourself.
 
 ### .helpOption(flags, description)
 
@@ -749,13 +759,11 @@ program
   .option("-e, --exec_mode <mode>", "Which exec mode to use")
   .action(function(cmd, options){
     console.log('exec "%s" using %s mode', cmd, options.exec_mode);
-  }).on('--help', function() {
-    console.log('');
-    console.log('Examples:');
-    console.log('');
-    console.log('  $ deploy exec sequential');
-    console.log('  $ deploy exec async');
-  });
+  }).addHelpText('after', `
+Examples:
+  $ deploy exec sequential
+  $ deploy exec async`
+  );
 
 program.parse(process.argv);
 ```

@@ -945,7 +945,7 @@ Read more on https://git.io/JJc0W`);
    */
   _dispatchSubcommand(commandName, operands, unknown) {
     const subCommand = this._findCommand(commandName);
-    if (!subCommand) this._helpAndError();
+    if (!subCommand) this.help({ error: true });
 
     if (subCommand._executableHandler) {
       this._executeSubCommand(subCommand, operands.concat(unknown));
@@ -980,7 +980,7 @@ Read more on https://git.io/JJc0W`);
     } else {
       if (this.commands.length && this.args.length === 0 && !this._actionHandler && !this._defaultCommandName) {
         // probably missing subcommand and no handler, user needs help
-        this._helpAndError();
+        this.help({ error: true });
       }
 
       outputHelpIfRequested(this, parsed.unknown);
@@ -1011,7 +1011,7 @@ Read more on https://git.io/JJc0W`);
         }
       } else if (this.commands.length) {
         // This command has subcommands and nothing hooked up at this level, so display help.
-        this._helpAndError();
+        this.help({ error: true });
       } else {
         // fall through for caller to handle after calling .parse()
       }
@@ -1618,26 +1618,62 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
-   * Output help information for this command.
-   *
-   * When listener(s) are available for the helpLongFlag
-   * those callbacks are invoked.
-   *
-   * @api public
+   * @api private
    */
 
-  outputHelp(cb) {
-    if (!cb) {
-      cb = (passthru) => {
-        return passthru;
-      };
+  _getHelpContext(contextOptions) {
+    contextOptions = contextOptions || {};
+    const context = { error: !!contextOptions.error };
+    let write;
+    if (context.error) {
+      write = (...args) => process.stderr.write(...args);
+    } else {
+      write = (...args) => process.stdout.write(...args);
     }
-    const cbOutput = cb(this.helpInformation());
-    if (typeof cbOutput !== 'string' && !Buffer.isBuffer(cbOutput)) {
-      throw new Error('outputHelp callback must return a string or a Buffer');
+    context.write = contextOptions.write || write;
+    context.command = this;
+    return context;
+  }
+
+  /**
+   * Output help information for this command.
+   *
+   * Outputs built-in help, and custom text added using `.addHelpText()`.
+   *
+   * @api public
+   * @param {Object} [contextOptions] - Can optionally pass in `{ error: true }` to write to stderr
+   */
+
+  outputHelp(contextOptions) {
+    let deprecatedCallback;
+    if (typeof contextOptions === 'function') {
+      deprecatedCallback = contextOptions;
+      contextOptions = {};
     }
-    process.stdout.write(cbOutput);
-    this.emit(this._helpLongFlag);
+    const context = this._getHelpContext(contextOptions);
+
+    const groupListeners = [];
+    let command = this;
+    while (command) {
+      groupListeners.push(command); // ordered from current command to root
+      command = command.parent;
+    }
+
+    groupListeners.slice().reverse().forEach(command => command.emit('beforeAllHelp', context));
+    this.emit('beforeHelp', context);
+
+    let helpInformation = this.helpInformation();
+    if (deprecatedCallback) {
+      helpInformation = deprecatedCallback(helpInformation);
+      if (typeof helpInformation !== 'string' && !Buffer.isBuffer(helpInformation)) {
+        throw new Error('outputHelp callback must return a string or a Buffer');
+      }
+    }
+    context.write(helpInformation);
+
+    this.emit(this._helpLongFlag); // deprecated
+    this.emit('afterHelp', context);
+    groupListeners.forEach(command => command.emit('afterAllHelp', context));
   };
 
   /**
@@ -1669,28 +1705,53 @@ Read more on https://git.io/JJc0W`);
   /**
    * Output help information and exit.
    *
-   * @param {Function} [cb]
+   * Outputs built-in help, and custom text added using `.addHelpText()`.
+   *
+   * @param {Object} [contextOptions] - optionally pass in `{ error: true }` to write to stderr
    * @api public
    */
 
-  help(cb) {
-    this.outputHelp(cb);
-    // exitCode: preserving original behaviour which was calling process.exit()
+  help(contextOptions) {
+    this.outputHelp(contextOptions);
+    let exitCode = process.exitCode || 0;
+    if (exitCode === 0 && contextOptions && typeof contextOptions !== 'function' && contextOptions.error) {
+      exitCode = 1;
+    }
     // message: do not have all displayed text available so only passing placeholder.
-    this._exit(process.exitCode || 0, 'commander.help', '(outputHelp)');
+    this._exit(exitCode, 'commander.help', '(outputHelp)');
   };
 
   /**
-   * Output help information and exit. Display for error situations.
+   * Add additional text to be displayed with the built-in help.
    *
-   * @api private
+   * Position is 'before' or 'after' to affect just this command,
+   * and 'beforeAll' or 'afterAll' to affect this command and all its subcommands.
+   *
+   * @param {string} position - before or after built-in help
+   * @param {string | Function} text - string to add, or a function returning a string
+   * @return {Command} `this` command for chaining
    */
-
-  _helpAndError() {
-    this.outputHelp();
-    // message: do not have all displayed text available so only passing placeholder.
-    this._exit(1, 'commander.help', '(outputHelp)');
-  };
+  addHelpText(position, text) {
+    const allowedValues = ['beforeAll', 'before', 'after', 'afterAll'];
+    if (!allowedValues.includes(position)) {
+      throw new Error(`Unexpected value for position to addHelpText.
+Expecting one of '${allowedValues.join("', '")}'`);
+    }
+    const helpEvent = `${position}Help`;
+    this.on(helpEvent, (context) => {
+      let helpStr;
+      if (typeof text === 'function') {
+        helpStr = text({ error: context.error, command: context.command });
+      } else {
+        helpStr = text;
+      }
+      // Ignore falsy value when nothing to output.
+      if (helpStr) {
+        context.write(`${helpStr}\n`);
+      }
+    });
+    return this;
+  }
 };
 
 /**

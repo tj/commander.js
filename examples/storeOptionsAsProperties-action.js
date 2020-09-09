@@ -3,7 +3,7 @@
 // To avoid possible name clashes, you can change the default behaviour
 // of storing the options values as properties on the command object.
 // In addition, you can pass just the options to the action handler
-// instead of a commmand object. This allows simpler code, and is more consistent
+// instead of a command object. This allows simpler code, and is more consistent
 // with the previous behaviour so less code changes from old code.
 //
 // Example output:

@@ -26,6 +26,15 @@ declare namespace commander {
   interface ParseOptions {
     from: 'node' | 'electron' | 'user';
   }
+  interface HelpContext { // optional parameter for .help() and .outputHelp()
+    error: boolean;
+  }
+  interface AddHelpTextContext { // passed to text function used with .addHelpText()
+    error: boolean;
+    command: Command;
+  }
+
+  type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
 
   interface Command {
     [key: string]: any; // options as properties
@@ -335,10 +344,11 @@ declare namespace commander {
     /**
      * Output help information for this command.
      *
-     * When listener(s) are available for the helpLongFlag
-     * those callbacks are invoked.
+     * Outputs built-in help, and custom text added using `.addHelpText()`.
+     *
      */
-    outputHelp(cb?: (str: string) => string): void;
+    outputHelp(context?: HelpContext): void;
+    outputHelp(cb?: (str: string) => string): void; // callback deprecated
 
     /**
      * Return command help documentation.
@@ -354,17 +364,23 @@ declare namespace commander {
 
     /**
      * Output help information and exit.
+     *
+     * Outputs built-in help, and custom text added using `.addHelpText()`.
      */
-    help(cb?: (str: string) => string): never;
+    help(context?: HelpContext): never;
+    help(cb?: (str: string) => string): never; // callback deprecated
+
+    /**
+     * Add additional text to be displayed with the built-in help.
+     *
+     * Position is 'before' or 'after' to affect just this command,
+     * and 'beforeAll' or 'afterAll' to affect this command and all its subcommands.
+     */
+    addHelpText(position: AddHelpTextPosition, text: string): this;
+    addHelpText(position: AddHelpTextPosition, text: (context: AddHelpTextContext) => string | void): this;
 
     /**
      * Add a listener (callback) for when events occur. (Implemented using EventEmitter.)
-     *
-     * @example
-     *     program
-     *       .on('--help', () -> {
-     *         console.log('See web site for more information.');
-     *     });
      */
     on(event: string | symbol, listener: (...args: any[]) => void): this;
   }
