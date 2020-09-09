@@ -33,6 +33,13 @@ describe('program calls to addHelpText', () => {
     expect(writeSpy).toHaveBeenNthCalledWith(2, program.helpInformation());
   });
 
+  test('when "before" function returns void then no effect', () => {
+    const program = new commander.Command();
+    program.addHelpText('before', () => { });
+    program.outputHelp();
+    expect(writeSpy).toHaveBeenNthCalledWith(1, program.helpInformation());
+  });
+
   test('when "beforeAll" string then string before built-in help', () => {
     const program = new commander.Command();
     program.addHelpText('beforeAll', 'text');
