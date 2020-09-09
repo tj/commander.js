@@ -18,21 +18,17 @@ function expectCommanderError(err, exitCode, code, message) {
 describe('.exitOverride and error details', () => {
   // Use internal knowledge to suppress output to keep test output clean.
   let consoleErrorSpy;
-  let writeSpy; // used for help [sic] and version
 
   beforeAll(() => {
     consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
-    writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
   });
 
   afterEach(() => {
     consoleErrorSpy.mockClear();
-    writeSpy.mockClear();
   });
 
   afterAll(() => {
     consoleErrorSpy.mockRestore();
-    writeSpy.mockRestore();
   });
 
   test('when specify unknown program option then throw CommanderError', () => {
@@ -125,6 +121,7 @@ describe('.exitOverride and error details', () => {
   });
 
   test('when specify --help then throw CommanderError', () => {
+    const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
     const program = new commander.Command();
     program
       .exitOverride();
@@ -136,11 +133,12 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expect(writeSpy).toHaveBeenCalled();
     expectCommanderError(caughtErr, 0, 'commander.helpDisplayed', '(outputHelp)');
+    writeSpy.mockRestore();
   });
 
   test('when executable subcommand and no command specified then throw CommanderError', () => {
+    const writeSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
     const program = new commander.Command();
     program
       .exitOverride()
@@ -153,11 +151,12 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expect(writeSpy).toHaveBeenCalled();
     expectCommanderError(caughtErr, 1, 'commander.help', '(outputHelp)');
+    writeSpy.mockRestore();
   });
 
   test('when specify --version then throw CommanderError', () => {
+    const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
@@ -171,8 +170,8 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expect(writeSpy).toHaveBeenCalled();
     expectCommanderError(caughtErr, 0, 'commander.version', myVersion);
+    writeSpy.mockRestore();
   });
 
   test('when executableSubcommand succeeds then call exitOverride', async() => {

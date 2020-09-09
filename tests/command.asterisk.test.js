@@ -11,18 +11,8 @@ const commander = require('../');
 // Historical: the event 'command:*' used to also be shared by the action handler on the program.
 
 describe(".command('*')", () => {
-  // Use internal knowledge to suppress output to keep test output clean.
-  let writeMock;
-
-  beforeAll(() => {
-    writeMock = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
-  });
-
-  afterAll(() => {
-    writeMock.mockRestore();
-  });
-
   test('when no arguments then asterisk action not called', () => {
+    const writeMock = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
     const mockAction = jest.fn();
     const program = new commander.Command();
     program
@@ -35,6 +25,7 @@ describe(".command('*')", () => {
       ;
     }
     expect(mockAction).not.toHaveBeenCalled();
+    writeMock.mockRestore();
   });
 
   test('when unrecognised argument then asterisk action called', () => {
