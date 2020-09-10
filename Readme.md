@@ -368,6 +368,7 @@ Configuration options can be passed with the call to `.command()` and `.addComma
 ### Specify the argument syntax
 
 You use `.arguments` to specify the arguments for the top-level command, and for subcommands they are usually included in the `.command` call. Angled brackets (e.g. `<required>`) indicate required input. Square brackets (e.g. `[optional]`) indicate optional input.
+You can optionally describe the arguments in the help by supplying a hash as second parameter to `.description()`.
 
 Example file: [env](./examples/env)
 
@@ -375,6 +376,10 @@ Example file: [env](./examples/env)
 program
   .version('0.1.0')
   .arguments('<cmd> [env]')
+  .description('test command', {
+    cmd: 'command to run',
+    env: 'environment to run test in'
+  })
   .action(function (cmd, env) {
     console.log('command:', cmd);
     console.log('environment:', env || 'no environment given');
