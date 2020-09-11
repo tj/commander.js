@@ -139,3 +139,22 @@ test('when no options then Options not includes in helpInformation', () => {
   const helpInformation = program.helpInformation();
   expect(helpInformation).not.toMatch('Options');
 });
+
+test('when arguments then included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .name('foo')
+    .arguments('<file>');
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch('Usage: foo [options] <file>');
+});
+
+test('when arguments described then included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .arguments('<file>')
+    .helpOption(false)
+    .description('description', { file: 'input source' });
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch(/Arguments:\n\n +file +input source/); // [sic], extra line
+});
