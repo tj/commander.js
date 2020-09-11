@@ -76,7 +76,7 @@ Options are defined with the `.option()` method, also serving as documentation f
 
 The options can be accessed as properties on the Command object. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc. See also optional new behaviour to [avoid name clashes](#avoiding-option-name-clashes).
 
-Multiple short flags may optionally be combined in a single argument following the dash: boolean flags, the last flag may take a value, and the value.
+Multiple short flags may optionally be combined in a single argument following the dash: boolean flags, followed by a single option taking a value (possibly followed by the value).
 For example `-a -b -p 80` may be written as `-ab -p80` or even `-abp80`.
 
 You can use `--` to indicate the end of the options, and any remaining arguments will be used without being interpreted.
