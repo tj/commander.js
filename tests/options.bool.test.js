@@ -92,18 +92,6 @@ describe('boolean flag on command', () => {
     program.parse(['node', 'test', 'sub', '--no-cheese']);
     expect(subCommand.cheese).toBe(false);
   });
-
-  test('when implicit negatable boolean flag specified then value is false', () => {
-    let subCommand;
-    const program = new commander.Command();
-    program
-      .command('sub')
-      .implicitNegateOptions()
-      .option('--cheese', 'add cheese')
-      .action((cmd) => { subCommand = cmd; });
-    program.parse(['node', 'test', 'sub', '--no-cheese']);
-    expect(subCommand.cheese).toBe(false);
-  });
 });
 
 // This is a somewhat undocumented special behaviour which appears in some examples.

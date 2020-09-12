@@ -119,7 +119,6 @@ class Command extends EventEmitter {
     this.options = [];
     this.parent = null;
     this._allowUnknownOption = false;
-    this._implicitNegateOptions = false;
     this._args = [];
     this.rawArgs = null;
     this._scriptPath = null;
@@ -499,7 +498,7 @@ Read more on https://git.io/JJc0W`);
    */
 
   _optionEx(config, flags, description, fn, defaultValue) {
-    const option = new Option(flags, description).allowNegateOption(this._implicitNegateOptions);
+    const option = new Option(flags, description);
     const oname = option.name();
     const name = option.attributeName();
     option.mandatory = !!config.mandatory;
@@ -674,17 +673,6 @@ Read more on https://git.io/JJc0W`);
    */
   allowUnknownOption(arg) {
     this._allowUnknownOption = (arg === undefined) || arg;
-    return this;
-  };
-
-  /**
-   * Allow implicit negate value to options on the command line.
-   *
-   * @param {Boolean} [arg] - if `true` or omitted, a negate option will be accepted for non negative options with no value or non required values.
-   * @api public
-   */
-  implicitNegateOptions(arg) {
-    this._implicitNegateOptions = (arg === undefined) || arg;
     return this;
   };
 
