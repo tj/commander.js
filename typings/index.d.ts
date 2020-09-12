@@ -42,7 +42,7 @@ declare namespace commander {
     /**
      * Set the custom handler for processing CLI option arguments into option values.
      */
-    parseArgWith<T>(fn: (value: string, previous: T) => T): this;
+    argParser<T>(fn: (value: string, previous: T) => T): this;
 
     /**
      * Whether the option is mandatory and must have a value after parsing.

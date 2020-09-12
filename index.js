@@ -90,7 +90,7 @@ class Option {
    * @api public
    */
 
-  parseArgWith(fn) {
+  argParser(fn) {
     this.parseArg = fn;
     return this;
   };
@@ -721,7 +721,7 @@ Read more on https://git.io/JJc0W`);
   option(flags, description, fn, defaultValue) {
     const option = new Option(flags, description);
     if (typeof fn === 'function') {
-      option.default(defaultValue).parseArgWith(fn);
+      option.default(defaultValue).argParser(fn);
     } else if (fn instanceof RegExp) {
       // legacy
       const regex = fn;
@@ -729,7 +729,7 @@ Read more on https://git.io/JJc0W`);
         const m = regex.exec(val);
         return m ? m[0] : def;
       };
-      option.default(defaultValue).parseArgWith(fn);
+      option.default(defaultValue).argParser(fn);
     } else {
       option.default(fn);
     }
@@ -1770,7 +1770,6 @@ Read more on https://git.io/JJc0W`);
    *
    * Outputs built-in help, and custom text added using `.addHelpText()`.
    *
-   * @param {Function} [cb]
    * @api public
    * @param {Object} [contextOptions] - Can optionally pass in `{ error: true }` to write to stderr
    */

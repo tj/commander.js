@@ -255,9 +255,9 @@ const myOptionThis2: commander.Option = baseOption.default(60, 'one minute');
 // fullDescription
 const optionDescription: string = baseOption.fullDescription();
 
-// parseArgWith
-const myOptionThis3: commander.Option = baseOption.parseArgWith((value: string) => parseInt(value));
-const myOptionThis4: commander.Option = baseOption.parseArgWith((value: string, previous: string[]) => { return previous.concat(value); });
+// argParser
+const myOptionThis3: commander.Option = baseOption.argParser((value: string) => parseInt(value));
+const myOptionThis4: commander.Option = baseOption.argParser((value: string, previous: string[]) => { return previous.concat(value); });
 
 // makeOptionMandatory
 const myOptionThis5: commander.Option = baseOption.makeOptionMandatory();
