@@ -1770,7 +1770,7 @@ Read more on https://git.io/JJc0W`);
    *
    * Outputs built-in help, and custom text added using `.addHelpText()`.
    *
-   * @param {{ error: boolean }} [contextOptions] - pass {error:true} to write to stderr instead of stdout
+   * @param {{ error: boolean } | Function} [contextOptions] - pass {error:true} to write to stderr instead of stdout
    * @api public
    */
 
@@ -1778,7 +1778,7 @@ Read more on https://git.io/JJc0W`);
     let legacyCallback;
     if (typeof contextOptions === 'function') {
       legacyCallback = contextOptions;
-      contextOptions = {};
+      contextOptions = undefined;
     }
     const context = this._getHelpContext(contextOptions);
 
