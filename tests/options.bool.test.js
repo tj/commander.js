@@ -35,6 +35,16 @@ describe('boolean flag on program', () => {
     program.parse(['node', 'test', '--no-cheese']);
     expect(program.cheese).toBe(false);
   });
+
+  test('when implicit negatable boolean flag specified then value is false', () => {
+    const program = new commander.Command();
+    program
+      .option('--cheese', 'add cheese')
+      ._findOption('--cheese')
+      .allowNegateOption(true);
+    program.parse(['node', 'test', '--no-cheese']);
+    expect(program.cheese).toBe(false);
+  });
 });
 
 // boolean flag on command
@@ -78,6 +88,18 @@ describe('boolean flag on command', () => {
     program
       .command('sub')
       .option('--no-cheese', 'remove cheese')
+      .action((cmd) => { subCommand = cmd; });
+    program.parse(['node', 'test', 'sub', '--no-cheese']);
+    expect(subCommand.cheese).toBe(false);
+  });
+
+  test('when implicit negatable boolean flag specified then value is false', () => {
+    let subCommand;
+    const program = new commander.Command();
+    program
+      .command('sub')
+      .implicitNegateOptions()
+      .option('--cheese', 'add cheese')
       .action((cmd) => { subCommand = cmd; });
     program.parse(['node', 'test', 'sub', '--no-cheese']);
     expect(subCommand.cheese).toBe(false);

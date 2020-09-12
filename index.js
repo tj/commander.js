@@ -34,6 +34,13 @@ class Option {
     }
     this.description = description || '';
     this.defaultValue = undefined;
+    this.negateOption = false;
+  }
+
+  allowNegateOption(allowNegateOption) {
+    allowNegateOption = (allowNegateOption === undefined) || allowNegateOption;
+    this.negateOption = !this.negate && this.long && !this.required && allowNegateOption;
+    return this;
   }
 
   /**
@@ -112,6 +119,7 @@ class Command extends EventEmitter {
     this.options = [];
     this.parent = null;
     this._allowUnknownOption = false;
+    this._implicitNegateOptions = false;
     this._args = [];
     this.rawArgs = null;
     this._scriptPath = null;
@@ -491,7 +499,7 @@ Read more on https://git.io/JJc0W`);
    */
 
   _optionEx(config, flags, description, fn, defaultValue) {
-    const option = new Option(flags, description);
+    const option = new Option(flags, description).allowNegateOption(this._implicitNegateOptions);
     const oname = option.name();
     const name = option.attributeName();
     option.mandatory = !!config.mandatory;
@@ -666,6 +674,17 @@ Read more on https://git.io/JJc0W`);
    */
   allowUnknownOption(arg) {
     this._allowUnknownOption = (arg === undefined) || arg;
+    return this;
+  };
+
+  /**
+   * Allow implicit negate value to options on the command line.
+   *
+   * @param {Boolean} [arg] - if `true` or omitted, a negate option will be accepted for non negative options with no value or non required values.
+   * @api public
+   */
+  implicitNegateOptions(arg) {
+    this._implicitNegateOptions = (arg === undefined) || arg;
     return this;
   };
 
@@ -1104,7 +1123,7 @@ Read more on https://git.io/JJc0W`);
       activeVariadicOption = null;
 
       if (maybeOption(arg)) {
-        const option = this._findOption(arg);
+        let option = this._findOption(arg);
         // recognised option, call listener to assign value with possible custom processing
         if (option) {
           if (option.required) {
@@ -1123,6 +1142,12 @@ Read more on https://git.io/JJc0W`);
           }
           activeVariadicOption = option.variadic ? option : null;
           continue;
+        } else if (arg.startsWith('--no-')) {
+          option = this._findOption(arg.replace(/^--no-/, '--'));
+          if (option && option.negateOption) {
+            this.emit(`option:${option.name()}`, false);
+            continue;
+          }
         }
       }
 
