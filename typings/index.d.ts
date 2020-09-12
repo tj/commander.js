@@ -231,7 +231,7 @@ declare namespace commander {
      */
     option(flags: string, description?: string, defaultValue?: string | boolean): this;
     option<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
-    /** @deprecated legacy since v7 */
+    /** @deprecated since v7, instead use choices or a custom function */
     option(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
 
     /**
@@ -242,7 +242,7 @@ declare namespace commander {
      */
     requiredOption(flags: string, description?: string, defaultValue?: string | boolean): this;
     requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
-    /** @deprecated legacy since v7 */
+    /** @deprecated since v7, instead use choices or a custom function */
     requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
 
     /**
@@ -406,7 +406,7 @@ declare namespace commander {
      *
      */
     outputHelp(context?: HelpContext): void;
-    /** @deprecated legacy since v7 */
+    /** @deprecated since v7 */
     outputHelp(cb?: (str: string) => string): void;
 
     /**
@@ -427,7 +427,7 @@ declare namespace commander {
      * Outputs built-in help, and custom text added using `.addHelpText()`.
      */
     help(context?: HelpContext): never;
-    /** @deprecated legacy since v7 */
+    /** @deprecated since v7 */
     help(cb?: (str: string) => string): never;
 
     /**

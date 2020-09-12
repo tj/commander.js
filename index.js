@@ -723,7 +723,7 @@ Read more on https://git.io/JJc0W`);
     if (typeof fn === 'function') {
       option.default(defaultValue).argParser(fn);
     } else if (fn instanceof RegExp) {
-      // legacy
+      // deprecated
       const regex = fn;
       fn = (val, def) => {
         const m = regex.exec(val);
@@ -1775,9 +1775,9 @@ Read more on https://git.io/JJc0W`);
    */
 
   outputHelp(contextOptions) {
-    let legacyCallback;
+    let deprecatedCallback;
     if (typeof contextOptions === 'function') {
-      legacyCallback = contextOptions;
+      deprecatedCallback = contextOptions;
       contextOptions = undefined;
     }
     const context = this._getHelpContext(contextOptions);
@@ -1793,15 +1793,15 @@ Read more on https://git.io/JJc0W`);
     this.emit('beforeHelp', context);
 
     let helpInformation = this.helpInformation();
-    if (legacyCallback) {
-      helpInformation = legacyCallback(helpInformation);
+    if (deprecatedCallback) {
+      helpInformation = deprecatedCallback(helpInformation);
       if (typeof helpInformation !== 'string' && !Buffer.isBuffer(helpInformation)) {
         throw new Error('outputHelp callback must return a string or a Buffer');
       }
     }
     context.write(helpInformation);
 
-    this.emit(this._helpLongFlag); // legacy
+    this.emit(this._helpLongFlag); // deprecated
     this.emit('afterHelp', context);
     groupListeners.forEach(command => command.emit('afterAllHelp', context));
   };

@@ -1,8 +1,8 @@
 const commander = require('../');
 
-// Test for backwards compatible behaviour of legacy features. We keep them working
-// (when not too difficult) to avoid breaking existing code and reduce barriers to updating
-// to latest version of Commander.
+// Test for backwards compatible behaviour of deprecated features that don't fit in elsewhere.
+// We keep deprecated features working (when not too difficult) to avoid breaking existing code
+// and reduce barriers to updating to latest version of Commander.
 
 describe('option with regular expression instead of custom processing function', () => {
   test('when option not given then value is default', () => {

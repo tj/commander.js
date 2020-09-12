@@ -88,7 +88,7 @@ test('when call outputHelp(cb) then display cb output', () => {
   writeSpy.mockClear();
 });
 
-test('when command sets legacy noHelp then not displayed in helpInformation', () => {
+test('when command sets deprecated noHelp then not displayed in helpInformation', () => {
   const program = new commander.Command();
   program
     .command('secret', 'secret description', { noHelp: true });
