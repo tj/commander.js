@@ -1770,8 +1770,8 @@ Read more on https://git.io/JJc0W`);
    *
    * Outputs built-in help, and custom text added using `.addHelpText()`.
    *
+   * @param {{ error: boolean }} [contextOptions] - pass {error:true} to write to stderr instead of stdout
    * @api public
-   * @param {Object} [contextOptions] - Can optionally pass in `{ error: true }` to write to stderr
    */
 
   outputHelp(contextOptions) {
@@ -1837,7 +1837,7 @@ Read more on https://git.io/JJc0W`);
    *
    * Outputs built-in help, and custom text added using `.addHelpText()`.
    *
-   * @param {Object} [contextOptions] - optionally pass in `{ error: true }` to write to stderr
+   * @param {{ error: boolean }} [contextOptions] - pass {error:true} to write to stderr instead of stdout
    * @api public
    */
 
