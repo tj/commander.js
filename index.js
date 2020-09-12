@@ -723,7 +723,7 @@ Read more on https://git.io/JJc0W`);
     if (typeof fn === 'function') {
       option.default(defaultValue).parseArgWith(fn);
     } else if (fn instanceof RegExp) {
-      // deprecated
+      // legacy
       const regex = fn;
       fn = (val, def) => {
         const m = regex.exec(val);
@@ -756,7 +756,7 @@ Read more on https://git.io/JJc0W`);
     if (typeof fn === 'function') {
       option.default(defaultValue).parseArgWith(fn);
     } else if (fn instanceof RegExp) {
-      // deprecated
+      // legacy
       const regex = fn;
       fn = (val, def) => {
         const m = regex.exec(val);
@@ -1790,9 +1790,9 @@ Read more on https://git.io/JJc0W`);
    */
 
   outputHelp(contextOptions) {
-    let deprecatedCallback;
+    let legacyCallback;
     if (typeof contextOptions === 'function') {
-      deprecatedCallback = contextOptions;
+      legacyCallback = contextOptions;
       contextOptions = {};
     }
     const context = this._getHelpContext(contextOptions);
@@ -1808,15 +1808,15 @@ Read more on https://git.io/JJc0W`);
     this.emit('beforeHelp', context);
 
     let helpInformation = this.helpInformation();
-    if (deprecatedCallback) {
-      helpInformation = deprecatedCallback(helpInformation);
+    if (legacyCallback) {
+      helpInformation = legacyCallback(helpInformation);
       if (typeof helpInformation !== 'string' && !Buffer.isBuffer(helpInformation)) {
         throw new Error('outputHelp callback must return a string or a Buffer');
       }
     }
     context.write(helpInformation);
 
-    this.emit(this._helpLongFlag); // deprecated
+    this.emit(this._helpLongFlag); // legacy
     this.emit('afterHelp', context);
     groupListeners.forEach(command => command.emit('afterAllHelp', context));
   };

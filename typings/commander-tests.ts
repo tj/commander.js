@@ -81,6 +81,7 @@ const optionThis1: commander.Command = program.option('-a,--alpha');
 const optionThis2: commander.Command = program.option('-p, --peppers', 'Add peppers');
 const optionThis3: commander.Command = program.option('-s, --string [value]', 'default string', 'value');
 const optionThis4: commander.Command = program.option('-b, --boolean', 'default boolean', false);
+program.option('--drink <size', 'drink size', /small|medium|large/);
 
 // example coercion functions from README
 
@@ -117,6 +118,7 @@ const requiredOptionThis1: commander.Command = program.requiredOption('-a,--alph
 const requiredOptionThis2: commander.Command = program.requiredOption('-p, --peppers', 'Add peppers');
 const requiredOptionThis3: commander.Command = program.requiredOption('-s, --string [value]', 'default string', 'value');
 const requiredOptionThis4: commander.Command = program.requiredOption('-b, --boolean', 'default boolean', false);
+program.requiredOption('--drink <size', 'drink size', /small|medium|large/);
 
 const requiredOptionThis5: commander.Command = program.requiredOption('-f, --float <number>', 'float argument', parseFloat);
 const requiredOptionThis6: commander.Command = program.requiredOption('-f, --float <number>', 'float argument', parseFloat, 3.2);
@@ -190,12 +192,12 @@ const nameValue: string = program.name();
 
 // outputHelp
 program.outputHelp();
-program.outputHelp((str: string) => { return str; }); // deprecated
+program.outputHelp((str: string) => { return str; });
 program.outputHelp({ error: true });
 
 // help
 program.help();
-program.help((str: string) => { return str; }); // Deprecated
+program.help((str: string) => { return str; });
 program.help({ error: true });
 
 // helpInformation

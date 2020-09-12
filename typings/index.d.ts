@@ -230,8 +230,9 @@ declare namespace commander {
      * @returns `this` command for chaining
      */
     option(flags: string, description?: string, defaultValue?: string | boolean): this;
-    option(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
     option<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
+    /** @deprecated legacy since v7 */
+    option(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
 
     /**
      * Define a required option, which must have a value after parsing. This usually means
@@ -240,8 +241,9 @@ declare namespace commander {
      * The `flags` string should contain both the short and long flags, separated by comma, a pipe or space.
      */
     requiredOption(flags: string, description?: string, defaultValue?: string | boolean): this;
-    requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
     requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
+    /** @deprecated legacy since v7 */
+    requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
 
     /**
      * Add a prepared Option.
@@ -404,7 +406,8 @@ declare namespace commander {
      *
      */
     outputHelp(context?: HelpContext): void;
-    outputHelp(cb?: (str: string) => string): void; // callback deprecated
+    /** @deprecated legacy since v7 */
+    outputHelp(cb?: (str: string) => string): void;
 
     /**
      * Return command help documentation.
@@ -424,7 +427,8 @@ declare namespace commander {
      * Outputs built-in help, and custom text added using `.addHelpText()`.
      */
     help(context?: HelpContext): never;
-    help(cb?: (str: string) => string): never; // callback deprecated
+    /** @deprecated legacy since v7 */
+    help(cb?: (str: string) => string): never;
 
     /**
      * Add additional text to be displayed with the built-in help.
