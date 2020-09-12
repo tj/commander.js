@@ -52,6 +52,47 @@ class Option {
   }
 
   /**
+   * Set the default value, and optionally supply the description to be displayed in the help.
+   *
+   * @param {any} value
+   * @param {string} [description]
+   * @return {Option}
+   * @api public
+   */
+
+  default(value, description) {
+    this.defaultValue = value;
+    this.defaultValueDescription = description;
+    return this;
+  };
+
+  /**
+   * Set the custom handler for processing CLI option arguments into option values.
+   *
+   * @param {Function} [fn]
+   * @return {Option}
+   * @api public
+   */
+
+  argParser(fn) {
+    this.parseArg = fn;
+    return this;
+  };
+
+  /**
+   * Whether the option is mandatory and must have a value after parsing.
+   *
+   * @param {boolean} [value]
+   * @return {Option}
+   * @api public
+   */
+
+  makeOptionMandatory(value) {
+    this.mandatory = (value === undefined) || value;
+    return this;
+  };
+
+  /**
    * Return option name.
    *
    * @return {string}
@@ -494,40 +535,18 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
-   * Internal implementation shared by .option() and .requiredOption()
+   * Add an option.
    *
-   * @param {Object} config
-   * @param {string} flags
-   * @param {string} description
-   * @param {Function|*} [fn] - custom option processing function or default value
-   * @param {*} [defaultValue]
+   * @param {Option} option
    * @return {Command} `this` command for chaining
-   * @api private
    */
-
-  _optionEx(config, flags, description, fn, defaultValue) {
-    const option = new Option(flags, description);
+  addOption(option) {
     const oname = option.name();
     const name = option.attributeName();
-    option.mandatory = !!config.mandatory;
 
     this._checkForOptionNameClash(option);
 
-    // default as 3rd arg
-    if (typeof fn !== 'function') {
-      if (fn instanceof RegExp) {
-        // This is a bit simplistic (especially no error messages), and probably better handled by caller using custom option processing.
-        // No longer documented in README, but still present for backwards compatibility.
-        const regex = fn;
-        fn = (val, def) => {
-          const m = regex.exec(val);
-          return m ? m[0] : def;
-        };
-      } else {
-        defaultValue = fn;
-        fn = null;
-      }
-    }
+    let defaultValue = option.defaultValue;
 
     // preassign default value for --no-*, [optional], <required>, or plain flag if boolean value
     if (option.negate || option.optional || option.required || typeof defaultValue === 'boolean') {
@@ -539,7 +558,6 @@ Read more on https://git.io/JJc0W`);
       // preassign only if we have a default
       if (defaultValue !== undefined) {
         this._setOptionValue(name, defaultValue);
-        option.defaultValue = defaultValue;
       }
     }
 
@@ -552,8 +570,16 @@ Read more on https://git.io/JJc0W`);
       const oldValue = this._getOptionValue(name);
 
       // custom processing
-      if (val !== null && fn) {
-        val = fn(val, oldValue === undefined ? defaultValue : oldValue);
+      if (val !== null && option.parseArg) {
+        try {
+          val = option.parseArg(val, oldValue === undefined ? defaultValue : oldValue);
+        } catch (err) {
+          if (err.code === 'commander.optionArgumentRejected') {
+            console.error(err.message);
+            this._exit(err.exitCode, err.code, err.message);
+          }
+          throw err;
+        }
       } else if (val !== null && option.variadic) {
         if (oldValue === defaultValue || !Array.isArray(oldValue)) {
           val = [val];
@@ -634,7 +660,22 @@ Read more on https://git.io/JJc0W`);
    */
 
   option(flags, description, fn, defaultValue) {
-    return this._optionEx({}, flags, description, fn, defaultValue);
+    const option = new Option(flags, description);
+    if (typeof fn === 'function') {
+      option.default(defaultValue).argParser(fn);
+    } else if (fn instanceof RegExp) {
+      // legacy
+      const regex = fn;
+      fn = (val, def) => {
+        const m = regex.exec(val);
+        return m ? m[0] : def;
+      };
+      option.default(defaultValue).argParser(fn);
+    } else {
+      option.default(fn);
+    }
+
+    return this.addOption(option);
   };
 
   /**
@@ -652,7 +693,9 @@ Read more on https://git.io/JJc0W`);
   */
 
   requiredOption(flags, description, fn, defaultValue) {
-    return this._optionEx({ mandatory: true }, flags, description, fn, defaultValue);
+    this.option(flags, description, fn, defaultValue);
+    this.options[this.options.length - 1].makeOptionMandatory();
+    return this;
   };
 
   /**
