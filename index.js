@@ -37,6 +37,14 @@ class Option {
     this.negateOption = false;
   }
 
+  /**
+   * Whether the option allows negate value with prefix `--no-`.
+   *
+   * @param {boolean} allowNegateOption
+   * @return {Option}
+   * @api public
+   */
+
   allowNegateOption(allowNegateOption) {
     allowNegateOption = (allowNegateOption === undefined) || allowNegateOption;
     this.negateOption = !this.negate && this.long && allowNegateOption;
