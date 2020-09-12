@@ -670,7 +670,7 @@ Read more on https://git.io/JJc0W`);
    * Define option with `flags`, `description` and optional
    * coercion `fn`.
    *
-   * The `flags` string should contain both the short and long flags,
+   * The `flags` string contains the short and/or long flags,
    * separated by comma, a pipe or space. The following are all valid
    * all will output this way when `--help` is used.
    *
@@ -741,7 +741,7 @@ Read more on https://git.io/JJc0W`);
   * Add a required option which must have a value after parsing. This usually means
   * the option must be specified on the command line. (Otherwise the same as .option().)
   *
-  * The `flags` string should contain both the short and long flags, separated by comma, a pipe or space.
+  * The `flags` string contains the short and/or long flags, separated by comma, a pipe or space.
   *
   * @param {string} flags
   * @param {string} description
