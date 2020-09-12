@@ -39,7 +39,7 @@ class Option {
 
   allowNegateOption(allowNegateOption) {
     allowNegateOption = (allowNegateOption === undefined) || allowNegateOption;
-    this.negateOption = !this.negate && this.long && !this.required && allowNegateOption;
+    this.negateOption = !this.negate && this.long && allowNegateOption;
     return this;
   }
 
