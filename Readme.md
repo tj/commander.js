@@ -202,6 +202,8 @@ $ pizza-options --cheese mozzarella
 add cheese type mozzarella
 ```
 
+More info about [options taking varying arguments](./docs/options-taking-varying-arguments.md).
+
 ### Custom option processing
 
 You may specify a function to do custom processing of option values. The callback function receives two parameters, the user specified value and the
@@ -310,6 +312,8 @@ $ collect --letter -n 1 -n 2 3 -- operand
 Options:  { number: [ '1', '2', '3' ], letter: true }
 Remaining arguments:  [ 'operand' ]
 ```
+
+More info about [options taking varying arguments](./docs/options-taking-varying-arguments.md).
 
 ### Version option
 
