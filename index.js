@@ -14,12 +14,14 @@ class Option {
    * Initialize a new `Option` with the given `flags` and `description`.
    *
    * @param {string} flags
-   * @param {string} description
+   * @param {string} [description]
    * @api public
    */
 
   constructor(flags, description) {
     this.flags = flags;
+    this.description = description || '';
+
     this.required = flags.includes('<'); // A value must be supplied when the option is specified.
     this.optional = flags.includes('['); // A value is optional when the option is specified.
     // variadic test ignores <value,...> et al which might be used to describe custom splitting of single argument
@@ -32,15 +34,128 @@ class Option {
     if (this.long) {
       this.negate = this.long.startsWith('--no-');
     }
-    this.description = description || '';
     this.defaultValue = undefined;
+    this.defaultValueDescription = undefined;
+    this.parseArg = undefined;
+    this.hidden = false;
+    this.argChoices = undefined;
   }
+
+  /**
+   * Set the default value, and optionally supply the description to be displayed in the help.
+   *
+   * @param {any} value
+   * @param {string} [description]
+   * @return {Option}
+   * @api public
+   */
+
+  default(value, description) {
+    this.defaultValue = value;
+    this.defaultValueDescription = description;
+    return this;
+  };
+
+  /**
+   * Calculate the full description, including defaultValue etc.
+   *
+   * @return {string}
+   * @api public
+   */
+
+  fullDescription() {
+    if (this.negate) {
+      return this.description;
+    }
+    const extraInfo = [];
+    if (this.argChoices) {
+      extraInfo.push(
+        // use stringify to match the display of the default value
+        `choices: ${this.argChoices.map((choice) => JSON.stringify(choice)).join(', ')}`);
+    }
+    if (this.defaultValue !== undefined) {
+      extraInfo.push(`default: ${this.defaultValueDescription || JSON.stringify(this.defaultValue)}`);
+    }
+    if (extraInfo.length > 0) {
+      return `${this.description} (${extraInfo.join(', ')})`;
+    }
+    return this.description;
+  };
+
+  /**
+   * Set the custom handler for processing CLI option arguments into option values.
+   *
+   * @param {Function} [fn]
+   * @return {Option}
+   * @api public
+   */
+
+  argParser(fn) {
+    this.parseArg = fn;
+    return this;
+  };
+
+  /**
+   * Whether the option is mandatory and must have a value after parsing.
+   *
+   * @param {boolean} [value]
+   * @return {Option}
+   * @api public
+   */
+
+  makeOptionMandatory(value) {
+    this.mandatory = (value === undefined) || value;
+    return this;
+  };
+
+  /**
+   * Hide option in help.
+   *
+   * @param {boolean} [value]
+   * @return {Option}
+   * @api public
+   */
+
+  hideHelp(value) {
+    this.hidden = (value === undefined) || value;
+    return this;
+  };
+
+  /**
+   * Validation of option argument failed.
+   * Intended for use from custom argument processing functions.
+   *
+   * @param {string} message
+   * @api public
+   */
+  argumentRejected(message) {
+    throw new CommanderError(1, 'commander.optionArgumentRejected', message);
+  }
+
+  /**
+   * Only allow option value to be one of choices.
+   *
+   * @param {string[]} values
+   * @return {Option}
+   * @api public
+   */
+
+  choices(values) {
+    this.argChoices = values;
+    this.parseArg = (arg) => {
+      if (!values.includes(arg)) {
+        this.argumentRejected(`error: option '${this.flags}' argument of '${arg}' not in allowed choices: ${values.join(', ')}`);
+      }
+      return arg;
+    };
+    return this;
+  };
 
   /**
    * Return option name.
    *
    * @return {string}
-   * @api private
+   * @api public
    */
 
   name() {
@@ -479,40 +594,18 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
-   * Internal implementation shared by .option() and .requiredOption()
+   * Add an option.
    *
-   * @param {Object} config
-   * @param {string} flags
-   * @param {string} description
-   * @param {Function|*} [fn] - custom option processing function or default value
-   * @param {*} [defaultValue]
+   * @param {Option} option
    * @return {Command} `this` command for chaining
-   * @api private
    */
-
-  _optionEx(config, flags, description, fn, defaultValue) {
-    const option = new Option(flags, description);
+  addOption(option) {
     const oname = option.name();
     const name = option.attributeName();
-    option.mandatory = !!config.mandatory;
 
     this._checkForOptionNameClash(option);
 
-    // default as 3rd arg
-    if (typeof fn !== 'function') {
-      if (fn instanceof RegExp) {
-        // This is a bit simplistic (especially no error messages), and probably better handled by caller using custom option processing.
-        // No longer documented in README, but still present for backwards compatibility.
-        const regex = fn;
-        fn = (val, def) => {
-          const m = regex.exec(val);
-          return m ? m[0] : def;
-        };
-      } else {
-        defaultValue = fn;
-        fn = null;
-      }
-    }
+    let defaultValue = option.defaultValue;
 
     // preassign default value for --no-*, [optional], <required>, or plain flag if boolean value
     if (option.negate || option.optional || option.required || typeof defaultValue === 'boolean') {
@@ -524,7 +617,6 @@ Read more on https://git.io/JJc0W`);
       // preassign only if we have a default
       if (defaultValue !== undefined) {
         this._setOptionValue(name, defaultValue);
-        option.defaultValue = defaultValue;
       }
     }
 
@@ -537,8 +629,16 @@ Read more on https://git.io/JJc0W`);
       const oldValue = this._getOptionValue(name);
 
       // custom processing
-      if (val !== null && fn) {
-        val = fn(val, oldValue === undefined ? defaultValue : oldValue);
+      if (val !== null && option.parseArg) {
+        try {
+          val = option.parseArg(val, oldValue === undefined ? defaultValue : oldValue);
+        } catch (err) {
+          if (err.code === 'commander.optionArgumentRejected') {
+            console.error(err.message);
+            this._exit(err.exitCode, err.code, err.message);
+          }
+          throw err;
+        }
       } else if (val !== null && option.variadic) {
         if (oldValue === defaultValue || !Array.isArray(oldValue)) {
           val = [val];
@@ -564,13 +664,13 @@ Read more on https://git.io/JJc0W`);
     });
 
     return this;
-  };
+  }
 
   /**
    * Define option with `flags`, `description` and optional
    * coercion `fn`.
    *
-   * The `flags` string should contain both the short and long flags,
+   * The `flags` string contains the short and/or long flags,
    * separated by comma, a pipe or space. The following are all valid
    * all will output this way when `--help` is used.
    *
@@ -619,14 +719,29 @@ Read more on https://git.io/JJc0W`);
    */
 
   option(flags, description, fn, defaultValue) {
-    return this._optionEx({}, flags, description, fn, defaultValue);
+    const option = new Option(flags, description);
+    if (typeof fn === 'function') {
+      option.default(defaultValue).argParser(fn);
+    } else if (fn instanceof RegExp) {
+      // deprecated
+      const regex = fn;
+      fn = (val, def) => {
+        const m = regex.exec(val);
+        return m ? m[0] : def;
+      };
+      option.default(defaultValue).argParser(fn);
+    } else {
+      option.default(fn);
+    }
+
+    return this.addOption(option);
   };
 
   /**
   * Add a required option which must have a value after parsing. This usually means
   * the option must be specified on the command line. (Otherwise the same as .option().)
   *
-  * The `flags` string should contain both the short and long flags, separated by comma, a pipe or space.
+  * The `flags` string contains the short and/or long flags, separated by comma, a pipe or space.
   *
   * @param {string} flags
   * @param {string} description
@@ -637,7 +752,9 @@ Read more on https://git.io/JJc0W`);
   */
 
   requiredOption(flags, description, fn, defaultValue) {
-    return this._optionEx({ mandatory: true }, flags, description, fn, defaultValue);
+    this.option(flags, description, fn, defaultValue);
+    this.options[this.options.length - 1].makeOptionMandatory();
+    return this;
   };
 
   /**
@@ -790,7 +907,9 @@ Read more on https://git.io/JJc0W`);
       default:
         throw new Error(`unexpected parse option { from: '${parseOptions.from}' }`);
     }
+    // @ts-ignore
     if (!this._scriptPath && process.mainModule) {
+      // @ts-ignore
       this._scriptPath = process.mainModule.filename;
     }
 
@@ -846,7 +965,9 @@ Read more on https://git.io/JJc0W`);
     // Want the entry script as the reference for command name and directory for searching for other files.
     let scriptPath = this._scriptPath;
     // Fallback in case not set, due to how Command created or called.
+    // @ts-ignore
     if (!scriptPath && process.mainModule) {
+      // @ts-ignore
       scriptPath = process.mainModule.filename;
     }
 
@@ -1492,6 +1613,16 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
+   * Any visible options?
+   *
+   * @return {boolean}
+   * @api private
+   */
+  _hasVisibleOptions() {
+    return this._hasHelpOption || this.options.some((option) => !option.hidden);
+  }
+
+  /**
    * Return help for options.
    *
    * @return {string}
@@ -1507,10 +1638,9 @@ Read more on https://git.io/JJc0W`);
     };
 
     // Explicit options (including version)
-    const help = this.options.map((option) => {
-      const fullDesc = option.description +
-        ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
-      return padOptionDetails(option.flags, fullDesc);
+    const visibleOptions = this.options.filter((option) => !option.hidden);
+    const help = visibleOptions.map((option) => {
+      return padOptionDetails(option.flags, option.fullDescription());
     });
 
     // Implicit help
@@ -1602,7 +1732,7 @@ Read more on https://git.io/JJc0W`);
     if (commandHelp) cmds = [commandHelp];
 
     let options = [];
-    if (this._hasHelpOption || this.options.length > 0) {
+    if (this._hasVisibleOptions()) {
       options = [
         'Options:',
         '' + this.optionHelp().replace(/^/gm, '  '),
@@ -1626,9 +1756,9 @@ Read more on https://git.io/JJc0W`);
     const context = { error: !!contextOptions.error };
     let write;
     if (context.error) {
-      write = (...args) => process.stderr.write(...args);
+      write = (arg, ...args) => process.stderr.write(arg, ...args);
     } else {
-      write = (...args) => process.stdout.write(...args);
+      write = (arg, ...args) => process.stdout.write(arg, ...args);
     }
     context.write = contextOptions.write || write;
     context.command = this;
@@ -1640,15 +1770,15 @@ Read more on https://git.io/JJc0W`);
    *
    * Outputs built-in help, and custom text added using `.addHelpText()`.
    *
+   * @param {{ error: boolean } | Function} [contextOptions] - pass {error:true} to write to stderr instead of stdout
    * @api public
-   * @param {Object} [contextOptions] - Can optionally pass in `{ error: true }` to write to stderr
    */
 
   outputHelp(contextOptions) {
     let deprecatedCallback;
     if (typeof contextOptions === 'function') {
       deprecatedCallback = contextOptions;
-      contextOptions = {};
+      contextOptions = undefined;
     }
     const context = this._getHelpContext(contextOptions);
 
@@ -1707,7 +1837,7 @@ Read more on https://git.io/JJc0W`);
    *
    * Outputs built-in help, and custom text added using `.addHelpText()`.
    *
-   * @param {Object} [contextOptions] - optionally pass in `{ error: true }` to write to stderr
+   * @param {{ error: boolean }} [contextOptions] - pass {error:true} to write to stderr instead of stdout
    * @api public
    */
 

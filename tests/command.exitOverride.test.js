@@ -205,4 +205,21 @@ describe('.exitOverride and error details', () => {
 
     expectCommanderError(caughtErr, 1, 'commander.missingMandatoryOptionValue', `error: required option '${optionFlags}' not specified`);
   });
+
+  test('when option argument not in choices then throw CommanderError', () => {
+    const optionFlags = '--colour <shade>';
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .addOption(new commander.Option(optionFlags).choices(['red', 'blue']));
+
+    let caughtErr;
+    try {
+      program.parse(['--colour', 'green'], { from: 'user' });
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expectCommanderError(caughtErr, 1, 'commander.optionArgumentRejected', `error: option '${optionFlags}' argument of 'green' not in allowed choices: red, blue`);
+  });
 });

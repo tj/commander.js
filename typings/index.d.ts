@@ -13,13 +13,62 @@ declare namespace commander {
 
   interface Option {
     flags: string;
+    description: string;
+
     required: boolean; // A value must be supplied when the option is specified.
     optional: boolean; // A value is optional when the option is specified.
+    variadic: boolean;
     mandatory: boolean; // The option must have a value after parsing, which usually means it must be specified on command line.
-    bool: boolean;
+    optionFlags: string;
     short?: string;
-    long: string;
-    description: string;
+    long?: string;
+    negate: boolean;
+    defaultValue?: any;
+    defaultValueDescription?: string;
+    parseArg?: <T>(value: string, previous: T) => T;
+    hidden: boolean;
+    argChoices?: string[];
+
+    /**
+     * Set the default value, and optionally supply the description to be displayed in the help.
+     */
+    default(value: any, description?: string): this;
+
+    /**
+     * Calculate the full description, including defaultValue etc.
+     */
+    fullDescription(): string;
+
+    /**
+     * Set the custom handler for processing CLI option arguments into option values.
+     */
+    argParser<T>(fn: (value: string, previous: T) => T): this;
+
+    /**
+     * Whether the option is mandatory and must have a value after parsing.
+     */
+    makeOptionMandatory(value?: boolean): this;
+
+    /**
+     * Hide option in help.
+     */
+    hideHelp(value?: boolean): this;
+
+    /**
+     * Validation of option argument failed.
+     * Intended for use from custom argument processing functions.
+     */
+    argumentRejected(messsage: string): never;
+
+    /**
+     * Only allow option value to be one of choices.
+     */
+    choices(values: string[]): this;
+
+    /**
+     * Return option name.
+     */
+    name(): string;
   }
   type OptionConstructor = new (flags: string, description?: string) => Option;
 
@@ -142,7 +191,7 @@ declare namespace commander {
      * Define option with `flags`, `description` and optional
      * coercion `fn`.
      *
-     * The `flags` string should contain both the short and long flags,
+     * The `flags` string contains the short and/or long flags,
      * separated by comma, a pipe or space. The following are all valid
      * all will output this way when `--help` is used.
      *
@@ -181,18 +230,27 @@ declare namespace commander {
      * @returns `this` command for chaining
      */
     option(flags: string, description?: string, defaultValue?: string | boolean): this;
-    option(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
     option<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
+    /** @deprecated since v7, instead use choices or a custom function */
+    option(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
 
     /**
      * Define a required option, which must have a value after parsing. This usually means
      * the option must be specified on the command line. (Otherwise the same as .option().)
      *
-     * The `flags` string should contain both the short and long flags, separated by comma, a pipe or space.
+     * The `flags` string contains the short and/or long flags, separated by comma, a pipe or space.
      */
     requiredOption(flags: string, description?: string, defaultValue?: string | boolean): this;
-    requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
     requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
+    /** @deprecated since v7, instead use choices or a custom function */
+    requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
+
+    /**
+     * Add a prepared Option.
+     *
+     * See .option() and .requiredOption() for creating and attaching an option in a single call.
+     */
+    addOption(option: Option): this;
 
     /**
      * Whether to store option values as properties on command object,
@@ -348,7 +406,8 @@ declare namespace commander {
      *
      */
     outputHelp(context?: HelpContext): void;
-    outputHelp(cb?: (str: string) => string): void; // callback deprecated
+    /** @deprecated since v7 */
+    outputHelp(cb?: (str: string) => string): void;
 
     /**
      * Return command help documentation.
@@ -368,7 +427,8 @@ declare namespace commander {
      * Outputs built-in help, and custom text added using `.addHelpText()`.
      */
     help(context?: HelpContext): never;
-    help(cb?: (str: string) => string): never; // callback deprecated
+    /** @deprecated since v7 */
+    help(cb?: (str: string) => string): never;
 
     /**
      * Add additional text to be displayed with the built-in help.

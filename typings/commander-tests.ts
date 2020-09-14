@@ -81,6 +81,7 @@ const optionThis1: commander.Command = program.option('-a,--alpha');
 const optionThis2: commander.Command = program.option('-p, --peppers', 'Add peppers');
 const optionThis3: commander.Command = program.option('-s, --string [value]', 'default string', 'value');
 const optionThis4: commander.Command = program.option('-b, --boolean', 'default boolean', false);
+program.option('--drink <size', 'drink size', /small|medium|large/);
 
 // example coercion functions from README
 
@@ -117,6 +118,7 @@ const requiredOptionThis1: commander.Command = program.requiredOption('-a,--alph
 const requiredOptionThis2: commander.Command = program.requiredOption('-p, --peppers', 'Add peppers');
 const requiredOptionThis3: commander.Command = program.requiredOption('-s, --string [value]', 'default string', 'value');
 const requiredOptionThis4: commander.Command = program.requiredOption('-b, --boolean', 'default boolean', false);
+program.requiredOption('--drink <size', 'drink size', /small|medium|large/);
 
 const requiredOptionThis5: commander.Command = program.requiredOption('-f, --float <number>', 'float argument', parseFloat);
 const requiredOptionThis6: commander.Command = program.requiredOption('-f, --float <number>', 'float argument', parseFloat, 3.2);
@@ -125,6 +127,9 @@ const requiredOptionThis8: commander.Command = program.requiredOption('-i, --int
 const requiredOptionThis9: commander.Command = program.requiredOption('-v, --verbose', 'verbosity that can be increased', increaseVerbosity, 0);
 const requiredOptionThis10: commander.Command = program.requiredOption('-c, --collect <value>', 'repeatable value', collect, []);
 const requiredOptionThis11: commander.Command = program.requiredOption('-l, --list <items>', 'comma separated list', commaSeparatedList);
+
+// addOption
+const addOptionThis: commander.Command = program.addOption(new commander.Option('-s,--simple'));
 
 // storeOptionsAsProperties
 const storeOptionsAsPropertiesThis1: commander.Command = program.storeOptionsAsProperties();
@@ -187,12 +192,12 @@ const nameValue: string = program.name();
 
 // outputHelp
 program.outputHelp();
-program.outputHelp((str: string) => { return str; }); // deprecated
+program.outputHelp((str: string) => { return str; });
 program.outputHelp({ error: true });
 
 // help
 program.help();
-program.help((str: string) => { return str; }); // Deprecated
+program.help((str: string) => { return str; });
 program.help({ error: true });
 
 // helpInformation
@@ -238,3 +243,37 @@ const myProgram = new MyCommand();
 myProgram.myFunction();
 const mySub = myProgram.command('sub');
 mySub.myFunction();
+
+// Option methods
+
+const baseOption = new commander.Option('-f,--foo', 'foo description');
+
+// default
+const myOptionThis1: commander.Option = baseOption.default(3);
+const myOptionThis2: commander.Option = baseOption.default(60, 'one minute');
+
+// fullDescription
+const optionDescription: string = baseOption.fullDescription();
+
+// argParser
+const myOptionThis3: commander.Option = baseOption.argParser((value: string) => parseInt(value));
+const myOptionThis4: commander.Option = baseOption.argParser((value: string, previous: string[]) => { return previous.concat(value); });
+
+// makeOptionMandatory
+const myOptionThis5: commander.Option = baseOption.makeOptionMandatory();
+const myOptionThis6: commander.Option = baseOption.makeOptionMandatory(true);
+
+// hideHelp
+const myOptionThis7: commander.Option = baseOption.hideHelp();
+const myOptionThis8: commander.Option = baseOption.hideHelp(true);
+
+// argumentRejected
+function goodbye(): never {
+  return baseOption.argumentRejected('failed');
+};
+
+// choices
+const myOptionThis9: commander.Option = baseOption.choices(['a', 'b']);
+
+// name
+const optionName: string = baseOption.name();

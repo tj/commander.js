@@ -3,7 +3,7 @@ const commander = require('../');
 // Do some testing of the default export(s).
 
 test('when require commander then is a Command (default export of global)', () => {
-  // Legacy global command
+  // Deprecated global command
   const program = commander;
   expect(program.constructor.name).toBe('Command');
 });

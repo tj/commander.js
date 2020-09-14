@@ -16,6 +16,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Common option types, boolean and value](#common-option-types-boolean-and-value)
     - [Default option value](#default-option-value)
     - [Other option types, negatable boolean and flag|value](#other-option-types-negatable-boolean-and-flagvalue)
+    - [Extra option features](#extra-option-features)
     - [Custom option processing](#custom-option-processing)
     - [Required option](#required-option)
     - [Variadic option](#variadic-option)
@@ -200,6 +201,33 @@ $ pizza-options --cheese
 add cheese
 $ pizza-options --cheese mozzarella
 add cheese type mozzarella
+```
+
+### Extra option features
+
+You can add most options using the `.option()` method, but there are some additional features available
+by constructing an `Option` explicitly for less common cases.
+
+Example file: [options-extra.js](./examples/options-extra.js)
+
+```js
+program
+  .addOption(new Option('-s, --secret').hideHelp())
+  .addOption(new Option('-t, --timeout <delay>', 'timeout in seconds').default(60, 'one minute'))
+  .addOption(new Option('-d, --drink <size>', 'drink size').choices(['small', 'medium', 'large']));
+```
+
+```bash
+$ extra --help
+Usage: help [options]
+
+Options:
+  -t, --timeout <delay>  timeout in seconds (default: one minute)
+  -d, --drink <size>     drink cup size (choices: "small", "medium", "large")
+  -h, --help             display help for command
+
+$ extra --drink huge
+error: option '-d, --drink <size>' argument of 'huge' not in allowed choices: small, medium, large
 ```
 
 ### Custom option processing
