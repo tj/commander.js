@@ -77,7 +77,7 @@ Options are defined with the `.option()` method, also serving as documentation f
 
 The options can be accessed as properties on the Command object. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc. See also optional new behaviour to [avoid name clashes](#avoiding-option-name-clashes).
 
-Multiple short flags may optionally be combined in a single argument following the dash: boolean flags, the last flag may take a value, and the value.
+Multiple short flags may optionally be combined in a single argument following the dash: boolean flags, followed by a single option taking a value (possibly followed by the value).
 For example `-a -b -p 80` may be written as `-ab -p80` or even `-abp80`.
 
 You can use `--` to indicate the end of the options, and any remaining arguments will be used without being interpreted.
@@ -396,6 +396,7 @@ Configuration options can be passed with the call to `.command()` and `.addComma
 ### Specify the argument syntax
 
 You use `.arguments` to specify the arguments for the top-level command, and for subcommands they are usually included in the `.command` call. Angled brackets (e.g. `<required>`) indicate required input. Square brackets (e.g. `[optional]`) indicate optional input.
+You can optionally describe the arguments in the help by supplying a hash as second parameter to `.description()`.
 
 Example file: [env](./examples/env)
 
@@ -403,6 +404,10 @@ Example file: [env](./examples/env)
 program
   .version('0.1.0')
   .arguments('<cmd> [env]')
+  .description('test command', {
+    cmd: 'command to run',
+    env: 'environment to run test in'
+  })
   .action(function (cmd, env) {
     console.log('command:', cmd);
     console.log('environment:', env || 'no environment given');

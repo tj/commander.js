@@ -43,6 +43,9 @@
     "typescript": "^3.9.7"
   },
   "typings": "typings/index.d.ts",
+  "jest": {
+    "collectCoverage": true
+  },
   "engines": {
     "node": ">= 6"
   }

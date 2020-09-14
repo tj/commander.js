@@ -3,3 +3,4 @@ node_modules
 *.sock
 .idea
 .vscode/
+coverage/
