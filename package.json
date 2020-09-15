@@ -39,7 +39,7 @@
     "eslint-plugin-jest": "^23.18.0",
     "jest": "^26.1.0",
     "standard": "^14.3.4",
-    "typescript": "^3.9.7"
+    "typescript": "^4.1.0-dev.20200915"
   },
   "typings": "typings/index.d.ts",
   "jest": {

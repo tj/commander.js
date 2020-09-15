@@ -27,9 +27,21 @@ declare namespace commander {
     from: 'node' | 'electron' | 'user';
   }
 
-  interface Command {
-    [key: string]: any; // options as properties
+  type Strip<S extends string> = S extends `${infer T} ${infer _}` ? T : S;
 
+  type CommandString<S extends string> = S extends `${infer _}--${infer T}` ? Strip<T> : never;
+
+  type CommandType<S extends string, T = string> =
+    S extends `${infer _}[${infer _}]` ? T | undefined :
+    S extends `${infer _}<${infer _}>` ? T :
+    boolean;
+
+  type ParseCommand<S extends string, T = string> =
+    string extends S ? { [key: string]: any } :
+    CommandString<S> extends never ? never :
+    { [K in CommandString<S>]: CommandType<S, T> };
+
+  interface Command {
     args: string[];
 
     commands: Command[];
@@ -171,9 +183,9 @@ declare namespace commander {
      *
      * @returns `this` command for chaining
      */
-    option(flags: string, description?: string, defaultValue?: string | boolean): this;
-    option(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
-    option<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
+    option<S extends string, T extends string | boolean>(flags: S, description?: string, defaultValue?: T): this & ParseCommand<S, T>;
+    option<S extends string, T extends string | boolean>(flags: S, description: string, regexp: RegExp, defaultValue?: T): this & ParseCommand<S, T>;
+    option<S extends string, T>(flags: S, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this & ParseCommand<S, T>;
 
     /**
      * Define a required option, which must have a value after parsing. This usually means
@@ -181,9 +193,9 @@ declare namespace commander {
      *
      * The `flags` string should contain both the short and long flags, separated by comma, a pipe or space.
      */
-    requiredOption(flags: string, description?: string, defaultValue?: string | boolean): this;
-    requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
-    requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
+    requiredOption<S extends string, T extends string | boolean>(flags: S, description?: string, defaultValue?: T): this & ParseCommand<S, T>;
+    requiredOption<S extends string, T extends string | boolean>(flags: S, description: string, regexp: RegExp, defaultValue?: T): this & ParseCommand<S, T>;
+    requiredOption<S extends string, T extends string | boolean>(flags: S, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this & ParseCommand<S, T>;
 
     /**
      * Whether to store option values as properties on command object,
