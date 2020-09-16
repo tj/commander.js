@@ -32,7 +32,7 @@ declare namespace commander {
   type CommandString<S extends string> = S extends `${infer _}--${infer T}` ? Strip<T> : never;
 
   type CommandType<S extends string, T = string> =
-    S extends `${infer _}[${infer _}]` ? T | undefined :
+    S extends `${infer _}[${infer _}]` ? T | boolean :
     S extends `${infer _}<${infer _}>` ? T :
     boolean;
 
@@ -183,9 +183,9 @@ declare namespace commander {
      *
      * @returns `this` command for chaining
      */
-    option<S extends string, T extends string | boolean>(flags: S, description?: string, defaultValue?: T): this & ParseCommand<S, T>;
-    option<S extends string, T extends string | boolean>(flags: S, description: string, regexp: RegExp, defaultValue?: T): this & ParseCommand<S, T>;
-    option<S extends string, T>(flags: S, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this & ParseCommand<S, T>;
+    option<S extends string, T = string>(flags: S, description?: string, defaultValue?: T): this & Partial<ParseCommand<S, T | string>>;
+    option<S extends string, T = string>(flags: S, description: string, regexp: RegExp, defaultValue?: T): this & Partial<ParseCommand<S, T | string>>;
+    option<S extends string, T>(flags: S, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this & Partial<ParseCommand<S, T>>;
 
     /**
      * Define a required option, which must have a value after parsing. This usually means
@@ -193,9 +193,9 @@ declare namespace commander {
      *
      * The `flags` string should contain both the short and long flags, separated by comma, a pipe or space.
      */
-    requiredOption<S extends string, T extends string | boolean>(flags: S, description?: string, defaultValue?: T): this & ParseCommand<S, T>;
-    requiredOption<S extends string, T extends string | boolean>(flags: S, description: string, regexp: RegExp, defaultValue?: T): this & ParseCommand<S, T>;
-    requiredOption<S extends string, T extends string | boolean>(flags: S, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this & ParseCommand<S, T>;
+    requiredOption<S extends string, T = string>(flags: S, description?: string, defaultValue?: T): this & ParseCommand<S, T | string>;
+    requiredOption<S extends string, T = string>(flags: S, description: string, regexp: RegExp, defaultValue?: T): this & ParseCommand<S, T | string>;
+    requiredOption<S extends string, T>(flags: S, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this & ParseCommand<S, T>;
 
     /**
      * Whether to store option values as properties on command object,
