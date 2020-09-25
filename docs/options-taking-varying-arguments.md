@@ -141,6 +141,7 @@ $ cook -i -t scrambled
 technique: scrambled
 ingredient: cheese
 ```
+
 ## Combining short options, and options taking arguments
 
 Multiple boolean short options can be combined after a single `-`, like `ls -al`. You can also include just

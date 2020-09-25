@@ -46,6 +46,8 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
   - [Support](#support)
     - [Commander for enterprise](#commander-for-enterprise)
 
+For information about terms used in this document see: [terminology](./docs/terminology.md)
+
 ## Installation
 
 ```bash
@@ -202,7 +204,7 @@ $ pizza-options --cheese mozzarella
 add cheese type mozzarella
 ```
 
-More info about [options taking varying arguments](./docs/options-taking-varying-arguments.md).
+For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-taking-varying-arguments.md).
 
 ### Custom option processing
 
@@ -313,7 +315,7 @@ Options:  { number: [ '1', '2', '3' ], letter: true }
 Remaining arguments:  [ 'operand' ]
 ```
 
-More info about [options taking varying arguments](./docs/options-taking-varying-arguments.md).
+For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-taking-varying-arguments.md).
 
 ### Version option
 
