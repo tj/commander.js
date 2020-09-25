@@ -12,9 +12,18 @@ let envValue;
 program
   .version('0.0.1')
   .arguments('<cmd> [env]')
+  .description('test command', {
+    cmd: 'command to run',
+    env: 'environment to run test in'
+  })
   .action(function(cmdValue, envValue) {
     console.log('command:', cmdValue);
     console.log('environment:', envValue || 'no environment given');
   });
 
 program.parse(process.argv);
+
+// Try the following:
+//    node env --help
+//    node env add
+//    node env add browser

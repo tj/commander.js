@@ -16,6 +16,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Common option types, boolean and value](#common-option-types-boolean-and-value)
     - [Default option value](#default-option-value)
     - [Other option types, negatable boolean and flag|value](#other-option-types-negatable-boolean-and-flagvalue)
+    - [Extra option features](#extra-option-features)
     - [Custom option processing](#custom-option-processing)
     - [Required option](#required-option)
     - [Variadic option](#variadic-option)
@@ -27,8 +28,8 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
   - [Automated help](#automated-help)
     - [Custom help](#custom-help)
     - [.usage and .name](#usage-and-name)
-    - [.help(cb)](#helpcb)
-    - [.outputHelp(cb)](#outputhelpcb)
+    - [.help()](#help)
+    - [.outputHelp()](#outputhelp)
     - [.helpInformation()](#helpinformation)
     - [.helpOption(flags, description)](#helpoptionflags-description)
     - [.addHelpCommand()](#addhelpcommand)
@@ -76,7 +77,7 @@ Options are defined with the `.option()` method, also serving as documentation f
 
 The options can be accessed as properties on the Command object. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc. See also optional new behaviour to [avoid name clashes](#avoiding-option-name-clashes).
 
-Multiple short flags may optionally be combined in a single argument following the dash: boolean flags, the last flag may take a value, and the value.
+Multiple short flags may optionally be combined in a single argument following the dash: boolean flags, followed by a single option taking a value (possibly followed by the value).
 For example `-a -b -p 80` may be written as `-ab -p80` or even `-abp80`.
 
 You can use `--` to indicate the end of the options, and any remaining arguments will be used without being interpreted.
@@ -200,6 +201,33 @@ $ pizza-options --cheese
 add cheese
 $ pizza-options --cheese mozzarella
 add cheese type mozzarella
+```
+
+### Extra option features
+
+You can add most options using the `.option()` method, but there are some additional features available
+by constructing an `Option` explicitly for less common cases.
+
+Example file: [options-extra.js](./examples/options-extra.js)
+
+```js
+program
+  .addOption(new Option('-s, --secret').hideHelp())
+  .addOption(new Option('-t, --timeout <delay>', 'timeout in seconds').default(60, 'one minute'))
+  .addOption(new Option('-d, --drink <size>', 'drink size').choices(['small', 'medium', 'large']));
+```
+
+```bash
+$ extra --help
+Usage: help [options]
+
+Options:
+  -t, --timeout <delay>  timeout in seconds (default: one minute)
+  -d, --drink <size>     drink cup size (choices: "small", "medium", "large")
+  -h, --help             display help for command
+
+$ extra --drink huge
+error: option '-d, --drink <size>' argument of 'huge' not in allowed choices: small, medium, large
 ```
 
 ### Custom option processing
@@ -368,6 +396,7 @@ Configuration options can be passed with the call to `.command()` and `.addComma
 ### Specify the argument syntax
 
 You use `.arguments` to specify the arguments for the top-level command, and for subcommands they are usually included in the `.command` call. Angled brackets (e.g. `<required>`) indicate required input. Square brackets (e.g. `[optional]`) indicate optional input.
+You can optionally describe the arguments in the help by supplying a hash as second parameter to `.description()`.
 
 Example file: [env](./examples/env)
 
@@ -375,6 +404,10 @@ Example file: [env](./examples/env)
 program
   .version('0.1.0')
   .arguments('<cmd> [env]')
+  .description('test command', {
+    cmd: 'command to run',
+    env: 'environment to run test in'
+  })
   .action(function (cmd, env) {
     console.log('command:', cmd);
     console.log('environment:', env || 'no environment given');
@@ -497,7 +530,7 @@ shell spawn --help
 
 ### Custom help
 
-You can display extra information by listening for "--help".
+You can add extra text to be displayed along with the built-in help. 
 
 Example file: [custom-help](./examples/custom-help)
 
@@ -505,12 +538,10 @@ Example file: [custom-help](./examples/custom-help)
 program
   .option('-f, --foo', 'enable some foo');
 
-// must be before .parse()
-program.on('--help', () => {
-  console.log('');
-  console.log('Example call:');
-  console.log('  $ custom-help --help');
-});
+program.addHelpText('after', `
+
+Example call:
+  $ custom-help --help`);
 ```
 
 Yields the following help output:
@@ -525,6 +556,20 @@ Options:
 Example call:
   $ custom-help --help
 ```
+
+The positions in order displayed are:
+
+- `beforeAll`: add to the program for a global banner or header
+- `before`: display extra information before built-in help
+- `after`: display extra information after built-in help
+- `afterAll`: add to the program for a global footer (epilog)
+
+The positions "beforeAll" and "afterAll" apply to the command and all its subcommands. 
+
+The second parameter can be a string, or a function returning a string. The function is passed a context object for your convenience. The properties are:
+
+- error: a boolean for whether the help is being displayed due to a usage error
+- command: the Command which is displaying the help
 
 ### .usage and .name
 
@@ -543,19 +588,17 @@ The help will start with:
 Usage: my-command [global options] command
 ```
 
-### .help(cb)
+### .help()
 
-Output help information and exit immediately. Optional callback cb allows post-processing of help text before it is displayed.
+Output help information and exit immediately. You can optionally pass `{ error: true }` to display on stderr and exit with an error status.
 
-### .outputHelp(cb)
+### .outputHelp()
 
-Output help information without exiting.
-Optional callback cb allows post-processing of help text before it is displayed.
+Output help information without exiting. You can optionally pass `{ error: true }` to display on stderr.
 
 ### .helpInformation()
 
-Get the command help information as a string for processing or displaying yourself. (The text does not include the custom help
-from `--help` listeners.)
+Get the built-in command help information as a string for processing or displaying yourself.
 
 ### .helpOption(flags, description)
 
@@ -749,13 +792,11 @@ program
   .option("-e, --exec_mode <mode>", "Which exec mode to use")
   .action(function(cmd, options){
     console.log('exec "%s" using %s mode', cmd, options.exec_mode);
-  }).on('--help', function() {
-    console.log('');
-    console.log('Examples:');
-    console.log('');
-    console.log('  $ deploy exec sequential');
-    console.log('  $ deploy exec async');
-  });
+  }).addHelpText('after', `
+Examples:
+  $ deploy exec sequential
+  $ deploy exec async`
+  );
 
 program.parse(process.argv);
 ```

@@ -98,6 +98,16 @@ test('when option specified multiple times then callback called with value and p
   expect(mockCoercion).toHaveBeenNthCalledWith(2, '2', 'callback');
 });
 
+// this is the happy path, testing failure case in command.exitOverride.test.js
+test('when option argument in choices then option set', () => {
+  const program = new commander.Command();
+  program
+    .exitOverride()
+    .addOption(new commander.Option('--colour <shade>').choices(['red', 'blue']));
+  program.parse(['--colour', 'red'], { from: 'user' });
+  expect(program.colour).toBe('red');
+});
+
 // Now some functional tests like the examples in the README!
 
 test('when parseFloat "1e2" then value is 100', () => {

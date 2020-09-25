@@ -1,6 +1,6 @@
 {
   "name": "commander",
-  "version": "6.1.0",
+  "version": "7.0.0-0",
   "description": "the complete solution for node.js command-line programs",
   "keywords": [
     "commander",
@@ -22,7 +22,8 @@
     "lint": "eslint index.js \"tests/**/*.js\"",
     "typescript-lint": "eslint typings/*.ts",
     "test": "jest && npm run test-typings",
-    "test-typings": "tsc -p tsconfig.json"
+    "test-typings": "tsc -p tsconfig.json",
+    "typescript-checkJS": "tsc --allowJS --checkJS index.js --noEmit"
   },
   "main": "index",
   "files": [
@@ -42,6 +43,9 @@
     "typescript": "^3.9.7"
   },
   "typings": "typings/index.d.ts",
+  "jest": {
+    "collectCoverage": true
+  },
   "engines": {
     "node": ">= 6"
   }

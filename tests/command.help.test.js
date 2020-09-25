@@ -88,8 +88,7 @@ test('when call outputHelp(cb) then display cb output', () => {
   writeSpy.mockClear();
 });
 
-// noHelp is now named hidden, not officially deprecated yet
-test('when command sets noHelp then not displayed in helpInformation', () => {
+test('when command sets deprecated noHelp then not displayed in helpInformation', () => {
   const program = new commander.Command();
   program
     .command('secret', 'secret description', { noHelp: true });
@@ -131,11 +130,94 @@ test('when both help flags masked then not displayed in helpInformation', () => 
   expect(helpInformation).not.toMatch('display help');
 });
 
-test('when no options then Options not includes in helpInformation', () => {
+test('when call .help then output on stdout', () => {
+  const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
+  const program = new commander.Command();
+  program
+    .exitOverride();
+  expect(() => {
+    program.help();
+  }).toThrow('(outputHelp)');
+  expect(writeSpy).toHaveBeenCalledWith(program.helpInformation());
+  writeSpy.mockClear();
+});
+
+test('when call .help with { error: true } then output on stderr', () => {
+  const writeSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
+  const program = new commander.Command();
+  program
+    .exitOverride();
+  expect(() => {
+    program.help({ error: true });
+  }).toThrow('(outputHelp)');
+  expect(writeSpy).toHaveBeenCalledWith(program.helpInformation());
+  writeSpy.mockClear();
+});
+
+test('when no options then Options not included in helpInformation', () => {
   const program = new commander.Command();
   // No custom options, no version option, no help option
   program
     .helpOption(false);
   const helpInformation = program.helpInformation();
   expect(helpInformation).not.toMatch('Options');
+});
+
+test('when option hidden then option not included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .addOption(new commander.Option('-s,--secret', 'secret option').hideHelp());
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).not.toMatch('secret');
+});
+
+test('when option has default value then default included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .option('-p, --port <portNumber>', 'port number', 80);
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch('(default: 80)');
+});
+
+test('when option has default value description then default description included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .addOption(new commander.Option('-a, --address <dotted>', 'ip address').default('127.0.0.1', 'home'));
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch('(default: home)');
+});
+
+test('when option has choices then choices included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .addOption(new commander.Option('-c, --colour <colour>').choices(['red', 'blue']));
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch('(choices: "red", "blue")');
+});
+
+test('when option has choices and default then both included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .addOption(new commander.Option('-c, --colour <colour>').choices(['red', 'blue']).default('red'));
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch('(choices: "red", "blue", default: "red")');
+});
+
+test('when arguments then included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .name('foo')
+    .arguments('<file>');
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch('Usage: foo [options] <file>');
+});
+
+test('when arguments described then included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .arguments('<file>')
+    .helpOption(false)
+    .description('description', { file: 'input source' });
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch(/Arguments:\n\n +file +input source/); // [sic], extra line
 });
