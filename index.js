@@ -667,6 +667,31 @@ Read more on https://git.io/JJc0W`);
   }
 
   /**
+   * Internal implementation shared by .option() and .requiredOption()
+   *
+   * @api private
+   */
+  _optionEx(config, flags, description, fn, defaultValue) {
+    const option = new Option(flags, description);
+    option.makeOptionMandatory(!!config.mandatory);
+    if (typeof fn === 'function') {
+      option.default(defaultValue).argParser(fn);
+    } else if (fn instanceof RegExp) {
+      // deprecated
+      const regex = fn;
+      fn = (val, def) => {
+        const m = regex.exec(val);
+        return m ? m[0] : def;
+      };
+      option.default(defaultValue).argParser(fn);
+    } else {
+      option.default(fn);
+    }
+
+    return this.addOption(option);
+  }
+
+  /**
    * Define option with `flags`, `description` and optional
    * coercion `fn`.
    *
@@ -719,22 +744,7 @@ Read more on https://git.io/JJc0W`);
    */
 
   option(flags, description, fn, defaultValue) {
-    const option = new Option(flags, description);
-    if (typeof fn === 'function') {
-      option.default(defaultValue).argParser(fn);
-    } else if (fn instanceof RegExp) {
-      // deprecated
-      const regex = fn;
-      fn = (val, def) => {
-        const m = regex.exec(val);
-        return m ? m[0] : def;
-      };
-      option.default(defaultValue).argParser(fn);
-    } else {
-      option.default(fn);
-    }
-
-    return this.addOption(option);
+    return this._optionEx({}, flags, description, fn, defaultValue);
   };
 
   /**
@@ -752,9 +762,7 @@ Read more on https://git.io/JJc0W`);
   */
 
   requiredOption(flags, description, fn, defaultValue) {
-    this.option(flags, description, fn, defaultValue);
-    this.options[this.options.length - 1].makeOptionMandatory();
-    return this;
+    return this._optionEx({ mandatory: true }, flags, description, fn, defaultValue);
   };
 
   /**
