@@ -10,7 +10,6 @@ and subtle issues in depth.
     - [Alternative: Use options instead of command-arguments](#alternative-use-options-instead-of-command-arguments)
   - [Combining short options, and options taking arguments](#combining-short-options-and-options-taking-arguments)
     - [Combining short options as if boolean](#combining-short-options-as-if-boolean)
-  - [Terminology](#terminology)
 
 Certain options take a varying number of arguments:
 
@@ -22,6 +21,8 @@ program
 ```
 
 This page uses examples with options taking 0 or 1 arguments, but the discussions also apply to variadic options taking more arguments.
+
+For information about terms used in this document see: [terminology](./terminology.md)
 
 ## Parsing ambiguity
 
@@ -140,6 +141,7 @@ $ cook -i -t scrambled
 technique: scrambled
 ingredient: cheese
 ```
+
 ## Combining short options, and options taking arguments
 
 Multiple boolean short options can be combined after a single `-`, like `ls -al`. You can also include just
@@ -197,24 +199,3 @@ To modify the parsing of options taking an optional value:
 .combineFlagAndOptionalValue(true)  // `-v45` is treated like `--vegan=45`, this is the default behaviour
 .combineFlagAndOptionalValue(false) // `-vl` is treated like `-v -l`
 ```
-
-## Terminology
-
-_Work in progress: this section may move to the main README, or a page of its own._
-
-The command line arguments are made up of options, option-arguments, commands, and command-arguments.
-
-| Term | Explanation |
-| --- | --- |
-| option | an argument which is a `-` followed by a character, or `--` followed by a word (or hyphenated words), like `-s` or `--short` |
-| option-argument| some options can take an argument |
-| command | a program or command can have subcommands |
-| command-argument | argument for the command (and not an option or option-argument) |
-
-For example:
-
-```sh
-my-utility command -o --option option-argument command-argument-1 command-argument-2
-```
-
-In other references options are sometimes called flags, and command-arguments are sometimes called positional arguments or operands.

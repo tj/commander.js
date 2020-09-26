@@ -46,6 +46,8 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
   - [Support](#support)
     - [Commander for enterprise](#commander-for-enterprise)
 
+For information about terms used in this document see: [terminology](./docs/terminology.md)
+
 ## Installation
 
 ```bash
@@ -202,6 +204,8 @@ $ pizza-options --cheese mozzarella
 add cheese type mozzarella
 ```
 
+For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-taking-varying-arguments.md).
+
 ### Custom option processing
 
 You may specify a function to do custom processing of option values. The callback function receives two parameters, the user specified value and the
@@ -310,6 +314,8 @@ $ collect --letter -n 1 -n 2 3 -- operand
 Options:  { number: [ '1', '2', '3' ], letter: true }
 Remaining arguments:  [ 'operand' ]
 ```
+
+For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-taking-varying-arguments.md).
 
 ### Version option
 
