@@ -43,6 +43,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Node options such as `--harmony`](#node-options-such-as---harmony)
     - [Debugging stand-alone executable subcommands](#debugging-stand-alone-executable-subcommands)
     - [Override exit handling](#override-exit-handling)
+    - [Additional documentation](#additional-documentation)
   - [Examples](#examples)
   - [Support](#support)
     - [Commander for enterprise](#commander-for-enterprise)
@@ -761,6 +762,13 @@ try {
   // custom processing...
 }
 ```
+
+### Additional documentation
+
+There is more information available about:
+
+- [deprecated](./docs/deprecated.md) features still supported for backwards compatibility
+- [options taking varying arguments](./docs/options-taking-varying-arguments.md)
 
 ## Examples
 

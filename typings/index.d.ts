@@ -447,9 +447,10 @@ declare namespace commander {
   type CommandConstructor = new (name?: string) => Command;
 
   interface CommandOptions {
-    noHelp?: boolean; // old name for hidden
     hidden?: boolean;
     isDefault?: boolean;
+    /** @deprecated since v7, replaced by hidden */
+    noHelp?: boolean;
   }
   interface ExecutableCommandOptions extends CommandOptions {
     executableFile?: string;
