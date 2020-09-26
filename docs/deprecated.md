@@ -13,7 +13,7 @@ program.option('-c,--coffee <type>', 'coffee', /short-white|long-black/);
 
 Removed from README in Commander v3. Deprecated from Commander v7.
 
-The newer functionality is the custom option processing function passed in the same parameter position.
+The newer functionality is the Option `.choices()' method, or using a custom option processing function.
 
 ## noHelp
 
@@ -23,9 +23,7 @@ This was an option passed to `.command()` to hide the command from the built-in 
 program.command('example', 'examnple command', { noHelp: true });
 ```
 
-The option has been renamed `hidden` from Commander v5.1.
-
-Deprecated from Commander v7. 
+The option was renamed `hidden` in Commander v5.1. Deprecated from Commander v7. 
 
 ## Default import of global Command object
 
@@ -44,7 +42,7 @@ const { Command } = require('commander');
 comnst program = new Command()
 ```
 
-Deprecated from Commander v7. 
+Removed from README in Commander v5. Deprecated from Commander v7. 
 
 ## Callback to .help() and .outputHelp()
 
@@ -56,14 +54,13 @@ program.outputHelp((text) => {
 });
 ```
 
-You can work with the built-in help via `.helpInformation()`.
-
+The newer approach is to directly access the built-in help text using `.helpInformation()`.
 
 ```js
 console.error(colors.red(program.helpInformation()));
 ```
 
-Deprecated from Commander v7. 
+Deprecated from Commander v7.
 
 ## .on('--help')
 
