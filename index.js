@@ -1706,7 +1706,6 @@ Read more on https://git.io/JJc0W`);
         const columns = process.stdout.columns || 80;
         const descriptionWidth = columns - width - 5;
         desc.push('Arguments:');
-        desc.push('');
         this._args.forEach((arg) => {
           desc.push('  ' + pad(arg.name, width) + '  ' + wrap(argsDescription[arg.name] || '', descriptionWidth, width + 4));
         });

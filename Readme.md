@@ -15,7 +15,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
   - [Options](#options)
     - [Common option types, boolean and value](#common-option-types-boolean-and-value)
     - [Default option value](#default-option-value)
-    - [Other option types, negatable boolean and flag|value](#other-option-types-negatable-boolean-and-flagvalue)
+    - [Other option types, negatable boolean and boolean|value](#other-option-types-negatable-boolean-and-booleanvalue)
     - [Extra option features](#extra-option-features)
     - [Custom option processing](#custom-option-processing)
     - [Required option](#required-option)
@@ -47,6 +47,8 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
   - [Examples](#examples)
   - [Support](#support)
     - [Commander for enterprise](#commander-for-enterprise)
+
+For information about terms used in this document see: [terminology](./docs/terminology.md)
 
 ## Installation
 
@@ -82,14 +84,13 @@ Multiple short flags may optionally be combined in a single argument following t
 For example `-a -b -p 80` may be written as `-ab -p80` or even `-abp80`.
 
 You can use `--` to indicate the end of the options, and any remaining arguments will be used without being interpreted.
-This is particularly useful for passing options through to another
-command, like: `do -- git --version`.
 
-Options on the command line are not positional, and can be specified before or after other command arguments.
+Options on the command line are not positional, and can be specified before or after other arguments.
 
 ### Common option types, boolean and value
 
-The two most used option types are a boolean flag, and an option which takes a value (declared using angle brackets). Both are `undefined` unless specified on command line.
+The two most used option types are a boolean option, and an option which takes its value
+from the following argument (declared with angle brackets like `--expect <value>`). Both are `undefined` unless specified on command line.  
 
 Example file: [options-common.js](./examples/options-common.js)
 
@@ -147,13 +148,13 @@ $ pizza-options --cheese stilton
 cheese: stilton
 ```
 
-### Other option types, negatable boolean and flag|value
+### Other option types, negatable boolean and boolean|value
 
-You can specify a boolean option long name with a leading `no-` to set the option value to false when used.
+You can define a boolean option long name with a leading `no-` to set the option value to false when used.
 Defined alone this also makes the option true by default.
 
 If you define `--foo` first, adding `--no-foo` does not change the default value from what it would
-otherwise be. You can specify a default boolean value for a boolean flag and it can be overridden on command line.
+otherwise be. You can specify a default boolean value for a boolean option and it can be overridden on command line.
 
 Example file: [options-negatable.js](./examples/options-negatable.js)
 
@@ -180,9 +181,10 @@ $ pizza-options --no-sauce --no-cheese
 You ordered a pizza with no sauce and no cheese
 ```
 
-You can specify an option which functions as a flag but may also take a value (declared using square brackets).
+You can specify an option which may be used as a boolean option but may optionally take an option-argument
+(declared with square brackets like `--optional [value]`).
 
-Example file: [options-flag-or-value.js](./examples/options-flag-or-value.js)
+Example file: [options-boolean-or-value.js](./examples/options-boolean-or-value.js)
 
 ```js
 program
@@ -203,6 +205,8 @@ add cheese
 $ pizza-options --cheese mozzarella
 add cheese type mozzarella
 ```
+
+For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-taking-varying-arguments.md).
 
 ### Extra option features
 
@@ -233,12 +237,12 @@ error: option '-d, --drink <size>' argument of 'huge' not in allowed choices: sm
 
 ### Custom option processing
 
-You may specify a function to do custom processing of option values. The callback function receives two parameters, the user specified value and the
-previous value for the option. It returns the new value for the option.
+You may specify a function to do custom processing of option-arguments. The callback function receives two parameters,
+the user specified option-argument and the previous value for the option. It returns the new value for the option.
 
-This allows you to coerce the option value to the desired type, or accumulate values, or do entirely custom processing.
+This allows you to coerce the option-argument to the desired type, or accumulate values, or do entirely custom processing.
 
-You can optionally specify the default/starting value for the option after the function.
+You can optionally specify the default/starting value for the option after the function parameter.
 
 Example file: [options-custom-processing.js](./examples/options-custom-processing.js)
 
@@ -311,7 +315,7 @@ error: required option '-c, --cheese <type>' not specified
 ### Variadic option
 
 You may make an option variadic by appending `...` to the value placeholder when declaring the option. On the command line you
-can then specify multiple option arguments, and the parsed option value will be an array. The extra arguments
+can then specify multiple option-arguments, and the parsed option value will be an array. The extra arguments
 are read until the first argument starting with a dash. The special argument `--` stops option processing entirely. If a value
 is specified in the same argument as the option then no further values are read.
 
@@ -340,6 +344,8 @@ Options:  { number: [ '1', '2', '3' ], letter: true }
 Remaining arguments:  [ 'operand' ]
 ```
 
+For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-taking-varying-arguments.md).
+
 ### Version option
 
 The optional `version` method adds handling for displaying the command version. The default option flags are `-V` and `--version`, and when present the command prints the version number and exits.
@@ -364,7 +370,7 @@ program.version('0.0.1', '-v, --vers', 'output the current version');
 
 You can specify (sub)commands using `.command()` or `.addCommand()`. There are two ways these can be implemented: using an action handler attached to the command, or as a stand-alone executable file (described in more detail later). The subcommands may be nested ([example](./examples/nestedCommands.js)).
 
-In the first parameter to `.command()` you specify the command name and any command arguments. The arguments may be `<required>` or `[optional]`, and the last argument may also be `variadic...`.
+In the first parameter to `.command()` you specify the command name and any command-arguments. The arguments may be `<required>` or `[optional]`, and the last argument may also be `variadic...`.
 
 You can use `.addCommand()` to add an already configured subcommand to the program.
 
@@ -392,11 +398,15 @@ program
   .addCommand(build.makeBuildCommand());
 ```
 
-Configuration options can be passed with the call to `.command()` and `.addCommand()`. Specifying `true` for `opts.hidden` will remove the command from the generated help output. Specifying `true` for `opts.isDefault` will run the subcommand if no other subcommand is specified ([example](./examples/defaultCommand.js)).
+Configuration options can be passed with the call to `.command()` and `.addCommand()`. Specifying `hidden: true` will 
+remove the command from the generated help output. Specifying `isDefault: true` will run the subcommand if no other
+subcommand is specified ([example](./examples/defaultCommand.js)).
 
 ### Specify the argument syntax
 
-You use `.arguments` to specify the arguments for the top-level command, and for subcommands they are usually included in the `.command` call. Angled brackets (e.g. `<required>`) indicate required input. Square brackets (e.g. `[optional]`) indicate optional input.
+You use `.arguments` to specify the expected command-arguments for the top-level command, and for subcommands they are usually
+included in the `.command` call. Angled brackets (e.g. `<required>`) indicate required command-arguments.
+Square brackets (e.g. `[optional]`) indicate optional command-arguments.
 You can optionally describe the arguments in the help by supplying a hash as second parameter to `.description()`.
 
 Example file: [env](./examples/env)
