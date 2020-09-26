@@ -5,7 +5,7 @@
 [![NPM Downloads](https://img.shields.io/npm/dm/commander.svg?style=flat)](https://npmcharts.com/compare/commander?minimal=true)
 [![Install Size](https://packagephobia.now.sh/badge?p=commander)](https://packagephobia.now.sh/result?p=commander)
 
-The complete solution for [node.js](http://nodejs.org) command-line interfaces, inspired by Ruby's [commander](https://github.com/commander-rb/commander).
+The complete solution for [node.js](http://nodejs.org) command-line interfaces.
 
 Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
 
