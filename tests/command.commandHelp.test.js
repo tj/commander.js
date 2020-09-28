@@ -6,7 +6,7 @@ test('when program has command then appears in commandHelp', () => {
   const program = new commander.Command();
   program
     .command('bare');
-  const commandHelp = program.commandHelp();
+  const commandHelp = program.commandHelp(program.createHelpUtils());
   expect(commandHelp).toMatch(/Commands:\n +bare\n/);
 });
 
@@ -14,6 +14,6 @@ test('when program has command with optional arg then appears in commandHelp', (
   const program = new commander.Command();
   program
     .command('bare [bare-arg]');
-  const commandHelp = program.commandHelp();
+  const commandHelp = program.commandHelp(program.createHelpUtils());
   expect(commandHelp).toMatch(/Commands:\n +bare \[bare-arg\]\n/);
 });

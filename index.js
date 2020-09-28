@@ -9,6 +9,77 @@ const fs = require('fs');
 
 // @ts-check
 
+// Although this is a class, treating it as just an interface and to allow flexible overrides.
+class HelpUtils {
+  visibleCommands(cmd) {
+    const visibleCommands = cmd.commands.filter(cmd => !cmd._hidden);
+    if (cmd._lazyHasImplicitHelpCommand()) {
+      const helpCommand = new Command(cmd._helpCommandnameAndArgs)
+        .description(cmd._helpCommandDescription)
+        .helpOption(false);
+      visibleCommands.push(helpCommand);
+    }
+    return visibleCommands;
+  }
+
+  /**
+   * Pad `str` to `width`.
+   *
+   * @param {string} str
+   * @param {number} width
+   * @return {string}
+   * @api private
+   */
+
+  pad(str, width) {
+    const len = Math.max(0, width - str.length);
+    return str + Array(len + 1).join(' ');
+  }
+
+  /**
+   * Wraps the given string with line breaks at the specified width while breaking
+   * words and indenting every but the first line on the left.
+   *
+   * @param {string} str
+   * @param {number} width
+   * @param {number} indent
+   * @return {string}
+   * @api private
+   */
+  wrap(str, width, indent) {
+    const regex = new RegExp('.{1,' + (width - 1) + '}([\\s\u200B]|$)|[^\\s\u200B]+?([\\s\u200B]|$)', 'g');
+    const lines = str.match(regex) || [];
+    return lines.map((line, i) => {
+      if (line.slice(-1) === '\n') {
+        line = line.slice(0, line.length - 1);
+      }
+      return ((i > 0 && indent) ? Array(indent + 1).join(' ') : '') + line.trimRight();
+    }).join('\n');
+  }
+
+  /**
+   * Optionally wrap the given str to a max width of width characters per line
+   * while indenting with indent spaces. Do not wrap if insufficient width or
+   * string is manually formatted.
+   *
+   * @param {string} str
+   * @param {number} width
+   * @param {number} indent
+   * @return {string}
+   * @api private
+   */
+  optionalWrap(str, width, indent, helper) {
+    // Detect manually wrapped and indented strings by searching for line breaks
+    // followed by multiple spaces/tabs.
+    if (str.match(/[\n]\s+/)) return str;
+    // Do not wrap to narrow columns (or can end up with a word per line).
+    const minWidth = 40;
+    if (width < minWidth) return str;
+
+    return helper.wrap(str, width, indent);
+  }
+}
+
 class Option {
   /**
    * Initialize a new `Option` with the given `flags` and `description`.
@@ -336,6 +407,20 @@ class Command extends EventEmitter {
 
   createCommand(name) {
     return new Command(name);
+  };
+
+  /**
+   * Factory routine to create a Help class of utility routines.
+   *
+   * You can override createHelpUtils to customise the Help.
+   *
+   * @param {string} [name]
+   * @return {Command} new command
+   * @api public
+   */
+
+  createHelpUtils() {
+    return new HelpUtils();
   };
 
   /**
@@ -1637,12 +1722,12 @@ Read more on https://git.io/JJc0W`);
    * @api private
    */
 
-  optionHelp() {
+  optionHelp(helper) {
     const width = this.padWidth();
     const columns = process.stdout.columns || 80;
     const descriptionWidth = columns - width - 4;
     function padOptionDetails(flags, description) {
-      return pad(flags, width) + '  ' + optionalWrap(description, descriptionWidth, width + 2);
+      return helper.pad(flags, width) + '  ' + helper.optionalWrap(description, descriptionWidth, width + 2, helper);
     };
 
     // Explicit options (including version)
@@ -1674,7 +1759,7 @@ Read more on https://git.io/JJc0W`);
    * @api private
    */
 
-  commandHelp() {
+  commandHelp(helper) {
     if (!this.commands.length && !this._lazyHasImplicitHelpCommand()) return '';
 
     const commands = this.prepareCommands();
@@ -1687,7 +1772,7 @@ Read more on https://git.io/JJc0W`);
       'Commands:',
       commands.map((cmd) => {
         const desc = cmd[1] ? '  ' + cmd[1] : '';
-        return (desc ? pad(cmd[0], width) : cmd[0]) + optionalWrap(desc, descriptionWidth, width + 2);
+        return (desc ? helper.pad(cmd[0], width) : cmd[0]) + helper.optionalWrap(desc, descriptionWidth, width + 2, helper);
       }).join('\n').replace(/^/gm, '  '),
       ''
     ].join('\n');
@@ -1701,6 +1786,7 @@ Read more on https://git.io/JJc0W`);
    */
 
   helpInformation() {
+    const helper = this.createHelpUtils();
     let desc = [];
     if (this._description) {
       desc = [
@@ -1715,7 +1801,7 @@ Read more on https://git.io/JJc0W`);
         const descriptionWidth = columns - width - 5;
         desc.push('Arguments:');
         this._args.forEach((arg) => {
-          desc.push('  ' + pad(arg.name, width) + '  ' + wrap(argsDescription[arg.name] || '', descriptionWidth, width + 4));
+          desc.push('  ' + helper.pad(arg.name, width) + '  ' + helper.wrap(argsDescription[arg.name] || '', descriptionWidth, width + 4));
         });
         desc.push('');
       }
@@ -1735,14 +1821,14 @@ Read more on https://git.io/JJc0W`);
     ];
 
     let cmds = [];
-    const commandHelp = this.commandHelp();
+    const commandHelp = this.commandHelp(helper);
     if (commandHelp) cmds = [commandHelp];
 
     let options = [];
     if (this._hasVisibleOptions()) {
       options = [
         'Options:',
-        '' + this.optionHelp().replace(/^/gm, '  '),
+        '' + this.optionHelp(helper).replace(/^/gm, '  '),
         ''
       ];
     }
@@ -1905,6 +1991,7 @@ exports.program = exports; // More explicit access to global command.
 exports.Command = Command;
 exports.Option = Option;
 exports.CommanderError = CommanderError;
+exports.HelpUtils = HelpUtils;
 
 /**
  * Camel-case the given `flag`
@@ -1918,63 +2005,6 @@ function camelcase(flag) {
   return flag.split('-').reduce((str, word) => {
     return str + word[0].toUpperCase() + word.slice(1);
   });
-}
-
-/**
- * Pad `str` to `width`.
- *
- * @param {string} str
- * @param {number} width
- * @return {string}
- * @api private
- */
-
-function pad(str, width) {
-  const len = Math.max(0, width - str.length);
-  return str + Array(len + 1).join(' ');
-}
-
-/**
- * Wraps the given string with line breaks at the specified width while breaking
- * words and indenting every but the first line on the left.
- *
- * @param {string} str
- * @param {number} width
- * @param {number} indent
- * @return {string}
- * @api private
- */
-function wrap(str, width, indent) {
-  const regex = new RegExp('.{1,' + (width - 1) + '}([\\s\u200B]|$)|[^\\s\u200B]+?([\\s\u200B]|$)', 'g');
-  const lines = str.match(regex) || [];
-  return lines.map((line, i) => {
-    if (line.slice(-1) === '\n') {
-      line = line.slice(0, line.length - 1);
-    }
-    return ((i > 0 && indent) ? Array(indent + 1).join(' ') : '') + line.trimRight();
-  }).join('\n');
-}
-
-/**
- * Optionally wrap the given str to a max width of width characters per line
- * while indenting with indent spaces. Do not wrap if insufficient width or
- * string is manually formatted.
- *
- * @param {string} str
- * @param {number} width
- * @param {number} indent
- * @return {string}
- * @api private
- */
-function optionalWrap(str, width, indent) {
-  // Detect manually wrapped and indented strings by searching for line breaks
-  // followed by multiple spaces/tabs.
-  if (str.match(/[\n]\s+/)) return str;
-  // Do not wrap to narrow columns (or can end up with a word per line).
-  const minWidth = 40;
-  if (width < minWidth) return str;
-
-  return wrap(str, width, indent);
 }
 
 /**
