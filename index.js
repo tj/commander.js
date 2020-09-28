@@ -22,6 +22,72 @@ class HelpUtils {
     return visibleCommands;
   }
 
+  /* WIP */
+  visibleOptions(cmd) {
+    const visibleOptions = cmd.options.slice(); // Hidden not added until PR #1331 lands
+    // Implicit help
+    const showShortHelpFlag = cmd._hasHelpOption && cmd._helpShortFlag && !cmd._findOption(cmd._helpShortFlag);
+    const showLongHelpFlag = cmd._hasHelpOption && !cmd._findOption(cmd._helpLongFlag);
+    if (showShortHelpFlag || showLongHelpFlag) {
+      let helpOption;
+      if (!showShortHelpFlag) {
+        helpOption = new Option(cmd._helpLongFlag, cmd._helpDescription);
+      } else if (!showLongHelpFlag) {
+        helpOption = new Option(cmd._helpShortFlag, cmd._helpDescription);
+      } else {
+        helpOption = new Option(cmd._helpFlags, cmd._helpDescription);
+      }
+      visibleOptions.push(helpOption);
+    }
+    return visibleOptions;
+  }
+
+  /* WIP */
+  visibleArguments() {
+    if (this._argsDescription && this._args.length) {
+      return this._args.map((argument) => {
+        return { term: argument.name, description: this._argsDescription[argument.name] || '' };
+      }, 0);
+    }
+    return [];
+  }
+
+  /* WIP: */
+  commandTerm(cmd) {
+    // Why not just use usage?!
+    const args = cmd._args.map(arg => humanReadableArgName(arg)).join(' ');
+    return cmd._name +
+      (cmd._aliases[0] ? '|' + cmd._aliases[0] : '') +
+      (cmd.options.length ? ' [options]' : '') + // simple check for non-help option
+      (args ? ' ' + args : '');
+  }
+
+  largestCommandTermLength(cmd, helper) {
+    return helper.visibleCommands(cmd).reduce((max, command) => {
+      return Math.max(max, helper.commandTerm(command).length);
+    }, 0);
+  };
+
+  largestOptionTermLength(cmd, helper) {
+    return helper.visibleOptions(cmd).reduce((max, option) => {
+      return Math.max(max, option.flags.length);
+    }, 0);
+  };
+
+  largestArgLength(cmd, helper) {
+    return helper.visibleArguments(cmd).reduce((max, argument) => {
+      return Math.max(max, argument.term.length);
+    }, 0);
+  };
+
+  padWidth(cmd, helper) {
+    return Math.max(
+      helper.largestOptionTermLength(cmd, helper),
+      helper.largestCommandTermLength(cmd, helper),
+      helper.largestArgLength(cmd, helper)
+    );
+  };
+
   /**
    * Pad `str` to `width`.
    *
@@ -1637,75 +1703,6 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
-   * Return the largest command length.
-   *
-   * @return {number}
-   * @api private
-   */
-
-  largestCommandLength() {
-    const commands = this.prepareCommands();
-    return commands.reduce((max, command) => {
-      return Math.max(max, command[0].length);
-    }, 0);
-  };
-
-  /**
-   * Return the largest option length.
-   *
-   * @return {number}
-   * @api private
-   */
-
-  largestOptionLength() {
-    const options = [].slice.call(this.options);
-    options.push({
-      flags: this._helpFlags
-    });
-
-    return options.reduce((max, option) => {
-      return Math.max(max, option.flags.length);
-    }, 0);
-  };
-
-  /**
-   * Return the largest arg length.
-   *
-   * @return {number}
-   * @api private
-   */
-
-  largestArgLength() {
-    return this._args.reduce((max, arg) => {
-      return Math.max(max, arg.name.length);
-    }, 0);
-  };
-
-  /**
-   * Return the pad width.
-   *
-   * @return {number}
-   * @api private
-   */
-
-  padWidth() {
-    let width = this.largestOptionLength();
-    if (this._argsDescription && this._args.length) {
-      if (this.largestArgLength() > width) {
-        width = this.largestArgLength();
-      }
-    }
-
-    if (this.commands && this.commands.length) {
-      if (this.largestCommandLength() > width) {
-        width = this.largestCommandLength();
-      }
-    }
-
-    return width;
-  };
-
-  /**
    * Any visible options?
    *
    * @return {boolean}
@@ -1723,7 +1720,7 @@ Read more on https://git.io/JJc0W`);
    */
 
   optionHelp(helper) {
-    const width = this.padWidth();
+    const width = helper.padWidth(this, helper);
     const columns = process.stdout.columns || 80;
     const descriptionWidth = columns - width - 4;
     function padOptionDetails(flags, description) {
@@ -1763,7 +1760,7 @@ Read more on https://git.io/JJc0W`);
     if (!this.commands.length && !this._lazyHasImplicitHelpCommand()) return '';
 
     const commands = this.prepareCommands();
-    const width = this.padWidth();
+    const width = helper.padWidth(this, helper);
 
     const columns = process.stdout.columns || 80;
     const descriptionWidth = columns - width - 4;
@@ -1796,7 +1793,7 @@ Read more on https://git.io/JJc0W`);
 
       const argsDescription = this._argsDescription;
       if (argsDescription && this._args.length) {
-        const width = this.padWidth();
+        const width = helper.padWidth(this, helper);
         const columns = process.stdout.columns || 80;
         const descriptionWidth = columns - width - 5;
         desc.push('Arguments:');
