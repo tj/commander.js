@@ -9,8 +9,13 @@ const fs = require('fs');
 
 // @ts-check
 
-// Although this is a class, treating it as just an interface and to allow flexible overrides.
+// Although this is a class, methods are static in style to allow override using subclass or arrow functions.
+// (Need to reconcile what is private when decide public/private methods????)
 class HelpUtils {
+  columns() {
+    return process.stdout.columns || 80;
+  }
+
   visibleCommands(cmd) {
     const visibleCommands = cmd.commands.filter(cmd => !cmd._hidden);
     if (cmd._lazyHasImplicitHelpCommand()) {
@@ -1682,7 +1687,7 @@ Read more on https://git.io/JJc0W`);
   helpInformation() {
     const helper = this.createHelpUtils();
     const width = helper.padWidth(this, helper);
-    const columns = process.stdout.columns || 80;
+    const columns = helper.columns();
     const descriptionWidth = columns - width - 4;
     function formatItem(term, description) {
       if (description) {
