@@ -486,8 +486,8 @@ class Command extends EventEmitter {
   };
 
   /**
-   * You can customise the help with eitehr a subclass by overriding createHelpTools,
-   * or by supplying routines using helpOverrides.
+   * You can customise the help with either a subclass by overriding createHelpTools,
+   * or by supplying routines using helpToolsOverrides.
    *
    * @param {string} [name]
    * @return {Command} new command
