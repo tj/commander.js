@@ -1750,32 +1750,6 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
-   * Return command help documentation.
-   *
-   * @return {string}
-   * @api private
-   */
-
-  commandHelp(helper) {
-    if (!this.commands.length && !this._lazyHasImplicitHelpCommand()) return '';
-
-    const commands = this.prepareCommands();
-    const width = helper.padWidth(this, helper);
-
-    const columns = process.stdout.columns || 80;
-    const descriptionWidth = columns - width - 4;
-
-    return [
-      'Commands:',
-      commands.map((cmd) => {
-        const desc = cmd[1] ? '  ' + cmd[1] : '';
-        return (desc ? helper.pad(cmd[0], width) : cmd[0]) + helper.optionalWrap(desc, descriptionWidth, width + 2, helper);
-      }).join('\n').replace(/^/gm, '  '),
-      ''
-    ].join('\n');
-  };
-
-  /**
    * Return program help documentation.
    *
    * @return {string}
@@ -1784,6 +1758,19 @@ Read more on https://git.io/JJc0W`);
 
   helpInformation() {
     const helper = this.createHelpUtils();
+    const width = helper.padWidth(this, helper);
+    const columns = process.stdout.columns || 80;
+    const descriptionWidth = columns - width - 4;
+    function formatItem(term, description) {
+      if (description) {
+        return helper.pad(term, width) + '  ' + helper.optionalWrap(description, descriptionWidth, width + 2, helper);
+      }
+      return term;
+    };
+    function formatList(text) {
+      return text.join('\n').replace(/^/gm, '  ');
+    }
+
     let desc = [];
     if (this._description) {
       desc = [
@@ -1817,9 +1804,16 @@ Read more on https://git.io/JJc0W`);
       ''
     ];
 
-    let cmds = [];
-    const commandHelp = this.commandHelp(helper);
-    if (commandHelp) cmds = [commandHelp];
+    // Commands
+    let cmds = []; // temp
+    const visibleCommands = helper.visibleCommands(this);
+    if (visibleCommands.length) {
+      const commandList = visibleCommands.map((cmd) => {
+        return formatItem(helper.commandTerm(cmd), cmd.description());
+      });
+      // output = output.concat(['Commands:', formatList(commandList), '']);
+      cmds = ['Commands:', formatList(commandList), ''];
+    }
 
     let options = [];
     if (this._hasVisibleOptions()) {

@@ -60,8 +60,8 @@ Options:
   -h, --help                     display help for command
 
 Commands:
-  alpha                          Lorem mollit quis dolor ex do eu quis ad
-                                 insa a commodo esse.
+  alpha                          Lorem mollit quis dolor ex do eu quis ad insa
+                                 a commodo esse.
   help [command]                 display help for command
 `;
 
