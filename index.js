@@ -24,7 +24,7 @@ class HelpUtils {
 
   /* WIP */
   visibleOptions(cmd) {
-    const visibleOptions = cmd.options.slice(); // Hidden not added until PR #1331 lands
+    const visibleOptions = cmd.options.filter((option) => !option.hidden);
     // Implicit help
     const showShortHelpFlag = cmd._hasHelpOption && cmd._helpShortFlag && !cmd._findOption(cmd._helpShortFlag);
     const showLongHelpFlag = cmd._hasHelpOption && !cmd._findOption(cmd._helpLongFlag);
@@ -43,10 +43,10 @@ class HelpUtils {
   }
 
   /* WIP */
-  visibleArguments() {
-    if (this._argsDescription && this._args.length) {
-      return this._args.map((argument) => {
-        return { term: argument.name, description: this._argsDescription[argument.name] || '' };
+  visibleArguments(cmd) {
+    if (cmd._argsDescription && cmd._args.length) {
+      return cmd._args.map((argument) => {
+        return { term: argument.name, description: cmd._argsDescription[argument.name] || '' };
       }, 0);
     }
     return [];
@@ -1771,26 +1771,7 @@ Read more on https://git.io/JJc0W`);
       return text.join('\n').replace(/^/gm, '  ');
     }
 
-    let desc = [];
-    if (this._description) {
-      desc = [
-        this._description,
-        ''
-      ];
-
-      const argsDescription = this._argsDescription;
-      if (argsDescription && this._args.length) {
-        const width = helper.padWidth(this, helper);
-        const columns = process.stdout.columns || 80;
-        const descriptionWidth = columns - width - 5;
-        desc.push('Arguments:');
-        this._args.forEach((arg) => {
-          desc.push('  ' + helper.pad(arg.name, width) + '  ' + helper.wrap(argsDescription[arg.name] || '', descriptionWidth, width + 4));
-        });
-        desc.push('');
-      }
-    }
-
+    // Usage
     let cmdName = this._name;
     if (this._aliases[0]) {
       cmdName = cmdName + '|' + this._aliases[0];
@@ -1799,36 +1780,41 @@ Read more on https://git.io/JJc0W`);
     for (let parentCmd = this.parent; parentCmd; parentCmd = parentCmd.parent) {
       parentCmdNames = parentCmd.name() + ' ' + parentCmdNames;
     }
-    const usage = [
-      'Usage: ' + parentCmdNames + cmdName + ' ' + this.usage(),
-      ''
-    ];
+    let output = ['Usage: ' + parentCmdNames + cmdName + ' ' + this.usage(), ''];
+
+    // Description
+    if (this._description) {
+      output = output.concat([this._description, '']);
+    }
+
+    // Arguments
+    const visibleArguments = helper.visibleArguments(this);
+    if (visibleArguments.length) {
+      const argumentsList = visibleArguments.map((argument) => {
+        return formatItem(argument.term, argument.description);
+      });
+      output = output.concat(['Arguments:', formatList(argumentsList), '']);
+    }
+
+    // Optioms
+    const visibleOptions = helper.visibleOptions(this);
+    if (visibleOptions.length) {
+      const optionList = visibleOptions.map((option) => {
+        return formatItem(option.flags, option.fullDescription());
+      });
+      output = output.concat(['Options:', formatList(optionList), '']);
+    }
 
     // Commands
-    let cmds = []; // temp
     const visibleCommands = helper.visibleCommands(this);
     if (visibleCommands.length) {
       const commandList = visibleCommands.map((cmd) => {
         return formatItem(helper.commandTerm(cmd), cmd.description());
       });
-      // output = output.concat(['Commands:', formatList(commandList), '']);
-      cmds = ['Commands:', formatList(commandList), ''];
+      output = output.concat(['Commands:', formatList(commandList), '']);
     }
 
-    let options = [];
-    if (this._hasVisibleOptions()) {
-      options = [
-        'Options:',
-        '' + this.optionHelp(helper).replace(/^/gm, '  '),
-        ''
-      ];
-    }
-
-    return usage
-      .concat(desc)
-      .concat(options)
-      .concat(cmds)
-      .join('\n');
+    return output.join('\n');
   };
 
   /**
