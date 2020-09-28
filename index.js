@@ -11,7 +11,7 @@ const fs = require('fs');
 
 // Although this is a class, methods are static in style to allow override using subclass or just functions.
 // (Need to reconcile what is private when decide public/private methods????)
-class HelpUtils {
+class HelpTools {
   columns() {
     return process.stdout.columns || 80;
   }
@@ -400,7 +400,7 @@ class Command extends EventEmitter {
     this._helpCommandName = 'help';
     this._helpCommandnameAndArgs = 'help [command]';
     this._helpCommandDescription = 'display help for command';
-    this._helpUtilOverrides = {};
+    this._helpToolsOverrides = {};
   }
 
   /**
@@ -486,7 +486,7 @@ class Command extends EventEmitter {
   };
 
   /**
-   * You can customise the help with eitehr a subclass by overriding createHelpUtils,
+   * You can customise the help with eitehr a subclass by overriding createHelpTools,
    * or by supplying routines using helpOverrides.
    *
    * @param {string} [name]
@@ -494,12 +494,12 @@ class Command extends EventEmitter {
    * @api public
    */
 
-  createHelpUtils() {
-    return Object.assign(new HelpUtils(), this._helpUtilOverrides);
+  createHelpTools() {
+    return Object.assign(new HelpTools(), this._helpToolsOverrides);
   };
 
-  helpUtilOverrides(overrides) {
-    this._helpUtilOverrides = overrides;
+  helpToolsOverrides(overrides) {
+    this._helpToolsOverrides = overrides;
     return this;
   }
 
@@ -1694,7 +1694,7 @@ Read more on https://git.io/JJc0W`);
    */
 
   helpInformation() {
-    const helper = this.createHelpUtils();
+    const helper = this.createHelpTools();
     const width = helper.padWidth(this, helper);
     const columns = helper.columns();
     const descriptionWidth = columns - width - 4;
@@ -1905,7 +1905,7 @@ exports.program = exports; // More explicit access to global command.
 exports.Command = Command;
 exports.Option = Option;
 exports.CommanderError = CommanderError;
-exports.HelpUtils = HelpUtils;
+exports.HelpTools = HelpTools;
 
 /**
  * Camel-case the given `flag`
