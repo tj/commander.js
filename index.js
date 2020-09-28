@@ -396,6 +396,7 @@ class Command extends EventEmitter {
     this._helpCommandName = 'help';
     this._helpCommandnameAndArgs = 'help [command]';
     this._helpCommandDescription = 'display help for command';
+    this._helpUtilOverrides = {};
   }
 
   /**
@@ -481,9 +482,8 @@ class Command extends EventEmitter {
   };
 
   /**
-   * Factory routine to create a Help class of utility routines.
-   *
-   * You can override createHelpUtils to customise the Help.
+   * You can customise the help with eitehr a subclass by overriding createHelpUtils,
+   * or by supplying routines using helpOverrides.
    *
    * @param {string} [name]
    * @return {Command} new command
@@ -491,8 +491,13 @@ class Command extends EventEmitter {
    */
 
   createHelpUtils() {
-    return new HelpUtils();
+    return Object.assign(new HelpUtils(), this._helpUtilOverrides);
   };
+
+  helpUtilOverrides(overrides) {
+    this._helpUtilOverrides = overrides;
+    return this;
+  }
 
   /**
    * Add a prepared subcommand.
