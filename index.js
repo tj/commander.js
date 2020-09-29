@@ -1715,15 +1715,18 @@ Read more on https://git.io/JJc0W`);
     const helper = this.createHelpTools();
     const termWidth = helper.padWidth(this, helper);
     const columns = helper.columns;
-    const descriptionWidth = columns - termWidth - 4;
+    const itemIndentWidth = 2;
+    const itemSeparatorWidth = 2;
+    // itemIndent term itemSeparator description
+    const descriptionWidth = columns - termWidth - itemIndentWidth - itemSeparatorWidth;
     function formatItem(term, description) {
       if (description) {
-        return helper.pad(term, termWidth) + '  ' + helper.optionalWrap(description, descriptionWidth, termWidth + 2, helper);
+        return helper.pad(term, termWidth + itemSeparatorWidth) + helper.optionalWrap(description, descriptionWidth, termWidth + itemSeparatorWidth, helper);
       }
       return term;
     };
-    function formatList(text) {
-      return text.join('\n').replace(/^/gm, '  ');
+    function formatList(textArray) {
+      return textArray.join('\n').replace(/^/gm, Array(itemIndentWidth + 1).join(' '));
     }
 
     // Usage
