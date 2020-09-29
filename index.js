@@ -12,8 +12,8 @@ const fs = require('fs');
 // Although this is a class, methods are static in style to allow override using subclass or just functions.
 // (Need to reconcile what is private when decide public/private methods????)
 class HelpTools {
-  columns() {
-    return process.stdout.columns || 80;
+  constructor() {
+    this.columns = process.stdout.columns || 80;
   }
 
   itemIndent() {
@@ -1696,7 +1696,7 @@ Read more on https://git.io/JJc0W`);
   helpInformation() {
     const helper = this.createHelpTools();
     const width = helper.padWidth(this, helper);
-    const columns = helper.columns();
+    const columns = helper.columns;
     const descriptionWidth = columns - width - 4;
     function formatItem(term, description) {
       if (description) {
