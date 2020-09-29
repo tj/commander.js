@@ -16,10 +16,6 @@ class HelpTools {
     this.columns = process.stdout.columns || 80;
   }
 
-  itemIndent() {
-    return '  ';
-  }
-
   visibleCommands(cmd) {
     const visibleCommands = cmd.commands.filter(cmd => !cmd._hidden);
     if (cmd._lazyHasImplicitHelpCommand()) {
@@ -1705,7 +1701,7 @@ Read more on https://git.io/JJc0W`);
       return term;
     };
     function formatList(text) {
-      return text.join('\n').replace(/^/gm, helper.itemIndent());
+      return text.join('\n').replace(/^/gm, '  ');
     }
 
     // Usage
