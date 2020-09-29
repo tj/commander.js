@@ -67,6 +67,10 @@ class HelpTools {
       (args ? ' ' + args : '');
   }
 
+  optionTerm(option) {
+    return `${option.flags}`;
+  }
+
   largestCommandTermLength(cmd, helper) {
     return helper.visibleCommands(cmd).reduce((max, command) => {
       return Math.max(max, helper.commandTerm(command).length);
@@ -75,7 +79,7 @@ class HelpTools {
 
   largestOptionTermLength(cmd, helper) {
     return helper.visibleOptions(cmd).reduce((max, option) => {
-      return Math.max(max, option.flags.length);
+      return Math.max(max, helper.optionTerm(option).length);
     }, 0);
   };
 
@@ -97,6 +101,36 @@ class HelpTools {
     }
     return 'Usage: ' + parentCmdNames + cmdName + ' ' + cmd.usage();
   }
+
+  commandDescription(cmd) {
+    return cmd.description();
+  }
+
+  /**
+   * Calculate the full description, including defaultValue etc.
+   *
+   * @return {string}
+   * @api public
+   */
+
+  optionDescription(option) {
+    if (option.negate) {
+      return option.description;
+    }
+    const extraInfo = [];
+    if (option.argChoices) {
+      extraInfo.push(
+        // use stringify to match the display of the default value
+        `choices: ${option.argChoices.map((choice) => JSON.stringify(choice)).join(', ')}`);
+    }
+    if (option.defaultValue !== undefined) {
+      extraInfo.push(`default: ${option.defaultValueDescription || JSON.stringify(option.defaultValue)}`);
+    }
+    if (extraInfo.length > 0) {
+      return `${option.description} (${extraInfo.join(', ')})`;
+    }
+    return `${option.description}`;
+  };
 
   padWidth(cmd, helper) {
     return Math.max(
@@ -209,32 +243,6 @@ class Option {
     this.defaultValue = value;
     this.defaultValueDescription = description;
     return this;
-  };
-
-  /**
-   * Calculate the full description, including defaultValue etc.
-   *
-   * @return {string}
-   * @api public
-   */
-
-  fullDescription() {
-    if (this.negate) {
-      return this.description;
-    }
-    const extraInfo = [];
-    if (this.argChoices) {
-      extraInfo.push(
-        // use stringify to match the display of the default value
-        `choices: ${this.argChoices.map((choice) => JSON.stringify(choice)).join(', ')}`);
-    }
-    if (this.defaultValue !== undefined) {
-      extraInfo.push(`default: ${this.defaultValueDescription || JSON.stringify(this.defaultValue)}`);
-    }
-    if (extraInfo.length > 0) {
-      return `${this.description} (${extraInfo.join(', ')})`;
-    }
-    return this.description;
   };
 
   /**
@@ -1735,11 +1743,11 @@ Read more on https://git.io/JJc0W`);
       output = output.concat(['Arguments:', formatList(argumentsList), '']);
     }
 
-    // Optioms
+    // Options
     const visibleOptions = helper.visibleOptions(this);
     if (visibleOptions.length) {
       const optionList = visibleOptions.map((option) => {
-        return formatItem(option.flags, option.fullDescription());
+        return formatItem(helper.optionTerm(option), helper.optionDescription(option));
       });
       output = output.concat(['Options:', formatList(optionList), '']);
     }
@@ -1748,7 +1756,7 @@ Read more on https://git.io/JJc0W`);
     const visibleCommands = helper.visibleCommands(this);
     if (visibleCommands.length) {
       const commandList = visibleCommands.map((cmd) => {
-        return formatItem(helper.commandTerm(cmd), cmd.description());
+        return formatItem(helper.commandTerm(cmd), helper.commandDescription(cmd));
       });
       output = output.concat(['Commands:', formatList(commandList), '']);
     }
