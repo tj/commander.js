@@ -85,6 +85,19 @@ class HelpTools {
     }, 0);
   };
 
+  commandUsage(cmd) {
+    // Usage
+    let cmdName = cmd._name;
+    if (cmd._aliases[0]) {
+      cmdName = cmdName + '|' + cmd._aliases[0];
+    }
+    let parentCmdNames = '';
+    for (let parentCmd = cmd.parent; parentCmd; parentCmd = parentCmd.parent) {
+      parentCmdNames = parentCmd.name() + ' ' + parentCmdNames;
+    }
+    return 'Usage: ' + parentCmdNames + cmdName + ' ' + cmd.usage();
+  }
+
   padWidth(cmd, helper) {
     return Math.max(
       helper.largestOptionTermLength(cmd, helper),
@@ -1706,15 +1719,7 @@ Read more on https://git.io/JJc0W`);
     }
 
     // Usage
-    let cmdName = this._name;
-    if (this._aliases[0]) {
-      cmdName = cmdName + '|' + this._aliases[0];
-    }
-    let parentCmdNames = '';
-    for (let parentCmd = this.parent; parentCmd; parentCmd = parentCmd.parent) {
-      parentCmdNames = parentCmd.name() + ' ' + parentCmdNames;
-    }
-    let output = ['Usage: ' + parentCmdNames + cmdName + ' ' + this.usage(), ''];
+    let output = [helper.commandUsage(this), ''];
 
     // Description
     if (this._description) {
