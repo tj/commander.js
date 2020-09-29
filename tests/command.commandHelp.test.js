@@ -1,6 +1,6 @@
 const commander = require('../');
 
-// Note: .commandHelp is not currently documented in the README. This is a ported legacy test.
+// This is a ported legacy test.
 
 test('when program has command then appears in help', () => {
   const program = new commander.Command();
