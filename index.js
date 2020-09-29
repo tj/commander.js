@@ -20,8 +20,8 @@ class HelpTools {
     const visibleCommands = cmd.commands.filter(cmd => !cmd._hidden);
     if (cmd._lazyHasImplicitHelpCommand()) {
       const helpCommand = new Command(cmd._helpCommandnameAndArgs)
-        .description(cmd._helpCommandDescription)
-        .helpOption(false);
+        .helpOption(false)
+        .description(cmd._helpCommandDescription);
       visibleCommands.push(helpCommand);
     }
     return visibleCommands;
@@ -562,8 +562,7 @@ class Command extends EventEmitter {
    * You can customise the help with either a subclass by overriding createHelpTools,
    * or by supplying routines using helpToolsOverrides.
    *
-   * @param {string} [name]
-   * @return {Command} new command
+   * @return {HelpTools}
    * @api public
    */
 
