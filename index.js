@@ -83,7 +83,7 @@ class HelpTools {
     }, 0);
   };
 
-  largestArgLength(cmd, helper) {
+  largestArgTermLength(cmd, helper) {
     return helper.visibleArguments(cmd).reduce((max, argument) => {
       return Math.max(max, argument.term.length);
     }, 0);
@@ -136,7 +136,7 @@ class HelpTools {
     return Math.max(
       helper.largestOptionTermLength(cmd, helper),
       helper.largestCommandTermLength(cmd, helper),
-      helper.largestArgLength(cmd, helper)
+      helper.largestArgTermLength(cmd, helper)
     );
   };
 
