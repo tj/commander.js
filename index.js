@@ -132,6 +132,61 @@ class HelpTools {
     return `${option.description}`;
   };
 
+  formatHelp(cmd, helper) {
+    const termWidth = helper.padWidth(cmd, helper);
+    const columns = helper.columns;
+    const itemIndentWidth = 2;
+    const itemSeparatorWidth = 2;
+    // itemIndent term itemSeparator description
+    const descriptionWidth = columns - termWidth - itemIndentWidth - itemSeparatorWidth;
+    function formatItem(term, description) {
+      if (description) {
+        return helper.pad(term, termWidth + itemSeparatorWidth) + helper.optionalWrap(description, descriptionWidth, termWidth + itemSeparatorWidth, helper);
+      }
+      return term;
+    };
+    function formatList(textArray) {
+      return textArray.join('\n').replace(/^/gm, Array(itemIndentWidth + 1).join(' '));
+    }
+
+    // Usage
+    let output = [helper.commandUsage(cmd), ''];
+
+    // Description
+    if (cmd.description()) {
+      output = output.concat([cmd.description(), '']);
+    }
+
+    // Arguments
+    const visibleArguments = helper.visibleArguments(cmd);
+    if (visibleArguments.length) {
+      const argumentsList = visibleArguments.map((argument) => {
+        return formatItem(argument.term, argument.description);
+      });
+      output = output.concat(['Arguments:', formatList(argumentsList), '']);
+    }
+
+    // Options
+    const visibleOptions = helper.visibleOptions(cmd);
+    if (visibleOptions.length) {
+      const optionList = visibleOptions.map((option) => {
+        return formatItem(helper.optionTerm(option), helper.optionDescription(option));
+      });
+      output = output.concat(['Options:', formatList(optionList), '']);
+    }
+
+    // Commands
+    const visibleCommands = helper.visibleCommands(cmd);
+    if (visibleCommands.length) {
+      const commandList = visibleCommands.map((cmd) => {
+        return formatItem(helper.commandTerm(cmd), helper.commandDescription(cmd));
+      });
+      output = output.concat(['Commands:', formatList(commandList), '']);
+    }
+
+    return output.join('\n');
+  }
+
   padWidth(cmd, helper) {
     return Math.max(
       helper.largestOptionTermLength(cmd, helper),
@@ -1713,58 +1768,7 @@ Read more on https://git.io/JJc0W`);
 
   helpInformation() {
     const helper = this.createHelpTools();
-    const termWidth = helper.padWidth(this, helper);
-    const columns = helper.columns;
-    const itemIndentWidth = 2;
-    const itemSeparatorWidth = 2;
-    // itemIndent term itemSeparator description
-    const descriptionWidth = columns - termWidth - itemIndentWidth - itemSeparatorWidth;
-    function formatItem(term, description) {
-      if (description) {
-        return helper.pad(term, termWidth + itemSeparatorWidth) + helper.optionalWrap(description, descriptionWidth, termWidth + itemSeparatorWidth, helper);
-      }
-      return term;
-    };
-    function formatList(textArray) {
-      return textArray.join('\n').replace(/^/gm, Array(itemIndentWidth + 1).join(' '));
-    }
-
-    // Usage
-    let output = [helper.commandUsage(this), ''];
-
-    // Description
-    if (this._description) {
-      output = output.concat([this._description, '']);
-    }
-
-    // Arguments
-    const visibleArguments = helper.visibleArguments(this);
-    if (visibleArguments.length) {
-      const argumentsList = visibleArguments.map((argument) => {
-        return formatItem(argument.term, argument.description);
-      });
-      output = output.concat(['Arguments:', formatList(argumentsList), '']);
-    }
-
-    // Options
-    const visibleOptions = helper.visibleOptions(this);
-    if (visibleOptions.length) {
-      const optionList = visibleOptions.map((option) => {
-        return formatItem(helper.optionTerm(option), helper.optionDescription(option));
-      });
-      output = output.concat(['Options:', formatList(optionList), '']);
-    }
-
-    // Commands
-    const visibleCommands = helper.visibleCommands(this);
-    if (visibleCommands.length) {
-      const commandList = visibleCommands.map((cmd) => {
-        return formatItem(helper.commandTerm(cmd), helper.commandDescription(cmd));
-      });
-      output = output.concat(['Commands:', formatList(commandList), '']);
-    }
-
-    return output.join('\n');
+    return helper.formatHelp(this, helper);
   };
 
   /**
