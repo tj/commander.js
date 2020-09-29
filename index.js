@@ -1692,12 +1692,12 @@ Read more on https://git.io/JJc0W`);
 
   helpInformation() {
     const helper = this.createHelpTools();
-    const width = helper.padWidth(this, helper);
+    const termWidth = helper.padWidth(this, helper);
     const columns = helper.columns;
-    const descriptionWidth = columns - width - 4;
+    const descriptionWidth = columns - termWidth - 4;
     function formatItem(term, description) {
       if (description) {
-        return helper.pad(term, width) + '  ' + helper.optionalWrap(description, descriptionWidth, width + 2, helper);
+        return helper.pad(term, termWidth) + '  ' + helper.optionalWrap(description, descriptionWidth, termWidth + 2, helper);
       }
       return term;
     };
