@@ -130,9 +130,9 @@ describe('Command methods that should return this for chaining', () => {
     expect(result).toBe(program);
   });
 
-  test('when call .helpToolsOverrides() then returns this', () => {
+  test('when call .helpOverrides() then returns this', () => {
     const program = new Command();
-    const result = program.helpToolsOverrides({ });
+    const result = program.helpOverrides({ });
     expect(result).toBe(program);
   });
 });

@@ -11,7 +11,7 @@ const fs = require('fs');
 
 // Although this is a class, methods are static in style to allow override using subclass or just functions.
 // (Need to reconcile what is private when decide public/private methods????)
-class HelpTools {
+class Help {
   constructor() {
     this.columns = process.stdout.columns || 80;
   }
@@ -472,7 +472,7 @@ class Command extends EventEmitter {
     this._helpCommandName = 'help';
     this._helpCommandnameAndArgs = 'help [command]';
     this._helpCommandDescription = 'display help for command';
-    this._helpToolsOverrides = {};
+    this._helpOverrides = {};
   }
 
   /**
@@ -528,7 +528,7 @@ class Command extends EventEmitter {
     cmd._helpCommandName = this._helpCommandName;
     cmd._helpCommandnameAndArgs = this._helpCommandnameAndArgs;
     cmd._helpCommandDescription = this._helpCommandDescription;
-    cmd._helpToolsOverrides = this._helpToolsOverrides;
+    cmd._helpOverrides = this._helpOverrides;
     cmd._exitCallback = this._exitCallback;
     cmd._storeOptionsAsProperties = this._storeOptionsAsProperties;
     cmd._passCommandToAction = this._passCommandToAction;
@@ -559,19 +559,19 @@ class Command extends EventEmitter {
   };
 
   /**
-   * You can customise the help with either a subclass by overriding createHelpTools,
-   * or by supplying routines using helpToolsOverrides.
+   * You can customise the help with either a subclass by overriding createHelp,
+   * or by supplying routines using helpOverrides.
    *
-   * @return {HelpTools}
+   * @return {Help}
    * @api public
    */
 
-  createHelpTools() {
-    return Object.assign(new HelpTools(), this._helpToolsOverrides);
+  createHelp() {
+    return Object.assign(new Help(), this._helpOverrides);
   };
 
-  helpToolsOverrides(overrides) {
-    this._helpToolsOverrides = overrides;
+  helpOverrides(overrides) {
+    this._helpOverrides = overrides;
     return this;
   }
 
@@ -1766,7 +1766,7 @@ Read more on https://git.io/JJc0W`);
    */
 
   helpInformation() {
-    const helper = this.createHelpTools();
+    const helper = this.createHelp();
     return helper.formatHelp(this, helper);
   };
 
@@ -1921,7 +1921,7 @@ exports.program = exports; // More explicit access to global command.
 exports.Command = Command;
 exports.Option = Option;
 exports.CommanderError = CommanderError;
-exports.HelpTools = HelpTools;
+exports.Help = Help;
 
 /**
  * Camel-case the given `flag`
