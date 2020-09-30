@@ -158,29 +158,26 @@ class Help {
     }
 
     // Arguments
-    const visibleArguments = helper.visibleArguments(cmd);
-    if (visibleArguments.length) {
-      const argumentsList = visibleArguments.map((argument) => {
-        return formatItem(argument.term, argument.description);
-      });
-      output = output.concat(['Arguments:', formatList(argumentsList), '']);
+    const argumentList = helper.visibleArguments(cmd).map((argument) => {
+      return formatItem(argument.term, argument.description);
+    });
+    if (argumentList.length > 0) {
+      output = output.concat(['Arguments:', formatList(argumentList), '']);
     }
 
     // Options
-    const visibleOptions = helper.visibleOptions(cmd);
-    if (visibleOptions.length) {
-      const optionList = visibleOptions.map((option) => {
-        return formatItem(helper.optionTerm(option), helper.optionDescription(option));
-      });
+    const optionList = helper.visibleOptions(cmd).map((option) => {
+      return formatItem(helper.optionTerm(option), helper.optionDescription(option));
+    });
+    if (optionList.length > 0) {
       output = output.concat(['Options:', formatList(optionList), '']);
     }
 
     // Commands
-    const visibleCommands = helper.visibleCommands(cmd);
-    if (visibleCommands.length) {
-      const commandList = visibleCommands.map((cmd) => {
-        return formatItem(helper.commandTerm(cmd), helper.commandDescription(cmd));
-      });
+    const commandList = helper.visibleCommands(cmd).map((cmd) => {
+      return formatItem(helper.commandTerm(cmd), helper.commandDescription(cmd));
+    });
+    if (commandList.length > 0) {
       output = output.concat(['Commands:', formatList(commandList), '']);
     }
 
