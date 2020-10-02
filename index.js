@@ -14,6 +14,8 @@ const fs = require('fs');
 class Help {
   constructor() {
     this.columns = process.stdout.columns || 80;
+    this.sortCommands = false;
+    this.sortOptions = false;
   }
 
   visibleCommands(cmd) {
@@ -23,6 +25,11 @@ class Help {
         .helpOption(false)
         .description(cmd._helpCommandDescription);
       visibleCommands.push(helpCommand);
+    }
+    if (this.sortCommands) {
+      visibleCommands.sort((a, b) => {
+        return a.name().localeCompare(b.name());
+      });
     }
     return visibleCommands;
   }
@@ -43,6 +50,11 @@ class Help {
         helpOption = new Option(cmd._helpFlags, cmd._helpDescription);
       }
       visibleOptions.push(helpOption);
+    }
+    if (this.sortOptions) {
+      visibleOptions.sort((a, b) => {
+        return a.name().localeCompare(b.name());
+      });
     }
     return visibleOptions;
   }
