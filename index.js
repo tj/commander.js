@@ -568,6 +568,8 @@ class Command extends EventEmitter {
   };
 
   helpOverrides(overrides) {
+    if (overrides === undefined) return this._helpOverrides;
+
     this._helpOverrides = overrides;
     return this;
   }
