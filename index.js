@@ -21,9 +21,12 @@ class Help {
   visibleCommands(cmd) {
     const visibleCommands = cmd.commands.filter(cmd => !cmd._hidden);
     if (cmd._lazyHasImplicitHelpCommand()) {
-      const helpCommand = new Command(cmd._helpCommandnameAndArgs)
+      // Create a command matching the implicit help command.
+      const args = cmd._helpCommandnameAndArgs.split(/ +/);
+      const helpCommand = cmd.createCommand(args.shift())
         .helpOption(false)
         .description(cmd._helpCommandDescription);
+      helpCommand._parseExpectedArgs(args);
       visibleCommands.push(helpCommand);
     }
     if (this.sortCommands) {
@@ -71,11 +74,11 @@ class Help {
 
   /* WIP: */
   commandTerm(cmd) {
-    // Why not just use usage?!
+    // Legacy. Ignores custom usage string, and nested commands.
     const args = cmd._args.map(arg => humanReadableArgName(arg)).join(' ');
     return cmd._name +
       (cmd._aliases[0] ? '|' + cmd._aliases[0] : '') +
-      (cmd.options.length ? ' [options]' : '') + // simple check for non-help option
+      (cmd.options.length ? ' [options]' : '') + // simplistic check for non-help option
       (args ? ' ' + args : '');
   }
 
