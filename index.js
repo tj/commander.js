@@ -153,12 +153,12 @@ class Help {
     const descriptionWidth = columns - termWidth - itemIndentWidth - itemSeparatorWidth;
     function formatItem(term, description) {
       if (description) {
-        return helper.pad(term, termWidth + itemSeparatorWidth) + helper.optionalWrap(description, descriptionWidth, termWidth + itemSeparatorWidth, helper);
+        return term.padEnd(termWidth + itemSeparatorWidth) + helper.optionalWrap(description, descriptionWidth, termWidth + itemSeparatorWidth, helper);
       }
       return term;
     };
     function formatList(textArray) {
-      return textArray.join('\n').replace(/^/gm, Array(itemIndentWidth + 1).join(' '));
+      return textArray.join('\n').replace(/^/gm, ' '.repeat(itemIndentWidth));
     }
 
     // Usage
@@ -205,20 +205,6 @@ class Help {
   };
 
   /**
-   * Pad `str` to `width`.
-   *
-   * @param {string} str
-   * @param {number} width
-   * @return {string}
-   * @api private
-   */
-
-  pad(str, width) {
-    const len = Math.max(0, width - str.length);
-    return str + Array(len + 1).join(' ');
-  }
-
-  /**
    * Wraps the given string with line breaks at the specified width while breaking
    * words and indenting every but the first line on the left.
    *
@@ -229,13 +215,14 @@ class Help {
    * @api private
    */
   wrap(str, width, indent) {
+    const indentString = ' '.repeat(indent);
     const regex = new RegExp('.{1,' + (width - 1) + '}([\\s\u200B]|$)|[^\\s\u200B]+?([\\s\u200B]|$)', 'g');
     const lines = str.match(regex) || [];
     return lines.map((line, i) => {
       if (line.slice(-1) === '\n') {
         line = line.slice(0, line.length - 1);
       }
-      return ((i > 0 && indent) ? Array(indent + 1).join(' ') : '') + line.trimRight();
+      return ((i > 0 && indent) ? indentString : '') + line.trimRight();
     }).join('\n');
   }
 
