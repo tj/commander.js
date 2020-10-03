@@ -244,6 +244,44 @@ myProgram.myFunction();
 const mySub = myProgram.command('sub');
 mySub.myFunction();
 
+// configureHelp
+
+const createHelpInstance: commander.Help = program.createHelp();
+const configureHelpThis: commander.Command = program.configureHelp({
+  sortCommands: true, // override property
+  visibleCommands: (cmd: commander.Command) => [], // override method
+  customProperty: 'boo'
+});
+const helpConfiguration: commander.HelpConfiguration = program.configureHelp();
+
+// Help
+const helper = new commander.Help();
+const helperCommand = new commander.Command();
+const helperOption = new commander.Option('-a, --all');
+
+helper.columns = 3;
+helper.sortCommands = true;
+helper.sortOptions = false;
+
+const commandTermStr: string = helper.commandTerm(helperCommand);
+const commandUsageStr: string = helper.commandUsage(helperCommand);
+const commandDescriptionStr: string = helper.commandDescription(helperCommand);
+const optionTermStr: string = helper.optionTerm(helperOption);
+const optionDescriptionStr: string = helper.optionDescription(helperOption);
+
+const visibleCommands: commander.Command[] = helper.visibleCommands(helperCommand);
+const visibleOptions: commander.Option[] = helper.visibleOptions(helperCommand);
+const visibleArguments: Array<{ term: string; description: string}> = helper.visibleArguments(helperCommand);
+
+const widestCommand: number = helper.largestCommandTermLength(helperCommand, helper);
+const widestOption: number = helper.largestOptionTermLength(helperCommand, helper);
+const widestArgument: number = helper.largestArgTermLength(helperCommand, helper);
+const widest: number = helper.padWidth(helperCommand, helper);
+
+const wrapped: string = helper.wrap('a b c', 50, 3);
+
+const formatted: string = helper.formatHelp(helperCommand, helper);
+
 // Option methods
 
 const baseOption = new commander.Option('-f,--foo', 'foo description');

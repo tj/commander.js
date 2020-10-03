@@ -499,6 +499,7 @@ declare namespace commander {
     Command: CommandConstructor;
     Option: OptionConstructor;
     CommanderError: CommanderErrorConstructor;
+    Help: HelpConstructor;
   }
 
 }
