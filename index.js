@@ -37,7 +37,6 @@ class Help {
     return visibleCommands;
   }
 
-  /* WIP */
   visibleOptions(cmd) {
     const visibleOptions = cmd.options.filter((option) => !option.hidden);
     // Implicit help
@@ -62,7 +61,6 @@ class Help {
     return visibleOptions;
   }
 
-  /* WIP */
   visibleArguments(cmd) {
     if (cmd._argsDescription && cmd._args.length) {
       return cmd._args.map((argument) => {
@@ -72,7 +70,6 @@ class Help {
     return [];
   }
 
-  /* WIP: */
   commandTerm(cmd) {
     // Legacy. Ignores custom usage string, and nested commands.
     const args = cmd._args.map(arg => humanReadableArgName(arg)).join(' ');
