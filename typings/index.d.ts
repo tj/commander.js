@@ -72,6 +72,35 @@ declare namespace commander {
   }
   type OptionConstructor = new (flags: string, description?: string) => Option;
 
+  interface Help {
+    columns: number;
+    sortCommands: boolean;
+    sortOptions: boolean;
+
+    visibleCommands(cmd: Command): Command[];
+    visibleOptions(cmd: Command): Option[];
+    visibleArguments(cmd: Command): Array<{ term: string; description: string}>;
+
+    commandTerm(cmd: Command): string;
+    optionTerm(option: Option): string;
+
+    largestCommandTermLength(cmd: Command, helper: Help): number;
+    largestOptionTermLength(cmd: Command, helper: Help): number;
+    largestArgTermLength(cmd: Command, helper: Help): number;
+    padWidth(cmd: Command, helper: Help): number;
+
+    commandUsage(cmd: Command): string;
+    commandDescription(cmd: Command): string;
+    optionDescription(option: Option): string;
+
+    wrap(str: string, width: number, indent: number): string;
+    optionalWrap(str: string, width: number, indent: number, helper: Help): string;
+
+    formatHelp(cmd: Command, helper: Help): string;
+  }
+  type HelpConstructor = new () => Help;
+  type HelpOverridesConfiguration = Partial<Help>;
+
   interface ParseOptions {
     from: 'node' | 'electron' | 'user';
   }
@@ -171,6 +200,9 @@ declare namespace commander {
      * Register callback to use as replacement for calling process.exit.
      */
     exitOverride(callback?: (err: CommanderError) => never|void): this;
+
+    helpOverrides(): HelpOverridesConfiguration;
+    helpOverrides(overrides: HelpOverridesConfiguration | object): this;
 
     /**
      * Register callback `fn` for the command.
