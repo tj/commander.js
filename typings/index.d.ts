@@ -99,7 +99,9 @@ declare namespace commander {
     formatHelp(cmd: Command, helper: Help): string;
   }
   type HelpConstructor = new () => Help;
-  type HelpOverridesConfiguration = Partial<Help>;
+  interface HelpConfiguration extends Partial<Help> {
+    [key: string]: any; // allow extra custom properties
+  }
 
   interface ParseOptions {
     from: 'node' | 'electron' | 'user';
@@ -201,8 +203,8 @@ declare namespace commander {
      */
     exitOverride(callback?: (err: CommanderError) => never|void): this;
 
-    helpOverrides(): HelpOverridesConfiguration;
-    helpOverrides(overrides: HelpOverridesConfiguration | object): this;
+    configureHelp(configuration: HelpConfiguration): this;
+    configureHelp(): HelpConfiguration;
 
     /**
      * Register callback `fn` for the command.

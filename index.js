@@ -468,7 +468,7 @@ class Command extends EventEmitter {
     this._helpCommandName = 'help';
     this._helpCommandnameAndArgs = 'help [command]';
     this._helpCommandDescription = 'display help for command';
-    this._helpOverrides = {};
+    this._helpConfiguration = {};
   }
 
   /**
@@ -524,7 +524,7 @@ class Command extends EventEmitter {
     cmd._helpCommandName = this._helpCommandName;
     cmd._helpCommandnameAndArgs = this._helpCommandnameAndArgs;
     cmd._helpCommandDescription = this._helpCommandDescription;
-    cmd._helpOverrides = this._helpOverrides;
+    cmd._helpConfiguration = this._helpConfiguration;
     cmd._exitCallback = this._exitCallback;
     cmd._storeOptionsAsProperties = this._storeOptionsAsProperties;
     cmd._passCommandToAction = this._passCommandToAction;
@@ -556,20 +556,20 @@ class Command extends EventEmitter {
 
   /**
    * You can customise the help with either a subclass by overriding createHelp,
-   * or by supplying routines using helpOverrides.
+   * or by supplying routines using configureHelp().
    *
    * @return {Help}
    * @api public
    */
 
   createHelp() {
-    return Object.assign(new Help(), this._helpOverrides);
+    return Object.assign(new Help(), this.configureHelp());
   };
 
-  helpOverrides(overrides) {
-    if (overrides === undefined) return this._helpOverrides;
+  configureHelp(configuration) {
+    if (configuration === undefined) return this._helpConfiguration;
 
-    this._helpOverrides = overrides;
+    this._helpConfiguration = configuration;
     return this;
   }
 
