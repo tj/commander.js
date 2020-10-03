@@ -31,9 +31,9 @@ describe('help command listed in helpInformation', () => {
 
   test('when add custom help command then custom help command', () => {
     const program = new commander.Command();
-    program.addHelpCommand('help command', 'help description');
+    program.addHelpCommand('myHelp', 'help description');
     const helpInformation = program.helpInformation();
-    expect(helpInformation).toMatch(/help command +help description/);
+    expect(helpInformation).toMatch(/myHelp +help description/);
   });
 });
 
