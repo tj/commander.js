@@ -179,7 +179,7 @@ describe('largestOptionTermLength', () => {
     expect(helper.largestOptionTermLength(program, helper)).toEqual(0);
   });
 
-  test('when implicit help option returns length of help flags', () => {
+  test('when just implicit help option returns length of help flags', () => {
     const program = new commander.Command();
     const helper = new commander.Help();
     expect(helper.largestOptionTermLength(program, helper)).toEqual('-h, --help'.length);
@@ -322,4 +322,53 @@ describe('optionDescription', () => {
     const helper = new commander.Help();
     expect(helper.optionDescription(option)).toEqual('description (choices: "one", "two")');
   });
+});
+
+describe.skip('formatHelp', () => {
+  // Might be happy with the Command tests?
+});
+
+describe('padWidth', () => {
+  test('when argument term longest return argument length', () => {
+    const longestThing = 'veryLongThingBiggerThanOthers';
+    const program = new commander.Command();
+    program
+      .arguments(`<${longestThing}>`)
+      .description('description', { veryLongThingBiggerThanOthers: 'desc' })
+      .option('-o');
+    program
+      .command('sub');
+    const helper = new commander.Help();
+    expect(helper.padWidth(program, helper)).toEqual(longestThing.length);
+  });
+
+  test('when option term longest return option length', () => {
+    const longestThing = '--very-long-thing-bigger-than-others';
+    const program = new commander.Command();
+    program
+      .arguments('<file}>')
+      .description('description', { file: 'desc' })
+      .option(longestThing);
+    program
+      .command('sub');
+    const helper = new commander.Help();
+    expect(helper.padWidth(program, helper)).toEqual(longestThing.length);
+  });
+
+  test('when command term longest return command length', () => {
+    const longestThing = 'very-long-thing-bigger-than-others';
+    const program = new commander.Command();
+    program
+      .arguments('<file}>')
+      .description('description', { file: 'desc' })
+      .option('-o');
+    program
+      .command(longestThing);
+    const helper = new commander.Help();
+    expect(helper.padWidth(program, helper)).toEqual(longestThing.length);
+  });
+});
+
+describe.skip('wrap', () => {
+  // To Do
 });
