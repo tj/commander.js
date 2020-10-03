@@ -446,6 +446,8 @@ class Command extends EventEmitter {
     this._exitCallback = null;
     this._aliases = [];
     this._combineFlagAndOptionalValue = true;
+    this._description = '';
+    this._argsDescription = undefined;
 
     this._hidden = false;
     this._hasHelpOption = true;
