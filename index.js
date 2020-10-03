@@ -153,7 +153,7 @@ class Help {
     const descriptionWidth = columns - termWidth - itemIndentWidth - itemSeparatorWidth;
     function formatItem(term, description) {
       if (description) {
-        return term.padEnd(termWidth + itemSeparatorWidth) + helper.optionalWrap(description, descriptionWidth, termWidth + itemSeparatorWidth, helper);
+        return term.padEnd(termWidth + itemSeparatorWidth) + helper.wrap(description, descriptionWidth, termWidth + itemSeparatorWidth, helper);
       }
       return term;
     };
@@ -205,28 +205,6 @@ class Help {
   };
 
   /**
-   * Wraps the given string with line breaks at the specified width while breaking
-   * words and indenting every but the first line on the left.
-   *
-   * @param {string} str
-   * @param {number} width
-   * @param {number} indent
-   * @return {string}
-   * @api private
-   */
-  wrap(str, width, indent) {
-    const indentString = ' '.repeat(indent);
-    const regex = new RegExp('.{1,' + (width - 1) + '}([\\s\u200B]|$)|[^\\s\u200B]+?([\\s\u200B]|$)', 'g');
-    const lines = str.match(regex) || [];
-    return lines.map((line, i) => {
-      if (line.slice(-1) === '\n') {
-        line = line.slice(0, line.length - 1);
-      }
-      return ((i > 0 && indent) ? indentString : '') + line.trimRight();
-    }).join('\n');
-  }
-
-  /**
    * Optionally wrap the given str to a max width of width characters per line
    * while indenting with indent spaces. Do not wrap if insufficient width or
    * string is manually formatted.
@@ -237,7 +215,7 @@ class Help {
    * @return {string}
    * @api private
    */
-  optionalWrap(str, width, indent, helper) {
+  wrap(str, width, indent) {
     // Detect manually wrapped and indented strings by searching for line breaks
     // followed by multiple spaces/tabs.
     if (str.match(/[\n]\s+/)) return str;
@@ -245,7 +223,15 @@ class Help {
     const minWidth = 40;
     if (width < minWidth) return str;
 
-    return helper.wrap(str, width, indent);
+    const indentString = ' '.repeat(indent);
+    const regex = new RegExp('.{1,' + (width - 1) + '}([\\s\u200B]|$)|[^\\s\u200B]+?([\\s\u200B]|$)', 'g');
+    const lines = str.match(regex) || [];
+    return lines.map((line, i) => {
+      if (line.slice(-1) === '\n') {
+        line = line.slice(0, line.length - 1);
+      }
+      return ((i > 0 && indent) ? indentString : '') + line.trimRight();
+    }).join('\n');
   }
 }
 

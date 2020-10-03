@@ -77,24 +77,22 @@ declare namespace commander {
     sortCommands: boolean;
     sortOptions: boolean;
 
+    commandTerm(cmd: Command): string;
+    commandUsage(cmd: Command): string;
+    commandDescription(cmd: Command): string;
+    optionTerm(option: Option): string;
+    optionDescription(option: Option): string;
+
     visibleCommands(cmd: Command): Command[];
     visibleOptions(cmd: Command): Option[];
     visibleArguments(cmd: Command): Array<{ term: string; description: string}>;
-
-    commandTerm(cmd: Command): string;
-    optionTerm(option: Option): string;
 
     largestCommandTermLength(cmd: Command, helper: Help): number;
     largestOptionTermLength(cmd: Command, helper: Help): number;
     largestArgTermLength(cmd: Command, helper: Help): number;
     padWidth(cmd: Command, helper: Help): number;
 
-    commandUsage(cmd: Command): string;
-    commandDescription(cmd: Command): string;
-    optionDescription(option: Option): string;
-
     wrap(str: string, width: number, indent: number): string;
-    optionalWrap(str: string, width: number, indent: number, helper: Help): string;
 
     formatHelp(cmd: Command, helper: Help): string;
   }
