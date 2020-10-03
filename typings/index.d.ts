@@ -201,6 +201,7 @@ declare namespace commander {
      */
     exitOverride(callback?: (err: CommanderError) => never|void): this;
 
+    createHelp(): Help;
     configureHelp(configuration: HelpConfiguration): this;
     configureHelp(): HelpConfiguration;
 
