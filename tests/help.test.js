@@ -269,3 +269,19 @@ describe('commandUsage', () => {
     expect(helper.commandUsage(program)).toEqual('Usage: program [options] <file>');
   });
 });
+
+describe('commandDescription', () => {
+  test('when program has no description then undefined', () => {
+    const program = new commander.Command();
+    const helper = new commander.Help();
+    expect(helper.commandDescription(program)).toBeUndefined();
+  });
+
+  test('when program has description then return description', () => {
+    const description = 'womble';
+    const program = new commander.Command();
+    program.description(description);
+    const helper = new commander.Help();
+    expect(helper.commandDescription(program)).toEqual(description);
+  });
+});
