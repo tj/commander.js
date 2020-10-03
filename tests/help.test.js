@@ -271,17 +271,55 @@ describe('commandUsage', () => {
 });
 
 describe('commandDescription', () => {
-  test('when program has no description then undefined', () => {
+  test('when program has no description then empty string', () => {
     const program = new commander.Command();
     const helper = new commander.Help();
-    expect(helper.commandDescription(program)).toBeUndefined();
+    expect(helper.commandDescription(program)).toEqual('');
   });
 
   test('when program has description then return description', () => {
-    const description = 'womble';
+    const description = 'description';
     const program = new commander.Command();
     program.description(description);
     const helper = new commander.Help();
     expect(helper.commandDescription(program)).toEqual(description);
+  });
+});
+
+describe('optionDescription', () => {
+  test('when option has no description then empty string', () => {
+    const option = new commander.Option('-a');
+    const helper = new commander.Help();
+    expect(helper.optionDescription(option)).toEqual('');
+  });
+
+  test('when option has description then return description', () => {
+    const description = 'description';
+    const option = new commander.Option('-a', description);
+    const helper = new commander.Help();
+    expect(helper.optionDescription(option)).toEqual(description);
+  });
+
+  test('when option has default value then return description and default value', () => {
+    const description = 'description';
+    const option = new commander.Option('-a', description).default('default');
+    const helper = new commander.Help();
+    expect(helper.optionDescription(option)).toEqual('description (default: "default")');
+  });
+
+  test('when option has default value description then return description and custom default description', () => {
+    const description = 'description';
+    const defaultValueDescription = 'custom';
+    const option = new commander.Option('-a', description).default('default value', defaultValueDescription);
+    const helper = new commander.Help();
+    expect(helper.optionDescription(option)).toEqual(`description (default: ${defaultValueDescription})`);
+  });
+
+  test('when option has choices then return description and choices', () => {
+    const description = 'description';
+    const choices = ['one', 'two'];
+    const option = new commander.Option('-a', description).choices(choices);
+    const helper = new commander.Help();
+    expect(helper.optionDescription(option)).toEqual('description (choices: "one", "two")');
   });
 });
