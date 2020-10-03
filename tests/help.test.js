@@ -150,8 +150,8 @@ describe('largestCommandTermLength', () => {
     expect(helper.largestCommandTermLength(program, helper)).toEqual(helper.commandTerm(sub).length);
   });
 
-  test('when multiple commands and no help then returns longest length', () => {
-    const longestCommandName = 'alphabet-soup';
+  test('when multiple commands then returns longest length', () => {
+    const longestCommandName = 'alphabet-soup <longer_than_help>';
     const program = new commander.Command();
     program
       .addHelpCommand(false)
@@ -162,11 +162,65 @@ describe('largestCommandTermLength', () => {
     expect(helper.largestCommandTermLength(program, helper)).toEqual(longestCommandName.length);
   });
 
-  test('when jsut help command then returns length of help term', () => {
+  test('when just help command then returns length of help term', () => {
     const program = new commander.Command();
     program
       .addHelpCommand(true);
     const helper = new commander.Help();
     expect(helper.largestCommandTermLength(program, helper)).toEqual('help [command]'.length);
+  });
+});
+
+describe('largestOptionTermLength', () => {
+  test('when no option then returns zero', () => {
+    const program = new commander.Command();
+    program.helpOption(false);
+    const helper = new commander.Help();
+    expect(helper.largestOptionTermLength(program, helper)).toEqual(0);
+  });
+
+  test('when implicit help option returns length of help flags', () => {
+    const program = new commander.Command();
+    const helper = new commander.Help();
+    expect(helper.largestOptionTermLength(program, helper)).toEqual('-h, --help'.length);
+  });
+
+  test('when multiple option then returns longest length', () => {
+    const longestOptionFlags = '-l, --longest <value>';
+    const program = new commander.Command();
+    program
+      .option('--before', 'optional description of flags')
+      .option(longestOptionFlags)
+      .option('--after');
+    const helper = new commander.Help();
+    expect(helper.largestOptionTermLength(program, helper)).toEqual(longestOptionFlags.length);
+  });
+});
+
+describe('largestArgTermLength', () => {
+  test('when no arguments then returns zero', () => {
+    const program = new commander.Command();
+    const helper = new commander.Help();
+    expect(helper.largestArgTermLength(program, helper)).toEqual(0);
+  });
+
+  test('when has argument description then returns argument length', () => {
+    const program = new commander.Command();
+    program.arguments('<wonder>');
+    program.description('dummy', { wonder: 'wonder description' });
+    const helper = new commander.Help();
+    expect(helper.largestArgTermLength(program, helper)).toEqual('wonder'.length);
+  });
+
+  test('when has multiple argument descriptions then returns longest', () => {
+    const program = new commander.Command();
+    program.arguments('<alpha> <longest> <beta>');
+    program.description('dummy', {
+      alpha: 'x',
+      longest: 'x',
+      beta: 'x'
+    });
+    const helper = new commander.Help();
+    expect(helper.largestArgTermLength(program, helper)).toEqual('longest'.length);
   });
 });
