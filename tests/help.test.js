@@ -3,8 +3,22 @@ const commander = require('../');
 // These are tests of the Help class, not of the Command help.
 // There is some overlap with the higher level Command tests (which predate Help).
 
-describe.skip('columns', () => {
-  // To Do
+describe('columns', () => {
+  test('when default then columns from stdout', () => {
+    const hold = process.stdout.columns;
+    process.stdout.columns = 123;
+    const program = new commander.Command();
+    const helper = program.createHelp();
+    expect(helper.columns).toEqual(123);
+    process.stdout.columns = hold;
+  });
+
+  test('when configure columns then value from user', () => {
+    const program = new commander.Command();
+    program.configureHelp({ columns: 321 });
+    const helper = program.createHelp();
+    expect(helper.columns).toEqual(321);
+  });
 });
 
 describe('sortCommands', () => {
@@ -435,6 +449,48 @@ describe('padWidth', () => {
   });
 });
 
-describe.skip('wrap', () => {
-  // To Do
+describe('wrap', () => {
+  test('when string fits into width then no wrap', () => {
+    const text = 'a '.repeat(24) + 'a';
+    const helper = new commander.Help();
+    const wrapped = helper.wrap(text, 50, 3);
+    expect(wrapped).toEqual(text);
+  });
+
+  test('when string exceeds width then wrap', () => {
+    const text = 'a '.repeat(30) + 'a';
+    const helper = new commander.Help();
+    const wrapped = helper.wrap(text, 50, 0);
+    expect(wrapped).toEqual(`${'a '.repeat(24)}a
+${'a '.repeat(5)}a`);
+  });
+
+  test('when string exceeds width then wrap and indent', () => {
+    const text = 'a '.repeat(30) + 'a';
+    const helper = new commander.Help();
+    const wrapped = helper.wrap(text, 50, 10);
+    expect(wrapped).toEqual(`${'a '.repeat(24)}a
+${' '.repeat(10)}${'a '.repeat(5)}a`);
+  });
+
+  test('when width < 40 then do not wrap', () => {
+    const text = 'a '.repeat(30) + 'a';
+    const helper = new commander.Help();
+    const wrapped = helper.wrap(text, 39, 0);
+    expect(wrapped).toEqual(text);
+  });
+
+  test('when text has line breaks then respect and indent', () => {
+    const text = 'foo\nbar';
+    const helper = new commander.Help();
+    const wrapped = helper.wrap(text, 50, 3);
+    expect(wrapped).toEqual('foo\n   bar');
+  });
+
+  test('when text already formatted with line breaks and indent then do not touch', () => {
+    const text = 'a '.repeat(25) + '\n   ' + 'a '.repeat(25) + 'a';
+    const helper = new commander.Help();
+    const wrapped = helper.wrap(text, 39, 0);
+    expect(wrapped).toEqual(text);
+  });
 });
