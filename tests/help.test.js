@@ -98,27 +98,75 @@ describe('optionTerm', () => {
     const flags = '-s';
     const option = new commander.Option(flags);
     const helper = new commander.Help();
-    expect(helper.optionTerm(option)).toBe(flags);
+    expect(helper.optionTerm(option)).toEqual(flags);
   });
 
   test('when --short flags then returns flags', () => {
     const flags = '--short';
     const option = new commander.Option(flags);
     const helper = new commander.Help();
-    expect(helper.optionTerm(option)).toBe(flags);
+    expect(helper.optionTerm(option)).toEqual(flags);
   });
 
   test('when -s,--short flags then returns flags', () => {
     const flags = '-s,--short';
     const option = new commander.Option(flags);
     const helper = new commander.Help();
-    expect(helper.optionTerm(option)).toBe(flags);
+    expect(helper.optionTerm(option)).toEqual(flags);
   });
 
   test('when -s|--short flags then returns flags', () => {
     const flags = '-s|--short';
     const option = new commander.Option(flags);
     const helper = new commander.Help();
-    expect(helper.optionTerm(option)).toBe(flags);
+    expect(helper.optionTerm(option)).toEqual(flags);
+  });
+});
+
+describe('largestCommandTermLength', () => {
+  test('when no commands then returns zero', () => {
+    const program = new commander.Command();
+    const helper = new commander.Help();
+    expect(helper.largestCommandTermLength(program, helper)).toEqual(0);
+  });
+
+  test('when command and no help then returns length of term', () => {
+    const sub = new commander.Command('sub');
+    const program = new commander.Command();
+    program
+      .addHelpCommand(false)
+      .addCommand(sub);
+    const helper = new commander.Help();
+    expect(helper.largestCommandTermLength(program, helper)).toEqual(helper.commandTerm(sub).length);
+  });
+
+  test('when command with arg and no help then returns length of term', () => {
+    const sub = new commander.Command('sub <file)');
+    const program = new commander.Command();
+    program
+      .addHelpCommand(false)
+      .addCommand(sub);
+    const helper = new commander.Help();
+    expect(helper.largestCommandTermLength(program, helper)).toEqual(helper.commandTerm(sub).length);
+  });
+
+  test('when multiple commands and no help then returns longest length', () => {
+    const longestCommandName = 'alphabet-soup';
+    const program = new commander.Command();
+    program
+      .addHelpCommand(false)
+      .command('before', 'desc')
+      .command(longestCommandName, 'desc')
+      .command('after', 'desc');
+    const helper = new commander.Help();
+    expect(helper.largestCommandTermLength(program, helper)).toEqual(longestCommandName.length);
+  });
+
+  test('when jsut help command then returns length of help term', () => {
+    const program = new commander.Command();
+    program
+      .addHelpCommand(true);
+    const helper = new commander.Help();
+    expect(helper.largestCommandTermLength(program, helper)).toEqual('help [command]'.length);
   });
 });
