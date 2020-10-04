@@ -165,4 +165,11 @@ describe('.version', () => {
       program.parse(['node', 'test', '--version']);
     }).toThrow(myVersion);
   });
+
+  test('when specify version then can get version', () => {
+    const myVersion = '1.2.3';
+    const program = new commander.Command();
+    program.version(myVersion);
+    expect(program.version()).toEqual(myVersion);
+  });
 });
