@@ -279,7 +279,7 @@ class Help {
   }
 
   /**
-   * Calculate the pad width from the maximum term length..
+   * Calculate the pad width from the maximum term length.
    *
    * @param {Command} cmd
    * @param {Help} helper
