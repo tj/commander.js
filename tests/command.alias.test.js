@@ -73,3 +73,17 @@ test('when use second of aliases then action handler called', () => {
   program.parse(['dir'], { from: 'user' });
   expect(actionMock).toHaveBeenCalled();
 });
+
+test('when set alias then can get alias', () => {
+  const program = new commander.Command();
+  const alias = 'abcde';
+  program.alias(alias);
+  expect(program.alias()).toEqual(alias);
+});
+
+test('when set aliases then can get aliases', () => {
+  const program = new commander.Command();
+  const aliases = ['a', 'b'];
+  program.aliases(aliases);
+  expect(program.aliases()).toEqual(aliases);
+});
