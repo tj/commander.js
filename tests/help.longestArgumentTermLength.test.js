@@ -3,11 +3,11 @@ const commander = require('../');
 // These are tests of the Help class, not of the Command help.
 // There is some overlap with the higher level Command tests (which predate Help).
 
-describe('largestArgTermLength', () => {
+describe('longestArgumentTermLength', () => {
   test('when no arguments then returns zero', () => {
     const program = new commander.Command();
     const helper = new commander.Help();
-    expect(helper.largestArgTermLength(program, helper)).toEqual(0);
+    expect(helper.longestArgumentTermLength(program, helper)).toEqual(0);
   });
 
   test('when has argument description then returns argument length', () => {
@@ -15,7 +15,7 @@ describe('largestArgTermLength', () => {
     program.arguments('<wonder>');
     program.description('dummy', { wonder: 'wonder description' });
     const helper = new commander.Help();
-    expect(helper.largestArgTermLength(program, helper)).toEqual('wonder'.length);
+    expect(helper.longestArgumentTermLength(program, helper)).toEqual('wonder'.length);
   });
 
   test('when has multiple argument descriptions then returns longest', () => {
@@ -27,6 +27,6 @@ describe('largestArgTermLength', () => {
       beta: 'x'
     });
     const helper = new commander.Help();
-    expect(helper.largestArgTermLength(program, helper)).toEqual('longest'.length);
+    expect(helper.longestArgumentTermLength(program, helper)).toEqual('longest'.length);
   });
 });

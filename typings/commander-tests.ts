@@ -273,9 +273,9 @@ const visibleCommands: commander.Command[] = helper.visibleCommands(helperComman
 const visibleOptions: commander.Option[] = helper.visibleOptions(helperCommand);
 const visibleArguments: Array<{ term: string; description: string}> = helper.visibleArguments(helperCommand);
 
-const widestCommand: number = helper.largestCommandTermLength(helperCommand, helper);
-const widestOption: number = helper.largestOptionTermLength(helperCommand, helper);
-const widestArgument: number = helper.largestArgTermLength(helperCommand, helper);
+const widestCommand: number = helper.longestCommandTermLength(helperCommand, helper);
+const widestOption: number = helper.longestOptionTermLength(helperCommand, helper);
+const widestArgument: number = helper.longestArgumentTermLength(helperCommand, helper);
 const widest: number = helper.padWidth(helperCommand, helper);
 
 const wrapped: string = helper.wrap('a b c', 50, 3);

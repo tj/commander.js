@@ -87,9 +87,9 @@ declare namespace commander {
     visibleOptions(cmd: Command): Option[];
     visibleArguments(cmd: Command): Array<{ term: string; description: string}>;
 
-    largestCommandTermLength(cmd: Command, helper: Help): number;
-    largestOptionTermLength(cmd: Command, helper: Help): number;
-    largestArgTermLength(cmd: Command, helper: Help): number;
+    longestCommandTermLength(cmd: Command, helper: Help): number;
+    longestOptionTermLength(cmd: Command, helper: Help): number;
+    longestArgumentTermLength(cmd: Command, helper: Help): number;
     padWidth(cmd: Command, helper: Help): number;
 
     wrap(str: string, width: number, indent: number): string;

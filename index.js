@@ -10,7 +10,6 @@ const fs = require('fs');
 // @ts-check
 
 // Although this is a class, methods are static in style to allow override using subclass or just functions.
-// (Need to reconcile what is private when decide public/private methods????)
 class Help {
   constructor() {
     this.columns = process.stdout.columns || 80;
@@ -18,14 +17,21 @@ class Help {
     this.sortOptions = false;
   }
 
+  /**
+   * Get an array of the visible subcommands. Includes a placeholder for the implicit help command, if there is one.
+   *
+   * @param {Command} cmd
+   * @returns {Command[]}
+   */
+
   visibleCommands(cmd) {
     const visibleCommands = cmd.commands.filter(cmd => !cmd._hidden);
     if (cmd._lazyHasImplicitHelpCommand()) {
       // Create a command matching the implicit help command.
       const args = cmd._helpCommandnameAndArgs.split(/ +/);
       const helpCommand = cmd.createCommand(args.shift())
-        .helpOption(false)
-        .description(cmd._helpCommandDescription);
+        .helpOption(false);
+      helpCommand.description(cmd._helpCommandDescription);
       helpCommand._parseExpectedArgs(args);
       visibleCommands.push(helpCommand);
     }
@@ -36,6 +42,13 @@ class Help {
     }
     return visibleCommands;
   }
+
+  /**
+   * Get an array of the visible options. Includes a placeholder for the implicit help option, if there is one.
+   *
+   * @param {Command} cmd
+   * @returns {Option[]}
+   */
 
   visibleOptions(cmd) {
     const visibleOptions = cmd.options.filter((option) => !option.hidden);
@@ -61,6 +74,13 @@ class Help {
     return visibleOptions;
   }
 
+  /**
+   * Get an array of the arguments which have descriptions.
+   *
+   * @param {Command} cmd
+   * @returns {{ term: string, description:string }[]}
+   */
+
   visibleArguments(cmd) {
     if (cmd._argsDescription && cmd._args.length) {
       return cmd._args.map((argument) => {
@@ -69,6 +89,13 @@ class Help {
     }
     return [];
   }
+
+  /**
+   * Get the command term to show in the list of subcommands.
+   *
+   * @param {Command} cmd
+   * @returns {string}
+   */
 
   commandTerm(cmd) {
     // Legacy. Ignores custom usage string, and nested commands.
@@ -79,27 +106,65 @@ class Help {
       (args ? ' ' + args : '');
   }
 
+  /**
+   * Get the option term to show in the list of options.
+   *
+   * @param {Option} option
+   * @returns {string}
+   */
+
   optionTerm(option) {
     return `${option.flags}`;
   }
 
-  largestCommandTermLength(cmd, helper) {
+  /**
+   * Get the longest command term length.
+   *
+   * @param {Command} cmd
+   * @param {Help} helper
+   * @returns {number}
+   */
+
+  longestCommandTermLength(cmd, helper) {
     return helper.visibleCommands(cmd).reduce((max, command) => {
       return Math.max(max, helper.commandTerm(command).length);
     }, 0);
   };
 
-  largestOptionTermLength(cmd, helper) {
+  /**
+   * Get the longest option term length.
+   *
+   * @param {Command} cmd
+   * @param {Help} helper
+   * @returns {number}
+   */
+
+  longestOptionTermLength(cmd, helper) {
     return helper.visibleOptions(cmd).reduce((max, option) => {
       return Math.max(max, helper.optionTerm(option).length);
     }, 0);
   };
 
-  largestArgTermLength(cmd, helper) {
+  /**
+   * Get the longest argument term length.
+   *
+   * @param {Command} cmd
+   * @param {Help} helper
+   * @returns {number}
+   */
+
+  longestArgumentTermLength(cmd, helper) {
     return helper.visibleArguments(cmd).reduce((max, argument) => {
       return Math.max(max, argument.term.length);
     }, 0);
   };
+
+  /**
+   * Get the command usage to be displayed at the top of the built-in help.
+   *
+   * @param {Command} cmd
+   * @returns {string}
+   */
 
   commandUsage(cmd) {
     // Usage
@@ -114,15 +179,23 @@ class Help {
     return 'Usage: ' + parentCmdNames + cmdName + ' ' + cmd.usage();
   }
 
+  /**
+   * Get the command description to show in the list of subcommands.
+   *
+   * @param {Command} cmd
+   * @returns {string}
+   */
+
   commandDescription(cmd) {
+    // @ts-ignore: overloaded return type
     return cmd.description();
   }
 
   /**
-   * Calculate the full description, including defaultValue etc.
+   * Get the option description to show in the list of options.
    *
+   * @param {Option} option
    * @return {string}
-   * @api public
    */
 
   optionDescription(option) {
@@ -144,6 +217,14 @@ class Help {
     return `${option.description}`;
   };
 
+  /**
+   * Generate the built-in help text.
+   *
+   * @param {Command} cmd
+   * @param {Help} helper
+   * @returns {string}
+   */
+
   formatHelp(cmd, helper) {
     const termWidth = helper.padWidth(cmd, helper);
     const columns = helper.columns;
@@ -153,7 +234,7 @@ class Help {
     const descriptionWidth = columns - termWidth - itemIndentWidth - itemSeparatorWidth;
     function formatItem(term, description) {
       if (description) {
-        return term.padEnd(termWidth + itemSeparatorWidth) + helper.wrap(description, descriptionWidth, termWidth + itemSeparatorWidth, helper);
+        return term.padEnd(termWidth + itemSeparatorWidth) + helper.wrap(description, descriptionWidth, termWidth + itemSeparatorWidth);
       }
       return term;
     };
@@ -166,6 +247,7 @@ class Help {
 
     // Description
     if (cmd.description()) {
+      // @ts-ignore: overloaded return type
       output = output.concat([cmd.description(), '']);
     }
 
@@ -196,11 +278,19 @@ class Help {
     return output.join('\n');
   }
 
+  /**
+   * Calculate the pad width from the maximum term length..
+   *
+   * @param {Command} cmd
+   * @param {Help} helper
+   * @returns {number}
+   */
+
   padWidth(cmd, helper) {
     return Math.max(
-      helper.largestOptionTermLength(cmd, helper),
-      helper.largestCommandTermLength(cmd, helper),
-      helper.largestArgTermLength(cmd, helper)
+      helper.longestOptionTermLength(cmd, helper),
+      helper.longestCommandTermLength(cmd, helper),
+      helper.longestArgumentTermLength(cmd, helper)
     );
   };
 
@@ -213,8 +303,8 @@ class Help {
    * @param {number} width
    * @param {number} indent
    * @return {string}
-   * @api private
    */
+
   wrap(str, width, indent) {
     // Detect manually wrapped and indented strings by searching for line breaks
     // followed by multiple spaces/tabs.
@@ -241,7 +331,6 @@ class Option {
    *
    * @param {string} flags
    * @param {string} [description]
-   * @api public
    */
 
   constructor(flags, description) {
@@ -273,7 +362,6 @@ class Option {
    * @param {any} value
    * @param {string} [description]
    * @return {Option}
-   * @api public
    */
 
   default(value, description) {
@@ -287,7 +375,6 @@ class Option {
    *
    * @param {Function} [fn]
    * @return {Option}
-   * @api public
    */
 
   argParser(fn) {
@@ -300,7 +387,6 @@ class Option {
    *
    * @param {boolean} [value]
    * @return {Option}
-   * @api public
    */
 
   makeOptionMandatory(value) {
@@ -313,7 +399,6 @@ class Option {
    *
    * @param {boolean} [value]
    * @return {Option}
-   * @api public
    */
 
   hideHelp(value) {
@@ -326,7 +411,6 @@ class Option {
    * Intended for use from custom argument processing functions.
    *
    * @param {string} message
-   * @api public
    */
   argumentRejected(message) {
     throw new CommanderError(1, 'commander.optionArgumentRejected', message);
@@ -337,7 +421,6 @@ class Option {
    *
    * @param {string[]} values
    * @return {Option}
-   * @api public
    */
 
   choices(values) {
@@ -355,7 +438,6 @@ class Option {
    * Return option name.
    *
    * @return {string}
-   * @api public
    */
 
   name() {
@@ -418,7 +500,6 @@ class Command extends EventEmitter {
    * Initialize a new `Command`.
    *
    * @param {string} [name]
-   * @api public
    */
 
   constructor(name) {
@@ -483,7 +564,6 @@ class Command extends EventEmitter {
    * @param {Object|string} [actionOptsOrExecDesc] - configuration options (for action), or description (for executable)
    * @param {Object} [execOpts] - configuration options (for executable)
    * @return {Command} returns new command for action handler, or `this` for executable command
-   * @api public
    */
 
   command(nameAndArgs, actionOptsOrExecDesc, execOpts) {
@@ -535,7 +615,6 @@ class Command extends EventEmitter {
    *
    * @param {string} [name]
    * @return {Command} new command
-   * @api public
    */
 
   createCommand(name) {
@@ -547,7 +626,6 @@ class Command extends EventEmitter {
    * or by supplying routines using configureHelp().
    *
    * @return {Help}
-   * @api public
    */
 
   createHelp() {
@@ -569,7 +647,6 @@ class Command extends EventEmitter {
    * @param {Command} cmd - new subcommand
    * @param {Object} [opts] - configuration options
    * @return {Command} `this` command for chaining
-   * @api public
    */
 
   addCommand(cmd, opts) {
@@ -598,8 +675,6 @@ class Command extends EventEmitter {
 
   /**
    * Define argument syntax for the command.
-   *
-   * @api public
    */
 
   arguments(desc) {
@@ -614,7 +689,6 @@ class Command extends EventEmitter {
    *    addHelpCommand('help [cmd]', 'display help for [cmd]'); // force on with custom details
    *
    * @return {Command} `this` command for chaining
-   * @api public
    */
 
   addHelpCommand(enableOrNameAndArgs, description) {
@@ -693,7 +767,6 @@ class Command extends EventEmitter {
    *
    * @param {Function} [fn] optional callback which will be passed a CommanderError, defaults to throwing
    * @return {Command} `this` command for chaining
-   * @api public
    */
 
   exitOverride(fn) {
@@ -743,7 +816,6 @@ class Command extends EventEmitter {
    *
    * @param {Function} fn
    * @return {Command} `this` command for chaining
-   * @api public
    */
 
   action(fn) {
@@ -963,7 +1035,6 @@ Read more on https://git.io/JJc0W`);
    * @param {Function|*} [fn] - custom option processing function or default value
    * @param {*} [defaultValue]
    * @return {Command} `this` command for chaining
-   * @api public
    */
 
   option(flags, description, fn, defaultValue) {
@@ -981,7 +1052,6 @@ Read more on https://git.io/JJc0W`);
   * @param {Function|*} [fn] - custom option processing function or default value
   * @param {*} [defaultValue]
   * @return {Command} `this` command for chaining
-  * @api public
   */
 
   requiredOption(flags, description, fn, defaultValue) {
@@ -998,7 +1068,6 @@ Read more on https://git.io/JJc0W`);
    *    .combineFlagAndOptionalValue(false) // `-fb` is treated like `-f -b`
    *
    * @param {Boolean} [arg] - if `true` or omitted, an optional value can be specified directly after the flag.
-   * @api public
    */
   combineFlagAndOptionalValue(arg) {
     this._combineFlagAndOptionalValue = (arg === undefined) || arg;
@@ -1010,7 +1079,6 @@ Read more on https://git.io/JJc0W`);
    *
    * @param {Boolean} [arg] - if `true` or omitted, no error will be thrown
    * for unknown options.
-   * @api public
    */
   allowUnknownOption(arg) {
     this._allowUnknownOption = (arg === undefined) || arg;
@@ -1023,7 +1091,6 @@ Read more on https://git.io/JJc0W`);
     *
     * @param {boolean} value
     * @return {Command} `this` command for chaining
-    * @api public
     */
 
   storeOptionsAsProperties(value) {
@@ -1041,7 +1108,6 @@ Read more on https://git.io/JJc0W`);
     *
     * @param {boolean} value
     * @return {Command} `this` command for chaining
-    * @api public
     */
 
   passCommandToAction(value) {
@@ -1096,7 +1162,6 @@ Read more on https://git.io/JJc0W`);
    * @param {Object} [parseOptions] - optionally specify style of options with from: node/user/electron
    * @param {string} [parseOptions.from] - where the args are from: 'node', 'user', 'electron'
    * @return {Command} `this` command for chaining
-   * @api public
    */
 
   parse(argv, parseOptions) {
@@ -1108,7 +1173,7 @@ Read more on https://git.io/JJc0W`);
     // Default to using process.argv
     if (argv === undefined) {
       argv = process.argv;
-      // @ts-ignore
+      // @ts-ignore: unknown property
       if (process.versions && process.versions.electron) {
         parseOptions.from = 'electron';
       }
@@ -1124,7 +1189,7 @@ Read more on https://git.io/JJc0W`);
         userArgs = argv.slice(2);
         break;
       case 'electron':
-        // @ts-ignore
+        // @ts-ignore: unknown property
         if (process.defaultApp) {
           this._scriptPath = argv[1];
           userArgs = argv.slice(2);
@@ -1138,9 +1203,9 @@ Read more on https://git.io/JJc0W`);
       default:
         throw new Error(`unexpected parse option { from: '${parseOptions.from}' }`);
     }
-    // @ts-ignore
+    // @ts-ignore: unknown property
     if (!this._scriptPath && process.mainModule) {
-      // @ts-ignore
+      // @ts-ignore: unknown property
       this._scriptPath = process.mainModule.filename;
     }
 
@@ -1171,7 +1236,6 @@ Read more on https://git.io/JJc0W`);
    * @param {Object} [parseOptions]
    * @param {string} parseOptions.from - where the args are from: 'node', 'user', 'electron'
    * @return {Promise}
-   * @api public
    */
 
   parseAsync(argv, parseOptions) {
@@ -1196,9 +1260,9 @@ Read more on https://git.io/JJc0W`);
     // Want the entry script as the reference for command name and directory for searching for other files.
     let scriptPath = this._scriptPath;
     // Fallback in case not set, due to how Command created or called.
-    // @ts-ignore
+    // @ts-ignore: unknown property
     if (!scriptPath && process.mainModule) {
-      // @ts-ignore
+      // @ts-ignore: unknown property
       scriptPath = process.mainModule.filename;
     }
 
@@ -1424,7 +1488,6 @@ Read more on https://git.io/JJc0W`);
    *
    * @param {String[]} argv
    * @return {{operands: String[], unknown: String[]}}
-   * @api public
    */
 
   parseOptions(argv) {
@@ -1520,7 +1583,6 @@ Read more on https://git.io/JJc0W`);
    * Return an object containing options as key-value pairs
    *
    * @return {Object}
-   * @api public
    */
   opts() {
     if (this._storeOptionsAsProperties) {
@@ -1627,7 +1689,6 @@ Read more on https://git.io/JJc0W`);
    * @param {string} [flags]
    * @param {string} [description]
    * @return {this | string} `this` command for chaining, or version string if no arguments
-   * @api public
    */
 
   version(str, flags, description) {
@@ -1648,12 +1709,10 @@ Read more on https://git.io/JJc0W`);
   /**
    * Set the description to `str`.
    *
-   * @param {string} str
+   * @param {string} [str]
    * @param {Object} [argsDescription]
    * @return {string|Command}
-   * @api public
    */
-
   description(str, argsDescription) {
     if (str === undefined && argsDescription === undefined) return this._description;
     this._description = str;
@@ -1668,7 +1727,6 @@ Read more on https://git.io/JJc0W`);
    *
    * @param {string} [alias]
    * @return {string|Command}
-   * @api public
    */
 
   alias(alias) {
@@ -1693,7 +1751,6 @@ Read more on https://git.io/JJc0W`);
    *
    * @param {string[]} [aliases]
    * @return {string[]|Command}
-   * @api public
    */
 
   aliases(aliases) {
@@ -1709,7 +1766,6 @@ Read more on https://git.io/JJc0W`);
    *
    * @param {string} [str]
    * @return {String|Command}
-   * @api public
    */
 
   usage(str) {
@@ -1735,7 +1791,6 @@ Read more on https://git.io/JJc0W`);
    *
    * @param {string} [str]
    * @return {String|Command}
-   * @api public
    */
 
   name(str) {
@@ -1748,7 +1803,6 @@ Read more on https://git.io/JJc0W`);
    * Return program help documentation.
    *
    * @return {string}
-   * @api public
    */
 
   helpInformation() {
@@ -1780,7 +1834,6 @@ Read more on https://git.io/JJc0W`);
    * Outputs built-in help, and custom text added using `.addHelpText()`.
    *
    * @param {{ error: boolean } | Function} [contextOptions] - pass {error:true} to write to stderr instead of stdout
-   * @api public
    */
 
   outputHelp(contextOptions) {
@@ -1823,7 +1876,6 @@ Read more on https://git.io/JJc0W`);
    * @param {string | boolean} [flags]
    * @param {string} [description]
    * @return {Command} `this` command for chaining
-   * @api public
    */
 
   helpOption(flags, description) {
@@ -1847,7 +1899,6 @@ Read more on https://git.io/JJc0W`);
    * Outputs built-in help, and custom text added using `.addHelpText()`.
    *
    * @param {{ error: boolean }} [contextOptions] - pass {error:true} to write to stderr instead of stdout
-   * @api public
    */
 
   help(contextOptions) {
