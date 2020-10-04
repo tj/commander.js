@@ -36,3 +36,35 @@ describe('visibleOptions', () => {
     expect(visibleOptionNames).toEqual(['visible', 'help']);
   });
 });
+
+describe('implicit help', () => {
+  test('when default then help term is -h, --help', () => {
+    const program = new commander.Command();
+    const helper = new commander.Help();
+    const implicitHelp = helper.visibleOptions(program)[0];
+    expect(helper.optionTerm(implicitHelp)).toEqual('-h, --help');
+  });
+
+  test('when short flag obscured then help term is --help', () => {
+    const program = new commander.Command();
+    program.addOption(new commander.Option('-h, --huge').hideHelp());
+    const helper = new commander.Help();
+    const implicitHelp = helper.visibleOptions(program)[0];
+    expect(helper.optionTerm(implicitHelp)).toEqual('--help');
+  });
+
+  test('when long flag obscured then help term is --h', () => {
+    const program = new commander.Command();
+    program.addOption(new commander.Option('-H, --help').hideHelp());
+    const helper = new commander.Help();
+    const implicitHelp = helper.visibleOptions(program)[0];
+    expect(helper.optionTerm(implicitHelp)).toEqual('-h');
+  });
+
+  test('when help flags obscured then implicit help hidden', () => {
+    const program = new commander.Command();
+    program.addOption(new commander.Option('-h, --help').hideHelp());
+    const helper = new commander.Help();
+    expect(helper.visibleOptions(program)).toEqual([]);
+  });
+});
