@@ -3,11 +3,11 @@ const commander = require('../');
 // These are tests of the Help class, not of the Command help.
 // There is some overlap with the higher level Command tests (which predate Help).
 
-describe('longestCommandTermLength', () => {
+describe('longestSubcommandTermLength', () => {
   test('when no commands then returns zero', () => {
     const program = new commander.Command();
     const helper = new commander.Help();
-    expect(helper.longestCommandTermLength(program, helper)).toEqual(0);
+    expect(helper.longestSubcommandTermLength(program, helper)).toEqual(0);
   });
 
   test('when command and no help then returns length of term', () => {
@@ -17,7 +17,7 @@ describe('longestCommandTermLength', () => {
       .addHelpCommand(false)
       .addCommand(sub);
     const helper = new commander.Help();
-    expect(helper.longestCommandTermLength(program, helper)).toEqual(helper.commandTerm(sub).length);
+    expect(helper.longestSubcommandTermLength(program, helper)).toEqual(helper.subcommandTerm(sub).length);
   });
 
   test('when command with arg and no help then returns length of term', () => {
@@ -27,7 +27,7 @@ describe('longestCommandTermLength', () => {
       .addHelpCommand(false)
       .addCommand(sub);
     const helper = new commander.Help();
-    expect(helper.longestCommandTermLength(program, helper)).toEqual(helper.commandTerm(sub).length);
+    expect(helper.longestSubcommandTermLength(program, helper)).toEqual(helper.subcommandTerm(sub).length);
   });
 
   test('when multiple commands then returns longest length', () => {
@@ -39,7 +39,7 @@ describe('longestCommandTermLength', () => {
       .command(longestCommandName, 'desc')
       .command('after', 'desc');
     const helper = new commander.Help();
-    expect(helper.longestCommandTermLength(program, helper)).toEqual(longestCommandName.length);
+    expect(helper.longestSubcommandTermLength(program, helper)).toEqual(longestCommandName.length);
   });
 
   test('when just help command then returns length of help term', () => {
@@ -47,6 +47,6 @@ describe('longestCommandTermLength', () => {
     program
       .addHelpCommand(true);
     const helper = new commander.Help();
-    expect(helper.longestCommandTermLength(program, helper)).toEqual('help [command]'.length);
+    expect(helper.longestSubcommandTermLength(program, helper)).toEqual('help [command]'.length);
   });
 });

@@ -97,7 +97,7 @@ class Help {
    * @returns {string}
    */
 
-  commandTerm(cmd) {
+  subcommandTerm(cmd) {
     // Legacy. Ignores custom usage string, and nested commands.
     const args = cmd._args.map(arg => humanReadableArgName(arg)).join(' ');
     return cmd._name +
@@ -125,9 +125,9 @@ class Help {
    * @returns {number}
    */
 
-  longestCommandTermLength(cmd, helper) {
+  longestSubcommandTermLength(cmd, helper) {
     return helper.visibleCommands(cmd).reduce((max, command) => {
-      return Math.max(max, helper.commandTerm(command).length);
+      return Math.max(max, helper.subcommandTerm(command).length);
     }, 0);
   };
 
@@ -180,13 +180,25 @@ class Help {
   }
 
   /**
-   * Get the command description to show in the list of subcommands.
+   * Get the description for the command.
    *
    * @param {Command} cmd
    * @returns {string}
    */
 
   commandDescription(cmd) {
+    // @ts-ignore: overloaded return type
+    return cmd.description();
+  }
+
+  /**
+   * Get the command description to show in the list of subcommands.
+   *
+   * @param {Command} cmd
+   * @returns {string}
+   */
+
+  subcommandDescription(cmd) {
     // @ts-ignore: overloaded return type
     return cmd.description();
   }
@@ -246,9 +258,9 @@ class Help {
     let output = [helper.commandUsage(cmd), ''];
 
     // Description
-    if (cmd.description()) {
-      // @ts-ignore: overloaded return type
-      output = output.concat([cmd.description(), '']);
+    const commandDescription = helper.commandDescription(cmd);
+    if (commandDescription.length > 0) {
+      output = output.concat([commandDescription, '']);
     }
 
     // Arguments
@@ -269,7 +281,7 @@ class Help {
 
     // Commands
     const commandList = helper.visibleCommands(cmd).map((cmd) => {
-      return formatItem(helper.commandTerm(cmd), helper.commandDescription(cmd));
+      return formatItem(helper.subcommandTerm(cmd), helper.subcommandDescription(cmd));
     });
     if (commandList.length > 0) {
       output = output.concat(['Commands:', formatList(commandList), '']);
@@ -289,7 +301,7 @@ class Help {
   padWidth(cmd, helper) {
     return Math.max(
       helper.longestOptionTermLength(cmd, helper),
-      helper.longestCommandTermLength(cmd, helper),
+      helper.longestSubcommandTermLength(cmd, helper),
       helper.longestArgumentTermLength(cmd, helper)
     );
   };

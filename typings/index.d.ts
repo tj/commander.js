@@ -79,9 +79,9 @@ declare namespace commander {
     sortOptions: boolean;
 
     /** Get the command term to show in the list of subcommands. */
-    commandTerm(cmd: Command): string;
+    subcommandTerm(cmd: Command): string;
     /** Get the command description to show in the list of subcommands. */
-    commandDescription(cmd: Command): string;
+    subcommandDescription(cmd: Command): string;
     /** Get the option term to show in the list of options. */
     optionTerm(option: Option): string;
     /** Get the option description to show in the list of options. */
@@ -89,6 +89,7 @@ declare namespace commander {
 
     /** Get the command usage to be displayed at the top of the built-in help. */
     commandUsage(cmd: Command): string;
+    commandDescription(cmd: Command): string;
 
     /** Get an array of the visible subcommands. Includes a placeholder for the implicit help command, if there is one. */
     visibleCommands(cmd: Command): Command[];
@@ -98,7 +99,7 @@ declare namespace commander {
     visibleArguments(cmd: Command): Array<{ term: string; description: string}>;
 
     /** Get the longest command term length. */
-    longestCommandTermLength(cmd: Command, helper: Help): number;
+    longestSubcommandTermLength(cmd: Command, helper: Help): number;
     /** Get the longest option term length. */
     longestOptionTermLength(cmd: Command, helper: Help): number;
     /** Get the longest argument term length. */

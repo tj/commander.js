@@ -263,9 +263,10 @@ helper.columns = 3;
 helper.sortCommands = true;
 helper.sortOptions = false;
 
-const commandTermStr: string = helper.commandTerm(helperCommand);
+const subcommandTermStr: string = helper.subcommandTerm(helperCommand);
 const commandUsageStr: string = helper.commandUsage(helperCommand);
 const commandDescriptionStr: string = helper.commandDescription(helperCommand);
+const subcommandDescriptionStr: string = helper.subcommandDescription(helperCommand);
 const optionTermStr: string = helper.optionTerm(helperOption);
 const optionDescriptionStr: string = helper.optionDescription(helperOption);
 
@@ -273,7 +274,7 @@ const visibleCommands: commander.Command[] = helper.visibleCommands(helperComman
 const visibleOptions: commander.Option[] = helper.visibleOptions(helperCommand);
 const visibleArguments: Array<{ term: string; description: string}> = helper.visibleArguments(helperCommand);
 
-const widestCommand: number = helper.longestCommandTermLength(helperCommand, helper);
+const widestCommand: number = helper.longestSubcommandTermLength(helperCommand, helper);
 const widestOption: number = helper.longestOptionTermLength(helperCommand, helper);
 const widestArgument: number = helper.longestArgumentTermLength(helperCommand, helper);
 const widest: number = helper.padWidth(helperCommand, helper);
