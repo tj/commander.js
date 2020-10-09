@@ -176,7 +176,7 @@ class Help {
     for (let parentCmd = cmd.parent; parentCmd; parentCmd = parentCmd.parent) {
       parentCmdNames = parentCmd.name() + ' ' + parentCmdNames;
     }
-    return 'Usage: ' + parentCmdNames + cmdName + ' ' + cmd.usage();
+    return parentCmdNames + cmdName + ' ' + cmd.usage();
   }
 
   /**
@@ -255,7 +255,7 @@ class Help {
     }
 
     // Usage
-    let output = [helper.commandUsage(cmd), ''];
+    let output = [`Usage: ${helper.commandUsage(cmd)}`, ''];
 
     // Description
     const commandDescription = helper.commandDescription(cmd);

@@ -4,19 +4,19 @@ const commander = require('../');
 // There is some overlap with the higher level Command tests (which predate Help).
 
 describe('commandUsage', () => {
-  test('when single program then "Usage: program [options]"', () => {
+  test('when single program then "program [options]"', () => {
     const program = new commander.Command();
     program.name('program');
     const helper = new commander.Help();
-    expect(helper.commandUsage(program)).toEqual('Usage: program [options]');
+    expect(helper.commandUsage(program)).toEqual('program [options]');
   });
 
-  test('when multi program then "Usage: program [options] [command]"', () => {
+  test('when multi program then "program [options] [command]"', () => {
     const program = new commander.Command();
     program.name('program');
     program.command('sub');
     const helper = new commander.Help();
-    expect(helper.commandUsage(program)).toEqual('Usage: program [options] [command]');
+    expect(helper.commandUsage(program)).toEqual('program [options] [command]');
   });
 
   test('when program has alias then usage includes alias', () => {
@@ -25,7 +25,7 @@ describe('commandUsage', () => {
       .name('program')
       .alias('alias');
     const helper = new commander.Help();
-    expect(helper.commandUsage(program)).toEqual('Usage: program|alias [options]');
+    expect(helper.commandUsage(program)).toEqual('program|alias [options]');
   });
 
   test('when help for subcommand then usage includes hierarchy', () => {
@@ -35,7 +35,7 @@ describe('commandUsage', () => {
     const sub = program.command('sub')
       .name('sub');
     const helper = new commander.Help();
-    expect(helper.commandUsage(sub)).toEqual('Usage: program sub [options]');
+    expect(helper.commandUsage(sub)).toEqual('program sub [options]');
   });
 
   test('when program has argument then usage includes argument', () => {
@@ -44,6 +44,6 @@ describe('commandUsage', () => {
       .name('program')
       .arguments('<file>');
     const helper = new commander.Help();
-    expect(helper.commandUsage(program)).toEqual('Usage: program [options] <file>');
+    expect(helper.commandUsage(program)).toEqual('program [options] <file>');
   });
 });
