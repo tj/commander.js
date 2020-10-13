@@ -1,6 +1,8 @@
 // Type definitions for commander
 // Original definitions by: Alan Agius <https://github.com/alan-agius4>, Marcelo Dezem <https://github.com/mdezem>, vvakame <https://github.com/vvakame>, Jules Randolph <https://github.com/sveinburne>
 
+import * as stream from 'stream';
+
 declare namespace commander {
 
   interface CommanderError extends Error {
@@ -220,6 +222,17 @@ declare namespace commander {
      * @returns `this` command for chaining
      */
     allowUnknownOption(arg?: boolean): this;
+
+    /**
+     * Set the Stream to which this command writes normal output (help, usage, etc.).
+     *
+     * @returns `this` command for chaining
+     */
+    outputStream(writeStream: stream.Writable): this;
+    /**
+     * Get the Stream to which this command writes normal output (help, usage, etc.).
+     */
+    outputStream(): stream.Writable;
 
     /**
      * Parse `argv`, setting options and invoking commands when defined.

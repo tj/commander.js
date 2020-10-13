@@ -128,6 +128,7 @@ class Command extends EventEmitter {
     this._exitCallback = null;
     this._aliases = [];
     this._combineFlagAndOptionalValue = true;
+    this._outputStream = process.stdout;
 
     this._hidden = false;
     this._hasHelpOption = true;
@@ -198,6 +199,7 @@ class Command extends EventEmitter {
     cmd._storeOptionsAsProperties = this._storeOptionsAsProperties;
     cmd._passCommandToAction = this._passCommandToAction;
     cmd._combineFlagAndOptionalValue = this._combineFlagAndOptionalValue;
+    cmd._outputStream = this._outputStream;
 
     cmd._executableFile = opts.executableFile || null; // Custom name for executable file, set missing to null to match constructor
     this.commands.push(cmd);
@@ -684,6 +686,20 @@ Read more on https://git.io/JJc0W`);
     if (this.options.length) {
       throw new Error('call .storeOptionsAsProperties() before adding options');
     }
+    return this;
+  };
+
+  /**
+   * The Stream to which this command writes
+   * normal output (help, usage, etc.).
+   *
+   * @param {tty.WriteStream} writeStream
+   * @returns {Command} `this` command for chaining
+   * @api public
+   */
+  outputStream(writeStream) {
+    if (writeStream === undefined) return this._outputStream;
+    this._outputStream = writeStream;
     return this;
   };
 
@@ -1287,7 +1303,7 @@ Read more on https://git.io/JJc0W`);
     this._versionOptionName = versionOption.attributeName();
     this.options.push(versionOption);
     this.on('option:' + versionOption.name(), () => {
-      process.stdout.write(str + '\n');
+      this._outputStream.write(str + '\n');
       this._exit(0, 'commander.version', str);
     });
     return this;
@@ -1500,7 +1516,7 @@ Read more on https://git.io/JJc0W`);
 
   optionHelp() {
     const width = this.padWidth();
-    const columns = process.stdout.columns || 80;
+    const columns = this._outputStream.columns || 80;
     const descriptionWidth = columns - width - 4;
     function padOptionDetails(flags, description) {
       return pad(flags, width) + '  ' + optionalWrap(description, descriptionWidth, width + 2);
@@ -1542,7 +1558,7 @@ Read more on https://git.io/JJc0W`);
     const commands = this.prepareCommands();
     const width = this.padWidth();
 
-    const columns = process.stdout.columns || 80;
+    const columns = this._outputStream.columns || 80;
     const descriptionWidth = columns - width - 4;
 
     return [
@@ -1573,7 +1589,7 @@ Read more on https://git.io/JJc0W`);
       const argsDescription = this._argsDescription;
       if (argsDescription && this._args.length) {
         const width = this.padWidth();
-        const columns = process.stdout.columns || 80;
+        const columns = this._outputStream.columns || 80;
         const descriptionWidth = columns - width - 5;
         desc.push('Arguments:');
         desc.push('');
@@ -1636,7 +1652,7 @@ Read more on https://git.io/JJc0W`);
     if (typeof cbOutput !== 'string' && !Buffer.isBuffer(cbOutput)) {
       throw new Error('outputHelp callback must return a string or a Buffer');
     }
-    process.stdout.write(cbOutput);
+    this._outputStream.write(cbOutput);
     this.emit(this._helpLongFlag);
   };
 
