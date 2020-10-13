@@ -693,7 +693,7 @@ Read more on https://git.io/JJc0W`);
    * The Stream to which this command writes
    * normal output (help, usage, etc.).
    *
-   * @param {tty.WriteStream} writeStream
+   * @param {stream.Writeable} writeStream
    * @returns {Command} `this` command for chaining
    * @api public
    */
