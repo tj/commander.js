@@ -638,6 +638,8 @@ The data properties are:
 
 There are methods getting the visible lists of arguments, options, and subcommands. There are methods for formatting the items in the lists, with each item having a _term_ and _description_. Take a look at `.formatHelp()` to see how they are used.
 
+Example file: [configure-help.js](./examples/configure-help.js)
+
 ```
 program.configureHelp({
   sortCommands: true,

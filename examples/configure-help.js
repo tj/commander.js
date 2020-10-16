@@ -4,7 +4,7 @@ const commander = require('../'); // include commander in git clone of commander
 const program = new commander.Command();
 
 // This example shows a simple use of configureHelp.
-// This is used as an example in the README (in part).
+// This is used as an example in the README.
 
 program.configureHelp({
   sortCommands: true,
