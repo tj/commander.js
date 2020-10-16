@@ -3,7 +3,7 @@ const commander = require('../');
 // These are tests of the Help class, not of the Command help.
 // There is some overlap with the higher level Command tests (which predate Help).
 
-describe('sortCommands', () => {
+describe('sortSubcommands', () => {
   test('when unsorted then commands in order added', () => {
     const program = new commander.Command();
     program
@@ -15,10 +15,10 @@ describe('sortCommands', () => {
     expect(visibleCommandNames).toEqual(['ccc', 'aaa', 'bbb', 'help']);
   });
 
-  test('when sortCommands:true then commands sorted', () => {
+  test('when sortSubcommands:true then commands sorted', () => {
     const program = new commander.Command();
     program
-      .configureHelp({ sortCommands: true })
+      .configureHelp({ sortSubcommands: true })
       .command('ccc', 'desc')
       .command('aaa', 'desc')
       .command('bbb', 'desc');

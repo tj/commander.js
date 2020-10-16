@@ -248,7 +248,7 @@ mySub.myFunction();
 
 const createHelpInstance: commander.Help = program.createHelp();
 const configureHelpThis: commander.Command = program.configureHelp({
-  sortCommands: true, // override property
+  sortSubcommands: true, // override property
   visibleCommands: (cmd: commander.Command) => [], // override method
   customProperty: 'boo'
 });
@@ -260,7 +260,7 @@ const helperCommand = new commander.Command();
 const helperOption = new commander.Option('-a, --all');
 
 helper.columns = 3;
-helper.sortCommands = true;
+helper.sortSubcommands = true;
 helper.sortOptions = false;
 
 const subcommandTermStr: string = helper.subcommandTerm(helperCommand);

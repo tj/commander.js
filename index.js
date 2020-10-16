@@ -13,7 +13,7 @@ const fs = require('fs');
 class Help {
   constructor() {
     this.columns = process.stdout.columns || 80;
-    this.sortCommands = false;
+    this.sortSubcommands = false;
     this.sortOptions = false;
   }
 
@@ -35,7 +35,7 @@ class Help {
       helpCommand._parseExpectedArgs(args);
       visibleCommands.push(helpCommand);
     }
-    if (this.sortCommands) {
+    if (this.sortSubcommands) {
       visibleCommands.sort((a, b) => {
         return a.name().localeCompare(b.name());
       });

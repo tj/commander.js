@@ -7,7 +7,7 @@ const program = new commander.Command();
 // This is used as an example in the README.
 
 program.configureHelp({
-  sortCommands: true,
+  sortSubcommands: true,
   subcommandTerm: (cmd) => cmd.name() // Just show the name, instead of short usage.
 });
 
