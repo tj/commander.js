@@ -118,9 +118,7 @@ declare namespace commander {
     formatHelp(cmd: Command, helper: Help): string;
   }
   type HelpConstructor = new () => Help;
-  interface HelpConfiguration extends Partial<Help> {
-    [key: string]: any; // allow extra custom properties
-  }
+  type HelpConfiguration = Partial<Help>;
 
   interface ParseOptions {
     from: 'node' | 'electron' | 'user';

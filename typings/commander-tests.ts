@@ -249,8 +249,7 @@ mySub.myFunction();
 const createHelpInstance: commander.Help = program.createHelp();
 const configureHelpThis: commander.Command = program.configureHelp({
   sortSubcommands: true, // override property
-  visibleCommands: (cmd: commander.Command) => [], // override method
-  customProperty: 'boo'
+  visibleCommands: (cmd: commander.Command) => [] // override method
 });
 const helpConfiguration: commander.HelpConfiguration = program.configureHelp();
 
