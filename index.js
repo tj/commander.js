@@ -26,7 +26,7 @@ class Help {
 
   visibleCommands(cmd) {
     const visibleCommands = cmd.commands.filter(cmd => !cmd._hidden);
-    if (cmd._lazyHasImplicitHelpCommand()) {
+    if (cmd._hasImplicitHelpCommand()) {
       // Create a command matching the implicit help command.
       const args = cmd._helpCommandnameAndArgs.split(/ +/);
       const helpCommand = cmd.createCommand(args.shift())
@@ -545,7 +545,7 @@ class Command extends EventEmitter {
     this._helpDescription = 'display help for command';
     this._helpShortFlag = '-h';
     this._helpLongFlag = '--help';
-    this._hasImplicitHelpCommand = undefined; // Deliberately undefined, not decided whether true or false
+    this._addImplicitHelpCommand = undefined; // Deliberately undefined, not decided whether true or false
     this._helpCommandName = 'help';
     this._helpCommandnameAndArgs = 'help [command]';
     this._helpCommandDescription = 'display help for command';
@@ -705,9 +705,9 @@ class Command extends EventEmitter {
 
   addHelpCommand(enableOrNameAndArgs, description) {
     if (enableOrNameAndArgs === false) {
-      this._hasImplicitHelpCommand = false;
+      this._addImplicitHelpCommand = false;
     } else {
-      this._hasImplicitHelpCommand = true;
+      this._addImplicitHelpCommand = true;
       if (typeof enableOrNameAndArgs === 'string') {
         this._helpCommandName = enableOrNameAndArgs.split(' ')[0];
         this._helpCommandnameAndArgs = enableOrNameAndArgs;
@@ -722,11 +722,11 @@ class Command extends EventEmitter {
    * @api private
    */
 
-  _lazyHasImplicitHelpCommand() {
-    if (this._hasImplicitHelpCommand === undefined) {
-      this._hasImplicitHelpCommand = this.commands.length && !this._actionHandler && !this._findCommand('help');
+  _hasImplicitHelpCommand() {
+    if (this._addImplicitHelpCommand === undefined) {
+      return this.commands.length && !this._actionHandler && !this._findCommand('help');
     }
-    return this._hasImplicitHelpCommand;
+    return this._addImplicitHelpCommand;
   };
 
   /**
@@ -1396,7 +1396,7 @@ Read more on https://git.io/JJc0W`);
 
     if (operands && this._findCommand(operands[0])) {
       this._dispatchSubcommand(operands[0], operands.slice(1), unknown);
-    } else if (this._lazyHasImplicitHelpCommand() && operands[0] === this._helpCommandName) {
+    } else if (this._hasImplicitHelpCommand() && operands[0] === this._helpCommandName) {
       if (operands.length === 1) {
         this.help();
       } else {
