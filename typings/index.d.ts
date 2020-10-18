@@ -220,8 +220,18 @@ declare namespace commander {
      */
     exitOverride(callback?: (err: CommanderError) => never|void): this;
 
+    /**
+     * You can customise the help with a subclass of Help by overriding createHelp,
+     * or by overriding Help properties using configureHelp().
+     */
     createHelp(): Help;
+
+    /**
+     * You can customise the help by overriding Help properties using configureHelp(),
+     * or with a subclass of Help by overriding createHelp().
+     */
     configureHelp(configuration: HelpConfiguration): this;
+    /** Get configuration */
     configureHelp(): HelpConfiguration;
 
     /**

@@ -646,7 +646,7 @@ class Command extends EventEmitter {
 
   /**
    * You can customise the help by overriding Help properties using configureHelp(),
-   * or with a subclass of Help by overriding createHelp,
+   * or with a subclass of Help by overriding createHelp().
    *
    * @param {Object} [configuration] - configuration options
    * @return {Command|Object} `this` command for chaining, or stored configuration
