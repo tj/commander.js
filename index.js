@@ -634,8 +634,8 @@ class Command extends EventEmitter {
   };
 
   /**
-   * You can customise the help with either a subclass by overriding createHelp,
-   * or by supplying routines using configureHelp().
+   * You can customise the help with a subclass of Help by overriding createHelp,
+   * or by overriding Help properties using configureHelp().
    *
    * @return {Help}
    */
@@ -643,6 +643,14 @@ class Command extends EventEmitter {
   createHelp() {
     return Object.assign(new Help(), this.configureHelp());
   };
+
+  /**
+   * You can customise the help by overriding Help properties using configureHelp(),
+   * or with a subclass of Help by overriding createHelp,
+   *
+   * @param {Object} [configuration] - configuration options
+   * @return {Command|Object} `this` command for chaining, or stored configuration
+   */
 
   configureHelp(configuration) {
     if (configuration === undefined) return this._helpConfiguration;
@@ -1802,7 +1810,7 @@ Read more on https://git.io/JJc0W`);
    * Get or set the name of the command
    *
    * @param {string} [str]
-   * @return {String|Command}
+   * @return {string|Command}
    */
 
   name(str) {
