@@ -163,12 +163,28 @@ test('when no options then Options not included in helpInformation', () => {
   expect(helpInformation).not.toMatch('Options');
 });
 
-test('when option hidden then option not included in helpInformation', () => {
+test('when option.hideHelp() then option not included in helpInformation', () => {
   const program = new commander.Command();
   program
     .addOption(new commander.Option('-s,--secret', 'secret option').hideHelp());
   const helpInformation = program.helpInformation();
   expect(helpInformation).not.toMatch('secret');
+});
+
+test('when option.hideHelp(true) then option not included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .addOption(new commander.Option('-s,--secret', 'secret option').hideHelp(true));
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).not.toMatch('secret');
+});
+
+test('when option.hideHelp(false) then option included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .addOption(new commander.Option('-s,--secret', 'secret option').hideHelp(false));
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch('secret');
 });
 
 test('when option has default value then default included in helpInformation', () => {

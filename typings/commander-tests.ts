@@ -264,8 +264,9 @@ const myOptionThis5: commander.Option = baseOption.makeOptionMandatory();
 const myOptionThis6: commander.Option = baseOption.makeOptionMandatory(true);
 
 // hideHelp
-const myOptionThis7: commander.Option = baseOption.hideHelp();
-const myOptionThis8: commander.Option = baseOption.hideHelp(true);
+const hideHelpThis1: commander.Option = baseOption.hideHelp();
+const hideHelpThis2: commander.Option = baseOption.hideHelp(true);
+const hideHelpThis3: commander.Option = baseOption.hideHelp(false);
 
 // argumentRejected
 function goodbye(): never {
@@ -273,7 +274,7 @@ function goodbye(): never {
 };
 
 // choices
-const myOptionThis9: commander.Option = baseOption.choices(['a', 'b']);
+const choicesThis: commander.Option = baseOption.choices(['a', 'b']);
 
 // name
 const optionName: string = baseOption.name();
