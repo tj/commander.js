@@ -89,6 +89,7 @@ declare namespace commander {
 
     /** Get the command usage to be displayed at the top of the built-in help. */
     commandUsage(cmd: Command): string;
+    /** Get the description for the command. */
     commandDescription(cmd: Command): string;
 
     /** Get an array of the visible subcommands. Includes a placeholder for the implicit help command, if there is one. */
