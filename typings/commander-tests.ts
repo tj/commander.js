@@ -55,6 +55,13 @@ const addCommandThis: commander.Command = program.addCommand(new commander.Comma
 // arguments
 const argumentsThis: commander.Command = program.arguments('<cmd> [env]');
 
+// addHelpCommand
+const addHelpCommandThis1: commander.Command = program.addHelpCommand();
+const addHelpCommandThis3: commander.Command = program.addHelpCommand(false);
+const addHelpCommandThis2: commander.Command = program.addHelpCommand(true);
+const addHelpCommandThis4: commander.Command = program.addHelpCommand('compress <file>');
+const addHelpCommandThis5: commander.Command = program.addHelpCommand('compress <file>', 'compress target file');
+
 // exitOverride
 const exitThis1: commander.Command = program.exitOverride();
 const exitThis2: commander.Command = program.exitOverride((err): never => {
