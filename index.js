@@ -230,7 +230,7 @@ class Help {
     if (extraInfo.length > 0) {
       return `${option.description} (${extraInfo.join(', ')})`;
     }
-    return `${option.description}`;
+    return option.description;
   };
 
   /**
