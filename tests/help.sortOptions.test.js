@@ -15,7 +15,7 @@ describe('sortOptions', () => {
     expect(visibleOptionNames).toEqual(['zzz', 'aaa', 'bbb', 'help']);
   });
 
-  test('when sortOptions:true then options sorted', () => {
+  test('when sortOptions:true then options sorted alphabetically', () => {
     const program = new commander.Command();
     program
       .configureHelp({ sortOptions: true })
@@ -23,11 +23,11 @@ describe('sortOptions', () => {
       .option('--aaa', 'desc')
       .option('--bbb', 'desc');
     const helper = program.createHelp();
-    const visibleCommandNames = helper.visibleOptions(program).map(cmd => cmd.name());
-    expect(visibleCommandNames).toEqual(['aaa', 'bbb', 'help', 'zzz']);
+    const visibleOptionNames = helper.visibleOptions(program).map(cmd => cmd.name());
+    expect(visibleOptionNames).toEqual(['aaa', 'bbb', 'help', 'zzz']);
   });
 
-  test('when sortOptions:true then options sorted on name not flags', () => {
+  test('when short and long flags then sort on long flag (name)', () => {
     const program = new commander.Command();
     program
       .configureHelp({ sortOptions: true })
@@ -35,7 +35,33 @@ describe('sortOptions', () => {
       .option('-n,--aaa', 'desc')
       .option('-o,--bbb', 'desc');
     const helper = program.createHelp();
-    const visibleCommandNames = helper.visibleOptions(program).map(cmd => cmd.name());
-    expect(visibleCommandNames).toEqual(['aaa', 'bbb', 'help', 'zzz']);
+    const visibleOptionNames = helper.visibleOptions(program).map(cmd => cmd.name());
+    expect(visibleOptionNames).toEqual(['aaa', 'bbb', 'help', 'zzz']);
+  });
+
+  test('when negated option with positive then sort together with negative after positive', () => {
+    const program = new commander.Command();
+    program
+      .configureHelp({ sortOptions: true })
+      .option('--bbb', 'desc')
+      .option('--ccc', 'desc')
+      .option('--no-bbb', 'desc')
+      .option('--aaa', 'desc');
+    const helper = program.createHelp();
+    const visibleOptionNames = helper.visibleOptions(program).map(cmd => cmd.name());
+    expect(visibleOptionNames).toEqual(['aaa', 'bbb', 'no-bbb', 'ccc', 'help']);
+  });
+
+  test('when negated option without positive then still sorts using attribute name', () => {
+    // Sorting '--no-foo' as 'foo' (mainly for when also 'foo' so sort together)!
+    const program = new commander.Command();
+    program
+      .configureHelp({ sortOptions: true })
+      .option('--ccc', 'desc')
+      .option('--aaa', 'desc')
+      .option('--no-bbb', 'desc');
+    const helper = program.createHelp();
+    const visibleOptionNames = helper.visibleOptions(program).map(cmd => cmd.name());
+    expect(visibleOptionNames).toEqual(['aaa', 'no-bbb', 'ccc', 'help']);
   });
 });
