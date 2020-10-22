@@ -118,7 +118,7 @@ class Help {
    */
 
   optionTerm(option) {
-    return `${option.flags}`;
+    return option.flags;
   }
 
   /**
