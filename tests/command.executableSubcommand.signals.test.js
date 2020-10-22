@@ -17,8 +17,8 @@ const describeOrSkipOnWindows = (process.platform === 'win32') ? describe.skip :
 describeOrSkipOnWindows.each([['SIGINT'], ['SIGHUP'], ['SIGTERM'], ['SIGUSR1'], ['SIGUSR2']])(
   'test signal handling in executableSubcommand', (value) => {
     // Slightly tricky test, stick with callback and disable lint warning.
-    // eslint-disable-next-line jest/no-test-callback
-    test(`when command killed with ${value} then executableSubcommand receieves ${value}`, (done) => {
+    // eslint-disable-next-line jest/no-done-callback
+    test(`when command killed with ${value} then executableSubcommand receives ${value}`, (done) => {
       const pmPath = path.join(__dirname, './fixtures/pm');
 
       // The child process writes to stdout.
