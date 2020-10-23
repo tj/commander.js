@@ -33,7 +33,7 @@ const errorInstance = new commander.CommanderError(1, 'code', 'message');
 
 // Command properties
 console.log(programWithOptions.someOption);
-// eslint-disable-next-line dot-notation
+// eslint-disable-next-line @typescript-eslint/dot-notation
 console.log(programWithOptions['someOption']);
 const theArgs = program.args;
 const theCommands: commander.Command[] = program.commands;
@@ -54,6 +54,13 @@ const addCommandThis: commander.Command = program.addCommand(new commander.Comma
 
 // arguments
 const argumentsThis: commander.Command = program.arguments('<cmd> [env]');
+
+// addHelpCommand
+const addHelpCommandThis1: commander.Command = program.addHelpCommand();
+const addHelpCommandThis3: commander.Command = program.addHelpCommand(false);
+const addHelpCommandThis2: commander.Command = program.addHelpCommand(true);
+const addHelpCommandThis4: commander.Command = program.addHelpCommand('compress <file>');
+const addHelpCommandThis5: commander.Command = program.addHelpCommand('compress <file>', 'compress target file');
 
 // exitOverride
 const exitThis1: commander.Command = program.exitOverride();
@@ -167,7 +174,7 @@ const { operands, unknown } = program.parseOptions(['node', 'script.js', 'hello'
 // opts
 const opts = program.opts();
 const optsVal1 = opts.foo;
-// eslint-disable-next-line dot-notation
+// eslint-disable-next-line @typescript-eslint/dot-notation
 const opstVale2 = opts['bar'];
 
 // description

@@ -16,8 +16,10 @@ test('when subcommand file missing then error', () => {
   return execAsync(`node ${pm} list`).catch((err) => {
     if (process.platform === 'win32') {
       // Get uncaught thrown error on Windows
+      // eslint-disable-next-line jest/no-conditional-expect
       expect(err.stderr).toBeDefined();
     } else {
+      // eslint-disable-next-line jest/no-conditional-expect
       expect(err.stderr).toMatch(new RegExp(/Error: 'pm-list' does not exist/));
     }
   });
@@ -28,8 +30,10 @@ test('when alias subcommand file missing then error', () => {
   return execAsync(`node ${pm} lst`).catch((err) => {
     if (process.platform === 'win32') {
       // Get uncaught thrown error on Windows
+      // eslint-disable-next-line jest/no-conditional-expect
       expect(err.stderr).toBeDefined();
     } else {
+      // eslint-disable-next-line jest/no-conditional-expect
       expect(err.stderr).toMatch(new RegExp(/Error: 'pm-list' does not exist/));
     }
   });

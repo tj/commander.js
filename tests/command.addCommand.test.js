@@ -36,6 +36,7 @@ test('when commands added using .addCommand and .command then internals similar'
       case 'number':
       case 'undefined':
         // Compare values in a way that will be readable in test failure message.
+        // eslint-disable-next-line jest/no-conditional-expect
         expect(`${key}:${cmd1[key]}`).toEqual(`${key}:${cmd2[key]}`);
         break;
     }

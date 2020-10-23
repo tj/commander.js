@@ -1276,7 +1276,7 @@ Read more on https://git.io/JJc0W`);
   _executeSubCommand(subcommand, args) {
     args = args.slice();
     let launchWithNode = false; // Use node for source targets so do not need to get permissions correct, and on Windows.
-    const sourceExt = ['.js', '.ts', '.mjs'];
+    const sourceExt = ['.js', '.ts', '.tsx', '.mjs'];
 
     // Not checking for help first. Unlikely to have mandatory and executable, and can't robustly test for help flags in external command.
     this._checkForMissingMandatoryOptions();

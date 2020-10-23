@@ -217,6 +217,17 @@ declare namespace commander {
     arguments(desc: string): this;
 
     /**
+     * Override default decision whether to add implicit help command.
+     *
+     *    addHelpCommand() // force on
+     *    addHelpCommand(false); // force off
+     *    addHelpCommand('help [cmd]', 'display help for [cmd]'); // force on with custom details
+     *
+     * @returns `this` command for chaining
+     */
+    addHelpCommand(enableOrNameAndArgs?: string | boolean, description?: string): this;
+
+    /**
      * Register callback to use as replacement for calling process.exit.
      */
     exitOverride(callback?: (err: CommanderError) => never|void): this;
@@ -535,6 +546,6 @@ declare namespace commander {
 }
 
 // Declaring namespace AND global
-// eslint-disable-next-line no-redeclare
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 declare const commander: commander.CommanderStatic;
 export = commander;
