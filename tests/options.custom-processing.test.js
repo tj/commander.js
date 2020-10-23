@@ -63,7 +63,7 @@ test('when option specified then callback called with value', () => {
   expect(mockCoercion).toHaveBeenCalledWith(value, undefined);
 });
 
-test('when option specified then value is as returned from callback ', () => {
+test('when option specified then value is as returned from callback', () => {
   const callbackResult = 2;
   const program = new commander.Command();
   program

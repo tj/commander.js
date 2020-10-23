@@ -33,7 +33,7 @@ const errorInstance = new commander.CommanderError(1, 'code', 'message');
 
 // Command properties
 console.log(programWithOptions.someOption);
-// eslint-disable-next-line dot-notation
+// eslint-disable-next-line @typescript-eslint/dot-notation
 console.log(programWithOptions['someOption']);
 const theArgs = program.args;
 const theCommands: commander.Command[] = program.commands;
@@ -169,7 +169,7 @@ const { operands, unknown } = program.parseOptions(['node', 'script.js', 'hello'
 // opts
 const opts = program.opts();
 const optsVal1 = opts.foo;
-// eslint-disable-next-line dot-notation
+// eslint-disable-next-line @typescript-eslint/dot-notation
 const opstVale2 = opts['bar'];
 
 // description
