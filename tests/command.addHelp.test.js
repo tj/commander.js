@@ -33,7 +33,7 @@ describe('program calls to addHelpText', () => {
     expect(writeSpy).toHaveBeenNthCalledWith(2, program.helpInformation());
   });
 
-  test('when "before" function returns void then no effect', () => {
+  test('when "before" function returns nothing then no effect', () => {
     const program = new commander.Command();
     program.addHelpText('before', () => { });
     program.outputHelp();

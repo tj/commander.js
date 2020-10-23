@@ -1,6 +1,9 @@
 // Type definitions for commander
 // Original definitions by: Alan Agius <https://github.com/alan-agius4>, Marcelo Dezem <https://github.com/mdezem>, vvakame <https://github.com/vvakame>, Jules Randolph <https://github.com/sveinburne>
 
+// Using method rather than property for method-signature-style, to document method overloads separately. Allow either.
+/* eslint-disable @typescript-eslint/method-signature-style */
+
 declare namespace commander {
 
   interface CommanderError extends Error {
@@ -511,7 +514,7 @@ declare namespace commander {
      * and 'beforeAll' or 'afterAll' to affect this command and all its subcommands.
      */
     addHelpText(position: AddHelpTextPosition, text: string): this;
-    addHelpText(position: AddHelpTextPosition, text: (context: AddHelpTextContext) => string | void): this;
+    addHelpText(position: AddHelpTextPosition, text: (context: AddHelpTextContext) => string | undefined): this;
 
     /**
      * Add a listener (callback) for when events occur. (Implemented using EventEmitter.)
