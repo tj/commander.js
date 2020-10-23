@@ -72,6 +72,55 @@ declare namespace commander {
   }
   type OptionConstructor = new (flags: string, description?: string) => Option;
 
+  interface Help {
+    /** output columns, long lines are wrapped to fit */
+    columns: number;
+    sortSubcommands: boolean;
+    sortOptions: boolean;
+
+    /** Get the command term to show in the list of subcommands. */
+    subcommandTerm(cmd: Command): string;
+    /** Get the command description to show in the list of subcommands. */
+    subcommandDescription(cmd: Command): string;
+    /** Get the option term to show in the list of options. */
+    optionTerm(option: Option): string;
+    /** Get the option description to show in the list of options. */
+    optionDescription(option: Option): string;
+
+    /** Get the command usage to be displayed at the top of the built-in help. */
+    commandUsage(cmd: Command): string;
+    /** Get the description for the command. */
+    commandDescription(cmd: Command): string;
+
+    /** Get an array of the visible subcommands. Includes a placeholder for the implicit help command, if there is one. */
+    visibleCommands(cmd: Command): Command[];
+    /** Get an array of the visible options. Includes a placeholder for the implicit help option, if there is one. */
+    visibleOptions(cmd: Command): Option[];
+    /** Get an array of the arguments which have descriptions. */
+    visibleArguments(cmd: Command): Array<{ term: string; description: string}>;
+
+    /** Get the longest command term length. */
+    longestSubcommandTermLength(cmd: Command, helper: Help): number;
+    /** Get the longest option term length. */
+    longestOptionTermLength(cmd: Command, helper: Help): number;
+    /** Get the longest argument term length. */
+    longestArgumentTermLength(cmd: Command, helper: Help): number;
+    /** Calculate the pad width from the maximum term length. */
+    padWidth(cmd: Command, helper: Help): number;
+
+    /**
+     * Optionally wrap the given str to a max width of width characters per line
+     * while indenting with indent spaces. Do not wrap if insufficient width or
+     * string is manually formatted.
+     */
+    wrap(str: string, width: number, indent: number): string;
+
+    /** Generate the built-in help text. */
+    formatHelp(cmd: Command, helper: Help): string;
+  }
+  type HelpConstructor = new () => Help;
+  type HelpConfiguration = Partial<Help>;
+
   interface ParseOptions {
     from: 'node' | 'electron' | 'user';
   }
@@ -171,6 +220,20 @@ declare namespace commander {
      * Register callback to use as replacement for calling process.exit.
      */
     exitOverride(callback?: (err: CommanderError) => never|void): this;
+
+    /**
+     * You can customise the help with a subclass of Help by overriding createHelp,
+     * or by overriding Help properties using configureHelp().
+     */
+    createHelp(): Help;
+
+    /**
+     * You can customise the help by overriding Help properties using configureHelp(),
+     * or with a subclass of Help by overriding createHelp().
+     */
+    configureHelp(configuration: HelpConfiguration): this;
+    /** Get configuration */
+    configureHelp(): HelpConfiguration;
 
     /**
      * Register callback `fn` for the command.
@@ -466,6 +529,7 @@ declare namespace commander {
     Command: CommandConstructor;
     Option: OptionConstructor;
     CommanderError: CommanderErrorConstructor;
+    Help: HelpConstructor;
   }
 
 }

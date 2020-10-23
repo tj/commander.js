@@ -16,23 +16,22 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Common option types, boolean and value](#common-option-types-boolean-and-value)
     - [Default option value](#default-option-value)
     - [Other option types, negatable boolean and boolean|value](#other-option-types-negatable-boolean-and-booleanvalue)
-    - [Extra option features](#extra-option-features)
-    - [Custom option processing](#custom-option-processing)
     - [Required option](#required-option)
     - [Variadic option](#variadic-option)
     - [Version option](#version-option)
+    - [More configuration](#more-configuration)
+    - [Custom option processing](#custom-option-processing)
   - [Commands](#commands)
     - [Specify the argument syntax](#specify-the-argument-syntax)
     - [Action handler (sub)commands](#action-handler-subcommands)
     - [Stand-alone executable (sub)commands](#stand-alone-executable-subcommands)
   - [Automated help](#automated-help)
     - [Custom help](#custom-help)
+    - [Display help from code](#display-help-from-code)
     - [.usage and .name](#usage-and-name)
-    - [.help()](#help)
-    - [.outputHelp()](#outputhelp)
-    - [.helpInformation()](#helpinformation)
     - [.helpOption(flags, description)](#helpoptionflags-description)
     - [.addHelpCommand()](#addhelpcommand)
+    - [More configuration](#more-configuration-1)
   - [Custom event listeners](#custom-event-listeners)
   - [Bits and pieces](#bits-and-pieces)
     - [.parse() and .parseAsync()](#parse-and-parseasync)
@@ -208,7 +207,79 @@ add cheese type mozzarella
 
 For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-taking-varying-arguments.md).
 
-### Extra option features
+### Required option
+
+You may specify a required (mandatory) option using `.requiredOption`. The option must have a value after parsing, usually specified on the command line, or perhaps from a default value (say from environment). The method is otherwise the same as `.option` in format, taking flags and description, and optional default value or custom processing.
+
+Example file: [options-required.js](./examples/options-required.js)
+
+```js
+program
+  .requiredOption('-c, --cheese <type>', 'pizza must have cheese');
+
+program.parse(process.argv);
+```
+
+```bash
+$ pizza
+error: required option '-c, --cheese <type>' not specified
+```
+
+### Variadic option
+
+You may make an option variadic by appending `...` to the value placeholder when declaring the option. On the command line you
+can then specify multiple option-arguments, and the parsed option value will be an array. The extra arguments
+are read until the first argument starting with a dash. The special argument `--` stops option processing entirely. If a value
+is specified in the same argument as the option then no further values are read.
+
+Example file: [options-variadic.js](./examples/options-variadic.js)
+
+```js
+program
+  .option('-n, --number <numbers...>', 'specify numbers')
+  .option('-l, --letter [letters...]', 'specify letters');
+
+program.parse();
+
+console.log('Options: ', program.opts());
+console.log('Remaining arguments: ', program.args);
+```
+
+```bash
+$ collect -n 1 2 3 --letter a b c
+Options:  { number: [ '1', '2', '3' ], letter: [ 'a', 'b', 'c' ] }
+Remaining arguments:  []
+$ collect --letter=A -n80 operand
+Options:  { number: [ '80' ], letter: [ 'A' ] }
+Remaining arguments:  [ 'operand' ]
+$ collect --letter -n 1 -n 2 3 -- operand
+Options:  { number: [ '1', '2', '3' ], letter: true }
+Remaining arguments:  [ 'operand' ]
+```
+
+For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-taking-varying-arguments.md).
+
+### Version option
+
+The optional `version` method adds handling for displaying the command version. The default option flags are `-V` and `--version`, and when present the command prints the version number and exits.
+
+```js
+program.version('0.0.1');
+```
+
+```bash
+$ ./examples/pizza -V
+0.0.1
+```
+
+You may change the flags and description by passing additional parameters to the `version` method, using
+the same syntax for flags as the `option` method.
+
+```js
+program.version('0.0.1', '-v, --vers', 'output the current version');
+```
+
+### More configuration
 
 You can add most options using the `.option()` method, but there are some additional features available
 by constructing an `Option` explicitly for less common cases.
@@ -292,78 +363,6 @@ $ custom -c a -c b -c c
 [ 'a', 'b', 'c' ]
 $ custom --list x,y,z
 [ 'x', 'y', 'z' ]
-```
-
-### Required option
-
-You may specify a required (mandatory) option using `.requiredOption`. The option must have a value after parsing, usually specified on the command line, or perhaps from a default value (say from environment). The method is otherwise the same as `.option` in format, taking flags and description, and optional default value or custom processing.
-
-Example file: [options-required.js](./examples/options-required.js)
-
-```js
-program
-  .requiredOption('-c, --cheese <type>', 'pizza must have cheese');
-
-program.parse(process.argv);
-```
-
-```bash
-$ pizza
-error: required option '-c, --cheese <type>' not specified
-```
-
-### Variadic option
-
-You may make an option variadic by appending `...` to the value placeholder when declaring the option. On the command line you
-can then specify multiple option-arguments, and the parsed option value will be an array. The extra arguments
-are read until the first argument starting with a dash. The special argument `--` stops option processing entirely. If a value
-is specified in the same argument as the option then no further values are read.
-
-Example file: [options-variadic.js](./examples/options-variadic.js)
-
-```js
-program
-  .option('-n, --number <numbers...>', 'specify numbers')
-  .option('-l, --letter [letters...]', 'specify letters');
-
-program.parse();
-
-console.log('Options: ', program.opts());
-console.log('Remaining arguments: ', program.args);
-```
-
-```bash
-$ collect -n 1 2 3 --letter a b c
-Options:  { number: [ '1', '2', '3' ], letter: [ 'a', 'b', 'c' ] }
-Remaining arguments:  []
-$ collect --letter=A -n80 operand
-Options:  { number: [ '80' ], letter: [ 'A' ] }
-Remaining arguments:  [ 'operand' ]
-$ collect --letter -n 1 -n 2 3 -- operand
-Options:  { number: [ '1', '2', '3' ], letter: true }
-Remaining arguments:  [ 'operand' ]
-```
-
-For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-taking-varying-arguments.md).
-
-### Version option
-
-The optional `version` method adds handling for displaying the command version. The default option flags are `-V` and `--version`, and when present the command prints the version number and exits.
-
-```js
-program.version('0.0.1');
-```
-
-```bash
-$ ./examples/pizza -V
-0.0.1
-```
-
-You may change the flags and description by passing additional parameters to the `version` method, using
-the same syntax for flags as the `option` method.
-
-```js
-program.version('0.0.1', '-v, --vers', 'output the current version');
 ```
 
 ## Commands
@@ -582,6 +581,14 @@ The second parameter can be a string, or a function returning a string. The func
 - error: a boolean for whether the help is being displayed due to a usage error
 - command: the Command which is displaying the help
 
+### Display help from code
+
+`.help()`: display help information and exit immediately. You can optionally pass `{ error: true }` to display on stderr and exit with an error status.
+
+`.outputHelp()`: output help information without exiting. You can optionally pass `{ error: true }` to display on stderr.
+
+`.helpInformation()`: get the built-in command help information as a string for processing or displaying yourself.
+
 ### .usage and .name
 
 These allow you to customise the usage description in the first line of the help. The name is otherwise
@@ -599,21 +606,9 @@ The help will start with:
 Usage: my-command [global options] command
 ```
 
-### .help()
-
-Output help information and exit immediately. You can optionally pass `{ error: true }` to display on stderr and exit with an error status.
-
-### .outputHelp()
-
-Output help information without exiting. You can optionally pass `{ error: true }` to display on stderr.
-
-### .helpInformation()
-
-Get the built-in command help information as a string for processing or displaying yourself.
-
 ### .helpOption(flags, description)
 
-Override the default help flags and description. Pass false to disable the built-in help option.
+By default every command has a help option. Override the default help flags and description. Pass false to disable the built-in help option.
 
 ```js
 program
@@ -622,12 +617,34 @@ program
 
 ### .addHelpCommand()
 
-You can explicitly turn on or off the implicit help command with `.addHelpCommand()` and `.addHelpCommand(false)`.
+A help command is added by default if your command has subcommands. You can explicitly turn on or off the implicit help command with `.addHelpCommand()` and `.addHelpCommand(false)`.
 
 You can both turn on and customise the help command by supplying the name and description:
 
 ```js
 program.addHelpCommand('assist [command]', 'show assistance');
+```
+
+### More configuration
+
+The built-in help is formatted using the Help class.
+You can configure the Help behaviour by modifying data properties and methods using `.configureHelp()`, or by subclassing using `.createHelp()` if you prefer.
+
+The data properties are:
+
+- `columns`: specify the wrap width, useful for unit tests
+- `sortSubcommands`: sort the subcommands alphabetically
+- `sortOptions`: sort the options alphabetically
+
+There are methods getting the visible lists of arguments, options, and subcommands. There are methods for formatting the items in the lists, with each item having a _term_ and _description_. Take a look at `.formatHelp()` to see how they are used.
+
+Example file: [configure-help.js](./examples/configure-help.js)
+
+```
+program.configureHelp({
+  sortSubcommands: true,
+  subcommandTerm: (cmd) => cmd.name() // Just show the name, instead of short usage.
+});
 ```
 
 ## Custom event listeners

@@ -9,13 +9,344 @@ const fs = require('fs');
 
 // @ts-check
 
+// Although this is a class, methods are static in style to allow override using subclass or just functions.
+class Help {
+  constructor() {
+    this.columns = process.stdout.columns || 80;
+    this.sortSubcommands = false;
+    this.sortOptions = false;
+  }
+
+  /**
+   * Get an array of the visible subcommands. Includes a placeholder for the implicit help command, if there is one.
+   *
+   * @param {Command} cmd
+   * @returns {Command[]}
+   */
+
+  visibleCommands(cmd) {
+    const visibleCommands = cmd.commands.filter(cmd => !cmd._hidden);
+    if (cmd._hasImplicitHelpCommand()) {
+      // Create a command matching the implicit help command.
+      const args = cmd._helpCommandnameAndArgs.split(/ +/);
+      const helpCommand = cmd.createCommand(args.shift())
+        .helpOption(false);
+      helpCommand.description(cmd._helpCommandDescription);
+      helpCommand._parseExpectedArgs(args);
+      visibleCommands.push(helpCommand);
+    }
+    if (this.sortSubcommands) {
+      visibleCommands.sort((a, b) => {
+        return a.name().localeCompare(b.name());
+      });
+    }
+    return visibleCommands;
+  }
+
+  /**
+   * Get an array of the visible options. Includes a placeholder for the implicit help option, if there is one.
+   *
+   * @param {Command} cmd
+   * @returns {Option[]}
+   */
+
+  visibleOptions(cmd) {
+    const visibleOptions = cmd.options.filter((option) => !option.hidden);
+    // Implicit help
+    const showShortHelpFlag = cmd._hasHelpOption && cmd._helpShortFlag && !cmd._findOption(cmd._helpShortFlag);
+    const showLongHelpFlag = cmd._hasHelpOption && !cmd._findOption(cmd._helpLongFlag);
+    if (showShortHelpFlag || showLongHelpFlag) {
+      let helpOption;
+      if (!showShortHelpFlag) {
+        helpOption = new Option(cmd._helpLongFlag, cmd._helpDescription);
+      } else if (!showLongHelpFlag) {
+        helpOption = new Option(cmd._helpShortFlag, cmd._helpDescription);
+      } else {
+        helpOption = new Option(cmd._helpFlags, cmd._helpDescription);
+      }
+      visibleOptions.push(helpOption);
+    }
+    if (this.sortOptions) {
+      visibleOptions.sort((a, b) => {
+        const compare = a.attributeName().localeCompare(b.attributeName());
+        if (compare === 0) {
+          return (a.negate) ? +1 : -1;
+        }
+        return compare;
+      });
+    }
+    return visibleOptions;
+  }
+
+  /**
+   * Get an array of the arguments which have descriptions.
+   *
+   * @param {Command} cmd
+   * @returns {{ term: string, description:string }[]}
+   */
+
+  visibleArguments(cmd) {
+    if (cmd._argsDescription && cmd._args.length) {
+      return cmd._args.map((argument) => {
+        return { term: argument.name, description: cmd._argsDescription[argument.name] || '' };
+      }, 0);
+    }
+    return [];
+  }
+
+  /**
+   * Get the command term to show in the list of subcommands.
+   *
+   * @param {Command} cmd
+   * @returns {string}
+   */
+
+  subcommandTerm(cmd) {
+    // Legacy. Ignores custom usage string, and nested commands.
+    const args = cmd._args.map(arg => humanReadableArgName(arg)).join(' ');
+    return cmd._name +
+      (cmd._aliases[0] ? '|' + cmd._aliases[0] : '') +
+      (cmd.options.length ? ' [options]' : '') + // simplistic check for non-help option
+      (args ? ' ' + args : '');
+  }
+
+  /**
+   * Get the option term to show in the list of options.
+   *
+   * @param {Option} option
+   * @returns {string}
+   */
+
+  optionTerm(option) {
+    return option.flags;
+  }
+
+  /**
+   * Get the longest command term length.
+   *
+   * @param {Command} cmd
+   * @param {Help} helper
+   * @returns {number}
+   */
+
+  longestSubcommandTermLength(cmd, helper) {
+    return helper.visibleCommands(cmd).reduce((max, command) => {
+      return Math.max(max, helper.subcommandTerm(command).length);
+    }, 0);
+  };
+
+  /**
+   * Get the longest option term length.
+   *
+   * @param {Command} cmd
+   * @param {Help} helper
+   * @returns {number}
+   */
+
+  longestOptionTermLength(cmd, helper) {
+    return helper.visibleOptions(cmd).reduce((max, option) => {
+      return Math.max(max, helper.optionTerm(option).length);
+    }, 0);
+  };
+
+  /**
+   * Get the longest argument term length.
+   *
+   * @param {Command} cmd
+   * @param {Help} helper
+   * @returns {number}
+   */
+
+  longestArgumentTermLength(cmd, helper) {
+    return helper.visibleArguments(cmd).reduce((max, argument) => {
+      return Math.max(max, argument.term.length);
+    }, 0);
+  };
+
+  /**
+   * Get the command usage to be displayed at the top of the built-in help.
+   *
+   * @param {Command} cmd
+   * @returns {string}
+   */
+
+  commandUsage(cmd) {
+    // Usage
+    let cmdName = cmd._name;
+    if (cmd._aliases[0]) {
+      cmdName = cmdName + '|' + cmd._aliases[0];
+    }
+    let parentCmdNames = '';
+    for (let parentCmd = cmd.parent; parentCmd; parentCmd = parentCmd.parent) {
+      parentCmdNames = parentCmd.name() + ' ' + parentCmdNames;
+    }
+    return parentCmdNames + cmdName + ' ' + cmd.usage();
+  }
+
+  /**
+   * Get the description for the command.
+   *
+   * @param {Command} cmd
+   * @returns {string}
+   */
+
+  commandDescription(cmd) {
+    // @ts-ignore: overloaded return type
+    return cmd.description();
+  }
+
+  /**
+   * Get the command description to show in the list of subcommands.
+   *
+   * @param {Command} cmd
+   * @returns {string}
+   */
+
+  subcommandDescription(cmd) {
+    // @ts-ignore: overloaded return type
+    return cmd.description();
+  }
+
+  /**
+   * Get the option description to show in the list of options.
+   *
+   * @param {Option} option
+   * @return {string}
+   */
+
+  optionDescription(option) {
+    if (option.negate) {
+      return option.description;
+    }
+    const extraInfo = [];
+    if (option.argChoices) {
+      extraInfo.push(
+        // use stringify to match the display of the default value
+        `choices: ${option.argChoices.map((choice) => JSON.stringify(choice)).join(', ')}`);
+    }
+    if (option.defaultValue !== undefined) {
+      extraInfo.push(`default: ${option.defaultValueDescription || JSON.stringify(option.defaultValue)}`);
+    }
+    if (extraInfo.length > 0) {
+      return `${option.description} (${extraInfo.join(', ')})`;
+    }
+    return option.description;
+  };
+
+  /**
+   * Generate the built-in help text.
+   *
+   * @param {Command} cmd
+   * @param {Help} helper
+   * @returns {string}
+   */
+
+  formatHelp(cmd, helper) {
+    const termWidth = helper.padWidth(cmd, helper);
+    const columns = helper.columns;
+    const itemIndentWidth = 2;
+    const itemSeparatorWidth = 2;
+    // itemIndent term itemSeparator description
+    const descriptionWidth = columns - termWidth - itemIndentWidth - itemSeparatorWidth;
+    function formatItem(term, description) {
+      if (description) {
+        return term.padEnd(termWidth + itemSeparatorWidth) + helper.wrap(description, descriptionWidth, termWidth + itemSeparatorWidth);
+      }
+      return term;
+    };
+    function formatList(textArray) {
+      return textArray.join('\n').replace(/^/gm, ' '.repeat(itemIndentWidth));
+    }
+
+    // Usage
+    let output = [`Usage: ${helper.commandUsage(cmd)}`, ''];
+
+    // Description
+    const commandDescription = helper.commandDescription(cmd);
+    if (commandDescription.length > 0) {
+      output = output.concat([commandDescription, '']);
+    }
+
+    // Arguments
+    const argumentList = helper.visibleArguments(cmd).map((argument) => {
+      return formatItem(argument.term, argument.description);
+    });
+    if (argumentList.length > 0) {
+      output = output.concat(['Arguments:', formatList(argumentList), '']);
+    }
+
+    // Options
+    const optionList = helper.visibleOptions(cmd).map((option) => {
+      return formatItem(helper.optionTerm(option), helper.optionDescription(option));
+    });
+    if (optionList.length > 0) {
+      output = output.concat(['Options:', formatList(optionList), '']);
+    }
+
+    // Commands
+    const commandList = helper.visibleCommands(cmd).map((cmd) => {
+      return formatItem(helper.subcommandTerm(cmd), helper.subcommandDescription(cmd));
+    });
+    if (commandList.length > 0) {
+      output = output.concat(['Commands:', formatList(commandList), '']);
+    }
+
+    return output.join('\n');
+  }
+
+  /**
+   * Calculate the pad width from the maximum term length.
+   *
+   * @param {Command} cmd
+   * @param {Help} helper
+   * @returns {number}
+   */
+
+  padWidth(cmd, helper) {
+    return Math.max(
+      helper.longestOptionTermLength(cmd, helper),
+      helper.longestSubcommandTermLength(cmd, helper),
+      helper.longestArgumentTermLength(cmd, helper)
+    );
+  };
+
+  /**
+   * Optionally wrap the given str to a max width of width characters per line
+   * while indenting with indent spaces. Do not wrap if insufficient width or
+   * string is manually formatted.
+   *
+   * @param {string} str
+   * @param {number} width
+   * @param {number} indent
+   * @return {string}
+   */
+
+  wrap(str, width, indent) {
+    // Detect manually wrapped and indented strings by searching for line breaks
+    // followed by multiple spaces/tabs.
+    if (str.match(/[\n]\s+/)) return str;
+    // Do not wrap to narrow columns (or can end up with a word per line).
+    const minWidth = 40;
+    if (width < minWidth) return str;
+
+    const indentString = ' '.repeat(indent);
+    const regex = new RegExp('.{1,' + (width - 1) + '}([\\s\u200B]|$)|[^\\s\u200B]+?([\\s\u200B]|$)', 'g');
+    const lines = str.match(regex) || [];
+    return lines.map((line, i) => {
+      if (line.slice(-1) === '\n') {
+        line = line.slice(0, line.length - 1);
+      }
+      return ((i > 0 && indent) ? indentString : '') + line.trimRight();
+    }).join('\n');
+  }
+}
+
 class Option {
   /**
    * Initialize a new `Option` with the given `flags` and `description`.
    *
    * @param {string} flags
    * @param {string} [description]
-   * @api public
    */
 
   constructor(flags, description) {
@@ -47,7 +378,6 @@ class Option {
    * @param {any} value
    * @param {string} [description]
    * @return {Option}
-   * @api public
    */
 
   default(value, description) {
@@ -57,37 +387,10 @@ class Option {
   };
 
   /**
-   * Calculate the full description, including defaultValue etc.
-   *
-   * @return {string}
-   * @api public
-   */
-
-  fullDescription() {
-    if (this.negate) {
-      return this.description;
-    }
-    const extraInfo = [];
-    if (this.argChoices) {
-      extraInfo.push(
-        // use stringify to match the display of the default value
-        `choices: ${this.argChoices.map((choice) => JSON.stringify(choice)).join(', ')}`);
-    }
-    if (this.defaultValue !== undefined) {
-      extraInfo.push(`default: ${this.defaultValueDescription || JSON.stringify(this.defaultValue)}`);
-    }
-    if (extraInfo.length > 0) {
-      return `${this.description} (${extraInfo.join(', ')})`;
-    }
-    return this.description;
-  };
-
-  /**
    * Set the custom handler for processing CLI option arguments into option values.
    *
    * @param {Function} [fn]
    * @return {Option}
-   * @api public
    */
 
   argParser(fn) {
@@ -100,7 +403,6 @@ class Option {
    *
    * @param {boolean} [value]
    * @return {Option}
-   * @api public
    */
 
   makeOptionMandatory(value) {
@@ -113,7 +415,6 @@ class Option {
    *
    * @param {boolean} [value]
    * @return {Option}
-   * @api public
    */
 
   hideHelp(value) {
@@ -126,7 +427,6 @@ class Option {
    * Intended for use from custom argument processing functions.
    *
    * @param {string} message
-   * @api public
    */
   argumentRejected(message) {
     throw new CommanderError(1, 'commander.optionArgumentRejected', message);
@@ -137,7 +437,6 @@ class Option {
    *
    * @param {string[]} values
    * @return {Option}
-   * @api public
    */
 
   choices(values) {
@@ -155,7 +454,6 @@ class Option {
    * Return option name.
    *
    * @return {string}
-   * @api public
    */
 
   name() {
@@ -218,7 +516,6 @@ class Command extends EventEmitter {
    * Initialize a new `Command`.
    *
    * @param {string} [name]
-   * @api public
    */
 
   constructor(name) {
@@ -243,6 +540,8 @@ class Command extends EventEmitter {
     this._exitCallback = null;
     this._aliases = [];
     this._combineFlagAndOptionalValue = true;
+    this._description = '';
+    this._argsDescription = undefined;
 
     this._hidden = false;
     this._hasHelpOption = true;
@@ -250,10 +549,11 @@ class Command extends EventEmitter {
     this._helpDescription = 'display help for command';
     this._helpShortFlag = '-h';
     this._helpLongFlag = '--help';
-    this._hasImplicitHelpCommand = undefined; // Deliberately undefined, not decided whether true or false
+    this._addImplicitHelpCommand = undefined; // Deliberately undefined, not decided whether true or false
     this._helpCommandName = 'help';
     this._helpCommandnameAndArgs = 'help [command]';
     this._helpCommandDescription = 'display help for command';
+    this._helpConfiguration = {};
   }
 
   /**
@@ -280,7 +580,6 @@ class Command extends EventEmitter {
    * @param {Object|string} [actionOptsOrExecDesc] - configuration options (for action), or description (for executable)
    * @param {Object} [execOpts] - configuration options (for executable)
    * @return {Command} returns new command for action handler, or `this` for executable command
-   * @api public
    */
 
   command(nameAndArgs, actionOptsOrExecDesc, execOpts) {
@@ -309,6 +608,7 @@ class Command extends EventEmitter {
     cmd._helpCommandName = this._helpCommandName;
     cmd._helpCommandnameAndArgs = this._helpCommandnameAndArgs;
     cmd._helpCommandDescription = this._helpCommandDescription;
+    cmd._helpConfiguration = this._helpConfiguration;
     cmd._exitCallback = this._exitCallback;
     cmd._storeOptionsAsProperties = this._storeOptionsAsProperties;
     cmd._passCommandToAction = this._passCommandToAction;
@@ -331,12 +631,37 @@ class Command extends EventEmitter {
    *
    * @param {string} [name]
    * @return {Command} new command
-   * @api public
    */
 
   createCommand(name) {
     return new Command(name);
   };
+
+  /**
+   * You can customise the help with a subclass of Help by overriding createHelp,
+   * or by overriding Help properties using configureHelp().
+   *
+   * @return {Help}
+   */
+
+  createHelp() {
+    return Object.assign(new Help(), this.configureHelp());
+  };
+
+  /**
+   * You can customise the help by overriding Help properties using configureHelp(),
+   * or with a subclass of Help by overriding createHelp().
+   *
+   * @param {Object} [configuration] - configuration options
+   * @return {Command|Object} `this` command for chaining, or stored configuration
+   */
+
+  configureHelp(configuration) {
+    if (configuration === undefined) return this._helpConfiguration;
+
+    this._helpConfiguration = configuration;
+    return this;
+  }
 
   /**
    * Add a prepared subcommand.
@@ -346,7 +671,6 @@ class Command extends EventEmitter {
    * @param {Command} cmd - new subcommand
    * @param {Object} [opts] - configuration options
    * @return {Command} `this` command for chaining
-   * @api public
    */
 
   addCommand(cmd, opts) {
@@ -375,8 +699,6 @@ class Command extends EventEmitter {
 
   /**
    * Define argument syntax for the command.
-   *
-   * @api public
    */
 
   arguments(desc) {
@@ -391,14 +713,13 @@ class Command extends EventEmitter {
    *    addHelpCommand('help [cmd]', 'display help for [cmd]'); // force on with custom details
    *
    * @return {Command} `this` command for chaining
-   * @api public
    */
 
   addHelpCommand(enableOrNameAndArgs, description) {
     if (enableOrNameAndArgs === false) {
-      this._hasImplicitHelpCommand = false;
+      this._addImplicitHelpCommand = false;
     } else {
-      this._hasImplicitHelpCommand = true;
+      this._addImplicitHelpCommand = true;
       if (typeof enableOrNameAndArgs === 'string') {
         this._helpCommandName = enableOrNameAndArgs.split(' ')[0];
         this._helpCommandnameAndArgs = enableOrNameAndArgs;
@@ -413,11 +734,11 @@ class Command extends EventEmitter {
    * @api private
    */
 
-  _lazyHasImplicitHelpCommand() {
-    if (this._hasImplicitHelpCommand === undefined) {
-      this._hasImplicitHelpCommand = this.commands.length && !this._actionHandler && !this._findCommand('help');
+  _hasImplicitHelpCommand() {
+    if (this._addImplicitHelpCommand === undefined) {
+      return this.commands.length && !this._actionHandler && !this._findCommand('help');
     }
-    return this._hasImplicitHelpCommand;
+    return this._addImplicitHelpCommand;
   };
 
   /**
@@ -470,7 +791,6 @@ class Command extends EventEmitter {
    *
    * @param {Function} [fn] optional callback which will be passed a CommanderError, defaults to throwing
    * @return {Command} `this` command for chaining
-   * @api public
    */
 
   exitOverride(fn) {
@@ -520,7 +840,6 @@ class Command extends EventEmitter {
    *
    * @param {Function} fn
    * @return {Command} `this` command for chaining
-   * @api public
    */
 
   action(fn) {
@@ -740,7 +1059,6 @@ Read more on https://git.io/JJc0W`);
    * @param {Function|*} [fn] - custom option processing function or default value
    * @param {*} [defaultValue]
    * @return {Command} `this` command for chaining
-   * @api public
    */
 
   option(flags, description, fn, defaultValue) {
@@ -758,7 +1076,6 @@ Read more on https://git.io/JJc0W`);
   * @param {Function|*} [fn] - custom option processing function or default value
   * @param {*} [defaultValue]
   * @return {Command} `this` command for chaining
-  * @api public
   */
 
   requiredOption(flags, description, fn, defaultValue) {
@@ -775,7 +1092,6 @@ Read more on https://git.io/JJc0W`);
    *    .combineFlagAndOptionalValue(false) // `-fb` is treated like `-f -b`
    *
    * @param {Boolean} [arg] - if `true` or omitted, an optional value can be specified directly after the flag.
-   * @api public
    */
   combineFlagAndOptionalValue(arg) {
     this._combineFlagAndOptionalValue = (arg === undefined) || arg;
@@ -787,7 +1103,6 @@ Read more on https://git.io/JJc0W`);
    *
    * @param {Boolean} [arg] - if `true` or omitted, no error will be thrown
    * for unknown options.
-   * @api public
    */
   allowUnknownOption(arg) {
     this._allowUnknownOption = (arg === undefined) || arg;
@@ -800,7 +1115,6 @@ Read more on https://git.io/JJc0W`);
     *
     * @param {boolean} value
     * @return {Command} `this` command for chaining
-    * @api public
     */
 
   storeOptionsAsProperties(value) {
@@ -818,7 +1132,6 @@ Read more on https://git.io/JJc0W`);
     *
     * @param {boolean} value
     * @return {Command} `this` command for chaining
-    * @api public
     */
 
   passCommandToAction(value) {
@@ -873,7 +1186,6 @@ Read more on https://git.io/JJc0W`);
    * @param {Object} [parseOptions] - optionally specify style of options with from: node/user/electron
    * @param {string} [parseOptions.from] - where the args are from: 'node', 'user', 'electron'
    * @return {Command} `this` command for chaining
-   * @api public
    */
 
   parse(argv, parseOptions) {
@@ -885,7 +1197,7 @@ Read more on https://git.io/JJc0W`);
     // Default to using process.argv
     if (argv === undefined) {
       argv = process.argv;
-      // @ts-ignore
+      // @ts-ignore: unknown property
       if (process.versions && process.versions.electron) {
         parseOptions.from = 'electron';
       }
@@ -901,7 +1213,7 @@ Read more on https://git.io/JJc0W`);
         userArgs = argv.slice(2);
         break;
       case 'electron':
-        // @ts-ignore
+        // @ts-ignore: unknown property
         if (process.defaultApp) {
           this._scriptPath = argv[1];
           userArgs = argv.slice(2);
@@ -915,9 +1227,9 @@ Read more on https://git.io/JJc0W`);
       default:
         throw new Error(`unexpected parse option { from: '${parseOptions.from}' }`);
     }
-    // @ts-ignore
+    // @ts-ignore: unknown property
     if (!this._scriptPath && process.mainModule) {
-      // @ts-ignore
+      // @ts-ignore: unknown property
       this._scriptPath = process.mainModule.filename;
     }
 
@@ -948,7 +1260,6 @@ Read more on https://git.io/JJc0W`);
    * @param {Object} [parseOptions]
    * @param {string} parseOptions.from - where the args are from: 'node', 'user', 'electron'
    * @return {Promise}
-   * @api public
    */
 
   parseAsync(argv, parseOptions) {
@@ -973,9 +1284,9 @@ Read more on https://git.io/JJc0W`);
     // Want the entry script as the reference for command name and directory for searching for other files.
     let scriptPath = this._scriptPath;
     // Fallback in case not set, due to how Command created or called.
-    // @ts-ignore
+    // @ts-ignore: unknown property
     if (!scriptPath && process.mainModule) {
-      // @ts-ignore
+      // @ts-ignore: unknown property
       scriptPath = process.mainModule.filename;
     }
 
@@ -1097,7 +1408,7 @@ Read more on https://git.io/JJc0W`);
 
     if (operands && this._findCommand(operands[0])) {
       this._dispatchSubcommand(operands[0], operands.slice(1), unknown);
-    } else if (this._lazyHasImplicitHelpCommand() && operands[0] === this._helpCommandName) {
+    } else if (this._hasImplicitHelpCommand() && operands[0] === this._helpCommandName) {
       if (operands.length === 1) {
         this.help();
       } else {
@@ -1201,7 +1512,6 @@ Read more on https://git.io/JJc0W`);
    *
    * @param {String[]} argv
    * @return {{operands: String[], unknown: String[]}}
-   * @api public
    */
 
   parseOptions(argv) {
@@ -1297,7 +1607,6 @@ Read more on https://git.io/JJc0W`);
    * Return an object containing options as key-value pairs
    *
    * @return {Object}
-   * @api public
    */
   opts() {
     if (this._storeOptionsAsProperties) {
@@ -1404,7 +1713,6 @@ Read more on https://git.io/JJc0W`);
    * @param {string} [flags]
    * @param {string} [description]
    * @return {this | string} `this` command for chaining, or version string if no arguments
-   * @api public
    */
 
   version(str, flags, description) {
@@ -1425,12 +1733,10 @@ Read more on https://git.io/JJc0W`);
   /**
    * Set the description to `str`.
    *
-   * @param {string} str
+   * @param {string} [str]
    * @param {Object} [argsDescription]
    * @return {string|Command}
-   * @api public
    */
-
   description(str, argsDescription) {
     if (str === undefined && argsDescription === undefined) return this._description;
     this._description = str;
@@ -1445,7 +1751,6 @@ Read more on https://git.io/JJc0W`);
    *
    * @param {string} [alias]
    * @return {string|Command}
-   * @api public
    */
 
   alias(alias) {
@@ -1470,7 +1775,6 @@ Read more on https://git.io/JJc0W`);
    *
    * @param {string[]} [aliases]
    * @return {string[]|Command}
-   * @api public
    */
 
   aliases(aliases) {
@@ -1486,7 +1790,6 @@ Read more on https://git.io/JJc0W`);
    *
    * @param {string} [str]
    * @return {String|Command}
-   * @api public
    */
 
   usage(str) {
@@ -1511,8 +1814,7 @@ Read more on https://git.io/JJc0W`);
    * Get or set the name of the command
    *
    * @param {string} [str]
-   * @return {String|Command}
-   * @api public
+   * @return {string|Command}
    */
 
   name(str) {
@@ -1522,236 +1824,14 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
-   * Return prepared commands.
-   *
-   * @return {Array}
-   * @api private
-   */
-
-  prepareCommands() {
-    const commandDetails = this.commands.filter((cmd) => {
-      return !cmd._hidden;
-    }).map((cmd) => {
-      const args = cmd._args.map((arg) => {
-        return humanReadableArgName(arg);
-      }).join(' ');
-
-      return [
-        cmd._name +
-          (cmd._aliases[0] ? '|' + cmd._aliases[0] : '') +
-          (cmd.options.length ? ' [options]' : '') +
-          (args ? ' ' + args : ''),
-        cmd._description
-      ];
-    });
-
-    if (this._lazyHasImplicitHelpCommand()) {
-      commandDetails.push([this._helpCommandnameAndArgs, this._helpCommandDescription]);
-    }
-    return commandDetails;
-  };
-
-  /**
-   * Return the largest command length.
-   *
-   * @return {number}
-   * @api private
-   */
-
-  largestCommandLength() {
-    const commands = this.prepareCommands();
-    return commands.reduce((max, command) => {
-      return Math.max(max, command[0].length);
-    }, 0);
-  };
-
-  /**
-   * Return the largest option length.
-   *
-   * @return {number}
-   * @api private
-   */
-
-  largestOptionLength() {
-    const options = [].slice.call(this.options);
-    options.push({
-      flags: this._helpFlags
-    });
-
-    return options.reduce((max, option) => {
-      return Math.max(max, option.flags.length);
-    }, 0);
-  };
-
-  /**
-   * Return the largest arg length.
-   *
-   * @return {number}
-   * @api private
-   */
-
-  largestArgLength() {
-    return this._args.reduce((max, arg) => {
-      return Math.max(max, arg.name.length);
-    }, 0);
-  };
-
-  /**
-   * Return the pad width.
-   *
-   * @return {number}
-   * @api private
-   */
-
-  padWidth() {
-    let width = this.largestOptionLength();
-    if (this._argsDescription && this._args.length) {
-      if (this.largestArgLength() > width) {
-        width = this.largestArgLength();
-      }
-    }
-
-    if (this.commands && this.commands.length) {
-      if (this.largestCommandLength() > width) {
-        width = this.largestCommandLength();
-      }
-    }
-
-    return width;
-  };
-
-  /**
-   * Any visible options?
-   *
-   * @return {boolean}
-   * @api private
-   */
-  _hasVisibleOptions() {
-    return this._hasHelpOption || this.options.some((option) => !option.hidden);
-  }
-
-  /**
-   * Return help for options.
-   *
-   * @return {string}
-   * @api private
-   */
-
-  optionHelp() {
-    const width = this.padWidth();
-    const columns = process.stdout.columns || 80;
-    const descriptionWidth = columns - width - 4;
-    function padOptionDetails(flags, description) {
-      return pad(flags, width) + '  ' + optionalWrap(description, descriptionWidth, width + 2);
-    };
-
-    // Explicit options (including version)
-    const visibleOptions = this.options.filter((option) => !option.hidden);
-    const help = visibleOptions.map((option) => {
-      return padOptionDetails(option.flags, option.fullDescription());
-    });
-
-    // Implicit help
-    const showShortHelpFlag = this._hasHelpOption && this._helpShortFlag && !this._findOption(this._helpShortFlag);
-    const showLongHelpFlag = this._hasHelpOption && !this._findOption(this._helpLongFlag);
-    if (showShortHelpFlag || showLongHelpFlag) {
-      let helpFlags = this._helpFlags;
-      if (!showShortHelpFlag) {
-        helpFlags = this._helpLongFlag;
-      } else if (!showLongHelpFlag) {
-        helpFlags = this._helpShortFlag;
-      }
-      help.push(padOptionDetails(helpFlags, this._helpDescription));
-    }
-
-    return help.join('\n');
-  };
-
-  /**
-   * Return command help documentation.
-   *
-   * @return {string}
-   * @api private
-   */
-
-  commandHelp() {
-    if (!this.commands.length && !this._lazyHasImplicitHelpCommand()) return '';
-
-    const commands = this.prepareCommands();
-    const width = this.padWidth();
-
-    const columns = process.stdout.columns || 80;
-    const descriptionWidth = columns - width - 4;
-
-    return [
-      'Commands:',
-      commands.map((cmd) => {
-        const desc = cmd[1] ? '  ' + cmd[1] : '';
-        return (desc ? pad(cmd[0], width) : cmd[0]) + optionalWrap(desc, descriptionWidth, width + 2);
-      }).join('\n').replace(/^/gm, '  '),
-      ''
-    ].join('\n');
-  };
-
-  /**
    * Return program help documentation.
    *
    * @return {string}
-   * @api public
    */
 
   helpInformation() {
-    let desc = [];
-    if (this._description) {
-      desc = [
-        this._description,
-        ''
-      ];
-
-      const argsDescription = this._argsDescription;
-      if (argsDescription && this._args.length) {
-        const width = this.padWidth();
-        const columns = process.stdout.columns || 80;
-        const descriptionWidth = columns - width - 5;
-        desc.push('Arguments:');
-        this._args.forEach((arg) => {
-          desc.push('  ' + pad(arg.name, width) + '  ' + wrap(argsDescription[arg.name] || '', descriptionWidth, width + 4));
-        });
-        desc.push('');
-      }
-    }
-
-    let cmdName = this._name;
-    if (this._aliases[0]) {
-      cmdName = cmdName + '|' + this._aliases[0];
-    }
-    let parentCmdNames = '';
-    for (let parentCmd = this.parent; parentCmd; parentCmd = parentCmd.parent) {
-      parentCmdNames = parentCmd.name() + ' ' + parentCmdNames;
-    }
-    const usage = [
-      'Usage: ' + parentCmdNames + cmdName + ' ' + this.usage(),
-      ''
-    ];
-
-    let cmds = [];
-    const commandHelp = this.commandHelp();
-    if (commandHelp) cmds = [commandHelp];
-
-    let options = [];
-    if (this._hasVisibleOptions()) {
-      options = [
-        'Options:',
-        '' + this.optionHelp().replace(/^/gm, '  '),
-        ''
-      ];
-    }
-
-    return usage
-      .concat(desc)
-      .concat(options)
-      .concat(cmds)
-      .join('\n');
+    const helper = this.createHelp();
+    return helper.formatHelp(this, helper);
   };
 
   /**
@@ -1778,7 +1858,6 @@ Read more on https://git.io/JJc0W`);
    * Outputs built-in help, and custom text added using `.addHelpText()`.
    *
    * @param {{ error: boolean } | Function} [contextOptions] - pass {error:true} to write to stderr instead of stdout
-   * @api public
    */
 
   outputHelp(contextOptions) {
@@ -1821,7 +1900,6 @@ Read more on https://git.io/JJc0W`);
    * @param {string | boolean} [flags]
    * @param {string} [description]
    * @return {Command} `this` command for chaining
-   * @api public
    */
 
   helpOption(flags, description) {
@@ -1845,7 +1923,6 @@ Read more on https://git.io/JJc0W`);
    * Outputs built-in help, and custom text added using `.addHelpText()`.
    *
    * @param {{ error: boolean }} [contextOptions] - pass {error:true} to write to stderr instead of stdout
-   * @api public
    */
 
   help(contextOptions) {
@@ -1905,6 +1982,7 @@ exports.program = exports; // More explicit access to global command.
 exports.Command = Command;
 exports.Option = Option;
 exports.CommanderError = CommanderError;
+exports.Help = Help;
 
 /**
  * Camel-case the given `flag`
@@ -1918,63 +1996,6 @@ function camelcase(flag) {
   return flag.split('-').reduce((str, word) => {
     return str + word[0].toUpperCase() + word.slice(1);
   });
-}
-
-/**
- * Pad `str` to `width`.
- *
- * @param {string} str
- * @param {number} width
- * @return {string}
- * @api private
- */
-
-function pad(str, width) {
-  const len = Math.max(0, width - str.length);
-  return str + Array(len + 1).join(' ');
-}
-
-/**
- * Wraps the given string with line breaks at the specified width while breaking
- * words and indenting every but the first line on the left.
- *
- * @param {string} str
- * @param {number} width
- * @param {number} indent
- * @return {string}
- * @api private
- */
-function wrap(str, width, indent) {
-  const regex = new RegExp('.{1,' + (width - 1) + '}([\\s\u200B]|$)|[^\\s\u200B]+?([\\s\u200B]|$)', 'g');
-  const lines = str.match(regex) || [];
-  return lines.map((line, i) => {
-    if (line.slice(-1) === '\n') {
-      line = line.slice(0, line.length - 1);
-    }
-    return ((i > 0 && indent) ? Array(indent + 1).join(' ') : '') + line.trimRight();
-  }).join('\n');
-}
-
-/**
- * Optionally wrap the given str to a max width of width characters per line
- * while indenting with indent spaces. Do not wrap if insufficient width or
- * string is manually formatted.
- *
- * @param {string} str
- * @param {number} width
- * @param {number} indent
- * @return {string}
- * @api private
- */
-function optionalWrap(str, width, indent) {
-  // Detect manually wrapped and indented strings by searching for line breaks
-  // followed by multiple spaces/tabs.
-  if (str.match(/[\n]\s+/)) return str;
-  // Do not wrap to narrow columns (or can end up with a word per line).
-  const minWidth = 40;
-  if (width < minWidth) return str;
-
-  return wrap(str, width, indent);
 }
 
 /**
