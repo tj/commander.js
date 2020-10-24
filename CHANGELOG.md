@@ -22,6 +22,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - add missing TypeScript definition for `.addHelpCommand()' ([#1375])
 - removed blank line after "Arguments:" in help, to match "Options:" and "Commands:" ([#1360])
 
+### Changed
+
+- update dependencies
+
 ## [6.1.0] (2020-08-28)
 
 ### Added
