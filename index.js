@@ -919,7 +919,7 @@ Read more on https://git.io/JJc0W`);
    * create the option. You can override createOption to return a custom option.
    *
    * @param {string} flags
-   * @param {string} description
+   * @param {string} [description]
    * @return {Option} new option
    */
 
@@ -1070,7 +1070,7 @@ Read more on https://git.io/JJc0W`);
    *     program.option('-c, --cheese [type]', 'add cheese [marble]');
    *
    * @param {string} flags
-   * @param {string} description
+   * @param {string} [description]
    * @param {Function|*} [fn] - custom option processing function or default value
    * @param {*} [defaultValue]
    * @return {Command} `this` command for chaining
@@ -1087,7 +1087,7 @@ Read more on https://git.io/JJc0W`);
   * The `flags` string contains the short and/or long flags, separated by comma, a pipe or space.
   *
   * @param {string} flags
-  * @param {string} description
+  * @param {string} [description]
   * @param {Function|*} [fn] - custom option processing function or default value
   * @param {*} [defaultValue]
   * @return {Command} `this` command for chaining
