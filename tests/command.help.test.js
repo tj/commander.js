@@ -163,6 +163,15 @@ test('when no options then Options not included in helpInformation', () => {
   expect(helpInformation).not.toMatch('Options');
 });
 
+test('when negated option then option included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .option('-C, --no-colour', 'colourless');
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch('--no-colour');
+  expect(helpInformation).toMatch('colourless');
+});
+
 test('when option.hideHelp() then option not included in helpInformation', () => {
   const program = new commander.Command();
   program
