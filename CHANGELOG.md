@@ -8,6 +8,35 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [7.0.0-0] (2020-10-25)
+
+### Added
+
+- use `.addHelpText()` to add text before or after the built-in help, for just current command or also for all subcommands ([#1296])
+- enhance Option class ([#1331])
+  - allow hiding options from help
+  - allow restricting option arguments to a list of choices
+  - allow setting how default value is shown in help
+- refactor the code generating the help into a separate public Help class ([#1365])
+  - support sorting subcommands and options in help
+  - support specifying wrap width (columns)
+  - allow subclassing Help class
+  - allow configuring Help class without subclassing
+ 
+### Fixed
+
+- wrapping bugs in help ([#1365])
+  - first line of command description was wrapping two characters early
+  - pad width calculation was not including help option and help command
+  - pad width calculation was including hidden options and commands
+  
+### Changed
+
+- document and annotate deprecated routines ([#1349])
+- deprecated callback parameter to `.help()` and `.outputHelp()` (removed from README) ([#1296])
+- deprecate `.on('--help')` (removed from README) ([#1296])
+- initialise the command description to empty string (previously undefined) ([#1365])
+
 ## [6.1.0] (2020-08-28)
 
 ### Added
@@ -301,6 +330,7 @@ if (program.rawArgs.length < 3) ...
 [#1250]: https://github.com/tj/commander.js/pull/1250
 [#1256]: https://github.com/tj/commander.js/pull/1256
 [#1275]: https://github.com/tj/commander.js/pull/1275
+[#1296]: https://github.com/tj/commander.js/pull/1296
 [#1301]: https://github.com/tj/commander.js/issues/1301
 [#1306]: https://github.com/tj/commander.js/pull/1306
 [#1312]: https://github.com/tj/commander.js/pull/1312
@@ -308,8 +338,12 @@ if (program.rawArgs.length < 3) ...
 [#1323]: https://github.com/tj/commander.js/pull/1323
 [#1325]: https://github.com/tj/commander.js/pull/1325
 [#1326]: https://github.com/tj/commander.js/pull/1326
+[#1331]: https://github.com/tj/commander.js/pull/1331
+[#1349]: https://github.com/tj/commander.js/pull/1349
+[#1365]: https://github.com/tj/commander.js/pull/1365
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[7.0.0-0]: https://github.com/tj/commander.js/compare/v6.2.0...v7.0.0-0
 [6.1.0]: https://github.com/tj/commander.js/compare/v6.0.0..v6.1.0
 [6.0.0]: https://github.com/tj/commander.js/compare/v5.1.0..v6.0.0
 [6.0.0-0]: https://github.com/tj/commander.js/compare/v5.1.0..v6.0.0-0
