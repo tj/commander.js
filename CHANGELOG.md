@@ -37,6 +37,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - deprecate `.on('--help')` (removed from README) ([#1296])
 - initialise the command description to empty string (previously undefined) ([#1365])
 
+## [6.2.0] (2020-10-25)
+
+### Added
+
+- added 'tsx' file extension for stand-alone executable subcommands ([#1368])
+- documented second parameter to `.description()` to describe command arguments ([#1353])
+- documentation of special cases with options taking varying numbers of option-arguments ([#1332])
+- documentation for terminology ([#1361])
+  
+### Fixed
+
+- add missing TypeScript definition for `.addHelpCommand()' ([#1375])
+- removed blank line after "Arguments:" in help, to match "Options:" and "Commands:" ([#1360])
+
+### Changed
+
+- update dependencies
+
 ## [6.1.0] (2020-08-28)
 
 ### Added
@@ -339,11 +357,18 @@ if (program.rawArgs.length < 3) ...
 [#1325]: https://github.com/tj/commander.js/pull/1325
 [#1326]: https://github.com/tj/commander.js/pull/1326
 [#1331]: https://github.com/tj/commander.js/pull/1331
+[#1332]: https://github.com/tj/commander.js/pull/1332
 [#1349]: https://github.com/tj/commander.js/pull/1349
+[#1353]: https://github.com/tj/commander.js/pull/1353
+[#1360]: https://github.com/tj/commander.js/pull/1360
+[#1361]: https://github.com/tj/commander.js/pull/1361
 [#1365]: https://github.com/tj/commander.js/pull/1365
+[#1368]: https://github.com/tj/commander.js/pull/1368
+[#1375]: https://github.com/tj/commander.js/pull/1375
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
 [7.0.0-0]: https://github.com/tj/commander.js/compare/v6.2.0...v7.0.0-0
+[6.2.0]: https://github.com/tj/commander.js/compare/v6.1.0..v6.2.0
 [6.1.0]: https://github.com/tj/commander.js/compare/v6.0.0..v6.1.0
 [6.0.0]: https://github.com/tj/commander.js/compare/v5.1.0..v6.0.0
 [6.0.0-0]: https://github.com/tj/commander.js/compare/v5.1.0..v6.0.0-0
