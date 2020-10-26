@@ -58,11 +58,11 @@ class Help {
     if (showShortHelpFlag || showLongHelpFlag) {
       let helpOption;
       if (!showShortHelpFlag) {
-        helpOption = new Option(cmd._helpLongFlag, cmd._helpDescription);
+        helpOption = cmd.createOption(cmd._helpLongFlag, cmd._helpDescription);
       } else if (!showLongHelpFlag) {
-        helpOption = new Option(cmd._helpShortFlag, cmd._helpDescription);
+        helpOption = cmd.createOption(cmd._helpShortFlag, cmd._helpDescription);
       } else {
-        helpOption = new Option(cmd._helpFlags, cmd._helpDescription);
+        helpOption = cmd.createOption(cmd._helpFlags, cmd._helpDescription);
       }
       visibleOptions.push(helpOption);
     }
@@ -913,6 +913,21 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
+   * Factory routine to create a new unattached option.
+   *
+   * See .option() for creating an attached option, which uses this routine to
+   * create the option. You can override createOption to return a custom option.
+   *
+   * @param {string} flags
+   * @param {string} [description]
+   * @return {Option} new option
+   */
+
+  createOption(flags, description) {
+    return new Option(flags, description);
+  };
+
+  /**
    * Add an option.
    *
    * @param {Option} option
@@ -991,7 +1006,7 @@ Read more on https://git.io/JJc0W`);
    * @api private
    */
   _optionEx(config, flags, description, fn, defaultValue) {
-    const option = new Option(flags, description);
+    const option = this.createOption(flags, description);
     option.makeOptionMandatory(!!config.mandatory);
     if (typeof fn === 'function') {
       option.default(defaultValue).argParser(fn);
@@ -1055,7 +1070,7 @@ Read more on https://git.io/JJc0W`);
    *     program.option('-c, --cheese [type]', 'add cheese [marble]');
    *
    * @param {string} flags
-   * @param {string} description
+   * @param {string} [description]
    * @param {Function|*} [fn] - custom option processing function or default value
    * @param {*} [defaultValue]
    * @return {Command} `this` command for chaining
@@ -1072,7 +1087,7 @@ Read more on https://git.io/JJc0W`);
   * The `flags` string contains the short and/or long flags, separated by comma, a pipe or space.
   *
   * @param {string} flags
-  * @param {string} description
+  * @param {string} [description]
   * @param {Function|*} [fn] - custom option processing function or default value
   * @param {*} [defaultValue]
   * @return {Command} `this` command for chaining
@@ -1720,7 +1735,7 @@ Read more on https://git.io/JJc0W`);
     this._version = str;
     flags = flags || '-V, --version';
     description = description || 'output the version number';
-    const versionOption = new Option(flags, description);
+    const versionOption = this.createOption(flags, description);
     this._versionOptionName = versionOption.attributeName();
     this.options.push(versionOption);
     this.on('option:' + versionOption.name(), () => {

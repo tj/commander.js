@@ -323,6 +323,15 @@ declare namespace commander {
     requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
 
     /**
+     * Factory routine to create a new unattached option.
+     *
+     * See .option() for creating an attached option, which uses this routine to
+     * create the option. You can override createOption to return a custom option.
+     */
+
+    createOption(flags: string, description?: string): Option;
+
+    /**
      * Add a prepared Option.
      *
      * See .option() and .requiredOption() for creating and attaching an option in a single call.

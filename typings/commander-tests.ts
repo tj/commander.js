@@ -135,6 +135,10 @@ const requiredOptionThis9: commander.Command = program.requiredOption('-v, --ver
 const requiredOptionThis10: commander.Command = program.requiredOption('-c, --collect <value>', 'repeatable value', collect, []);
 const requiredOptionThis11: commander.Command = program.requiredOption('-l, --list <items>', 'comma separated list', commaSeparatedList);
 
+// createOption
+const createOption1: commander.Option = program.createOption('a, --alpha');
+const createOption2: commander.Option = program.createOption('a, --alpha', 'description');
+
 // addOption
 const addOptionThis: commander.Command = program.addOption(new commander.Option('-s,--simple'));
 
@@ -234,7 +238,6 @@ const onThis: commander.Command = program.on('command:foo', () => {
 
 // createCommand
 
-const createInstance1: commander.Command = program.createCommand();
 const createInstance2: commander.Command = program.createCommand('name');
 
 class MyCommand extends commander.Command {
