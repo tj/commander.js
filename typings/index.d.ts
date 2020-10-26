@@ -50,12 +50,12 @@ declare namespace commander {
     /**
      * Whether the option is mandatory and must have a value after parsing.
      */
-    makeOptionMandatory(value?: boolean): this;
+    makeOptionMandatory(mandatory?: boolean): this;
 
     /**
      * Hide option in help.
      */
-    hideHelp(value?: boolean): this;
+    hideHelp(hide?: boolean): this;
 
     /**
      * Validation of option argument failed.
@@ -344,7 +344,7 @@ declare namespace commander {
      *
      * @returns `this` command for chaining
      */
-    storeOptionsAsProperties(value?: boolean): this;
+    storeOptionsAsProperties(storeAsProperties?: boolean): this;
 
     /**
      * Whether to pass command to action handler,
@@ -352,7 +352,7 @@ declare namespace commander {
      *
      * @returns `this` command for chaining
      */
-    passCommandToAction(value?: boolean): this;
+    passCommandToAction(passCommand?: boolean): this;
 
     /**
      * Alter parsing of short flags with optional values.
@@ -364,15 +364,14 @@ declare namespace commander {
      *
      * @returns `this` command for chaining
      */
-    combineFlagAndOptionalValue(arg?: boolean): this;
+    combineFlagAndOptionalValue(combine?: boolean): this;
 
     /**
      * Allow unknown options on the command line.
      *
-     * @param [arg] if `true` or omitted, no error will be thrown for unknown options.
      * @returns `this` command for chaining
      */
-    allowUnknownOption(arg?: boolean): this;
+    allowUnknownOption(allowUnknown?: boolean): this;
 
     /**
      * Parse `argv`, setting options and invoking commands when defined.
