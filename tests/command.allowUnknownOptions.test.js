@@ -29,11 +29,35 @@ describe('allowUnknownOption', () => {
     }).toThrow();
   });
 
-  test('when specify unknown program option and allowUnknownOption then no error', () => {
+  test('when specify unknown program option and allowUnknownOption(false) then error', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .allowUnknownOption(false)
+      .option('-p, --pepper', 'add pepper');
+
+    expect(() => {
+      program.parse(['node', 'test', '-m']);
+    }).toThrow();
+  });
+
+  test('when specify unknown program option and allowUnknownOption() then no error', () => {
     const program = new commander.Command();
     program
       .exitOverride()
       .allowUnknownOption()
+      .option('-p, --pepper', 'add pepper');
+
+    expect(() => {
+      program.parse(['node', 'test', '-m']);
+    }).not.toThrow();
+  });
+
+  test('when specify unknown program option and allowUnknownOption(true) then no error', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .allowUnknownOption(true)
       .option('-p, --pepper', 'add pepper');
 
     expect(() => {
