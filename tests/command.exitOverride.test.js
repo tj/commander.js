@@ -156,7 +156,7 @@ describe('.exitOverride and error details', () => {
   });
 
   test('when specify --version then throw CommanderError', () => {
-    const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
+    const logSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
@@ -171,7 +171,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expectCommanderError(caughtErr, 0, 'commander.version', myVersion);
-    writeSpy.mockRestore();
+    logSpy.mockRestore();
   });
 
   test('when executableSubcommand succeeds then call exitOverride', async() => {

@@ -543,6 +543,13 @@ class Command extends EventEmitter {
     this._description = '';
     this._argsDescription = undefined;
 
+    this._outputConfiguration = {
+      log: (...args) => console.log(...args),
+      error: (...args) => console.error(...args),
+      logColumns: () => process.stdout.isTTY ? process.stdout.columns : undefined,
+      errorColumns: () => process.stderr.isTTY ? process.stderr.columns : undefined
+    };
+
     this._hidden = false;
     this._hasHelpOption = true;
     this._helpFlags = '-h, --help';
@@ -660,6 +667,23 @@ class Command extends EventEmitter {
     if (configuration === undefined) return this._helpConfiguration;
 
     this._helpConfiguration = configuration;
+    return this;
+  }
+
+  /**
+   * WIP
+   *
+   * @param {Object} [configuration] - configuration options
+   * @return {Command|Object} `this` command for chaining, or stored configuration
+   */
+
+  configureOutput(configuration) {
+    // Do we need a getter? Could be useful for users building custom outputs,
+    // see if add other bottlenecks making less likely????
+    if (configuration === undefined) return this._outputConfiguration;
+
+    Object.assign(this._outputConfiguration, configuration);
+    // add type checking on properties and throw if incorrect????
     return this;
   }
 
@@ -968,8 +992,7 @@ Read more on https://git.io/JJc0W`);
           val = option.parseArg(val, oldValue === undefined ? defaultValue : oldValue);
         } catch (err) {
           if (err.code === 'commander.optionArgumentRejected') {
-            console.error(err.message);
-            this._exit(err.exitCode, err.code, err.message);
+            this._displayError(err.exitCode, err.code, err.message);
           }
           throw err;
         }
@@ -1640,6 +1663,14 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
+   * WIP
+   */
+  _displayError(exitCode, code, message) {
+    this._outputConfiguration.error(message);
+    this._exit(exitCode, code, message);
+  }
+
+  /**
    * Argument `name` is missing.
    *
    * @param {string} name
@@ -1648,8 +1679,7 @@ Read more on https://git.io/JJc0W`);
 
   missingArgument(name) {
     const message = `error: missing required argument '${name}'`;
-    console.error(message);
-    this._exit(1, 'commander.missingArgument', message);
+    this._displayError(1, 'commander.missingArgument', message);
   };
 
   /**
@@ -1667,8 +1697,7 @@ Read more on https://git.io/JJc0W`);
     } else {
       message = `error: option '${option.flags}' argument missing`;
     }
-    console.error(message);
-    this._exit(1, 'commander.optionMissingArgument', message);
+    this._displayError(1, 'commander.optionMissingArgument', message);
   };
 
   /**
@@ -1680,8 +1709,7 @@ Read more on https://git.io/JJc0W`);
 
   missingMandatoryOptionValue(option) {
     const message = `error: required option '${option.flags}' not specified`;
-    console.error(message);
-    this._exit(1, 'commander.missingMandatoryOptionValue', message);
+    this._displayError(1, 'commander.missingMandatoryOptionValue', message);
   };
 
   /**
@@ -1694,8 +1722,7 @@ Read more on https://git.io/JJc0W`);
   unknownOption(flag) {
     if (this._allowUnknownOption) return;
     const message = `error: unknown option '${flag}'`;
-    console.error(message);
-    this._exit(1, 'commander.unknownOption', message);
+    this._displayError(1, 'commander.unknownOption', message);
   };
 
   /**
@@ -1712,8 +1739,7 @@ Read more on https://git.io/JJc0W`);
     const fullCommand = partCommands.join(' ');
     const message = `error: unknown command '${this.args[0]}'.` +
       (this._hasHelpOption ? ` See '${fullCommand} ${this._helpLongFlag}'.` : '');
-    console.error(message);
-    this._exit(1, 'commander.unknownCommand', message);
+    this._displayError(1, 'commander.unknownCommand', message);
   };
 
   /**
@@ -1739,7 +1765,7 @@ Read more on https://git.io/JJc0W`);
     this._versionOptionName = versionOption.attributeName();
     this.options.push(versionOption);
     this.on('option:' + versionOption.name(), () => {
-      process.stdout.write(str + '\n');
+      this._outputConfiguration.log(str);
       this._exit(0, 'commander.version', str);
     });
     return this;
