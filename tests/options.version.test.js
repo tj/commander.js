@@ -4,18 +4,18 @@ const commander = require('../');
 
 describe('.version', () => {
   // Optional. Suppress normal output to keep test output clean.
-  let logSpy;
+  let writeSpy;
 
   beforeAll(() => {
-    logSpy = jest.spyOn(console, 'log').mockImplementation(() => { });
+    writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
   });
 
   afterEach(() => {
-    logSpy.mockClear();
+    writeSpy.mockClear();
   });
 
   afterAll(() => {
-    logSpy.mockRestore();
+    writeSpy.mockRestore();
   });
 
   test('when no .version and specify --version then unknown option error', () => {
@@ -50,7 +50,7 @@ describe('.version', () => {
     }).toThrow(myVersion);
 
     // Test output once as well, rest of tests just check the thrown message.
-    expect(logSpy).toHaveBeenCalledWith(myVersion);
+    expect(writeSpy).toHaveBeenCalledWith(`${myVersion}\n`);
   });
 
   test('when specify default long flag then display version', () => {

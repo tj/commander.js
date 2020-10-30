@@ -544,10 +544,13 @@ class Command extends EventEmitter {
     this._argsDescription = undefined;
 
     this._outputConfiguration = {
-      log: (...args) => console.log(...args),
-      error: (...args) => console.error(...args),
-      logColumns: () => process.stdout.isTTY ? process.stdout.columns : undefined,
-      errorColumns: () => process.stderr.isTTY ? process.stderr.columns : undefined
+      // "write" and "error" are choosing backwards compatibility over consistency, for now!
+      // write is used for output to stdout, and error for output to stderr.
+      // Commander only passes simple strings and does not use implicit formatting in either case.
+      write: (arg) => process.stdout.write(arg),
+      writeError: (arg) => process.stderr.write(arg),
+      columns: () => process.stdout.isTTY ? process.stdout.columns : undefined,
+      columnsError: () => process.stderr.isTTY ? process.stderr.columns : undefined
     };
 
     this._hidden = false;
@@ -683,7 +686,6 @@ class Command extends EventEmitter {
     if (configuration === undefined) return this._outputConfiguration;
 
     Object.assign(this._outputConfiguration, configuration);
-    // add type checking on properties and throw if incorrect????
     return this;
   }
 
@@ -1666,7 +1668,7 @@ Read more on https://git.io/JJc0W`);
    * WIP
    */
   _displayError(exitCode, code, message) {
-    this._outputConfiguration.error(message);
+    this._outputConfiguration.writeError(`${message}\n`);
     this._exit(exitCode, code, message);
   }
 
@@ -1765,7 +1767,7 @@ Read more on https://git.io/JJc0W`);
     this._versionOptionName = versionOption.attributeName();
     this.options.push(versionOption);
     this.on('option:' + versionOption.name(), () => {
-      this._outputConfiguration.log(str);
+      this._outputConfiguration.write(`${str}\n`);
       this._exit(0, 'commander.version', str);
     });
     return this;
@@ -1884,9 +1886,9 @@ Read more on https://git.io/JJc0W`);
     const context = { error: !!contextOptions.error };
     let write;
     if (context.error) {
-      write = (arg, ...args) => process.stderr.write(arg, ...args);
+      write = (...arg) => this._outputConfiguration.writeError(...arg);
     } else {
-      write = (arg, ...args) => process.stdout.write(arg, ...args);
+      write = (...arg) => this._outputConfiguration.write(...arg);
     }
     context.write = contextOptions.write || write;
     context.command = this;
