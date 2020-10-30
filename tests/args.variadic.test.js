@@ -3,21 +3,6 @@ const commander = require('../');
 // Testing variadic arguments. Testing all the action arguments, but could test just variadicArg.
 
 describe('variadic argument', () => {
-  // Optional. Use internal knowledge to suppress output to keep test output clean.
-  let consoleErrorSpy;
-
-  beforeAll(() => {
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
-  });
-
-  afterEach(() => {
-    consoleErrorSpy.mockClear();
-  });
-
-  afterAll(() => {
-    consoleErrorSpy.mockRestore();
-  });
-
   test('when no extra arguments specified for program then variadic arg is empty array', () => {
     const actionMock = jest.fn();
     const program = new commander.Command();

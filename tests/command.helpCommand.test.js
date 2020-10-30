@@ -39,21 +39,21 @@ describe('help command listed in helpInformation', () => {
 
 describe('help command processed on correct command', () => {
   // Use internal knowledge to suppress output to keep test output clean.
-  let consoleErrorSpy;
+  let writeErrorSpy;
   let writeSpy;
 
   beforeAll(() => {
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+    writeErrorSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
     writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
   });
 
   afterEach(() => {
-    consoleErrorSpy.mockClear();
+    writeErrorSpy.mockClear();
     writeSpy.mockClear();
   });
 
   afterAll(() => {
-    consoleErrorSpy.mockRestore();
+    writeErrorSpy.mockRestore();
     writeSpy.mockRestore();
   });
 

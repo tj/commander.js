@@ -2,22 +2,22 @@ const commander = require('../');
 
 describe('helpOption', () => {
   let writeSpy;
-  let consoleErrorSpy;
+  let writeErrorSpy;
 
   beforeAll(() => {
     // Optional. Suppress expected output to keep test output clean.
     writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+    writeErrorSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
   });
 
   afterEach(() => {
     writeSpy.mockClear();
-    consoleErrorSpy.mockClear();
+    writeErrorSpy.mockClear();
   });
 
   afterAll(() => {
     writeSpy.mockRestore();
-    consoleErrorSpy.mockRestore();
+    writeErrorSpy.mockRestore();
   });
 
   test('when helpOption has custom flags then custom short flag invokes help', () => {

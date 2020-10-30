@@ -3,7 +3,7 @@ const commander = require('../');
 describe('variadic option with required value', () => {
   test('when variadic with value missing then error', () => {
     // Optional. Use internal knowledge to suppress output to keep test output clean.
-    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+    const writeErrorSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
 
     const program = new commander.Command();
     program
@@ -14,7 +14,7 @@ describe('variadic option with required value', () => {
       program.parse(['--required'], { from: 'user' });
     }).toThrow();
 
-    consoleErrorSpy.mockRestore();
+    writeErrorSpy.mockRestore();
   });
 
   test('when variadic with one value then set in array', () => {
