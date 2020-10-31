@@ -231,3 +231,15 @@ test('when custom getErrorColumns and configureHelp:columns then help error colu
 
   expect(helpColumns).toBe(expectedColumns);
 });
+
+test('when set configureOutput then get configureOutput', () => {
+  const outputOptions = {
+    write: jest.fn(),
+    writeError: jest.fn(),
+    getColumns: jest.fn(),
+    getErrorColumns: jest.fn()
+  };
+  const program = new commander.Command();
+  program.configureOutput(outputOptions);
+  expect(program.configureOutput()).toEqual(outputOptions);
+});
