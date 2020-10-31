@@ -544,11 +544,9 @@ class Command extends EventEmitter {
     this._argsDescription = undefined;
 
     this._outputConfiguration = {
-      // "write" and "error" are choosing backwards compatibility over consistency, for now!
-      // write is used for output to stdout, and error for output to stderr.
-      // Commander only passes simple strings and does not use implicit formatting in either case.
       write: (arg) => process.stdout.write(arg),
       writeError: (arg) => process.stderr.write(arg),
+      // columns is used for wrapping the help
       getColumns: () => process.stdout.isTTY ? process.stdout.columns : undefined,
       getErrorColumns: () => process.stderr.isTTY ? process.stderr.columns : undefined
     };
@@ -681,8 +679,6 @@ class Command extends EventEmitter {
    */
 
   configureOutput(configuration) {
-    // Do we need a getter? Could be useful for users building custom outputs,
-    // see if add other bottlenecks making less likely????
     if (configuration === undefined) return this._outputConfiguration;
 
     Object.assign(this._outputConfiguration, configuration);
