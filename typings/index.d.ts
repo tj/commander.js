@@ -77,7 +77,7 @@ declare namespace commander {
 
   interface Help {
     /** output columns, long lines are wrapped to fit */
-    columns: number;
+    columns?: number;
     sortSubcommands: boolean;
     sortOptions: boolean;
 

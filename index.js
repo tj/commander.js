@@ -12,7 +12,7 @@ const fs = require('fs');
 // Although this is a class, methods are static in style to allow override using subclass or just functions.
 class Help {
   constructor() {
-    this.columns = process.stdout.columns || 80;
+    this.columns = undefined;
     this.sortSubcommands = false;
     this.sortOptions = false;
   }
@@ -243,7 +243,7 @@ class Help {
 
   formatHelp(cmd, helper) {
     const termWidth = helper.padWidth(cmd, helper);
-    const columns = helper.columns;
+    const columns = helper.columns || 80;
     const itemIndentWidth = 2;
     const itemSeparatorWidth = 2;
     // itemIndent term itemSeparator description
@@ -549,8 +549,8 @@ class Command extends EventEmitter {
       // Commander only passes simple strings and does not use implicit formatting in either case.
       write: (arg) => process.stdout.write(arg),
       writeError: (arg) => process.stderr.write(arg),
-      columns: () => process.stdout.isTTY ? process.stdout.columns : undefined,
-      columnsError: () => process.stderr.isTTY ? process.stderr.columns : undefined
+      getColumns: () => process.stdout.isTTY ? process.stdout.columns : undefined,
+      getErrorColumns: () => process.stderr.isTTY ? process.stderr.columns : undefined
     };
 
     this._hidden = false;
@@ -1869,11 +1869,15 @@ Read more on https://git.io/JJc0W`);
   /**
    * Return program help documentation.
    *
+   * @param {{ error: boolean }} [contextOptions] - pass {error:true} to wrap for stderr instead of stdout
    * @return {string}
    */
 
-  helpInformation() {
+  helpInformation(contextOptions) {
     const helper = this.createHelp();
+    if (helper.columns === undefined) {
+      helper.columns = (contextOptions && contextOptions.error) ? this._outputConfiguration.getErrorColumns() : this._outputConfiguration.getColumns();
+    }
     return helper.formatHelp(this, helper);
   };
 
@@ -1921,7 +1925,7 @@ Read more on https://git.io/JJc0W`);
     groupListeners.slice().reverse().forEach(command => command.emit('beforeAllHelp', context));
     this.emit('beforeHelp', context);
 
-    let helpInformation = this.helpInformation();
+    let helpInformation = this.helpInformation(context);
     if (deprecatedCallback) {
       helpInformation = deprecatedCallback(helpInformation);
       if (typeof helpInformation !== 'string' && !Buffer.isBuffer(helpInformation)) {
