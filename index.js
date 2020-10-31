@@ -1886,9 +1886,9 @@ Read more on https://git.io/JJc0W`);
     const context = { error: !!contextOptions.error };
     let write;
     if (context.error) {
-      write = (...arg) => this._outputConfiguration.writeError(...arg);
+      write = (arg) => this._outputConfiguration.writeError(arg);
     } else {
-      write = (...arg) => this._outputConfiguration.write(...arg);
+      write = (arg) => this._outputConfiguration.write(arg);
     }
     context.write = contextOptions.write || write;
     context.command = this;
