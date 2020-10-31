@@ -211,3 +211,23 @@ test('when custom getColumns and configureHelp:columns then help columns from co
 
   expect(helpColumns).toBe(expectedColumns);
 });
+
+test('when custom getErrorColumns and configureHelp:columns then help error columns from configureHelp', () => {
+  const expectedColumns = 123;
+  let helpColumns;
+
+  const program = new commander.Command();
+  program
+    .configureHelp({
+      formatHelp: (cmd, helper) => {
+        helpColumns = helper.columns;
+        return '';
+      },
+      columns: expectedColumns
+    }).configureOutput({
+      getErrorColumns: () => 999
+    });
+  program.outputHelp({ error: true });
+
+  expect(helpColumns).toBe(expectedColumns);
+});
