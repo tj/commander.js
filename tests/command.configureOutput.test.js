@@ -74,7 +74,7 @@ test('when default write() then help on stdout', () => {
   writeSpy.mockRestore();
 });
 
-test('when custom write() then help error on stdout', () => {
+test('when custom write() then help error on custom output', () => {
   const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
   const customWrite = jest.fn();
   const program = new commander.Command();
@@ -95,7 +95,7 @@ test('when default writeError then help error on stderr', () => {
   writeSpy.mockRestore();
 });
 
-test('when custom writeError then help error on stderr', () => {
+test('when custom writeError then help error on custom output', () => {
   const writeSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
   const customWrite = jest.fn();
   const program = new commander.Command();
@@ -105,4 +105,109 @@ test('when custom writeError then help error on stderr', () => {
   expect(writeSpy).toHaveBeenCalledTimes(0);
   expect(customWrite).toHaveBeenCalledTimes(1);
   writeSpy.mockRestore();
+});
+
+test('when default getColumns then help columns from stdout', () => {
+  const expectedColumns = 123;
+  const holdIsTTY = process.stdout.isTTY;
+  const holdColumns = process.stdout.columns;
+  let helpColumns;
+
+  process.stderr.isTTY = true;
+  process.stdout.columns = expectedColumns;
+  process.stdout.isTTY = true;
+  const program = new commander.Command();
+  program
+    .configureHelp({
+      formatHelp: (cmd, helper) => {
+        helpColumns = helper.columns;
+        return '';
+      }
+    });
+  program.outputHelp();
+
+  expect(helpColumns).toBe(expectedColumns);
+  process.stdout.columns = holdColumns;
+  process.stdout.isTTY = holdIsTTY;
+});
+
+test('when custom getColumns then help columns custom', () => {
+  const expectedColumns = 123;
+  let helpColumns;
+
+  const program = new commander.Command();
+  program
+    .configureHelp({
+      formatHelp: (cmd, helper) => {
+        helpColumns = helper.columns;
+        return '';
+      }
+    }).configureOutput({
+      getColumns: () => expectedColumns
+    });
+  program.outputHelp();
+
+  expect(helpColumns).toBe(expectedColumns);
+});
+
+test('when default getErrorColumns then help error columns from stderr', () => {
+  const expectedColumns = 123;
+  const holdIsTTY = process.stderr.isTTY;
+  const holdColumns = process.stderr.columns;
+  let helpColumns;
+
+  process.stderr.isTTY = true;
+  process.stderr.columns = expectedColumns;
+  const program = new commander.Command();
+  program
+    .configureHelp({
+      formatHelp: (cmd, helper) => {
+        helpColumns = helper.columns;
+        return '';
+      }
+    });
+  program.outputHelp({ error: true });
+
+  expect(helpColumns).toBe(expectedColumns);
+  process.stderr.isTTY = holdIsTTY;
+  process.stderr.columns = holdColumns;
+});
+
+test('when custom getErrorColumns then help error columns custom', () => {
+  const expectedColumns = 123;
+  let helpColumns;
+
+  const program = new commander.Command();
+  program
+    .configureHelp({
+      formatHelp: (cmd, helper) => {
+        helpColumns = helper.columns;
+        return '';
+      }
+    }).configureOutput({
+      getErrorColumns: () => expectedColumns
+    });
+  program.outputHelp({ error: true });
+
+  expect(helpColumns).toBe(expectedColumns);
+});
+
+test('when custom getColumns and configureHelp:columns then help columns from configureHelp', () => {
+  const expectedColumns = 123;
+  let helpColumns;
+
+  const program = new commander.Command();
+  program
+    .configureHelp({
+      formatHelp: (cmd, helper) => {
+        helpColumns = helper.columns;
+        return '';
+      },
+      columns: expectedColumns
+    }).configureOutput({
+      getColumns: () => 999
+    });
+  program.outputHelp();
+
+  expect(helpColumns).toBe(expectedColumns);
 });
