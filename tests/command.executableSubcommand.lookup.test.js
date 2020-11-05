@@ -1,7 +1,7 @@
 const childProcess = require('child_process');
 const path = require('path');
 const util = require('util');
-const execAsync = util.promisify(childProcess.exec);
+const execFileAsync = util.promisify(childProcess.execFile);
 
 // Calling node explicitly so pm works without file suffix cross-platform.
 
@@ -13,7 +13,7 @@ const pm = path.join(__dirname, './fixtures/pm');
 
 test('when subcommand file missing then error', () => {
   expect.assertions(1);
-  return execAsync(`node ${pm} list`).catch((err) => {
+  return execFileAsync('node', [pm, 'list']).catch((err) => {
     if (process.platform === 'win32') {
       // Get uncaught thrown error on Windows
       // eslint-disable-next-line jest/no-conditional-expect
@@ -27,7 +27,7 @@ test('when subcommand file missing then error', () => {
 
 test('when alias subcommand file missing then error', () => {
   expect.assertions(1);
-  return execAsync(`node ${pm} lst`).catch((err) => {
+  return execFileAsync('node', [pm, 'lst']).catch((err) => {
     if (process.platform === 'win32') {
       // Get uncaught thrown error on Windows
       // eslint-disable-next-line jest/no-conditional-expect
@@ -40,44 +40,44 @@ test('when alias subcommand file missing then error', () => {
 });
 
 test('when subcommand file has no suffix then lookup succeeds', async() => {
-  const { stdout } = await execAsync(`node ${pm} install`);
+  const { stdout } = await execFileAsync('node', [pm, 'install']);
   expect(stdout).toBe('install\n');
 });
 
 test('when alias subcommand file has no suffix then lookup succeeds', async() => {
-  const { stdout } = await execAsync(`node ${pm} i`);
+  const { stdout } = await execFileAsync('node', [pm, 'i']);
   expect(stdout).toBe('install\n');
 });
 
 test('when subcommand target executablefile has no suffix then lookup succeeds', async() => {
-  const { stdout } = await execAsync(`node ${pm} specifyInstall`);
+  const { stdout } = await execFileAsync('node', [pm, 'specifyInstall']);
   expect(stdout).toBe('install\n');
 });
 
 test('when subcommand file suffix .js then lookup succeeds', async() => {
-  const { stdout } = await execAsync(`node ${pm} publish`);
+  const { stdout } = await execFileAsync('node', [pm, 'publish']);
   expect(stdout).toBe('publish\n');
 });
 
 test('when alias subcommand file suffix .js then lookup succeeds', async() => {
-  const { stdout } = await execAsync(`node ${pm} p`);
+  const { stdout } = await execFileAsync('node', [pm, 'p']);
   expect(stdout).toBe('publish\n');
 });
 
 test('when subcommand target executablefile has suffix .js then lookup succeeds', async() => {
-  const { stdout } = await execAsync(`node ${pm} specifyPublish`);
+  const { stdout } = await execFileAsync('node', [pm, 'specifyPublish']);
   expect(stdout).toBe('publish\n');
 });
 
 testOrSkipOnWindows('when subcommand file is symlink then lookup succeeds', async() => {
   const pmlink = path.join(__dirname, 'fixtures', 'pmlink');
-  const { stdout } = await execAsync(`node ${pmlink} install`);
+  const { stdout } = await execFileAsync('node', [pmlink, 'install']);
   expect(stdout).toBe('install\n');
 });
 
 testOrSkipOnWindows('when subcommand file is double symlink then lookup succeeds', async() => {
   const pmlink = path.join(__dirname, 'fixtures', 'another-dir', 'pm');
-  const { stdout } = await execAsync(`node ${pmlink} install`);
+  const { stdout } = await execFileAsync('node', [pmlink, 'install']);
   expect(stdout).toBe('install\n');
 });
 
@@ -86,11 +86,11 @@ test('when subcommand suffix is .ts then lookup succeeds', async() => {
   // The program and the subcommand `pm-install.ts` are both plain JavaScript code.
   const binLinkTs = path.join(__dirname, 'fixtures-ts', 'pm.ts');
   // childProcess.execFile('node', ['-r', 'ts-node/register', binLinkTs, 'install'], function(_error, stdout, stderr) {
-  const { stdout } = await execAsync(`node ${binLinkTs} install`);
+  const { stdout } = await execFileAsync('node', [binLinkTs, 'install']);
   expect(stdout).toBe('install\n');
 });
 
 test('when subsubcommand then lookup sub-sub-command', async() => {
-  const { stdout } = await execAsync(`node ${pm} cache clear`);
+  const { stdout } = await execFileAsync('node', [pm, 'cache', 'clear']);
   expect(stdout).toBe('cache-clear\n');
 });
