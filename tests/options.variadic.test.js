@@ -5,7 +5,7 @@ describe('variadic option with required value', () => {
     const program = new commander.Command();
     program
       .exitOverride()
-      .configureOutput({ writeError: jest.fn() })
+      .configureOutput({ writeErr: jest.fn() })
       .option('-r,--required <value...>');
 
     expect(() => {

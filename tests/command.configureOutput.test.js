@@ -1,6 +1,6 @@
 const commander = require('../');
 
-test('when default writeError() then error on stderr', () => {
+test('when default writeErr() then error on stderr', () => {
   const writeSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
   const program = new commander.Command();
   program.exitOverride();
@@ -14,13 +14,13 @@ test('when default writeError() then error on stderr', () => {
   writeSpy.mockRestore();
 });
 
-test('when custom writeError() then error on custom output', () => {
+test('when custom writeErr() then error on custom output', () => {
   const writeSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
   const customWrite = jest.fn();
   const program = new commander.Command();
   program
     .exitOverride()
-    .configureOutput({ writeError: customWrite });
+    .configureOutput({ writeErr: customWrite });
 
   try {
     program.parse(['--unknown'], { from: 'user' });
@@ -54,7 +54,7 @@ test('when custom write() then version on custom output', () => {
   program
     .exitOverride()
     .version('1.2.3')
-    .configureOutput({ write: customWrite });
+    .configureOutput({ writeOut: customWrite });
 
   expect(() => {
     program.parse(['--version'], { from: 'user' });
@@ -78,7 +78,7 @@ test('when custom write() then help error on custom output', () => {
   const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
   const customWrite = jest.fn();
   const program = new commander.Command();
-  program.configureOutput({ write: customWrite });
+  program.configureOutput({ writeOut: customWrite });
   program.outputHelp();
 
   expect(writeSpy).toHaveBeenCalledTimes(0);
@@ -86,7 +86,7 @@ test('when custom write() then help error on custom output', () => {
   writeSpy.mockRestore();
 });
 
-test('when default writeError then help error on stderr', () => {
+test('when default writeErr then help error on stderr', () => {
   const writeSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
   const program = new commander.Command();
   program.outputHelp({ error: true });
@@ -95,11 +95,11 @@ test('when default writeError then help error on stderr', () => {
   writeSpy.mockRestore();
 });
 
-test('when custom writeError then help error on custom output', () => {
+test('when custom writeErr then help error on custom output', () => {
   const writeSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
   const customWrite = jest.fn();
   const program = new commander.Command();
-  program.configureOutput({ writeError: customWrite });
+  program.configureOutput({ writeErr: customWrite });
   program.outputHelp({ error: true });
 
   expect(writeSpy).toHaveBeenCalledTimes(0);
@@ -107,7 +107,7 @@ test('when custom writeError then help error on custom output', () => {
   writeSpy.mockRestore();
 });
 
-test('when default getColumns then help columns from stdout', () => {
+test('when default getOutColumns then help columns from stdout', () => {
   const expectedColumns = 123;
   const holdIsTTY = process.stdout.isTTY;
   const holdColumns = process.stdout.columns;
@@ -131,7 +131,7 @@ test('when default getColumns then help columns from stdout', () => {
   process.stdout.isTTY = holdIsTTY;
 });
 
-test('when custom getColumns then help columns custom', () => {
+test('when custom getOutColumns then help columns custom', () => {
   const expectedColumns = 123;
   let helpColumns;
 
@@ -143,14 +143,14 @@ test('when custom getColumns then help columns custom', () => {
         return '';
       }
     }).configureOutput({
-      getColumns: () => expectedColumns
+      getOutColumns: () => expectedColumns
     });
   program.outputHelp();
 
   expect(helpColumns).toBe(expectedColumns);
 });
 
-test('when default getErrorColumns then help error columns from stderr', () => {
+test('when default getErrColumns then help error columns from stderr', () => {
   const expectedColumns = 123;
   const holdIsTTY = process.stderr.isTTY;
   const holdColumns = process.stderr.columns;
@@ -173,7 +173,7 @@ test('when default getErrorColumns then help error columns from stderr', () => {
   process.stderr.columns = holdColumns;
 });
 
-test('when custom getErrorColumns then help error columns custom', () => {
+test('when custom getErrColumns then help error columns custom', () => {
   const expectedColumns = 123;
   let helpColumns;
 
@@ -185,14 +185,14 @@ test('when custom getErrorColumns then help error columns custom', () => {
         return '';
       }
     }).configureOutput({
-      getErrorColumns: () => expectedColumns
+      getErrColumns: () => expectedColumns
     });
   program.outputHelp({ error: true });
 
   expect(helpColumns).toBe(expectedColumns);
 });
 
-test('when custom getColumns and configureHelp:columns then help columns from configureHelp', () => {
+test('when custom getOutColumns and configureHelp:columns then help columns from configureHelp', () => {
   const expectedColumns = 123;
   let helpColumns;
 
@@ -205,14 +205,14 @@ test('when custom getColumns and configureHelp:columns then help columns from co
       },
       columns: expectedColumns
     }).configureOutput({
-      getColumns: () => 999
+      getOutColumns: () => 999
     });
   program.outputHelp();
 
   expect(helpColumns).toBe(expectedColumns);
 });
 
-test('when custom getErrorColumns and configureHelp:columns then help error columns from configureHelp', () => {
+test('when custom getErrColumns and configureHelp:columns then help error columns from configureHelp', () => {
   const expectedColumns = 123;
   let helpColumns;
 
@@ -225,7 +225,7 @@ test('when custom getErrorColumns and configureHelp:columns then help error colu
       },
       columns: expectedColumns
     }).configureOutput({
-      getErrorColumns: () => 999
+      getErrColumns: () => 999
     });
   program.outputHelp({ error: true });
 
@@ -234,10 +234,10 @@ test('when custom getErrorColumns and configureHelp:columns then help error colu
 
 test('when set configureOutput then get configureOutput', () => {
   const outputOptions = {
-    write: jest.fn(),
-    writeError: jest.fn(),
-    getColumns: jest.fn(),
-    getErrorColumns: jest.fn()
+    writeOut: jest.fn(),
+    writeErr: jest.fn(),
+    getOutColumns: jest.fn(),
+    getErrColumns: jest.fn()
   };
   const program = new commander.Command();
   program.configureOutput(outputOptions);

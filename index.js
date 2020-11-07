@@ -544,11 +544,11 @@ class Command extends EventEmitter {
     this._argsDescription = undefined;
 
     this._outputConfiguration = {
-      write: (arg) => process.stdout.write(arg),
-      writeError: (arg) => process.stderr.write(arg),
+      writeOut: (arg) => process.stdout.write(arg),
+      writeErr: (arg) => process.stderr.write(arg),
       // columns is used for wrapping the help
-      getColumns: () => process.stdout.isTTY ? process.stdout.columns : undefined,
-      getErrorColumns: () => process.stderr.isTTY ? process.stderr.columns : undefined
+      getOutColumns: () => process.stdout.isTTY ? process.stdout.columns : undefined,
+      getErrColumns: () => process.stderr.isTTY ? process.stderr.columns : undefined
     };
 
     this._hidden = false;
@@ -1664,7 +1664,7 @@ Read more on https://git.io/JJc0W`);
    * WIP
    */
   _displayError(exitCode, code, message) {
-    this._outputConfiguration.writeError(`${message}\n`);
+    this._outputConfiguration.writeErr(`${message}\n`);
     this._exit(exitCode, code, message);
   }
 
@@ -1763,7 +1763,7 @@ Read more on https://git.io/JJc0W`);
     this._versionOptionName = versionOption.attributeName();
     this.options.push(versionOption);
     this.on('option:' + versionOption.name(), () => {
-      this._outputConfiguration.write(`${str}\n`);
+      this._outputConfiguration.writeOut(`${str}\n`);
       this._exit(0, 'commander.version', str);
     });
     return this;
@@ -1872,7 +1872,7 @@ Read more on https://git.io/JJc0W`);
   helpInformation(contextOptions) {
     const helper = this.createHelp();
     if (helper.columns === undefined) {
-      helper.columns = (contextOptions && contextOptions.error) ? this._outputConfiguration.getErrorColumns() : this._outputConfiguration.getColumns();
+      helper.columns = (contextOptions && contextOptions.error) ? this._outputConfiguration.getErrColumns() : this._outputConfiguration.getOutColumns();
     }
     return helper.formatHelp(this, helper);
   };
@@ -1886,9 +1886,9 @@ Read more on https://git.io/JJc0W`);
     const context = { error: !!contextOptions.error };
     let write;
     if (context.error) {
-      write = (arg) => this._outputConfiguration.writeError(arg);
+      write = (arg) => this._outputConfiguration.writeErr(arg);
     } else {
-      write = (arg) => this._outputConfiguration.write(arg);
+      write = (arg) => this._outputConfiguration.writeOut(arg);
     }
     context.write = contextOptions.write || write;
     context.command = this;

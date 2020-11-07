@@ -50,7 +50,7 @@ test('when .action on program with required argument and argument not supplied t
   const program = new commander.Command();
   program
     .exitOverride()
-    .configureOutput({ writeError: () => {} })
+    .configureOutput({ writeErr: () => {} })
     .arguments('<file>')
     .action(actionMock);
   expect(() => {

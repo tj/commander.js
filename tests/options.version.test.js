@@ -29,7 +29,7 @@ describe('.version', () => {
     const program = new commander.Command();
     program
       .exitOverride()
-      .configureOutput({ write: writeMock })
+      .configureOutput({ writeOut: writeMock })
       .version(myVersion);
 
     expect(() => {
@@ -44,7 +44,7 @@ describe('.version', () => {
     const program = new commander.Command();
     program
       .exitOverride()
-      .configureOutput({ write: writeMock })
+      .configureOutput({ writeOut: writeMock })
       .version(myVersion);
 
     expect(() => {
@@ -71,7 +71,7 @@ describe('.version', () => {
     const program = new commander.Command();
     program
       .exitOverride()
-      .configureOutput({ write: writeMock })
+      .configureOutput({ writeOut: writeMock })
       .version(myVersion, '-r, --revision');
 
     expect(() => {
@@ -86,7 +86,7 @@ describe('.version', () => {
     const program = new commander.Command();
     program
       .exitOverride()
-      .configureOutput({ write: writeMock })
+      .configureOutput({ writeOut: writeMock })
       .version(myVersion, '-r');
 
     expect(() => {
@@ -101,7 +101,7 @@ describe('.version', () => {
     const program = new commander.Command();
     program
       .exitOverride()
-      .configureOutput({ write: writeMock })
+      .configureOutput({ writeOut: writeMock })
       .version(myVersion, '-r, --revision');
 
     expect(() => {
@@ -116,7 +116,7 @@ describe('.version', () => {
     const program = new commander.Command();
     program
       .exitOverride()
-      .configureOutput({ write: writeMock })
+      .configureOutput({ writeOut: writeMock })
       .version(myVersion, '--revision');
 
     expect(() => {
@@ -158,7 +158,7 @@ describe('.version', () => {
     const program = new commander.Command();
     program
       .exitOverride()
-      .configureOutput({ write: writeMock })
+      .configureOutput({ writeOut: writeMock })
       .version(myVersion)
       .command('version')
       .action(() => {});
