@@ -220,6 +220,6 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expectCommanderError(caughtErr, 1, 'commander.optionArgumentRejected', `error: option '${optionFlags}' argument of 'green' not in allowed choices: red, blue`);
+    expectCommanderError(caughtErr, 1, 'commander.optionArgumentRejected', 'Allowed choices are red, blue.');
   });
 });

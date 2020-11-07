@@ -423,16 +423,6 @@ class Option {
   };
 
   /**
-   * Validation of option argument failed.
-   * Intended for use from custom argument processing functions.
-   *
-   * @param {string} message
-   */
-  argumentRejected(message) {
-    throw new CommanderError(1, 'commander.optionArgumentRejected', message);
-  }
-
-  /**
    * Only allow option value to be one of choices.
    *
    * @param {string[]} values
@@ -443,7 +433,9 @@ class Option {
     this.argChoices = values;
     this.parseArg = (arg) => {
       if (!values.includes(arg)) {
-        this.argumentRejected(`error: option '${this.flags}' argument of '${arg}' not in allowed choices: ${values.join(', ')}`);
+        throw new CommanderError(1, 'commander.optionArgumentRejected',
+          `Allowed choices are ${values.join(', ')}.`
+        );
       }
       return arg;
     };
@@ -968,7 +960,7 @@ Read more on https://git.io/JJc0W`);
           val = option.parseArg(val, oldValue === undefined ? defaultValue : oldValue);
         } catch (err) {
           if (err.code === 'commander.optionArgumentRejected') {
-            console.error(err.message);
+            console.error(`error: option '${option.flags}' argument '${val}' is invalid. ${err.message}`);
             this._exit(err.exitCode, err.code, err.message);
           }
           throw err;
