@@ -237,7 +237,8 @@ test('when set configureOutput then get configureOutput', () => {
     writeOut: jest.fn(),
     writeErr: jest.fn(),
     getOutColumns: jest.fn(),
-    getErrColumns: jest.fn()
+    getErrColumns: jest.fn(),
+    outputError: jest.fn()
   };
   const program = new commander.Command();
   program.configureOutput(outputOptions);

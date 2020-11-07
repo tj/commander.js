@@ -544,11 +544,14 @@ class Command extends EventEmitter {
     this._argsDescription = undefined;
 
     this._outputConfiguration = {
-      writeOut: (arg) => process.stdout.write(arg),
-      writeErr: (arg) => process.stderr.write(arg),
+      // Routines for where output is going, stdout or stderr
+      writeOut: (str) => process.stdout.write(str),
+      writeErr: (str) => process.stderr.write(str),
       // columns is used for wrapping the help
       getOutColumns: () => process.stdout.isTTY ? process.stdout.columns : undefined,
-      getErrColumns: () => process.stderr.isTTY ? process.stderr.columns : undefined
+      getErrColumns: () => process.stderr.isTTY ? process.stderr.columns : undefined,
+      // routines for what is being written out
+      outputError: (str, write) => write(str) // used for displaying errors, and not used for displaying help
     };
 
     this._hidden = false;
@@ -1664,7 +1667,7 @@ Read more on https://git.io/JJc0W`);
    * WIP
    */
   _displayError(exitCode, code, message) {
-    this._outputConfiguration.writeErr(`${message}\n`);
+    this._outputConfiguration.outputError(`${message}\n`, this._outputConfiguration.writeErr);
     this._exit(exitCode, code, message);
   }
 
