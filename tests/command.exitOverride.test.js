@@ -220,6 +220,6 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expectCommanderError(caughtErr, 1, 'commander.optionArgumentRejected', 'Allowed choices are red, blue.');
+    expectCommanderError(caughtErr, 1, 'commander.invalidOptionArgument', 'Allowed choices are red, blue.');
   });
 });

@@ -433,9 +433,7 @@ class Option {
     this.argChoices = values;
     this.parseArg = (arg) => {
       if (!values.includes(arg)) {
-        throw new CommanderError(1, 'commander.optionArgumentRejected',
-          `Allowed choices are ${values.join(', ')}.`
-        );
+        throw new InvalidOptionArgumentError(`Allowed choices are ${values.join(', ')}.`);
       }
       return arg;
     };
@@ -500,6 +498,24 @@ class CommanderError extends Error {
     this.code = code;
     this.exitCode = exitCode;
     this.nestedError = undefined;
+  }
+}
+
+/**
+ * InvalidOptionArgumentError class
+ * @class
+ */
+class InvalidOptionArgumentError extends CommanderError {
+  /**
+   * Constructs the InvalidOptionArgumentError class
+   * @param {string} [message] explanation of why argument is invalid
+   * @constructor
+   */
+  constructor(message) {
+    super(1, 'commander.invalidOptionArgument', message);
+    // properly capture stack trace in Node.js
+    Error.captureStackTrace(this, this.constructor);
+    this.name = this.constructor.name;
   }
 }
 
@@ -959,7 +975,7 @@ Read more on https://git.io/JJc0W`);
         try {
           val = option.parseArg(val, oldValue === undefined ? defaultValue : oldValue);
         } catch (err) {
-          if (err.code === 'commander.optionArgumentRejected') {
+          if (err.code === 'commander.invalidOptionArgument') {
             console.error(`error: option '${option.flags}' argument '${val}' is invalid. ${err.message}`);
             this._exit(err.exitCode, err.code, err.message);
           }
@@ -1989,6 +2005,7 @@ exports.program = exports; // More explicit access to global command.
 exports.Command = Command;
 exports.Option = Option;
 exports.CommanderError = CommanderError;
+exports.InvalidOptionArgumentError = InvalidOptionArgumentError;
 exports.Help = Help;
 
 /**
