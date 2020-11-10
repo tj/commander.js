@@ -543,15 +543,13 @@ class Command extends EventEmitter {
     this._description = '';
     this._argsDescription = undefined;
 
+    // see .configureOutput() for docs
     this._outputConfiguration = {
-      // Routines for where output is going, stdout or stderr
       writeOut: (str) => process.stdout.write(str),
       writeErr: (str) => process.stderr.write(str),
-      // columns is used for wrapping the help
       getOutColumns: () => process.stdout.isTTY ? process.stdout.columns : undefined,
       getErrColumns: () => process.stderr.isTTY ? process.stderr.columns : undefined,
-      // routines for what is being written out
-      outputError: (str, write) => write(str) // used for displaying errors, and not used for displaying help
+      outputError: (str, write) => write(str)
     };
 
     this._hidden = false;
@@ -678,14 +676,15 @@ class Command extends EventEmitter {
    * The default output goes to stdout and stderr. You can customise this for special
    * applications. You can also customise the display of errors by overriding outputError.
    *
-   * The function signatures are:
+   * The configuration properties are all functions:
    *
+   *    // functions to change where being written, stdout and stderr
    *    writeOut(str)
    *    writeErr(str)
-   *    // columns is used for wrapping the help
+   *    // matching functions to specify columns for wrapping help
    *    getOutColumns()
    *    getErrColumns()
-   *    // routines for what is being written out
+   *    // functions based on what is being written out
    *    outputError(str, write) // used for displaying errors, and not used for displaying help
    *
    * @param {Object} [configuration] - configuration options
