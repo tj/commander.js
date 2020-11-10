@@ -675,7 +675,18 @@ class Command extends EventEmitter {
   }
 
   /**
-   * WIP
+   * The default output goes to stdout and stderr. You can customise this for special
+   * applications. You can also customise the display of errors by overriding outputError.
+   *
+   * The function signatures are:
+   *
+   *    writeOut(str)
+   *    writeErr(str)
+   *    // columns is used for wrapping the help
+   *    getOutColumns()
+   *    getErrColumns()
+   *    // routines for what is being written out
+   *    outputError(str, write) // used for displaying errors, and not used for displaying help
    *
    * @param {Object} [configuration] - configuration options
    * @return {Command|Object} `this` command for chaining, or stored configuration
@@ -1664,7 +1675,9 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
-   * WIP
+   * Internal bottleneck for handling of parsing errors.
+   *
+   * @api private
    */
   _displayError(exitCode, code, message) {
     this._outputConfiguration.outputError(`${message}\n`, this._outputConfiguration.writeErr);
