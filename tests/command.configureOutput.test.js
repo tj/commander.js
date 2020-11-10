@@ -244,3 +244,32 @@ test('when set configureOutput then get configureOutput', () => {
   program.configureOutput(outputOptions);
   expect(program.configureOutput()).toEqual(outputOptions);
 });
+
+test('when custom outputErr and error then outputErr called', () => {
+  const outputError = jest.fn();
+  const program = new commander.Command();
+  program
+    .exitOverride()
+    .configureOutput({
+      outputError
+    });
+
+  expect(() => {
+    program.parse(['--unknownOption'], { from: 'user' });
+  }).toThrow();
+  expect(outputError).toHaveBeenCalledWith("error: unknown option '--unknownOption'\n", program._outputConfiguration.writeErr);
+});
+
+test('when custom outputErr and writeErr and error then outputErr passed writeErr', () => {
+  const writeErr = () => jest.fn();
+  const outputError = jest.fn();
+  const program = new commander.Command();
+  program
+    .exitOverride()
+    .configureOutput({ writeErr, outputError });
+
+  expect(() => {
+    program.parse(['--unknownOption'], { from: 'user' });
+  }).toThrow();
+  expect(outputError).toHaveBeenCalledWith("error: unknown option '--unknownOption'\n", writeErr);
+});
