@@ -9,7 +9,7 @@ function red(str) {
 
 program
   .configureOutput({
-    // Visibly override write routines for example!
+    // Visibly override write routines as example!
     writeOut: (str) => process.stdout.write(`[OUT] ${str}`),
     writeErr: (str) => process.stdout.write(`[ERR] ${str}`),
     // Output errors in red.
