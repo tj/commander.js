@@ -797,13 +797,18 @@ Example file: [configure-output.js](./examples/configure-output.js)
 
 
 ```js
+function errorColor(str) {
+  // Add ANSI escape codes to display text in red.
+  return `\x1b[31m${str}\x1b[0m`;
+}
+
 program
   .configureOutput({
     // Visibly override write routines as example!
     writeOut: (str) => process.stdout.write(`[OUT] ${str}`),
     writeErr: (str) => process.stdout.write(`[ERR] ${str}`),
-    // Output errors in red.
-    outputError: (str, write) => write(red(str))
+    // Highlight errors in color.
+    outputError: (str, write) => write(errorColor(str))
   });
 ```
 
