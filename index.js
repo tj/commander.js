@@ -12,7 +12,7 @@ const fs = require('fs');
 // Although this is a class, methods are static in style to allow override using subclass or just functions.
 class Help {
   constructor() {
-    this.columns = process.stdout.columns || 80;
+    this.columns = undefined;
     this.sortSubcommands = false;
     this.sortOptions = false;
   }
@@ -243,7 +243,7 @@ class Help {
 
   formatHelp(cmd, helper) {
     const termWidth = helper.padWidth(cmd, helper);
-    const columns = helper.columns;
+    const columns = helper.columns || 80;
     const itemIndentWidth = 2;
     const itemSeparatorWidth = 2;
     // itemIndent term itemSeparator description
@@ -551,6 +551,15 @@ class Command extends EventEmitter {
     this._description = '';
     this._argsDescription = undefined;
 
+    // see .configureOutput() for docs
+    this._outputConfiguration = {
+      writeOut: (str) => process.stdout.write(str),
+      writeErr: (str) => process.stderr.write(str),
+      getOutColumns: () => process.stdout.isTTY ? process.stdout.columns : undefined,
+      getErrColumns: () => process.stderr.isTTY ? process.stderr.columns : undefined,
+      outputError: (str, write) => write(str)
+    };
+
     this._hidden = false;
     this._hasHelpOption = true;
     this._helpFlags = '-h, --help';
@@ -668,6 +677,32 @@ class Command extends EventEmitter {
     if (configuration === undefined) return this._helpConfiguration;
 
     this._helpConfiguration = configuration;
+    return this;
+  }
+
+  /**
+   * The default output goes to stdout and stderr. You can customise this for special
+   * applications. You can also customise the display of errors by overriding outputError.
+   *
+   * The configuration properties are all functions:
+   *
+   *    // functions to change where being written, stdout and stderr
+   *    writeOut(str)
+   *    writeErr(str)
+   *    // matching functions to specify columns for wrapping help
+   *    getOutColumns()
+   *    getErrColumns()
+   *    // functions based on what is being written out
+   *    outputError(str, write) // used for displaying errors, and not used for displaying help
+   *
+   * @param {Object} [configuration] - configuration options
+   * @return {Command|Object} `this` command for chaining, or stored configuration
+   */
+
+  configureOutput(configuration) {
+    if (configuration === undefined) return this._outputConfiguration;
+
+    Object.assign(this._outputConfiguration, configuration);
     return this;
   }
 
@@ -976,8 +1011,8 @@ Read more on https://git.io/JJc0W`);
           val = option.parseArg(val, oldValue === undefined ? defaultValue : oldValue);
         } catch (err) {
           if (err.code === 'commander.invalidOptionArgument') {
-            console.error(`error: option '${option.flags}' argument '${val}' is invalid. ${err.message}`);
-            this._exit(err.exitCode, err.code, err.message);
+            const message = `error: option '${option.flags}' argument '${val}' is invalid. ${err.message}`;
+            this._displayError(err.exitCode, err.code, message);
           }
           throw err;
         }
@@ -1648,6 +1683,16 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
+   * Internal bottleneck for handling of parsing errors.
+   *
+   * @api private
+   */
+  _displayError(exitCode, code, message) {
+    this._outputConfiguration.outputError(`${message}\n`, this._outputConfiguration.writeErr);
+    this._exit(exitCode, code, message);
+  }
+
+  /**
    * Argument `name` is missing.
    *
    * @param {string} name
@@ -1656,8 +1701,7 @@ Read more on https://git.io/JJc0W`);
 
   missingArgument(name) {
     const message = `error: missing required argument '${name}'`;
-    console.error(message);
-    this._exit(1, 'commander.missingArgument', message);
+    this._displayError(1, 'commander.missingArgument', message);
   };
 
   /**
@@ -1675,8 +1719,7 @@ Read more on https://git.io/JJc0W`);
     } else {
       message = `error: option '${option.flags}' argument missing`;
     }
-    console.error(message);
-    this._exit(1, 'commander.optionMissingArgument', message);
+    this._displayError(1, 'commander.optionMissingArgument', message);
   };
 
   /**
@@ -1688,8 +1731,7 @@ Read more on https://git.io/JJc0W`);
 
   missingMandatoryOptionValue(option) {
     const message = `error: required option '${option.flags}' not specified`;
-    console.error(message);
-    this._exit(1, 'commander.missingMandatoryOptionValue', message);
+    this._displayError(1, 'commander.missingMandatoryOptionValue', message);
   };
 
   /**
@@ -1702,8 +1744,7 @@ Read more on https://git.io/JJc0W`);
   unknownOption(flag) {
     if (this._allowUnknownOption) return;
     const message = `error: unknown option '${flag}'`;
-    console.error(message);
-    this._exit(1, 'commander.unknownOption', message);
+    this._displayError(1, 'commander.unknownOption', message);
   };
 
   /**
@@ -1720,8 +1761,7 @@ Read more on https://git.io/JJc0W`);
     const fullCommand = partCommands.join(' ');
     const message = `error: unknown command '${this.args[0]}'.` +
       (this._hasHelpOption ? ` See '${fullCommand} ${this._helpLongFlag}'.` : '');
-    console.error(message);
-    this._exit(1, 'commander.unknownCommand', message);
+    this._displayError(1, 'commander.unknownCommand', message);
   };
 
   /**
@@ -1747,7 +1787,7 @@ Read more on https://git.io/JJc0W`);
     this._versionOptionName = versionOption.attributeName();
     this.options.push(versionOption);
     this.on('option:' + versionOption.name(), () => {
-      process.stdout.write(str + '\n');
+      this._outputConfiguration.writeOut(`${str}\n`);
       this._exit(0, 'commander.version', str);
     });
     return this;
@@ -1849,11 +1889,15 @@ Read more on https://git.io/JJc0W`);
   /**
    * Return program help documentation.
    *
+   * @param {{ error: boolean }} [contextOptions] - pass {error:true} to wrap for stderr instead of stdout
    * @return {string}
    */
 
-  helpInformation() {
+  helpInformation(contextOptions) {
     const helper = this.createHelp();
+    if (helper.columns === undefined) {
+      helper.columns = (contextOptions && contextOptions.error) ? this._outputConfiguration.getErrColumns() : this._outputConfiguration.getOutColumns();
+    }
     return helper.formatHelp(this, helper);
   };
 
@@ -1866,9 +1910,9 @@ Read more on https://git.io/JJc0W`);
     const context = { error: !!contextOptions.error };
     let write;
     if (context.error) {
-      write = (arg, ...args) => process.stderr.write(arg, ...args);
+      write = (arg) => this._outputConfiguration.writeErr(arg);
     } else {
-      write = (arg, ...args) => process.stdout.write(arg, ...args);
+      write = (arg) => this._outputConfiguration.writeOut(arg);
     }
     context.write = contextOptions.write || write;
     context.command = this;
@@ -1901,7 +1945,7 @@ Read more on https://git.io/JJc0W`);
     groupListeners.slice().reverse().forEach(command => command.emit('beforeAllHelp', context));
     this.emit('beforeHelp', context);
 
-    let helpInformation = this.helpInformation();
+    let helpInformation = this.helpInformation(context);
     if (deprecatedCallback) {
       helpInformation = deprecatedCallback(helpInformation);
       if (typeof helpInformation !== 'string' && !Buffer.isBuffer(helpInformation)) {

@@ -263,6 +263,18 @@ const configureHelpThis: commander.Command = program.configureHelp({
 });
 const helpConfiguration: commander.HelpConfiguration = program.configureHelp();
 
+// configureOutput
+const configureOutputThis: commander.Command = program.configureOutput({ });
+const configureOutputConfig: commander.OutputConfiguration = program.configureOutput();
+
+program.configureOutput({
+  writeOut: (str: string) => { },
+  writeErr: (str: string) => { },
+  getOutColumns: () => 80,
+  getErrColumns: () => 80,
+  outputError: (str: string, write: (str: string) => void) => { }
+});
+
 // Help
 const helper = new commander.Help();
 const helperCommand = new commander.Command();
