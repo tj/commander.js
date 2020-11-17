@@ -14,6 +14,10 @@ declare namespace commander {
   }
   type CommanderErrorConstructor = new (exitCode: number, code: string, message: string) => CommanderError;
 
+  interface InvalidOptionArgumentError extends CommanderError {
+  }
+  type InvalidOptionArgumentErrorConstructor = new (message: string) => InvalidOptionArgumentError;
+
   interface Option {
     flags: string;
     description: string;
@@ -578,6 +582,7 @@ declare namespace commander {
     Command: CommandConstructor;
     Option: OptionConstructor;
     CommanderError: CommanderErrorConstructor;
+    InvalidOptionArgumentError: InvalidOptionArgumentErrorConstructor;
     Help: HelpConstructor;
   }
 

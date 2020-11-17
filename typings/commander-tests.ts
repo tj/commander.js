@@ -30,6 +30,7 @@ const commandInstance1 = new commander.Command();
 const commandInstance2 = new commander.Command('name');
 const optionsInstance = new commander.Option('-f');
 const errorInstance = new commander.CommanderError(1, 'code', 'message');
+const invalidOptionErrorInstance = new commander.InvalidOptionArgumentError('message');
 
 // Command properties
 console.log(programWithOptions.someOption);
