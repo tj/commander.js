@@ -41,7 +41,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Import into ECMAScript Module](#import-into-ecmascript-module)
     - [Node options such as `--harmony`](#node-options-such-as---harmony)
     - [Debugging stand-alone executable subcommands](#debugging-stand-alone-executable-subcommands)
-    - [Override exit handling](#override-exit-handling)
+    - [Override exit and output handling](#override-exit-and-output-handling)
     - [Additional documentation](#additional-documentation)
   - [Examples](#examples)
   - [Support](#support)
@@ -772,7 +772,7 @@ the inspector port is incremented by 1 for the spawned subcommand.
 
 If you are using VSCode to debug executable subcommands you need to set the `"autoAttachChildProcesses": true` flag in your launch.json configuration.
 
-### Override exit handling
+### Override exit and output handling
 
 By default Commander calls `process.exit` when it detects errors, or after displaying the help or version. You can override
 this behaviour and optionally supply a callback. The default override throws a `CommanderError`.
@@ -788,6 +788,28 @@ try {
 } catch (err) {
   // custom processing...
 }
+```
+
+By default Commander is configured for a command-line application and writes to stdout and stderr.
+You can modify this behaviour for custom applications. In addition, you can modify the display of error messages.
+
+Example file: [configure-output.js](./examples/configure-output.js)
+
+
+```js
+function errorColor(str) {
+  // Add ANSI escape codes to display text in red.
+  return `\x1b[31m${str}\x1b[0m`;
+}
+
+program
+  .configureOutput({
+    // Visibly override write routines as example!
+    writeOut: (str) => process.stdout.write(`[OUT] ${str}`),
+    writeErr: (str) => process.stdout.write(`[ERR] ${str}`),
+    // Highlight errors in color.
+    outputError: (str, write) => write(errorColor(str))
+  });
 ```
 
 ### Additional documentation

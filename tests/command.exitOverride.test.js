@@ -17,18 +17,18 @@ function expectCommanderError(err, exitCode, code, message) {
 
 describe('.exitOverride and error details', () => {
   // Use internal knowledge to suppress output to keep test output clean.
-  let consoleErrorSpy;
+  let stderrSpy;
 
   beforeAll(() => {
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+    stderrSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
   });
 
   afterEach(() => {
-    consoleErrorSpy.mockClear();
+    stderrSpy.mockClear();
   });
 
   afterAll(() => {
-    consoleErrorSpy.mockRestore();
+    stderrSpy.mockRestore();
   });
 
   test('when specify unknown program option then throw CommanderError', () => {
@@ -43,7 +43,7 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expect(consoleErrorSpy).toHaveBeenCalled();
+    expect(stderrSpy).toHaveBeenCalled();
     expectCommanderError(caughtErr, 1, 'commander.unknownOption', "error: unknown option '-m'");
   });
 
@@ -61,7 +61,7 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expect(consoleErrorSpy).toHaveBeenCalled();
+    expect(stderrSpy).toHaveBeenCalled();
     expectCommanderError(caughtErr, 1, 'commander.unknownCommand', "error: unknown command 'oops'. See 'prog --help'.");
   });
 
@@ -98,7 +98,7 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expect(consoleErrorSpy).toHaveBeenCalled();
+    expect(stderrSpy).toHaveBeenCalled();
     expectCommanderError(caughtErr, 1, 'commander.optionMissingArgument', `error: option '${optionFlags}' argument missing`);
   });
 
@@ -116,7 +116,7 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expect(consoleErrorSpy).toHaveBeenCalled();
+    expect(stderrSpy).toHaveBeenCalled();
     expectCommanderError(caughtErr, 1, 'commander.missingArgument', "error: missing required argument 'arg-name'");
   });
 
@@ -138,7 +138,6 @@ describe('.exitOverride and error details', () => {
   });
 
   test('when executable subcommand and no command specified then throw CommanderError', () => {
-    const writeSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
     const program = new commander.Command();
     program
       .exitOverride()
@@ -152,11 +151,10 @@ describe('.exitOverride and error details', () => {
     }
 
     expectCommanderError(caughtErr, 1, 'commander.help', '(outputHelp)');
-    writeSpy.mockRestore();
   });
 
   test('when specify --version then throw CommanderError', () => {
-    const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
+    const stdoutSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program
@@ -171,7 +169,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expectCommanderError(caughtErr, 0, 'commander.version', myVersion);
-    writeSpy.mockRestore();
+    stdoutSpy.mockRestore();
   });
 
   test('when executableSubcommand succeeds then call exitOverride', async() => {

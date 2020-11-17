@@ -103,18 +103,18 @@ describe('required program option with mandatory value specified', () => {
 
 describe('required program option with mandatory value not specified', () => {
   // Optional. Use internal knowledge to suppress output to keep test output clean.
-  let consoleErrorSpy;
+  let writeErrorSpy;
 
   beforeAll(() => {
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+    writeErrorSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
   });
 
   afterEach(() => {
-    consoleErrorSpy.mockClear();
+    writeErrorSpy.mockClear();
   });
 
   afterAll(() => {
-    consoleErrorSpy.mockRestore();
+    writeErrorSpy.mockRestore();
   });
 
   test('when program has required option not specified then error', () => {
@@ -185,18 +185,18 @@ describe('required command option with mandatory value specified', () => {
 
 describe('required command option with mandatory value not specified', () => {
   // Optional. Use internal knowledge to suppress output to keep test output clean.
-  let consoleErrorSpy;
+  let writeErrorSpy;
 
   beforeAll(() => {
-    consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => { });
+    writeErrorSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
   });
 
   afterEach(() => {
-    consoleErrorSpy.mockClear();
+    writeErrorSpy.mockClear();
   });
 
   afterAll(() => {
-    consoleErrorSpy.mockRestore();
+    writeErrorSpy.mockRestore();
   });
 
   test('when command has required value not specified then error', () => {

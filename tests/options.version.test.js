@@ -3,21 +3,6 @@ const commander = require('../');
 // Test .version. Using exitOverride to check behaviour (instead of mocking process.exit).
 
 describe('.version', () => {
-  // Optional. Suppress normal output to keep test output clean.
-  let writeSpy;
-
-  beforeAll(() => {
-    writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
-  });
-
-  afterEach(() => {
-    writeSpy.mockClear();
-  });
-
-  afterAll(() => {
-    writeSpy.mockRestore();
-  });
-
   test('when no .version and specify --version then unknown option error', () => {
     const errorMessage = 'unknownOption';
     const program = new commander.Command();
@@ -40,29 +25,32 @@ describe('.version', () => {
 
   test('when specify default short flag then display version', () => {
     const myVersion = '1.2.3';
+    const writeMock = jest.fn();
     const program = new commander.Command();
     program
       .exitOverride()
+      .configureOutput({ writeOut: writeMock })
       .version(myVersion);
 
     expect(() => {
       program.parse(['node', 'test', '-V']);
     }).toThrow(myVersion);
-
-    // Test output once as well, rest of tests just check the thrown message.
-    expect(writeSpy).toHaveBeenCalledWith(`${myVersion}\n`);
+    expect(writeMock).toHaveBeenCalledWith(`${myVersion}\n`);
   });
 
   test('when specify default long flag then display version', () => {
     const myVersion = '1.2.3';
+    const writeMock = jest.fn();
     const program = new commander.Command();
     program
       .exitOverride()
+      .configureOutput({ writeOut: writeMock })
       .version(myVersion);
 
     expect(() => {
       program.parse(['node', 'test', '--version']);
     }).toThrow(myVersion);
+    expect(writeMock).toHaveBeenCalledWith(`${myVersion}\n`);
   });
 
   test('when default .version then helpInformation includes default version help', () => {
@@ -79,50 +67,62 @@ describe('.version', () => {
 
   test('when specify custom short flag then display version', () => {
     const myVersion = '1.2.3';
+    const writeMock = jest.fn();
     const program = new commander.Command();
     program
       .exitOverride()
+      .configureOutput({ writeOut: writeMock })
       .version(myVersion, '-r, --revision');
 
     expect(() => {
       program.parse(['node', 'test', '-r']);
     }).toThrow(myVersion);
+    expect(writeMock).toHaveBeenCalledWith(`${myVersion}\n`);
   });
 
   test('when specify just custom short flag then display version', () => {
     const myVersion = '1.2.3';
+    const writeMock = jest.fn();
     const program = new commander.Command();
     program
       .exitOverride()
+      .configureOutput({ writeOut: writeMock })
       .version(myVersion, '-r');
 
     expect(() => {
       program.parse(['node', 'test', '-r']);
     }).toThrow(myVersion);
+    expect(writeMock).toHaveBeenCalledWith(`${myVersion}\n`);
   });
 
   test('when specify custom long flag then display version', () => {
     const myVersion = '1.2.3';
+    const writeMock = jest.fn();
     const program = new commander.Command();
     program
       .exitOverride()
+      .configureOutput({ writeOut: writeMock })
       .version(myVersion, '-r, --revision');
 
     expect(() => {
       program.parse(['node', 'test', '--revision']);
     }).toThrow(myVersion);
+    expect(writeMock).toHaveBeenCalledWith(`${myVersion}\n`);
   });
 
   test('when specify just custom long flag then display version', () => {
     const myVersion = '1.2.3';
+    const writeMock = jest.fn();
     const program = new commander.Command();
     program
       .exitOverride()
+      .configureOutput({ writeOut: writeMock })
       .version(myVersion, '--revision');
 
     expect(() => {
       program.parse(['node', 'test', '--revision']);
     }).toThrow(myVersion);
+    expect(writeMock).toHaveBeenCalledWith(`${myVersion}\n`);
   });
 
   test('when custom .version then helpInformation includes custom version help', () => {
@@ -154,9 +154,11 @@ describe('.version', () => {
 
   test('when have .version+version and specify --version then version displayed', () => {
     const myVersion = '1.2.3';
+    const writeMock = jest.fn();
     const program = new commander.Command();
     program
       .exitOverride()
+      .configureOutput({ writeOut: writeMock })
       .version(myVersion)
       .command('version')
       .action(() => {});
@@ -164,6 +166,7 @@ describe('.version', () => {
     expect(() => {
       program.parse(['node', 'test', '--version']);
     }).toThrow(myVersion);
+    expect(writeMock).toHaveBeenCalledWith(`${myVersion}\n`);
   });
 
   test('when specify version then can get version', () => {

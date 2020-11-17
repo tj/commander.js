@@ -77,7 +77,7 @@ declare namespace commander {
 
   interface Help {
     /** output columns, long lines are wrapped to fit */
-    columns: number;
+    columns?: number;
     sortSubcommands: boolean;
     sortOptions: boolean;
 
@@ -133,6 +133,14 @@ declare namespace commander {
   interface AddHelpTextContext { // passed to text function used with .addHelpText()
     error: boolean;
     command: Command;
+  }
+  interface OutputConfiguration {
+    writeOut?(str: string): void;
+    writeErr?(str: string): void;
+    getOutColumns?(): number;
+    getErrColumns?(): number;
+    outputError?(str: string, write: (str: string) => void): void;
+
   }
 
   type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
@@ -248,6 +256,25 @@ declare namespace commander {
     configureHelp(configuration: HelpConfiguration): this;
     /** Get configuration */
     configureHelp(): HelpConfiguration;
+
+    /**
+     * The default output goes to stdout and stderr. You can customise this for special
+     * applications. You can also customise the display of errors by overriding outputError.
+     *
+     * The configuration properties are all functions:
+     *
+     *    // functions to change where being written, stdout and stderr
+     *    writeOut(str)
+     *    writeErr(str)
+     *    // matching functions to specify columns for wrapping help
+     *    getOutColumns()
+     *    getErrColumns()
+     *    // functions based on what is being written out
+     *    outputError(str, write) // used for displaying errors, and not used for displaying help
+     */
+    configureOutput(configuration: OutputConfiguration): this;
+    /** Get configuration */
+    configureOutput(): OutputConfiguration;
 
     /**
      * Register callback `fn` for the command.
