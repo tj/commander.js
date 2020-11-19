@@ -112,9 +112,8 @@ declare namespace commander {
     padWidth(cmd: Command, helper: Help): number;
 
     /**
-     * Optionally wrap the given str to a max width of width characters per line
-     * while indenting with indent spaces. Do not wrap if insufficient width or
-     * string is manually formatted.
+     * Wrap the given string to width characters per line, with lines after the first indented.
+     * Do not wrap if insufficient room for wrapping, or string is manually formatted.
      */
     wrap(str: string, width: number, indent: number): string;
 
