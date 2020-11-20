@@ -632,7 +632,7 @@ You can configure the Help behaviour by modifying data properties and methods us
 
 The data properties are:
 
-- `columns`: specify the wrap width, useful for unit tests
+- `helpWidth`: specify the wrap width, useful for unit tests
 - `sortSubcommands`: sort the subcommands alphabetically
 - `sortOptions`: sort the options alphabetically
 

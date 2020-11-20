@@ -107,11 +107,11 @@ test('when custom writeErr then help error on custom output', () => {
   writeSpy.mockRestore();
 });
 
-test('when default getOutColumns then help columns from stdout', () => {
+test('when default getOutHelpWidth then help helpWidth from stdout', () => {
   const expectedColumns = 123;
   const holdIsTTY = process.stdout.isTTY;
   const holdColumns = process.stdout.columns;
-  let helpColumns;
+  let helpWidth;
 
   process.stderr.isTTY = true;
   process.stdout.columns = expectedColumns;
@@ -120,41 +120,41 @@ test('when default getOutColumns then help columns from stdout', () => {
   program
     .configureHelp({
       formatHelp: (cmd, helper) => {
-        helpColumns = helper.columns;
+        helpWidth = helper.helpWidth;
         return '';
       }
     });
   program.outputHelp();
 
-  expect(helpColumns).toBe(expectedColumns);
+  expect(helpWidth).toBe(expectedColumns);
   process.stdout.columns = holdColumns;
   process.stdout.isTTY = holdIsTTY;
 });
 
-test('when custom getOutColumns then help columns custom', () => {
+test('when custom getOutHelpWidth then help helpWidth custom', () => {
   const expectedColumns = 123;
-  let helpColumns;
+  let helpWidth;
 
   const program = new commander.Command();
   program
     .configureHelp({
       formatHelp: (cmd, helper) => {
-        helpColumns = helper.columns;
+        helpWidth = helper.helpWidth;
         return '';
       }
     }).configureOutput({
-      getOutColumns: () => expectedColumns
+      getOutHelpWidth: () => expectedColumns
     });
   program.outputHelp();
 
-  expect(helpColumns).toBe(expectedColumns);
+  expect(helpWidth).toBe(expectedColumns);
 });
 
-test('when default getErrColumns then help error columns from stderr', () => {
+test('when default getErrHelpWidth then help error helpWidth from stderr', () => {
   const expectedColumns = 123;
   const holdIsTTY = process.stderr.isTTY;
   const holdColumns = process.stderr.columns;
-  let helpColumns;
+  let helpWidth;
 
   process.stderr.isTTY = true;
   process.stderr.columns = expectedColumns;
@@ -162,82 +162,82 @@ test('when default getErrColumns then help error columns from stderr', () => {
   program
     .configureHelp({
       formatHelp: (cmd, helper) => {
-        helpColumns = helper.columns;
+        helpWidth = helper.helpWidth;
         return '';
       }
     });
   program.outputHelp({ error: true });
 
-  expect(helpColumns).toBe(expectedColumns);
+  expect(helpWidth).toBe(expectedColumns);
   process.stderr.isTTY = holdIsTTY;
   process.stderr.columns = holdColumns;
 });
 
-test('when custom getErrColumns then help error columns custom', () => {
+test('when custom getErrHelpWidth then help error helpWidth custom', () => {
   const expectedColumns = 123;
-  let helpColumns;
+  let helpWidth;
 
   const program = new commander.Command();
   program
     .configureHelp({
       formatHelp: (cmd, helper) => {
-        helpColumns = helper.columns;
+        helpWidth = helper.helpWidth;
         return '';
       }
     }).configureOutput({
-      getErrColumns: () => expectedColumns
+      getErrHelpWidth: () => expectedColumns
     });
   program.outputHelp({ error: true });
 
-  expect(helpColumns).toBe(expectedColumns);
+  expect(helpWidth).toBe(expectedColumns);
 });
 
-test('when custom getOutColumns and configureHelp:columns then help columns from configureHelp', () => {
+test('when custom getOutHelpWidth and configureHelp:helpWidth then help helpWidth from configureHelp', () => {
   const expectedColumns = 123;
-  let helpColumns;
+  let helpWidth;
 
   const program = new commander.Command();
   program
     .configureHelp({
       formatHelp: (cmd, helper) => {
-        helpColumns = helper.columns;
+        helpWidth = helper.helpWidth;
         return '';
       },
-      columns: expectedColumns
+      helpWidth: expectedColumns
     }).configureOutput({
-      getOutColumns: () => 999
+      getOutHelpWidth: () => 999
     });
   program.outputHelp();
 
-  expect(helpColumns).toBe(expectedColumns);
+  expect(helpWidth).toBe(expectedColumns);
 });
 
-test('when custom getErrColumns and configureHelp:columns then help error columns from configureHelp', () => {
+test('when custom getErrHelpWidth and configureHelp:helpWidth then help error helpWidth from configureHelp', () => {
   const expectedColumns = 123;
-  let helpColumns;
+  let helpWidth;
 
   const program = new commander.Command();
   program
     .configureHelp({
       formatHelp: (cmd, helper) => {
-        helpColumns = helper.columns;
+        helpWidth = helper.helpWidth;
         return '';
       },
-      columns: expectedColumns
+      helpWidth: expectedColumns
     }).configureOutput({
-      getErrColumns: () => 999
+      getErrHelpWidth: () => 999
     });
   program.outputHelp({ error: true });
 
-  expect(helpColumns).toBe(expectedColumns);
+  expect(helpWidth).toBe(expectedColumns);
 });
 
 test('when set configureOutput then get configureOutput', () => {
   const outputOptions = {
     writeOut: jest.fn(),
     writeErr: jest.fn(),
-    getOutColumns: jest.fn(),
-    getErrColumns: jest.fn(),
+    getOutHelpWidth: jest.fn(),
+    getErrHelpWidth: jest.fn(),
     outputError: jest.fn()
   };
   const program = new commander.Command();
