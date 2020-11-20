@@ -35,16 +35,16 @@ ${' '.repeat(10)}${'a '.repeat(5)}a`);
   });
 
   test('when text has line breaks then respect and indent', () => {
-    const text = 'foo\nbar';
+    const text = 'term description\nanother line';
     const helper = new commander.Help();
-    const wrapped = helper.wrap(text, 50, 3);
-    expect(wrapped).toEqual('foo\n   bar');
+    const wrapped = helper.wrap(text, 78, 5);
+    expect(wrapped).toEqual('term description\n     another line');
   });
 
   test('when text already formatted with line breaks and indent then do not touch', () => {
-    const text = 'a '.repeat(25) + '\n   ' + 'a '.repeat(25) + 'a';
+    const text = 'term a '.repeat(25) + '\n   ' + 'a '.repeat(25) + 'a';
     const helper = new commander.Help();
-    const wrapped = helper.wrap(text, 39, 0);
+    const wrapped = helper.wrap(text, 78, 5);
     expect(wrapped).toEqual(text);
   });
 });

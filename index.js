@@ -245,12 +245,11 @@ class Help {
     const termWidth = helper.padWidth(cmd, helper);
     const columns = helper.columns || 80;
     const itemIndentWidth = 2;
-    const itemSeparatorWidth = 2;
-    // itemIndent term itemSeparator description
-    const descriptionWidth = columns - termWidth - itemIndentWidth - itemSeparatorWidth;
+    const itemSeparatorWidth = 2; // between term and description
     function formatItem(term, description) {
       if (description) {
-        return term.padEnd(termWidth + itemSeparatorWidth) + helper.wrap(description, descriptionWidth, termWidth + itemSeparatorWidth);
+        const fullText = `${term.padEnd(termWidth + itemSeparatorWidth)}${description}`;
+        return helper.wrap(fullText, columns - itemIndentWidth, termWidth + itemSeparatorWidth);
       }
       return term;
     };
@@ -311,32 +310,36 @@ class Help {
   };
 
   /**
-   * Optionally wrap the given str to a max width of width characters per line
-   * while indenting with indent spaces. Do not wrap if insufficient width or
-   * string is manually formatted.
+   * Wrap the given string to width characters per line, with lines after the first indented.
+   * Do not wrap if insufficient room for wrapping, or string is manually formatted.
    *
    * @param {string} str
    * @param {number} width
    * @param {number} indent
    * @return {string}
+   *
    */
 
   wrap(str, width, indent) {
     // Detect manually wrapped and indented strings by searching for line breaks
     // followed by multiple spaces/tabs.
     if (str.match(/[\n]\s+/)) return str;
-    // Do not wrap to narrow columns (or can end up with a word per line).
-    const minWidth = 40;
-    if (width < minWidth) return str;
+    // Do not wrap if not enough room for a wrapped column of text (as could end up with a word per line).
+    const columnWidth = width - indent;
+    const minColumnWidth = 40;
+    if (columnWidth < minColumnWidth) return str;
+
+    const leadingStr = str.substr(0, indent);
+    const columnText = str.substr(indent);
 
     const indentString = ' '.repeat(indent);
-    const regex = new RegExp('.{1,' + (width - 1) + '}([\\s\u200B]|$)|[^\\s\u200B]+?([\\s\u200B]|$)', 'g');
-    const lines = str.match(regex) || [];
-    return lines.map((line, i) => {
+    const regex = new RegExp('.{1,' + (columnWidth - 1) + '}([\\s\u200B]|$)|[^\\s\u200B]+?([\\s\u200B]|$)', 'g');
+    const lines = columnText.match(regex) || [];
+    return leadingStr + lines.map((line, i) => {
       if (line.slice(-1) === '\n') {
         line = line.slice(0, line.length - 1);
       }
-      return ((i > 0 && indent) ? indentString : '') + line.trimRight();
+      return ((i > 0) ? indentString : '') + line.trimRight();
     }).join('\n');
   }
 }
