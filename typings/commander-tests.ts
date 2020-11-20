@@ -213,6 +213,7 @@ program.help({ error: true });
 
 // helpInformation
 const helpInformnationValue: string = program.helpInformation();
+const helpInformnationValue2: string = program.helpInformation({ error: true });
 
 // helpOption
 const helpOptionThis1: commander.Command = program.helpOption('-h,--help');
