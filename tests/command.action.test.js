@@ -9,7 +9,7 @@ test('when .action called then command passed to action', () => {
     .command('info')
     .action(actionMock);
   program.parse(['node', 'test', 'info']);
-  expect(actionMock).toHaveBeenCalledWith(cmd);
+  expect(actionMock).toHaveBeenCalledWith(cmd, cmd);
 });
 
 test('when .action called then program.args only contains args', () => {
@@ -57,7 +57,7 @@ test('when .action on program with required argument and argument supplied then 
     .arguments('<file>')
     .action(actionMock);
   program.parse(['node', 'test', 'my-file']);
-  expect(actionMock).toHaveBeenCalledWith('my-file', program);
+  expect(actionMock).toHaveBeenCalledWith('my-file', program, program);
 });
 
 test('when .action on program with required argument and argument not supplied then action not called', () => {
@@ -81,7 +81,7 @@ test('when .action on program and no arguments then action called', () => {
   program
     .action(actionMock);
   program.parse(['node', 'test']);
-  expect(actionMock).toHaveBeenCalledWith(program);
+  expect(actionMock).toHaveBeenCalledWith(program, program);
 });
 
 test('when .action on program with optional argument supplied then action called', () => {
@@ -91,7 +91,7 @@ test('when .action on program with optional argument supplied then action called
     .arguments('[file]')
     .action(actionMock);
   program.parse(['node', 'test', 'my-file']);
-  expect(actionMock).toHaveBeenCalledWith('my-file', program);
+  expect(actionMock).toHaveBeenCalledWith('my-file', program, program);
 });
 
 test('when .action on program without optional argument supplied then action called', () => {
@@ -101,7 +101,7 @@ test('when .action on program without optional argument supplied then action cal
     .arguments('[file]')
     .action(actionMock);
   program.parse(['node', 'test']);
-  expect(actionMock).toHaveBeenCalledWith(undefined, program);
+  expect(actionMock).toHaveBeenCalledWith(undefined, program, program);
 });
 
 test('when .action on program with optional argument and subcommand and program argument then program action called', () => {
@@ -115,7 +115,7 @@ test('when .action on program with optional argument and subcommand and program 
 
   program.parse(['node', 'test', 'a']);
 
-  expect(actionMock).toHaveBeenCalledWith('a', program);
+  expect(actionMock).toHaveBeenCalledWith('a', program, program);
 });
 
 // Changes made in #1062 to allow this case
@@ -130,7 +130,7 @@ test('when .action on program with optional argument and subcommand and no progr
 
   program.parse(['node', 'test']);
 
-  expect(actionMock).toHaveBeenCalledWith(undefined, program);
+  expect(actionMock).toHaveBeenCalledWith(undefined, program, program);
 });
 
 test('when action is async then can await parseAsync', async() => {

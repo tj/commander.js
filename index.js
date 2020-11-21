@@ -883,21 +883,20 @@ class Command extends EventEmitter {
 
   action(fn) {
     const listener = (args) => {
-      // The .action callback takes an extra parameter which is the command or options.
       const expectedArgsCount = this._args.length;
       const actionArgs = args.slice(0, expectedArgsCount);
+      if (args.length > expectedArgsCount && this._actionHandler) {
+        this.excessArguments(args.slice(expectedArgsCount));
+      }
+
+      // Add the options (which might be the command, with options as properties!)
       if (this._passCommandToAction) {
         actionArgs[expectedArgsCount] = this;
       } else {
         actionArgs[expectedArgsCount] = this.opts();
       }
-      // Add the extra arguments so available too.
-      if (args.length > expectedArgsCount) {
-        actionArgs.push(args.slice(expectedArgsCount));
-      }
-      if (args.length > expectedArgsCount && this._actionHandler) {
-        this.excessArguments(args.slice(expectedArgsCount));
-      }
+      // Add command
+      actionArgs.push(this);
 
       const actionResult = fn.apply(this, actionArgs);
       // Remember result in case it is async. Assume parseAsync getting called on root.
@@ -1764,7 +1763,7 @@ Read more on https://git.io/JJc0W`);
    */
 
   excessArguments(args) {
-    if (this._allowExcessArguments) return;
+    if (this._allowExcessArguments || args.length === 0) return;
     if (this.name() === '*') return; // support legacy use, do not enforce arguments
     const message = `error: excess argument${args.length > 1 ? 's' : ''} '${args.join(' ')}'`;
     this._displayError(1, 'commander.excessArguments', message);
