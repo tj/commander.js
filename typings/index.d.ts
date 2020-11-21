@@ -76,8 +76,8 @@ declare namespace commander {
   type OptionConstructor = new (flags: string, description?: string) => Option;
 
   interface Help {
-    /** output columns, long lines are wrapped to fit */
-    columns?: number;
+    /** output helpWidth, long lines are wrapped to fit */
+    helpWidth?: number;
     sortSubcommands: boolean;
     sortOptions: boolean;
 
@@ -136,8 +136,8 @@ declare namespace commander {
   interface OutputConfiguration {
     writeOut?(str: string): void;
     writeErr?(str: string): void;
-    getOutColumns?(): number;
-    getErrColumns?(): number;
+    getOutHelpWidth?(): number;
+    getErrHelpWidth?(): number;
     outputError?(str: string, write: (str: string) => void): void;
 
   }
@@ -265,9 +265,9 @@ declare namespace commander {
      *    // functions to change where being written, stdout and stderr
      *    writeOut(str)
      *    writeErr(str)
-     *    // matching functions to specify columns for wrapping help
-     *    getOutColumns()
-     *    getErrColumns()
+     *    // matching functions to specify width for wrapping help
+     *    getOutHelpWidth()
+     *    getErrHelpWidth()
      *    // functions based on what is being written out
      *    outputError(str, write) // used for displaying errors, and not used for displaying help
      */

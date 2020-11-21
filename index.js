@@ -12,7 +12,7 @@ const fs = require('fs');
 // Although this is a class, methods are static in style to allow override using subclass or just functions.
 class Help {
   constructor() {
-    this.columns = undefined;
+    this.helpWidth = undefined;
     this.sortSubcommands = false;
     this.sortOptions = false;
   }
@@ -243,13 +243,13 @@ class Help {
 
   formatHelp(cmd, helper) {
     const termWidth = helper.padWidth(cmd, helper);
-    const columns = helper.columns || 80;
+    const helpWidth = helper.helpWidth || 80;
     const itemIndentWidth = 2;
     const itemSeparatorWidth = 2; // between term and description
     function formatItem(term, description) {
       if (description) {
         const fullText = `${term.padEnd(termWidth + itemSeparatorWidth)}${description}`;
-        return helper.wrap(fullText, columns - itemIndentWidth, termWidth + itemSeparatorWidth);
+        return helper.wrap(fullText, helpWidth - itemIndentWidth, termWidth + itemSeparatorWidth);
       }
       return term;
     };
@@ -550,8 +550,8 @@ class Command extends EventEmitter {
     this._outputConfiguration = {
       writeOut: (str) => process.stdout.write(str),
       writeErr: (str) => process.stderr.write(str),
-      getOutColumns: () => process.stdout.isTTY ? process.stdout.columns : undefined,
-      getErrColumns: () => process.stderr.isTTY ? process.stderr.columns : undefined,
+      getOutHelpWidth: () => process.stdout.isTTY ? process.stdout.columns : undefined,
+      getErrHelpWidth: () => process.stderr.isTTY ? process.stderr.columns : undefined,
       outputError: (str, write) => write(str)
     };
 
@@ -684,9 +684,9 @@ class Command extends EventEmitter {
    *    // functions to change where being written, stdout and stderr
    *    writeOut(str)
    *    writeErr(str)
-   *    // matching functions to specify columns for wrapping help
-   *    getOutColumns()
-   *    getErrColumns()
+   *    // matching functions to specify width for wrapping help
+   *    getOutHelpWidth()
+   *    getErrHelpWidth()
    *    // functions based on what is being written out
    *    outputError(str, write) // used for displaying errors, and not used for displaying help
    *
@@ -1889,8 +1889,8 @@ Read more on https://git.io/JJc0W`);
 
   helpInformation(contextOptions) {
     const helper = this.createHelp();
-    if (helper.columns === undefined) {
-      helper.columns = (contextOptions && contextOptions.error) ? this._outputConfiguration.getErrColumns() : this._outputConfiguration.getOutColumns();
+    if (helper.helpWidth === undefined) {
+      helper.helpWidth = (contextOptions && contextOptions.error) ? this._outputConfiguration.getErrHelpWidth() : this._outputConfiguration.getOutHelpWidth();
     }
     return helper.formatHelp(this, helper);
   };

@@ -270,8 +270,8 @@ const configureOutputConfig: commander.OutputConfiguration = program.configureOu
 program.configureOutput({
   writeOut: (str: string) => { },
   writeErr: (str: string) => { },
-  getOutColumns: () => 80,
-  getErrColumns: () => 80,
+  getOutHelpWidth: () => 80,
+  getErrHelpWidth: () => 80,
   outputError: (str: string, write: (str: string) => void) => { }
 });
 
@@ -280,7 +280,7 @@ const helper = new commander.Help();
 const helperCommand = new commander.Command();
 const helperOption = new commander.Option('-a, --all');
 
-helper.columns = 3;
+helper.helpWidth = 3;
 helper.sortSubcommands = true;
 helper.sortOptions = false;
 
