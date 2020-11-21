@@ -527,6 +527,7 @@ class Command extends EventEmitter {
     this.options = [];
     this.parent = null;
     this._allowUnknownOption = false;
+    this._allowExcessArguments = false;
     this._args = [];
     this.rawArgs = null;
     this._scriptPath = null;
@@ -894,6 +895,9 @@ class Command extends EventEmitter {
       if (args.length > expectedArgsCount) {
         actionArgs.push(args.slice(expectedArgsCount));
       }
+      if (args.length > expectedArgsCount && this._actionHandler) {
+        this.excessArguments(args.slice(expectedArgsCount));
+      }
 
       const actionResult = fn.apply(this, actionArgs);
       // Remember result in case it is async. Assume parseAsync getting called on root.
@@ -1158,6 +1162,17 @@ Read more on https://git.io/JJc0W`);
    */
   allowUnknownOption(allowUnknown) {
     this._allowUnknownOption = (allowUnknown === undefined) || !!allowUnknown;
+    return this;
+  };
+
+  /**
+   * Allow excess arguments on the command line, beyond what has been declared.
+   *
+   * @param {Boolean} [allowExcess] - if `true` or omitted, no error will be thrown
+   * for unknown arguments.
+   */
+  allowExcessArguments(allowExcess) {
+    this._allowExcessArguments = (allowExcess === undefined) || !!allowExcess;
     return this;
   };
 
@@ -1739,6 +1754,20 @@ Read more on https://git.io/JJc0W`);
     if (this._allowUnknownOption) return;
     const message = `error: unknown option '${flag}'`;
     this._displayError(1, 'commander.unknownOption', message);
+  };
+
+  /**
+   * Excess arguments `arg`.
+   *
+   * @param {string[]} args
+   * @api private
+   */
+
+  excessArguments(args) {
+    if (this._allowExcessArguments) return;
+    if (this.name() === '*') return; // support legacy use, do not enforce arguments
+    const message = `error: excess argument${args.length > 1 ? 's' : ''} '${args.join(' ')}'`;
+    this._displayError(1, 'commander.excessArguments', message);
   };
 
   /**

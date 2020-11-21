@@ -24,7 +24,7 @@ describe('unknownOption', () => {
     }).not.toThrow();
   });
 
-  test('when unknown command but action handler then no error', () => {
+  test('when unknown command and program action handler then error due to excess argument', () => {
     const program = new commander.Command();
     program
       .exitOverride()
@@ -33,7 +33,7 @@ describe('unknownOption', () => {
       .action(() => { });
     expect(() => {
       program.parse('node test.js unknown'.split(' '));
-    }).not.toThrow();
+    }).toThrow();
   });
 
   test('when unknown command but listener then no error', () => {

@@ -23,16 +23,31 @@ test('when .action called then program.args only contains args', () => {
   expect(program.args).toEqual(['info', 'my-file']);
 });
 
-test('when .action called with extra arguments then extras also passed to action', () => {
-  // This is a new and undocumented behaviour for now.
-  // Might make this an error by default in future.
+test('when .action called with excess arguments then error', () => {
   const actionMock = jest.fn();
   const program = new commander.Command();
-  const cmd = program
+  program.exitOverride();
+  program
     .command('info <file>')
+    .configureOutput({ writeErr: () => {} })
     .action(actionMock);
-  program.parse(['node', 'test', 'info', 'my-file', 'a']);
-  expect(actionMock).toHaveBeenCalledWith('my-file', cmd, ['a']);
+  expect(() => {
+    program.parse(['node', 'test', 'info', 'my-file', 'a']);
+  }).toThrow();
+});
+
+test('when .action called with allowed excess arguments then no error', () => {
+  const actionMock = jest.fn();
+  const program = new commander.Command();
+  program.exitOverride();
+  program
+    .command('info <file>')
+    .allowExcessArguments()
+    .action(actionMock);
+  expect(() => {
+    program.parse(['node', 'test', 'info', 'my-file', 'a']);
+  }).not.toThrow();
+  expect(actionMock).toHaveBeenCalled();
 });
 
 test('when .action on program with required argument and argument supplied then action called', () => {

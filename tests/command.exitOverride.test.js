@@ -47,6 +47,24 @@ describe('.exitOverride and error details', () => {
     expectCommanderError(caughtErr, 1, 'commander.unknownOption', "error: unknown option '-m'");
   });
 
+  test('when specify excess program arguments then throw CommanderError', () => {
+    const program = new commander.Command();
+    program
+      .arguments('<file>')
+      .exitOverride()
+      .action(() => {});
+
+    let caughtErr;
+    try {
+      program.parse(['node', 'test', 'expected', 'excess']);
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expect(stderrSpy).toHaveBeenCalled();
+    expectCommanderError(caughtErr, 1, 'commander.excessArguments', "error: excess argument 'excess'");
+  });
+
   test('when specify unknown command then throw CommanderError', () => {
     const program = new commander.Command();
     program

@@ -34,6 +34,7 @@ describe('default action command', () => {
     program
       .command('default', { isDefault: true })
       .allowUnknownOption()
+      .allowExcessArguments()
       .action(actionMock);
     return { program, actionMock };
   }
@@ -62,6 +63,7 @@ describe('default added command', () => {
     const actionMock = jest.fn();
     const defaultCmd = new commander.Command('default')
       .allowUnknownOption()
+      .allowExcessArguments()
       .action(actionMock);
 
     const program = new commander.Command();
