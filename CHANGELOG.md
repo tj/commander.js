@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [7.0.0-1] (2020-11-21)
+
+### Added
+
+- `.createOption()` to support subclassing of automatically created options (like `.createCommand()`) ([#1380])
+- `.configureOutput()` to modify use of stdout and stderr or customise display of errors ([#1387])
+
+### Breaking changes relative to 7.0.0-0
+
+- rework new `Help.wrap()` for simpler usage pattern (#1395)
+- rename new "columns" properties (#1396)
+  - `Help.columns` -> `helpWidth`
+  - `getOutColumns()` -> `getOutHelpWidth()`
+  - `getErrColumns()` -> `getErrHelpWidth()`
+
 ## [7.0.0-0] (2020-10-25)
 
 ### Added
@@ -267,8 +282,11 @@ to expand `-fb` to `-f -b` rather than `-f b`.
 [#1365]: https://github.com/tj/commander.js/pull/1365
 [#1368]: https://github.com/tj/commander.js/pull/1368
 [#1375]: https://github.com/tj/commander.js/pull/1375
+[#1380]: https://github.com/tj/commander.js/pull/1380
+[#1387]: https://github.com/tj/commander.js/pull/1387
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[7.0.0-1]: https://github.com/tj/commander.js/compare/v7.0.0-0...v7.0.0-1
 [7.0.0-0]: https://github.com/tj/commander.js/compare/v6.2.0...v7.0.0-0
 [6.2.0]: https://github.com/tj/commander.js/compare/v6.1.0..v6.2.0
 [6.1.0]: https://github.com/tj/commander.js/compare/v6.0.0..v6.1.0
