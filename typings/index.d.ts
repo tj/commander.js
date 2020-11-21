@@ -523,7 +523,7 @@ declare namespace commander {
     /**
      * Return command help documentation.
      */
-    helpInformation(): string;
+    helpInformation(context?: HelpContext): string;
 
     /**
      * You can pass in flags and a description to override the help
