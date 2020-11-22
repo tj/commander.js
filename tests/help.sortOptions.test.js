@@ -27,7 +27,7 @@ describe('sortOptions', () => {
     expect(visibleOptionNames).toEqual(['aaa', 'bbb', 'help', 'zzz']);
   });
 
-  test('when short and long flags then sort on long flag (name)', () => {
+  test('when both short and long flags then sort on long flag (name)', () => {
     const program = new commander.Command();
     program
       .configureHelp({ sortOptions: true })
@@ -39,7 +39,19 @@ describe('sortOptions', () => {
     expect(visibleOptionNames).toEqual(['aaa', 'bbb', 'help', 'zzz']);
   });
 
-  test('when negated option with positive then sort together with negative after positive', () => {
+  test('when lone short and long flags then sort on flag (name)', () => {
+    const program = new commander.Command();
+    program
+      .configureHelp({ sortOptions: true })
+      .option('--zzz', 'desc')
+      .option('--aaa', 'desc')
+      .option('-b', 'desc');
+    const helper = program.createHelp();
+    const visibleOptionNames = helper.visibleOptions(program).map(cmd => cmd.name());
+    expect(visibleOptionNames).toEqual(['aaa', 'b', 'help', 'zzz']);
+  });
+
+  test('when negated option then sort negated option separately', () => {
     const program = new commander.Command();
     program
       .configureHelp({ sortOptions: true })
@@ -49,19 +61,6 @@ describe('sortOptions', () => {
       .option('--aaa', 'desc');
     const helper = program.createHelp();
     const visibleOptionNames = helper.visibleOptions(program).map(cmd => cmd.name());
-    expect(visibleOptionNames).toEqual(['aaa', 'bbb', 'no-bbb', 'ccc', 'help']);
-  });
-
-  test('when negated option without positive then still sorts using attribute name', () => {
-    // Sorting '--no-foo' as 'foo' (mainly for when also 'foo' so sort together)!
-    const program = new commander.Command();
-    program
-      .configureHelp({ sortOptions: true })
-      .option('--ccc', 'desc')
-      .option('--aaa', 'desc')
-      .option('--no-bbb', 'desc');
-    const helper = program.createHelp();
-    const visibleOptionNames = helper.visibleOptions(program).map(cmd => cmd.name());
-    expect(visibleOptionNames).toEqual(['aaa', 'no-bbb', 'ccc', 'help']);
+    expect(visibleOptionNames).toEqual(['aaa', 'bbb', 'ccc', 'help', 'no-bbb']);
   });
 });

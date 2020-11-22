@@ -68,11 +68,7 @@ class Help {
     }
     if (this.sortOptions) {
       visibleOptions.sort((a, b) => {
-        const compare = a.attributeName().localeCompare(b.attributeName());
-        if (compare === 0) {
-          return (a.negate) ? +1 : -1;
-        }
-        return compare;
+        return a.name().localeCompare(b.name());
       });
     }
     return visibleOptions;
