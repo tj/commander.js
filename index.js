@@ -67,8 +67,12 @@ class Help {
       visibleOptions.push(helpOption);
     }
     if (this.sortOptions) {
+      const getSortKey = (option) => {
+        // WYSIWYG for order displayed in help with short before long, no special handling for negated.
+        return option.short ? option.short.replace(/^-/, '') : option.long.replace(/^--/, '');
+      };
       visibleOptions.sort((a, b) => {
-        return a.name().localeCompare(b.name());
+        return getSortKey(a).localeCompare(getSortKey(b));
       });
     }
     return visibleOptions;
