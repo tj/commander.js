@@ -303,7 +303,7 @@ Options:
   -h, --help             display help for command
 
 $ extra --drink huge
-error: option '-d, --drink <size>' argument of 'huge' not in allowed choices: small, medium, large
+error: option '-d, --drink <size>' argument 'huge' is invalid. Allowed choices are small, medium, large.
 ```
 
 ### Custom option processing
@@ -319,8 +319,12 @@ Example file: [options-custom-processing.js](./examples/options-custom-processin
 
 ```js
 function myParseInt(value, dummyPrevious) {
-  // parseInt takes a string and an optional radix
-  return parseInt(value);
+  // parseInt takes a string and a radix
+  const parsedValue = parseInt(value, 10);
+  if (isNaN(parsedValue)) {
+    throw new commander.InvalidOptionArgumentError('Not a number.');
+  }
+  return parsedValue;
 }
 
 function increaseVerbosity(dummyValue, previous) {

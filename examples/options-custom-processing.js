@@ -16,6 +16,8 @@
 // [ 'a', 'b', 'c' ]
 // $ custom --list x,y,z
 // [ 'x', 'y', 'z' ]
+// $ custom --integer oops
+// error: option '-i, --integer <number>' argument 'oops' is invalid. Not a number.
 
 // const commander = require('commander'); // (normal include)
 const commander = require('../'); // include commander in git clone of commander repo
@@ -23,7 +25,11 @@ const program = new commander.Command();
 
 function myParseInt(value, dummyPrevious) {
   // parseInt takes a string and a radix
-  return parseInt(value, 10);
+  const parsedValue = parseInt(value, 10);
+  if (isNaN(parsedValue)) {
+    throw new commander.InvalidOptionArgumentError('Not a number.');
+  }
+  return parsedValue;
 }
 
 function increaseVerbosity(dummyValue, previous) {

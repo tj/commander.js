@@ -426,16 +426,6 @@ class Option {
   };
 
   /**
-   * Validation of option argument failed.
-   * Intended for use from custom argument processing functions.
-   *
-   * @param {string} message
-   */
-  argumentRejected(message) {
-    throw new CommanderError(1, 'commander.optionArgumentRejected', message);
-  }
-
-  /**
    * Only allow option value to be one of choices.
    *
    * @param {string[]} values
@@ -446,7 +436,7 @@ class Option {
     this.argChoices = values;
     this.parseArg = (arg) => {
       if (!values.includes(arg)) {
-        this.argumentRejected(`error: option '${this.flags}' argument of '${arg}' not in allowed choices: ${values.join(', ')}`);
+        throw new InvalidOptionArgumentError(`Allowed choices are ${values.join(', ')}.`);
       }
       return arg;
     };
@@ -511,6 +501,24 @@ class CommanderError extends Error {
     this.code = code;
     this.exitCode = exitCode;
     this.nestedError = undefined;
+  }
+}
+
+/**
+ * InvalidOptionArgumentError class
+ * @class
+ */
+class InvalidOptionArgumentError extends CommanderError {
+  /**
+   * Constructs the InvalidOptionArgumentError class
+   * @param {string} [message] explanation of why argument is invalid
+   * @constructor
+   */
+  constructor(message) {
+    super(1, 'commander.invalidOptionArgument', message);
+    // properly capture stack trace in Node.js
+    Error.captureStackTrace(this, this.constructor);
+    this.name = this.constructor.name;
   }
 }
 
@@ -1005,8 +1013,9 @@ Read more on https://git.io/JJc0W`);
         try {
           val = option.parseArg(val, oldValue === undefined ? defaultValue : oldValue);
         } catch (err) {
-          if (err.code === 'commander.optionArgumentRejected') {
-            this._displayError(err.exitCode, err.code, err.message);
+          if (err.code === 'commander.invalidOptionArgument') {
+            const message = `error: option '${option.flags}' argument '${val}' is invalid. ${err.message}`;
+            this._displayError(err.exitCode, err.code, message);
           }
           throw err;
         }
@@ -2043,6 +2052,7 @@ exports.program = exports; // More explicit access to global command.
 exports.Command = Command;
 exports.Option = Option;
 exports.CommanderError = CommanderError;
+exports.InvalidOptionArgumentError = InvalidOptionArgumentError;
 exports.Help = Help;
 
 /**

@@ -218,6 +218,26 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expectCommanderError(caughtErr, 1, 'commander.optionArgumentRejected', `error: option '${optionFlags}' argument of 'green' not in allowed choices: red, blue`);
+    expectCommanderError(caughtErr, 1, 'commander.invalidOptionArgument', "error: option '--colour <shade>' argument 'green' is invalid. Allowed choices are red, blue.");
+  });
+
+  test('when custom processing throws InvalidOptionArgumentError then throw CommanderError', () => {
+    function justSayNo(value) {
+      throw new commander.InvalidOptionArgumentError('NO');
+    }
+    const optionFlags = '--colour <shade>';
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .option(optionFlags, 'specify shade', justSayNo);
+
+    let caughtErr;
+    try {
+      program.parse(['--colour', 'green'], { from: 'user' });
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expectCommanderError(caughtErr, 1, 'commander.invalidOptionArgument', "error: option '--colour <shade>' argument 'green' is invalid. NO");
   });
 });
