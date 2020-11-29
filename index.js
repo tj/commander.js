@@ -2038,6 +2038,24 @@ Expecting one of '${allowedValues.join("', '")}'`);
   }
 };
 
+class CommandStrict extends Command {
+  /**
+   * Initialize a new `CommandStrict` object, which adopts new patterns and best practices
+   * more aggressively than Command.
+   *
+   * @param {string} [name]
+   */
+  constructor(name) {
+    super(name);
+    this.storeOptionsAsProperties(false);
+    this.passCommandToAction(false);
+  }
+
+  createCommand(name) {
+    return new CommandStrict(name);
+  };
+}
+
 /**
  * Expose the root command.
  */
@@ -2050,6 +2068,7 @@ exports.program = exports; // More explicit access to global command.
  */
 
 exports.Command = Command;
+exports.CommandStrict = CommandStrict;
 exports.Option = Option;
 exports.CommanderError = CommanderError;
 exports.InvalidOptionArgumentError = InvalidOptionArgumentError;

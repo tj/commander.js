@@ -86,34 +86,34 @@ declare namespace commander {
     sortOptions: boolean;
 
     /** Get the command term to show in the list of subcommands. */
-    subcommandTerm(cmd: Command): string;
+    subcommandTerm(cmd: CommandInterface): string;
     /** Get the command description to show in the list of subcommands. */
-    subcommandDescription(cmd: Command): string;
+    subcommandDescription(cmd: CommandInterface): string;
     /** Get the option term to show in the list of options. */
     optionTerm(option: Option): string;
     /** Get the option description to show in the list of options. */
     optionDescription(option: Option): string;
 
     /** Get the command usage to be displayed at the top of the built-in help. */
-    commandUsage(cmd: Command): string;
+    commandUsage(cmd: CommandInterface): string;
     /** Get the description for the command. */
-    commandDescription(cmd: Command): string;
+    commandDescription(cmd: CommandInterface): string;
 
     /** Get an array of the visible subcommands. Includes a placeholder for the implicit help command, if there is one. */
-    visibleCommands(cmd: Command): Command[];
+    visibleCommands(cmd: CommandInterface): CommandInterface[];
     /** Get an array of the visible options. Includes a placeholder for the implicit help option, if there is one. */
-    visibleOptions(cmd: Command): Option[];
+    visibleOptions(cmd: CommandInterface): Option[];
     /** Get an array of the arguments which have descriptions. */
-    visibleArguments(cmd: Command): Array<{ term: string; description: string}>;
+    visibleArguments(cmd: CommandInterface): Array<{ term: string; description: string}>;
 
     /** Get the longest command term length. */
-    longestSubcommandTermLength(cmd: Command, helper: Help): number;
+    longestSubcommandTermLength(cmd: CommandInterface, helper: Help): number;
     /** Get the longest option term length. */
-    longestOptionTermLength(cmd: Command, helper: Help): number;
+    longestOptionTermLength(cmd: CommandInterface, helper: Help): number;
     /** Get the longest argument term length. */
-    longestArgumentTermLength(cmd: Command, helper: Help): number;
+    longestArgumentTermLength(cmd: CommandInterface, helper: Help): number;
     /** Calculate the pad width from the maximum term length. */
-    padWidth(cmd: Command, helper: Help): number;
+    padWidth(cmd: CommandInterface, helper: Help): number;
 
     /**
      * Wrap the given string to width characters per line, with lines after the first indented.
@@ -122,7 +122,7 @@ declare namespace commander {
     wrap(str: string, width: number, indent: number): string;
 
     /** Generate the built-in help text. */
-    formatHelp(cmd: Command, helper: Help): string;
+    formatHelp(cmd: CommandInterface, helper: Help): string;
   }
   type HelpConstructor = new () => Help;
   type HelpConfiguration = Partial<Help>;
@@ -135,7 +135,7 @@ declare namespace commander {
   }
   interface AddHelpTextContext { // passed to text function used with .addHelpText()
     error: boolean;
-    command: Command;
+    command: CommandInterface;
   }
   interface OutputConfiguration {
     writeOut?(str: string): void;
@@ -148,12 +148,25 @@ declare namespace commander {
 
   type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
 
-  interface Command {
+  // Command which may have options stored as properties
+  interface Command extends CommandInterface {
     [key: string]: any; // options as properties
+    createCommand(name?: string): Command;
+  }
+  type CommandConstructor = new (name?: string) => Command;
 
+  // Command without options stored as properties
+  // Extending from CommandInterface rather than Command to allow stronger typing.
+  interface CommandStrict extends CommandInterface {
+    createCommand(name?: string): CommandStrict;
+  }
+  type CommandStrictConstructor = new (name?: string) => CommandStrict;
+
+  // Additional layer compared with JavaScript to allow stronger typing.
+  interface CommandInterface {
     args: string[];
 
-    commands: Command[];
+    commands: CommandInterface[];
 
     /**
      * Set the program version to `str`.
@@ -212,7 +225,7 @@ declare namespace commander {
      * See .command() for creating an attached subcommand, which uses this routine to
      * create the command. You can override createCommand to customise subcommands.
      */
-    createCommand(name?: string): Command;
+    createCommand(name?: string): CommandInterface;
 
     /**
      * Add a prepared subcommand.
@@ -221,7 +234,7 @@ declare namespace commander {
      *
      * @returns `this` command for chaining
      */
-    addCommand(cmd: Command, opts?: CommandOptions): this;
+    addCommand(cmd: CommandInterface, opts?: CommandOptions): this;
 
     /**
      * Define argument syntax for command.
@@ -559,7 +572,6 @@ declare namespace commander {
      */
     on(event: string | symbol, listener: (...args: any[]) => void): this;
   }
-  type CommandConstructor = new (name?: string) => Command;
 
   interface CommandOptions {
     hidden?: boolean;
@@ -579,6 +591,7 @@ declare namespace commander {
   interface CommanderStatic extends Command {
     program: Command;
     Command: CommandConstructor;
+    CommandStrict: CommandStrictConstructor;
     Option: OptionConstructor;
     CommanderError: CommanderErrorConstructor;
     InvalidOptionArgumentError: InvalidOptionArgumentErrorConstructor;
