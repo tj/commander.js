@@ -1490,6 +1490,7 @@ Read more on https://git.io/JJc0W`);
         this.unknownOption(parsed.unknown[0]);
       }
 
+      const commandEvent = `command:${this.name()}`;
       if (this._actionHandler) {
         const args = this.args.slice();
         this._args.forEach((arg, i) => {
@@ -1501,9 +1502,11 @@ Read more on https://git.io/JJc0W`);
         });
 
         this._actionHandler(args);
-        this.emit('command:' + this.name(), operands, unknown);
+        if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
+      } else if (this.parent && this.parent.listenerCount(commandEvent)) {
+        this.parent.emit(commandEvent, operands, unknown); // legacy
       } else if (operands.length) {
-        if (this._findCommand('*')) {
+        if (this._findCommand('*')) { // legacy
           this._dispatchSubcommand('*', operands, unknown);
         } else if (this.listenerCount('command:*')) {
           this.emit('command:*', operands, unknown);
