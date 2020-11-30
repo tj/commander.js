@@ -890,18 +890,16 @@ class Command extends EventEmitter {
 
   action(fn) {
     const listener = (args) => {
-      // The .action callback takes an extra parameter which is the command or options.
       const expectedArgsCount = this._args.length;
       const actionArgs = args.slice(0, expectedArgsCount);
+      // Add the "options" (which might actually be the command).
       if (this._passCommandToAction) {
         actionArgs[expectedArgsCount] = this;
       } else {
         actionArgs[expectedArgsCount] = this.opts();
       }
-      // Add the extra arguments so available too.
-      if (args.length > expectedArgsCount) {
-        actionArgs.push(args.slice(expectedArgsCount));
-      }
+      // Add the command.
+      actionArgs.push(this);
 
       const actionResult = fn.apply(this, actionArgs);
       // Remember result in case it is async. Assume parseAsync getting called on root.

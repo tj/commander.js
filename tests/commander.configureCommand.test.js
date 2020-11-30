@@ -19,7 +19,7 @@ test('when default then command passed to action', () => {
     .arguments('<value>')
     .action(callback);
   program.parse(['node', 'test', 'value']);
-  expect(callback).toHaveBeenCalledWith('value', program);
+  expect(callback).toHaveBeenCalledWith('value', program, program);
 });
 
 // storeOptionsAsProperties
@@ -61,7 +61,7 @@ test('when passCommandToAction() then command passed to action', () => {
     .arguments('<value>')
     .action(callback);
   program.parse(['node', 'test', 'value']);
-  expect(callback).toHaveBeenCalledWith('value', program);
+  expect(callback).toHaveBeenCalledWith('value', program, program);
 });
 
 test('when passCommandToAction(true) then command passed to action', () => {
@@ -72,7 +72,7 @@ test('when passCommandToAction(true) then command passed to action', () => {
     .arguments('<value>')
     .action(callback);
   program.parse(['node', 'test', 'value']);
-  expect(callback).toHaveBeenCalledWith('value', program);
+  expect(callback).toHaveBeenCalledWith('value', program, program);
 });
 
 test('when passCommandToAction(false) then options passed to action', () => {
@@ -83,5 +83,5 @@ test('when passCommandToAction(false) then options passed to action', () => {
     .arguments('<value>')
     .action(callback);
   program.parse(['node', 'test', 'value']);
-  expect(callback).toHaveBeenCalledWith('value', program.opts());
+  expect(callback).toHaveBeenCalledWith('value', program.opts(), program);
 });
