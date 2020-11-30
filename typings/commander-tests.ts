@@ -1,5 +1,4 @@
 import * as commander from './index';
-import { command } from './index';
 
 // Test Commander usage with TypeScript.
 // This is NOT a usable program, just used to test for compile errors!
