@@ -1509,7 +1509,7 @@ Read more on https://git.io/JJc0W`);
     // Explicit options (including version)
     const help = this.options.map((option) => {
       const fullDesc = option.description +
-        ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + JSON.stringify(option.defaultValue) + ')' : '');
+        ((!option.negate && option.defaultValue !== undefined) ? ' (default: ' + stringify(option.defaultValue) + ')' : '');
       return padOptionDetails(option.flags, fullDesc);
     });
 
@@ -1776,6 +1776,21 @@ function optionalWrap(str, width, indent) {
   if (width < minWidth) return str;
 
   return wrap(str, width, indent);
+}
+
+/**
+ * Convert JS value to JSON string for output in help.
+ *
+ * @param {any} value
+ * @return {string}
+ * @api private
+ */
+
+function stringify(value) {
+  if (value === Infinity || value === -Infinity) {
+    return value.toString();
+  }
+  return JSON.stringify(value);
 }
 
 /**
