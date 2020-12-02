@@ -535,6 +535,7 @@ class Command extends EventEmitter {
     this.options = [];
     this.parent = null;
     this._allowUnknownOption = false;
+    this._allowExcessArguments = true;
     this._args = [];
     this.rawArgs = null;
     this._scriptPath = null;
@@ -1171,6 +1172,17 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
+   * Allow excess arguments on the command line.
+   *
+   * @param {Boolean} [allowExcess] - if `true` or omitted, no error will be thrown
+   * for excess arguments.
+   */
+  allowExcessArguments(allowExcess) {
+    this._allowExcessArguments = (allowExcess === undefined) || !!allowExcess;
+    return this;
+  };
+
+  /**
     * Whether to store option values as properties on command object,
     * or store separately (specify false). In both cases the option values can be accessed using .opts().
     *
@@ -1492,14 +1504,19 @@ Read more on https://git.io/JJc0W`);
 
       const commandEvent = `command:${this.name()}`;
       if (this._actionHandler) {
+        // Check expected arguments and collect variadic together.
         const args = this.args.slice();
         this._args.forEach((arg, i) => {
           if (arg.required && args[i] == null) {
             this.missingArgument(arg.name);
           } else if (arg.variadic) {
             args[i] = args.splice(i);
+            args.length = Math.min(i + 1, args.length);
           }
         });
+        if (args.length > this._args.length) {
+          this._excessArguments(args); // may be allowed
+        }
 
         this._actionHandler(args);
         if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
@@ -1751,6 +1768,23 @@ Read more on https://git.io/JJc0W`);
     if (this._allowUnknownOption) return;
     const message = `error: unknown option '${flag}'`;
     this._displayError(1, 'commander.unknownOption', message);
+  };
+
+  /**
+   * Excess arguments, more than expected.
+   *
+   * @param {string[]} receivedArgs
+   * @api private
+   */
+
+  _excessArguments(receivedArgs) {
+    if (this._allowExcessArguments) return;
+    if (this._name === '*') return; // Legacy default handler
+
+    const expected = this._args.length;
+    const s = expected === 1 ? '' : 's';
+    const message = `error: too many arguments for '${this.name()}'. Expected ${expected} argument${s} but got ${receivedArgs.length}.`;
+    this._displayError(1, 'commander.excessArguments', message);
   };
 
   /**
