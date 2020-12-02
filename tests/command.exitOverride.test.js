@@ -120,6 +120,24 @@ describe('.exitOverride and error details', () => {
     expectCommanderError(caughtErr, 1, 'commander.missingArgument', "error: missing required argument 'arg-name'");
   });
 
+  test('when specify excess argument then throw CommanderError', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .allowExcessArguments(false)
+      .action(() => { });
+
+    let caughtErr;
+    try {
+      program.parse(['node', 'test', 'excess']);
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expect(stderrSpy).toHaveBeenCalled();
+    expectCommanderError(caughtErr, 1, 'commander.excessArguments', 'error: too many arguments. Expected 0 arguments but got 1.');
+  });
+
   test('when specify command with excess argument then throw CommanderError', () => {
     const program = new commander.Command();
     program

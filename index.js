@@ -1782,8 +1782,9 @@ Read more on https://git.io/JJc0W`);
     if (this._name === '*') return; // Legacy default handler
 
     const expected = this._args.length;
-    const s = expected === 1 ? '' : 's';
-    const message = `error: too many arguments for '${this.name()}'. Expected ${expected} argument${s} but got ${receivedArgs.length}.`;
+    const s = (expected === 1) ? '' : 's';
+    const forSubcommand = this.parent ? ` for '${this.name()}'` : '';
+    const message = `error: too many arguments${forSubcommand}. Expected ${expected} argument${s} but got ${receivedArgs.length}.`;
     this._displayError(1, 'commander.excessArguments', message);
   };
 
