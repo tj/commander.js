@@ -23,6 +23,7 @@ const program = new commander.Command();
 program
   .storeOptionsAsProperties(false) // <--- change behaviour
   .passCommandToAction(false); // <--- change behaviour
+// Now same settings as CommandStrict.
 
 program
   .name('my-program-name')

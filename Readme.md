@@ -35,7 +35,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
   - [Custom event listeners](#custom-event-listeners)
   - [Bits and pieces](#bits-and-pieces)
     - [.parse() and .parseAsync()](#parse-and-parseasync)
-    - [Avoiding option name clashes](#avoiding-option-name-clashes)
+    - [Strict](#strict)
     - [TypeScript](#typescript)
     - [createCommand()](#createcommand)
     - [Import into ECMAScript Module](#import-into-ecmascript-module)
@@ -70,6 +70,14 @@ For larger programs which may use commander in multiple ways, including unit tes
 ```js
 const { Command } = require('commander');
 const program = new Command();
+program.version('0.0.1');
+```
+
+Or even better for new programs, create a CommandStrict object which favors safe configuration over backwards compatibility.
+
+```js
+const { CommandStrict } = require('commander');
+const program = new CommandStrict();
 program.version('0.0.1');
 ```
 
@@ -688,26 +696,38 @@ program.parse(); // Implicit, and auto-detect electron
 program.parse(['-f', 'filename'], { from: 'user' });
 ```
 
-### Avoiding option name clashes
+### Strict
 
-The original and default behaviour is that the option values are stored
-as properties on the program, and the action handler is passed a
+The default configuration of the Command class changes slowly to preserve backwards compatibility. 
+The CommandStrict class uses latest recommended settings and is suggested
+for new programs. All of the examples in this README and the examples work with both `Commnand` and
+`CommandStrict`.
+
+**Avoiding option name clashes**
+ 
+The original and default `Command` behaviour is that the option values are stored
+as properties on the command, and the action handler is passed a
 command object with the options values stored as properties.
 This is very convenient to code, but the downside is possible clashes with
-existing properties of Command.
+existing properties of `Command`.
 
-There are two new routines to change the behaviour, and the default behaviour may change in the future:
+There are two new routines to change the behaviour:
 
 - `storeOptionsAsProperties`: whether to store option values as properties on command object, or store separately (specify false) and access using `.opts()`
 - `passCommandToAction`: whether to pass command to action handler,
 or just the options (specify false)
 
+The suggested manual use is set them both the same. `Command` sets both to true, while `CommandStrict` sets both to false.
+
 Example file: [storeOptionsAsProperties-action.js](./examples/storeOptionsAsProperties-action.js)
 
 ```js
+const program = new Command();
+
 program
   .storeOptionsAsProperties(false)
   .passCommandToAction(false);
+// Now same settings as CommandStrict.
 
 program
   .name('my-program-name')
