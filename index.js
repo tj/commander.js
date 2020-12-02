@@ -1515,7 +1515,7 @@ Read more on https://git.io/JJc0W`);
           }
         });
         if (args.length > this._args.length) {
-          this._excessArguments(args); // may be allowed
+          this._excessArguments(args);
         }
 
         this._actionHandler(args);
@@ -1779,7 +1779,6 @@ Read more on https://git.io/JJc0W`);
 
   _excessArguments(receivedArgs) {
     if (this._allowExcessArguments) return;
-    if (this._name === '*') return; // Legacy default handler
 
     const expected = this._args.length;
     const s = (expected === 1) ? '' : 's';
