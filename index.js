@@ -404,24 +404,24 @@ class Option {
   /**
    * Whether the option is mandatory and must have a value after parsing.
    *
-   * @param {boolean} [mandatory]
+   * @param {boolean} [mandatory=true]
    * @return {Option}
    */
 
-  makeOptionMandatory(mandatory) {
-    this.mandatory = (mandatory === undefined) || !!mandatory;
+  makeOptionMandatory(mandatory = true) {
+    this.mandatory = !!mandatory;
     return this;
   };
 
   /**
    * Hide option in help.
    *
-   * @param {boolean} [hide]
+   * @param {boolean} [hide=true]
    * @return {Option}
    */
 
-  hideHelp(hide) {
-    this.hidden = (hide === undefined) || !!hide;
+  hideHelp(hide = true) {
+    this.hidden = !!hide;
     return this;
   };
 
@@ -1153,32 +1153,32 @@ Read more on https://git.io/JJc0W`);
    *    .combineFlagAndOptionalValue(true)  // `-f80` is treated like `--flag=80`, this is the default behaviour
    *    .combineFlagAndOptionalValue(false) // `-fb` is treated like `-f -b`
    *
-   * @param {Boolean} [combine] - if `true` or omitted, an optional value can be specified directly after the flag.
+   * @param {Boolean} [combine=true] - if `true` or omitted, an optional value can be specified directly after the flag.
    */
-  combineFlagAndOptionalValue(combine) {
-    this._combineFlagAndOptionalValue = (combine === undefined) || !!combine;
+  combineFlagAndOptionalValue(combine = true) {
+    this._combineFlagAndOptionalValue = !!combine;
     return this;
   };
 
   /**
    * Allow unknown options on the command line.
    *
-   * @param {Boolean} [allowUnknown] - if `true` or omitted, no error will be thrown
+   * @param {Boolean} [allowUnknown=true] - if `true` or omitted, no error will be thrown
    * for unknown options.
    */
-  allowUnknownOption(allowUnknown) {
-    this._allowUnknownOption = (allowUnknown === undefined) || !!allowUnknown;
+  allowUnknownOption(allowUnknown = true) {
+    this._allowUnknownOption = !!allowUnknown;
     return this;
   };
 
   /**
    * Allow excess arguments on the command line.
    *
-   * @param {Boolean} [allowExcess] - if `true` or omitted, no error will be thrown
+   * @param {Boolean} [allowExcess=true] - if `true` or omitted, no error will be thrown
    * for excess arguments.
    */
-  allowExcessArguments(allowExcess) {
-    this._allowExcessArguments = (allowExcess === undefined) || !!allowExcess;
+  allowExcessArguments(allowExcess = true) {
+    this._allowExcessArguments = !!allowExcess;
     return this;
   };
 
@@ -1186,13 +1186,13 @@ Read more on https://git.io/JJc0W`);
     * Whether to store option values as properties on command object,
     * or store separately (specify false). In both cases the option values can be accessed using .opts().
     *
-    * @param {boolean} storeAsProperties
+    * @param {boolean} [storeAsProperties=true]
     * @return {Command} `this` command for chaining
     */
 
-  storeOptionsAsProperties(storeAsProperties) {
+  storeOptionsAsProperties(storeAsProperties = true) {
     this._storeOptionsAsPropertiesCalled = true;
-    this._storeOptionsAsProperties = (storeAsProperties === undefined) || !!storeAsProperties;
+    this._storeOptionsAsProperties = !!storeAsProperties;
     if (this.options.length) {
       throw new Error('call .storeOptionsAsProperties() before adding options');
     }
@@ -1203,12 +1203,12 @@ Read more on https://git.io/JJc0W`);
     * Whether to pass command to action handler,
     * or just the options (specify false).
     *
-    * @param {boolean} passCommand
+    * @param {boolean} [passCommand=true]
     * @return {Command} `this` command for chaining
     */
 
-  passCommandToAction(passCommand) {
-    this._passCommandToAction = (passCommand === undefined) || !!passCommand;
+  passCommandToAction(passCommand = true) {
+    this._passCommandToAction = !!passCommand;
     return this;
   };
 
