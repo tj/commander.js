@@ -12,8 +12,9 @@ test('when arguments includes -- then stop processing options', () => {
     .option('-b, --bar', 'add some bar');
   program.parse(['node', 'test', '--foo', '--', '--bar', 'baz']);
   // More than one assert, ported from legacy test
-  expect(program.foo).toBe(true);
-  expect(program.bar).toBeUndefined();
+  const opts = program.opts();
+  expect(opts.foo).toBe(true);
+  expect(opts.bar).toBeUndefined();
   expect(program.args).toEqual(['--bar', 'baz']);
 });
 

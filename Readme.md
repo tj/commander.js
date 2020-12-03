@@ -699,15 +699,12 @@ existing properties of Command.
 There are two new routines to change the behaviour, and the default behaviour may change in the future:
 
 - `storeOptionsAsProperties`: whether to store option values as properties on command object, or store separately (specify false) and access using `.opts()`
-- `passCommandToAction`: whether to pass command to action handler,
-or just the options (specify false)
 
 Example file: [storeOptionsAsProperties-action.js](./examples/storeOptionsAsProperties-action.js)
 
 ```js
 program
-  .storeOptionsAsProperties(false)
-  .passCommandToAction(false);
+  .storeOptionsAsProperties(false);
 
 program
   .name('my-program-name')

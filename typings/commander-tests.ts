@@ -147,10 +147,6 @@ const addOptionThis: commander.Command = program.addOption(new commander.Option(
 const storeOptionsAsPropertiesThis1: commander.Command = program.storeOptionsAsProperties();
 const storeOptionsAsPropertiesThis2: commander.Command = program.storeOptionsAsProperties(false);
 
-// passCommandToAction
-const passCommandToActionThis1: commander.Command = program.passCommandToAction();
-const passCommandToActionThis2: commander.Command = program.passCommandToAction(false);
-
 // combineFlagAndOptionalValue
 const combineFlagAndOptionalValueThis1: commander.Command = program.combineFlagAndOptionalValue();
 const combineFlagAndOptionalValueThis2: commander.Command = program.combineFlagAndOptionalValue(false);

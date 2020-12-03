@@ -3,10 +3,11 @@ const commander = require('../');
 // Test the `.opts()` way of accessing option values.
 // Basic coverage of the main option types (leaving out negatable flags and options with optional values).
 
-test('when .version used then version in opts', () => {
+test('when .version used with storeOptionsAsProperties() then version in opts', () => {
   const program = new commander.Command();
   const version = '0.0.1';
   program
+    .storeOptionsAsProperties()
     .version(version);
   program.parse(['node', 'test']);
   expect(program.opts()).toEqual({ version });

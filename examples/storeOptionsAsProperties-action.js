@@ -21,8 +21,7 @@ const commander = require('../'); // include commander in git clone of commander
 const program = new commander.Command();
 
 program
-  .storeOptionsAsProperties(false) // <--- change behaviour
-  .passCommandToAction(false); // <--- change behaviour
+  .storeOptionsAsProperties(false); // <--- change behaviour
 
 program
   .name('my-program-name')
