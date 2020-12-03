@@ -890,7 +890,11 @@ class Command extends EventEmitter {
       // The .action callback takes an extra parameter which is the command or options.
       const expectedArgsCount = this._args.length;
       const actionArgs = args.slice(0, expectedArgsCount);
-      actionArgs[expectedArgsCount] = this.opts();
+      if (this._storeOptionsAsProperties) {
+        actionArgs[expectedArgsCount] = this; // backwards compatible "options"
+      } else {
+        actionArgs[expectedArgsCount] = this.opts();
+      }
       actionArgs.push(this);
 
       const actionResult = fn.apply(this, actionArgs);
