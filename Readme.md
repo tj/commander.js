@@ -35,7 +35,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
   - [Custom event listeners](#custom-event-listeners)
   - [Bits and pieces](#bits-and-pieces)
     - [.parse() and .parseAsync()](#parse-and-parseasync)
-    - [Avoiding option name clashes](#avoiding-option-name-clashes)
+    - [Legacy options as properties](#legacy-options-as-properties)
     - [TypeScript](#typescript)
     - [createCommand()](#createcommand)
     - [Import into ECMAScript Module](#import-into-ecmascript-module)
@@ -688,39 +688,21 @@ program.parse(); // Implicit, and auto-detect electron
 program.parse(['-f', 'filename'], { from: 'user' });
 ```
 
-### Avoiding option name clashes
+### Legacy options as properties 
 
-The original and default behaviour is that the option values are stored
-as properties on the program, and the action handler is passed a
-command object with the options values stored as properties.
-This is very convenient to code, but the downside is possible clashes with
-existing properties of Command.
-
-There are two new routines to change the behaviour, and the default behaviour may change in the future:
-
-- `storeOptionsAsProperties`: whether to store option values as properties on command object, or store separately (specify false) and access using `.opts()`
-
-Example file: [storeOptionsAsProperties-action.js](./examples/storeOptionsAsProperties-action.js)
+Before Commander 7, the option values were stored as properties on the command.
+This was convenient to code but the downside was possible clashes with
+existing properties of `Command`. You can revert to the old behaviour to run old code by using `.storeOptionsAsProperties()`.
 
 ```js
 program
-  .storeOptionsAsProperties(false);
-
-program
-  .name('my-program-name')
-  .option('-n,--name <name>');
-
-program
-  .command('show')
-  .option('-a,--action <action>')
-  .action((options) => {
-    console.log(options.action);
+  .storeOptionsAsProperties()
+  .option('-d, --debug')
+  .action((commandAndOptions) => {
+    if (commandAndOptions.debug) {
+      console.error(`Called ${commandAndOptions.name()}`);
+    }
   });
-
-program.parse(process.argv);
-
-const programOptions = program.opts();
-console.log(programOptions.name);
 ```
 
 ### TypeScript
