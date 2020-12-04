@@ -136,9 +136,9 @@ Example file: [options-defaults.js](./examples/options-defaults.js)
 program
   .option('-c, --cheese <type>', 'add the specified type of cheese', 'blue');
 
-program.parse(process.argv);
+program.parse();
 
-console.log(`cheese: ${program.cheese}`);
+console.log(`cheese: ${program.opts().cheese}`);
 ```
 
 ```bash
