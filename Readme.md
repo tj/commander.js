@@ -692,7 +692,7 @@ program.parse(['-f', 'filename'], { from: 'user' });
 
 Before Commander 7, the option values were stored as properties on the command.
 This was convenient to code but the downside was possible clashes with
-existing properties of `Command`. You can revert to the old behaviour to run old code by using `.storeOptionsAsProperties()`.
+existing properties of `Command`. You can revert to the old behaviour to run unmodified legacy code by using `.storeOptionsAsProperties()`.
 
 ```js
 program
