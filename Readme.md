@@ -77,7 +77,7 @@ program.version('0.0.1');
 
 Options are defined with the `.option()` method, also serving as documentation for the options. Each option can have a short flag (single character) and a long name, separated by a comma or space or vertical bar ('|').
 
-The options can be accessed as properties on the Command object. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc. See also optional new behaviour to [avoid name clashes](#avoiding-option-name-clashes).
+The parsed options can be accessed by calling `.opts()` on a `Command` object. Multi-word options such as "--template-engine" are camel-cased, becoming `program.opts().templateEngine` etc.
 
 Multiple short flags may optionally be combined in a single argument following the dash: boolean flags, followed by a single option taking a value (possibly followed by the value).
 For example `-a -b -p 80` may be written as `-ab -p80` or even `-abp80`.
@@ -101,10 +101,11 @@ program
 
 program.parse(process.argv);
 
-if (program.debug) console.log(program.opts());
+const options = program.opts();
+if (options.debug) console.log(options);
 console.log('pizza details:');
-if (program.small) console.log('- small pizza size');
-if (program.pizzaType) console.log(`- ${program.pizzaType}`);
+if (options.small) console.log('- small pizza size');
+if (options.pizzaType) console.log(`- ${options.pizzaType}`);
 ```
 
 ```bash
