@@ -205,7 +205,7 @@ describe('required command option with mandatory value not specified', () => {
       .exitOverride()
       .command('sub')
       .requiredOption('--subby <type>', 'description')
-      .action((cmd) => {});
+      .action(() => {});
 
     expect(() => {
       program.parse(['node', 'test', 'sub']);
@@ -218,7 +218,7 @@ describe('required command option with mandatory value not specified', () => {
       .exitOverride()
       .command('sub')
       .requiredOption('--subby <type>', 'description')
-      .action((cmd) => {});
+      .action(() => {});
     program
       .command('sub2');
 
