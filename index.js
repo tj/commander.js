@@ -620,6 +620,8 @@ class Command extends EventEmitter {
     }
     if (opts.isDefault) this._defaultCommandName = cmd._name;
 
+    cmd._outputConfiguration = this._outputConfiguration;
+
     cmd._hidden = !!(opts.noHelp || opts.hidden); // noHelp is deprecated old name for hidden
     cmd._hasHelpOption = this._hasHelpOption;
     cmd._helpFlags = this._helpFlags;
