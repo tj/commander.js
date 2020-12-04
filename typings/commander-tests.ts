@@ -159,6 +159,10 @@ const combineFlagAndOptionalValueThis2: commander.Command = program.combineFlagA
 const allowUnknownOptionThis1: commander.Command = program.allowUnknownOption();
 const allowUnknownOptionThis2: commander.Command = program.allowUnknownOption(false);
 
+// allowExcessArguments
+const allowExcessArgumentsThis1: commander.Command = program.allowExcessArguments();
+const allowExcessArgumentsThis2: commander.Command = program.allowExcessArguments(false);
+
 // parse
 const parseThis1: commander.Command = program.parse();
 const parseThis2: commander.Command = program.parse(process.argv);

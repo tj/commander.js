@@ -404,24 +404,24 @@ class Option {
   /**
    * Whether the option is mandatory and must have a value after parsing.
    *
-   * @param {boolean} [mandatory]
+   * @param {boolean} [mandatory=true]
    * @return {Option}
    */
 
-  makeOptionMandatory(mandatory) {
-    this.mandatory = (mandatory === undefined) || !!mandatory;
+  makeOptionMandatory(mandatory = true) {
+    this.mandatory = !!mandatory;
     return this;
   };
 
   /**
    * Hide option in help.
    *
-   * @param {boolean} [hide]
+   * @param {boolean} [hide=true]
    * @return {Option}
    */
 
-  hideHelp(hide) {
-    this.hidden = (hide === undefined) || !!hide;
+  hideHelp(hide = true) {
+    this.hidden = !!hide;
     return this;
   };
 
@@ -535,6 +535,7 @@ class Command extends EventEmitter {
     this.options = [];
     this.parent = null;
     this._allowUnknownOption = false;
+    this._allowExcessArguments = true;
     this._args = [];
     this.rawArgs = null;
     this._scriptPath = null;
@@ -1152,21 +1153,32 @@ Read more on https://git.io/JJc0W`);
    *    .combineFlagAndOptionalValue(true)  // `-f80` is treated like `--flag=80`, this is the default behaviour
    *    .combineFlagAndOptionalValue(false) // `-fb` is treated like `-f -b`
    *
-   * @param {Boolean} [combine] - if `true` or omitted, an optional value can be specified directly after the flag.
+   * @param {Boolean} [combine=true] - if `true` or omitted, an optional value can be specified directly after the flag.
    */
-  combineFlagAndOptionalValue(combine) {
-    this._combineFlagAndOptionalValue = (combine === undefined) || !!combine;
+  combineFlagAndOptionalValue(combine = true) {
+    this._combineFlagAndOptionalValue = !!combine;
     return this;
   };
 
   /**
    * Allow unknown options on the command line.
    *
-   * @param {Boolean} [allowUnknown] - if `true` or omitted, no error will be thrown
+   * @param {Boolean} [allowUnknown=true] - if `true` or omitted, no error will be thrown
    * for unknown options.
    */
-  allowUnknownOption(allowUnknown) {
-    this._allowUnknownOption = (allowUnknown === undefined) || !!allowUnknown;
+  allowUnknownOption(allowUnknown = true) {
+    this._allowUnknownOption = !!allowUnknown;
+    return this;
+  };
+
+  /**
+   * Allow excess arguments on the command line.
+   *
+   * @param {Boolean} [allowExcess=true] - if `true` or omitted, no error will be thrown
+   * for excess arguments.
+   */
+  allowExcessArguments(allowExcess = true) {
+    this._allowExcessArguments = !!allowExcess;
     return this;
   };
 
@@ -1174,13 +1186,13 @@ Read more on https://git.io/JJc0W`);
     * Whether to store option values as properties on command object,
     * or store separately (specify false). In both cases the option values can be accessed using .opts().
     *
-    * @param {boolean} storeAsProperties
+    * @param {boolean} [storeAsProperties=true]
     * @return {Command} `this` command for chaining
     */
 
-  storeOptionsAsProperties(storeAsProperties) {
+  storeOptionsAsProperties(storeAsProperties = true) {
     this._storeOptionsAsPropertiesCalled = true;
-    this._storeOptionsAsProperties = (storeAsProperties === undefined) || !!storeAsProperties;
+    this._storeOptionsAsProperties = !!storeAsProperties;
     if (this.options.length) {
       throw new Error('call .storeOptionsAsProperties() before adding options');
     }
@@ -1191,12 +1203,12 @@ Read more on https://git.io/JJc0W`);
     * Whether to pass command to action handler,
     * or just the options (specify false).
     *
-    * @param {boolean} passCommand
+    * @param {boolean} [passCommand=true]
     * @return {Command} `this` command for chaining
     */
 
-  passCommandToAction(passCommand) {
-    this._passCommandToAction = (passCommand === undefined) || !!passCommand;
+  passCommandToAction(passCommand = true) {
+    this._passCommandToAction = !!passCommand;
     return this;
   };
 
@@ -1492,14 +1504,19 @@ Read more on https://git.io/JJc0W`);
 
       const commandEvent = `command:${this.name()}`;
       if (this._actionHandler) {
+        // Check expected arguments and collect variadic together.
         const args = this.args.slice();
         this._args.forEach((arg, i) => {
           if (arg.required && args[i] == null) {
             this.missingArgument(arg.name);
           } else if (arg.variadic) {
             args[i] = args.splice(i);
+            args.length = Math.min(i + 1, args.length);
           }
         });
+        if (args.length > this._args.length) {
+          this._excessArguments(args);
+        }
 
         this._actionHandler(args);
         if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
@@ -1751,6 +1768,23 @@ Read more on https://git.io/JJc0W`);
     if (this._allowUnknownOption) return;
     const message = `error: unknown option '${flag}'`;
     this._displayError(1, 'commander.unknownOption', message);
+  };
+
+  /**
+   * Excess arguments, more than expected.
+   *
+   * @param {string[]} receivedArgs
+   * @api private
+   */
+
+  _excessArguments(receivedArgs) {
+    if (this._allowExcessArguments) return;
+
+    const expected = this._args.length;
+    const s = (expected === 1) ? '' : 's';
+    const forSubcommand = this.parent ? ` for '${this.name()}'` : '';
+    const message = `error: too many arguments${forSubcommand}. Expected ${expected} argument${s} but got ${receivedArgs.length}.`;
+    this._displayError(1, 'commander.excessArguments', message);
   };
 
   /**

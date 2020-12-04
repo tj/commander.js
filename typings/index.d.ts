@@ -404,6 +404,13 @@ declare namespace commander {
     allowUnknownOption(allowUnknown?: boolean): this;
 
     /**
+     * Allow excess arguments on the command line.
+     *
+     * @returns `this` command for chaining
+     */
+    allowExcessArguments(allowExcess?: boolean): this;
+
+    /**
      * Parse `argv`, setting options and invoking commands when defined.
      *
      * The default expectation is that the arguments are from node and have the application as argv[0]

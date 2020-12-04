@@ -120,6 +120,43 @@ describe('.exitOverride and error details', () => {
     expectCommanderError(caughtErr, 1, 'commander.missingArgument', "error: missing required argument 'arg-name'");
   });
 
+  test('when specify excess argument then throw CommanderError', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .allowExcessArguments(false)
+      .action(() => { });
+
+    let caughtErr;
+    try {
+      program.parse(['node', 'test', 'excess']);
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expect(stderrSpy).toHaveBeenCalled();
+    expectCommanderError(caughtErr, 1, 'commander.excessArguments', 'error: too many arguments. Expected 0 arguments but got 1.');
+  });
+
+  test('when specify command with excess argument then throw CommanderError', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .command('speak')
+      .allowExcessArguments(false)
+      .action(() => { });
+
+    let caughtErr;
+    try {
+      program.parse(['node', 'test', 'speak', 'excess']);
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expect(stderrSpy).toHaveBeenCalled();
+    expectCommanderError(caughtErr, 1, 'commander.excessArguments', "error: too many arguments for 'speak'. Expected 0 arguments but got 1.");
+  });
+
   test('when specify --help then throw CommanderError', () => {
     const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
     const program = new commander.Command();
