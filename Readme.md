@@ -23,7 +23,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Custom option processing](#custom-option-processing)
   - [Commands](#commands)
     - [Specify the argument syntax](#specify-the-argument-syntax)
-    - [Action handler (sub)commands](#action-handler-subcommands)
+    - [Action handler](#action-handler)
     - [Stand-alone executable (sub)commands](#stand-alone-executable-subcommands)
   - [Automated help](#automated-help)
     - [Custom help](#custom-help)
@@ -77,7 +77,7 @@ program.version('0.0.1');
 
 Options are defined with the `.option()` method, also serving as documentation for the options. Each option can have a short flag (single character) and a long name, separated by a comma or space or vertical bar ('|').
 
-The parsed options can be accessed by calling `.opts()` on a `Command` object. Multi-word options such as "--template-engine" are camel-cased, becoming `program.opts().templateEngine` etc.
+The parsed options can be accessed by calling `.opts()` on a `Command` object, and are passed to the action handler. Multi-word options such as "--template-engine" are camel-cased, becoming `program.opts().templateEngine` etc.
 
 Multiple short flags may optionally be combined in a single argument following the dash: boolean flags, followed by a single option taking a value (possibly followed by the value).
 For example `-a -b -p 80` may be written as `-ab -p80` or even `-abp80`.
@@ -124,7 +124,7 @@ pizza details:
 - cheese
 ```
 
-`program.parse(arguments)` processes the arguments, leaving any args not consumed by the program options in the `program.args` array.
+`program.parse(arguments)` processes the arguments, leaving any args not consumed by the program options in the `program.args` array. The parameter is optional and defaults to `process.argv`.
 
 ### Default option value
 
@@ -220,7 +220,7 @@ Example file: [options-required.js](./examples/options-required.js)
 program
   .requiredOption('-c, --cheese <type>', 'pizza must have cheese');
 
-program.parse(process.argv);
+program.parse();
 ```
 
 ```bash
@@ -457,11 +457,10 @@ program.parse(process.argv);
 
 The variadic argument is passed to the action handler as an array.
 
-### Action handler (sub)commands
+### Action handler
 
-You can add options to a command that uses an action handler.
-The action handler gets passed a parameter for each argument you declared, and one additional argument which is the
-command object itself. This command argument has the values for the command-specific options added as properties.
+The action handler gets passed a parameter for each command-argument you declared, and two additional parameters which are the parsed options and the
+command object itself. 
 
 ```js
 const { program } = require('commander');
@@ -469,8 +468,9 @@ const { program } = require('commander');
 program
   .command('rm <dir>')
   .option('-r, --recursive', 'Remove recursively')
-  .action(function (dir, cmdObj) {
-    console.log('remove ' + dir + (cmdObj.recursive ? ' recursively' : ''))
+  .action(function (dir, options, command) {
+    const recursively = options.recursive ? ' recursively' : '';
+    console.log(`${command.name}${recursively}: ${dir}`)
   })
 
 program.parse(process.argv)
@@ -489,7 +489,7 @@ async function main() {
 }
 ```
 
-A command's options on the command line are validated when the command is used. Any unknown options will be reported as an error.
+A command's options and arguments on the command line are validated when the command is used. Any unknown options or missing arguments or unexpected arguments will be reported as an error.
 
 ### Stand-alone executable (sub)commands
 

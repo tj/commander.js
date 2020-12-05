@@ -17,4 +17,4 @@ const program = new commander.Command();
 program
   .requiredOption('-c, --cheese <type>', 'pizza must have cheese');
 
-program.parse(process.argv);
+program.parse();

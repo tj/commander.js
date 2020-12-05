@@ -37,7 +37,7 @@ if (options.debug) console.log(`Program name is ${program.name()}`);
 
 **action handler**
 
-The action handler was previously passed by default a command object with the options as properties. Now that is split into  two parameters which are the options and the command. If you
+The action handler gets passed a parameter for each command-argument you declared. Previously by default the next parameter was the command object with the options as properties. Now the next two parameters are instead the options and the command. If you
 only access the options there may be no code changes required.
 
 ```js
