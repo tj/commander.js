@@ -70,6 +70,12 @@ describe('Command methods that should return this for chaining', () => {
     expect(result).toBe(program);
   });
 
+  test('when call .allowExcessArguments() then returns this', () => {
+    const program = new Command();
+    const result = program.allowExcessArguments();
+    expect(result).toBe(program);
+  });
+
   test('when call .storeOptionsAsProperties() then returns this', () => {
     const program = new Command();
     const result = program.storeOptionsAsProperties();
