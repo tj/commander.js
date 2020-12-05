@@ -8,6 +8,56 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [Unreleased] (date goes here)
+
+### Migration Tips
+
+**program options**
+
+The parsed option values were previously stored by default as properties on the command object, and are now stored separately.
+Use the `.opts()` method to access the options.
+
+```js
+program.option('-d, --debug');
+program.parse();
+// Old code
+if (program.debug) console.log(`Program name is ${program.name()}`);
+```
+
+```js
+// New code
+const options = program.opts();
+if (options.debug) console.log(`Program name is ${program.name()}`);
+```
+
+**action handler**
+
+The action handler was previously passed by default a command object with the options as properties. Now it is passed two
+extra parameters, the options and the command.
+
+```js
+.command('compress <filename>')
+.option('-t, --trace')
+// Old code
+.action((filename, cmd)) => {
+   if (cmd.trace) console.log(`Command name is ${cmd.name()}`);
+});
+```
+
+```js
+// New code
+.action((filename, options, command)) => {
+   if (options.trace) console.log(`Command name is ${command.name()}`);
+});
+```
+
+**legacy behaviour**
+
+If you do not want to update your code, you can call `.storeOptionsAsProperties()` to restore the old behavior and store the parsed option values as properties on the command.
+
+An action handler will be passed the command _twice_, as the "options" and "command". This lets you run unmodified code, but allows you to incrementally move to use the "options" and "command" pattern
+and remove the legacy behaviour when you are ready.
+
 ## [7.0.0-1] (2020-11-21)
 
 ### Added
