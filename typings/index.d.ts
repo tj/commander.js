@@ -149,8 +149,6 @@ declare namespace commander {
   type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
 
   interface Command {
-    [key: string]: any; // options as properties
-
     args: string[];
 
     commands: Command[];
