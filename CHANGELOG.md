@@ -12,10 +12,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Migration Tips
 
+The biggest change is the parsed option values were previously stored by default as properties on the command object, and are now stored separately.
+
+If you wish to restore the old behaviour and get running quickly you can call `.storeOptionsAsProperties()`. 
+To allow you to move to the new code patterns incrementally, the action handler will be passed the command _twice_,
+to match the new "options" and "command" parameters.
+
 **program options**
 
-The parsed option values were previously stored by default as properties on the command object, and are now stored separately.
-Use the `.opts()` method to access the options.
+Use the `.opts()` method to access the options. This is available on any command but is used most with the program.
 
 ```js
 program.option('-d, --debug');
@@ -32,8 +37,8 @@ if (options.debug) console.log(`Program name is ${program.name()}`);
 
 **action handler**
 
-The action handler was previously passed by default a command object with the options as properties. Now it is passed two
-extra parameters, the options and the command.
+The action handler was previously passed by default a command object with the options as properties. Now that is split into  two parameters which are the options and the command. If you
+only access the options there may be no code changes required.
 
 ```js
 .command('compress <filename>')
@@ -50,13 +55,6 @@ extra parameters, the options and the command.
    if (options.trace) console.log(`Command name is ${command.name()}`);
 });
 ```
-
-**legacy behaviour**
-
-If you do not want to update your code, you can call `.storeOptionsAsProperties()` to restore the old behavior and store the parsed option values as properties on the command.
-
-An action handler will be passed the command _twice_, as the "options" and "command". This lets you run unmodified code, but allows you to incrementally move to use the "options" and "command" pattern
-and remove the legacy behaviour when you are ready.
 
 ## [7.0.0-1] (2020-11-21)
 
