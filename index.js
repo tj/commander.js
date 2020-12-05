@@ -535,7 +535,7 @@ class Command extends EventEmitter {
     this.options = [];
     this.parent = null;
     this._allowUnknownOption = false;
-    this._allowExcessArguments = true;
+    this._allowExcessArguments = false;
     this._args = [];
     this.rawArgs = null;
     this._scriptPath = null;

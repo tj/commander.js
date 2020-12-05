@@ -18,7 +18,7 @@ describe('allowUnknownOption', () => {
     writeErrorSpy.mockRestore();
   });
 
-  test('when specify excess program argument then ignored by default', () => {
+  test('when specify excess program argument then error by default', () => {
     const program = new commander.Command();
     program
       .exitOverride()
@@ -26,7 +26,7 @@ describe('allowUnknownOption', () => {
 
     expect(() => {
       program.parse(['excess'], { from: 'user' });
-    }).not.toThrow();
+    }).toThrow();
   });
 
   test('when specify excess program argument and allowExcessArguments(false) then error', () => {
@@ -65,7 +65,7 @@ describe('allowUnknownOption', () => {
     }).not.toThrow();
   });
 
-  test('when specify excess command argument then no error (by default)', () => {
+  test('when specify excess command argument then error (by default)', () => {
     const program = new commander.Command();
     program
       .exitOverride()
@@ -74,7 +74,7 @@ describe('allowUnknownOption', () => {
 
     expect(() => {
       program.parse(['sub', 'excess'], { from: 'user' });
-    }).not.toThrow();
+    }).toThrow();
   });
 
   test('when specify excess command argument and allowExcessArguments(false) then error', () => {

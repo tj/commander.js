@@ -24,12 +24,13 @@ describe('unknownOption', () => {
     }).not.toThrow();
   });
 
-  test('when unknown command but action handler then no error', () => {
+  test('when unknown command but action handler taking arg then no error', () => {
     const program = new commander.Command();
     program
       .exitOverride()
       .command('sub');
     program
+      .arguments('[args...]')
       .action(() => { });
     expect(() => {
       program.parse('node test.js unknown'.split(' '));
