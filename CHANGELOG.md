@@ -12,11 +12,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Migration Tips
 
-The biggest change is the parsed option values were previously stored by default as properties on the command object, and are now stored separately.
+The biggest change is the parsed option values which were previously stored by default as properties on the command object, and are now stored separately.
 
 If you wish to restore the old behaviour and get running quickly you can call `.storeOptionsAsProperties()`. 
 To allow you to move to the new code patterns incrementally, the action handler will be passed the command _twice_,
-to match the new "options" and "command" parameters.
+to match the new "options" and "command" parameters (see below).
 
 **program options**
 
