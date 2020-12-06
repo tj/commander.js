@@ -416,7 +416,7 @@ included in the `.command` call. Angled brackets (e.g. `<required>`) indicate re
 Square brackets (e.g. `[optional]`) indicate optional command-arguments.
 You can optionally describe the arguments in the help by supplying a hash as second parameter to `.description()`.
 
-Example file: [env](./examples/arguments.js)
+Example file: [arguments.js](./examples/arguments.js)
 
 ```js
 program
@@ -450,21 +450,23 @@ The variadic argument is passed to the action handler as an array.
 
 ### Action handler
 
-The action handler gets passed a parameter for each command-argument you declared, and two additional parameters which are the parsed options and the
-command object itself. 
+The action handler gets passed a parameter for each command-argument you declared, and two additional parameters
+which are the parsed options and the command object itself. 
+
+Example file: [thank.js](./examples/thank.js)
 
 ```js
-const { program } = require('commander');
-
 program
-  .command('rm <dir>')
-  .option('-r, --recursive', 'Remove recursively')
-  .action(function (dir, options, command) {
-    const recursively = options.recursive ? ' recursively' : '';
-    console.log(`${command.name}${recursively}: ${dir}`)
-  })
-
-program.parse(process.argv)
+  .arguments('<name>')
+  .option('-t, --title <honorific>', 'title to use before name')
+  .option('-d, --debug', 'display some debugging')
+  .action((name, options, command) => {
+    if (options.debug) {
+      console.error('Called %s with options %o', command.name(), options);
+    }
+    const title = options.title ? `${options.title} ` : '';
+    console.log(`Thank-you ${title}${name}`);
+  });
 ```
 
 You may supply an `async` action handler, in which case you call `.parseAsync` rather than `.parse`.
