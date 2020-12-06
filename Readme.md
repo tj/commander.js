@@ -416,43 +416,34 @@ included in the `.command` call. Angled brackets (e.g. `<required>`) indicate re
 Square brackets (e.g. `[optional]`) indicate optional command-arguments.
 You can optionally describe the arguments in the help by supplying a hash as second parameter to `.description()`.
 
-Example file: [env](./examples/env)
+Example file: [env](./examples/arguments.js)
 
 ```js
 program
   .version('0.1.0')
-  .arguments('<cmd> [env]')
+  .arguments('<username> [password]')
   .description('test command', {
-    cmd: 'command to run',
-    env: 'environment to run test in'
+    username: 'user to login',
+    password: 'password for user, if required'
   })
-  .action(function (cmd, env) {
-    console.log('command:', cmd);
-    console.log('environment:', env || 'no environment given');
+  .action((username, password) => {
+    console.log('username:', username);
+    console.log('environment:', password || 'no password given');
   });
-
-program.parse(process.argv);
 ```
 
  The last argument of a command can be variadic, and only the last argument.  To make an argument variadic you
  append `...` to the argument name. For example:
 
 ```js
-const { program } = require('commander');
-
 program
   .version('0.1.0')
-  .command('rmdir <dir> [otherDirs...]')
-  .action(function (dir, otherDirs) {
-    console.log('rmdir %s', dir);
-    if (otherDirs) {
-      otherDirs.forEach(function (oDir) {
-        console.log('rmdir %s', oDir);
-      });
-    }
+  .command('rmdir <dirs...>')
+  .action(function (dirs) {
+    dirs.forEach((dir) => {
+      console.log('rmdir %s', dir);
+    });
   });
-
-program.parse(process.argv);
 ```
 
 The variadic argument is passed to the action handler as an array.
