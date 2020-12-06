@@ -482,7 +482,7 @@ async function main() {
 }
 ```
 
-A command's options and arguments on the command line are validated when the command is used. Any unknown options or missing arguments or unexpected arguments will be reported as an error.
+A command's options and arguments on the command line are validated when the command is used. Any unknown options or unexpected command-arguments will be reported as an error, or you can suppress these checks with `.allowUnknownOption()` and `.allowExcessArguments()`.
 
 ### Stand-alone executable (sub)commands
 
