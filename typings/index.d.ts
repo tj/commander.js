@@ -578,11 +578,13 @@ declare namespace commander {
     executableFile?: string;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface ParseOptionsResult {
     operands: string[];
     unknown: string[];
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   interface CommanderStatic extends Command {
     program: Command;
     Command: CommandConstructor;
