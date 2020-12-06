@@ -13,12 +13,13 @@ program
 
 program.parse(process.argv);
 
+const options = program.opts();
 console.log('you ordered a pizza with:');
-if (program.peppers) console.log('  - peppers');
-if (program.pineapple) console.log('  - pineapple');
-if (program.bbq) console.log('  - bbq');
+if (options.peppers) console.log('  - peppers');
+if (options.pineapple) console.log('  - pineapple');
+if (options.bbq) console.log('  - bbq');
 
-const cheese = !program.cheese ? 'no' : program.cheese;
+const cheese = !options.cheese ? 'no' : options.cheese;
 
 console.log('  - %s cheese', cheese);
-console.log(program.args);
+console.log(options.args);
