@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Migration Tips
 
-The biggest change is the parsed option values. Previously the options were stored by default as properties on the command object, and now the options are now stored separately.
+The biggest change is the parsed option values. Previously the options were stored by default as properties on the command object, and now the options are stored separately.
 
 If you wish to restore the old behaviour and get running quickly you can call `.storeOptionsAsProperties()`. 
 To allow you to move to the new code patterns incrementally, the action handler will be passed the command _twice_,
@@ -38,7 +38,7 @@ if (options.debug) console.log(`Program name is ${program.name()}`);
 **action handler**
 
 The action handler gets passed a parameter for each command-argument you declared. Previously by default the next parameter was the command object with the options as properties. Now the next two parameters are instead the options and the command. If you
-only access the options there may be no code changes required.
+only accessed the options there may be no code changes required.
 
 ```js
 program
@@ -86,13 +86,13 @@ If the extra arguments are supported by your command then you can either declare
 // Old code before Commander 7
 program
   .action(() => {});
-program.parse(['a', 'b', 'c'], { from: 'user' }); // no error
+program.parse(['a', 'b', 'c'], { from: 'user' }); // now causes an error
 ```
 
 ```js
 // New code, declare arguments
 program
-  .arguments('[args...])
+  .arguments('[args...]')
   .action(() => {});
 ```
 
