@@ -53,6 +53,6 @@
     "collectCoverage": true
   },
   "engines": {
-    "node": ">= 10"
+    "node": ">= 6"
   }
 }
