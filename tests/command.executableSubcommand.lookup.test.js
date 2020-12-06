@@ -20,7 +20,7 @@ test('when subcommand file missing then error', () => {
       expect(err.stderr).toBeDefined();
     } else {
       // eslint-disable-next-line jest/no-conditional-expect
-      expect(err.stderr).toMatch(new RegExp(/Error: 'pm-list' does not exist/));
+      expect(err.stderr).toMatch(/Error: 'pm-list' does not exist/);
     }
   });
 });
@@ -34,7 +34,7 @@ test('when alias subcommand file missing then error', () => {
       expect(err.stderr).toBeDefined();
     } else {
       // eslint-disable-next-line jest/no-conditional-expect
-      expect(err.stderr).toMatch(new RegExp(/Error: 'pm-list' does not exist/));
+      expect(err.stderr).toMatch(/Error: 'pm-list' does not exist/);
     }
   });
 });

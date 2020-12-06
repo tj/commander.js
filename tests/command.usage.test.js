@@ -6,7 +6,7 @@ test('when default usage and check program help then starts with default usage',
   program.name('test');
   const helpInformation = program.helpInformation();
 
-  expect(helpInformation).toMatch(new RegExp('^Usage: test \\[options\\]'));
+  expect(helpInformation).toMatch(/^Usage: test \[options\]/);
 });
 
 test('when custom usage and check program help then starts with custom usage', () => {
@@ -29,7 +29,7 @@ test('when default usage and check subcommand help then starts with default usag
   program.name('test');
   const helpInformation = subCommand.helpInformation();
 
-  expect(helpInformation).toMatch(new RegExp('^Usage: test info \\[options\\]'));
+  expect(helpInformation).toMatch(/^Usage: test info \[options\]/);
 });
 
 test('when custom usage and check subcommand help then starts with custom usage including program name', () => {
