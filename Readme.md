@@ -518,10 +518,9 @@ Example file: [pizza](./examples/pizza)
 $ node ./examples/pizza --help
 Usage: pizza [options]
 
-An application for pizzas ordering
+An application for pizza ordering
 
 Options:
-  -V, --version        output the version number
   -p, --peppers        Add peppers
   -c, --cheese <type>  Add the specified type of cheese (default: "marble")
   -C, --no-cheese      You do not want any cheese
@@ -801,44 +800,68 @@ There is more information available about:
 
 ## Examples
 
-Example file: [deploy](./examples/deploy)
+In a single command program, you might not need an action handler.
+
+Example file: [pizza](./examples/pizza)
 
 ```js
 const { program } = require('commander');
 
 program
-  .version('0.1.0')
-  .option('-C, --chdir <path>', 'change the working directory')
-  .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
-  .option('-T, --no-tests', 'ignore test hook');
+  .description('An application for pizza ordering')
+  .option('-p, --peppers', 'Add peppers')
+  .option('-c, --cheese <type>', 'Add the specified type of cheese', 'marble')
+  .option('-C, --no-cheese', 'You do not want any cheese');
+
+program.parse();
+
+const options = program.opts();
+console.log('you ordered a pizza with:');
+if (options.peppers) console.log('  - peppers');
+const cheese = !options.cheese ? 'no' : options.cheese;
+console.log('  - %s cheese', cheese);
+```
+
+In a multi-command file, you will have action handlers for each command (or stand-alone executables for the commands).
+
+Example file: [deploy](./examples/deploy)
+
+```js
+const { Command } = require('commander');
+const program = new Command();
+
+program
+  .version('0.0.1')
+  .option('-c, --config <path>', 'set config path', './deploy.conf');
 
 program
   .command('setup [env]')
   .description('run setup commands for all envs')
-  .option("-s, --setup_mode [mode]", "Which setup mode to use")
-  .action(function(env, options){
-    const mode = options.setup_mode || "normal";
+  .option('-s, --setup_mode <mode>', 'Which setup mode to use', 'normal')
+  .action((env, options) => {
     env = env || 'all';
-    console.log('setup for %s env(s) with %s mode', env, mode);
+    console.log('read config from %s', program.opts().config);
+    console.log('setup for %s env(s) with %s mode', env, options.setup_mode);
   });
 
 program
-  .command('exec <cmd>')
+  .command('exec <script>')
   .alias('ex')
   .description('execute the given remote cmd')
-  .option("-e, --exec_mode <mode>", "Which exec mode to use")
-  .action(function(cmd, options){
-    console.log('exec "%s" using %s mode', cmd, options.exec_mode);
+  .option('-e, --exec_mode <mode>', 'Which exec mode to use', 'fast')
+  .action((script, options) => {
+    console.log('read config from %s', program.opts().config);
+    console.log('exec "%s" using %s mode and config %s', script, options.exec_mode, program.opts().config);
   }).addHelpText('after', `
 Examples:
   $ deploy exec sequential
   $ deploy exec async`
   );
-
+  
 program.parse(process.argv);
 ```
 
-More Demos can be found in the [examples](https://github.com/tj/commander.js/tree/master/examples) directory.
+More samples can be found in the [examples](https://github.com/tj/commander.js/tree/master/examples) directory.
 
 ## Support
 
