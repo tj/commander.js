@@ -822,7 +822,7 @@ const cheese = !options.cheese ? 'no' : options.cheese;
 console.log('  - %s cheese', cheese);
 ```
 
-In a multi-command file, you will have action handlers for each command (or stand-alone executables for the commands).
+In a multi-command program, you will have action handlers for each command (or stand-alone executables for the commands).
 
 Example file: [deploy](./examples/deploy)
 
