@@ -13,7 +13,7 @@ program.option('-c,--coffee <type>', 'coffee', /short-white|long-black/);
 
 Removed from README in Commander v3. Deprecated from Commander v7.
 
-The newer functionality is the Option `.choices()' method, or using a custom option processing function.
+The newer functionality is the Option `.choices()` method, or using a custom option processing function.
 
 ## noHelp
 
