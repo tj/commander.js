@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [6.2.1] (2020-12-13)
+
+### Fixed
+
+- some tests failed if directory path included a space ([1390])
+
 ## [6.2.0] (2020-10-25)
 
 ### Added
@@ -332,9 +338,10 @@ if (program.rawArgs.length < 3) ...
 [#1361]: https://github.com/tj/commander.js/pull/1361
 [#1368]: https://github.com/tj/commander.js/pull/1368
 [#1375]: https://github.com/tj/commander.js/pull/1375
-
+[#1390]: https://github.com/tj/commander.js/pull/1390
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[6.2.1]: https://github.com/tj/commander.js/compare/v6.2.0..v6.2.1
 [6.2.0]: https://github.com/tj/commander.js/compare/v6.1.0..v6.2.0
 [6.1.0]: https://github.com/tj/commander.js/compare/v6.0.0..v6.1.0
 [6.0.0]: https://github.com/tj/commander.js/compare/v5.1.0..v6.0.0
