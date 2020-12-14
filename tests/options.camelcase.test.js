@@ -7,7 +7,7 @@ test('when option defined with --word-word then option property is wordWord', ()
   program
     .option('--my-option', 'description');
   program.parse(['node', 'test', '--my-option']);
-  expect(program.myOption).toBe(true);
+  expect(program.opts().myOption).toBe(true);
 });
 
 test('when option defined with --word-wORD then option property is wordWORD', () => {
@@ -15,7 +15,7 @@ test('when option defined with --word-wORD then option property is wordWORD', ()
   program
     .option('--my-oPTION', 'description');
   program.parse(['node', 'test', '--my-oPTION']);
-  expect(program.myOPTION).toBe(true);
+  expect(program.opts().myOPTION).toBe(true);
 });
 
 test('when option defined with --word-WORD then option property is wordWORD', () => {
@@ -23,7 +23,7 @@ test('when option defined with --word-WORD then option property is wordWORD', ()
   program
     .option('--my-OPTION', 'description');
   program.parse(['node', 'test', '--my-OPTION']);
-  expect(program.myOPTION).toBe(true);
+  expect(program.opts().myOPTION).toBe(true);
 });
 
 test('when option defined with --word-word-word then option property is wordWordWord', () => {
@@ -31,7 +31,7 @@ test('when option defined with --word-word-word then option property is wordWord
   program
     .option('--my-special-option', 'description');
   program.parse(['node', 'test', '--my-special-option']);
-  expect(program.mySpecialOption).toBe(true);
+  expect(program.opts().mySpecialOption).toBe(true);
 });
 
 test('when option defined with --word-WORD-word then option property is wordWORDWord', () => {
@@ -39,7 +39,7 @@ test('when option defined with --word-WORD-word then option property is wordWORD
   program
     .option('--my-SPECIAL-option', 'description');
   program.parse(['node', 'test', '--my-SPECIAL-option']);
-  expect(program.mySPECIALOption).toBe(true);
+  expect(program.opts().mySPECIALOption).toBe(true);
 });
 
 test('when option defined with --Word then option property is Word', () => {
@@ -47,5 +47,5 @@ test('when option defined with --Word then option property is Word', () => {
   program
     .option('--Myoption', 'description');
   program.parse(['node', 'test', '--Myoption']);
-  expect(program.Myoption).toBe(true);
+  expect(program.opts().Myoption).toBe(true);
 });

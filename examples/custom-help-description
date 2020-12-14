@@ -14,7 +14,7 @@ program
 program
   .command('child')
   .option('--gender', 'specific gender of child')
-  .action((cmd) => {
+  .action((options) => {
     console.log('Childsubcommand...');
   });
 

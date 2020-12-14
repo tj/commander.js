@@ -33,6 +33,7 @@ describe(".command('*')", () => {
     const program = new commander.Command();
     program
       .command('*')
+      .arguments('[args...]')
       .action(mockAction);
     program.parse(['node', 'test', 'unrecognised-command']);
     expect(mockAction).toHaveBeenCalled();
@@ -58,6 +59,7 @@ describe(".command('*')", () => {
       .command('install');
     program
       .command('*')
+      .arguments('[args...]')
       .action(mockAction);
     program.parse(['node', 'test', 'unrecognised-command']);
     expect(mockAction).toHaveBeenCalled();

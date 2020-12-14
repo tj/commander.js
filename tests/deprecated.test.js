@@ -10,7 +10,7 @@ describe('option with regular expression instead of custom processing function',
     program
       .option('--cheese <type>', 'cheese type', /mild|tasty/, 'mild');
     program.parse([], { from: 'user' });
-    expect(program.cheese).toEqual('mild');
+    expect(program.opts().cheese).toEqual('mild');
   });
 
   test('when argument matches regexp then value is as specified', () => {
@@ -18,7 +18,7 @@ describe('option with regular expression instead of custom processing function',
     program
       .option('--cheese <type>', 'cheese type', /mild|tasty/, 'mild');
     program.parse(['--cheese', 'tasty'], { from: 'user' });
-    expect(program.cheese).toEqual('tasty');
+    expect(program.opts().cheese).toEqual('tasty');
   });
 
   test('when argument does mot matches regexp then value is default', () => {
@@ -26,6 +26,6 @@ describe('option with regular expression instead of custom processing function',
     program
       .option('--cheese <type>', 'cheese type', /mild|tasty/, 'mild');
     program.parse(['--cheese', 'other'], { from: 'user' });
-    expect(program.cheese).toEqual('mild');
+    expect(program.opts().cheese).toEqual('mild');
   });
 });

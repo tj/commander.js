@@ -7,7 +7,7 @@ describe('option with optional value, no default', () => {
     program
       .option('--cheese [type]', 'cheese type');
     program.parse(['node', 'test']);
-    expect(program.cheese).toBeUndefined();
+    expect(program.opts().cheese).toBeUndefined();
   });
 
   test('when option specified then value is as specified', () => {
@@ -16,7 +16,7 @@ describe('option with optional value, no default', () => {
       .option('--cheese [type]', 'cheese type');
     const cheeseType = 'blue';
     program.parse(['node', 'test', '--cheese', cheeseType]);
-    expect(program.cheese).toBe(cheeseType);
+    expect(program.opts().cheese).toBe(cheeseType);
   });
 
   test('when option specified without value then value is true', () => {
@@ -24,7 +24,7 @@ describe('option with optional value, no default', () => {
     program
       .option('--cheese [type]', 'cheese type');
     program.parse(['node', 'test', '--cheese']);
-    expect(program.cheese).toBe(true);
+    expect(program.opts().cheese).toBe(true);
   });
 
   test('when option specified without value and following option then value is true', () => {
@@ -34,7 +34,7 @@ describe('option with optional value, no default', () => {
       .option('--cheese [type]', 'cheese type')
       .option('--some-option');
     program.parse(['node', 'test', '--cheese', '--some-option']);
-    expect(program.cheese).toBe(true);
+    expect(program.opts().cheese).toBe(true);
   });
 });
 
@@ -46,7 +46,7 @@ describe('option with optional value, with default', () => {
     program
       .option('--cheese [type]', 'cheese type', defaultValue);
     program.parse(['node', 'test']);
-    expect(program.cheese).toBe(defaultValue);
+    expect(program.opts().cheese).toBe(defaultValue);
   });
 
   test('when option specified then value is as specified', () => {
@@ -56,7 +56,7 @@ describe('option with optional value, with default', () => {
       .option('--cheese [type]', 'cheese type', defaultValue);
     const cheeseType = 'blue';
     program.parse(['node', 'test', '--cheese', cheeseType]);
-    expect(program.cheese).toBe(cheeseType);
+    expect(program.opts().cheese).toBe(cheeseType);
   });
 
   test('when option specified without value then value is default', () => {
@@ -65,6 +65,6 @@ describe('option with optional value, with default', () => {
     program
       .option('--cheese [type]', 'cheese type', defaultValue);
     program.parse(['node', 'test', '--cheese']);
-    expect(program.cheese).toBe(defaultValue);
+    expect(program.opts().cheese).toBe(defaultValue);
   });
 });

@@ -10,7 +10,7 @@ describe('required program option with mandatory value specified', () => {
       .exitOverride()
       .requiredOption('--cheese <type>', 'cheese type');
     program.parse(['node', 'test', '--cheese', 'blue']);
-    expect(program.cheese).toBe('blue');
+    expect(program.opts().cheese).toBe('blue');
   });
 
   test('when program has option with name different than property then still recognised', () => {
@@ -19,7 +19,7 @@ describe('required program option with mandatory value specified', () => {
       .exitOverride()
       .requiredOption('--cheese-type <type>', 'cheese type');
     program.parse(['node', 'test', '--cheese-type', 'blue']);
-    expect(program.cheeseType).toBe('blue');
+    expect(program.opts().cheeseType).toBe('blue');
   });
 
   test('when program has required value default then default value', () => {
@@ -28,7 +28,7 @@ describe('required program option with mandatory value specified', () => {
       .exitOverride()
       .requiredOption('--cheese <type>', 'cheese type', 'default');
     program.parse(['node', 'test']);
-    expect(program.cheese).toBe('default');
+    expect(program.opts().cheese).toBe('default');
   });
 
   test('when program has optional value flag specified then true', () => {
@@ -37,7 +37,7 @@ describe('required program option with mandatory value specified', () => {
       .exitOverride()
       .requiredOption('--cheese [type]', 'cheese type');
     program.parse(['node', 'test', '--cheese']);
-    expect(program.cheese).toBe(true);
+    expect(program.opts().cheese).toBe(true);
   });
 
   test('when program has optional value default then default value', () => {
@@ -46,7 +46,7 @@ describe('required program option with mandatory value specified', () => {
       .exitOverride()
       .requiredOption('--cheese [type]', 'cheese type', 'default');
     program.parse(['node', 'test']);
-    expect(program.cheese).toBe('default');
+    expect(program.opts().cheese).toBe('default');
   });
 
   test('when program has value/no flag specified with value then specified value', () => {
@@ -56,7 +56,7 @@ describe('required program option with mandatory value specified', () => {
       .requiredOption('--cheese <type>', 'cheese type')
       .requiredOption('--no-cheese', 'no cheese thanks');
     program.parse(['node', 'test', '--cheese', 'blue']);
-    expect(program.cheese).toBe('blue');
+    expect(program.opts().cheese).toBe('blue');
   });
 
   test('when program has mandatory-yes/no flag specified with flag then true', () => {
@@ -66,7 +66,7 @@ describe('required program option with mandatory value specified', () => {
       .requiredOption('--cheese', 'cheese type')
       .option('--no-cheese', 'no cheese thanks');
     program.parse(['node', 'test', '--cheese']);
-    expect(program.cheese).toBe(true);
+    expect(program.opts().cheese).toBe(true);
   });
 
   test('when program has mandatory-yes/mandatory-no flag specified with flag then true', () => {
@@ -76,7 +76,7 @@ describe('required program option with mandatory value specified', () => {
       .requiredOption('--cheese', 'cheese type')
       .requiredOption('--no-cheese', 'no cheese thanks');
     program.parse(['node', 'test', '--cheese']);
-    expect(program.cheese).toBe(true);
+    expect(program.opts().cheese).toBe(true);
   });
 
   test('when program has yes/no flag specified negated then false', () => {
@@ -86,7 +86,7 @@ describe('required program option with mandatory value specified', () => {
       .requiredOption('--cheese <type>', 'cheese type')
       .option('--no-cheese', 'no cheese thanks');
     program.parse(['node', 'test', '--no-cheese']);
-    expect(program.cheese).toBe(false);
+    expect(program.opts().cheese).toBe(false);
   });
 
   test('when program has required value specified and subcommand then specified value', () => {
@@ -97,7 +97,7 @@ describe('required program option with mandatory value specified', () => {
       .command('sub')
       .action(() => {});
     program.parse(['node', 'test', '--cheese', 'blue', 'sub']);
-    expect(program.cheese).toBe('blue');
+    expect(program.opts().cheese).toBe('blue');
   });
 });
 
@@ -173,8 +173,8 @@ describe('required command option with mandatory value specified', () => {
       .exitOverride()
       .command('sub')
       .requiredOption('--subby <type>', 'description')
-      .action((cmd) => {
-        cmdOptions = cmd;
+      .action((options) => {
+        cmdOptions = options;
       });
 
     program.parse(['node', 'test', 'sub', '--subby', 'blue']);
@@ -205,7 +205,7 @@ describe('required command option with mandatory value not specified', () => {
       .exitOverride()
       .command('sub')
       .requiredOption('--subby <type>', 'description')
-      .action((cmd) => {});
+      .action(() => {});
 
     expect(() => {
       program.parse(['node', 'test', 'sub']);
@@ -218,7 +218,7 @@ describe('required command option with mandatory value not specified', () => {
       .exitOverride()
       .command('sub')
       .requiredOption('--subby <type>', 'description')
-      .action((cmd) => {});
+      .action(() => {});
     program
       .command('sub2');
 

@@ -535,15 +535,13 @@ class Command extends EventEmitter {
     this.options = [];
     this.parent = null;
     this._allowUnknownOption = false;
-    this._allowExcessArguments = true;
+    this._allowExcessArguments = false;
     this._args = [];
     this.rawArgs = null;
     this._scriptPath = null;
     this._name = name || '';
     this._optionValues = {};
-    this._storeOptionsAsProperties = true; // backwards compatible by default
-    this._storeOptionsAsPropertiesCalled = false;
-    this._passCommandToAction = true; // backwards compatible by default
+    this._storeOptionsAsProperties = false;
     this._actionResults = [];
     this._actionHandler = null;
     this._executableHandler = false;
@@ -634,7 +632,6 @@ class Command extends EventEmitter {
     cmd._helpConfiguration = this._helpConfiguration;
     cmd._exitCallback = this._exitCallback;
     cmd._storeOptionsAsProperties = this._storeOptionsAsProperties;
-    cmd._passCommandToAction = this._passCommandToAction;
     cmd._combineFlagAndOptionalValue = this._combineFlagAndOptionalValue;
 
     cmd._executableFile = opts.executableFile || null; // Custom name for executable file, set missing to null to match constructor
@@ -896,15 +893,12 @@ class Command extends EventEmitter {
       // The .action callback takes an extra parameter which is the command or options.
       const expectedArgsCount = this._args.length;
       const actionArgs = args.slice(0, expectedArgsCount);
-      if (this._passCommandToAction) {
-        actionArgs[expectedArgsCount] = this;
+      if (this._storeOptionsAsProperties) {
+        actionArgs[expectedArgsCount] = this; // backwards compatible "options"
       } else {
         actionArgs[expectedArgsCount] = this.opts();
       }
-      // Add the extra arguments so available too.
-      if (args.length > expectedArgsCount) {
-        actionArgs.push(args.slice(expectedArgsCount));
-      }
+      actionArgs.push(this);
 
       const actionResult = fn.apply(this, actionArgs);
       // Remember result in case it is async. Assume parseAsync getting called on root.
@@ -916,49 +910,6 @@ class Command extends EventEmitter {
     };
     this._actionHandler = listener;
     return this;
-  };
-
-  /**
-   * Internal routine to check whether there is a clash storing option value with a Command property.
-   *
-   * @param {Option} option
-   * @api private
-   */
-
-  _checkForOptionNameClash(option) {
-    if (!this._storeOptionsAsProperties || this._storeOptionsAsPropertiesCalled) {
-      // Storing options safely, or user has been explicit and up to them.
-      return;
-    }
-    // User may override help, and hard to tell if worth warning.
-    if (option.name() === 'help') {
-      return;
-    }
-
-    const commandProperty = this._getOptionValue(option.attributeName());
-    if (commandProperty === undefined) {
-      // no clash
-      return;
-    }
-
-    let foundClash = true;
-    if (option.negate) {
-      // It is ok if define foo before --no-foo.
-      const positiveLongFlag = option.long.replace(/^--no-/, '--');
-      foundClash = !this._findOption(positiveLongFlag);
-    } else if (option.long) {
-      const negativeLongFlag = option.long.replace(/^--/, '--no-');
-      foundClash = !this._findOption(negativeLongFlag);
-    }
-
-    if (foundClash) {
-      throw new Error(`option '${option.name()}' clashes with existing property '${option.attributeName()}' on Command
-- call storeOptionsAsProperties(false) to store option values safely,
-- or call storeOptionsAsProperties(true) to suppress this check,
-- or change option name
-
-Read more on https://git.io/JJc0W`);
-    }
   };
 
   /**
@@ -985,8 +936,6 @@ Read more on https://git.io/JJc0W`);
   addOption(option) {
     const oname = option.name();
     const name = option.attributeName();
-
-    this._checkForOptionNameClash(option);
 
     let defaultValue = option.defaultValue;
 
@@ -1193,24 +1142,10 @@ Read more on https://git.io/JJc0W`);
     */
 
   storeOptionsAsProperties(storeAsProperties = true) {
-    this._storeOptionsAsPropertiesCalled = true;
     this._storeOptionsAsProperties = !!storeAsProperties;
     if (this.options.length) {
       throw new Error('call .storeOptionsAsProperties() before adding options');
     }
-    return this;
-  };
-
-  /**
-    * Whether to pass command to action handler,
-    * or just the options (specify false).
-    *
-    * @param {boolean} [passCommand=true]
-    * @return {Command} `this` command for chaining
-    */
-
-  passCommandToAction(passCommand = true) {
-    this._passCommandToAction = !!passCommand;
     return this;
   };
 

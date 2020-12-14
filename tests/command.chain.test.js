@@ -82,12 +82,6 @@ describe('Command methods that should return this for chaining', () => {
     expect(result).toBe(program);
   });
 
-  test('when call .passCommandToAction() then returns this', () => {
-    const program = new Command();
-    const result = program.passCommandToAction();
-    expect(result).toBe(program);
-  });
-
   test('when call .version() then returns this', () => {
     const program = new Command();
     const result = program.version('1.2.3');

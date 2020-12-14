@@ -31,8 +31,8 @@ program
   .command('serve', { isDefault: true })
   .description('launch web server')
   .option('-p,--port <port_number>', 'web port')
-  .action((opts) => {
-    console.log(`server on port ${opts.port}`);
+  .action((options) => {
+    console.log(`server on port ${options.port}`);
   });
 
 program.parse(process.argv);

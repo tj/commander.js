@@ -18,14 +18,14 @@ program.createCommand = (name) => {
 program
   .command('serve')
   .option('--port <port-number>', 'specify port number', 80)
-  .action((cmd) => {
-    if (cmd.debug) {
+  .action((options) => {
+    if (options.debug) {
       console.log('Options:');
-      console.log(cmd.opts());
+      console.log(options);
       console.log();
     }
 
-    console.log(`Start serve on port ${cmd.port}`);
+    console.log(`Start serve on port ${options.port}`);
   });
 
 program.parse();

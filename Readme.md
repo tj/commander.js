@@ -23,7 +23,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Custom option processing](#custom-option-processing)
   - [Commands](#commands)
     - [Specify the argument syntax](#specify-the-argument-syntax)
-    - [Action handler (sub)commands](#action-handler-subcommands)
+    - [Action handler](#action-handler)
     - [Stand-alone executable (sub)commands](#stand-alone-executable-subcommands)
   - [Automated help](#automated-help)
     - [Custom help](#custom-help)
@@ -35,7 +35,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
   - [Custom event listeners](#custom-event-listeners)
   - [Bits and pieces](#bits-and-pieces)
     - [.parse() and .parseAsync()](#parse-and-parseasync)
-    - [Avoiding option name clashes](#avoiding-option-name-clashes)
+    - [Legacy options as properties](#legacy-options-as-properties)
     - [TypeScript](#typescript)
     - [createCommand()](#createcommand)
     - [Import into ECMAScript Module](#import-into-ecmascript-module)
@@ -77,7 +77,7 @@ program.version('0.0.1');
 
 Options are defined with the `.option()` method, also serving as documentation for the options. Each option can have a short flag (single character) and a long name, separated by a comma or space or vertical bar ('|').
 
-The options can be accessed as properties on the Command object. Multi-word options such as "--template-engine" are camel-cased, becoming `program.templateEngine` etc. See also optional new behaviour to [avoid name clashes](#avoiding-option-name-clashes).
+The parsed options can be accessed by calling `.opts()` on a `Command` object, and are passed to the action handler. Multi-word options such as "--template-engine" are camel-cased, becoming `program.opts().templateEngine` etc.
 
 Multiple short flags may optionally be combined in a single argument following the dash: boolean flags, followed by a single option taking a value (possibly followed by the value).
 For example `-a -b -p 80` may be written as `-ab -p80` or even `-abp80`.
@@ -101,10 +101,11 @@ program
 
 program.parse(process.argv);
 
-if (program.debug) console.log(program.opts());
+const options = program.opts();
+if (options.debug) console.log(options);
 console.log('pizza details:');
-if (program.small) console.log('- small pizza size');
-if (program.pizzaType) console.log(`- ${program.pizzaType}`);
+if (options.small) console.log('- small pizza size');
+if (options.pizzaType) console.log(`- ${options.pizzaType}`);
 ```
 
 ```bash
@@ -123,7 +124,7 @@ pizza details:
 - cheese
 ```
 
-`program.parse(arguments)` processes the arguments, leaving any args not consumed by the program options in the `program.args` array.
+`program.parse(arguments)` processes the arguments, leaving any args not consumed by the program options in the `program.args` array. The parameter is optional and defaults to `process.argv`.
 
 ### Default option value
 
@@ -135,9 +136,9 @@ Example file: [options-defaults.js](./examples/options-defaults.js)
 program
   .option('-c, --cheese <type>', 'add the specified type of cheese', 'blue');
 
-program.parse(process.argv);
+program.parse();
 
-console.log(`cheese: ${program.cheese}`);
+console.log(`cheese: ${program.opts().cheese}`);
 ```
 
 ```bash
@@ -162,10 +163,11 @@ program
   .option('--no-sauce', 'Remove sauce')
   .option('--cheese <flavour>', 'cheese flavour', 'mozzarella')
   .option('--no-cheese', 'plain with no cheese')
-  .parse(process.argv);
+  .parse();
 
-const sauceStr = program.sauce ? 'sauce' : 'no sauce';
-const cheeseStr = (program.cheese === false) ? 'no cheese' : `${program.cheese} cheese`;
+const options = program.opts();
+const sauceStr = options.sauce ? 'sauce' : 'no sauce';
+const cheeseStr = (options.cheese === false) ? 'no cheese' : `${options.cheese} cheese`;
 console.log(`You ordered a pizza with ${sauceStr} and ${cheeseStr}`);
 ```
 
@@ -191,9 +193,10 @@ program
 
 program.parse(process.argv);
 
-if (program.cheese === undefined) console.log('no cheese');
-else if (program.cheese === true) console.log('add cheese');
-else console.log(`add cheese type ${program.cheese}`);
+const options = program.opts();
+if (options.cheese === undefined) console.log('no cheese');
+else if (options.cheese === true) console.log('add cheese');
+else console.log(`add cheese type ${options.cheese}`);
 ```
 
 ```bash
@@ -217,7 +220,7 @@ Example file: [options-required.js](./examples/options-required.js)
 program
   .requiredOption('-c, --cheese <type>', 'pizza must have cheese');
 
-program.parse(process.argv);
+program.parse();
 ```
 
 ```bash
@@ -347,13 +350,14 @@ program
   .option('-l, --list <items>', 'comma separated list', commaSeparatedList)
 ;
 
-program.parse(process.argv);
+program.parse();
 
-if (program.float !== undefined) console.log(`float: ${program.float}`);
-if (program.integer !== undefined) console.log(`integer: ${program.integer}`);
-if (program.verbose > 0) console.log(`verbosity: ${program.verbose}`);
-if (program.collect.length > 0) console.log(program.collect);
-if (program.list !== undefined) console.log(program.list);
+const options = program.opts();
+if (options.float !== undefined) console.log(`float: ${options.float}`);
+if (options.integer !== undefined) console.log(`integer: ${options.integer}`);
+if (options.verbose > 0) console.log(`verbosity: ${options.verbose}`);
+if (options.collect.length > 0) console.log(options.collect);
+if (options.list !== undefined) console.log(options.list);
 ```
 
 ```bash
@@ -412,64 +416,57 @@ included in the `.command` call. Angled brackets (e.g. `<required>`) indicate re
 Square brackets (e.g. `[optional]`) indicate optional command-arguments.
 You can optionally describe the arguments in the help by supplying a hash as second parameter to `.description()`.
 
-Example file: [env](./examples/env)
+Example file: [arguments.js](./examples/arguments.js)
 
 ```js
 program
   .version('0.1.0')
-  .arguments('<cmd> [env]')
+  .arguments('<username> [password]')
   .description('test command', {
-    cmd: 'command to run',
-    env: 'environment to run test in'
+    username: 'user to login',
+    password: 'password for user, if required'
   })
-  .action(function (cmd, env) {
-    console.log('command:', cmd);
-    console.log('environment:', env || 'no environment given');
+  .action((username, password) => {
+    console.log('username:', username);
+    console.log('environment:', password || 'no password given');
   });
-
-program.parse(process.argv);
 ```
 
  The last argument of a command can be variadic, and only the last argument.  To make an argument variadic you
  append `...` to the argument name. For example:
 
 ```js
-const { program } = require('commander');
-
 program
   .version('0.1.0')
-  .command('rmdir <dir> [otherDirs...]')
-  .action(function (dir, otherDirs) {
-    console.log('rmdir %s', dir);
-    if (otherDirs) {
-      otherDirs.forEach(function (oDir) {
-        console.log('rmdir %s', oDir);
-      });
-    }
+  .command('rmdir <dirs...>')
+  .action(function (dirs) {
+    dirs.forEach((dir) => {
+      console.log('rmdir %s', dir);
+    });
   });
-
-program.parse(process.argv);
 ```
 
 The variadic argument is passed to the action handler as an array.
 
-### Action handler (sub)commands
+### Action handler
 
-You can add options to a command that uses an action handler.
-The action handler gets passed a parameter for each argument you declared, and one additional argument which is the
-command object itself. This command argument has the values for the command-specific options added as properties.
+The action handler gets passed a parameter for each command-argument you declared, and two additional parameters
+which are the parsed options and the command object itself. 
+
+Example file: [thank.js](./examples/thank.js)
 
 ```js
-const { program } = require('commander');
-
 program
-  .command('rm <dir>')
-  .option('-r, --recursive', 'Remove recursively')
-  .action(function (dir, cmdObj) {
-    console.log('remove ' + dir + (cmdObj.recursive ? ' recursively' : ''))
-  })
-
-program.parse(process.argv)
+  .arguments('<name>')
+  .option('-t, --title <honorific>', 'title to use before name')
+  .option('-d, --debug', 'display some debugging')
+  .action((name, options, command) => {
+    if (options.debug) {
+      console.error('Called %s with options %o', command.name(), options);
+    }
+    const title = options.title ? `${options.title} ` : '';
+    console.log(`Thank-you ${title}${name}`);
+  });
 ```
 
 You may supply an `async` action handler, in which case you call `.parseAsync` rather than `.parse`.
@@ -485,7 +482,7 @@ async function main() {
 }
 ```
 
-A command's options on the command line are validated when the command is used. Any unknown options will be reported as an error.
+A command's options and arguments on the command line are validated when the command is used. Any unknown options or unexpected command-arguments will be reported as an error, or you can suppress these checks with `.allowUnknownOption()` and `.allowExcessArguments()`.
 
 ### Stand-alone executable (sub)commands
 
@@ -521,10 +518,9 @@ Example file: [pizza](./examples/pizza)
 $ node ./examples/pizza --help
 Usage: pizza [options]
 
-An application for pizzas ordering
+An application for pizza ordering
 
 Options:
-  -V, --version        output the version number
   -p, --peppers        Add peppers
   -c, --cheese <type>  Add the specified type of cheese (default: "marble")
   -C, --no-cheese      You do not want any cheese
@@ -688,42 +684,21 @@ program.parse(); // Implicit, and auto-detect electron
 program.parse(['-f', 'filename'], { from: 'user' });
 ```
 
-### Avoiding option name clashes
+### Legacy options as properties 
 
-The original and default behaviour is that the option values are stored
-as properties on the program, and the action handler is passed a
-command object with the options values stored as properties.
-This is very convenient to code, but the downside is possible clashes with
-existing properties of Command.
-
-There are two new routines to change the behaviour, and the default behaviour may change in the future:
-
-- `storeOptionsAsProperties`: whether to store option values as properties on command object, or store separately (specify false) and access using `.opts()`
-- `passCommandToAction`: whether to pass command to action handler,
-or just the options (specify false)
-
-Example file: [storeOptionsAsProperties-action.js](./examples/storeOptionsAsProperties-action.js)
+Before Commander 7, the option values were stored as properties on the command.
+This was convenient to code but the downside was possible clashes with
+existing properties of `Command`. You can revert to the old behaviour to run unmodified legacy code by using `.storeOptionsAsProperties()`.
 
 ```js
 program
-  .storeOptionsAsProperties(false)
-  .passCommandToAction(false);
-
-program
-  .name('my-program-name')
-  .option('-n,--name <name>');
-
-program
-  .command('show')
-  .option('-a,--action <action>')
-  .action((options) => {
-    console.log(options.action);
+  .storeOptionsAsProperties()
+  .option('-d, --debug')
+  .action((commandAndOptions) => {
+    if (commandAndOptions.debug) {
+      console.error(`Called ${commandAndOptions.name()}`);
+    }
   });
-
-program.parse(process.argv);
-
-const programOptions = program.opts();
-console.log(programOptions.name);
 ```
 
 ### TypeScript
@@ -825,44 +800,68 @@ There is more information available about:
 
 ## Examples
 
-Example file: [deploy](./examples/deploy)
+In a single command program, you might not need an action handler.
+
+Example file: [pizza](./examples/pizza)
 
 ```js
 const { program } = require('commander');
 
 program
-  .version('0.1.0')
-  .option('-C, --chdir <path>', 'change the working directory')
-  .option('-c, --config <path>', 'set config path. defaults to ./deploy.conf')
-  .option('-T, --no-tests', 'ignore test hook');
+  .description('An application for pizza ordering')
+  .option('-p, --peppers', 'Add peppers')
+  .option('-c, --cheese <type>', 'Add the specified type of cheese', 'marble')
+  .option('-C, --no-cheese', 'You do not want any cheese');
+
+program.parse();
+
+const options = program.opts();
+console.log('you ordered a pizza with:');
+if (options.peppers) console.log('  - peppers');
+const cheese = !options.cheese ? 'no' : options.cheese;
+console.log('  - %s cheese', cheese);
+```
+
+In a multi-command program, you will have action handlers for each command (or stand-alone executables for the commands).
+
+Example file: [deploy](./examples/deploy)
+
+```js
+const { Command } = require('commander');
+const program = new Command();
+
+program
+  .version('0.0.1')
+  .option('-c, --config <path>', 'set config path', './deploy.conf');
 
 program
   .command('setup [env]')
   .description('run setup commands for all envs')
-  .option("-s, --setup_mode [mode]", "Which setup mode to use")
-  .action(function(env, options){
-    const mode = options.setup_mode || "normal";
+  .option('-s, --setup_mode <mode>', 'Which setup mode to use', 'normal')
+  .action((env, options) => {
     env = env || 'all';
-    console.log('setup for %s env(s) with %s mode', env, mode);
+    console.log('read config from %s', program.opts().config);
+    console.log('setup for %s env(s) with %s mode', env, options.setup_mode);
   });
 
 program
-  .command('exec <cmd>')
+  .command('exec <script>')
   .alias('ex')
   .description('execute the given remote cmd')
-  .option("-e, --exec_mode <mode>", "Which exec mode to use")
-  .action(function(cmd, options){
-    console.log('exec "%s" using %s mode', cmd, options.exec_mode);
+  .option('-e, --exec_mode <mode>', 'Which exec mode to use', 'fast')
+  .action((script, options) => {
+    console.log('read config from %s', program.opts().config);
+    console.log('exec "%s" using %s mode and config %s', script, options.exec_mode, program.opts().config);
   }).addHelpText('after', `
 Examples:
   $ deploy exec sequential
   $ deploy exec async`
   );
-
+  
 program.parse(process.argv);
 ```
 
-More Demos can be found in the [examples](https://github.com/tj/commander.js/tree/master/examples) directory.
+More samples can be found in the [examples](https://github.com/tj/commander.js/tree/master/examples) directory.
 
 ## Support
 

@@ -8,6 +8,101 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [Unreleased] (date goes here)
+
+### Migration Tips
+
+The biggest change is the parsed option values. Previously the options were stored by default as properties on the command object, and now the options are stored separately.
+
+If you wish to restore the old behaviour and get running quickly you can call `.storeOptionsAsProperties()`. 
+To allow you to move to the new code patterns incrementally, the action handler will be passed the command _twice_,
+to match the new "options" and "command" parameters (see below).
+
+**program options**
+
+Use the `.opts()` method to access the options. This is available on any command but is used most with the program.
+
+```js
+program.option('-d, --debug');
+program.parse();
+// Old code before Commander 7
+if (program.debug) console.log(`Program name is ${program.name()}`);
+```
+
+```js
+// New code
+const options = program.opts();
+if (options.debug) console.log(`Program name is ${program.name()}`);
+```
+
+**action handler**
+
+The action handler gets passed a parameter for each command-argument you declared. Previously by default the next parameter was the command object with the options as properties. Now the next two parameters are instead the options and the command. If you
+only accessed the options there may be no code changes required.
+
+```js
+program
+  .command('compress <filename>')
+  .option('-t, --trace')
+  // Old code before Commander 7
+  .action((filename, cmd)) => {
+    if (cmd.trace) console.log(`Command name is ${cmd.name()}`);
+  });
+```
+
+```js
+  // New code
+  .action((filename, options, command)) => {
+    if (options.trace) console.log(`Command name is ${command.name()}`);
+  });
+```
+
+If you already set `.storeOptionsAsProperties(false)` you may still need to adjust your code.
+
+```js
+program
+  .command('compress <filename>')
+  .storeOptionsAsProperties(false)
+  .option('-t, --trace')
+  // Old code before Commander 7
+  .action((filename, command)) => {
+    if (command.opts().trace) console.log(`Command name is ${command.name()}`);
+  });
+```
+
+```js
+   // New code
+   .action((filename, options, command)) => {
+      if (command.opts().trace) console.log(`Command name is ${command.name()}`);
+   });
+```
+
+**excess command-arguments**
+
+There is now an error if there are too many command-arguments on the command line (only checked if there is an action handler).
+If the extra arguments are supported by your command then you can either declare the expected arguments, or allow excess arguments.
+
+```js
+// Old code before Commander 7
+program
+  .action(() => {});
+program.parse(['a', 'b', 'c'], { from: 'user' }); // now causes an error
+```
+
+```js
+// New code, declare arguments
+program
+  .arguments('[args...]')
+  .action(() => {});
+```
+
+```js
+// New code, allow excess arguments
+program
+  .allowExcessArguments()
+  .action(() => {});
+```
+
 ## [7.0.0-1] (2020-11-21)
 
 ### Added

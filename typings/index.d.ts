@@ -149,8 +149,6 @@ declare namespace commander {
   type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
 
   interface Command {
-    [key: string]: any; // options as properties
-
     args: string[];
 
     commands: Command[];
@@ -375,14 +373,6 @@ declare namespace commander {
      * @returns `this` command for chaining
      */
     storeOptionsAsProperties(storeAsProperties?: boolean): this;
-
-    /**
-     * Whether to pass command to action handler,
-     * or just the options (specify false).
-     *
-     * @returns `this` command for chaining
-     */
-    passCommandToAction(passCommand?: boolean): this;
 
     /**
      * Alter parsing of short flags with optional values.

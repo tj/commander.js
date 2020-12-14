@@ -7,7 +7,7 @@ describe('option with required value, no default', () => {
     program
       .option('--cheese <type>', 'cheese type');
     program.parse(['node', 'test']);
-    expect(program.cheese).toBeUndefined();
+    expect(program.opts().cheese).toBeUndefined();
   });
 
   test('when option specified then value is as specified', () => {
@@ -16,7 +16,7 @@ describe('option with required value, no default', () => {
       .option('--cheese <type>', 'cheese type');
     const cheeseType = 'blue';
     program.parse(['node', 'test', '--cheese', cheeseType]);
-    expect(program.cheese).toBe(cheeseType);
+    expect(program.opts().cheese).toBe(cheeseType);
   });
 
   test('when option value not specified then error', () => {
@@ -47,7 +47,7 @@ describe('option with required value, with default', () => {
     program
       .option('--cheese <type>', 'cheese type', defaultValue);
     program.parse(['node', 'test']);
-    expect(program.cheese).toBe(defaultValue);
+    expect(program.opts().cheese).toBe(defaultValue);
   });
 
   test('when option specified then value is as specified', () => {
@@ -57,7 +57,7 @@ describe('option with required value, with default', () => {
       .option('--cheese <type>', 'cheese type', defaultValue);
     const cheeseType = 'blue';
     program.parse(['node', 'test', '--cheese', cheeseType]);
-    expect(program.cheese).toBe(cheeseType);
+    expect(program.opts().cheese).toBe(cheeseType);
   });
 
   test('when option value not specified then error', () => {

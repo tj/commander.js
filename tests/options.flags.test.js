@@ -7,7 +7,7 @@ test('when only short flag defined and not specified then value is undefined', (
   program
     .option('-p', 'add pepper');
   program.parse(['node', 'test']);
-  expect(program.p).toBeUndefined();
+  expect(program.opts().p).toBeUndefined();
 });
 
 test('when only short flag defined and specified then value is true', () => {
@@ -15,7 +15,7 @@ test('when only short flag defined and specified then value is true', () => {
   program
     .option('-p', 'add pepper');
   program.parse(['node', 'test', '-p']);
-  expect(program.p).toBe(true);
+  expect(program.opts().p).toBe(true);
 });
 
 test('when only long flag defined and not specified then value is undefined', () => {
@@ -23,7 +23,7 @@ test('when only long flag defined and not specified then value is undefined', ()
   program
     .option('--pepper', 'add pepper');
   program.parse(['node', 'test']);
-  expect(program.pepper).toBeUndefined();
+  expect(program.opts().pepper).toBeUndefined();
 });
 
 test('when only long flag defined and specified then value is true', () => {
@@ -31,7 +31,7 @@ test('when only long flag defined and specified then value is true', () => {
   program
     .option('--pepper', 'add pepper');
   program.parse(['node', 'test', '--pepper']);
-  expect(program.pepper).toBe(true);
+  expect(program.opts().pepper).toBe(true);
 });
 
 test('when "short,long" flags defined and short specified then value is true', () => {
@@ -39,7 +39,7 @@ test('when "short,long" flags defined and short specified then value is true', (
   program
     .option('-p,--pepper', 'add pepper');
   program.parse(['node', 'test', '-p']);
-  expect(program.pepper).toBe(true);
+  expect(program.opts().pepper).toBe(true);
 });
 
 test('when "short,long" flags defined and long specified then value is true', () => {
@@ -47,7 +47,7 @@ test('when "short,long" flags defined and long specified then value is true', ()
   program
     .option('-p,--pepper', 'add pepper');
   program.parse(['node', 'test', '--pepper']);
-  expect(program.pepper).toBe(true);
+  expect(program.opts().pepper).toBe(true);
 });
 
 test('when "short|long" flags defined and short specified then value is true', () => {
@@ -55,7 +55,7 @@ test('when "short|long" flags defined and short specified then value is true', (
   program
     .option('-p|--pepper', 'add pepper');
   program.parse(['node', 'test', '-p']);
-  expect(program.pepper).toBe(true);
+  expect(program.opts().pepper).toBe(true);
 });
 
 test('when "short|long" flags defined and long specified then value is true', () => {
@@ -63,7 +63,7 @@ test('when "short|long" flags defined and long specified then value is true', ()
   program
     .option('-p|--pepper', 'add pepper');
   program.parse(['node', 'test', '--pepper']);
-  expect(program.pepper).toBe(true);
+  expect(program.opts().pepper).toBe(true);
 });
 
 test('when "short long" flags defined and short specified then value is true', () => {
@@ -71,7 +71,7 @@ test('when "short long" flags defined and short specified then value is true', (
   program
     .option('-p --pepper', 'add pepper');
   program.parse(['node', 'test', '-p']);
-  expect(program.pepper).toBe(true);
+  expect(program.opts().pepper).toBe(true);
 });
 
 test('when "short long" flags defined and long specified then value is true', () => {
@@ -79,5 +79,5 @@ test('when "short long" flags defined and long specified then value is true', ()
   program
     .option('-p --pepper', 'add pepper');
   program.parse(['node', 'test', '--pepper']);
-  expect(program.pepper).toBe(true);
+  expect(program.opts().pepper).toBe(true);
 });

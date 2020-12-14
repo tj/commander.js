@@ -9,16 +9,7 @@ import * as commander from './index';
 // This conflicts with esline rule saying no space!
 /* eslint-disable @typescript-eslint/space-before-function-paren */
 
-// Defined stricter type, as the options as properties `[key: string]: any`
-// makes the type checking very weak.
-// https://github.com/Microsoft/TypeScript/issues/25987#issuecomment-441224690
-type KnownKeys<T> = {
-  [K in keyof T]: string extends K ? never : number extends K ? never : K
-} extends {[_ in keyof T]: infer U} ? ({} extends U ? never : U) : never;
-type CommandWithoutOptionsAsProperties = Pick<commander.Command, KnownKeys<commander.Command>>;
-
-const program: CommandWithoutOptionsAsProperties = commander.program;
-const programWithOptions = commander.program;
+const program: commander.Command = new commander.Command();
 // program.silly; // <-- Error, hurrah!
 
 // Check for exported global Command objects
@@ -33,10 +24,7 @@ const errorInstance = new commander.CommanderError(1, 'code', 'message');
 const invalidOptionErrorInstance = new commander.InvalidOptionArgumentError('message');
 
 // Command properties
-console.log(programWithOptions.someOption);
-// eslint-disable-next-line @typescript-eslint/dot-notation
-console.log(programWithOptions['someOption']);
-const theArgs = program.args;
+const theArgs: string[] = program.args;
 const theCommands: commander.Command[] = program.commands;
 
 // version
@@ -146,10 +134,6 @@ const addOptionThis: commander.Command = program.addOption(new commander.Option(
 // storeOptionsAsProperties
 const storeOptionsAsPropertiesThis1: commander.Command = program.storeOptionsAsProperties();
 const storeOptionsAsPropertiesThis2: commander.Command = program.storeOptionsAsProperties(false);
-
-// passCommandToAction
-const passCommandToActionThis1: commander.Command = program.passCommandToAction();
-const passCommandToActionThis2: commander.Command = program.passCommandToAction(false);
 
 // combineFlagAndOptionalValue
 const combineFlagAndOptionalValueThis1: commander.Command = program.combineFlagAndOptionalValue();

@@ -18,25 +18,25 @@ describe.each([['str'], ['80'], ['-'], ['-5'], ['--flag']])(
     test('when short flag followed by value then value is as specified', () => {
       const program = createPortProgram();
       program.parse(['node', 'test', '-p', value]);
-      expect(program.port).toBe(value);
+      expect(program.opts().port).toBe(value);
     });
 
     test('when short flag concatenated with value then value is as specified', () => {
       const program = createPortProgram();
       program.parse(['node', 'test', `-p${value}`]);
-      expect(program.port).toBe(value);
+      expect(program.opts().port).toBe(value);
     });
 
     test('when long flag followed by value then value is as specified', () => {
       const program = createPortProgram();
       program.parse(['node', 'test', '--port', value]);
-      expect(program.port).toBe(value);
+      expect(program.opts().port).toBe(value);
     });
 
     test('when long flag = value then value is as specified', () => {
       const program = createPortProgram();
       program.parse(['node', 'test', `--port=${value}`]);
-      expect(program.port).toBe(value);
+      expect(program.opts().port).toBe(value);
     });
   });
 
@@ -52,25 +52,25 @@ describe('option with optional value', () => {
   test('when short flag followed by value then value is as specified', () => {
     const program = createPortProgram();
     program.parse('node test -p 80'.split(' '));
-    expect(program.port).toBe('80');
+    expect(program.opts().port).toBe('80');
   });
 
   test('when short flag concatenated with value then value is as specified', () => {
     const program = createPortProgram();
     program.parse('node test -p80'.split(' '));
-    expect(program.port).toBe('80');
+    expect(program.opts().port).toBe('80');
   });
 
   test('when long flag followed by value then value is as specified', () => {
     const program = createPortProgram();
     program.parse('node test --port 80'.split(' '));
-    expect(program.port).toBe('80');
+    expect(program.opts().port).toBe('80');
   });
 
   test('when long flag = value then value is as specified', () => {
     const program = createPortProgram();
     program.parse('node test --port=80'.split(' '));
-    expect(program.port).toBe('80');
+    expect(program.opts().port).toBe('80');
   });
 
   test('when long flag followed empty string then value is empty string', () => {
@@ -78,6 +78,6 @@ describe('option with optional value', () => {
     program
       .option('-c, --cheese [type]', 'optionally specify the type of cheese');
     program.parse(['node', 'test', '--cheese', '']);
-    expect(program.cheese).toBe('');
+    expect(program.opts().cheese).toBe('');
   });
 });

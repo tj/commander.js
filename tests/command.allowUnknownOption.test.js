@@ -83,6 +83,7 @@ describe('allowUnknownOption', () => {
     program
       .exitOverride()
       .command('sub')
+      .arguments('[args...]') // unknown option will be passed as an argument
       .allowUnknownOption()
       .option('-p, --pepper', 'add pepper')
       .action(() => { });

@@ -12,7 +12,7 @@ describe('variadic argument', () => {
 
     program.parse(['node', 'test', 'id']);
 
-    expect(actionMock).toHaveBeenCalledWith('id', [], program);
+    expect(actionMock).toHaveBeenCalledWith('id', [], program.opts(), program);
   });
 
   test('when extra arguments specified for program then variadic arg is array of values', () => {
@@ -25,7 +25,7 @@ describe('variadic argument', () => {
 
     program.parse(['node', 'test', 'id', ...extraArguments]);
 
-    expect(actionMock).toHaveBeenCalledWith('id', extraArguments, program);
+    expect(actionMock).toHaveBeenCalledWith('id', extraArguments, program.opts(), program);
   });
 
   test('when no extra arguments specified for command then variadic arg is empty array', () => {
@@ -37,7 +37,7 @@ describe('variadic argument', () => {
 
     program.parse(['node', 'test', 'sub']);
 
-    expect(actionMock).toHaveBeenCalledWith([], cmd);
+    expect(actionMock).toHaveBeenCalledWith([], cmd.opts(), cmd);
   });
 
   test('when extra arguments specified for command then variadic arg is array of values', () => {
@@ -50,7 +50,7 @@ describe('variadic argument', () => {
 
     program.parse(['node', 'test', 'sub', ...extraArguments]);
 
-    expect(actionMock).toHaveBeenCalledWith(extraArguments, cmd);
+    expect(actionMock).toHaveBeenCalledWith(extraArguments, cmd.opts(), cmd);
   });
 
   test('when program variadic argument not last then error', () => {
