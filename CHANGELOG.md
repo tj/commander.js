@@ -12,21 +12,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Changed
 
-- *Breaking:* options are stored safely by default, not as properties on the command
+- *Breaking:* options are stored safely by default, not as properties on the command ([#1409])
     - this especially affects accessing options on program, use `program.opts()`
     - revert behaviour with `.storeOptionsAsProperties()`
-- *Breaking:* action handlers are passed options and command separately
+- *Breaking:* action handlers are passed options and command separately ([#1409])
 
 ### Added
 
-- *Breaking:* error message if there are too many command-arguments on command line for the action handler
+- *Breaking:* error message if there are too many command-arguments on command line for the action handler ([#1409])
     - if should be allowed then declare extra arguments, or use `.allowExcessArguments()`
 
 ### Deleted
 
-- *Breaking:* `.passCommandToAction()`
+- *Breaking:* `.passCommandToAction()` ([#1409])
     - no longer needed as action handler is passed options and command
-- *Breaking:* "extra arguments" parameter to action handler
+- *Breaking:* "extra arguments" parameter to action handler ([#1409])
     - if being used to detect excess arguments, there is now an error displayed by default
 
 ### Migration Tips
@@ -404,6 +404,7 @@ to expand `-fb` to `-f -b` rather than `-f b`.
 [#1380]: https://github.com/tj/commander.js/pull/1380
 [#1387]: https://github.com/tj/commander.js/pull/1387
 [#1390]: https://github.com/tj/commander.js/pull/1390
+[#1409]: https://github.com/tj/commander.js/pull/1409
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
 [7.0.0-1]: https://github.com/tj/commander.js/compare/v7.0.0-1...v7.0.0-2
