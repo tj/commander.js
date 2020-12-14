@@ -146,6 +146,11 @@ program
 - deprecated callback parameter to `.help()` and `.outputHelp()` (removed from README) ([#1296])
 - deprecate `.on('--help')` (removed from README) ([#1296])
 - initialise the command description to empty string (previously undefined) ([#1365])
+## [6.2.1] (2020-12-13)
+
+### Fixed
+
+- some tests failed if directory path included a space ([1390])
 
 ## [6.2.0] (2020-10-25)
 
@@ -379,10 +384,12 @@ to expand `-fb` to `-f -b` rather than `-f b`.
 [#1375]: https://github.com/tj/commander.js/pull/1375
 [#1380]: https://github.com/tj/commander.js/pull/1380
 [#1387]: https://github.com/tj/commander.js/pull/1387
+[#1390]: https://github.com/tj/commander.js/pull/1390
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
 [7.0.0-1]: https://github.com/tj/commander.js/compare/v7.0.0-0...v7.0.0-1
 [7.0.0-0]: https://github.com/tj/commander.js/compare/v6.2.0...v7.0.0-0
+[6.2.1]: https://github.com/tj/commander.js/compare/v6.2.0..v6.2.1
 [6.2.0]: https://github.com/tj/commander.js/compare/v6.1.0..v6.2.0
 [6.1.0]: https://github.com/tj/commander.js/compare/v6.0.0..v6.1.0
 [6.0.0]: https://github.com/tj/commander.js/compare/v5.1.0..v6.0.0

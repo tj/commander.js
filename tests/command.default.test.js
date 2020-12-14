@@ -3,24 +3,24 @@ const commander = require('../');
 const path = require('path');
 const util = require('util');
 
-const execAsync = util.promisify(childProcess.exec);
+const execFileAsync = util.promisify(childProcess.execFile);
 
 describe('default executable command', () => {
   // Calling node explicitly so pm works without file suffix cross-platform.
   const pm = path.join(__dirname, './fixtures/pm');
 
   test('when default subcommand and no command then call default', async() => {
-    const { stdout } = await execAsync(`node ${pm}`);
+    const { stdout } = await execFileAsync('node', [pm]);
     expect(stdout).toBe('default\n');
   });
 
   test('when default subcommand and unrecognised argument then call default with argument', async() => {
-    const { stdout } = await execAsync(`node ${pm} an-argument`);
+    const { stdout } = await execFileAsync('node', [pm, 'an-argument']);
     expect(stdout).toBe("default\n[ 'an-argument' ]\n");
   });
 
   test('when default subcommand and unrecognised option then call default with option', async() => {
-    const { stdout } = await execAsync(`node ${pm} --an-option`);
+    const { stdout } = await execFileAsync('node', [pm, '--an-option']);
     expect(stdout).toBe("default\n[ '--an-option' ]\n");
   });
 });
