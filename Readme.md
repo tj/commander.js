@@ -865,7 +865,7 @@ More samples can be found in the [examples](https://github.com/tj/commander.js/t
 
 ## Support
 
-The current version of Commander is fully supported on Long Term Support versions of node, and requires node v10.
+The current version of Commander is fully supported on Long Term Support versions of node, and requires at least node v10.
 (For older versions of node, use an older version of Commander. Commander version 2.x has the widest support.)
 
 The main forum for free and community support is the project [Issues](https://github.com/tj/commander.js/issues) on GitHub.
