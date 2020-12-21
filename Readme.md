@@ -722,7 +722,7 @@ const program = createCommand();
 
 `createCommand` is also a method of the Command object, and creates a new command rather than a subcommand. This gets used internally
 when creating subcommands using `.command()`, and you may override it to
-customise the new subcommand (examples using [subclass](./examples/custom-command-class.js) and [function](./examples/custom-command-function.js)).
+customise the new subcommand (example file [custom-command-class.js](./examples/custom-command-class.js)).
 
 ### Import into ECMAScript Module
 

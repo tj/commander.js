@@ -3,34 +3,48 @@
 // const commander = require('commander'); // (normal include)
 const commander = require('../'); // include commander in git clone of commander repo
 
-// Use a class override of createCommand to customise subcommands,
-// in this example by adding --debug option.
+// Use a class override to customise the command and its subcommands.
+//
+// Configuring the command for compatibility with Commander v6 defaults behaviours.
 
-class MyCommand extends commander.Command {
+class Command6 extends commander.Command {
+  constructor(name) {
+    super(name);
+
+    // Revert to Commander v6 behaviours.
+    this.storeOptionsAsProperties();
+    this.allowExcessArguments();
+  }
+
   createCommand(name) {
-    const cmd = new MyCommand(name);
-    cmd.option('-d,--debug', 'output options');
-    return cmd;
+    return new Command6(name);
   }
 };
 
-const program = new MyCommand();
-program
-  .command('serve')
-  .option('--port <port-number>', 'specify port number', 80)
-  .action((options) => {
-    if (options.debug) {
-      console.log('Options:');
-      console.log(options);
-      console.log();
-    }
+function inspectCommand(command, optionName) {
+  // The option value is stored as property on command because we called .storeOptionsAsProperties()
+  console.log(`Inspecting '${command.name()}'`);
+  console.log(`option '${optionName}': ${command[optionName]}`);
+  console.log(`args: ${command.args}`);
+};
 
-    console.log(`Start serve on port ${options.port}`);
+const program = new Command6('program')
+  .option('-p, --port <number>')
+  .action(() => {
+    inspectCommand(program, 'port');
+  });
+
+program
+  .command('sub')
+  .option('-d, --debug')
+  .action((options, command) => {
+    inspectCommand(command, 'debug');
   });
 
 program.parse();
 
+// We can pass excess arguments without an error as we called .allowExcessArguments()
+//
 // Try the following:
-//    node custom-command-class.js help serve
-//    node custom-command-class.js serve --debug
-//    node custom-command-class.js serve --debug --port 8080
+//    node custom-command-class.js --port 80 extra arguments
+//    node custom-command-class.js sub --debug extra arguments
