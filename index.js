@@ -1681,8 +1681,8 @@ Read more on https://git.io/JJc0W`);
 
   /**
    * Sets the default command for the program.
-   * 
-   * @param {string} command The name of the command 
+   *
+   * @param {string} command The name of the command
    * @api public
    */
   default(name) {
