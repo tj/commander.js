@@ -1680,6 +1680,16 @@ Read more on https://git.io/JJc0W`);
   };
 
   /**
+   * Sets the default command for the program.
+   * 
+   * @param {string} command The name of the command 
+   * @api public
+   */
+  default(name) {
+    this._defaultCommandName = name;
+  }
+
+  /**
    * Output help information and exit. Display for error situations.
    *
    * @api private

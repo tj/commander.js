@@ -369,6 +369,11 @@ declare namespace commander {
     help(cb?: (str: string) => string): never;
 
     /**
+     * Set the default command for a program.
+     */
+    default(name: string): void;
+
+    /**
      * Add a listener (callback) for when events occur. (Implemented using EventEmitter.)
      *
      * @example
