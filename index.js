@@ -1687,6 +1687,7 @@ Read more on https://git.io/JJc0W`);
    */
   default(name) {
     this._defaultCommandName = name;
+    return this;
   }
 
   /**
