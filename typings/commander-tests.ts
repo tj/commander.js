@@ -132,8 +132,16 @@ const createOption2: commander.Option = program.createOption('a, --alpha', 'desc
 const addOptionThis: commander.Command = program.addOption(new commander.Option('-s,--simple'));
 
 // storeOptionsAsProperties
+// chaining
 const storeOptionsAsPropertiesThis1: commander.Command = program.storeOptionsAsProperties();
 const storeOptionsAsPropertiesThis2: commander.Command = program.storeOptionsAsProperties(false);
+// return type depends on parameter
+const storeOptionsAsPropertiesThis3 = program.storeOptionsAsProperties();
+const storeOptionsAsPropertiesValue3 = storeOptionsAsPropertiesThis3.someOption;
+const storeOptionsAsPropertiesThis4 = program.storeOptionsAsProperties(true);
+const storeOptionsAsPropertiesValue4 = storeOptionsAsPropertiesThis4.someOption;
+const storeOptionsAsPropertiesThis5 = program.storeOptionsAsProperties(false);
+// const storeOptionsAsPropertiesValue5 = storeOptionsAsPropertiesThis5.someOption; // error
 
 // combineFlagAndOptionalValue
 const combineFlagAndOptionalValueThis1: commander.Command = program.combineFlagAndOptionalValue();

@@ -148,6 +148,10 @@ declare namespace commander {
 
   type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
 
+  interface OptionValues {
+    [key: string]: any;
+  }
+
   interface Command {
     args: string[];
 
@@ -372,6 +376,8 @@ declare namespace commander {
      *
      * @returns `this` command for chaining
      */
+    storeOptionsAsProperties(): this & OptionValues;
+    storeOptionsAsProperties(storeAsProperties: true): this & OptionValues;
     storeOptionsAsProperties(storeAsProperties?: boolean): this;
 
     /**
@@ -450,7 +456,7 @@ declare namespace commander {
     /**
      * Return an object containing options as key-value pairs
      */
-    opts(): { [key: string]: any };
+    opts(): OptionValues;
 
     /**
      * Set the description.
