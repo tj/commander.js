@@ -1,6 +1,6 @@
 const commander = require('../');
 
-test('when default then option parsed after command-argument', () => {
+test('when option after argument then option parsed', () => {
   const program = new commander.Command();
   program
     .option('-d, --debug')
@@ -10,18 +10,18 @@ test('when default then option parsed after command-argument', () => {
   expect(program.args).toEqual(['arg']);
 });
 
-// test('when optionsBeforeArguments then global option not parsed after command-argument', () => {
-//   const program = new commander.Command();
-//   program._optionsBeforeArguments = true;
-//   program
-//     .option('-d, --debug')
-//     .arguments('[arg]');
-//   program.parse(['arg', '--debug'], { from: 'user' });
-//   expect(program.opts().debug).toBeUndefined();
-//   expect(program.args).toEqual(['arg', '--debug']);
-// });
+test('when option after argument and _parseOptionsFollowingArguments(false) then option not parsed', () => {
+  const program = new commander.Command();
+  program._parseOptionsFollowingArguments = false;
+  program
+    .option('-d, --debug')
+    .arguments('[arg]');
+  program.parse(['arg', '--debug'], { from: 'user' });
+  expect(program.opts().debug).toBeUndefined();
+  expect(program.args).toEqual(['arg', '--debug']);
+});
 
-test('when global option after subcommand and default then global option parsed', () => {
+test('when global option after subcommand then global option parsed', () => {
   const mockAction = jest.fn();
   const program = new commander.Command();
   program

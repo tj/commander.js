@@ -552,7 +552,8 @@ class Command extends EventEmitter {
     this._combineFlagAndOptionalValue = true;
     this._description = '';
     this._argsDescription = undefined;
-    this._parseGlobalOptionsAnywhere = true;
+    this._parseGlobalOptionsAnywhere = true; // before and after subcommands
+    this._parseOptionsFollowingArguments = true;
 
     // see .configureOutput() for docs
     this._outputConfiguration = {
@@ -1610,21 +1611,24 @@ class Command extends EventEmitter {
         }
       }
 
-      // looks like an option but unknown, unknowns from here
-      if (arg.length > 1 && arg[0] === '-') {
-        dest = unknown;
-      }
-
       // found first non-option
       if (operands.length === 0 && unknown.length === 0) {
         // check whether to stop parsing global options because hit subcommand
         if (!this._parseGlobalOptionsAnywhere && this._findCommand(arg)) {
-          dest.push(arg);
+          operands.push(arg);
           unknown.push(...args);
           break;
         }
         // check whether to stop parsing options because hit argument
-        // ...
+        if (!this._parseOptionsFollowingArguments && !this._findCommand(arg)) {
+          operands.push(arg, ...args);
+          break;
+        }
+      }
+
+      // looks like an option but unknown, unknowns from here
+      if (arg.length > 1 && arg[0] === '-') {
+        dest = unknown;
       }
 
       // add arg
