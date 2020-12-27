@@ -12,7 +12,7 @@ test('when option after argument then option parsed', () => {
 
 test('when option after argument and _parseOptionsFollowingArguments(false) then option not parsed', () => {
   const program = new commander.Command();
-  program._parseOptionsFollowingArguments = false;
+  program._allowOptionsFollowingArguments = false;
   program
     .option('-d, --debug')
     .arguments('[arg]');
@@ -37,7 +37,7 @@ test('when global option after subcommand then global option parsed', () => {
 test('when global option after subcommand and parseGlobalOptionsAnywhere(false) then global option not parsed', () => {
   const mockAction = jest.fn();
   const program = new commander.Command();
-  program._parseGlobalOptionsAnywhere = false;
+  program._allowGlobalOptionsAnywhere = false;
   program
     .option('-d, --debug');
   const sub = program.command('sub')
@@ -52,7 +52,7 @@ test('when global option after subcommand and parseGlobalOptionsAnywhere(false) 
 test('when option after subcommand is global and local and parseGlobalOptionsAnywhere(false) then option parsed as local', () => {
   const mockAction = jest.fn();
   const program = new commander.Command();
-  program._parseGlobalOptionsAnywhere = false;
+  program._allowGlobalOptionsAnywhere = false;
   program
     .option('-d, --debug');
   const sub = program.command('sub')
