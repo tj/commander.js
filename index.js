@@ -552,6 +552,7 @@ class Command extends EventEmitter {
     this._combineFlagAndOptionalValue = true;
     this._description = '';
     this._argsDescription = undefined;
+    this._optionsBeforeArguments = false;
 
     // see .configureOutput() for docs
     this._outputConfiguration = {
@@ -1612,6 +1613,20 @@ class Command extends EventEmitter {
       // looks like an option but unknown, unknowns from here
       if (arg.length > 1 && arg[0] === '-') {
         dest = unknown;
+      }
+
+      if (!maybeOption(arg) && this._optionsBeforeArguments) {
+        dest.push(arg);
+        if (this._findCommand(arg)) {
+          // sub --debug
+          unknown.push(...args);
+        } else {
+          // help foo
+          // arg --help
+          // arg --debug
+          dest.push(...args);
+        }
+        break;
       }
 
       // add arg
