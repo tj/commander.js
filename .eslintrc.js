@@ -15,10 +15,17 @@ const javascriptSettings = {
 
 const typescriptSettings = {
   files: ['*.ts'],
-  extends: ['standard-with-typescript'],
   parserOptions: {
     project: './tsconfig.json'
   },
+  plugins: [
+    '@typescript-eslint'
+  ],
+  extends: [
+    'eslint:recommended',
+    'plugin:@typescript-eslint/eslint-recommended',
+    'plugin:@typescript-eslint/recommended'
+  ],
   rules: {
     'no-else-return': ['error', { allowElseIf: false }],
     'no-var': 'warn',
@@ -38,7 +45,10 @@ const typescriptSettings = {
           requireLast: false
         }
       }
-    ]
+    ],
+    // Add some "standard" rules by hand, as eslint-config-standard-with-typescript painful to keep up to date
+    quotes: ['error', 'single'],
+    'no-trailing-spaces': 'error'
   }
 };
 

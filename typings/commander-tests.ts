@@ -81,10 +81,6 @@ program.option('--drink <size', 'drink size', /small|medium|large/);
 
 // example coercion functions from README
 
-function range(val: string): Number[] {
-  return val.split('..').map(Number);
-}
-
 function myParseInt(value: string, dummyPrevious: number): number {
   return parseInt(value);
 }
@@ -266,11 +262,11 @@ const configureOutputThis: commander.Command = program.configureOutput({ });
 const configureOutputConfig: commander.OutputConfiguration = program.configureOutput();
 
 program.configureOutput({
-  writeOut: (str: string) => { },
-  writeErr: (str: string) => { },
+  writeOut: (str: string) => console.log(str),
+  writeErr: (str: string) => console.error(str),
   getOutHelpWidth: () => 80,
   getErrHelpWidth: () => 80,
-  outputError: (str: string, write: (str: string) => void) => { }
+  outputError: (str: string, write: (str: string) => void) => { write(str); }
 });
 
 // Help
@@ -329,7 +325,7 @@ const hideHelpThis3: commander.Option = baseOption.hideHelp(false);
 // argumentRejected
 function goodbye(): never {
   return baseOption.argumentRejected('failed');
-};
+}
 
 // choices
 const choicesThis: commander.Option = baseOption.choices(['a', 'b']);
