@@ -3,6 +3,7 @@
 
 // Using method rather than property for method-signature-style, to document method overloads separately. Allow either.
 /* eslint-disable @typescript-eslint/method-signature-style */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 declare namespace commander {
 
@@ -14,6 +15,7 @@ declare namespace commander {
   }
   type CommanderErrorConstructor = new (exitCode: number, code: string, message: string) => CommanderError;
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface InvalidOptionArgumentError extends CommanderError {
   }
   type InvalidOptionArgumentErrorConstructor = new (message: string) => InvalidOptionArgumentError;
