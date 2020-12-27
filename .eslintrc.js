@@ -15,7 +15,6 @@ const javascriptSettings = {
 
 const typescriptSettings = {
   files: ['*.ts'],
-  // extends: ['standard-with-typescript'],
   parserOptions: {
     project: './tsconfig.json'
   },
