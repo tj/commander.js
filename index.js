@@ -1612,7 +1612,7 @@ class Command extends EventEmitter {
       }
 
       // found first non-option
-      if (operands.length === 0 && unknown.length === 0) {
+      if (operands.length === 0 && unknown.length === 0 && !maybeOption(arg)) {
         // check whether to stop parsing global options because hit subcommand
         if (!this._allowGlobalOptionsAnywhere && this._findCommand(arg)) {
           operands.push(arg);
