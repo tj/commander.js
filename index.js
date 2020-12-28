@@ -552,8 +552,8 @@ class Command extends EventEmitter {
     this._combineFlagAndOptionalValue = true;
     this._description = '';
     this._argsDescription = undefined;
-    this._allowGlobalOptionsAnywhere = true; // before and after subcommands
-    this._allowOptionsFollowingArguments = true;
+    this._allowGlobalOptionsAnywhere = true; // in particular, including after subcommands
+    this._passThroughOptions = false;
 
     // see .configureOutput() for docs
     this._outputConfiguration = {
@@ -1619,8 +1619,8 @@ class Command extends EventEmitter {
           unknown.push(...args);
           break;
         }
-        // check whether to stop parsing options because hit argument
-        if (!this._allowOptionsFollowingArguments && !this._findCommand(arg)) {
+        // check whether to stop parsing options because hit command-argument
+        if (this._passThroughOptions && !this._findCommand(arg)) {
           operands.push(arg, ...args);
           break;
         }

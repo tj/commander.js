@@ -10,9 +10,9 @@ test('when option after argument then option parsed', () => {
   expect(program.args).toEqual(['arg']);
 });
 
-test('when option after argument and _parseOptionsFollowingArguments(false) then option not parsed', () => {
+test('when option after argument and passThroughOptions=true then option not parsed', () => {
   const program = new commander.Command();
-  program._allowOptionsFollowingArguments = false;
+  program._passThroughOptions = true;
   program
     .option('-d, --debug')
     .arguments('[arg]');
@@ -34,7 +34,7 @@ test('when global option after subcommand then global option parsed', () => {
   expect(mockAction).toBeCalledWith('arg', sub.opts(), sub);
 });
 
-test('when global option after subcommand and parseGlobalOptionsAnywhere(false) then global option not parsed', () => {
+test('when global option after subcommand and allowGlobalOptionsAnywhere=false then global option not parsed', () => {
   const mockAction = jest.fn();
   const program = new commander.Command();
   program._allowGlobalOptionsAnywhere = false;
@@ -49,7 +49,7 @@ test('when global option after subcommand and parseGlobalOptionsAnywhere(false) 
   expect(mockAction).toBeCalledWith('--debug', sub.opts(), sub);
 });
 
-test('when option after subcommand is global and local and parseGlobalOptionsAnywhere(false) then option parsed as local', () => {
+test('when option after subcommand is global and local and allowGlobalOptionsAnywhere=false then option parsed as local', () => {
   const mockAction = jest.fn();
   const program = new commander.Command();
   program._allowGlobalOptionsAnywhere = false;
