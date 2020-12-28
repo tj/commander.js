@@ -63,7 +63,32 @@ test('when option after subcommand is global and local and allowGlobalOptionsAny
   expect(sub.opts().debug).toBe(true);
 });
 
-// arg --help
-// sub --help
-// help sub
-// default command, arg
+describe('program with _allowGlobalOptionsAnywhere=false and subcommand with _passThroughOptions=true', () => {
+  test.each([
+    [[], true],
+    [['help'], true],
+    [['--help'], true],
+    [['sub'], false],
+    [['sub', '--help'], true],
+    [['sub', 'foo', '--help'], false]
+  ])('when user args %p then help called is %p', (userArgs, expectHelpCalled) => {
+    const program = new commander.Command();
+    program._allowGlobalOptionsAnywhere = false;
+    program
+      .exitOverride()
+      .configureHelp({ formatHelp: () => '' });
+    const sub = program.command('sub')
+      .exitOverride()
+      .configureHelp({ formatHelp: () => '' })
+      .action(() => { });
+    sub._passThroughOptions = true;
+
+    let helpCalled = false;
+    try {
+      program.parse(userArgs, { from: 'user' });
+    } catch (err) {
+      helpCalled = err.code === 'commander.helpDisplayed' || err.code === 'commander.help';
+    }
+    expect(helpCalled).toEqual(expectHelpCalled);
+  });
+});
