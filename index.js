@@ -1611,24 +1611,30 @@ class Command extends EventEmitter {
         }
       }
 
-      // found first non-option
-      if (operands.length === 0 && unknown.length === 0 && !maybeOption(arg)) {
-        // check whether to stop parsing global options because hit subcommand
-        if (this._enablePositionalOptions && this._findCommand(arg)) {
-          operands.push(arg);
+      // Not a recognised option by this command.
+      // Might be a command-argument, or subcommand option, or unknown option, or help command or option.
+
+      // An unknown option means further arguments also classified as unknown so can be reprocessed by subcommands.
+      if (maybeOption(arg)) {
+        dest = unknown;
+      }
+
+      // If using positionalOptions, stop processing our options at subcommand.
+      if ((this._enablePositionalOptions || this._passThroughOptions) && operands.length === 0 && unknown.length === 0) {
+        if (this._findCommand(arg)) {
+          dest.push(arg);
           unknown.push(...args);
           break;
-        }
-        // check whether to stop parsing options because hit command-argument
-        if (this._passThroughOptions && !this._findCommand(arg)) {
-          operands.push(arg, ...args);
-          break;
+        } else if (this._defaultCommandName) {
+          dest.push(arg);
+          unknown.push(...args);
         }
       }
 
-      // looks like an option but unknown, unknowns from here
-      if (arg.length > 1 && arg[0] === '-') {
-        dest = unknown;
+      // If using passThroughOptions, stop processing options at first command-argument.
+      if (this._passThroughOptions) {
+        dest.push(arg, ...args);
+        break;
       }
 
       // add arg
