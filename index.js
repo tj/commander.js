@@ -552,7 +552,7 @@ class Command extends EventEmitter {
     this._combineFlagAndOptionalValue = true;
     this._description = '';
     this._argsDescription = undefined;
-    this._allowGlobalOptionsAnywhere = true; // in particular, including after subcommands
+    this._enablePositionalOptions = false;
     this._passThroughOptions = false;
 
     // see .configureOutput() for docs
@@ -1614,7 +1614,7 @@ class Command extends EventEmitter {
       // found first non-option
       if (operands.length === 0 && unknown.length === 0 && !maybeOption(arg)) {
         // check whether to stop parsing global options because hit subcommand
-        if (!this._allowGlobalOptionsAnywhere && this._findCommand(arg)) {
+        if (this._enablePositionalOptions && this._findCommand(arg)) {
           operands.push(arg);
           unknown.push(...args);
           break;

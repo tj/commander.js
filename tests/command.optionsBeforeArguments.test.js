@@ -21,6 +21,19 @@ test('when option after argument and passThroughOptions=true then option not par
   expect(program.args).toEqual(['arg', '--debug']);
 });
 
+// This shows bug, parsing of the "known" at the top level ate the argument before parsing by the subcommand.
+// Could require that global parsing is off, to get pass-through?
+// test('BUG: when option after subcommand argument and passThroughOptions=true then option not parsed', () => {
+//   const program = new commander.Command();
+//   const sub = program.command('sub')
+//     .option('-d, --debug')
+//     .arguments('<arg>');
+//   sub._passThroughOptions = true;
+//   program.parse(['sub', 'arg', '--debug'], { from: 'user' });
+//   expect(sub.opts().debug).toBeUndefined();
+//   expect(sub.args).toEqual(['arg', '--debug']);
+// });
+
 test('when global option after subcommand then global option parsed', () => {
   const mockAction = jest.fn();
   const program = new commander.Command();
@@ -34,10 +47,10 @@ test('when global option after subcommand then global option parsed', () => {
   expect(mockAction).toBeCalledWith('arg', sub.opts(), sub);
 });
 
-test('when global option after subcommand and allowGlobalOptionsAnywhere=false then global option not parsed', () => {
+test('when global option after subcommand and _enablePositionalOptions=true then global option not parsed', () => {
   const mockAction = jest.fn();
   const program = new commander.Command();
-  program._allowGlobalOptionsAnywhere = false;
+  program._enablePositionalOptions = true;
   program
     .option('-d, --debug');
   const sub = program.command('sub')
@@ -49,10 +62,10 @@ test('when global option after subcommand and allowGlobalOptionsAnywhere=false t
   expect(mockAction).toBeCalledWith('--debug', sub.opts(), sub);
 });
 
-test('when option after subcommand is global and local and allowGlobalOptionsAnywhere=false then option parsed as local', () => {
+test('when option after subcommand is global and local and _enablePositionalOptions=true then option parsed as local', () => {
   const mockAction = jest.fn();
   const program = new commander.Command();
-  program._allowGlobalOptionsAnywhere = false;
+  program._enablePositionalOptions = true;
   program
     .option('-d, --debug');
   const sub = program.command('sub')
@@ -63,7 +76,7 @@ test('when option after subcommand is global and local and allowGlobalOptionsAny
   expect(sub.opts().debug).toBe(true);
 });
 
-describe('program with _allowGlobalOptionsAnywhere=false and subcommand with _passThroughOptions=true', () => {
+describe('program with _enablePositionalOptions=true and subcommand with _passThroughOptions=true', () => {
   test.each([
     [[], true],
     [['help'], true],
@@ -73,7 +86,7 @@ describe('program with _allowGlobalOptionsAnywhere=false and subcommand with _pa
     [['sub', 'foo', '--help'], false]
   ])('when user args %p then help called is %p', (userArgs, expectHelpCalled) => {
     const program = new commander.Command();
-    program._allowGlobalOptionsAnywhere = false;
+    program._enablePositionalOptions = true;
     program
       .exitOverride()
       .configureHelp({ formatHelp: () => '' });
