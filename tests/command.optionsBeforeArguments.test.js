@@ -1,11 +1,14 @@
 const commander = require('../');
 
-describe('program with _passThroughOptions=true', () => {
+// The changes to parsing for positional options are subtle, and took extra care to work with
+// implicit help and default commands. Lots of tests.
+
+describe('program with passThrough', () => {
   function makeProgram() {
     const program = new commander.Command();
     program._passThroughOptions = true;
     program
-      .option('-d, --debug')
+      .option('-p, --debug')
       .arguments('<args...>');
     return program;
   }
@@ -65,6 +68,146 @@ describe('program with _passThroughOptions=true', () => {
     expect(program.args).toEqual(['arg', '--version']);
   });
 });
+
+// -----------------------------------------------------------
+
+describe('program with positionalOptions and subcommand', () => {
+  function makeProgram() {
+    const program = new commander.Command();
+    program._enablePositionalOptions = true;
+    program
+      .option('-s, --shared')
+      .arguments('<args...>');
+    const sub = program.command('sub')
+      .arguments('[arg]')
+      .option('-s, --shared')
+      .action(() => {}); // Not used, but normal to have action handler on subcommand.
+    return { program, sub };
+  }
+
+  test('when global option before subcommand then global option parsed', () => {
+    const { program } = makeProgram();
+    program.parse(['--shared', 'sub'], { from: 'user' });
+    expect(program.opts().shared).toBe(true);
+  });
+
+  test('when shared option after subcommand then parsed by subcommand', () => {
+    const { program, sub } = makeProgram();
+    program.parse(['sub', '--shared'], { from: 'user' });
+    expect(sub.opts().shared).toBe(true);
+    expect(program.opts().shared).toBeUndefined();
+  });
+
+  test('when shared option after subcommand argument then parsed by subcommand', () => {
+    const { program, sub } = makeProgram();
+    program.parse(['sub', 'arg', '--shared'], { from: 'user' });
+    expect(sub.opts().shared).toBe(true);
+    expect(sub.args).toEqual(['arg']);
+    expect(program.opts().shared).toBeUndefined();
+  });
+
+  test.each([
+    [[], 1, 0],
+    [['sub'], 0, 0],
+    [['--help'], 1, 0],
+    [['sub', '--help'], 0, 1],
+    [['sub', 'foo', '--help'], 0, 1],
+    [['help'], 1, 0],
+    [['help', 'sub'], 0, 1]
+  ])('help: when user args %p then program/sub help called %p/%p', (userArgs, expectProgramHelpCount, expectSubHelpCount) => {
+    const { program, sub } = makeProgram();
+    const mockProgramHelp = jest.fn();
+    program
+      .exitOverride()
+      .configureHelp({ formatHelp: mockProgramHelp });
+    const mockSubHelp = jest.fn();
+    sub
+      .exitOverride()
+      .configureHelp({ formatHelp: mockSubHelp });
+
+    try {
+      program.parse(userArgs, { from: 'user' });
+    } catch (err) {
+    }
+    expect(mockProgramHelp).toHaveBeenCalledTimes(expectProgramHelpCount);
+    expect(mockSubHelp).toHaveBeenCalledTimes(expectSubHelpCount);
+  });
+});
+
+// ---------------------------------------------------------------
+
+describe('program with positionalOptions and default subcommand called sub', () => {
+  function makeProgram() {
+    const program = new commander.Command();
+    program._enablePositionalOptions = true;
+    program
+      .option('-s, --shared')
+      .option('-g, --global')
+      .arguments('<args...>');
+    const sub = program.command('sub', { isDefault: true })
+      .arguments('[args...]')
+      .option('-s, --shared')
+      .option('-d, --default')
+      .action(() => {}); // Not used, but normal to have action handler on subcommand.
+    program.command('another'); // Not used, but normal to have more than one subcommand if have a default.
+    return { program, sub };
+  }
+
+  test('when program option before sub option then program option read by program', () => {
+    const { program } = makeProgram();
+    program.parse(['--global', '--default'], { from: 'user' });
+    expect(program.opts().global).toBe(true);
+  });
+
+  test('when global option before sub option then sub option read by sub', () => {
+    const { program, sub } = makeProgram();
+    program.parse(['--global', '--default'], { from: 'user' });
+    expect(sub.opts().default).toBe(true);
+  });
+
+  test('when shared option before sub argument then option read by program', () => {
+    const { program } = makeProgram();
+    program.parse(['--shared', 'foo'], { from: 'user' });
+    expect(program.opts().shared).toBe(true);
+  });
+
+  test('when shared option after sub argument then option read by sub', () => {
+    const { program, sub } = makeProgram();
+    program.parse(['foo', '--shared'], { from: 'user' });
+    expect(sub.opts().shared).toBe(true);
+  });
+
+  test.each([
+    [[], 0, 0],
+    [['--help'], 1, 0],
+    [['help'], 1, 0]
+  ])('help: when user args %p then program/sub help called %p/%p', (userArgs, expectProgramHelpCount, expectSubHelpCount) => {
+    const { program, sub } = makeProgram();
+    const mockProgramHelp = jest.fn();
+    program
+      .exitOverride()
+      .configureHelp({ formatHelp: mockProgramHelp });
+    const mockSubHelp = jest.fn();
+    sub
+      .exitOverride()
+      .configureHelp({ formatHelp: mockSubHelp });
+
+    try {
+      program.parse(userArgs, { from: 'user' });
+    } catch (err) {
+    }
+    expect(mockProgramHelp).toHaveBeenCalledTimes(expectProgramHelpCount);
+    expect(mockSubHelp).toHaveBeenCalledTimes(expectSubHelpCount);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// WIP from here
+// ---------------------------------------------------------------------------
+
+// --------- subcommand passThrough
+
+// --------- subcommand passThrough with default ????
 
 test('when global option after subcommand then global option parsed', () => {
   const mockAction = jest.fn();
@@ -141,6 +284,8 @@ describe('program with _enablePositionalOptions=true and subcommand with _passTh
 
 // test for "foo sub" where sub is a parameter and not a command ????
 
-// default command tests, including help
+// Interaction of unknowns with passThrough ????
 
-// Interaction of unknowns with passThrough.
+// Test action handler at least once in each block ????
+
+// Test default command support does not break any other cases ????
