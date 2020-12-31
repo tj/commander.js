@@ -106,6 +106,13 @@ describe('program with positionalOptions and subcommand', () => {
     expect(program.opts().shared).toBeUndefined();
   });
 
+  test('when shared option before and after subcommand then both parsed', () => {
+    const { program, sub } = makeProgram();
+    program.parse(['--shared', 'sub', '--shared'], { from: 'user' });
+    expect(program.opts().shared).toBe(true);
+    expect(sub.opts().shared).toBe(true);
+  });
+
   test.each([
     [[], 1, 0],
     [['sub'], 0, 0],
@@ -136,7 +143,7 @@ describe('program with positionalOptions and subcommand', () => {
 
 // ---------------------------------------------------------------
 
-describe('program with positionalOptions and default subcommand called sub', () => {
+describe('program with positionalOptions and default subcommand (called sub)', () => {
   function makeProgram() {
     const program = new commander.Command();
     program._enablePositionalOptions = true;
@@ -159,7 +166,7 @@ describe('program with positionalOptions and default subcommand called sub', () 
     expect(program.opts().global).toBe(true);
   });
 
-  test('when global option before sub option then sub option read by sub', () => {
+  test('when program option before sub option then sub option read by sub', () => {
     const { program, sub } = makeProgram();
     program.parse(['--global', '--default'], { from: 'user' });
     expect(sub.opts().default).toBe(true);
@@ -201,88 +208,115 @@ describe('program with positionalOptions and default subcommand called sub', () 
   });
 });
 
+// ------------------------------------------------------------------------------
+
+describe('subcommand with passThrough', () => {
+  function makeProgram() {
+    const program = new commander.Command();
+    program._enablePositionalOptions = true;
+    program
+      .option('-s, --shared')
+      .arguments('<args...>');
+    const sub = program.command('sub')
+      .arguments('[args...]')
+      .option('-s, --shared')
+      .option('-d, --debug')
+      .action(() => {}); // Not used, but normal to have action handler on subcommand.
+    sub._passThroughOptions = true;
+    return { program, sub };
+  }
+
+  test('when option before command-argument then option parsed', () => {
+    const { program, sub } = makeProgram();
+    program.parse(['sub', '--debug', 'arg'], { from: 'user' });
+    expect(sub.args).toEqual(['arg']);
+    expect(sub.opts().debug).toBe(true);
+  });
+
+  test('when known option after command-argument then option passed through', () => {
+    const { program, sub } = makeProgram();
+    program.parse(['sub', 'arg', '--debug'], { from: 'user' });
+    expect(sub.args).toEqual(['arg', '--debug']);
+    expect(sub.opts().debug).toBeUndefined();
+  });
+
+  test('when unknown option after command-argument then option passed through', () => {
+    const { program, sub } = makeProgram();
+    program.parse(['sub', 'arg', '--pass'], { from: 'user' });
+    expect(sub.args).toEqual(['arg', '--pass']);
+  });
+
+  test('when action handler and unknown option after command-argument then option passed through', () => {
+    const { program, sub } = makeProgram();
+    const mockAction = jest.fn();
+    sub.action(mockAction);
+    program.parse(['sub', 'arg', '--pass'], { from: 'user' });
+    expect(mockAction).toHaveBeenCalledWith(['arg', '--pass'], sub.opts(), sub);
+  });
+
+  test('when help option after command-argument then option passed through', () => {
+    const { program, sub } = makeProgram();
+    program.parse(['sub', 'arg', '--help'], { from: 'user' });
+    expect(sub.args).toEqual(['arg', '--help']);
+  });
+
+  test('when version option after command-argument then option passed through', () => {
+    const { program, sub } = makeProgram();
+    program.version('1.2.3');
+    program.parse(['sub', 'arg', '--version'], { from: 'user' });
+    expect(sub.args).toEqual(['arg', '--version']);
+  });
+
+  test('when shared option before sub and after sub and after sub parameter then all three parsed', () => {
+    const { program, sub } = makeProgram();
+    program.version('1.2.3');
+    program.parse(['--shared', 'sub', '--shared', 'arg', '--shared'], { from: 'user' });
+    expect(program.opts().shared).toBe(true);
+    expect(sub.opts().shared).toBe(true);
+    expect(sub.args).toEqual(['arg', '--shared']);
+  });
+});
+
+// ------------------------------------------------------------------------------
+
+describe('program with action handler and positionalOptions and subcommand', () => {
+  function makeProgram() {
+    const program = new commander.Command();
+    program._enablePositionalOptions = true;
+    program
+      .option('-g, --global')
+      .arguments('<args...>')
+      .action(() => {});
+    const sub = program.command('sub')
+      .arguments('[arg]')
+      .action(() => {});
+    return { program, sub };
+  }
+
+  test('when global option before parameter then global option parsed', () => {
+    const { program } = makeProgram();
+    program.parse(['--global', 'foo'], { from: 'user' });
+    expect(program.opts().global).toBe(true);
+  });
+
+  test('when global option after parameter then global option parsed', () => {
+    const { program } = makeProgram();
+    program.parse(['foo', '--global'], { from: 'user' });
+    expect(program.opts().global).toBe(true);
+  });
+
+  test('when global option after parameter with same name as subcommand then global option parsed', () => {
+    const { program } = makeProgram();
+    program.parse(['foo', 'sub', '--global'], { from: 'user' });
+    expect(program.opts().global).toBe(true);
+  });
+});
+
 // ---------------------------------------------------------------------------
 // WIP from here
 // ---------------------------------------------------------------------------
 
-// --------- subcommand passThrough
-
 // --------- subcommand passThrough with default ????
-
-test('when global option after subcommand then global option parsed', () => {
-  const mockAction = jest.fn();
-  const program = new commander.Command();
-  program
-    .option('-d, --debug');
-  const sub = program.command('sub')
-    .arguments('[arg]')
-    .action(mockAction);
-  program.parse(['sub', '--debug', 'arg'], { from: 'user' });
-  expect(program.opts().debug).toBe(true);
-  expect(mockAction).toBeCalledWith('arg', sub.opts(), sub);
-});
-
-test('when global option after subcommand and _enablePositionalOptions=true then global option not parsed', () => {
-  const mockAction = jest.fn();
-  const program = new commander.Command();
-  program._enablePositionalOptions = true;
-  program
-    .option('-d, --debug');
-  const sub = program.command('sub')
-    .arguments('[arg]')
-    .allowUnknownOption()
-    .action(mockAction);
-  program.parse(['sub', '--debug'], { from: 'user' });
-  expect(program.opts().debug).toBeUndefined();
-  expect(mockAction).toBeCalledWith('--debug', sub.opts(), sub);
-});
-
-test('when option after subcommand is global and local and _enablePositionalOptions=true then option parsed as local', () => {
-  const mockAction = jest.fn();
-  const program = new commander.Command();
-  program._enablePositionalOptions = true;
-  program
-    .option('-d, --debug');
-  const sub = program.command('sub')
-    .option('-d, --debug')
-    .action(mockAction);
-  program.parse(['sub', '--debug'], { from: 'user' });
-  expect(program.opts().debug).toBeUndefined();
-  expect(sub.opts().debug).toBe(true);
-});
-
-describe('program with _enablePositionalOptions=true and subcommand with _passThroughOptions=true', () => {
-  test.each([
-    [[], true],
-    [['help'], true],
-    [['--help'], true],
-    [['sub'], false],
-    [['sub', '--help'], true],
-    [['sub', 'foo', '--help'], false]
-  ])('when user args %p then help called is %p', (userArgs, expectHelpCalled) => {
-    // also check which command calls help ????
-    const program = new commander.Command();
-    program._enablePositionalOptions = true;
-    program
-      .exitOverride()
-      .configureHelp({ formatHelp: () => '' });
-    const sub = program.command('sub')
-      .exitOverride()
-      .configureHelp({ formatHelp: () => '' })
-      .action(() => { });
-    sub._passThroughOptions = true;
-
-    let helpCalled = false;
-    try {
-      program.parse(userArgs, { from: 'user' });
-    } catch (err) {
-      helpCalled = err.code === 'commander.helpDisplayed' || err.code === 'commander.help';
-    }
-    expect(helpCalled).toEqual(expectHelpCalled);
-  });
-});
-
-// test for "foo sub" where sub is a parameter and not a command ????
 
 // Interaction of unknowns with passThrough ????
 
