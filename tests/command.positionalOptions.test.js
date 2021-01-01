@@ -322,4 +322,4 @@ describe('program with action handler and positionalOptions and subcommand', () 
 
 // Test action handler at least once in each block ????
 
-// Test default command support does not break any other cases ????
+// Test error when passThrough in subcommand without positionalOptions in parent
