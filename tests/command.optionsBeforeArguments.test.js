@@ -6,7 +6,7 @@ const commander = require('../');
 describe('program with passThrough', () => {
   function makeProgram() {
     const program = new commander.Command();
-    program._passThroughOptions = true;
+    program.passThroughOptions();
     program
       .option('-p, --debug')
       .arguments('<args...>');
@@ -74,7 +74,7 @@ describe('program with passThrough', () => {
 describe('program with positionalOptions and subcommand', () => {
   function makeProgram() {
     const program = new commander.Command();
-    program._enablePositionalOptions = true;
+    program.enablePositionalOptions();
     program
       .option('-s, --shared')
       .arguments('<args...>');
@@ -146,7 +146,7 @@ describe('program with positionalOptions and subcommand', () => {
 describe('program with positionalOptions and default subcommand (called sub)', () => {
   function makeProgram() {
     const program = new commander.Command();
-    program._enablePositionalOptions = true;
+    program.enablePositionalOptions();
     program
       .option('-s, --shared')
       .option('-g, --global')
@@ -213,7 +213,7 @@ describe('program with positionalOptions and default subcommand (called sub)', (
 describe('subcommand with passThrough', () => {
   function makeProgram() {
     const program = new commander.Command();
-    program._enablePositionalOptions = true;
+    program.enablePositionalOptions();
     program
       .option('-s, --shared')
       .arguments('<args...>');
@@ -222,7 +222,7 @@ describe('subcommand with passThrough', () => {
       .option('-s, --shared')
       .option('-d, --debug')
       .action(() => {}); // Not used, but normal to have action handler on subcommand.
-    sub._passThroughOptions = true;
+    sub.passThroughOptions();
     return { program, sub };
   }
 
@@ -282,7 +282,7 @@ describe('subcommand with passThrough', () => {
 describe('program with action handler and positionalOptions and subcommand', () => {
   function makeProgram() {
     const program = new commander.Command();
-    program._enablePositionalOptions = true;
+    program.enablePositionalOptions();
     program
       .option('-g, --global')
       .arguments('<args...>')

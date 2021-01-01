@@ -1136,6 +1136,35 @@ class Command extends EventEmitter {
   };
 
   /**
+   * Enable positional options. Positional means global options are specified before subcommands which lets
+   * subcommands reuse the same option names, and also enables subcommands to turn on passThroughOptions.
+   * The default behaviour is non-positional and global options may appear anywhere on the command line.
+   *
+   * @param {Boolean} [positional=true]
+   */
+  enablePositionalOptions(positional = true) {
+    this._enablePositionalOptions = !!positional;
+    return this;
+  };
+
+  /**
+   * Pass through options that come after command-arguments rather than treat them as command-options,
+   * so actual command-options come before command-arguments. Turning this on for a subcommand requires
+   * positional options to have been enabled on the program (parent commands).
+   * The default behaviour is non-positional and options may appear before or after command-arguments.
+   *
+   * @param {Boolean} [passThrough=true]
+   * for unknown options.
+   */
+  passThroughOptions(passThrough = true) {
+    this._passThroughOptions = !!passThrough;
+    if (!!this.parent && !this.parent._enablePositionalOptions) {
+      throw new Error('passThroughOptions() can not be used because enablePositionOptions() has been called on program (parent commands)');
+    }
+    return this;
+  };
+
+  /**
     * Whether to store option values as properties on command object,
     * or store separately (specify false). In both cases the option values can be accessed using .opts().
     *
