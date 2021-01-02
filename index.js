@@ -635,6 +635,7 @@ class Command extends EventEmitter {
     cmd._exitCallback = this._exitCallback;
     cmd._storeOptionsAsProperties = this._storeOptionsAsProperties;
     cmd._combineFlagAndOptionalValue = this._combineFlagAndOptionalValue;
+    cmd._enablePositionalOptions = this._enablePositionalOptions;
 
     cmd._executableFile = opts.executableFile || null; // Custom name for executable file, set missing to null to match constructor
     this.commands.push(cmd);
