@@ -443,3 +443,73 @@ describe('program with allowUnknownOption', () => {
     expect(program.args).toEqual(['--unknown']);
   });
 });
+
+// ------------------------------------------------------------------------------
+
+describe('passThroughOptions(xxx) and option after command-argument', () => {
+  function makeProgram() {
+    const program = new commander.Command();
+    program
+      .option('-d, --debug')
+      .arguments('<args...>');
+    return program;
+  }
+
+  test('when passThroughOptions() then option passed through', () => {
+    const program = makeProgram();
+    program.passThroughOptions();
+    program.parse(['foo', '--debug'], { from: 'user' });
+    expect(program.args).toEqual(['foo', '--debug']);
+  });
+
+  test('when passThroughOptions(true) then option passed through', () => {
+    const program = makeProgram();
+    program.passThroughOptions(true);
+    program.parse(['foo', '--debug'], { from: 'user' });
+    expect(program.args).toEqual(['foo', '--debug']);
+  });
+
+  test('when passThroughOptions(false) then option parsed', () => {
+    const program = makeProgram();
+    program.passThroughOptions(false);
+    program.parse(['foo', '--debug'], { from: 'user' });
+    expect(program.args).toEqual(['foo']);
+    expect(program.opts().debug).toEqual(true);
+  });
+});
+
+// ------------------------------------------------------------------------------
+
+describe('enablePositionalOptions(xxx) and shared option after subcommand', () => {
+  function makeProgram() {
+    const program = new commander.Command();
+    program
+      .option('-d, --debug');
+    const sub = program
+      .command('sub')
+      .option('-d, --debug');
+    return { program, sub };
+  }
+
+  test('when enablePositionalOptions() then option parsed by subcommand', () => {
+    const { program, sub } = makeProgram();
+    program.enablePositionalOptions();
+    program.parse(['sub', '--debug'], { from: 'user' });
+    expect(sub.opts().debug).toEqual(true);
+  });
+
+  test('when enablePositionalOptions(true) then option parsed by subcommand', () => {
+    const { program, sub } = makeProgram();
+    program.enablePositionalOptions(true);
+    program.parse(['sub', '--debug'], { from: 'user' });
+    expect(sub.opts().debug).toEqual(true);
+  });
+
+  test('when enablePositionalOptions(false) then option parsed by program', () => {
+    const { program, sub } = makeProgram();
+    program.enablePositionalOptions(false);
+    program.parse(['sub', '--debug'], { from: 'user' });
+    expect(sub.opts().debug).toBeUndefined();
+    expect(program.opts().debug).toEqual(true);
+  });
+});
