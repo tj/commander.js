@@ -1158,8 +1158,8 @@ class Command extends EventEmitter {
    */
   passThroughOptions(passThrough = true) {
     this._passThroughOptions = !!passThrough;
-    if (!!this.parent && !this.parent._enablePositionalOptions) {
-      throw new Error('passThroughOptions() can not be used because enablePositionOptions() has been called on program (parent commands)');
+    if (!!this.parent && passThrough && !this.parent._enablePositionalOptions) {
+      throw new Error('passThroughOptions can not be used without turning on enablePositionOptions for parent command(s)');
     }
     return this;
   };
@@ -1650,19 +1650,25 @@ class Command extends EventEmitter {
 
       // If using positionalOptions, stop processing our options at subcommand.
       if ((this._enablePositionalOptions || this._passThroughOptions) && operands.length === 0 && unknown.length === 0) {
-        if (this._findCommand(arg)) {
-          dest.push(arg);
-          unknown.push(...args);
+        if (this._hasImplicitHelpCommand() && arg === this._helpCommandName) {
+          operands.push(arg);
+          if (args.length > 0) operands.push(...args);
+          break;
+        } if (this._findCommand(arg)) {
+          operands.push(arg);
+          if (args.length > 0) unknown.push(...args);
           break;
         } else if (this._defaultCommandName) {
-          dest.push(arg);
-          unknown.push(...args);
+          unknown.push(arg);
+          if (args.length > 0) unknown.push(...args);
+          break;
         }
       }
 
       // If using passThroughOptions, stop processing options at first command-argument.
       if (this._passThroughOptions) {
-        dest.push(arg, ...args);
+        dest.push(arg);
+        if (args.length > 0) dest.push(...args);
         break;
       }
 

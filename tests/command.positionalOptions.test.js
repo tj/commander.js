@@ -74,43 +74,43 @@ describe('program with passThrough', () => {
 describe('program with positionalOptions and subcommand', () => {
   function makeProgram() {
     const program = new commander.Command();
-    program.enablePositionalOptions();
     program
-      .option('-s, --shared')
+      .enablePositionalOptions()
+      .option('-s, --shared <value>')
       .arguments('<args...>');
     const sub = program.command('sub')
       .arguments('[arg]')
-      .option('-s, --shared')
+      .option('-s, --shared <value>')
       .action(() => {}); // Not used, but normal to have action handler on subcommand.
     return { program, sub };
   }
 
   test('when global option before subcommand then global option parsed', () => {
     const { program } = makeProgram();
-    program.parse(['--shared', 'sub'], { from: 'user' });
-    expect(program.opts().shared).toBe(true);
+    program.parse(['--shared', 'program', 'sub'], { from: 'user' });
+    expect(program.opts().shared).toEqual('program');
   });
 
   test('when shared option after subcommand then parsed by subcommand', () => {
     const { program, sub } = makeProgram();
-    program.parse(['sub', '--shared'], { from: 'user' });
-    expect(sub.opts().shared).toBe(true);
+    program.parse(['sub', '--shared', 'local'], { from: 'user' });
+    expect(sub.opts().shared).toEqual('local');
     expect(program.opts().shared).toBeUndefined();
   });
 
   test('when shared option after subcommand argument then parsed by subcommand', () => {
     const { program, sub } = makeProgram();
-    program.parse(['sub', 'arg', '--shared'], { from: 'user' });
-    expect(sub.opts().shared).toBe(true);
+    program.parse(['sub', 'arg', '--shared', 'local'], { from: 'user' });
+    expect(sub.opts().shared).toEqual('local');
     expect(sub.args).toEqual(['arg']);
     expect(program.opts().shared).toBeUndefined();
   });
 
   test('when shared option before and after subcommand then both parsed', () => {
     const { program, sub } = makeProgram();
-    program.parse(['--shared', 'sub', '--shared'], { from: 'user' });
-    expect(program.opts().shared).toBe(true);
-    expect(sub.opts().shared).toBe(true);
+    program.parse(['--shared', 'program', 'sub', '--shared', 'local'], { from: 'user' });
+    expect(program.opts().shared).toEqual('program');
+    expect(sub.opts().shared).toEqual('local');
   });
 
   test.each([
@@ -146,8 +146,8 @@ describe('program with positionalOptions and subcommand', () => {
 describe('program with positionalOptions and default subcommand (called sub)', () => {
   function makeProgram() {
     const program = new commander.Command();
-    program.enablePositionalOptions();
     program
+      .enablePositionalOptions()
       .option('-s, --shared')
       .option('-g, --global')
       .arguments('<args...>');
@@ -213,16 +213,16 @@ describe('program with positionalOptions and default subcommand (called sub)', (
 describe('subcommand with passThrough', () => {
   function makeProgram() {
     const program = new commander.Command();
-    program.enablePositionalOptions();
     program
-      .option('-s, --shared')
+      .enablePositionalOptions()
+      .option('-s, --shared <value>')
       .arguments('<args...>');
     const sub = program.command('sub')
+      .passThroughOptions()
       .arguments('[args...]')
-      .option('-s, --shared')
+      .option('-s, --shared <value>')
       .option('-d, --debug')
       .action(() => {}); // Not used, but normal to have action handler on subcommand.
-    sub.passThroughOptions();
     return { program, sub };
   }
 
@@ -269,11 +269,54 @@ describe('subcommand with passThrough', () => {
 
   test('when shared option before sub and after sub and after sub parameter then all three parsed', () => {
     const { program, sub } = makeProgram();
-    program.version('1.2.3');
-    program.parse(['--shared', 'sub', '--shared', 'arg', '--shared'], { from: 'user' });
-    expect(program.opts().shared).toBe(true);
-    expect(sub.opts().shared).toBe(true);
+    program.parse(['--shared=global', 'sub', '--shared=local', 'arg', '--shared'], { from: 'user' });
+    expect(program.opts().shared).toEqual('global');
+    expect(sub.opts().shared).toEqual('local');
     expect(sub.args).toEqual(['arg', '--shared']);
+  });
+});
+
+// ------------------------------------------------------------------------------
+
+describe('default command with passThrough', () => {
+  function makeProgram() {
+    const program = new commander.Command();
+    program
+      .enablePositionalOptions();
+    const sub = program.command('sub', { isDefault: true })
+      .passThroughOptions()
+      .arguments('[args...]')
+      .option('-d, --debug')
+      .action(() => {}); // Not used, but normal to have action handler on subcommand.
+    return { program, sub };
+  }
+
+  test('when option before command-argument then option parsed', () => {
+    const { program, sub } = makeProgram();
+    program.parse(['--debug', 'arg'], { from: 'user' });
+    expect(sub.args).toEqual(['arg']);
+    expect(sub.opts().debug).toBe(true);
+  });
+
+  test('when known option after command-argument then option passed through', () => {
+    const { program, sub } = makeProgram();
+    program.parse(['arg', '--debug'], { from: 'user' });
+    expect(sub.args).toEqual(['arg', '--debug']);
+    expect(sub.opts().debug).toBeUndefined();
+  });
+
+  test('when unknown option after command-argument then option passed through', () => {
+    const { program, sub } = makeProgram();
+    program.parse(['arg', '--pass'], { from: 'user' });
+    expect(sub.args).toEqual(['arg', '--pass']);
+  });
+
+  test('when action handler and unknown option after command-argument then option passed through', () => {
+    const { program, sub } = makeProgram();
+    const mockAction = jest.fn();
+    sub.action(mockAction);
+    program.parse(['arg', '--pass'], { from: 'user' });
+    expect(mockAction).toHaveBeenCalledWith(['arg', '--pass'], sub.opts(), sub);
   });
 });
 
@@ -282,8 +325,8 @@ describe('subcommand with passThrough', () => {
 describe('program with action handler and positionalOptions and subcommand', () => {
   function makeProgram() {
     const program = new commander.Command();
-    program.enablePositionalOptions();
     program
+      .enablePositionalOptions()
       .option('-g, --global')
       .arguments('<args...>')
       .action(() => {});
@@ -312,6 +355,17 @@ describe('program with action handler and positionalOptions and subcommand', () 
   });
 });
 
+// ------------------------------------------------------------------------------
+
+test('when program not positional and turn on passthrough in subcommand then error', () => {
+  const program = new commander.Command();
+  const sub = program.command('sub');
+
+  expect(() => {
+    sub.passThroughOptions();
+  }).toThrow();
+});
+
 // ---------------------------------------------------------------------------
 // WIP from here
 // ---------------------------------------------------------------------------
@@ -321,5 +375,3 @@ describe('program with action handler and positionalOptions and subcommand', () 
 // Interaction of unknowns with passThrough ????
 
 // Test action handler at least once in each block ????
-
-// Test error when passThrough in subcommand without positionalOptions in parent
