@@ -4,6 +4,7 @@ const commander = require('../');
 
 describe('incrementNodeInspectorPort', () => {
   let spawnSpy;
+  let signalSpy;
   const oldExecArgv = process.execArgv;
 
   beforeAll(() => {
@@ -12,6 +13,7 @@ describe('incrementNodeInspectorPort', () => {
         on: () => {}
       };
     });
+    signalSpy = jest.spyOn(process, 'on').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -20,6 +22,7 @@ describe('incrementNodeInspectorPort', () => {
 
   afterAll(() => {
     spawnSpy.mockRestore();
+    signalSpy.mockRestore();
     process.execArgv = oldExecArgv;
   });
 
@@ -58,6 +61,14 @@ describe('incrementNodeInspectorPort', () => {
     expect(execArgs).toEqual(['--inspect=1.2.3.4:101']);
   });
 
+  test('when --inspect=1.2.3.4 then bump port', () => {
+    const program = makeProgram();
+    process.execArgv = ['--inspect=1.2.3.4'];
+    program.parse(['node', 'test', 'cache']);
+    const execArgs = extractMockExecArgs(spawnSpy);
+    expect(execArgs).toEqual(['--inspect=1.2.3.4:9230']);
+  });
+
   test('when --inspect-brk then bump port', () => {
     const program = makeProgram();
     process.execArgv = ['--inspect-brk'];
@@ -72,6 +83,14 @@ describe('incrementNodeInspectorPort', () => {
     program.parse(['node', 'test', 'cache']);
     const execArgs = extractMockExecArgs(spawnSpy);
     expect(execArgs).toEqual(['--inspect-brk=127.0.0.1:101']);
+  });
+
+  test('when --inspect-brk=1.2.3.4 then bump port', () => {
+    const program = makeProgram();
+    process.execArgv = ['--inspect-brk=1.2.3.4'];
+    program.parse(['node', 'test', 'cache']);
+    const execArgs = extractMockExecArgs(spawnSpy);
+    expect(execArgs).toEqual(['--inspect-brk=1.2.3.4:9230']);
   });
 
   test('when --inspect-brk=1.2.3.4:100 then bump port', () => {
@@ -96,5 +115,21 @@ describe('incrementNodeInspectorPort', () => {
     program.parse(['node', 'test', 'cache']);
     const execArgs = extractMockExecArgs(spawnSpy);
     expect(execArgs).toEqual(['--inspect-port=1.2.3.4:101']);
+  });
+
+  test('when --inspect-unexpected then unchanged', () => {
+    const program = makeProgram();
+    process.execArgv = ['--inspect-unexpected'];
+    program.parse(['node', 'test', 'cache']);
+    const execArgs = extractMockExecArgs(spawnSpy);
+    expect(execArgs).toEqual(['--inspect-unexpected']);
+  });
+
+  test('when --frozen-intrinsics  then unchanged', () => {
+    const program = makeProgram();
+    process.execArgv = ['--frozen-intrinsics '];
+    program.parse(['node', 'test', 'cache']);
+    const execArgs = extractMockExecArgs(spawnSpy);
+    expect(execArgs).toEqual(['--frozen-intrinsics ']);
   });
 });
