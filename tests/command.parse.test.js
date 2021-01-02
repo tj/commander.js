@@ -72,3 +72,11 @@ describe('return type', () => {
     expect(result).toBe(program);
   });
 });
+
+// Easy mistake to make when writing unit tests
+test('when parse strings then error', () => {
+  const program = new commander.Command();
+  expect(() => {
+    program.parse('node', 'test');
+  }).toThrow();
+});
