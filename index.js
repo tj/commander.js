@@ -1650,13 +1650,13 @@ class Command extends EventEmitter {
 
       // If using positionalOptions, stop processing our options at subcommand.
       if ((this._enablePositionalOptions || this._passThroughOptions) && operands.length === 0 && unknown.length === 0) {
-        if (this._hasImplicitHelpCommand() && arg === this._helpCommandName) {
-          operands.push(arg);
-          if (args.length > 0) operands.push(...args);
-          break;
-        } if (this._findCommand(arg)) {
+        if (this._findCommand(arg)) {
           operands.push(arg);
           if (args.length > 0) unknown.push(...args);
+          break;
+        } else if (arg === this._helpCommandName && this._hasImplicitHelpCommand()) {
+          operands.push(arg);
+          if (args.length > 0) operands.push(...args);
           break;
         } else if (this._defaultCommandName) {
           unknown.push(arg);
