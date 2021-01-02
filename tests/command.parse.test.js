@@ -4,7 +4,7 @@ const commander = require('../');
 // https://github.com/electron/electron/issues/4690#issuecomment-217435222
 // https://www.electronjs.org/docs/api/process#processdefaultapp-readonly
 
-describe('.parse() user args', () => {
+describe('.parse() args from', () => {
   test('when no args then use process.argv and app/script/args', () => {
     const program = new commander.Command();
     const hold = process.argv;
@@ -50,6 +50,13 @@ describe('.parse() user args', () => {
     const program = new commander.Command();
     program.parse('user'.split(' '), { from: 'user' });
     expect(program.args).toEqual(['user']);
+  });
+
+  test('when args from "silly" then error', () => {
+    const program = new commander.Command();
+    expect(() => {
+      program.parse(['node', 'script.js'], { from: 'silly' });
+    }).toThrow();
   });
 });
 
