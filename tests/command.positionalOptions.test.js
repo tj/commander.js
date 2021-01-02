@@ -8,7 +8,7 @@ describe('program with passThrough', () => {
     const program = new commander.Command();
     program.passThroughOptions();
     program
-      .option('-p, --debug')
+      .option('-d, --debug')
       .arguments('<args...>');
     return program;
   }
@@ -371,12 +371,75 @@ test('when program not positional and turn on passthrough in subcommand then err
   }).toThrow();
 });
 
-// ---------------------------------------------------------------------------
-// WIP from here
-// ---------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 
-// --------- subcommand passThrough with default ????
+describe('program with action handler and passThrough and subcommand', () => {
+  function makeProgram() {
+    const program = new commander.Command();
+    program
+      .passThroughOptions()
+      .option('-g, --global')
+      .arguments('<args...>')
+      .action(() => {});
+    const sub = program
+      .command('sub')
+      .arguments('[arg]')
+      .option('-g, --group')
+      .option('-d, --debug')
+      .action(() => {});
+    return { program, sub };
+  }
 
-// Interaction of unknowns with passThrough ????
+  test('when global option before parameter then global option parsed', () => {
+    const { program } = makeProgram();
+    program.parse(['--global', 'foo'], { from: 'user' });
+    expect(program.opts().global).toBe(true);
+  });
 
-// Test action handler at least once in each block ????
+  test('when global option after parameter then passed through', () => {
+    const { program } = makeProgram();
+    program.parse(['foo', '--global'], { from: 'user' });
+    expect(program.args).toEqual(['foo', '--global']);
+  });
+
+  test('when subcommand option after subcommand then option parsed', () => {
+    const { program, sub } = makeProgram();
+    program.parse(['sub', '--debug'], { from: 'user' });
+    expect(sub.opts().debug).toBe(true);
+  });
+
+  // This is somewhat of a side-affect of supporting previous test.
+  test('when shared option after subcommand then parsed by subcommand', () => {
+    const { program, sub } = makeProgram();
+    program.parse(['sub', '-g'], { from: 'user' });
+    expect(sub.opts().group).toBe(true);
+    expect(program.opts().global).toBeUndefined();
+  });
+});
+
+// ------------------------------------------------------------------------------
+
+describe('program with allowUnknownOption', () => {
+  test('when passThroughOptions and unknown option then arguments from unknown passed through', () => {
+    const program = new commander.Command();
+    program
+      .passThroughOptions()
+      .allowUnknownOption()
+      .option('--debug');
+
+    program.parse(['--unknown', '--debug'], { from: 'user' });
+    expect(program.args).toEqual(['--unknown', '--debug']);
+  });
+
+  test('when positionalOptions and unknown option then known options then known option parsed', () => {
+    const program = new commander.Command();
+    program
+      .enablePositionalOptions()
+      .allowUnknownOption()
+      .option('--debug');
+
+    program.parse(['--unknown', '--debug'], { from: 'user' });
+    expect(program.opts().debug).toBe(true);
+    expect(program.args).toEqual(['--unknown']);
+  });
+});
