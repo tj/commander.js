@@ -148,7 +148,7 @@ describe('Command methods that should return this for chaining', () => {
     expect(result).toBe(program);
   });
 
-  test('when call .enablePositionOptions() then returns this', () => {
+  test('when call .enablePositionalOptions() then returns this', () => {
     const program = new Command();
     const result = program.enablePositionalOptions();
     expect(result).toBe(program);
