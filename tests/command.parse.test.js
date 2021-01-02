@@ -52,7 +52,7 @@ describe('.parse() args from', () => {
     expect(program.args).toEqual(['user']);
   });
 
-  test('when args from "silly" then error', () => {
+  test('when args from "silly" then throw', () => {
     const program = new commander.Command();
     expect(() => {
       program.parse(['node', 'script.js'], { from: 'silly' });
@@ -81,7 +81,7 @@ describe('return type', () => {
 });
 
 // Easy mistake to make when writing unit tests
-test('when parse strings then error', () => {
+test('when parse strings instead of array then throw', () => {
   const program = new commander.Command();
   expect(() => {
     program.parse('node', 'test');
