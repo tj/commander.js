@@ -1672,13 +1672,8 @@ class Command extends EventEmitter {
    * @api private
    */
 
-  optionMissingArgument(option, flag) {
-    let message;
-    if (flag) {
-      message = `error: option '${option.flags}' argument missing, got '${flag}'`;
-    } else {
-      message = `error: option '${option.flags}' argument missing`;
-    }
+  optionMissingArgument(option) {
+    const message = `error: option '${option.flags}' argument missing`;
     this._displayError(1, 'commander.optionMissingArgument', message);
   };
 
