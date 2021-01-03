@@ -694,7 +694,7 @@ an option for a different purpose in subcommands.
 
 Example file: [positional-options.js](./examples/positional-options.js)
 
-With positional options, these two lines are different:
+With positional options, the `-b` is a program option in the first line and a subcommand option in the second:
 
 ```sh
 program -b subcommand
@@ -704,11 +704,11 @@ program subcommand -b
 By default options are recognised before and after command-arguments. To only process options that come
 before the command-arguments, use `.passThroughOptions()`. This lets you pass the  arguments and following options through to another program
 without needing to use `--` to end the option processing. 
-To use pass through options in a subcommand, the programs need to enable positional options.
+To use pass through options in a subcommand, the program needs to enable positional options.
 
 Example file: [pass-through-options.js](./examples/pass-through-options.js)
 
-With pass through options, these two lines are different:
+With pass through options, the `--port=80` is a program option in the line and passed through as a command-argument in the second:
 
 ```sh
 program --port=80 arg
