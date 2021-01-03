@@ -83,6 +83,16 @@ describe('help command processed on correct command', () => {
     }).toThrow('program');
   });
 
+  test('when "program help unknown" then program', () => {
+    const program = new commander.Command();
+    program.exitOverride();
+    program.command('sub1');
+    program.exitOverride(() => { throw new Error('program'); });
+    expect(() => {
+      program.parse('node test.js help unknown'.split(' '));
+    }).toThrow('program');
+  });
+
   test('when "program help sub1" then sub1', () => {
     const program = new commander.Command();
     program.exitOverride();
