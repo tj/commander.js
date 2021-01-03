@@ -394,7 +394,7 @@ declare namespace commander {
     allowUnknownOption(allowUnknown?: boolean): this;
 
     /**
-     * Allow excess arguments on the command line.
+     * Allow excess arguments on the command line. Pass false to make excess arguments an error.
      *
      * @returns `this` command for chaining
      */
