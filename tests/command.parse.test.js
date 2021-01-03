@@ -14,7 +14,16 @@ describe('.parse() args from', () => {
     expect(program.args).toEqual(['user']);
   });
 
-  // implicit also supports detecting electron but more implementation knowledge required than useful to test
+  test('when no args and electron properties and not default app then use process.argv and app/args', () => {
+    const program = new commander.Command();
+    const holdArgv = process.argv;
+    process.versions.electron = '1.2.3';
+    process.argv = 'node user'.split(' ');
+    program.parse();
+    delete process.versions.electron;
+    process.argv = holdArgv;
+    expect(program.args).toEqual(['user']);
+  });
 
   test('when args then app/script/args', () => {
     const program = new commander.Command();
