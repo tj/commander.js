@@ -278,3 +278,26 @@ describe('.exitOverride and error details', () => {
     expectCommanderError(caughtErr, 1, 'commander.invalidOptionArgument', "error: option '--colour <shade>' argument 'green' is invalid. NO");
   });
 });
+
+test('when no override and error then exit(1)', () => {
+  const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => { });
+  const program = new commander.Command();
+  program.configureOutput({ outputError: () => {} });
+  program.parse(['--unknownOption'], { from: 'user' });
+  expect(exitSpy).toHaveBeenCalledWith(1);
+  exitSpy.mockRestore();
+});
+
+test('when custom processing throws custom error then throw custom error', () => {
+  function justSayNo(value) {
+    throw new Error('custom');
+  }
+  const program = new commander.Command();
+  program
+    .exitOverride()
+    .option('-s, --shade <value>', 'specify shade', justSayNo);
+
+  expect(() => {
+    program.parse(['--shade', 'green'], { from: 'user' });
+  }).toThrow('custom');
+});

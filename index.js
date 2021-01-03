@@ -3,7 +3,7 @@
  */
 
 const EventEmitter = require('events').EventEmitter;
-const spawn = require('child_process').spawn;
+const childProcess = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
@@ -1335,15 +1335,15 @@ class Command extends EventEmitter {
         // add executable arguments to spawn
         args = incrementNodeInspectorPort(process.execArgv).concat(args);
 
-        proc = spawn(process.argv[0], args, { stdio: 'inherit' });
+        proc = childProcess.spawn(process.argv[0], args, { stdio: 'inherit' });
       } else {
-        proc = spawn(bin, args, { stdio: 'inherit' });
+        proc = childProcess.spawn(bin, args, { stdio: 'inherit' });
       }
     } else {
       args.unshift(bin);
       // add executable arguments to spawn
       args = incrementNodeInspectorPort(process.execArgv).concat(args);
-      proc = spawn(process.execPath, args, { stdio: 'inherit' });
+      proc = childProcess.spawn(process.execPath, args, { stdio: 'inherit' });
     }
 
     const signals = ['SIGUSR1', 'SIGUSR2', 'SIGTERM', 'SIGINT', 'SIGHUP'];
@@ -1672,13 +1672,8 @@ class Command extends EventEmitter {
    * @api private
    */
 
-  optionMissingArgument(option, flag) {
-    let message;
-    if (flag) {
-      message = `error: option '${option.flags}' argument missing, got '${flag}'`;
-    } else {
-      message = `error: option '${option.flags}' argument missing`;
-    }
+  optionMissingArgument(option) {
+    const message = `error: option '${option.flags}' argument missing`;
     this._displayError(1, 'commander.optionMissingArgument', message);
   };
 

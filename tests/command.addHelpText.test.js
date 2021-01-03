@@ -77,6 +77,13 @@ describe('program calls to addHelpText', () => {
     expect(writeSpy).toHaveBeenNthCalledWith(4, 'after\n');
     expect(writeSpy).toHaveBeenNthCalledWith(5, 'afterAll\n');
   });
+
+  test('when "silly" position then throw', () => {
+    const program = new commander.Command();
+    expect(() => {
+      program.addHelpText('silly', 'text');
+    }).toThrow();
+  });
 });
 
 describe('program and subcommand calls to addHelpText', () => {

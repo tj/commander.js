@@ -87,3 +87,12 @@ test('when set aliases then can get aliases', () => {
   program.aliases(aliases);
   expect(program.aliases()).toEqual(aliases);
 });
+
+test('when set alias on executable then can get alias', () => {
+  const program = new commander.Command();
+  const alias = 'abcde';
+  program
+    .command('external', 'external command')
+    .alias(alias);
+  expect(program.commands[0].alias()).toEqual(alias);
+});
