@@ -151,6 +151,14 @@ const allowUnknownOptionThis2: commander.Command = program.allowUnknownOption(fa
 const allowExcessArgumentsThis1: commander.Command = program.allowExcessArguments();
 const allowExcessArgumentsThis2: commander.Command = program.allowExcessArguments(false);
 
+// enablePositionalOptions
+const enablePositionalOptionsThis1: commander.Command = program.enablePositionalOptions();
+const enablePositionalOptionsThis2: commander.Command = program.enablePositionalOptions(false);
+
+// passThroughOptions
+const passThroughOptionsThis1: commander.Command = program.passThroughOptions();
+const passThroughOptionsThis2: commander.Command = program.passThroughOptions(false);
+
 // parse
 const parseThis1: commander.Command = program.parse();
 const parseThis2: commander.Command = program.parse(process.argv);

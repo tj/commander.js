@@ -35,6 +35,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
   - [Custom event listeners](#custom-event-listeners)
   - [Bits and pieces](#bits-and-pieces)
     - [.parse() and .parseAsync()](#parse-and-parseasync)
+    - [Parsing Configuration](#parsing-configuration)
     - [Legacy options as properties](#legacy-options-as-properties)
     - [TypeScript](#typescript)
     - [createCommand()](#createcommand)
@@ -84,7 +85,7 @@ For example `-a -b -p 80` may be written as `-ab -p80` or even `-abp80`.
 
 You can use `--` to indicate the end of the options, and any remaining arguments will be used without being interpreted.
 
-Options on the command line are not positional, and can be specified before or after other arguments.
+By default options on the command line are not positional, and can be specified before or after other arguments.
 
 ### Common option types, boolean and value
 
@@ -683,6 +684,39 @@ program.parse(process.argv); // Explicit, node conventions
 program.parse(); // Implicit, and auto-detect electron
 program.parse(['-f', 'filename'], { from: 'user' });
 ```
+
+### Parsing Configuration
+
+If the default parsing does not suit your needs, there are some behaviours to support other usage patterns.
+
+By default program options are recognised before and after subcommands. To only look for program options before subcommands, use `.enablePositionalOptions()`. This lets you use
+an option for a different purpose in subcommands.
+
+Example file: [positional-options.js](./examples/positional-options.js)
+
+With positional options, the `-b` is a program option in the first line and a subcommand option in the second:
+
+```sh
+program -b subcommand
+program subcommand -b
+```
+
+By default options are recognised before and after command-arguments. To only process options that come
+before the command-arguments, use `.passThroughOptions()`. This lets you pass the  arguments and following options through to another program
+without needing to use `--` to end the option processing. 
+To use pass through options in a subcommand, the program needs to enable positional options.
+
+Example file: [pass-through-options.js](./examples/pass-through-options.js)
+
+With pass through options, the `--port=80` is a program option in the line and passed through as a command-argument in the second:
+
+```sh
+program --port=80 arg
+program arg --port=80
+```
+
+
+By default the option processing shows an error for an unknown option. To have an unknown option treated as an ordinary command-argument and continue looking for options, use `.allowUnknownOption()`. This lets you mix known and unknown options.
 
 ### Legacy options as properties 
 

@@ -409,6 +409,27 @@ declare namespace commander {
     allowExcessArguments(allowExcess?: boolean): this;
 
     /**
+     * Enable positional options. Positional means global options are specified before subcommands which lets
+     * subcommands reuse the same option names, and also enables subcommands to turn on passThroughOptions.
+     *
+     * The default behaviour is non-positional and global options may appear anywhere on the command line.
+     *
+     * @returns `this` command for chaining
+     */
+    enablePositionalOptions(positional?: boolean): this;
+
+    /**
+     * Pass through options that come after command-arguments rather than treat them as command-options,
+     * so actual command-options come before command-arguments. Turning this on for a subcommand requires
+     * positional options to have been enabled on the program (parent commands).
+     *
+     * The default behaviour is non-positional and options may appear before or after command-arguments.
+     *
+     * @returns `this` command for chaining
+     */
+    passThroughOptions(passThrough?: boolean): this;
+
+    /**
      * Parse `argv`, setting options and invoking commands when defined.
      *
      * The default expectation is that the arguments are from node and have the application as argv[0]
