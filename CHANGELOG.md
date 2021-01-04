@@ -8,7 +8,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
-## [7.0.0-2] (2020-12-14)
+## [7.0.0] (date goes here)
+
+### Added
+
+- *Breaking:* error message if there are too many command-arguments on command line for the action handler ([#1409])
+    - if should be allowed then declare extra arguments, or use `.allowExcessArguments()`
+- `.configureOutput()` to modify use of stdout and stderr or customise display of errors ([#1387])
+- use `.addHelpText()` to add text before or after the built-in help, for just current command or also for all subcommands ([#1296])
+- enhance Option class ([#1331])
+  - allow hiding options from help
+  - allow restricting option arguments to a list of choices
+  - allow setting how default value is shown in help
+- `.createOption()` to support subclassing of automatically created options (like `.createCommand()`) ([#1380])
+- refactor the code generating the help into a separate public Help class ([#1365])
+  - support sorting subcommands and options in help
+  - support specifying wrap width (columns)
+  - allow subclassing Help class
+  - allow configuring Help class without subclassing
 
 ### Changed
 
@@ -16,12 +33,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
     - this especially affects accessing options on program, use `program.opts()`
     - revert behaviour with `.storeOptionsAsProperties()`
 - *Breaking:* action handlers are passed options and command separately ([#1409])
+- deprecated callback parameter to `.help()` and `.outputHelp()` (removed from README) ([#1296])
+- *Breaking:* errors now displayed using `process.stderr.write()` instead of `console.error()`
+- deprecate `.on('--help')` (removed from README) ([#1296])
+- initialise the command description to empty string (previously undefined) ([#1365])
+- document and annotate deprecated routines ([#1349])
 
-### Added
+### Fixed
 
-- *Breaking:* error message if there are too many command-arguments on command line for the action handler ([#1409])
-    - if should be allowed then declare extra arguments, or use `.allowExcessArguments()`
-
+- wrapping bugs in help ([#1365])
+  - first line of command description was wrapping two characters early
+  - pad width calculation was not including help option and help command
+  - pad width calculation was including hidden options and commands
+  
 ### Deleted
 
 - *Breaking:* `.passCommandToAction()` ([#1409])
@@ -122,49 +146,18 @@ program
   .action(() => {});
 ```
 
+## [7.0.0-2] (2020-12-14)
+
+(Released in 7.0.0)
+
 ## [7.0.0-1] (2020-11-21)
 
-### Added
-
-- `.createOption()` to support subclassing of automatically created options (like `.createCommand()`) ([#1380])
-- `.configureOutput()` to modify use of stdout and stderr or customise display of errors ([#1387])
-
-### Breaking changes relative to 7.0.0-0
-
-- rework new `Help.wrap()` for simpler usage pattern (#1395)
-- rename new "columns" properties (#1396)
-  - `Help.columns` -> `helpWidth`
-  - `getOutColumns()` -> `getOutHelpWidth()`
-  - `getErrColumns()` -> `getErrHelpWidth()`
+(Released in 7.0.0)
 
 ## [7.0.0-0] (2020-10-25)
 
-### Added
+(Released in 7.0.0)
 
-- use `.addHelpText()` to add text before or after the built-in help, for just current command or also for all subcommands ([#1296])
-- enhance Option class ([#1331])
-  - allow hiding options from help
-  - allow restricting option arguments to a list of choices
-  - allow setting how default value is shown in help
-- refactor the code generating the help into a separate public Help class ([#1365])
-  - support sorting subcommands and options in help
-  - support specifying wrap width (columns)
-  - allow subclassing Help class
-  - allow configuring Help class without subclassing
- 
-### Fixed
-
-- wrapping bugs in help ([#1365])
-  - first line of command description was wrapping two characters early
-  - pad width calculation was not including help option and help command
-  - pad width calculation was including hidden options and commands
-  
-### Changed
-
-- document and annotate deprecated routines ([#1349])
-- deprecated callback parameter to `.help()` and `.outputHelp()` (removed from README) ([#1296])
-- deprecate `.on('--help')` (removed from README) ([#1296])
-- initialise the command description to empty string (previously undefined) ([#1365])
 ## [6.2.1] (2020-12-13)
 
 ### Fixed
