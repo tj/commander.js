@@ -316,17 +316,17 @@ class Help {
    * @param {string} str
    * @param {number} width
    * @param {number} indent
+   * @param {number} [minColumnWidth=40]
    * @return {string}
    *
    */
 
-  wrap(str, width, indent) {
+  wrap(str, width, indent, minColumnWidth = 40) {
     // Detect manually wrapped and indented strings by searching for line breaks
     // followed by multiple spaces/tabs.
     if (str.match(/[\n]\s+/)) return str;
     // Do not wrap if not enough room for a wrapped column of text (as could end up with a word per line).
     const columnWidth = width - indent;
-    const minColumnWidth = 40;
     if (columnWidth < minColumnWidth) return str;
 
     const leadingStr = str.substr(0, indent);
