@@ -12,8 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- *Breaking:* error message if there are too many command-arguments on command line for the action handler ([#1409])
-    - if should be allowed then declare extra arguments, or use `.allowExcessArguments()`
+- `.allowExcessArguments(false)` to show an error message if there are too many command-arguments on command line for the action handler ([#1409])
 - `.configureOutput()` to modify use of stdout and stderr or customise display of errors ([#1387])
 - use `.addHelpText()` to add text before or after the built-in help, for just current command or also for all subcommands ([#1296])
 - enhance Option class ([#1331])
@@ -118,32 +117,6 @@ program
    .action((filename, options, command)) => {
       if (command.opts().trace) console.log(`Command name is ${command.name()}`);
    });
-```
-
-**excess command-arguments**
-
-There is now an error if there are too many command-arguments on the command line (only checked if there is an action handler).
-If the extra arguments are supported by your command then you can either declare the expected arguments, or allow excess arguments.
-
-```js
-// Old code before Commander 7
-program
-  .action(() => {});
-program.parse(['a', 'b', 'c'], { from: 'user' }); // now causes an error
-```
-
-```js
-// New code, declare arguments
-program
-  .arguments('[args...]')
-  .action(() => {});
-```
-
-```js
-// New code, allow excess arguments
-program
-  .allowExcessArguments()
-  .action(() => {});
 ```
 
 ## [7.0.0-2] (2020-12-14)
