@@ -81,10 +81,6 @@ program.option('--drink <size', 'drink size', /small|medium|large/);
 
 // example coercion functions from README
 
-function range(val: string): Number[] {
-  return val.split('..').map(Number);
-}
-
 function myParseInt(value: string, dummyPrevious: number): number {
   return parseInt(value);
 }
@@ -132,8 +128,16 @@ const createOption2: commander.Option = program.createOption('a, --alpha', 'desc
 const addOptionThis: commander.Command = program.addOption(new commander.Option('-s,--simple'));
 
 // storeOptionsAsProperties
+// chaining
 const storeOptionsAsPropertiesThis1: commander.Command = program.storeOptionsAsProperties();
 const storeOptionsAsPropertiesThis2: commander.Command = program.storeOptionsAsProperties(false);
+// return type depends on parameter
+const storeOptionsAsPropertiesThis3 = program.storeOptionsAsProperties();
+const storeOptionsAsPropertiesValue3 = storeOptionsAsPropertiesThis3.someOption;
+const storeOptionsAsPropertiesThis4 = program.storeOptionsAsProperties(true);
+const storeOptionsAsPropertiesValue4 = storeOptionsAsPropertiesThis4.someOption;
+const storeOptionsAsPropertiesThis5 = program.storeOptionsAsProperties(false);
+// const storeOptionsAsPropertiesValue5 = storeOptionsAsPropertiesThis5.someOption; // error
 
 // combineFlagAndOptionalValue
 const combineFlagAndOptionalValueThis1: commander.Command = program.combineFlagAndOptionalValue();
@@ -146,6 +150,14 @@ const allowUnknownOptionThis2: commander.Command = program.allowUnknownOption(fa
 // allowExcessArguments
 const allowExcessArgumentsThis1: commander.Command = program.allowExcessArguments();
 const allowExcessArgumentsThis2: commander.Command = program.allowExcessArguments(false);
+
+// enablePositionalOptions
+const enablePositionalOptionsThis1: commander.Command = program.enablePositionalOptions();
+const enablePositionalOptionsThis2: commander.Command = program.enablePositionalOptions(false);
+
+// passThroughOptions
+const passThroughOptionsThis1: commander.Command = program.passThroughOptions();
+const passThroughOptionsThis2: commander.Command = program.passThroughOptions(false);
 
 // parse
 const parseThis1: commander.Command = program.parse();
@@ -258,11 +270,11 @@ const configureOutputThis: commander.Command = program.configureOutput({ });
 const configureOutputConfig: commander.OutputConfiguration = program.configureOutput();
 
 program.configureOutput({
-  writeOut: (str: string) => { },
-  writeErr: (str: string) => { },
+  writeOut: (str: string) => console.log(str),
+  writeErr: (str: string) => console.error(str),
   getOutHelpWidth: () => 80,
   getErrHelpWidth: () => 80,
-  outputError: (str: string, write: (str: string) => void) => { }
+  outputError: (str: string, write: (str: string) => void) => { write(str); }
 });
 
 // Help
@@ -321,7 +333,7 @@ const hideHelpThis3: commander.Option = baseOption.hideHelp(false);
 // argumentRejected
 function goodbye(): never {
   return baseOption.argumentRejected('failed');
-};
+}
 
 // choices
 const choicesThis: commander.Option = baseOption.choices(['a', 'b']);

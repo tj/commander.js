@@ -3,6 +3,7 @@
 
 // Using method rather than property for method-signature-style, to document method overloads separately. Allow either.
 /* eslint-disable @typescript-eslint/method-signature-style */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 declare namespace commander {
 
@@ -14,6 +15,7 @@ declare namespace commander {
   }
   type CommanderErrorConstructor = new (exitCode: number, code: string, message: string) => CommanderError;
 
+  // eslint-disable-next-line @typescript-eslint/no-empty-interface
   interface InvalidOptionArgumentError extends CommanderError {
   }
   type InvalidOptionArgumentErrorConstructor = new (message: string) => InvalidOptionArgumentError;
@@ -147,6 +149,10 @@ declare namespace commander {
   }
 
   type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
+
+  interface OptionValues {
+    [key: string]: any;
+  }
 
   interface Command {
     args: string[];
@@ -372,6 +378,8 @@ declare namespace commander {
      *
      * @returns `this` command for chaining
      */
+    storeOptionsAsProperties(): this & OptionValues;
+    storeOptionsAsProperties(storeAsProperties: true): this & OptionValues;
     storeOptionsAsProperties(storeAsProperties?: boolean): this;
 
     /**
@@ -399,6 +407,27 @@ declare namespace commander {
      * @returns `this` command for chaining
      */
     allowExcessArguments(allowExcess?: boolean): this;
+
+    /**
+     * Enable positional options. Positional means global options are specified before subcommands which lets
+     * subcommands reuse the same option names, and also enables subcommands to turn on passThroughOptions.
+     *
+     * The default behaviour is non-positional and global options may appear anywhere on the command line.
+     *
+     * @returns `this` command for chaining
+     */
+    enablePositionalOptions(positional?: boolean): this;
+
+    /**
+     * Pass through options that come after command-arguments rather than treat them as command-options,
+     * so actual command-options come before command-arguments. Turning this on for a subcommand requires
+     * positional options to have been enabled on the program (parent commands).
+     *
+     * The default behaviour is non-positional and options may appear before or after command-arguments.
+     *
+     * @returns `this` command for chaining
+     */
+    passThroughOptions(passThrough?: boolean): this;
 
     /**
      * Parse `argv`, setting options and invoking commands when defined.
@@ -450,7 +479,7 @@ declare namespace commander {
     /**
      * Return an object containing options as key-value pairs
      */
-    opts(): { [key: string]: any };
+    opts(): OptionValues;
 
     /**
      * Set the description.

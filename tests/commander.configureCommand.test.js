@@ -76,3 +76,11 @@ test('when storeOptionsAsProperties(false) then opts+command passed to action', 
   program.parse(['node', 'test', 'value']);
   expect(callback).toHaveBeenCalledWith('value', program.opts(), program);
 });
+
+test('when storeOptionsAsProperties() after adding option then throw', () => {
+  const program = new commander.Command();
+  program.option('--port <number>', 'port number', '80');
+  expect(() => {
+    program.storeOptionsAsProperties(false);
+  }).toThrow();
+});

@@ -141,4 +141,16 @@ describe('Command methods that should return this for chaining', () => {
     const result = program.configureOutput({ });
     expect(result).toBe(program);
   });
+
+  test('when call .passThroughOptions() then returns this', () => {
+    const program = new Command();
+    const result = program.passThroughOptions();
+    expect(result).toBe(program);
+  });
+
+  test('when call .enablePositionalOptions() then returns this', () => {
+    const program = new Command();
+    const result = program.enablePositionalOptions();
+    expect(result).toBe(program);
+  });
 });
