@@ -1127,7 +1127,7 @@ class Command extends EventEmitter {
   };
 
   /**
-   * Allow excess arguments on the command line. Pass false to make excess arguments an error.
+   * Allow excess command-arguments on the command line. Pass false to make excess arguments an error.
    *
    * @param {Boolean} [allowExcess=true] - if `true` or omitted, no error will be thrown
    * for excess arguments.
