@@ -48,7 +48,7 @@
   - [支持](#%e6%94%af%e6%8c%81)
     - [企业使用 Commander](#%e4%bc%81%e4%b8%9a%e4%bd%bf%e7%94%a8-commander)
 
-关于本文档中使用的术语，请见[术语表](./docs/terminology.md)
+关于本文档中使用的术语，请见[术语表](./docs/zh-CN/%E6%9C%AF%E8%AF%AD%E8%A1%A8.md)
 
 ## 安装
 
@@ -204,7 +204,7 @@ $ pizza-options --cheese mozzarella
 add cheese type mozzarella
 ```
 
-关于可能有歧义的用例，请见[可变参数的选项](./docs/options-taking-varying-arguments.md)
+关于可能有歧义的用例，请见[可变参数的选项](./docs/zh-CN/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E7%9A%84%E9%80%89%E9%A1%B9.md)。
 
 ### 必填选项
 
@@ -252,7 +252,7 @@ $ collect --letter -n 1 -n 2 3 -- operand
 Options:  { number: [ '1', '2', '3' ], letter: true }
 Remaining arguments:  [ 'operand' ]
 ```
-关于可能有歧义的用例，请见[可变参数的选项](./docs/options-taking-varying-arguments.md)
+关于可能有歧义的用例，请见[可变参数的选项](./docs/zh-CN/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E7%9A%84%E9%80%89%E9%A1%B9.md)。
 
 ### 版本选项
 
@@ -795,8 +795,8 @@ program
 
 请参考关于如下话题的其他文档：
 
-- [不再推荐使用的功能](./docs/deprecated.md)。这些功能仍受到支持，以保证向后兼容。
-- [选项参数详解](./docs/options-taking-varying-arguments.md)
+- [不再推荐使用的功能](./docs/zh-CN/%E4%B8%8D%E5%86%8D%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8%E7%9A%84%E5%8A%9F%E8%83%BD.md)。这些功能仍受到支持，以保证向后兼容。
+- [可变参数的选项](./docs/zh-CN/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E7%9A%84%E9%80%89%E9%A1%B9.md)
 
 ## 例子
 
