@@ -1725,10 +1725,9 @@ class Command extends EventEmitter {
   };
 
   /**
-   * `Option` is missing an argument, but received `flag` or nothing.
+   * `Option` is missing an argument.
    *
    * @param {Option} option
-   * @param {string} [flag]
    * @api private
    */
 
