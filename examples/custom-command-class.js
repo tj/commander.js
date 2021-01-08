@@ -4,47 +4,47 @@
 const commander = require('../'); // include commander in git clone of commander repo
 
 // Use a class override to customise the command and its subcommands.
-//
-// Configuring the command for compatibility with Commander v6 defaults behaviours.
 
-class Command6 extends commander.Command {
-  constructor(name) {
-    super(name);
-
-    // Revert to Commander v6 behaviours.
-    this.storeOptionsAsProperties();
-    this.allowExcessArguments();
-  }
-
+class CommandWithTrace extends commander.Command {
   createCommand(name) {
-    return new Command6(name);
+    const cmd = new CommandWithTrace(name);
+    // Add an option to subcommands created using `.command()`
+    cmd.option('-t, --trace', 'display extra information when run command');
+    return cmd;
   }
 };
 
-function inspectCommand(command, optionName) {
+function inpectCommand(command) {
   // The option value is stored as property on command because we called .storeOptionsAsProperties()
-  console.log(`Inspecting '${command.name()}'`);
-  console.log(`option '${optionName}': ${command[optionName]}`);
+  console.log(`Called '${command.name()}'`);
   console.log(`args: ${command.args}`);
+  console.log('opts: %o', command.opts());
 };
 
-const program = new Command6('program')
-  .option('-p, --port <number>')
-  .action(() => {
-    inspectCommand(program, 'port');
+const program = new CommandWithTrace('program')
+  .option('-v, ---verbose')
+  .action((options, command) => {
+    inpectCommand(command);
   });
 
 program
-  .command('sub')
-  .option('-d, --debug')
-  .action((options, command) => {
-    inspectCommand(command, 'debug');
+  .command('serve [params...]')
+  .option('-p, --port <number>', 'port number')
+  .action((params, options, command) => {
+    inpectCommand(command);
+  });
+
+program
+  .command('build <target>')
+  .action((buildTarget, options, command) => {
+    inpectCommand(command);
   });
 
 program.parse();
 
-// We can pass excess arguments without an error as we called .allowExcessArguments()
-//
 // Try the following:
-//    node custom-command-class.js --port 80 extra arguments
-//    node custom-command-class.js sub --debug extra arguments
+//    node custom-command-class.js --help
+//    node custom-command-class.js serve --help
+//    node custom-command-class.js serve -t -p 80 a b c
+//    node custom-command-class.js build --help
+//    node custom-command-class.js build --trace foo

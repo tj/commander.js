@@ -535,7 +535,7 @@ class Command extends EventEmitter {
     this.options = [];
     this.parent = null;
     this._allowUnknownOption = false;
-    this._allowExcessArguments = false;
+    this._allowExcessArguments = true;
     this._args = [];
     this.rawArgs = null;
     this._scriptPath = null;
@@ -635,6 +635,7 @@ class Command extends EventEmitter {
     cmd._exitCallback = this._exitCallback;
     cmd._storeOptionsAsProperties = this._storeOptionsAsProperties;
     cmd._combineFlagAndOptionalValue = this._combineFlagAndOptionalValue;
+    cmd._allowExcessArguments = this._allowExcessArguments;
     cmd._enablePositionalOptions = this._enablePositionalOptions;
 
     cmd._executableFile = opts.executableFile || null; // Custom name for executable file, set missing to null to match constructor
@@ -1126,7 +1127,7 @@ class Command extends EventEmitter {
   };
 
   /**
-   * Allow excess arguments on the command line.
+   * Allow excess command-arguments on the command line. Pass false to make excess arguments an error.
    *
    * @param {Boolean} [allowExcess=true] - if `true` or omitted, no error will be thrown
    * for excess arguments.
@@ -1724,10 +1725,9 @@ class Command extends EventEmitter {
   };
 
   /**
-   * `Option` is missing an argument, but received `flag` or nothing.
+   * `Option` is missing an argument.
    *
    * @param {Option} option
-   * @param {string} [flag]
    * @api private
    */
 

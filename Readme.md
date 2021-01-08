@@ -483,7 +483,8 @@ async function main() {
 }
 ```
 
-A command's options and arguments on the command line are validated when the command is used. Any unknown options or unexpected command-arguments will be reported as an error, or you can suppress these checks with `.allowUnknownOption()` and `.allowExcessArguments()`.
+A command's options and arguments on the command line are validated when the command is used. Any unknown options or missing arguments will be reported as an error. You can suppress the unknown option checks with `.allowUnknownOption()`. By default it is not an error to
+pass more arguments than declared, but you can make this an error with `.allowExcessArguments(false)`.
 
 ### Stand-alone executable (sub)commands
 
@@ -715,8 +716,10 @@ program --port=80 arg
 program arg --port=80
 ```
 
-
 By default the option processing shows an error for an unknown option. To have an unknown option treated as an ordinary command-argument and continue looking for options, use `.allowUnknownOption()`. This lets you mix known and unknown options.
+
+By default the argument processing does not display an error for more command-arguments than expected.
+To display an error for excess arguments, use`.allowExcessArguments(false)`.
 
 ### Legacy options as properties 
 
