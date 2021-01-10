@@ -1271,6 +1271,8 @@ class Command extends EventEmitter {
         throw new Error(`unexpected parse option { from: '${parseOptions.from}' }`);
     }
     // @ts-ignore: unknown property
+    // mainModule is deprecated, revisit coverage when change code.
+    // istanbul ignore next
     if (!this._scriptPath && process.mainModule) {
       // @ts-ignore: unknown property
       this._scriptPath = process.mainModule.filename;
@@ -1316,6 +1318,8 @@ class Command extends EventEmitter {
    * @api private
    */
 
+  /* _executeSubCommand is tested mostly by spawned calls which do not register in coverage. Don't count for now. */
+  /* istanbul ignore next */
   _executeSubCommand(subcommand, args) {
     args = args.slice();
     let launchWithNode = false; // Use node for source targets so do not need to get permissions correct, and on Windows.
