@@ -4,8 +4,15 @@ const commander = require('../');
 // There is some overlap with the higher level Command tests (which predate Help).
 
 describe('wrap', () => {
-  test('when string fits into width then no wrap', () => {
+  test('when string fits into width then returns input', () => {
     const text = 'a '.repeat(24) + 'a';
+    const helper = new commander.Help();
+    const wrapped = helper.wrap(text, 50, 3);
+    expect(wrapped).toEqual(text);
+  });
+
+  test('when string shorter than indent then returns input', () => {
+    const text = 'a';
     const helper = new commander.Help();
     const wrapped = helper.wrap(text, 50, 3);
     expect(wrapped).toEqual(text);
