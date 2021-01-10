@@ -68,6 +68,22 @@ describe('helpOption', () => {
     expect(helpInformation).toMatch(/-C,--custom-help +custom help output/);
   });
 
+  test('when helpOption has just flags then helpInformation includes default description', () => {
+    const program = new commander.Command();
+    program
+      .helpOption('-C,--custom-help');
+    const helpInformation = program.helpInformation();
+    expect(helpInformation).toMatch(/-C,--custom-help +display help for command/);
+  });
+
+  test('when helpOption has just description then helpInformation includes default flags', () => {
+    const program = new commander.Command();
+    program
+      .helpOption(undefined, 'custom help output');
+    const helpInformation = program.helpInformation();
+    expect(helpInformation).toMatch(/-h, --help +custom help output/);
+  });
+
   test('when helpOption(false) then helpInformation does not include --help', () => {
     const program = new commander.Command();
     program
