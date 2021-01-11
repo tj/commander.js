@@ -121,7 +121,7 @@ declare namespace commander {
      * Wrap the given string to width characters per line, with lines after the first indented.
      * Do not wrap if insufficient room for wrapping, or string is manually formatted.
      */
-    wrap(str: string, width: number, indent: number): string;
+    wrap(str: string, width: number, indent: number, minColumnWidth?: number): string;
 
     /** Generate the built-in help text. */
     formatHelp(cmd: Command, helper: Help): string;
