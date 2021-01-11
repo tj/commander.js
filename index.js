@@ -311,7 +311,7 @@ class Help {
 
   /**
    * Wrap the given string to width characters per line, with lines after the first indented.
-   * Do not wrap if insufficient room for wrapping, or string is manually formatted.
+   * Do not wrap if insufficient room for wrapping (minColumnWidth), or string is manually formatted.
    *
    * @param {string} str
    * @param {number} width
