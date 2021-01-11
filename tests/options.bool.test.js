@@ -106,6 +106,16 @@ describe('boolean flag with non-boolean default', () => {
     program.parse(['node', 'test', '--olives']);
     expect(program.opts().olives).toBe(flagValue);
   });
+
+  test('when flag implied and negated then value is false', () => {
+    const flagValue = 'black';
+    const program = new commander.Command();
+    program
+      .option('-v, --olives', 'Add olives? Sorry we only have black.', flagValue)
+      .option('--no-olives');
+    program.parse(['node', 'test', '--olives', '--no-olives']);
+    expect(program.opts().olives).toBe(false);
+  });
 });
 
 // Regression test for #1301 with `-no-` in middle of option

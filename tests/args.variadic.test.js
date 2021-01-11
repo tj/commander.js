@@ -68,4 +68,13 @@ describe('variadic argument', () => {
       program.command('sub <variadicArg...> [optionalArg]');
     }).toThrow("only the last argument can be variadic 'variadicArg'");
   });
+
+  test('when variadic argument then usage shows variadic', () => {
+    const program = new commander.Command();
+    program
+      .name('foo')
+      .arguments('[args...]');
+
+    expect(program.usage()).toBe('[options] [args...]');
+  });
 });
