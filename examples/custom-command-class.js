@@ -8,11 +8,11 @@ const commander = require('../'); // include commander in git clone of commander
 
 class MyCommand extends commander.Command {
   createCommand(name) {
-    const cmd = new MyCommand(name);
+    const cmd = new MyCommand();
     cmd.option('-d,--debug', 'output options');
     return cmd;
   }
-};
+}
 
 const program = new MyCommand();
 program
