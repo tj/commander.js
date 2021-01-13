@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
-## [7.0.0] (date goes here)
+## [7.0.0] (2021-01-15)
 
 ### Added
 
@@ -373,7 +373,8 @@ to expand `-fb` to `-f -b` rather than `-f b`.
 [#1409]: https://github.com/tj/commander.js/pull/1409
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
-[7.0.0-1]: https://github.com/tj/commander.js/compare/v7.0.0-1...v7.0.0-2
+[7.0.0]: https://github.com/tj/commander.js/compare/v6.2.1...v7.0.0
+[7.0.0-2]: https://github.com/tj/commander.js/compare/v7.0.0-1...v7.0.0-2
 [7.0.0-1]: https://github.com/tj/commander.js/compare/v7.0.0-0...v7.0.0-1
 [7.0.0-0]: https://github.com/tj/commander.js/compare/v6.2.0...v7.0.0-0
 [6.2.1]: https://github.com/tj/commander.js/compare/v6.2.0..v6.2.1
