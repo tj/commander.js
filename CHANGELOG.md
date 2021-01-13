@@ -8,10 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
-## [7.0.0] (date goes here)
+## [7.0.0] (2021-01-15)
 
 ### Added
 
+- `.enablePositionalOptions()` to let program and subcommand reuse same option ([#1427])
+- `.passThroughOptions()` to pass options through to other programs without needing `--` ([#1427])
 - `.allowExcessArguments(false)` to show an error message if there are too many command-arguments on command line for the action handler ([#1409])
 - `.configureOutput()` to modify use of stdout and stderr or customise display of errors ([#1387])
 - use `.addHelpText()` to add text before or after the built-in help, for just current command or also for all subcommands ([#1296])
@@ -44,6 +46,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
   - first line of command description was wrapping two characters early
   - pad width calculation was not including help option and help command
   - pad width calculation was including hidden options and commands
+- improve backwards compatibility for custom command event listeners ([#1403])
   
 ### Deleted
 
@@ -370,10 +373,13 @@ to expand `-fb` to `-f -b` rather than `-f b`.
 [#1380]: https://github.com/tj/commander.js/pull/1380
 [#1387]: https://github.com/tj/commander.js/pull/1387
 [#1390]: https://github.com/tj/commander.js/pull/1390
+[#1403]: https://github.com/tj/commander.js/pull/1403
 [#1409]: https://github.com/tj/commander.js/pull/1409
+[#1427]: https://github.com/tj/commander.js/pull/1427
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
-[7.0.0-1]: https://github.com/tj/commander.js/compare/v7.0.0-1...v7.0.0-2
+[7.0.0]: https://github.com/tj/commander.js/compare/v6.2.1...v7.0.0
+[7.0.0-2]: https://github.com/tj/commander.js/compare/v7.0.0-1...v7.0.0-2
 [7.0.0-1]: https://github.com/tj/commander.js/compare/v7.0.0-0...v7.0.0-1
 [7.0.0-0]: https://github.com/tj/commander.js/compare/v6.2.0...v7.0.0-0
 [6.2.1]: https://github.com/tj/commander.js/compare/v6.2.0..v6.2.1
