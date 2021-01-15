@@ -53,7 +53,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - *Breaking:* `.passCommandToAction()` ([#1409])
     - no longer needed as action handler is passed options and command
 - *Breaking:* "extra arguments" parameter to action handler ([#1409])
-    - if being used to detect excess arguments, there is now an error displayed by default
+    - if being used to detect excess arguments, there is now an error available by setting `.allowExcessArguments(false)`
 
 ### Migration Tips
 
