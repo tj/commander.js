@@ -26,11 +26,17 @@
     "typescript-checkJS": "tsc --allowJS --checkJS index.js --noEmit",
     "test-all": "npm run test && npm run lint && npm run typescript-lint && npm run typescript-checkJS"
   },
-  "main": "index",
+  "main": "./index.js",
   "files": [
     "index.js",
+    "wrapper.mjs",
     "typings/index.d.ts"
   ],
+  "type": "commonjs",
+  "exports": {
+    "import": "./wrapper.mjs",
+    "default": "./index.js"
+  },
   "dependencies": {},
   "devDependencies": {
     "@types/jest": "^26.0.20",
