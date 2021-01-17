@@ -11,21 +11,23 @@ function check(condition, explanation) {
   }
 }
 
-function checkConstructor(classConstructor, name) {
-  console.log(`Checking class ${name}`);
-  check(typeof classConstructor === 'function', `${name} is function (constructor)`);
-  check(classConstructor.name === name, `(constructor) name is ${name}`);
+function checkClass(obj, name) {
+  console.log(`Checking ${name}`);
+  check(typeof obj === 'object', `new ${name}() produces object`);
+  check(obj.constructor.name === name, `object constructor is ${name}`);
 }
 
+console.log('Checking program');
 check(typeof program === 'object', 'program is object');
 check(program.constructor.name === 'Command', 'program is class Command');
 
-checkConstructor(Command, 'Command');
-checkConstructor(Option, 'Option');
-checkConstructor(CommanderError, 'CommanderError');
-checkConstructor(InvalidOptionArgumentError, 'InvalidOptionArgumentError');
-checkConstructor(Help, 'Help');
+checkClass(new Command(), 'Command');
+checkClass(new Option('-e, --example'), 'Option');
+checkClass(new CommanderError(1, 'code', 'failed'), 'CommanderError');
+checkClass(new InvalidOptionArgumentError('failed'), 'InvalidOptionArgumentError');
+checkClass(new Help(), 'Help');
 
+console.log('Checking createCommand');
 check(typeof createCommand === 'function', 'createCommand is function');
 
 console.log('No problems');
