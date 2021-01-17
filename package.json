@@ -33,10 +33,6 @@
     "typings/index.d.ts"
   ],
   "type": "commonjs",
-  "exports": {
-    "import": "./wrapper.mjs",
-    "default": "./index.js"
-  },
   "dependencies": {},
   "devDependencies": {
     "@types/jest": "^26.0.20",
