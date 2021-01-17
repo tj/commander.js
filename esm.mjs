@@ -1,4 +1,4 @@
-import commander from "./index.js"
+import commander from './index.js';
 
 export const program = commander.program;
 export const Option = commander.Option;

@@ -19,7 +19,7 @@
     "url": "https://github.com/tj/commander.js.git"
   },
   "scripts": {
-    "lint": "eslint index.js \"tests/**/*.js\"",
+    "lint": "eslint index.js esm.mjs \"tests/**/*.js\"",
     "typescript-lint": "eslint typings/*.ts",
     "test": "jest && npm run test-typings",
     "test-typings": "tsc -p tsconfig.json",
