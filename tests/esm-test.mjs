@@ -2,7 +2,6 @@ import { program, Command, Option, CommanderError, InvalidOptionArgumentError, H
 
 // Do some simple checks that expected imports are available.
 // Run using `npm run test-esm`.
-// Not included in `npm run test-all` as depends on node version supporting esm.
 
 function check(condition, explanation) {
   if (!condition) {
