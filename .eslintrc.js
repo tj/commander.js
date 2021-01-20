@@ -1,5 +1,5 @@
 const javascriptSettings = {
-  files: ['*.js'],
+  files: ['*.js', '*.mjs'],
   extends: [
     'standard',
     'plugin:jest/recommended'
@@ -59,6 +59,12 @@ module.exports = {
   },
   overrides: [
     javascriptSettings,
-    typescriptSettings
+    typescriptSettings,
+    {
+      files: ['*.mjs'],
+      parserOptions: {
+        sourceType: 'module'
+      }
+    }
   ]
 };
