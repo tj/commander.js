@@ -73,13 +73,22 @@ const program = new Command();
 program.version('0.0.1');
 ```
 
-For named imports with ECMAScript Modules, import from `commander/esm.mjs`.
+For named imports in ECMAScript modules, import from `commander/esm.mjs`.
 
 ```js
+// index.mjs
 import { Command } from 'commander/esm.mjs';
 const program = new Command();
-program.version('0.0.1');
 ```
+
+And in TypeScript:
+
+```ts
+// index.ts
+import { Command } from 'commander';
+const program = new Command();
+```
+
 
 ## Options
 
@@ -746,8 +755,6 @@ program
 ```
 
 ### TypeScript
-
-The Commander package includes its TypeScript Definition file.
 
 If you use `ts-node` and  stand-alone executable subcommands written as `.ts` files, you need to call your program through node to get the subcommands called correctly. e.g.
 
