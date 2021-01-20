@@ -39,7 +39,6 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Legacy options as properties](#legacy-options-as-properties)
     - [TypeScript](#typescript)
     - [createCommand()](#createcommand)
-    - [Import into ECMAScript Module](#import-into-ecmascript-module)
     - [Node options such as `--harmony`](#node-options-such-as---harmony)
     - [Debugging stand-alone executable subcommands](#debugging-stand-alone-executable-subcommands)
     - [Override exit and output handling](#override-exit-and-output-handling)
@@ -70,6 +69,14 @@ For larger programs which may use commander in multiple ways, including unit tes
 
 ```js
 const { Command } = require('commander');
+const program = new Command();
+program.version('0.0.1');
+```
+
+For named imports with ECMAScript Modules, import from `commander/esm.mjs`.
+
+```js
+import { Command } from 'commander/esm.mjs';
 const program = new Command();
 program.version('0.0.1');
 ```
@@ -760,17 +767,6 @@ const program = createCommand();
 `createCommand` is also a method of the Command object, and creates a new command rather than a subcommand. This gets used internally
 when creating subcommands using `.command()`, and you may override it to
 customise the new subcommand (example file [custom-command-class.js](./examples/custom-command-class.js)).
-
-### Import into ECMAScript Module
-
-Commander is currently a CommonJS package, and the default export can be imported into an ES Module:
-
-```js
-// index.mjs
-import commander from 'commander';
-const program = commander.program;
-const newCommand = new commander.Command();
-```
 
 ### Node options such as `--harmony`
 
