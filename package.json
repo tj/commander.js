@@ -30,7 +30,7 @@
   "main": "./index.js",
   "files": [
     "index.js",
-    "wrapper.mjs",
+    "esm.mjs",
     "typings/index.d.ts"
   ],
   "type": "commonjs",
