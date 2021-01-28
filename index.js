@@ -1270,10 +1270,8 @@ class Command extends EventEmitter {
       default:
         throw new Error(`unexpected parse option { from: '${parseOptions.from}' }`);
     }
-    // @ts-ignore: unknown property
-    if (!this._scriptPath && process.mainModule) {
-      // @ts-ignore: unknown property
-      this._scriptPath = process.mainModule.filename;
+    if (!this._scriptPath && require.main) {
+      this._scriptPath = require.main.filename;
     }
 
     // Guess name, used in usage in help.
@@ -1327,10 +1325,8 @@ class Command extends EventEmitter {
     // Want the entry script as the reference for command name and directory for searching for other files.
     let scriptPath = this._scriptPath;
     // Fallback in case not set, due to how Command created or called.
-    // @ts-ignore: unknown property
-    if (!scriptPath && process.mainModule) {
-      // @ts-ignore: unknown property
-      scriptPath = process.mainModule.filename;
+    if (!scriptPath && require.main) {
+      scriptPath = require.main.filename;
     }
 
     let baseDir;
