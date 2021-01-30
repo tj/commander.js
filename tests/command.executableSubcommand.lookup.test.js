@@ -83,11 +83,23 @@ testOrSkipOnWindows('when subcommand file is double symlink then lookup succeeds
 
 test('when subcommand suffix is .ts then lookup succeeds', async() => {
   // We support looking for ts files for ts-node in particular, but don't need to test ts-node itself.
-  // The program and the subcommand `pm-install.ts` are both plain JavaScript code.
-  const binLinkTs = path.join(__dirname, 'fixtures-ts', 'pm.ts');
+  // The subcommand is both plain JavaScript code for this test.
+  const binLinkTs = path.join(__dirname, 'fixtures-extensions', 'pm.js');
   // childProcess.execFile('node', ['-r', 'ts-node/register', binLinkTs, 'install'], function(_error, stdout, stderr) {
-  const { stdout } = await execFileAsync('node', [binLinkTs, 'install']);
-  expect(stdout).toBe('install\n');
+  const { stdout } = await execFileAsync('node', [binLinkTs, 'try-ts']);
+  expect(stdout).toBe('found .ts\n');
+});
+
+test('when subcommand suffix is .cjs then lookup succeeds', async() => {
+  const binLinkTs = path.join(__dirname, 'fixtures-extensions', 'pm.js');
+  const { stdout } = await execFileAsync('node', [binLinkTs, 'try-cjs']);
+  expect(stdout).toBe('found .cjs\n');
+});
+
+test('when subcommand suffix is .mjs then lookup succeeds', async() => {
+  const binLinkTs = path.join(__dirname, 'fixtures-extensions', 'pm.js');
+  const { stdout } = await execFileAsync('node', [binLinkTs, 'try-mjs']);
+  expect(stdout).toBe('found .mjs\n');
 });
 
 test('when subsubcommand then lookup sub-sub-command', async() => {
