@@ -1,7 +1,7 @@
 import * as commander from './index';
 import {expectType, expectAssignable} from 'tsd';
 
-// We are are not just checking return types here, we are also implicitly checking that the expected syntas is allowed.
+// We are are not just checking return types here, we are also implicitly checking that the expected syntax is allowed.
 
 const program: commander.Command = new commander.Command();
 // program.silly; // <-- Error, hurrah!
