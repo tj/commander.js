@@ -23,7 +23,7 @@
     "typescript-lint": "eslint typings/*.ts",
     "test": "jest && npm run test-typings",
     "test-esm": "node --experimental-modules ./tests/esm-test.mjs",
-    "test-typings": "tsc -p tsconfig.json",
+    "test-typings": "tsd",
     "typescript-checkJS": "tsc --allowJS --checkJS index.js --noEmit",
     "test-all": "npm run test && npm run lint && npm run typescript-lint && npm run typescript-checkJS && npm run test-esm"
   },
