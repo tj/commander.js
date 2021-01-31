@@ -426,6 +426,18 @@ class Option {
   };
 
   /**
+   * @api private
+   */
+
+  _concatValue(value, previous) {
+    if (previous === this.defaultValue || !Array.isArray(previous)) {
+      return [value];
+    }
+
+    return previous.concat(value);
+  }
+
+  /**
    * Only allow option value to be one of choices.
    *
    * @param {string[]} values
@@ -434,9 +446,12 @@ class Option {
 
   choices(values) {
     this.argChoices = values;
-    this.parseArg = (arg) => {
+    this.parseArg = (arg, previous) => {
       if (!values.includes(arg)) {
         throw new InvalidOptionArgumentError(`Allowed choices are ${values.join(', ')}.`);
+      }
+      if (this.variadic) {
+        return this._concatValue(arg, previous);
       }
       return arg;
     };
@@ -976,11 +991,7 @@ class Command extends EventEmitter {
           throw err;
         }
       } else if (val !== null && option.variadic) {
-        if (oldValue === defaultValue || !Array.isArray(oldValue)) {
-          val = [val];
-        } else {
-          val = oldValue.concat(val);
-        }
+        val = option._concatValue(val, oldValue);
       }
 
       // unassigned or boolean value
