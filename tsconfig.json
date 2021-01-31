@@ -13,8 +13,5 @@
         "noEmit": true,
         "forceConsistentCasingInFileNames": true
     },
-    "files": [
-        "typings/index.d.ts",
-        "typings/commander-tests.ts"
-    ]
+    "include": ["**/*.ts"],
 }
