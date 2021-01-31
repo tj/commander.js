@@ -40,6 +40,24 @@ describe('variadic option with required value', () => {
     expect(program.opts().required).toEqual(['one', 'two']);
   });
 
+  test('when variadic used with choices and one value then set in array', () => {
+    const program = new commander.Command();
+    program
+      .addOption(new commander.Option('-r,--required <value...>').choices(['one', 'two']));
+
+    program.parse(['--required', 'one'], { from: 'user' });
+    expect(program.opts().required).toEqual(['one']);
+  });
+
+  test('when variadic used with choices and two values then set in array', () => {
+    const program = new commander.Command();
+    program
+      .addOption(new commander.Option('-r,--required <value...>').choices(['one', 'two']));
+
+    program.parse(['--required', 'one', 'two'], { from: 'user' });
+    expect(program.opts().required).toEqual(['one', 'two']);
+  });
+
   test('when variadic with short combined argument then not variadic', () => {
     const program = new commander.Command();
     program
