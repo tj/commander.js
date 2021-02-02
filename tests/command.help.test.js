@@ -251,5 +251,15 @@ test('when arguments described then included in helpInformation', () => {
     .helpOption(false)
     .description('description', { file: 'input source' });
   const helpInformation = program.helpInformation();
-  expect(helpInformation).toMatch(/Arguments:\n +file +input source/); // [sic], extra line
+  expect(helpInformation).toMatch(/Arguments:\n +file +input source/);
+});
+
+test('when arguments described and empty description then arguments included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .arguments('<file>')
+    .helpOption(false)
+    .description('', { file: 'input source' });
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch(/Arguments:\n +file +input source/);
 });
