@@ -27,7 +27,7 @@ describe('unknownOption', () => {
 
     let caughtErr;
     try {
-      program.parse(['node', 'info', '--NONSENSE']);
+      program.parse(['node', 'test', 'info', '--NONSENSE']);
     } catch (err) {
       caughtErr = err;
     }
