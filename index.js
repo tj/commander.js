@@ -1476,6 +1476,7 @@ class Command extends EventEmitter {
       outputHelpIfRequested(this, parsed.unknown);
       this._checkForMissingMandatoryOptions();
 
+      // We do not always call this check to avoid masking a "better" error, like unknown command.
       const checkForUnknownOptions = () => {
         if (parsed.unknown.length > 0) {
           this.unknownOption(parsed.unknown[0]);
@@ -1508,7 +1509,8 @@ class Command extends EventEmitter {
         if (this._findCommand('*')) { // legacy default command
           checkForUnknownOptions();
           this._dispatchSubcommand('*', operands, unknown);
-        } else if (this.listenerCount('command:*')) { // suggestions
+        } else if (this.listenerCount('command:*')) {
+          // skip option check, emit event for possible misspelling suggestion
           this.emit('command:*', operands, unknown);
         } else if (this.commands.length) {
           this.unknownCommand();
