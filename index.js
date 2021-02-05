@@ -1514,7 +1514,6 @@ class Command extends EventEmitter {
           this.unknownCommand();
         }
       } else if (this.commands.length) {
-        checkForUnknownOptions();
         // This command has subcommands and nothing hooked up at this level, so display help.
         this.help({ error: true });
       } else {
