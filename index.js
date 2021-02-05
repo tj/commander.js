@@ -1507,7 +1507,6 @@ class Command extends EventEmitter {
         this.parent.emit(commandEvent, operands, unknown); // legacy
       } else if (operands.length) {
         if (this._findCommand('*')) { // legacy default command
-          checkForUnknownOptions();
           this._dispatchSubcommand('*', operands, unknown);
         } else if (this.listenerCount('command:*')) {
           // skip option check, emit event for possible misspelling suggestion
