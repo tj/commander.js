@@ -140,4 +140,18 @@ describe(".on('command:*')", () => {
     program.parse(['node', 'test', 'unrecognised-command']);
     expect(mockAction).toHaveBeenCalled();
   });
+
+  test('when unrecognised command/argument and unknown option then listener called', () => {
+    // Give listener a chance to make a suggestion for misspelled command. The option
+    // could only be unknown because the command is not correct.
+    // Regression identified in https://github.com/tj/commander.js/issues/1460#issuecomment-772313494 
+    const mockAction = jest.fn();
+    const program = new commander.Command();
+    program
+      .command('install');
+    program
+      .on('command:*', mockAction);
+    program.parse(['node', 'test', 'intsall', '--unknown']);
+    expect(mockAction).toHaveBeenCalled();
+  });
 });
