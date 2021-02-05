@@ -1475,12 +1475,16 @@ class Command extends EventEmitter {
 
       outputHelpIfRequested(this, parsed.unknown);
       this._checkForMissingMandatoryOptions();
-      if (parsed.unknown.length > 0) {
-        this.unknownOption(parsed.unknown[0]);
-      }
+
+      const checkForUnknownOptions = () => {
+        if (parsed.unknown.length > 0) {
+          this.unknownOption(parsed.unknown[0]);
+        }
+      };
 
       const commandEvent = `command:${this.name()}`;
       if (this._actionHandler) {
+        checkForUnknownOptions();
         // Check expected arguments and collect variadic together.
         const args = this.args.slice();
         this._args.forEach((arg, i) => {
@@ -1498,8 +1502,10 @@ class Command extends EventEmitter {
         this._actionHandler(args);
         if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
       } else if (this.parent && this.parent.listenerCount(commandEvent)) {
+        checkForUnknownOptions();
         this.parent.emit(commandEvent, operands, unknown); // legacy
       } else if (operands.length) {
+        checkForUnknownOptions();
         if (this._findCommand('*')) { // legacy
           this._dispatchSubcommand('*', operands, unknown);
         } else if (this.listenerCount('command:*')) {
@@ -1508,9 +1514,11 @@ class Command extends EventEmitter {
           this.unknownCommand();
         }
       } else if (this.commands.length) {
+        checkForUnknownOptions();
         // This command has subcommands and nothing hooked up at this level, so display help.
         this.help({ error: true });
       } else {
+        checkForUnknownOptions();
         // fall through for caller to handle after calling .parse()
       }
     }
