@@ -64,6 +64,37 @@ describe(".command('*')", () => {
     program.parse(['node', 'test', 'unrecognised-command']);
     expect(mockAction).toHaveBeenCalled();
   });
+
+  test('when unrecognised argument and known option then asterisk action called', () => {
+    const mockAction = jest.fn();
+    const program = new commander.Command();
+    program
+      .command('install');
+    const star = program
+      .command('*')
+      .arguments('[args...]')
+      .option('-d, --debug')
+      .action(mockAction);
+    program.parse(['node', 'test', 'unrecognised-command', '--debug']);
+    expect(mockAction).toHaveBeenCalled();
+    expect(star.opts().debug).toEqual(true);
+  });
+
+  test('when unrecognised argument and unknown option then error', () => {
+    // This is a change in behaviour from v2, but is consistent with modern better detection of invalid options
+    const mockAction = jest.fn();
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .command('install');
+    program
+      .command('*')
+      .arguments('[args...]')
+      .action(mockAction);
+    expect(() => {
+      program.parse(['node', 'test', 'unrecognised-command', '--unknown']);
+    }).toThrow();
+  });
 });
 
 // Test .on explicitly rather than assuming covered by .command
