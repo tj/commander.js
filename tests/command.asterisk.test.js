@@ -66,6 +66,7 @@ describe(".command('*')", () => {
   });
 
   test('when unrecognised argument and known option then asterisk action called', () => {
+    // This tests for a regression between v4 and v5. Unknown option should not be detected by program.
     const mockAction = jest.fn();
     const program = new commander.Command();
     program
