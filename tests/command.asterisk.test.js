@@ -81,20 +81,27 @@ describe(".command('*')", () => {
     expect(star.opts().debug).toEqual(true);
   });
 
-  test('when unrecognised argument and unknown option then error', () => {
-    // This is a change in behaviour from v2, but is consistent with modern better detection of invalid options
+  test('when non-command argument and unknown option then error for unknown option', () => {
+    // This is a change in behaviour from v2 which did not error, but is consistent with modern better detection of invalid options
     const mockAction = jest.fn();
     const program = new commander.Command();
     program
       .exitOverride()
+      .configureOutput({
+        writeErr: () => {}
+      })
       .command('install');
     program
       .command('*')
       .arguments('[args...]')
       .action(mockAction);
-    expect(() => {
-      program.parse(['node', 'test', 'unrecognised-command', '--unknown']);
-    }).toThrow();
+    let caughtErr;
+    try {
+      program.parse(['node', 'test', 'some-argument', '--unknown']);
+    } catch (err) {
+      caughtErr = err;
+    }
+    expect(caughtErr.code).toEqual('commander.unknownOption');
   });
 });
 
@@ -144,7 +151,7 @@ describe(".on('command:*')", () => {
   test('when unrecognised command/argument and unknown option then listener called', () => {
     // Give listener a chance to make a suggestion for misspelled command. The option
     // could only be unknown because the command is not correct.
-    // Regression identified in https://github.com/tj/commander.js/issues/1460#issuecomment-772313494 
+    // Regression identified in https://github.com/tj/commander.js/issues/1460#issuecomment-772313494
     const mockAction = jest.fn();
     const program = new commander.Command();
     program
