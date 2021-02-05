@@ -1505,13 +1505,15 @@ class Command extends EventEmitter {
         checkForUnknownOptions();
         this.parent.emit(commandEvent, operands, unknown); // legacy
       } else if (operands.length) {
-        checkForUnknownOptions();
-        if (this._findCommand('*')) { // legacy
+        if (this._findCommand('*')) { // legacy default command
+          checkForUnknownOptions();
           this._dispatchSubcommand('*', operands, unknown);
-        } else if (this.listenerCount('command:*')) {
+        } else if (this.listenerCount('command:*')) { // suggestions
           this.emit('command:*', operands, unknown);
         } else if (this.commands.length) {
           this.unknownCommand();
+        } else {
+          checkForUnknownOptions();
         }
       } else if (this.commands.length) {
         // This command has subcommands and nothing hooked up at this level, so display help.
