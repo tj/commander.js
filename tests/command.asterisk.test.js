@@ -64,6 +64,45 @@ describe(".command('*')", () => {
     program.parse(['node', 'test', 'unrecognised-command']);
     expect(mockAction).toHaveBeenCalled();
   });
+
+  test('when unrecognised argument and known option then asterisk action called', () => {
+    // This tests for a regression between v4 and v5. Known default option should not be rejected by program.
+    const mockAction = jest.fn();
+    const program = new commander.Command();
+    program
+      .command('install');
+    const star = program
+      .command('*')
+      .arguments('[args...]')
+      .option('-d, --debug')
+      .action(mockAction);
+    program.parse(['node', 'test', 'unrecognised-command', '--debug']);
+    expect(mockAction).toHaveBeenCalled();
+    expect(star.opts().debug).toEqual(true);
+  });
+
+  test('when non-command argument and unknown option then error for unknown option', () => {
+    // This is a change in behaviour from v2 which did not error, but is consistent with modern better detection of invalid options
+    const mockAction = jest.fn();
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .configureOutput({
+        writeErr: () => {}
+      })
+      .command('install');
+    program
+      .command('*')
+      .arguments('[args...]')
+      .action(mockAction);
+    let caughtErr;
+    try {
+      program.parse(['node', 'test', 'some-argument', '--unknown']);
+    } catch (err) {
+      caughtErr = err;
+    }
+    expect(caughtErr.code).toEqual('commander.unknownOption');
+  });
 });
 
 // Test .on explicitly rather than assuming covered by .command
@@ -106,6 +145,20 @@ describe(".on('command:*')", () => {
     program
       .on('command:*', mockAction);
     program.parse(['node', 'test', 'unrecognised-command']);
+    expect(mockAction).toHaveBeenCalled();
+  });
+
+  test('when unrecognised command/argument and unknown option then listener called', () => {
+    // Give listener a chance to make a suggestion for misspelled command. The option
+    // could only be unknown because the command is not correct.
+    // Regression identified in https://github.com/tj/commander.js/issues/1460#issuecomment-772313494
+    const mockAction = jest.fn();
+    const program = new commander.Command();
+    program
+      .command('install');
+    program
+      .on('command:*', mockAction);
+    program.parse(['node', 'test', 'intsall', '--unknown']);
     expect(mockAction).toHaveBeenCalled();
   });
 });

@@ -82,4 +82,17 @@ describe('unknownOption', () => {
     }
     expect(caughtErr.code).toBe('commander.unknownOption');
   });
+
+  test('when specify unknown option with simple program then error', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride();
+    let caughtErr;
+    try {
+      program.parse(['node', 'test', '--NONSENSE']);
+    } catch (err) {
+      caughtErr = err;
+    }
+    expect(caughtErr.code).toBe('commander.unknownOption');
+  });
 });
