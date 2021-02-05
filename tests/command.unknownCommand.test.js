@@ -65,15 +65,14 @@ describe('unknownCommand', () => {
 
   test('when unknown command and unknown option then error is for unknown command', () => {
     //  The unknown command is more useful since the option is for an unknown command (and might be
-    // ok if the commadn had been correctly spelled, say).
+    // ok if the command had been correctly spelled, say).
     const program = new commander.Command();
     program
       .exitOverride()
-      .command('sub')
-      .option('-d, --debug');
+      .command('sub');
     let caughtErr;
     try {
-      program.parse('node test.js sbu --debug'.split(' '));
+      program.parse('node test.js sbu --silly'.split(' '));
     } catch (err) {
       caughtErr = err;
     }
