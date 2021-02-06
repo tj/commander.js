@@ -344,6 +344,20 @@ class Help {
   }
 }
 
+class Argument {
+  /**
+   * Initialize a new argument with description.
+   *
+   * @param {string} arg
+   * @param {object} [description]
+   */
+
+  constructor(arg, description) {
+    this.argDetails = parseArg(arg);
+    this.description = description || '';
+  }
+}
+
 class Option {
   /**
    * Initialize a new `Option` with the given `flags` and `description`.
@@ -756,6 +770,20 @@ class Command extends EventEmitter {
   };
 
   /**
+   * Define argument syntax for the command.
+   * @param {Argument} argument
+   */
+  addArgument(argument) {
+    this._args.push(argument.argDetails);
+    if (!this._argsDescription) {
+      this._argsDescription = {};
+    }
+    this._argsDescription[argument.argDetails.name] = argument.description;
+    this._validateArgs();
+    return this;
+  }
+
+  /**
    * Override default decision whether to add implicit help command.
    *
    *    addHelpCommand() // force on
@@ -804,37 +832,20 @@ class Command extends EventEmitter {
   _parseExpectedArgs(args) {
     if (!args.length) return;
     args.forEach((arg) => {
-      const argDetails = {
-        required: false,
-        name: '',
-        variadic: false
-      };
-
-      switch (arg[0]) {
-        case '<':
-          argDetails.required = true;
-          argDetails.name = arg.slice(1, -1);
-          break;
-        case '[':
-          argDetails.name = arg.slice(1, -1);
-          break;
-      }
-
-      if (argDetails.name.length > 3 && argDetails.name.slice(-3) === '...') {
-        argDetails.variadic = true;
-        argDetails.name = argDetails.name.slice(0, -3);
-      }
-      if (argDetails.name) {
-        this._args.push(argDetails);
-      }
+      const argDetails = parseArg(arg);
+      this._args.push(argDetails);
     });
+    this._validateArgs();
+    return this;
+  };
+
+  _validateArgs() {
     this._args.forEach((arg, i) => {
       if (arg.variadic && i < this._args.length - 1) {
         throw new Error(`only the last argument can be variadic '${arg.name}'`);
       }
     });
-    return this;
-  };
+  }
 
   /**
    * Register callback to use as replacement for calling process.exit.
@@ -1834,7 +1845,9 @@ class Command extends EventEmitter {
   description(str, argsDescription) {
     if (str === undefined && argsDescription === undefined) return this._description;
     this._description = str;
-    this._argsDescription = argsDescription;
+    if (argsDescription) {
+      this._argsDescription = argsDescription;
+    }
     return this;
   };
 
@@ -2079,6 +2092,7 @@ exports.program = exports; // More explicit access to global command.
 
 exports.Command = Command;
 exports.Option = Option;
+exports.Argument = Argument;
 exports.CommanderError = CommanderError;
 exports.InvalidOptionArgumentError = InvalidOptionArgumentError;
 exports.Help = Help;
@@ -2197,4 +2211,30 @@ function incrementNodeInspectorPort(args) {
     }
     return arg;
   });
+}
+
+function parseArg(arg) {
+  const argDetails = {
+    required: false,
+    name: '',
+    variadic: false
+  };
+
+  switch (arg[0]) {
+    case '<':
+      argDetails.required = true;
+      argDetails.name = arg.slice(1, -1);
+      break;
+    case '[':
+      argDetails.name = arg.slice(1, -1);
+      break;
+  }
+
+  if (argDetails.name.length > 3 && argDetails.name.slice(-3) === '...') {
+    argDetails.variadic = true;
+    argDetails.name = argDetails.name.slice(0, -3);
+  }
+  if (argDetails.name) {
+    return argDetails;
+  }
 }
