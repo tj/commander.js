@@ -833,7 +833,7 @@ class Command extends EventEmitter {
     if (!args.length) return;
     args.forEach((arg) => {
       const argDetails = parseArg(arg);
-      this._args.push(argDetails);
+      argDetails && this._args.push(argDetails);
     });
     this._validateArgs();
     return this;
