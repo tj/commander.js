@@ -28,9 +28,11 @@ test('when .action on program with required argument and argument supplied then 
   const program = new commander.Command();
   program
     .arguments('<file>')
+    .argument('<second>')
+    .addArgument(new commander.Argument('<last>'))
     .action(actionMock);
-  program.parse(['node', 'test', 'my-file']);
-  expect(actionMock).toHaveBeenCalledWith('my-file', program.opts(), program);
+  program.parse(['node', 'test', 'my-file', 'second', 'last']);
+  expect(actionMock).toHaveBeenCalledWith('my-file', 'second', 'last', program.opts(), program);
 });
 
 test('when .action on program with required argument and argument not supplied then action not called', () => {
@@ -40,6 +42,8 @@ test('when .action on program with required argument and argument not supplied t
     .exitOverride()
     .configureOutput({ writeErr: () => {} })
     .arguments('<file>')
+    .argument('<second>')
+    .addArgument(new commander.Argument('<last>'))
     .action(actionMock);
   expect(() => {
     program.parse(['node', 'test']);
@@ -62,9 +66,11 @@ test('when .action on program with optional argument supplied then action called
   const program = new commander.Command();
   program
     .arguments('[file]')
+    .argument('[second]')
+    .addArgument(new commander.Argument('[last]'))
     .action(actionMock);
-  program.parse(['node', 'test', 'my-file']);
-  expect(actionMock).toHaveBeenCalledWith('my-file', program.opts(), program);
+  program.parse(['node', 'test', 'my-file', 'second', 'last']);
+  expect(actionMock).toHaveBeenCalledWith('my-file', 'second', 'last', program.opts(), program);
 });
 
 test('when .action on program without optional argument supplied then action called', () => {
@@ -72,9 +78,11 @@ test('when .action on program without optional argument supplied then action cal
   const program = new commander.Command();
   program
     .arguments('[file]')
+    .argument('[second]')
+    .addArgument(new commander.Argument('[last]'))
     .action(actionMock);
   program.parse(['node', 'test']);
-  expect(actionMock).toHaveBeenCalledWith(undefined, program.opts(), program);
+  expect(actionMock).toHaveBeenCalledWith(undefined, undefined, undefined, program.opts(), program);
 });
 
 test('when .action on program with optional argument and subcommand and program argument then program action called', () => {
@@ -82,13 +90,15 @@ test('when .action on program with optional argument and subcommand and program 
   const program = new commander.Command();
   program
     .arguments('[file]')
+    .argument('[second]')
+    .addArgument(new commander.Argument('[last]'))
     .action(actionMock);
   program
     .command('subcommand');
 
-  program.parse(['node', 'test', 'a']);
+  program.parse(['node', 'test', 'a', 'second', 'last']);
 
-  expect(actionMock).toHaveBeenCalledWith('a', program.opts(), program);
+  expect(actionMock).toHaveBeenCalledWith('a', 'second', 'last', program.opts(), program);
 });
 
 // Changes made in #1062 to allow this case
@@ -97,13 +107,15 @@ test('when .action on program with optional argument and subcommand and no progr
   const program = new commander.Command();
   program
     .arguments('[file]')
+    .argument('[second]')
+    .addArgument(new commander.Argument('[last]'))
     .action(actionMock);
   program
     .command('subcommand');
 
   program.parse(['node', 'test']);
 
-  expect(actionMock).toHaveBeenCalledWith(undefined, program.opts(), program);
+  expect(actionMock).toHaveBeenCalledWith(undefined, undefined, undefined, program.opts(), program);
 });
 
 test('when action is async then can await parseAsync', async() => {

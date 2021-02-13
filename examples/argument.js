@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// This example shows specifying the arguments using addArgument() function.
+// This example shows specifying the arguments using addArgument() and argument() function.
 
 // const { Command } = require('commander'); // (normal include)
 const { Command, Argument } = require('../'); // include commander in git clone of commander repo
@@ -9,7 +9,7 @@ const program = new Command();
 program
   .version('0.1.0')
   .addArgument(new Argument('<username>', 'user to login'))
-  .addArgument(new Argument('[password]', 'password'))
+  .argument('[password]', 'password')
   .description('test command')
   .action((username, password) => {
     console.log('username:', username);

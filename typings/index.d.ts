@@ -20,6 +20,15 @@ declare namespace commander {
   }
   type InvalidOptionArgumentErrorConstructor = new (message: string) => InvalidOptionArgumentError;
 
+  interface Argument {
+    description: string;
+    argDetails: {
+      required: boolean;
+      name: string;
+      variadic: boolean;
+    };
+  }
+
   interface Option {
     flags: string;
     description: string;
@@ -80,6 +89,7 @@ declare namespace commander {
     name(): string;
   }
   type OptionConstructor = new (flags: string, description?: string) => Option;
+  type ArgumentConstructor = new (arg: string, description?: string) => Argument;
 
   interface Help {
     /** output helpWidth, long lines are wrapped to fit */
@@ -233,6 +243,8 @@ declare namespace commander {
      * @returns `this` command for chaining
      */
     arguments(desc: string): this;
+    argument(arg: string, description: string): this;
+    addArgument(arg: Argument): this;
 
     /**
      * Override default decision whether to add implicit help command.
@@ -608,6 +620,7 @@ declare namespace commander {
     program: Command;
     Command: CommandConstructor;
     Option: OptionConstructor;
+    Argument: ArgumentConstructor;
     CommanderError: CommanderErrorConstructor;
     InvalidOptionArgumentError: InvalidOptionArgumentErrorConstructor;
     Help: HelpConstructor;

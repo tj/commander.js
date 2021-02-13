@@ -784,6 +784,17 @@ class Command extends EventEmitter {
   }
 
   /**
+ * Define argument syntax for the command
+ * @param {string} arg
+ * @param {object} [description]
+ */
+  argument(arg, description) {
+    const argument = new Argument(arg, description);
+    this.addArgument(argument);
+    return this;
+  }
+
+  /**
    * Override default decision whether to add implicit help command.
    *
    *    addHelpCommand() // force on
