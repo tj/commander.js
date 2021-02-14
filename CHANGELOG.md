@@ -8,6 +8,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [7.1.0] (2021-02-15)
+
+### Added
+
+- support for named imports from ECMAScript modules ([#1440])
+- add `.cjs` to list of expected script file extensions ([#1449])
+- allow using option choices and variadic together ([#1454])
+
+### Fixed
+
+- replace use of deprecated `process.mainModule` ([#1448])
+- regression for legacy `command('*')` and call when command line includes options ([#1464])
+- regression for `on('command:*', ...)` and call when command line includes unknown options ([#1464])
+- display best error for combination of unknown command and unknown option (i.e. unknown command) ([#1464])
+
+### Changed
+
+- make TypeScript typings tests stricter ([#1453])
+- improvements to README and tests
+
 ## [7.0.0] (2021-01-15)
 
 ### Added
@@ -376,8 +396,17 @@ to expand `-fb` to `-f -b` rather than `-f b`.
 [#1403]: https://github.com/tj/commander.js/pull/1403
 [#1409]: https://github.com/tj/commander.js/pull/1409
 [#1427]: https://github.com/tj/commander.js/pull/1427
+[#1440]: https://github.com/tj/commander.js/pull/1440
+[#1448]: https://github.com/tj/commander.js/pull/1448
+[#1449]: https://github.com/tj/commander.js/pull/1449
+[#1453]: https://github.com/tj/commander.js/pull/1453
+[#1454]: https://github.com/tj/commander.js/pull/1454
+[#1464]: https://github.com/tj/commander.js/pull/1464
+
+
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[7.1.0]: https://github.com/tj/commander.js/compare/v7.0.0...v7.1.0
 [7.0.0]: https://github.com/tj/commander.js/compare/v6.2.1...v7.0.0
 [7.0.0-2]: https://github.com/tj/commander.js/compare/v7.0.0-1...v7.0.0-2
 [7.0.0-1]: https://github.com/tj/commander.js/compare/v7.0.0-0...v7.0.0-1
