@@ -41,7 +41,7 @@ test('when subcommand executable not executable (EACCES) then throw custom messa
   spawnSpy.mockRestore();
 });
 
-test('when subcommand executable fails with other error then return in custom wrapper', () => {
+test('when subcommand executable fails with other error  and exitOverride then return in custom wrapper', () => {
   // The existing behaviour is to just silently fail for unexpected errors, as it is happening
   // asynchronously in spawned process and client can not catch errors.
   const mockProcess = new EventEmitter();
@@ -60,5 +60,20 @@ test('when subcommand executable fails with other error then return in custom wr
   }
   expect(caughtErr.code).toEqual('commander.executeSubCommandAsync');
   expect(caughtErr.nestedError.code).toEqual('OTHER');
+  spawnSpy.mockRestore();
+});
+
+test('when subcommand executable fails with other error then exit', () => {
+  // The existing behaviour is to just silently fail for unexpected errors, as it is happening
+  // asynchronously in spawned process and client can not catch errors.
+  const mockProcess = new EventEmitter();
+  const spawnSpy = jest.spyOn(childProcess, 'spawn').mockImplementation(() => { return mockProcess; });
+  const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => { });
+  const program = new commander.Command();
+  program.command('executable', 'executable description');
+  program.parse(['executable'], { from: 'user' });
+  mockProcess.emit('error', makeSystemError('OTHER'));
+  expect(exitSpy).toHaveBeenCalledWith(1);
+  exitSpy.mockRestore();
   spawnSpy.mockRestore();
 });
