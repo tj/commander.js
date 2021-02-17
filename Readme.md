@@ -671,7 +671,7 @@ You can execute custom actions by listening to command and option events.
 
 ```js
 program.on('option:verbose', function () {
-  process.env.VERBOSE = this.verbose;
+  process.env.VERBOSE = this.opts().verbose;
 });
 
 program.on('command:*', function (operands) {

@@ -8,7 +8,8 @@
         "noImplicitThis": true,
         "strictNullChecks": true,
         "types": [
-            "node"
+          "node",
+          "jest"
         ],
         "noEmit": true,
         "forceConsistentCasingInFileNames": true

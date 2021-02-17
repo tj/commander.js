@@ -1,7 +1,8 @@
 import { program, Command, Option, CommanderError, InvalidOptionArgumentError, Help, createCommand } from '../esm.mjs';
 
-// Do some simple checks that expected imports are available.
+// Do some simple checks that expected imports are available at runtime.
 // Run using `npm run test-esm`.
+// Similar tests to test-imports.test.ts
 
 function check(condition, explanation) {
   if (!condition) {
