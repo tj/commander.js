@@ -21,6 +21,7 @@ expectType<commander.Command>(commander.createCommand());
 // Command properties
 expectType<string[]>(program.args);
 expectType<commander.Command[]>(program.commands);
+expectType<commander.Command | null>(program.parent);
 
 // version
 expectType<commander.Command>(program.version('1.2.3'));
