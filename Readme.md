@@ -456,27 +456,6 @@ program
 ```
 
 The variadic argument is passed to the action handler as an array.
-
-
-You can supply all the arguments at once using `.arguments()`, and optionally
-describe the arguments in the help by supplying a hash as second parameter to `.description()`.
-
-Example file: [arguments.js](./examples/arguments.js)
-
-```js
-program
-  .version('0.1.0')
-  .arguments('<username> [password]')
-  .description('test command', {
-    username: 'user to login',
-    password: 'password for user, if required'
-  })
-  .action((username, password) => {
-    console.log('username:', username);
-    console.log('environment:', password || 'no password given');
-  });
-```
-
 ### Action handler
 
 The action handler gets passed a parameter for each command-argument you declared, and two additional parameters
@@ -486,7 +465,7 @@ Example file: [thank.js](./examples/thank.js)
 
 ```js
 program
-  .arguments('<name>')
+  .argument('<name>')
   .option('-t, --title <honorific>', 'title to use before name')
   .option('-d, --debug', 'display some debugging')
   .action((name, options, command) => {

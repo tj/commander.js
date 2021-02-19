@@ -353,7 +353,10 @@ class Argument {
    */
 
   constructor(arg, description) {
-    this.argDetails = parseArg(arg);
+    const argDetails = parseArg(arg);
+    this.name = argDetails.name;
+    this.required = argDetails.required;
+    this.variadic = argDetails.variadic;
     this.description = description || '';
   }
 }
@@ -774,11 +777,11 @@ class Command extends EventEmitter {
    * @param {Argument} argument
    */
   addArgument(argument) {
-    this._args.push(argument.argDetails);
+    this._args.push(argument);
     if (!this._argsDescription) {
       this._argsDescription = {};
     }
-    this._argsDescription[argument.argDetails.name] = argument.description;
+    this._argsDescription[argument.name] = argument.description;
     this._validateArgs();
     return this;
   }
