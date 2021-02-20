@@ -156,8 +156,8 @@ declare namespace commander {
 
   interface Command {
     args: string[];
-
     commands: Command[];
+    parent: Command | null;
 
     /**
      * Set the program version to `str`.
