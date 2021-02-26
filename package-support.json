@@ -10,7 +10,6 @@
       },
       "backing": {
         "donations": [
-          "https://github.com/tj",
           "https://github.com/shadowspawn",
           "https://github.com/abetomo",
           "https://tidelift.com/funding/github/npm/commander"
