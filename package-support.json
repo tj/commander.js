@@ -9,11 +9,7 @@
         "type": "time-permitting"
       },
       "backing": {
-        "donations": [
-          "https://github.com/shadowspawn",
-          "https://github.com/abetomo",
-          "https://tidelift.com/funding/github/npm/commander"
-        ]
+        "npm-funding": true
       }
     }
   ]
