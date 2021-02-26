@@ -31,7 +31,8 @@
   "files": [
     "index.js",
     "esm.mjs",
-    "typings/index.d.ts"
+    "typings/index.d.ts",
+    "package-support.json"
   ],
   "type": "commonjs",
   "dependencies": {},
@@ -62,5 +63,6 @@
   },
   "engines": {
     "node": ">= 10"
-  }
+  },
+  "support": true
 }
