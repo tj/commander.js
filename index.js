@@ -1720,6 +1720,19 @@ class Command extends EventEmitter {
   };
 
   /**
+   * Return an object containing global options as key-value pairs
+   *
+   * @return {Object}
+   */
+  globalOpts() {
+    const result = {};
+    for (let parentCmd = this.parent; parentCmd; parentCmd = parentCmd.parent) {
+      Object.assign(result, parentCmd.opts());
+    }
+    return result;
+  }
+
+  /**
    * Internal bottleneck for handling of parsing errors.
    *
    * @api private
