@@ -482,6 +482,11 @@ declare namespace commander {
     opts(): OptionValues;
 
     /**
+     * Return an object containing global options as key-value pairs, from parent command(s).
+     */
+    globalOpts(): OptionValues;
+
+    /**
      * Set the description.
      *
      * @returns `this` command for chaining

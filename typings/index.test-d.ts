@@ -171,6 +171,12 @@ expectType<commander.OptionValues>(opts);
 expectType(opts.foo);
 expectType(opts['bar']);
 
+// globalOpts
+const globalOpts = program.globalOpts();
+expectType<commander.OptionValues>(globalOpts);
+expectType(globalOpts.foo);
+expectType(globalOpts['bar']);
+
 // description
 expectType<commander.Command>(program.description('my description'));
 expectType<string>(program.description());

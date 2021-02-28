@@ -1720,7 +1720,7 @@ class Command extends EventEmitter {
   };
 
   /**
-   * Return an object containing global options as key-value pairs
+   * Return an object containing global options as key-value pairs, from parent command(s).
    *
    * @return {Object}
    */
