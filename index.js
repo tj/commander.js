@@ -354,10 +354,15 @@ class Argument {
 
   constructor(arg, description) {
     const argDetails = parseArg(arg);
-    this.name = argDetails.name;
-    this.required = argDetails.required;
-    this.variadic = argDetails.variadic;
-    this.description = description || '';
+    if (argDetails === undefined) {
+      throw new Error(`Bad argument format: ${arg}`);
+    }
+    if (argDetails) {
+      this.name = argDetails.name;
+      this.required = argDetails.required;
+      this.variadic = argDetails.variadic;
+      this.description = description || '';
+    }
   }
 }
 
