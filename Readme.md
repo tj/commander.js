@@ -711,7 +711,7 @@ an option for a different purpose in subcommands.
 
 Example file: [positional-options.js](./examples/positional-options.js)
 
-With positional options, the `-b` is a program option in the first line and a subcommand option in the second:
+With positional options, the `-b` is a program option in the first line and a subcommand option in the second line:
 
 ```sh
 program -b subcommand
@@ -725,7 +725,7 @@ To use pass through options in a subcommand, the program needs to enable positio
 
 Example file: [pass-through-options.js](./examples/pass-through-options.js)
 
-With pass through options, the `--port=80` is a program option in the line and passed through as a command-argument in the second:
+With pass through options, the `--port=80` is a program option in the first line and passed through as a command-argument in the second line:
 
 ```sh
 program --port=80 arg
