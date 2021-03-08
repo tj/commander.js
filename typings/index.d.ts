@@ -78,6 +78,12 @@ declare namespace commander {
      * Return option name.
      */
     name(): string;
+
+    /**
+     * Return option name, in a camelcase format that can be used
+     * as a object attribute key.
+     */
+    attributeName(): string;
   }
   type OptionConstructor = new (flags: string, description?: string) => Option;
 
