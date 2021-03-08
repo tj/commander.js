@@ -324,3 +324,6 @@ expectType<commander.Option>(baseOption.choices(['a', 'b']));
 
 // name
 expectType<string>(baseOption.name());
+
+// attributeName
+expectType<string>(baseOption.attributeName());
