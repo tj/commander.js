@@ -1172,7 +1172,7 @@ class Command extends EventEmitter {
   passThroughOptions(passThrough = true) {
     this._passThroughOptions = !!passThrough;
     if (!!this.parent && passThrough && !this.parent._enablePositionalOptions) {
-      throw new Error('passThroughOptions can not be used without turning on enablePositionOptions for parent command(s)');
+      throw new Error('passThroughOptions can not be used without turning on enablePositionalOptions for parent command(s)');
     }
     return this;
   };
