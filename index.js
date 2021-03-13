@@ -86,11 +86,15 @@ class Help {
    */
 
   visibleArguments(cmd) {
-    if (cmd._argsDescription && cmd._args.length) {
-      return cmd._args.map((argument) => {
-        return { term: argument.name, description: cmd._argsDescription[argument.name] || '' };
-      }, 0);
-    }
+    // If there are some argument description then return all the arguments.
+    if (cmd._argsDescription || cmd._args.find(argument => argument.description)) {
+      const legacyDescriptions = cmd._argsDescription || {};
+      return cmd._args.map(argument => {
+        const term = argument.name;
+        const description = argument.description || legacyDescriptions[argument.name] || '';
+        return { term, description };
+      });
+    };
     return [];
   }
 
@@ -586,7 +590,7 @@ class Command extends EventEmitter {
     this._aliases = [];
     this._combineFlagAndOptionalValue = true;
     this._description = '';
-    this._argsDescription = undefined;
+    this._argsDescription = undefined; // legacy
     this._enablePositionalOptions = false;
     this._passThroughOptions = false;
 
@@ -802,17 +806,7 @@ class Command extends EventEmitter {
     if (previousArgument && previousArgument.variadic) {
       throw new Error(`only the last argument can be variadic '${previousArgument.name}'`);
     }
-
     this._args.push(argument);
-
-    // Legacy description handling
-    if (argument.description) {
-      if (!this._argsDescription) {
-        this._argsDescription = {};
-      }
-      this._argsDescription[argument.name] = argument.description;
-    }
-
     return this;
   }
 
