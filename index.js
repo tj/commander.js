@@ -28,11 +28,11 @@ class Help {
     const visibleCommands = cmd.commands.filter(cmd => !cmd._hidden);
     if (cmd._hasImplicitHelpCommand()) {
       // Create a command matching the implicit help command.
-      const pieces = cmd._helpCommandnameAndArgs.split(/ +/);
-      const helpCommand = cmd.createCommand(pieces.shift())
+      const [, helpName, helpArgs] = cmd._helpCommandnameAndArgs.match(/([^ ]+) *(.*)/);
+      const helpCommand = cmd.createCommand(helpName)
         .helpOption(false);
       helpCommand.description(cmd._helpCommandDescription);
-      if (pieces.length > 0) helpCommand.arguments(pieces.join(' '));
+      if (helpArgs) helpCommand.arguments(helpArgs);
       visibleCommands.push(helpCommand);
     }
     if (this.sortSubcommands) {
@@ -650,8 +650,8 @@ class Command extends EventEmitter {
       desc = null;
     }
     opts = opts || {};
-    const args = nameAndArgs.split(/ +/);
-    const cmd = this.createCommand(args.shift());
+    const [, name, args] = nameAndArgs.match(/([^ ]+) *(.*)/);
+    const cmd = this.createCommand(name);
 
     if (desc) {
       cmd.description(desc);
@@ -678,8 +678,8 @@ class Command extends EventEmitter {
     cmd._enablePositionalOptions = this._enablePositionalOptions;
 
     cmd._executableFile = opts.executableFile || null; // Custom name for executable file, set missing to null to match constructor
+    if (args) cmd.arguments(args);
     this.commands.push(cmd);
-    if (args.length > 0) cmd.arguments(args.join(' '));
     cmd.parent = this;
 
     if (desc) return this;
