@@ -23,14 +23,14 @@ test('when .action called then program.args only contains args', () => {
   expect(program.args).toEqual(['info', 'my-file']);
 });
 
-test.each(getTestCases('<file>'))('when .action on program with required argument and argument supplied then action called', (program) => {
+test.each(getTestCases('<file>'))('when .action on program with required argument via %s and argument supplied then action called', (methodName, program) => {
   const actionMock = jest.fn();
   program.action(actionMock);
   program.parse(['node', 'test', 'my-file']);
   expect(actionMock).toHaveBeenCalledWith('my-file', program.opts(), program);
 });
 
-test.each(getTestCases('<file>'))('when .action on program with required argument and argument not supplied then action not called', (program) => {
+test.each(getTestCases('<file>'))('when .action on program with required argument via %s and argument not supplied then action not called', (methodName, program) => {
   const actionMock = jest.fn();
   program
     .exitOverride()
@@ -52,21 +52,21 @@ test('when .action on program and no arguments then action called', () => {
   expect(actionMock).toHaveBeenCalledWith(program.opts(), program);
 });
 
-test.each(getTestCases('[file]'))('when .action on program with optional argument supplied then action called', (program) => {
+test.each(getTestCases('[file]'))('when .action on program with optional argument via %s supplied then action called', (methodName, program) => {
   const actionMock = jest.fn();
   program.action(actionMock);
   program.parse(['node', 'test', 'my-file']);
   expect(actionMock).toHaveBeenCalledWith('my-file', program.opts(), program);
 });
 
-test.each(getTestCases('[file]'))('when .action on program without optional argument supplied then action called', (program) => {
+test.each(getTestCases('[file]'))('when .action on program without optional argument supplied then action called', (methodName, program) => {
   const actionMock = jest.fn();
   program.action(actionMock);
   program.parse(['node', 'test']);
   expect(actionMock).toHaveBeenCalledWith(undefined, program.opts(), program);
 });
 
-test.each(getTestCases('[file]'))('when .action on program with optional argument and subcommand and program argument then program action called', (program) => {
+test.each(getTestCases('[file]'))('when .action on program with optional argument via %s and subcommand and program argument then program action called', (methodName, program) => {
   const actionMock = jest.fn();
   program.action(actionMock);
   program
@@ -78,7 +78,7 @@ test.each(getTestCases('[file]'))('when .action on program with optional argumen
 });
 
 // Changes made in #1062 to allow this case
-test.each(getTestCases('[file]'))('when .action on program with optional argument and subcommand and no program argument then program action called', (program) => {
+test.each(getTestCases('[file]'))('when .action on program with optional argument via %s and subcommand and no program argument then program action called', (methodName, program) => {
   const actionMock = jest.fn();
   program.action(actionMock);
   program.command('subcommand');
@@ -108,5 +108,5 @@ function getTestCases(arg) {
   const withArguments = new commander.Command().arguments(arg);
   const withArgument = new commander.Command().argument(arg);
   const withAddArgument = new commander.Command().addArgument(new commander.Argument(arg));
-  return [withArguments, withArgument, withAddArgument];
+  return [['.arguments', withArguments], ['.argument', withArgument], ['.addArgument', withAddArgument]];
 }

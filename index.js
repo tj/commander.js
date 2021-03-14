@@ -28,11 +28,11 @@ class Help {
     const visibleCommands = cmd.commands.filter(cmd => !cmd._hidden);
     if (cmd._hasImplicitHelpCommand()) {
       // Create a command matching the implicit help command.
-      const args = cmd._helpCommandnameAndArgs.split(/ +/);
-      const helpCommand = cmd.createCommand(args.shift())
+      const [, helpName, helpArgs] = cmd._helpCommandnameAndArgs.match(/([^ ]+) *(.*)/);
+      const helpCommand = cmd.createCommand(helpName)
         .helpOption(false);
       helpCommand.description(cmd._helpCommandDescription);
-      helpCommand._parseExpectedArgs(args);
+      if (helpArgs) helpCommand.arguments(helpArgs);
       visibleCommands.push(helpCommand);
     }
     if (this.sortSubcommands) {
@@ -86,11 +86,15 @@ class Help {
    */
 
   visibleArguments(cmd) {
-    if (cmd._argsDescription && cmd._args.length) {
-      return cmd._args.map((argument) => {
-        return { term: argument.name, description: cmd._argsDescription[argument.name] || '' };
-      }, 0);
-    }
+    // If there are some argument description then return all the arguments.
+    if (cmd._argsDescription || cmd._args.find(argument => argument.description)) {
+      const legacyDescriptions = cmd._argsDescription || {};
+      return cmd._args.map(argument => {
+        const term = argument.name;
+        const description = argument.description || legacyDescriptions[argument.name] || '';
+        return { term, description };
+      });
+    };
     return [];
   }
 
@@ -346,22 +350,35 @@ class Help {
 
 class Argument {
   /**
-   * Initialize a new argument with description.
+   * Initialize a new argument with the given detail and description.
    *
-   * @param {string} arg
-   * @param {object} [description]
+   * @param {string} detail
+   * @param {string} [description]
    */
 
-  constructor(arg, description) {
-    const argDetails = parseArg(arg);
-    if (argDetails === undefined) {
-      throw new Error(`Bad argument format: ${arg}`);
+  constructor(detail, description) {
+    this.required = false;
+    this.variadic = false;
+    this.name = '';
+    this.description = description || '';
+
+    switch (detail[0]) {
+      case '<': // e.g. <required>
+        this.required = true;
+        this.name = detail.slice(1, -1);
+        break;
+      case '[': // e.g. [optional]
+        this.name = detail.slice(1, -1);
+        break;
     }
-    if (argDetails) {
-      this.name = argDetails.name;
-      this.required = argDetails.required;
-      this.variadic = argDetails.variadic;
-      this.description = description || '';
+
+    if (this.name.length > 3 && this.name.slice(-3) === '...') {
+      this.variadic = true;
+      this.name = this.name.slice(0, -3);
+    }
+
+    if (this.name.length === 0) {
+      throw new Error(`Unrecognised argument format (expecting '<required>' or '[optional]'): ${detail}`);
     }
   }
 }
@@ -573,7 +590,7 @@ class Command extends EventEmitter {
     this._aliases = [];
     this._combineFlagAndOptionalValue = true;
     this._description = '';
-    this._argsDescription = undefined;
+    this._argsDescription = undefined; // legacy
     this._enablePositionalOptions = false;
     this._passThroughOptions = false;
 
@@ -633,8 +650,8 @@ class Command extends EventEmitter {
       desc = null;
     }
     opts = opts || {};
-    const args = nameAndArgs.split(/ +/);
-    const cmd = this.createCommand(args.shift());
+    const [, name, args] = nameAndArgs.match(/([^ ]+) *(.*)/);
+    const cmd = this.createCommand(name);
 
     if (desc) {
       cmd.description(desc);
@@ -661,8 +678,8 @@ class Command extends EventEmitter {
     cmd._enablePositionalOptions = this._enablePositionalOptions;
 
     cmd._executableFile = opts.executableFile || null; // Custom name for executable file, set missing to null to match constructor
+    if (args) cmd.arguments(args);
     this.commands.push(cmd);
-    cmd._parseExpectedArgs(args);
     cmd.parent = this;
 
     if (desc) return this;
@@ -773,8 +790,11 @@ class Command extends EventEmitter {
    * Define argument syntax for the command.
    */
 
-  arguments(desc) {
-    return this._parseExpectedArgs(desc.split(/ +/));
+  arguments(details) {
+    details.split(/ +/).forEach((detail) => {
+      this.argument(detail);
+    });
+    return this;
   };
 
   /**
@@ -782,22 +802,21 @@ class Command extends EventEmitter {
    * @param {Argument} argument
    */
   addArgument(argument) {
-    this._args.push(argument);
-    if (!this._argsDescription) {
-      this._argsDescription = {};
+    const previousArgument = this._args.slice(-1)[0];
+    if (previousArgument && previousArgument.variadic) {
+      throw new Error(`only the last argument can be variadic '${previousArgument.name}'`);
     }
-    this._argsDescription[argument.name] = argument.description;
-    this._validateArgs();
+    this._args.push(argument);
     return this;
   }
 
   /**
  * Define argument syntax for the command
- * @param {string} arg
- * @param {object} [description]
+ * @param {string} detail
+ * @param {string} [description]
  */
-  argument(arg, description) {
-    const argument = new Argument(arg, description);
+  argument(detail, description) {
+    const argument = new Argument(detail, description);
     this.addArgument(argument);
     return this;
   }
@@ -837,34 +856,6 @@ class Command extends EventEmitter {
     }
     return this._addImplicitHelpCommand;
   };
-
-  /**
-   * Parse expected `args`.
-   *
-   * For example `["[type]"]` becomes `[{ required: false, name: 'type' }]`.
-   *
-   * @param {Array} args
-   * @return {Command} `this` command for chaining
-   * @api private
-   */
-
-  _parseExpectedArgs(args) {
-    if (!args.length) return;
-    args.forEach((arg) => {
-      const argDetails = parseArg(arg);
-      argDetails && this._args.push(argDetails);
-    });
-    this._validateArgs();
-    return this;
-  };
-
-  _validateArgs() {
-    this._args.forEach((arg, i) => {
-      if (arg.variadic && i < this._args.length - 1) {
-        throw new Error(`only the last argument can be variadic '${arg.name}'`);
-      }
-    });
-  }
 
   /**
    * Register callback to use as replacement for calling process.exit.
@@ -2230,30 +2221,4 @@ function incrementNodeInspectorPort(args) {
     }
     return arg;
   });
-}
-
-function parseArg(arg) {
-  const argDetails = {
-    required: false,
-    name: '',
-    variadic: false
-  };
-
-  switch (arg[0]) {
-    case '<':
-      argDetails.required = true;
-      argDetails.name = arg.slice(1, -1);
-      break;
-    case '[':
-      argDetails.name = arg.slice(1, -1);
-      break;
-  }
-
-  if (argDetails.name.length > 3 && argDetails.name.slice(-3) === '...') {
-    argDetails.variadic = true;
-    argDetails.name = argDetails.name.slice(0, -3);
-  }
-  if (argDetails.name) {
-    return argDetails;
-  }
 }
