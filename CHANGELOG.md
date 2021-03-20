@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [7.2.0] (2021-03-26)
+
+### Added
+
+- TypeScript typing for `parent` property on `Command` ([#1475])
+- TypeScript typing for `.attributeName()` on `Option` ([#1483])
+- support information in package ([#1477])
+
+### Changed
+
+- improvements to error messages, README, and tests
+- update dependencies
+
 ## [7.1.0] (2021-02-15)
 
 ### Added
@@ -402,10 +415,12 @@ to expand `-fb` to `-f -b` rather than `-f b`.
 [#1453]: https://github.com/tj/commander.js/pull/1453
 [#1454]: https://github.com/tj/commander.js/pull/1454
 [#1464]: https://github.com/tj/commander.js/pull/1464
-
-
+[#1475]: https://github.com/tj/commander.js/pull/1475
+[#1477]: https://github.com/tj/commander.js/pull/1477
+[#1483]: https://github.com/tj/commander.js/pull/1483
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[7.2.0]: https://github.com/tj/commander.js/compare/v7.1.0...v7.2.0
 [7.1.0]: https://github.com/tj/commander.js/compare/v7.0.0...v7.1.0
 [7.0.0]: https://github.com/tj/commander.js/compare/v6.2.1...v7.0.0
 [7.0.0-2]: https://github.com/tj/commander.js/compare/v7.0.0-1...v7.0.0-2
