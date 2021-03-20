@@ -23,9 +23,9 @@ describe('visibleCommands', () => {
     const program = new commander.Command();
     program
       .command('visible', 'desc')
-      .command('invisible executable', 'desc', { hidden: true });
+      .command('invisible-executable', 'desc', { hidden: true });
     program
-      .command('invisible action', { hidden: true });
+      .command('invisible-action', { hidden: true });
     const helper = new commander.Help();
     const visibleCommandNames = helper.visibleCommands(program).map(cmd => cmd.name());
     expect(visibleCommandNames).toEqual(['visible', 'help']);
