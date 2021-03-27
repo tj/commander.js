@@ -15,7 +15,7 @@ program
   })
   .action((username, password) => {
     console.log('username:', username);
-    console.log('environment:', password || 'no password given');
+    console.log('password:', password || 'no password given');
   });
 
 program.parse();
