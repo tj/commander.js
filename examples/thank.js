@@ -7,7 +7,7 @@ const { Command } = require('../'); // include commander in git clone of command
 const program = new Command();
 
 program
-  .arguments('<name>')
+  .argument('<name>')
   .option('-t, --title <honorific>', 'title to use before name')
   .option('-d, --debug', 'display some debugging')
   .action((name, options, command) => {
