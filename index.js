@@ -386,7 +386,7 @@ class Argument {
    * Get or set the name of the argument.
    *
    * @param {string} [str]
-   * @return {string|Command}
+   * @return {string|Argument}
    */
 
   name(str) {
