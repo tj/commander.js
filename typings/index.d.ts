@@ -22,12 +22,20 @@ declare namespace commander {
 
   interface Argument {
     description: string;
-    argDetails: {
-      required: boolean;
-      name: string;
-      variadic: boolean;
-    };
-  }
+    required: boolean;
+    variadic: boolean;
+
+    /**
+     * Set the name of the argument.
+     *
+     * @returns `this` command for chaining
+     */
+     name(str: string): this;
+     /**
+      * Get the name of the argument.
+      */
+     name(): string;
+   }
 
   interface Option {
     flags: string;

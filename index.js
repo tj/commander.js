@@ -90,8 +90,8 @@ class Help {
     if (cmd._argsDescription || cmd._args.find(argument => argument.description)) {
       const legacyDescriptions = cmd._argsDescription || {};
       return cmd._args.map(argument => {
-        const term = argument.name;
-        const description = argument.description || legacyDescriptions[argument.name] || '';
+        const term = argument.name();
+        const description = argument.description || legacyDescriptions[argument.name()] || '';
         return { term, description };
       });
     };
@@ -359,28 +359,41 @@ class Argument {
   constructor(detail, description) {
     this.required = false;
     this.variadic = false;
-    this.name = '';
+    this._name = '';
     this.description = description || '';
 
     switch (detail[0]) {
       case '<': // e.g. <required>
         this.required = true;
-        this.name = detail.slice(1, -1);
+        this._name = detail.slice(1, -1);
         break;
       case '[': // e.g. [optional]
-        this.name = detail.slice(1, -1);
+        this._name = detail.slice(1, -1);
         break;
     }
 
-    if (this.name.length > 3 && this.name.slice(-3) === '...') {
+    if (this._name.length > 3 && this._name.slice(-3) === '...') {
       this.variadic = true;
-      this.name = this.name.slice(0, -3);
+      this._name = this._name.slice(0, -3);
     }
 
-    if (this.name.length === 0) {
+    if (this._name.length === 0) {
       throw new Error(`Unrecognised argument format (expecting '<required>' or '[optional]'): ${detail}`);
     }
   }
+
+  /**
+   * Get or set the name of the argument.
+   *
+   * @param {string} [str]
+   * @return {string|Command}
+   */
+
+  name(str) {
+    if (str === undefined) return this._name;
+    this._name = str;
+    return this;
+  };
 }
 
 class Option {
@@ -819,7 +832,7 @@ class Command extends EventEmitter {
   addArgument(argument) {
     const previousArgument = this._args.slice(-1)[0];
     if (previousArgument && previousArgument.variadic) {
-      throw new Error(`only the last argument can be variadic '${previousArgument.name}'`);
+      throw new Error(`only the last argument can be variadic '${previousArgument.name()}'`);
     }
     this._args.push(argument);
     return this;
@@ -1511,7 +1524,7 @@ class Command extends EventEmitter {
         const args = this.args.slice();
         this._args.forEach((arg, i) => {
           if (arg.required && args[i] == null) {
-            this.missingArgument(arg.name);
+            this.missingArgument(arg.name());
           } else if (arg.variadic) {
             args[i] = args.splice(i);
             args.length = Math.min(i + 1, args.length);
@@ -2164,7 +2177,7 @@ function outputHelpIfRequested(cmd, args) {
  */
 
 function humanReadableArgName(arg) {
-  const nameOutput = arg.name + (arg.variadic === true ? '...' : '');
+  const nameOutput = arg.name() + (arg.variadic === true ? '...' : '');
 
   return arg.required
     ? '<' + nameOutput + '>'
