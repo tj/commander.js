@@ -178,6 +178,7 @@ expectType(opts['bar']);
 // description
 expectType<commander.Command>(program.description('my description'));
 expectType<string>(program.description());
+expectType<commander.Command>(program.description('my description of command with arg foo', { foo: 'foo description'})); // deprecated
 
 // alias
 expectType<commander.Command>(program.alias('my alias'));
