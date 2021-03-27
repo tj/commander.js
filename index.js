@@ -350,7 +350,7 @@ class Help {
 
 class Argument {
   /**
-   * Initialize a new argument with the given detail and description.
+   * Initialize a new command argument with the given detail and description.
    *
    * @param {string} detail
    * @param {string} [description]
@@ -370,15 +370,15 @@ class Argument {
       case '[': // e.g. [optional]
         this._name = detail.slice(1, -1);
         break;
+      default:
+        this._name = detail;
+        this.required = true;
+        break;
     }
 
     if (this._name.length > 3 && this._name.slice(-3) === '...') {
       this.variadic = true;
       this._name = this._name.slice(0, -3);
-    }
-
-    if (this._name.length === 0) {
-      throw new Error(`Unrecognised argument format (expecting '<required>' or '[optional]'): ${detail}`);
     }
   }
 
