@@ -37,6 +37,10 @@ expectType<commander.Command>(program.command('exec', 'exec description', { isDe
 // addCommand
 expectType<commander.Command>(program.addCommand(new commander.Command('abc')));
 
+// argument
+expectType<commander.Command>(program.argument('<value>'));
+expectType<commander.Command>(program.argument('<value>', 'description'));
+
 // arguments
 expectType<commander.Command>(program.arguments('<cmd> [env]'));
 

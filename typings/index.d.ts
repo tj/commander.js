@@ -249,7 +249,7 @@ declare namespace commander {
      * @returns `this` command for chaining
      */
     arguments(desc: string): this;
-    argument(arg: string, description: string): this;
+    argument(arg: string, description?: string): this;
     addArgument(arg: Argument): this;
 
     /**
