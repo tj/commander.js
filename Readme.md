@@ -428,9 +428,10 @@ subcommand is specified ([example](./examples/defaultCommand.js)).
 
 ### Specify the argument syntax
 
-You use `.argument` to specify the expected command-arguments for the top-level command, and for subcommands they are usually
-included in the `.command` call. Angled brackets (e.g. `<required>`) indicate required command-arguments.
-Square brackets (e.g. `[optional]`) indicate optional command-arguments.
+You use `.argument` to specify the expected command-arguments. Angled brackets (e.g. `<required>`) indicate a required command-argument.
+Square brackets (e.g. `[optional]`) indicate an optional command-argument. The description parameter is optional.
+
+Example file: [argument.js](./examples/argument.js)
 
 ```js
 program
@@ -439,23 +440,20 @@ program
   .argument('[password]', 'password for user, if required')
   .action((username, password) => {
     console.log('username:', username);
-    console.log('environment:', password || 'no password given');
+    console.log('password:', password || 'no password given');
   });
 ```
 
-For more complex cases, use `.addArgument()` and pass `Argument` constructor.
+There are two ways to specify all the arguments at once, but these do not allow argument descriptions.
+
 ```js
 program
-  .version('0.1.0')
-  .addArgument(new Argument('<username>', 'user to login'))
-  .action((username) => {
-    console.log('username:', username);
-  });
+  .command('add <number> <number>');
+
+program
+  .command('fraction')
+  .arguments('<numerator> <denominator>');
 ```
-
-
-Example file: [argument.js](./examples/argument.js)
-
 
  The last argument of a command can be variadic, and only the last argument.  To make an argument variadic you
  append `...` to the argument name. For example:
@@ -471,7 +469,8 @@ program
   });
 ```
 
-The variadic argument is passed to the action handler as an array.
+A variadic argument is passed to the action handler as an array.
+
 ### Action handler
 
 The action handler gets passed a parameter for each command-argument you declared, and two additional parameters
