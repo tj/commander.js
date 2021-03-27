@@ -23,23 +23,18 @@ test('when .action called then program.args only contains args', () => {
   expect(program.args).toEqual(['info', 'my-file']);
 });
 
-test('when .action on program with required argument and argument supplied then action called', () => {
+test.each(getTestCases('<file>'))('when .action on program with required argument via %s and argument supplied then action called', (methodName, program) => {
   const actionMock = jest.fn();
-  const program = new commander.Command();
-  program
-    .arguments('<file>')
-    .action(actionMock);
+  program.action(actionMock);
   program.parse(['node', 'test', 'my-file']);
   expect(actionMock).toHaveBeenCalledWith('my-file', program.opts(), program);
 });
 
-test('when .action on program with required argument and argument not supplied then action not called', () => {
+test.each(getTestCases('<file>'))('when .action on program with required argument via %s and argument not supplied then action not called', (methodName, program) => {
   const actionMock = jest.fn();
-  const program = new commander.Command();
   program
     .exitOverride()
     .configureOutput({ writeErr: () => {} })
-    .arguments('<file>')
     .action(actionMock);
   expect(() => {
     program.parse(['node', 'test']);
@@ -57,32 +52,23 @@ test('when .action on program and no arguments then action called', () => {
   expect(actionMock).toHaveBeenCalledWith(program.opts(), program);
 });
 
-test('when .action on program with optional argument supplied then action called', () => {
+test.each(getTestCases('[file]'))('when .action on program with optional argument via %s supplied then action called', (methodName, program) => {
   const actionMock = jest.fn();
-  const program = new commander.Command();
-  program
-    .arguments('[file]')
-    .action(actionMock);
+  program.action(actionMock);
   program.parse(['node', 'test', 'my-file']);
   expect(actionMock).toHaveBeenCalledWith('my-file', program.opts(), program);
 });
 
-test('when .action on program without optional argument supplied then action called', () => {
+test.each(getTestCases('[file]'))('when .action on program without optional argument supplied then action called', (methodName, program) => {
   const actionMock = jest.fn();
-  const program = new commander.Command();
-  program
-    .arguments('[file]')
-    .action(actionMock);
+  program.action(actionMock);
   program.parse(['node', 'test']);
   expect(actionMock).toHaveBeenCalledWith(undefined, program.opts(), program);
 });
 
-test('when .action on program with optional argument and subcommand and program argument then program action called', () => {
+test.each(getTestCases('[file]'))('when .action on program with optional argument via %s and subcommand and program argument then program action called', (methodName, program) => {
   const actionMock = jest.fn();
-  const program = new commander.Command();
-  program
-    .arguments('[file]')
-    .action(actionMock);
+  program.action(actionMock);
   program
     .command('subcommand');
 
@@ -92,14 +78,10 @@ test('when .action on program with optional argument and subcommand and program 
 });
 
 // Changes made in #1062 to allow this case
-test('when .action on program with optional argument and subcommand and no program argument then program action called', () => {
+test.each(getTestCases('[file]'))('when .action on program with optional argument via %s and subcommand and no program argument then program action called', (methodName, program) => {
   const actionMock = jest.fn();
-  const program = new commander.Command();
-  program
-    .arguments('[file]')
-    .action(actionMock);
-  program
-    .command('subcommand');
+  program.action(actionMock);
+  program.command('subcommand');
 
   program.parse(['node', 'test']);
 
@@ -121,3 +103,10 @@ test('when action is async then can await parseAsync', async() => {
   await later;
   expect(asyncFinished).toBe(true);
 });
+
+function getTestCases(arg) {
+  const withArguments = new commander.Command().arguments(arg);
+  const withArgument = new commander.Command().argument(arg);
+  const withAddArgument = new commander.Command().addArgument(new commander.Argument(arg));
+  return [['.arguments', withArguments], ['.argument', withArgument], ['.addArgument', withAddArgument]];
+}

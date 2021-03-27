@@ -428,26 +428,34 @@ subcommand is specified ([example](./examples/defaultCommand.js)).
 
 ### Specify the argument syntax
 
-You use `.arguments` to specify the expected command-arguments for the top-level command, and for subcommands they are usually
+You use `.argument` to specify the expected command-arguments for the top-level command, and for subcommands they are usually
 included in the `.command` call. Angled brackets (e.g. `<required>`) indicate required command-arguments.
 Square brackets (e.g. `[optional]`) indicate optional command-arguments.
-You can optionally describe the arguments in the help by supplying a hash as second parameter to `.description()`.
-
-Example file: [arguments.js](./examples/arguments.js)
 
 ```js
 program
   .version('0.1.0')
-  .arguments('<username> [password]')
-  .description('test command', {
-    username: 'user to login',
-    password: 'password for user, if required'
-  })
+  .argument('<username>', 'user to login')
+  .argument('[password]', 'password for user, if required')
   .action((username, password) => {
     console.log('username:', username);
     console.log('environment:', password || 'no password given');
   });
 ```
+
+For more complex cases, use `.addArgument()` and pass `Argument` constructor.
+```js
+program
+  .version('0.1.0')
+  .addArgument(new Argument('<username>', 'user to login'))
+  .action((username) => {
+    console.log('username:', username);
+  });
+```
+
+
+Example file: [argument.js](./examples/argument.js)
+
 
  The last argument of a command can be variadic, and only the last argument.  To make an argument variadic you
  append `...` to the argument name. For example:
@@ -464,7 +472,6 @@ program
 ```
 
 The variadic argument is passed to the action handler as an array.
-
 ### Action handler
 
 The action handler gets passed a parameter for each command-argument you declared, and two additional parameters
@@ -474,7 +481,7 @@ Example file: [thank.js](./examples/thank.js)
 
 ```js
 program
-  .arguments('<name>')
+  .argument('<name>')
   .option('-t, --title <honorific>', 'title to use before name')
   .option('-d, --debug', 'display some debugging')
   .action((name, options, command) => {

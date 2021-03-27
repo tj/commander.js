@@ -82,9 +82,11 @@ test('when arguments then arguments included in usage', () => {
   const program = new commander.Command();
 
   program
-    .arguments('<file>');
+    .arguments('<file>')
+    .argument('<secondFile>')
+    .addArgument(new commander.Argument('<lastFile>'));
 
-  expect(program.usage()).toMatch('<file>');
+  expect(program.usage()).toMatch('<file> <secondFile> <lastFile>');
 });
 
 test('when options and command and arguments then all three included in usage', () => {
