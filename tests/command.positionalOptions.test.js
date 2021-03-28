@@ -9,7 +9,7 @@ describe('program with passThrough', () => {
     program.passThroughOptions();
     program
       .option('-d, --debug')
-      .arguments('<args...>');
+      .argument('<args...>');
     return program;
   }
 
@@ -77,10 +77,10 @@ describe('program with positionalOptions and subcommand', () => {
     program
       .enablePositionalOptions()
       .option('-s, --shared <value>')
-      .arguments('<args...>');
+      .argument('<args...>');
     const sub = program
       .command('sub')
-      .arguments('[arg]')
+      .argument('[arg]')
       .option('-s, --shared <value>')
       .action(() => {}); // Not used, but normal to have action handler on subcommand.
     return { program, sub };
@@ -151,10 +151,10 @@ describe('program with positionalOptions and default subcommand (called sub)', (
       .enablePositionalOptions()
       .option('-s, --shared')
       .option('-g, --global')
-      .arguments('<args...>');
+      .argument('<args...>');
     const sub = program
       .command('sub', { isDefault: true })
-      .arguments('[args...]')
+      .argument('[args...]')
       .option('-s, --shared')
       .option('-d, --default')
       .action(() => {}); // Not used, but normal to have action handler on subcommand.
@@ -218,11 +218,11 @@ describe('subcommand with passThrough', () => {
     program
       .enablePositionalOptions()
       .option('-s, --shared <value>')
-      .arguments('<args...>');
+      .argument('<args...>');
     const sub = program
       .command('sub')
       .passThroughOptions()
-      .arguments('[args...]')
+      .argument('[args...]')
       .option('-s, --shared <value>')
       .option('-d, --debug')
       .action(() => {}); // Not used, but normal to have action handler on subcommand.
@@ -289,7 +289,7 @@ describe('default command with passThrough', () => {
     const sub = program
       .command('sub', { isDefault: true })
       .passThroughOptions()
-      .arguments('[args...]')
+      .argument('[args...]')
       .option('-d, --debug')
       .action(() => {}); // Not used, but normal to have action handler on subcommand.
     return { program, sub };
@@ -332,11 +332,11 @@ describe('program with action handler and positionalOptions and subcommand', () 
     program
       .enablePositionalOptions()
       .option('-g, --global')
-      .arguments('<args...>')
+      .argument('<args...>')
       .action(() => {});
     const sub = program
       .command('sub')
-      .arguments('[arg]')
+      .argument('[arg]')
       .action(() => {});
     return { program, sub };
   }
@@ -379,11 +379,11 @@ describe('program with action handler and passThrough and subcommand', () => {
     program
       .passThroughOptions()
       .option('-g, --global')
-      .arguments('<args...>')
+      .argument('<args...>')
       .action(() => {});
     const sub = program
       .command('sub')
-      .arguments('[arg]')
+      .argument('[arg]')
       .option('-g, --group')
       .option('-d, --debug')
       .action(() => {});
@@ -451,7 +451,7 @@ describe('passThroughOptions(xxx) and option after command-argument', () => {
     const program = new commander.Command();
     program
       .option('-d, --debug')
-      .arguments('<args...>');
+      .argument('<args...>');
     return program;
   }
 

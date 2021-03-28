@@ -54,7 +54,7 @@ describe('unknownOption', () => {
     const program = new commander.Command();
     program
       .exitOverride()
-      .arguments('[file]')
+      .argument('[file]')
       .action(() => {});
 
     let caughtErr;
@@ -71,7 +71,7 @@ describe('unknownOption', () => {
     const program = new commander.Command();
     program
       .exitOverride()
-      .arguments('[file]')
+      .argument('[file]')
       .action(() => {});
 
     let caughtErr;

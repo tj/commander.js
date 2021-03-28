@@ -8,8 +8,7 @@ describe('padWidth', () => {
     const longestThing = 'veryLongThingBiggerThanOthers';
     const program = new commander.Command();
     program
-      .arguments(`<${longestThing}>`)
-      .description('description', { veryLongThingBiggerThanOthers: 'desc' })
+      .argument(`<${longestThing}>`, 'description')
       .option('-o');
     program
       .command('sub');
@@ -21,8 +20,7 @@ describe('padWidth', () => {
     const longestThing = '--very-long-thing-bigger-than-others';
     const program = new commander.Command();
     program
-      .arguments('<file}>')
-      .description('description', { file: 'desc' })
+      .argument('<file>', 'desc')
       .option(longestThing);
     program
       .command('sub');
@@ -34,8 +32,7 @@ describe('padWidth', () => {
     const longestThing = 'very-long-thing-bigger-than-others';
     const program = new commander.Command();
     program
-      .arguments('<file}>')
-      .description('description', { file: 'desc' })
+      .argument('<file>', 'desc')
       .option('-o');
     program
       .command(longestThing);

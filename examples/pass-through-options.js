@@ -5,7 +5,8 @@ const { Command } = require('../'); // include commander in git clone of command
 const program = new Command();
 
 program
-  .arguments('<utility> [args...]')
+  .argument('<utility>')
+  .argument('[args...]')
   .passThroughOptions()
   .option('-d, --dry-run')
   .action((utility, args, options) => {

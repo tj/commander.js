@@ -235,16 +235,25 @@ test('when option has choices and default then both included in helpInformation'
   expect(helpInformation).toMatch('(choices: "red", "blue", default: "red")');
 });
 
-test('when arguments then included in helpInformation', () => {
+test('when argument then included in helpInformation', () => {
   const program = new commander.Command();
   program
     .name('foo')
-    .arguments('<file>');
+    .argument('<file>');
   const helpInformation = program.helpInformation();
   expect(helpInformation).toMatch('Usage: foo [options] <file>');
 });
 
-test('when arguments described then included in helpInformation', () => {
+test('when argument described then included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .argument('<file>', 'input source')
+    .helpOption(false);
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch(/Arguments:\n +file +input source/);
+});
+
+test('when arguments described in deprecated way then included in helpInformation', () => {
   const program = new commander.Command();
   program
     .arguments('<file>')
@@ -254,7 +263,7 @@ test('when arguments described then included in helpInformation', () => {
   expect(helpInformation).toMatch(/Arguments:\n +file +input source/);
 });
 
-test('when arguments described and empty description then arguments included in helpInformation', () => {
+test('when arguments described in deprecated way and empty description then arguments still included in helpInformation', () => {
   const program = new commander.Command();
   program
     .arguments('<file>')

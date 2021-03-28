@@ -12,20 +12,16 @@ describe('longestArgumentTermLength', () => {
 
   test('when has argument description then returns argument length', () => {
     const program = new commander.Command();
-    program.arguments('<wonder>');
-    program.description('dummy', { wonder: 'wonder description' });
+    program.argument('<wonder>', 'wonder description');
     const helper = new commander.Help();
     expect(helper.longestArgumentTermLength(program, helper)).toEqual('wonder'.length);
   });
 
   test('when has multiple argument descriptions then returns longest', () => {
     const program = new commander.Command();
-    program.arguments('<alpha> <longest> <beta>');
-    program.description('dummy', {
-      alpha: 'x',
-      longest: 'x',
-      beta: 'x'
-    });
+    program.argument('<alpha>', 'x');
+    program.argument('<longest>', 'x');
+    program.argument('<beta>', 'x');
     const helper = new commander.Help();
     expect(helper.longestArgumentTermLength(program, helper)).toEqual('longest'.length);
   });

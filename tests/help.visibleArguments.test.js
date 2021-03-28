@@ -12,15 +12,14 @@ describe('visibleArguments', () => {
 
   test('when argument but no argument description then empty array', () => {
     const program = new commander.Command();
-    program.arguments('<file>');
+    program.argument('<file>');
     const helper = new commander.Help();
     expect(helper.visibleArguments(program)).toEqual([]);
   });
 
   test('when argument and argument description then returned', () => {
     const program = new commander.Command();
-    program.arguments('<file>');
-    program.description('dummy', { file: 'file description' });
+    program.argument('<file>', 'file description');
     const helper = new commander.Help();
     expect(helper.visibleArguments(program)).toEqual([{ term: 'file', description: 'file description' }]);
   });
