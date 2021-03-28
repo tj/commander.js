@@ -254,11 +254,14 @@ declare namespace commander {
     /**
      * Define argument syntax for command.
      *
+     * The default is that the argument is required, and you can explicitly
+     * indicate this with <> around the name. Put [] around the name for an optional argument.
+     *
      * @returns `this` command for chaining
      */
-    arguments(desc: string): this;
-    argument(arg: string, description?: string): this;
+    argument(name: string, description?: string): this;
     addArgument(arg: Argument): this;
+    arguments(names: string): this;
 
     /**
      * Override default decision whether to add implicit help command.

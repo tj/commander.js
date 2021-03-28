@@ -350,28 +350,30 @@ class Help {
 
 class Argument {
   /**
-   * Initialize a new command argument with the given detail and description.
+   * Initialize a new command argument with the given name and description.
+   * The default is that the argument is required, and you can explicitly
+   * indicate this with <> around the name. Put [] around the name for an optional argument.
    *
-   * @param {string} detail
+   * @param {string} name
    * @param {string} [description]
    */
 
-  constructor(detail, description) {
+  constructor(name, description) {
     this.required = false;
     this.variadic = false;
     this._name = '';
     this.description = description || '';
 
-    switch (detail[0]) {
+    switch (name[0]) {
       case '<': // e.g. <required>
         this.required = true;
-        this._name = detail.slice(1, -1);
+        this._name = name.slice(1, -1);
         break;
       case '[': // e.g. [optional]
-        this._name = detail.slice(1, -1);
+        this._name = name.slice(1, -1);
         break;
       default:
-        this._name = detail;
+        this._name = name;
         this.required = true;
         break;
     }
@@ -818,8 +820,8 @@ class Command extends EventEmitter {
    * Define argument syntax for the command.
    */
 
-  arguments(details) {
-    details.split(/ +/).forEach((detail) => {
+  arguments(names) {
+    names.split(/ +/).forEach((detail) => {
       this.argument(detail);
     });
     return this;
@@ -827,6 +829,7 @@ class Command extends EventEmitter {
 
   /**
    * Define argument syntax for the command.
+   *
    * @param {Argument} argument
    */
   addArgument(argument) {
@@ -839,12 +842,16 @@ class Command extends EventEmitter {
   }
 
   /**
- * Define argument syntax for the command
- * @param {string} detail
- * @param {string} [description]
- */
-  argument(detail, description) {
-    const argument = new Argument(detail, description);
+   * Define argument syntax for the command
+   *
+   * The default is that the argument is required, and you can explicitly
+   * indicate this with <> around the name. Put [] around the name for an optional argument.
+   *
+   * @param {string} name
+   * @param {string} [description]
+   */
+  argument(name, description) {
+    const argument = new Argument(name, description);
     this.addArgument(argument);
     return this;
   }
