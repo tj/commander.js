@@ -428,8 +428,9 @@ subcommand is specified ([example](./examples/defaultCommand.js)).
 
 ### Specify the argument syntax
 
-You use `.argument` to specify the expected command-arguments. Angled brackets (e.g. `<required>`) indicate a required command-argument.
-Square brackets (e.g. `[optional]`) indicate an optional command-argument. The description parameter is optional.
+You use `.argument` to specify the expected command-arguments.
+Angle brackets around the name indicate a required command-argument (e.g. `<required>`).
+Square brackets indicate an optional command-argument (e.g. `[optional]`). The description parameter is optional.
 
 Example file: [argument.js](./examples/argument.js)
 
