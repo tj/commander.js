@@ -257,10 +257,33 @@ declare namespace commander {
      * The default is that the argument is required, and you can explicitly
      * indicate this with <> around the name. Put [] around the name for an optional argument.
      *
+     * @example
+     *
+     *     program.argument('<input-file>');
+     *     program.argument('[output-file]');
+     *
      * @returns `this` command for chaining
      */
     argument(name: string, description?: string): this;
+
+    /**
+     * Define argument syntax for command, adding a prepared argument.
+     *
+     * @returns `this` command for chaining
+     */
     addArgument(arg: Argument): this;
+
+    /**
+     * Define argument syntax for command, adding multiple at once (without descriptions).
+     *
+     * See also .argument().
+     *
+     * @example
+     *
+     *     program.arguments('<cmd> [env]');
+     *
+     * @returns `this` command for chaining
+     */
     arguments(names: string): this;
 
     /**

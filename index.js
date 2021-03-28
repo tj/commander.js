@@ -817,7 +817,37 @@ class Command extends EventEmitter {
   };
 
   /**
-   * Define argument syntax for the command.
+   * Define argument syntax for command.
+   *
+   * The default is that the argument is required, and you can explicitly
+   * indicate this with <> around the name. Put [] around the name for an optional argument.
+   *
+   * @example
+   *
+   *     program.argument('<input-file>');
+   *     program.argument('[output-file]');
+   *
+   * @param {string} name
+   * @param {string} [description]
+   * @return {Command} `this` command for chaining
+   */
+  argument(name, description) {
+    const argument = new Argument(name, description);
+    this.addArgument(argument);
+    return this;
+  }
+
+  /**
+   * Define argument syntax for command, adding multiple at once (without descriptions).
+   *
+   * See also .argument().
+   *
+   * @example
+   *
+   *     program.arguments('<cmd> [env]');
+   *
+   * @param {string} names
+   * @return {Command} `this` command for chaining
    */
 
   arguments(names) {
@@ -828,9 +858,10 @@ class Command extends EventEmitter {
   };
 
   /**
-   * Define argument syntax for the command.
+   * Define argument syntax for command, adding a prepared argument.
    *
    * @param {Argument} argument
+   * @return {Command} `this` command for chaining
    */
   addArgument(argument) {
     const previousArgument = this._args.slice(-1)[0];
@@ -838,21 +869,6 @@ class Command extends EventEmitter {
       throw new Error(`only the last argument can be variadic '${previousArgument.name()}'`);
     }
     this._args.push(argument);
-    return this;
-  }
-
-  /**
-   * Define argument syntax for the command
-   *
-   * The default is that the argument is required, and you can explicitly
-   * indicate this with <> around the name. Put [] around the name for an optional argument.
-   *
-   * @param {string} name
-   * @param {string} [description]
-   */
-  argument(name, description) {
-    const argument = new Argument(name, description);
-    this.addArgument(argument);
     return this;
   }
 
