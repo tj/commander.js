@@ -7,9 +7,9 @@ test.each(getSingleArgCases('<explicit-required>'))('when add "<arg>" using %s t
   const argument = cmd._args[0];
   const expectedShape = {
     _name: 'explicit-required',
-    required: true,
-    variadic: false,
-    description: ''
+    _required: true,
+    _variadic: false,
+    _description: ''
   };
   expect(argument).toEqual(expectedShape);
 });
@@ -18,9 +18,9 @@ test.each(getSingleArgCases('implicit-required'))('when add "arg" using %s then 
   const argument = cmd._args[0];
   const expectedShape = {
     _name: 'implicit-required',
-    required: true,
-    variadic: false,
-    description: ''
+    _required: true,
+    _variadic: false,
+    _description: ''
   };
   expect(argument).toEqual(expectedShape);
 });
@@ -29,9 +29,9 @@ test.each(getSingleArgCases('[optional]'))('when add "[arg]" using %s then argum
   const argument = cmd._args[0];
   const expectedShape = {
     _name: 'optional',
-    required: false,
-    variadic: false,
-    description: ''
+    _required: false,
+    _variadic: false,
+    _description: ''
   };
   expect(argument).toEqual(expectedShape);
 });
@@ -40,9 +40,9 @@ test.each(getSingleArgCases('<explicit-required...>'))('when add "<arg...>" usin
   const argument = cmd._args[0];
   const expectedShape = {
     _name: 'explicit-required',
-    required: true,
-    variadic: true,
-    description: ''
+    _required: true,
+    _variadic: true,
+    _description: ''
   };
   expect(argument).toEqual(expectedShape);
 });
@@ -51,9 +51,9 @@ test.each(getSingleArgCases('implicit-required...'))('when add "arg..." using %s
   const argument = cmd._args[0];
   const expectedShape = {
     _name: 'implicit-required',
-    required: true,
-    variadic: true,
-    description: ''
+    _required: true,
+    _variadic: true,
+    _description: ''
   };
   expect(argument).toEqual(expectedShape);
 });
@@ -62,9 +62,9 @@ test.each(getSingleArgCases('[optional...]'))('when add "[arg...]" using %s then
   const argument = cmd._args[0];
   const expectedShape = {
     _name: 'optional',
-    required: false,
-    variadic: true,
-    description: ''
+    _required: false,
+    _variadic: true,
+    _description: ''
   };
   expect(argument).toEqual(expectedShape);
 });

@@ -87,11 +87,11 @@ class Help {
 
   visibleArguments(cmd) {
     // If there are some argument description then return all the arguments.
-    if (cmd._argsDescription || cmd._args.find(argument => argument.description)) {
+    if (cmd._argsDescription || cmd._args.find(argument => argument._description)) {
       const legacyDescriptions = cmd._argsDescription || {};
       return cmd._args.map(argument => {
         const term = argument.name();
-        const description = argument.description || legacyDescriptions[argument.name()] || '';
+        const description = argument._description || legacyDescriptions[argument.name()] || '';
         return { term, description };
       });
     };
@@ -359,14 +359,14 @@ class Argument {
    */
 
   constructor(name, description) {
-    this.required = false;
-    this.variadic = false;
+    this._required = false;
+    this._variadic = false;
     this._name = '';
-    this.description = description || '';
+    this._description = description || '';
 
     switch (name[0]) {
       case '<': // e.g. <required>
-        this.required = true;
+        this._required = true;
         this._name = name.slice(1, -1);
         break;
       case '[': // e.g. [optional]
@@ -374,12 +374,12 @@ class Argument {
         break;
       default:
         this._name = name;
-        this.required = true;
+        this._required = true;
         break;
     }
 
     if (this._name.length > 3 && this._name.slice(-3) === '...') {
-      this.variadic = true;
+      this._variadic = true;
       this._name = this._name.slice(0, -3);
     }
   }
@@ -865,7 +865,7 @@ class Command extends EventEmitter {
    */
   addArgument(argument) {
     const previousArgument = this._args.slice(-1)[0];
-    if (previousArgument && previousArgument.variadic) {
+    if (previousArgument && previousArgument._variadic) {
       throw new Error(`only the last argument can be variadic '${previousArgument.name()}'`);
     }
     this._args.push(argument);
@@ -1546,9 +1546,9 @@ class Command extends EventEmitter {
         // Check expected arguments and collect variadic together.
         const args = this.args.slice();
         this._args.forEach((arg, i) => {
-          if (arg.required && args[i] == null) {
+          if (arg._required && args[i] == null) {
             this.missingArgument(arg.name());
-          } else if (arg.variadic) {
+          } else if (arg._variadic) {
             args[i] = args.splice(i);
             args.length = Math.min(i + 1, args.length);
           }
@@ -2194,15 +2194,15 @@ function outputHelpIfRequested(cmd, args) {
 /**
  * Takes an argument and returns its human readable equivalent for help usage.
  *
- * @param {Object} arg
+ * @param {Argument} arg
  * @return {string}
  * @api private
  */
 
 function humanReadableArgName(arg) {
-  const nameOutput = arg.name() + (arg.variadic === true ? '...' : '');
+  const nameOutput = arg.name() + (arg._variadic === true ? '...' : '');
 
-  return arg.required
+  return arg._required
     ? '<' + nameOutput + '>'
     : '[' + nameOutput + ']';
 }

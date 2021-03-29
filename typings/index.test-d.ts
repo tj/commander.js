@@ -335,9 +335,9 @@ expectType<string>(baseOption.attributeName());
 
 // Argument properties
 const baseArgument = new commander.Argument('<foo');
-expectType<string>(baseArgument.description);
-expectType<boolean>(baseArgument.required);
-expectType<boolean>(baseArgument.variadic);
+// expectType<string>(baseArgument.description);
+// expectType<boolean>(baseArgument.required);
+// expectType<boolean>(baseArgument.variadic);
 
 // Argument methods
 // name
