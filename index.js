@@ -408,16 +408,13 @@ class Argument {
   }
 
   /**
-   * Get or set the name of the argument.
+   * Return argument name.
    *
-   * @param {string} [str]
-   * @return {string|Argument}
+   * @return {string}
    */
 
-  name(str) {
-    if (str === undefined) return this._name;
-    this._name = str;
-    return this;
+  name() {
+    return this._name;
   };
 }
 

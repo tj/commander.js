@@ -345,4 +345,3 @@ expectType<boolean>(baseArgument.variadic);
 // Argument methods
 // name
 expectType<string>(baseArgument.name());
-expectType<commander.Argument>(baseArgument.name('<foo>'));

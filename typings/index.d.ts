@@ -25,14 +25,8 @@ declare namespace commander {
     required: boolean;
     variadic: boolean;
 
-    /**
-     * Set the name of the argument.
-     *
-     * @returns `this` command for chaining
-     */
-     name(str: string): this;
      /**
-      * Get the name of the argument.
+      * Return argument name.
       */
      name(): string;
    }
