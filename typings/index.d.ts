@@ -21,9 +21,9 @@ declare namespace commander {
   type InvalidOptionArgumentErrorConstructor = new (message: string) => InvalidOptionArgumentError;
 
   interface Argument {
-    // description: string;
-    // required: boolean;
-    // variadic: boolean;
+    description: string;
+    required: boolean;
+    variadic: boolean;
 
     /**
      * Set the name of the argument.
