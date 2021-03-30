@@ -272,6 +272,7 @@ expectType<commander.Command>(program.configureOutput({
 const helper = new commander.Help();
 const helperCommand = new commander.Command();
 const helperOption = new commander.Option('-a, --all');
+const helperArgument = new commander.Argument('<file>');
 
 expectType<number | undefined>(helper.helpWidth);
 expectType<boolean>(helper.sortSubcommands);
@@ -283,10 +284,12 @@ expectType<string>(helper.commandDescription(helperCommand));
 expectType<string>(helper.subcommandDescription(helperCommand));
 expectType<string>(helper.optionTerm(helperOption));
 expectType<string>(helper.optionDescription(helperOption));
+expectType<string>(helper.argumentTerm(helperArgument));
+expectType<string>(helper.argumentDescription(helperArgument));
 
 expectType<commander.Command[]>(helper.visibleCommands(helperCommand));
 expectType<commander.Option[]>(helper.visibleOptions(helperCommand));
-expectType<Array<{ term: string; description: string}>>(helper.visibleArguments(helperCommand));
+expectType<commander.Argument[]>(helper.visibleArguments(helperCommand));
 
 expectType<number>(helper.longestSubcommandTermLength(helperCommand, helper));
 expectType<number>(helper.longestOptionTermLength(helperCommand, helper));

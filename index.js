@@ -79,21 +79,23 @@ class Help {
   }
 
   /**
-   * Get an array of the arguments which have descriptions.
+   * Get an array of the arguments if any have a description.
    *
    * @param {Command} cmd
-   * @returns {{ term: string, description:string }[]}
+   * @returns {Argument[]}
    */
 
   visibleArguments(cmd) {
-    // If there are some argument description then return all the arguments.
-    if (cmd._argsDescription || cmd._args.find(argument => argument.description)) {
-      const legacyDescriptions = cmd._argsDescription || {};
-      return cmd._args.map(argument => {
-        const term = argument.name();
-        const description = argument.description || legacyDescriptions[argument.name()] || '';
-        return { term, description };
+    // Side effect! Apply the legacy descriptions before the arguments are displayed.
+    if (cmd._argsDescription) {
+      cmd._args.forEach(argument => {
+        argument.description = argument.description || cmd._argsDescription[argument.name()] || '';
       });
+    }
+
+    // If there are any arguments with a description then return all the arguments.
+    if (cmd._args.find(argument => argument.description)) {
+      return cmd._args;
     };
     return [];
   }
@@ -123,6 +125,17 @@ class Help {
 
   optionTerm(option) {
     return option.flags;
+  }
+
+  /**
+   * Get the argument term to show in the list of arguments.
+   *
+   * @param {Argument} argument
+   * @returns {string}
+   */
+
+  argumentTerm(argument) {
+    return argument.name();
   }
 
   /**
@@ -163,7 +176,7 @@ class Help {
 
   longestArgumentTermLength(cmd, helper) {
     return helper.visibleArguments(cmd).reduce((max, argument) => {
-      return Math.max(max, argument.term.length);
+      return Math.max(max, helper.argumentTerm(argument).length);
     }, 0);
   };
 
@@ -238,6 +251,17 @@ class Help {
   };
 
   /**
+   * Get the argument description to show in the list of arguments.
+   *
+   * @param {Argument} argument
+   * @return {string}
+   */
+
+  argumentDescription(argument) {
+    return argument.description;
+  }
+
+  /**
    * Generate the built-in help text.
    *
    * @param {Command} cmd
@@ -272,7 +296,7 @@ class Help {
 
     // Arguments
     const argumentList = helper.visibleArguments(cmd).map((argument) => {
-      return formatItem(argument.term, argument.description);
+      return formatItem(helper.argumentTerm(argument), helper.argumentDescription(argument));
     });
     if (argumentList.length > 0) {
       output = output.concat(['Arguments:', formatList(argumentList), '']);

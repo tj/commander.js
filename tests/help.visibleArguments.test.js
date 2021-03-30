@@ -21,6 +21,8 @@ describe('visibleArguments', () => {
     const program = new commander.Command();
     program.argument('<file>', 'file description');
     const helper = new commander.Help();
-    expect(helper.visibleArguments(program)).toEqual([{ term: 'file', description: 'file description' }]);
+    const visibleArguments = helper.visibleArguments(program);
+    expect(visibleArguments.length).toEqual(1);
+    expect(visibleArguments[0]).toEqual(new commander.Argument('<file>', 'file description'));
   });
 });

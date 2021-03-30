@@ -119,6 +119,10 @@ declare namespace commander {
     optionTerm(option: Option): string;
     /** Get the option description to show in the list of options. */
     optionDescription(option: Option): string;
+    /** Get the argument term to show in the list of arguments. */
+    argumentTerm(argument: Argument): string;
+    /** Get the argument description to show in the list of arguments. */
+    argumentDescription(argument: Argument): string;
 
     /** Get the command usage to be displayed at the top of the built-in help. */
     commandUsage(cmd: Command): string;
@@ -130,7 +134,7 @@ declare namespace commander {
     /** Get an array of the visible options. Includes a placeholder for the implicit help option, if there is one. */
     visibleOptions(cmd: Command): Option[];
     /** Get an array of the arguments which have descriptions. */
-    visibleArguments(cmd: Command): Array<{ term: string; description: string}>;
+    visibleArguments(cmd: Command): Argument[];
 
     /** Get the longest command term length. */
     longestSubcommandTermLength(cmd: Command, helper: Help): number;
