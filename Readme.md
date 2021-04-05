@@ -394,7 +394,7 @@ $ custom --list x,y,z
 
 You can specify (sub)commands using `.command()` or `.addCommand()`. There are two ways these can be implemented: using an action handler attached to the command, or as a stand-alone executable file (described in more detail later). The subcommands may be nested ([example](./examples/nestedCommands.js)).
 
-In the first parameter to `.command()` you specify the command name and any command-arguments. The arguments may be `<required>` or `[optional]`, and the last argument may also be `variadic...`.
+In the first parameter to `.command()` you specify the command name. You may append the command-arguments after the command name, or specify them separately using `.argument()`. The arguments may be `<required>` or `[optional]`, and the last argument may also be `variadic...`.
 
 You can use `.addCommand()` to add an already configured subcommand to the program.
 
@@ -410,7 +410,7 @@ program
     console.log('clone command called');
   });
 
-// Command implemented using stand-alone executable file (description is second parameter to `.command`)
+// Command implemented using stand-alone executable file, indicated by adding description as second parameter to `.command`.
 // Returns `this` for adding more commands.
 program
   .command('start <service>', 'start named service')
@@ -428,9 +428,12 @@ subcommand is specified ([example](./examples/defaultCommand.js)).
 
 ### Specify the argument syntax
 
-You use `.argument` to specify the expected command-arguments.
-Angle brackets around the name indicate a required command-argument (e.g. `<required>`).
-Square brackets indicate an optional command-argument (e.g. `[optional]`). The description parameter is optional.
+For subcommands, you can specify the argument syntax in the call to `.command()` (as shown above). This
+is the only method usable for subcommands implemented using a stand-alone executable, but for other subcommands
+you can instead use the following method.
+
+To configure a command, you can use `.argument()` to specify each expected command-argument. 
+You supply the argument name and an optional description. The argument may be `<required>` or `[optional]`.
 
 Example file: [argument.js](./examples/argument.js)
 
@@ -445,24 +448,14 @@ program
   });
 ```
 
-There are two ways to specify all the arguments at once, but these do not allow argument descriptions.
-
-```js
-program
-  .command('add <number> <number>');
-
-program
-  .command('fraction')
-  .arguments('<numerator> <denominator>');
-```
-
  The last argument of a command can be variadic, and only the last argument.  To make an argument variadic you
- append `...` to the argument name. For example:
+ append `...` to the argument name. A variadic argument is passed to the action handler as an array. For example:
 
 ```js
 program
   .version('0.1.0')
-  .command('rmdir <dirs...>')
+  .command('rmdir')
+  .argument('<dirs...>')
   .action(function (dirs) {
     dirs.forEach((dir) => {
       console.log('rmdir %s', dir);
@@ -470,7 +463,12 @@ program
   });
 ```
 
-A variadic argument is passed to the action handler as an array.
+There is a convenience method to add multiple arguments at once, but without descriptions:
+
+```js
+program
+  .arguments('<username> <password>');
+```
 
 ### Action handler
 
