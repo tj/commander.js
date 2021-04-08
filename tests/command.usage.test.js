@@ -78,20 +78,20 @@ test('when no commands then [command] not included in usage', () => {
   expect(program.usage()).not.toMatch('[command]');
 });
 
-test('when arguments then arguments included in usage', () => {
+test('when argument then argument included in usage', () => {
   const program = new commander.Command();
 
   program
-    .arguments('<file>');
+    .argument('<file>');
 
   expect(program.usage()).toMatch('<file>');
 });
 
-test('when options and command and arguments then all three included in usage', () => {
+test('when options and command and argument then all three included in usage', () => {
   const program = new commander.Command();
 
   program
-    .arguments('<file>')
+    .argument('<file>')
     .option('--alpha')
     .command('beta');
 

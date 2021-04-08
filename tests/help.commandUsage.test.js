@@ -42,7 +42,7 @@ describe('commandUsage', () => {
     const program = new commander.Command();
     program
       .name('program')
-      .arguments('<file>');
+      .argument('<file>');
     const helper = new commander.Help();
     expect(helper.commandUsage(program)).toEqual('program [options] <file>');
   });

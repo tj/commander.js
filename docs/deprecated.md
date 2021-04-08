@@ -86,3 +86,28 @@ Examples:
 ```
 
 Deprecated from Commander v7. 
+
+## cmd.description(cmdDescription, argDescriptions)
+
+This was used to add command argument descriptions for the help.
+
+```js
+program
+  .command('price <book>')
+  .description('show price of book', {
+    book: 'ISBN number for book'
+  });
+```
+
+The new approach is to use the `.argument()` method.
+
+```js
+program
+  .command('price')
+  .description('show price of book')
+  .argument('<book>', 'ISBN number for book');
+```
+
+
+Deprecated from Commander v8.
+

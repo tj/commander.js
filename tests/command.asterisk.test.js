@@ -33,7 +33,7 @@ describe(".command('*')", () => {
     const program = new commander.Command();
     program
       .command('*')
-      .arguments('[args...]')
+      .argument('[args...]')
       .action(mockAction);
     program.parse(['node', 'test', 'unrecognised-command']);
     expect(mockAction).toHaveBeenCalled();
@@ -59,7 +59,7 @@ describe(".command('*')", () => {
       .command('install');
     program
       .command('*')
-      .arguments('[args...]')
+      .argument('[args...]')
       .action(mockAction);
     program.parse(['node', 'test', 'unrecognised-command']);
     expect(mockAction).toHaveBeenCalled();
@@ -73,7 +73,7 @@ describe(".command('*')", () => {
       .command('install');
     const star = program
       .command('*')
-      .arguments('[args...]')
+      .argument('[args...]')
       .option('-d, --debug')
       .action(mockAction);
     program.parse(['node', 'test', 'unrecognised-command', '--debug']);
@@ -93,7 +93,7 @@ describe(".command('*')", () => {
       .command('install');
     program
       .command('*')
-      .arguments('[args...]')
+      .argument('[args...]')
       .action(mockAction);
     let caughtErr;
     try {

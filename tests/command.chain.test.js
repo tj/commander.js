@@ -1,4 +1,4 @@
-const { Command, Option } = require('../');
+const { Command, Option, Argument } = require('../');
 
 // Testing the functions which should chain.
 // parse and parseAsync are tested in command.parse.test.js
@@ -13,6 +13,18 @@ describe('Command methods that should return this for chaining', () => {
   test('when call .addCommand() then returns this', () => {
     const program = new Command();
     const result = program.addCommand(new Command('name'));
+    expect(result).toBe(program);
+  });
+
+  test('when call .argument() then returns this', () => {
+    const program = new Command();
+    const result = program.argument('<file>');
+    expect(result).toBe(program);
+  });
+
+  test('when call .addArgument() then returns this', () => {
+    const program = new Command();
+    const result = program.addArgument(new Argument('<file>'));
     expect(result).toBe(program);
   });
 

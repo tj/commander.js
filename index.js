@@ -28,11 +28,11 @@ class Help {
     const visibleCommands = cmd.commands.filter(cmd => !cmd._hidden);
     if (cmd._hasImplicitHelpCommand()) {
       // Create a command matching the implicit help command.
-      const args = cmd._helpCommandnameAndArgs.split(/ +/);
-      const helpCommand = cmd.createCommand(args.shift())
+      const [, helpName, helpArgs] = cmd._helpCommandnameAndArgs.match(/([^ ]+) *(.*)/);
+      const helpCommand = cmd.createCommand(helpName)
         .helpOption(false);
       helpCommand.description(cmd._helpCommandDescription);
-      helpCommand._parseExpectedArgs(args);
+      if (helpArgs) helpCommand.arguments(helpArgs);
       visibleCommands.push(helpCommand);
     }
     if (this.sortSubcommands) {
@@ -79,18 +79,24 @@ class Help {
   }
 
   /**
-   * Get an array of the arguments which have descriptions.
+   * Get an array of the arguments if any have a description.
    *
    * @param {Command} cmd
-   * @returns {{ term: string, description:string }[]}
+   * @returns {Argument[]}
    */
 
   visibleArguments(cmd) {
-    if (cmd._argsDescription && cmd._args.length) {
-      return cmd._args.map((argument) => {
-        return { term: argument.name, description: cmd._argsDescription[argument.name] || '' };
-      }, 0);
+    // Side effect! Apply the legacy descriptions before the arguments are displayed.
+    if (cmd._argsDescription) {
+      cmd._args.forEach(argument => {
+        argument.description = argument.description || cmd._argsDescription[argument.name()] || '';
+      });
     }
+
+    // If there are any arguments with a description then return all the arguments.
+    if (cmd._args.find(argument => argument.description)) {
+      return cmd._args;
+    };
     return [];
   }
 
@@ -119,6 +125,17 @@ class Help {
 
   optionTerm(option) {
     return option.flags;
+  }
+
+  /**
+   * Get the argument term to show in the list of arguments.
+   *
+   * @param {Argument} argument
+   * @returns {string}
+   */
+
+  argumentTerm(argument) {
+    return argument.name();
   }
 
   /**
@@ -159,7 +176,7 @@ class Help {
 
   longestArgumentTermLength(cmd, helper) {
     return helper.visibleArguments(cmd).reduce((max, argument) => {
-      return Math.max(max, argument.term.length);
+      return Math.max(max, helper.argumentTerm(argument).length);
     }, 0);
   };
 
@@ -234,6 +251,17 @@ class Help {
   };
 
   /**
+   * Get the argument description to show in the list of arguments.
+   *
+   * @param {Argument} argument
+   * @return {string}
+   */
+
+  argumentDescription(argument) {
+    return argument.description;
+  }
+
+  /**
    * Generate the built-in help text.
    *
    * @param {Command} cmd
@@ -268,7 +296,7 @@ class Help {
 
     // Arguments
     const argumentList = helper.visibleArguments(cmd).map((argument) => {
-      return formatItem(argument.term, argument.description);
+      return formatItem(helper.argumentTerm(argument), helper.argumentDescription(argument));
     });
     if (argumentList.length > 0) {
       output = output.concat(['Arguments:', formatList(argumentList), '']);
@@ -342,6 +370,52 @@ class Help {
       return ((i > 0) ? indentString : '') + line.trimRight();
     }).join('\n');
   }
+}
+
+class Argument {
+  /**
+   * Initialize a new command argument with the given name and description.
+   * The default is that the argument is required, and you can explicitly
+   * indicate this with <> around the name. Put [] around the name for an optional argument.
+   *
+   * @param {string} name
+   * @param {string} [description]
+   */
+
+  constructor(name, description) {
+    this.description = description || '';
+    this.variadic = false;
+
+    switch (name[0]) {
+      case '<': // e.g. <required>
+        this.required = true;
+        this._name = name.slice(1, -1);
+        break;
+      case '[': // e.g. [optional]
+        this.required = false;
+        this._name = name.slice(1, -1);
+        break;
+      default:
+        this.required = true;
+        this._name = name;
+        break;
+    }
+
+    if (this._name.length > 3 && this._name.slice(-3) === '...') {
+      this.variadic = true;
+      this._name = this._name.slice(0, -3);
+    }
+  }
+
+  /**
+   * Return argument name.
+   *
+   * @return {string}
+   */
+
+  name() {
+    return this._name;
+  };
 }
 
 class Option {
@@ -566,7 +640,7 @@ class Command extends EventEmitter {
     this._aliases = [];
     this._combineFlagAndOptionalValue = true;
     this._description = '';
-    this._argsDescription = undefined;
+    this._argsDescription = undefined; // legacy
     this._enablePositionalOptions = false;
     this._passThroughOptions = false;
 
@@ -626,8 +700,8 @@ class Command extends EventEmitter {
       desc = null;
     }
     opts = opts || {};
-    const args = nameAndArgs.split(/ +/);
-    const cmd = this.createCommand(args.shift());
+    const [, name, args] = nameAndArgs.match(/([^ ]+) *(.*)/);
+    const cmd = this.createCommand(name);
 
     if (desc) {
       cmd.description(desc);
@@ -654,8 +728,8 @@ class Command extends EventEmitter {
     cmd._enablePositionalOptions = this._enablePositionalOptions;
 
     cmd._executableFile = opts.executableFile || null; // Custom name for executable file, set missing to null to match constructor
+    if (args) cmd.arguments(args);
     this.commands.push(cmd);
-    cmd._parseExpectedArgs(args);
     cmd.parent = this;
 
     if (desc) return this;
@@ -763,12 +837,60 @@ class Command extends EventEmitter {
   };
 
   /**
-   * Define argument syntax for the command.
+   * Define argument syntax for command.
+   *
+   * The default is that the argument is required, and you can explicitly
+   * indicate this with <> around the name. Put [] around the name for an optional argument.
+   *
+   * @example
+   *
+   *     program.argument('<input-file>');
+   *     program.argument('[output-file]');
+   *
+   * @param {string} name
+   * @param {string} [description]
+   * @return {Command} `this` command for chaining
+   */
+  argument(name, description) {
+    const argument = new Argument(name, description);
+    this.addArgument(argument);
+    return this;
+  }
+
+  /**
+   * Define argument syntax for command, adding multiple at once (without descriptions).
+   *
+   * See also .argument().
+   *
+   * @example
+   *
+   *     program.arguments('<cmd> [env]');
+   *
+   * @param {string} names
+   * @return {Command} `this` command for chaining
    */
 
-  arguments(desc) {
-    return this._parseExpectedArgs(desc.split(/ +/));
+  arguments(names) {
+    names.split(/ +/).forEach((detail) => {
+      this.argument(detail);
+    });
+    return this;
   };
+
+  /**
+   * Define argument syntax for command, adding a prepared argument.
+   *
+   * @param {Argument} argument
+   * @return {Command} `this` command for chaining
+   */
+  addArgument(argument) {
+    const previousArgument = this._args.slice(-1)[0];
+    if (previousArgument && previousArgument.variadic) {
+      throw new Error(`only the last argument can be variadic '${previousArgument.name()}'`);
+    }
+    this._args.push(argument);
+    return this;
+  }
 
   /**
    * Override default decision whether to add implicit help command.
@@ -804,51 +926,6 @@ class Command extends EventEmitter {
       return this.commands.length && !this._actionHandler && !this._findCommand('help');
     }
     return this._addImplicitHelpCommand;
-  };
-
-  /**
-   * Parse expected `args`.
-   *
-   * For example `["[type]"]` becomes `[{ required: false, name: 'type' }]`.
-   *
-   * @param {Array} args
-   * @return {Command} `this` command for chaining
-   * @api private
-   */
-
-  _parseExpectedArgs(args) {
-    if (!args.length) return;
-    args.forEach((arg) => {
-      const argDetails = {
-        required: false,
-        name: '',
-        variadic: false
-      };
-
-      switch (arg[0]) {
-        case '<':
-          argDetails.required = true;
-          argDetails.name = arg.slice(1, -1);
-          break;
-        case '[':
-          argDetails.name = arg.slice(1, -1);
-          break;
-      }
-
-      if (argDetails.name.length > 3 && argDetails.name.slice(-3) === '...') {
-        argDetails.variadic = true;
-        argDetails.name = argDetails.name.slice(0, -3);
-      }
-      if (argDetails.name) {
-        this._args.push(argDetails);
-      }
-    });
-    this._args.forEach((arg, i) => {
-      if (arg.variadic && i < this._args.length - 1) {
-        throw new Error(`only the last argument can be variadic '${arg.name}'`);
-      }
-    });
-    return this;
   };
 
   /**
@@ -1490,7 +1567,7 @@ class Command extends EventEmitter {
         const args = this.args.slice();
         this._args.forEach((arg, i) => {
           if (arg.required && args[i] == null) {
-            this.missingArgument(arg.name);
+            this.missingArgument(arg.name());
           } else if (arg.variadic) {
             args[i] = args.splice(i);
             args.length = Math.min(i + 1, args.length);
@@ -1851,7 +1928,9 @@ class Command extends EventEmitter {
   description(str, argsDescription) {
     if (str === undefined && argsDescription === undefined) return this._description;
     this._description = str;
-    this._argsDescription = argsDescription;
+    if (argsDescription) {
+      this._argsDescription = argsDescription;
+    }
     return this;
   };
 
@@ -2096,6 +2175,7 @@ exports.program = exports; // More explicit access to global command.
 
 exports.Command = Command;
 exports.Option = Option;
+exports.Argument = Argument;
 exports.CommanderError = CommanderError;
 exports.InvalidOptionArgumentError = InvalidOptionArgumentError;
 exports.Help = Help;
@@ -2134,13 +2214,13 @@ function outputHelpIfRequested(cmd, args) {
 /**
  * Takes an argument and returns its human readable equivalent for help usage.
  *
- * @param {Object} arg
+ * @param {Argument} arg
  * @return {string}
  * @api private
  */
 
 function humanReadableArgName(arg) {
-  const nameOutput = arg.name + (arg.variadic === true ? '...' : '');
+  const nameOutput = arg.name() + (arg.variadic === true ? '...' : '');
 
   return arg.required
     ? '<' + nameOutput + '>'

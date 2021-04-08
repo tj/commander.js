@@ -94,7 +94,7 @@ describe('allowUnknownOption', () => {
   test('when specify expected arg and allowExcessArguments(false) then no error', () => {
     const program = new commander.Command();
     program
-      .arguments('<file>')
+      .argument('<file>')
       .exitOverride()
       .allowExcessArguments(false)
       .action(() => {});
@@ -107,7 +107,7 @@ describe('allowUnknownOption', () => {
   test('when specify excess after <arg> and allowExcessArguments(false) then error', () => {
     const program = new commander.Command();
     program
-      .arguments('<file>')
+      .argument('<file>')
       .exitOverride()
       .allowExcessArguments(false)
       .action(() => {});
@@ -120,7 +120,7 @@ describe('allowUnknownOption', () => {
   test('when specify excess after [arg] and allowExcessArguments(false) then error', () => {
     const program = new commander.Command();
     program
-      .arguments('[file]')
+      .argument('[file]')
       .exitOverride()
       .allowExcessArguments(false)
       .action(() => {});
@@ -133,7 +133,7 @@ describe('allowUnknownOption', () => {
   test('when specify args for [args...] and allowExcessArguments(false) then no error', () => {
     const program = new commander.Command();
     program
-      .arguments('[files...]')
+      .argument('[files...]')
       .exitOverride()
       .allowExcessArguments(false)
       .action(() => {});

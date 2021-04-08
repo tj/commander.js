@@ -20,6 +20,17 @@ declare namespace commander {
   }
   type InvalidOptionArgumentErrorConstructor = new (message: string) => InvalidOptionArgumentError;
 
+  interface Argument {
+    description: string;
+    required: boolean;
+    variadic: boolean;
+
+     /**
+      * Return argument name.
+      */
+     name(): string;
+   }
+
   interface Option {
     flags: string;
     description: string;
@@ -86,6 +97,7 @@ declare namespace commander {
     attributeName(): string;
   }
   type OptionConstructor = new (flags: string, description?: string) => Option;
+  type ArgumentConstructor = new (arg: string, description?: string) => Argument;
 
   interface Help {
     /** output helpWidth, long lines are wrapped to fit */
@@ -101,6 +113,10 @@ declare namespace commander {
     optionTerm(option: Option): string;
     /** Get the option description to show in the list of options. */
     optionDescription(option: Option): string;
+    /** Get the argument term to show in the list of arguments. */
+    argumentTerm(argument: Argument): string;
+    /** Get the argument description to show in the list of arguments. */
+    argumentDescription(argument: Argument): string;
 
     /** Get the command usage to be displayed at the top of the built-in help. */
     commandUsage(cmd: Command): string;
@@ -112,7 +128,7 @@ declare namespace commander {
     /** Get an array of the visible options. Includes a placeholder for the implicit help option, if there is one. */
     visibleOptions(cmd: Command): Option[];
     /** Get an array of the arguments which have descriptions. */
-    visibleArguments(cmd: Command): Array<{ term: string; description: string}>;
+    visibleArguments(cmd: Command): Argument[];
 
     /** Get the longest command term length. */
     longestSubcommandTermLength(cmd: Command, helper: Help): number;
@@ -236,9 +252,37 @@ declare namespace commander {
     /**
      * Define argument syntax for command.
      *
+     * The default is that the argument is required, and you can explicitly
+     * indicate this with <> around the name. Put [] around the name for an optional argument.
+     *
+     * @example
+     *
+     *     program.argument('<input-file>');
+     *     program.argument('[output-file]');
+     *
      * @returns `this` command for chaining
      */
-    arguments(desc: string): this;
+    argument(name: string, description?: string): this;
+
+    /**
+     * Define argument syntax for command, adding a prepared argument.
+     *
+     * @returns `this` command for chaining
+     */
+    addArgument(arg: Argument): this;
+
+    /**
+     * Define argument syntax for command, adding multiple at once (without descriptions).
+     *
+     * See also .argument().
+     *
+     * @example
+     *
+     *     program.arguments('<cmd> [env]');
+     *
+     * @returns `this` command for chaining
+     */
+    arguments(names: string): this;
 
     /**
      * Override default decision whether to add implicit help command.
@@ -492,7 +536,10 @@ declare namespace commander {
      *
      * @returns `this` command for chaining
      */
-    description(str: string, argsDescription?: {[argName: string]: string}): this;
+
+    description(str: string): this;
+    /** @deprecated since v8, instead use .argument to add command argument with description */
+    description(str: string, argsDescription: {[argName: string]: string}): this;
     /**
      * Get the description.
      */
@@ -614,6 +661,7 @@ declare namespace commander {
     program: Command;
     Command: CommandConstructor;
     Option: OptionConstructor;
+    Argument: ArgumentConstructor;
     CommanderError: CommanderErrorConstructor;
     InvalidOptionArgumentError: InvalidOptionArgumentErrorConstructor;
     Help: HelpConstructor;

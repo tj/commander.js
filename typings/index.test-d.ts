@@ -37,6 +37,10 @@ expectType<commander.Command>(program.command('exec', 'exec description', { isDe
 // addCommand
 expectType<commander.Command>(program.addCommand(new commander.Command('abc')));
 
+// argument
+expectType<commander.Command>(program.argument('<value>'));
+expectType<commander.Command>(program.argument('<value>', 'description'));
+
 // arguments
 expectType<commander.Command>(program.arguments('<cmd> [env]'));
 
@@ -174,6 +178,7 @@ expectType(opts['bar']);
 // description
 expectType<commander.Command>(program.description('my description'));
 expectType<string>(program.description());
+expectType<commander.Command>(program.description('my description of command with arg foo', { foo: 'foo description'})); // deprecated
 
 // alias
 expectType<commander.Command>(program.alias('my alias'));
@@ -267,6 +272,7 @@ expectType<commander.Command>(program.configureOutput({
 const helper = new commander.Help();
 const helperCommand = new commander.Command();
 const helperOption = new commander.Option('-a, --all');
+const helperArgument = new commander.Argument('<file>');
 
 expectType<number | undefined>(helper.helpWidth);
 expectType<boolean>(helper.sortSubcommands);
@@ -278,10 +284,12 @@ expectType<string>(helper.commandDescription(helperCommand));
 expectType<string>(helper.subcommandDescription(helperCommand));
 expectType<string>(helper.optionTerm(helperOption));
 expectType<string>(helper.optionDescription(helperOption));
+expectType<string>(helper.argumentTerm(helperArgument));
+expectType<string>(helper.argumentDescription(helperArgument));
 
 expectType<commander.Command[]>(helper.visibleCommands(helperCommand));
 expectType<commander.Option[]>(helper.visibleOptions(helperCommand));
-expectType<Array<{ term: string; description: string}>>(helper.visibleArguments(helperCommand));
+expectType<commander.Argument[]>(helper.visibleArguments(helperCommand));
 
 expectType<number>(helper.longestSubcommandTermLength(helperCommand, helper));
 expectType<number>(helper.longestOptionTermLength(helperCommand, helper));
@@ -327,3 +335,13 @@ expectType<string>(baseOption.name());
 
 // attributeName
 expectType<string>(baseOption.attributeName());
+
+// Argument properties
+const baseArgument = new commander.Argument('<foo');
+expectType<string>(baseArgument.description);
+expectType<boolean>(baseArgument.required);
+expectType<boolean>(baseArgument.variadic);
+
+// Argument methods
+// name
+expectType<string>(baseArgument.name());

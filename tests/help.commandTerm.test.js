@@ -27,7 +27,7 @@ describe('subcommandTerm', () => {
 
   test('when command has <argument> then returns name <argument>', () => {
     const command = new commander.Command('program')
-      .arguments('<argument>');
+      .argument('<argument>');
     const helper = new commander.Help();
     expect(helper.subcommandTerm(command)).toEqual('program <argument>');
   });
@@ -36,7 +36,7 @@ describe('subcommandTerm', () => {
     const command = new commander.Command('program')
       .alias('alias')
       .option('-a,--all')
-      .arguments('<argument>');
+      .argument('<argument>');
     const helper = new commander.Help();
     expect(helper.subcommandTerm(command)).toEqual('program|alias [options] <argument>');
   });

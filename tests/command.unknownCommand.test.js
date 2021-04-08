@@ -30,7 +30,7 @@ describe('unknownCommand', () => {
       .exitOverride()
       .command('sub');
     program
-      .arguments('[args...]')
+      .argument('[args...]')
       .action(() => { });
     expect(() => {
       program.parse('node test.js unknown'.split(' '));

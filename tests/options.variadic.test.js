@@ -62,7 +62,7 @@ describe('variadic option with required value', () => {
     const program = new commander.Command();
     program
       .option('-r,--required <value...>')
-      .arguments('[arg]');
+      .argument('[arg]');
 
     program.parse(['-rone', 'operand'], { from: 'user' });
     expect(program.opts().required).toEqual(['one']);
@@ -72,7 +72,7 @@ describe('variadic option with required value', () => {
     const program = new commander.Command();
     program
       .option('-r,--required <value...>')
-      .arguments('[arg]');
+      .argument('[arg]');
 
     program.parse(['--required=one', 'operand'], { from: 'user' });
     expect(program.opts().required).toEqual(['one']);
@@ -83,7 +83,7 @@ describe('variadic option with required value', () => {
     program
       .option('-r,--required <value...>')
       .option('-f, --flag')
-      .arguments('[arg]');
+      .argument('[arg]');
 
     program.parse(['-r', 'one', '-f'], { from: 'user' });
     const opts = program.opts();
