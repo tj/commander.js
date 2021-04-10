@@ -1482,11 +1482,8 @@ class Command extends EventEmitter {
           this.unknownOption(parsed.unknown[0]);
         }
       };
-
-      const commandEvent = `command:${this.name()}`;
-      if (this._actionHandler) {
-        checkForUnknownOptions();
-        // Check expected arguments and collect variadic together.
+      // Refactor the arguments for passing to action handler, and check for missing or extra arguments.
+      const getCheckedArguments = () => {
         const args = this.args.slice();
         this._args.forEach((arg, i) => {
           if (arg.required && args[i] == null) {
@@ -1499,11 +1496,17 @@ class Command extends EventEmitter {
         if (args.length > this._args.length) {
           this._excessArguments(args);
         }
+        return args;
+      };
 
-        this._actionHandler(args);
+      const commandEvent = `command:${this.name()}`;
+      if (this._actionHandler) {
+        checkForUnknownOptions();
+        this._actionHandler(getCheckedArguments());
         if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
       } else if (this.parent && this.parent.listenerCount(commandEvent)) {
         checkForUnknownOptions();
+        getCheckedArguments();
         this.parent.emit(commandEvent, operands, unknown); // legacy
       } else if (operands.length) {
         if (this._findCommand('*')) { // legacy default command
@@ -1515,12 +1518,15 @@ class Command extends EventEmitter {
           this.unknownCommand();
         } else {
           checkForUnknownOptions();
+          getCheckedArguments();
+          // fall through for caller to handle after calling .parse()
         }
       } else if (this.commands.length) {
         // This command has subcommands and nothing hooked up at this level, so display help.
         this.help({ error: true });
       } else {
         checkForUnknownOptions();
+        getCheckedArguments();
         // fall through for caller to handle after calling .parse()
       }
     }
