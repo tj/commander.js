@@ -1559,28 +1559,38 @@ class Command extends EventEmitter {
           this.unknownOption(parsed.unknown[0]);
         }
       };
+      const checkNumberOfArguments = () => {
+        // too few
+        this._args.forEach((arg, i) => {
+          if (arg.required && this.args[i] == null) {
+            this.missingArgument(arg.name());
+          }
+        });
+        // too many
+        if (this._args.length > 0 && this._args[this._args.length - 1].variadic) {
+          return;
+        }
+        if (this.args.length > this._args.length) {
+          this._excessArguments(this.args);
+        }
+      };
 
       const commandEvent = `command:${this.name()}`;
       if (this._actionHandler) {
         checkForUnknownOptions();
-        // Check expected arguments and collect variadic together.
-        const args = this.args.slice();
-        this._args.forEach((arg, i) => {
-          if (arg.required && args[i] == null) {
-            this.missingArgument(arg.name());
-          } else if (arg.variadic) {
-            args[i] = args.splice(i);
-            args.length = Math.min(i + 1, args.length);
-          }
-        });
-        if (args.length > this._args.length) {
-          this._excessArguments(args);
+        checkNumberOfArguments();
+        // Collect trailing args into variadic.
+        let actionArgs = this.args;
+        const declaredArgCount = this._args.length;
+        if (declaredArgCount > 0 && this._args[declaredArgCount - 1].variadic) {
+          actionArgs = this.args.slice(0, declaredArgCount - 1);
+          actionArgs[declaredArgCount - 1] = this.args.slice(declaredArgCount - 1);
         }
-
-        this._actionHandler(args);
+        this._actionHandler(actionArgs);
         if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
       } else if (this.parent && this.parent.listenerCount(commandEvent)) {
         checkForUnknownOptions();
+        checkNumberOfArguments();
         this.parent.emit(commandEvent, operands, unknown); // legacy
       } else if (operands.length) {
         if (this._findCommand('*')) { // legacy default command
@@ -1592,12 +1602,14 @@ class Command extends EventEmitter {
           this.unknownCommand();
         } else {
           checkForUnknownOptions();
+          checkNumberOfArguments();
         }
       } else if (this.commands.length) {
         // This command has subcommands and nothing hooked up at this level, so display help.
         this.help({ error: true });
       } else {
         checkForUnknownOptions();
+        checkNumberOfArguments();
         // fall through for caller to handle after calling .parse()
       }
     }

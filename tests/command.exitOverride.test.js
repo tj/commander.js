@@ -120,6 +120,23 @@ describe('.exitOverride and error details', () => {
     expectCommanderError(caughtErr, 1, 'commander.missingArgument', "error: missing required argument 'arg-name'");
   });
 
+  test('when specify program without required argument and no action handler then throw CommanderError', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .argument('<arg-name>');
+
+    let caughtErr;
+    try {
+      program.parse(['node', 'test']);
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expect(stderrSpy).toHaveBeenCalled();
+    expectCommanderError(caughtErr, 1, 'commander.missingArgument', "error: missing required argument 'arg-name'");
+  });
+
   test('when specify excess argument then throw CommanderError', () => {
     const program = new commander.Command();
     program
