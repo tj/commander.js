@@ -837,6 +837,21 @@ class Command extends EventEmitter {
   };
 
   /**
+   * Factory routine to create a new unattached argument.
+   *
+   * See .argument() for creating an attached argument, which uses this routine to
+   * create the argument. You can override createArgument to return a custom argument.
+   *
+   * @param {string} name
+   * @param {string} [description]
+   * @return {Argument} new argument
+   */
+
+  createArgument(name, description) {
+    return new Argument(name, description);
+  };
+
+  /**
    * Define argument syntax for command.
    *
    * The default is that the argument is required, and you can explicitly
@@ -852,7 +867,7 @@ class Command extends EventEmitter {
    * @return {Command} `this` command for chaining
    */
   argument(name, description) {
-    const argument = new Argument(name, description);
+    const argument = this.createArgument(name, description);
     this.addArgument(argument);
     return this;
   }
