@@ -250,6 +250,14 @@ declare namespace commander {
     addCommand(cmd: Command, opts?: CommandOptions): this;
 
     /**
+     * Factory routine to create a new unattached argument.
+     *
+     * See .argument() for creating an attached argument, which uses this routine to
+     * create the argument. You can override createArgument to return a custom argument.
+     */
+    createArgument(name: string, description?: string): Argument;
+
+    /**
      * Define argument syntax for command.
      *
      * The default is that the argument is required, and you can explicitly
