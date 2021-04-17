@@ -42,7 +42,7 @@ class Command extends BaseCommand {
 
 exports = module.exports = new Command();
 exports.program = exports; // More explicit access to global command.
-// Implicit export of createCommand, createHelp, and createArgument.
+// Implicit export of createArgument, createCommand, and createOption.
 
 /**
  * Expose classes
