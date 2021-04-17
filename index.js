@@ -6,13 +6,22 @@ const { Help } = require('./src/help');
 
 // @ts-check
 
+// Supply the implementations of createHelp and createCommand, which only have
+// placeholders in BaseCommand to avoid a circular dependency.
+
 class Command extends BaseCommand {
   /**
-   * @inheritdoc
+   * Factory routine to create a new unattached command.
+   *
+   * See .command() for creating an attached subcommand, which uses this routine to
+   * create the command. You can override createCommand to customise subcommands.
+   *
+   * @param {string} [name]
+   * @return {Command} new command
    */
 
-  createCommand(...args) {
-    return new Command(...args);
+  createCommand(name) {
+    return new Command(name);
   };
 
   /**
@@ -33,6 +42,7 @@ class Command extends BaseCommand {
 
 exports = module.exports = new Command();
 exports.program = exports; // More explicit access to global command.
+// Implicit export of createCommand, createHelp, and createArgument.
 
 /**
  * Expose classes

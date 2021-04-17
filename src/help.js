@@ -1,4 +1,10 @@
-const { humanReadableArgName } = require('./argument');
+// eslint-disable-next-line no-unused-vars
+const { Argument, humanReadableArgName } = require('./argument');
+// eslint-disable-next-line no-unused-vars
+const { Option } = require('./option');
+// eslint-disable-next-line no-unused-vars
+const { Command } = require('./command');
+// Argument, Option, and Command are only used in JSDoc types not in code.
 
 // @ts-check
 

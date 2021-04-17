@@ -3,13 +3,15 @@ const childProcess = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
+// NB: not including ./help to avoid creating a circular dependency.
 const { Argument, humanReadableArgName } = require('./argument');
-const { CommanderError, NotImplementedError } = require('./errors');
+const { CommanderError } = require('./errors');
 const { Option, parseOptionFlags } = require('./option');
 
-// Command and Help have circular dependency so both declared here.
-
 // @ts-check
+
+// This only has placeholders for createCommand and createHelp.
+// The implementations are supplied and class completed in superclass.
 
 class Command extends EventEmitter {
   /**
@@ -137,29 +139,25 @@ class Command extends EventEmitter {
   };
 
   /**
-   * Factory routine to create a new unattached command.
-   *
-   * See .command() for creating an attached subcommand, which uses this routine to
-   * create the command. You can override createCommand to customise subcommands.
+   * Placeholder method, implemented and documented in superclass.
    *
    * @param {string} [name]
    * @return {Command} new command
    */
 
   createCommand(name) {
-    return new Command(name);
+    throw new Error('createCommand must be supplied by superclass');
   };
 
   /**
+   * Placeholder method, implemented and documented in superclass.
+   * This breaks a circular dependency between Help and Command.
+   *
    * @return {{helpWidth: number|undefined, formatHelp: Function}}
    */
 
   createHelp() {
-    return Object.assign({
-      formatHelp: function() {
-        throw new NotImplementedError('formatHelp not implemented.');
-      }
-    }, this.configureHelp());
+    throw new Error('formatHelp must be supplied by superclass');
   };
 
   /**
