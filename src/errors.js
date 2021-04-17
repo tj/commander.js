@@ -41,5 +41,24 @@ class InvalidOptionArgumentError extends CommanderError {
   }
 }
 
+/**
+ * NotImplementedError class
+ * @class
+ */
+class NotImplementedError extends CommanderError {
+  /**
+   * Constructs the NotImplementedError class
+   * @param {string} [message] human-readable description of the error
+   * @constructor
+   */
+  constructor(message) {
+    super(1, 'commander.notImplemented', message);
+    // properly capture stack trace in Node.js
+    Error.captureStackTrace(this, this.constructor);
+    this.name = this.constructor.name;
+  }
+}
+
 module.exports.CommanderError = CommanderError;
 module.exports.InvalidOptionArgumentError = InvalidOptionArgumentError;
+module.exports.NotImplementedError = NotImplementedError;

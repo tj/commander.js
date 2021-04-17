@@ -46,4 +46,21 @@ class Argument {
   };
 }
 
+/**
+ * Takes an argument and returns its human readable equivalent for help usage.
+ *
+ * @param {Argument} arg
+ * @return {string}
+ * @api private
+ */
+
+function humanReadableArgName(arg) {
+  const nameOutput = arg.name() + (arg.variadic === true ? '...' : '');
+
+  return arg.required
+    ? '<' + nameOutput + '>'
+    : '[' + nameOutput + ']';
+}
+
 module.exports.Argument = Argument;
+module.exports.humanReadableArgName = humanReadableArgName;
