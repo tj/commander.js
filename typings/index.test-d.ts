@@ -345,3 +345,7 @@ expectType<boolean>(baseArgument.variadic);
 // Argument methods
 // name
 expectType<string>(baseArgument.name());
+
+// createArgument
+expectType<commander.Argument>(program.createArgument('<name>'));
+expectType<commander.Argument>(program.createArgument('<name>', 'description'));
