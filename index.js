@@ -1640,8 +1640,8 @@ class Command extends EventEmitter {
               value = this.args.slice(index);
               if (declaredArg.parseArg) {
                 value = value.reduce((processed, v) => {
-                  return declaredArg.parseArg(v, processed === undefined ? declaredArg.defaultValue : processed);
-                }, undefined);
+                  return declaredArg.parseArg(v, processed);
+                }, declaredArg.defaultValue);
               }
             } else if (value === undefined) {
               value = [];
