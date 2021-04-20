@@ -385,6 +385,9 @@ class Argument {
   constructor(name, description) {
     this.description = description || '';
     this.variadic = false;
+    this.parseArg = undefined;
+    this.defaultValue = undefined;
+    this.defaultValueDescription = undefined;
 
     switch (name[0]) {
       case '<': // e.g. <required>
@@ -415,6 +418,32 @@ class Argument {
 
   name() {
     return this._name;
+  };
+
+  /**
+   * Set the default value, and optionally supply the description to be displayed in the help.
+   *
+   * @param {any} value
+   * @param {string} [description]
+   * @return {Option}
+   */
+
+  default(value, description) {
+    this.defaultValue = value;
+    this.defaultValueDescription = description;
+    return this;
+  };
+
+  /**
+   * Set the custom handler for processing CLI option arguments into option values.
+   *
+   * @param {Function} [fn]
+   * @return {Option}
+   */
+
+  argParser(fn) {
+    this.parseArg = fn;
+    return this;
   };
 }
 
@@ -864,10 +893,17 @@ class Command extends EventEmitter {
    *
    * @param {string} name
    * @param {string} [description]
+   * @param {Function|*} [fn] - custom argument processing function
+   * @param {*} [defaultValue] Not implemented yet
    * @return {Command} `this` command for chaining
    */
-  argument(name, description) {
+  argument(name, description, fn, defaultValue) {
     const argument = this.createArgument(name, description);
+    if (typeof fn === 'function') {
+      argument.default(defaultValue).argParser(fn);
+    } else {
+      argument.default(fn);
+    }
     this.addArgument(argument);
     return this;
   }
@@ -1594,13 +1630,31 @@ class Command extends EventEmitter {
       if (this._actionHandler) {
         checkForUnknownOptions();
         checkNumberOfArguments();
-        // Collect trailing args into variadic.
-        let actionArgs = this.args;
-        const declaredArgCount = this._args.length;
-        if (declaredArgCount > 0 && this._args[declaredArgCount - 1].variadic) {
-          actionArgs = this.args.slice(0, declaredArgCount - 1);
-          actionArgs[declaredArgCount - 1] = this.args.slice(declaredArgCount - 1);
-        }
+
+        // Move this into routine, say _getActionArgs
+        const actionArgs = [];
+        this._args.forEach((declaredArg, index) => {
+          let value = declaredArg.defaultValue;
+          if (declaredArg.variadic) {
+            if (index < this.args.length) {
+              value = this.args.slice(index);
+              if (declaredArg.parseArg) {
+                value = value.reduce((processed, v) => {
+                  return declaredArg.parseArg(v, processed === undefined ? declaredArg.defaultValue : processed);
+                }, undefined);
+              }
+            } else if (value === undefined) {
+              value = [];
+            }
+          } else if (index < this.args.length) {
+            value = this.args[index];
+            if (declaredArg.parseArg) {
+              value = declaredArg.parseArg(value, declaredArg.defaultValue);
+            }
+          }
+          actionArgs[index] = value;
+        });
+
         this._actionHandler(actionArgs);
         if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
       } else if (this.parent && this.parent.listenerCount(commandEvent)) {
