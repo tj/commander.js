@@ -425,7 +425,7 @@ class Argument {
    *
    * @param {any} value
    * @param {string} [description]
-   * @return {Option}
+   * @return {Argument}
    */
 
   default(value, description) {
@@ -438,7 +438,7 @@ class Argument {
    * Set the custom handler for processing CLI option arguments into option values.
    *
    * @param {Function} [fn]
-   * @return {Option}
+   * @return {Argument}
    */
 
   argParser(fn) {
@@ -1561,6 +1561,7 @@ class Command extends EventEmitter {
   /**
    * @api private
    */
+
   _dispatchSubcommand(commandName, operands, unknown) {
     const subCommand = this._findCommand(commandName);
     if (!subCommand) this.help({ error: true });
@@ -1571,6 +1572,41 @@ class Command extends EventEmitter {
       subCommand._parseCommand(operands, unknown);
     }
   };
+
+  /**
+   * Package arguments (this.args) for passing to action handler based
+   * on declared arguments (this._args).
+   *
+   * @api private
+   */
+
+  _getActionArguments() {
+    const actionArgs = [];
+    this._args.forEach((declaredArg, index) => {
+      let value = declaredArg.defaultValue;
+      if (declaredArg.variadic) {
+        // Collect together remaining arguments for passing together as an array.
+        if (index < this.args.length) {
+          value = this.args.slice(index);
+          if (declaredArg.parseArg) {
+            value = value.reduce((processed, v) => {
+              return declaredArg.parseArg(v, processed);
+            }, declaredArg.defaultValue);
+          }
+        } else if (value === undefined) {
+          value = [];
+        }
+      } else if (index < this.args.length) {
+        value = this.args[index];
+        if (declaredArg.parseArg) {
+          // defaultValue passed for consistency, albeit not likely to be useful.
+          value = declaredArg.parseArg(value, declaredArg.defaultValue);
+        }
+      }
+      actionArgs[index] = value;
+    });
+    return actionArgs;
+  }
 
   /**
    * Process arguments in context of this command.
@@ -1630,32 +1666,7 @@ class Command extends EventEmitter {
       if (this._actionHandler) {
         checkForUnknownOptions();
         checkNumberOfArguments();
-
-        // Move this into routine, say _getActionArgs
-        const actionArgs = [];
-        this._args.forEach((declaredArg, index) => {
-          let value = declaredArg.defaultValue;
-          if (declaredArg.variadic) {
-            if (index < this.args.length) {
-              value = this.args.slice(index);
-              if (declaredArg.parseArg) {
-                value = value.reduce((processed, v) => {
-                  return declaredArg.parseArg(v, processed);
-                }, declaredArg.defaultValue);
-              }
-            } else if (value === undefined) {
-              value = [];
-            }
-          } else if (index < this.args.length) {
-            value = this.args[index];
-            if (declaredArg.parseArg) {
-              value = declaredArg.parseArg(value, declaredArg.defaultValue);
-            }
-          }
-          actionArgs[index] = value;
-        });
-
-        this._actionHandler(actionArgs);
+        this._actionHandler(this._getActionArguments());
         if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
       } else if (this.parent && this.parent.listenerCount(commandEvent)) {
         checkForUnknownOptions();
