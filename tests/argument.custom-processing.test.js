@@ -45,6 +45,19 @@ test('when starting value is defined and argument not specified then action argu
   expect(actionValue).toEqual(startingValue);
 });
 
+test('when default value is defined (without custom processing) and argument not specified then action argument is default value', () => {
+  const defaultValue = 1;
+  let actionValue;
+  const program = new commander.Command();
+  program
+    .argument('[n]', 'number', defaultValue)
+    .action((arg) => {
+      actionValue = arg;
+    });
+  program.parse([], { from: 'user' });
+  expect(actionValue).toEqual(defaultValue);
+});
+
 test('when argument specified then callback called with value', () => {
   const mockCoercion = jest.fn();
   const value = '1';
