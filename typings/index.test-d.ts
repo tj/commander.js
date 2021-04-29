@@ -40,6 +40,9 @@ expectType<commander.Command>(program.addCommand(new commander.Command('abc')));
 // argument
 expectType<commander.Command>(program.argument('<value>'));
 expectType<commander.Command>(program.argument('<value>', 'description'));
+expectType<commander.Command>(program.argument('[value]', 'description', 'default'));
+expectType<commander.Command>(program.argument('[value]', 'description', parseFloat));
+expectType<commander.Command>(program.argument('[value]', 'description', parseFloat, 1.23));
 
 // arguments
 expectType<commander.Command>(program.arguments('<cmd> [env]'));

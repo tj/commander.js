@@ -270,7 +270,8 @@ declare namespace commander {
      *
      * @returns `this` command for chaining
      */
-    argument(name: string, description?: string): this;
+     argument<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
+     argument(name: string, description?: string, defaultValue?: any): this;
 
     /**
      * Define argument syntax for command, adding a prepared argument.
