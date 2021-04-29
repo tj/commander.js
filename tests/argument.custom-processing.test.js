@@ -22,7 +22,7 @@ test('when argument not specified then action argument undefined', () => {
   expect(actionValue).toBeUndefined();
 });
 
-test('when starting value is defined and argument not specified then callback not called', () => {
+test('when custom with starting value and argument not specified then callback not called', () => {
   const mockCoercion = jest.fn();
   const program = new commander.Command();
   program
@@ -32,7 +32,7 @@ test('when starting value is defined and argument not specified then callback no
   expect(mockCoercion).not.toHaveBeenCalled();
 });
 
-test('when starting value is defined and argument not specified then action argument is starting value', () => {
+test('when custom with starting value and argument not specified then action argument is starting value', () => {
   const startingValue = 1;
   let actionValue;
   const program = new commander.Command();
@@ -97,7 +97,7 @@ test('when argument specified then program.args has original rather than custom'
   expect(program.args).toEqual(['alpha']);
 });
 
-test('when starting value is defined and argument specified then callback called with value and starting value', () => {
+test('when custom with starting value and argument specified then callback called with value and starting value', () => {
   const mockCoercion = jest.fn();
   const startingValue = 1;
   const value = '2';
@@ -122,7 +122,7 @@ test('when variadic argument specified multiple times then callback called with 
   expect(mockCoercion).toHaveBeenNthCalledWith(2, '2', 'callback');
 });
 
-test('when parseFloat "1e2" then value is 100', () => {
+test('when parseFloat "1e2" then action argument is 100', () => {
   let actionValue;
   const program = new commander.Command();
   program
