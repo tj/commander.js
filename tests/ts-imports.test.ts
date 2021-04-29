@@ -1,4 +1,4 @@
-import { program, Command, Option, CommanderError, InvalidOptionArgumentError, Help, createCommand } from '../';
+import { program, Command, Option, CommanderError, InvalidArgumentError, InvalidOptionArgumentError, Help, createCommand } from '../';
 
 import * as commander from '../';
 
@@ -35,9 +35,14 @@ test('CommanderError', () => {
   checkClass(new CommanderError(1, 'code', 'failed'), 'CommanderError');
 });
 
-test('InvalidOptionArgumentError', () => {
-  checkClass(new InvalidOptionArgumentError('failed'), 'InvalidOptionArgumentError');
+test('InvalidArgumentError', () => {
+  checkClass(new InvalidArgumentError('failed'), 'InvalidArgumentError');
 });
+
+test('InvalidOptionArgumentError', () => { // Deprecated
+  checkClass(new InvalidOptionArgumentError('failed'), 'InvalidArgumentError');
+});
+
 
 test('Help', () => {
   checkClass(new Help(), 'Help');

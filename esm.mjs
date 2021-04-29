@@ -7,7 +7,7 @@ export const {
   createArgument,
   createOption,
   CommanderError,
-  InvalidOptionArgumentError,
+  InvalidArgumentError,
   Command,
   Argument,
   Option,

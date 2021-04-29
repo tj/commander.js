@@ -558,7 +558,7 @@ class Option {
     this.argChoices = values;
     this.parseArg = (arg, previous) => {
       if (!values.includes(arg)) {
-        throw new InvalidOptionArgumentError(`Allowed choices are ${values.join(', ')}.`);
+        throw new InvalidArgumentError(`Allowed choices are ${values.join(', ')}.`);
       }
       if (this.variadic) {
         return this._concatValue(arg, previous);
@@ -630,17 +630,17 @@ class CommanderError extends Error {
 }
 
 /**
- * InvalidOptionArgumentError class
+ * InvalidArgumentError class
  * @class
  */
-class InvalidOptionArgumentError extends CommanderError {
+class InvalidArgumentError extends CommanderError {
   /**
-   * Constructs the InvalidOptionArgumentError class
+   * Constructs the InvalidArgumentError class
    * @param {string} [message] explanation of why argument is invalid
    * @constructor
    */
   constructor(message) {
-    super(1, 'commander.invalidOptionArgument', message);
+    super(1, 'commander.invalidArgument', message);
     // properly capture stack trace in Node.js
     Error.captureStackTrace(this, this.constructor);
     this.name = this.constructor.name;
@@ -1122,7 +1122,7 @@ class Command extends EventEmitter {
         try {
           val = option.parseArg(val, oldValue === undefined ? defaultValue : oldValue);
         } catch (err) {
-          if (err.code === 'commander.invalidOptionArgument') {
+          if (err.code === 'commander.invalidArgument') {
             const message = `error: option '${option.flags}' argument '${val}' is invalid. ${err.message}`;
             this._displayError(err.exitCode, err.code, message);
           }
@@ -1591,6 +1591,23 @@ class Command extends EventEmitter {
    */
 
   _getActionArguments() {
+    const myParseArg = (argument, value, previous) => {
+      // Extra processing for nice error message on parsing failure.
+      let parsedValue = value;
+      if (value !== null && argument.parseArg) {
+        try {
+          parsedValue = argument.parseArg(value, previous);
+        } catch (err) {
+          if (err.code === 'commander.invalidArgument') {
+            const message = `error: command-argument value '${value}' is invalid for argument '${argument.name()}'. ${err.message}`;
+            this._displayError(err.exitCode, err.code, message);
+          }
+          throw err;
+        }
+      }
+      return parsedValue;
+    };
+
     const actionArgs = [];
     this._args.forEach((declaredArg, index) => {
       let value = declaredArg.defaultValue;
@@ -1600,7 +1617,7 @@ class Command extends EventEmitter {
           value = this.args.slice(index);
           if (declaredArg.parseArg) {
             value = value.reduce((processed, v) => {
-              return declaredArg.parseArg(v, processed);
+              return myParseArg(declaredArg, v, processed);
             }, declaredArg.defaultValue);
           }
         } else if (value === undefined) {
@@ -1610,7 +1627,7 @@ class Command extends EventEmitter {
         value = this.args[index];
         if (declaredArg.parseArg) {
           // defaultValue passed for consistency, albeit not likely to be useful.
-          value = declaredArg.parseArg(value, declaredArg.defaultValue);
+          value = myParseArg(declaredArg, value, declaredArg.defaultValue);
         }
       }
       actionArgs[index] = value;
@@ -2279,7 +2296,8 @@ exports.Command = Command;
 exports.Option = Option;
 exports.Argument = Argument;
 exports.CommanderError = CommanderError;
-exports.InvalidOptionArgumentError = InvalidOptionArgumentError;
+exports.InvalidArgumentError = InvalidArgumentError;
+exports.InvalidOptionArgumentError = InvalidArgumentError; // Deprecated
 exports.Help = Help;
 
 /**

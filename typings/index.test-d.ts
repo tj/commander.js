@@ -15,7 +15,8 @@ expectType<commander.Command>(new commander.Command());
 expectType<commander.Command>(new commander.Command('name'));
 expectType<commander.Option>(new commander.Option('-f'));
 expectType<commander.CommanderError>(new commander.CommanderError(1, 'code', 'message'));
-expectType<commander.InvalidOptionArgumentError>(new commander.InvalidOptionArgumentError('message'));
+expectType<commander.InvalidArgumentError>(new commander.InvalidArgumentError('message'));
+expectType<commander.InvalidArgumentError>(new commander.InvalidOptionArgumentError('message'));
 expectType<commander.Command>(commander.createCommand());
 
 // Command properties

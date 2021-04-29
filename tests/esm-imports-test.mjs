@@ -1,4 +1,4 @@
-import { program, Command, Option, Argument, CommanderError, InvalidOptionArgumentError, Help, createCommand, createArgument, createOption } from '../esm.mjs';
+import { program, Command, Option, Argument, CommanderError, InvalidArgumentError, Help, createCommand, createArgument, createOption } from '../esm.mjs';
 
 // Do some simple checks that expected imports are available at runtime.
 // Run using `npm run test-esm`.
@@ -24,7 +24,7 @@ check(program.constructor.name === 'Command', 'program is class Command');
 checkClass(new Command(), 'Command');
 checkClass(new Option('-e, --example'), 'Option');
 checkClass(new CommanderError(1, 'code', 'failed'), 'CommanderError');
-checkClass(new InvalidOptionArgumentError('failed'), 'InvalidOptionArgumentError');
+checkClass(new InvalidArgumentError('failed'), 'InvalidArgumentError');
 checkClass(new Help(), 'Help');
 checkClass(new Argument('<file>'), 'Argument');
 

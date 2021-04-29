@@ -16,9 +16,9 @@ declare namespace commander {
   type CommanderErrorConstructor = new (exitCode: number, code: string, message: string) => CommanderError;
 
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface InvalidOptionArgumentError extends CommanderError {
+  interface InvalidArgumentError extends CommanderError {
   }
-  type InvalidOptionArgumentErrorConstructor = new (message: string) => InvalidOptionArgumentError;
+  type InvalidArgumentErrorConstructor = new (message: string) => InvalidArgumentError;
 
   interface Argument {
     description: string;
@@ -672,7 +672,9 @@ declare namespace commander {
     Option: OptionConstructor;
     Argument: ArgumentConstructor;
     CommanderError: CommanderErrorConstructor;
-    InvalidOptionArgumentError: InvalidOptionArgumentErrorConstructor;
+    InvalidArgumentError: InvalidArgumentErrorConstructor;
+    /** @deprecated since v8, replaced by InvalidArgumentError */
+    InvalidOptionArgumentError: InvalidArgumentErrorConstructor;
     Help: HelpConstructor;
   }
 

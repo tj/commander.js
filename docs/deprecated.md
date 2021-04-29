@@ -111,3 +111,32 @@ program
 
 Deprecated from Commander v8.
 
+## InvalidOptionArgumentError
+
+This was used for throwing an error from custom option processing, for a nice error message.
+
+```js
+function myParseInt(value, dummyPrevious) {
+  // parseInt takes a string and a radix
+  const parsedValue = parseInt(value, 10);
+  if (isNaN(parsedValue)) {
+    throw new commander.InvalidOptionArgumentError('Not a number.');
+  }
+  return parsedValue;
+}
+```
+
+The replacement is `InvalidArgumentError` since can be used now for custom command-argument processing too.
+
+```js
+function myParseInt(value, dummyPrevious) {
+  // parseInt takes a string and a radix
+  const parsedValue = parseInt(value, 10);
+  if (isNaN(parsedValue)) {
+    throw new commander.InvalidArgumentError('Not a number.');
+  }
+  return parsedValue;
+}
+```
+
+Deprecated from Commander v8.
