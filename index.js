@@ -442,7 +442,7 @@ class Argument {
   };
 
   /**
-   * Set the custom handler for processing CLI option arguments into option values.
+   * Set the custom handler for processing CLI command arguments into argument values.
    *
    * @param {Function} [fn]
    * @return {Argument}
