@@ -1,5 +1,7 @@
 const commander = require('../');
 
+// Testing default value and custom processing behaviours.
+
 test('when argument not specified then callback not called', () => {
   const mockCoercion = jest.fn();
   const program = new commander.Command();
@@ -132,4 +134,11 @@ test('when parseFloat "1e2" then action argument is 100', () => {
     });
   program.parse(['1e2'], { from: 'user' });
   expect(actionValue).toEqual(100);
+});
+
+test('when defined default value for required argument then throw', () => {
+  const program = new commander.Command();
+  expect(() => {
+    program.argument('<number>', 'float argument', 4);
+  }).toThrow();
 });

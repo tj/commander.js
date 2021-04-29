@@ -937,7 +937,10 @@ class Command extends EventEmitter {
   addArgument(argument) {
     const previousArgument = this._args.slice(-1)[0];
     if (previousArgument && previousArgument.variadic) {
-      throw new Error(`only the last argument can be variadic '${previousArgument.name()}'`);
+      throw new Error(`only the last argument can be variadic: '${previousArgument.name()}'`);
+    }
+    if (argument.required && argument.defaultValue !== undefined && argument.parseArg === undefined) {
+      throw new Error(`a default value for a required argument is never used: '${argument.name()}'`);
     }
     this._args.push(argument);
     return this;
