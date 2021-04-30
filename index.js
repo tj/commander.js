@@ -1626,7 +1626,6 @@ class Command extends EventEmitter {
       } else if (index < this.args.length) {
         value = this.args[index];
         if (declaredArg.parseArg) {
-          // defaultValue passed for consistency, albeit not likely to be useful.
           value = myParseArg(declaredArg, value, declaredArg.defaultValue);
         }
       }
