@@ -485,6 +485,7 @@ Example file: [arguments-custom-processing.js](./examples/arguments-custom-proce
 
 ```js
 program
+  .command('add')
   .argument('<first>', 'integer argument', myParseInt)
   .argument('[second]', 'integer argument', myParseInt, 1000)
   .action((first, second) => {
