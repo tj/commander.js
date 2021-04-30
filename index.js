@@ -901,7 +901,7 @@ class Command extends EventEmitter {
    * @param {string} name
    * @param {string} [description]
    * @param {Function|*} [fn] - custom argument processing function
-   * @param {*} [defaultValue] Not implemented yet
+   * @param {*} [defaultValue]
    * @return {Command} `this` command for chaining
    */
   argument(name, description, fn, defaultValue) {
