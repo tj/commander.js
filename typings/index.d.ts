@@ -16,9 +16,9 @@ declare namespace commander {
   type CommanderErrorConstructor = new (exitCode: number, code: string, message: string) => CommanderError;
 
   // eslint-disable-next-line @typescript-eslint/no-empty-interface
-  interface InvalidOptionArgumentError extends CommanderError {
+  interface InvalidArgumentError extends CommanderError {
   }
-  type InvalidOptionArgumentErrorConstructor = new (message: string) => InvalidOptionArgumentError;
+  type InvalidArgumentErrorConstructor = new (message: string) => InvalidArgumentError;
 
   interface Argument {
     description: string;
@@ -270,7 +270,8 @@ declare namespace commander {
      *
      * @returns `this` command for chaining
      */
-    argument(name: string, description?: string): this;
+     argument<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
+     argument(name: string, description?: string, defaultValue?: any): this;
 
     /**
      * Define argument syntax for command, adding a prepared argument.
@@ -671,7 +672,9 @@ declare namespace commander {
     Option: OptionConstructor;
     Argument: ArgumentConstructor;
     CommanderError: CommanderErrorConstructor;
-    InvalidOptionArgumentError: InvalidOptionArgumentErrorConstructor;
+    InvalidArgumentError: InvalidArgumentErrorConstructor;
+    /** @deprecated since v8, replaced by InvalidArgumentError */
+    InvalidOptionArgumentError: InvalidArgumentErrorConstructor;
     Help: HelpConstructor;
   }
 

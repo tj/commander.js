@@ -258,6 +258,13 @@ class Help {
    */
 
   argumentDescription(argument) {
+    const extraInfo = [];
+    if (argument.defaultValue !== undefined) {
+      extraInfo.push(`default: ${argument.defaultValueDescription || JSON.stringify(argument.defaultValue)}`);
+    }
+    if (extraInfo.length > 0) {
+      return `${argument.description} (${extraInfo.join(', ')})`;
+    }
     return argument.description;
   }
 
@@ -385,6 +392,9 @@ class Argument {
   constructor(name, description) {
     this.description = description || '';
     this.variadic = false;
+    this.parseArg = undefined;
+    this.defaultValue = undefined;
+    this.defaultValueDescription = undefined;
 
     switch (name[0]) {
       case '<': // e.g. <required>
@@ -415,6 +425,32 @@ class Argument {
 
   name() {
     return this._name;
+  };
+
+  /**
+   * Set the default value, and optionally supply the description to be displayed in the help.
+   *
+   * @param {any} value
+   * @param {string} [description]
+   * @return {Argument}
+   */
+
+  default(value, description) {
+    this.defaultValue = value;
+    this.defaultValueDescription = description;
+    return this;
+  };
+
+  /**
+   * Set the custom handler for processing CLI command arguments into argument values.
+   *
+   * @param {Function} [fn]
+   * @return {Argument}
+   */
+
+  argParser(fn) {
+    this.parseArg = fn;
+    return this;
   };
 }
 
@@ -522,7 +558,7 @@ class Option {
     this.argChoices = values;
     this.parseArg = (arg, previous) => {
       if (!values.includes(arg)) {
-        throw new InvalidOptionArgumentError(`Allowed choices are ${values.join(', ')}.`);
+        throw new InvalidArgumentError(`Allowed choices are ${values.join(', ')}.`);
       }
       if (this.variadic) {
         return this._concatValue(arg, previous);
@@ -594,17 +630,17 @@ class CommanderError extends Error {
 }
 
 /**
- * InvalidOptionArgumentError class
+ * InvalidArgumentError class
  * @class
  */
-class InvalidOptionArgumentError extends CommanderError {
+class InvalidArgumentError extends CommanderError {
   /**
-   * Constructs the InvalidOptionArgumentError class
+   * Constructs the InvalidArgumentError class
    * @param {string} [message] explanation of why argument is invalid
    * @constructor
    */
   constructor(message) {
-    super(1, 'commander.invalidOptionArgument', message);
+    super(1, 'commander.invalidArgument', message);
     // properly capture stack trace in Node.js
     Error.captureStackTrace(this, this.constructor);
     this.name = this.constructor.name;
@@ -864,10 +900,17 @@ class Command extends EventEmitter {
    *
    * @param {string} name
    * @param {string} [description]
+   * @param {Function|*} [fn] - custom argument processing function
+   * @param {*} [defaultValue]
    * @return {Command} `this` command for chaining
    */
-  argument(name, description) {
+  argument(name, description, fn, defaultValue) {
     const argument = this.createArgument(name, description);
+    if (typeof fn === 'function') {
+      argument.default(defaultValue).argParser(fn);
+    } else {
+      argument.default(fn);
+    }
     this.addArgument(argument);
     return this;
   }
@@ -902,6 +945,9 @@ class Command extends EventEmitter {
     const previousArgument = this._args.slice(-1)[0];
     if (previousArgument && previousArgument.variadic) {
       throw new Error(`only the last argument can be variadic '${previousArgument.name()}'`);
+    }
+    if (argument.required && argument.defaultValue !== undefined && argument.parseArg === undefined) {
+      throw new Error(`a default value for a required argument is never used: '${argument.name()}'`);
     }
     this._args.push(argument);
     return this;
@@ -1076,7 +1122,7 @@ class Command extends EventEmitter {
         try {
           val = option.parseArg(val, oldValue === undefined ? defaultValue : oldValue);
         } catch (err) {
-          if (err.code === 'commander.invalidOptionArgument') {
+          if (err.code === 'commander.invalidArgument') {
             const message = `error: option '${option.flags}' argument '${val}' is invalid. ${err.message}`;
             this._displayError(err.exitCode, err.code, message);
           }
@@ -1525,6 +1571,7 @@ class Command extends EventEmitter {
   /**
    * @api private
    */
+
   _dispatchSubcommand(commandName, operands, unknown) {
     const subCommand = this._findCommand(commandName);
     if (!subCommand) this.help({ error: true });
@@ -1535,6 +1582,57 @@ class Command extends EventEmitter {
       subCommand._parseCommand(operands, unknown);
     }
   };
+
+  /**
+   * Package arguments (this.args) for passing to action handler based
+   * on declared arguments (this._args).
+   *
+   * @api private
+   */
+
+  _getActionArguments() {
+    const myParseArg = (argument, value, previous) => {
+      // Extra processing for nice error message on parsing failure.
+      let parsedValue = value;
+      if (value !== null && argument.parseArg) {
+        try {
+          parsedValue = argument.parseArg(value, previous);
+        } catch (err) {
+          if (err.code === 'commander.invalidArgument') {
+            const message = `error: command-argument value '${value}' is invalid for argument '${argument.name()}'. ${err.message}`;
+            this._displayError(err.exitCode, err.code, message);
+          }
+          throw err;
+        }
+      }
+      return parsedValue;
+    };
+
+    const actionArgs = [];
+    this._args.forEach((declaredArg, index) => {
+      let value = declaredArg.defaultValue;
+      if (declaredArg.variadic) {
+        // Collect together remaining arguments for passing together as an array.
+        if (index < this.args.length) {
+          value = this.args.slice(index);
+          if (declaredArg.parseArg) {
+            value = value.reduce((processed, v) => {
+              return myParseArg(declaredArg, v, processed);
+            }, declaredArg.defaultValue);
+          }
+        } else if (value === undefined) {
+          value = [];
+        }
+      } else if (index < this.args.length) {
+        value = this.args[index];
+        if (declaredArg.parseArg) {
+          value = myParseArg(declaredArg, value, declaredArg.defaultValue);
+        }
+      }
+      actionArgs[index] = value;
+    });
+    return actionArgs;
+  }
 
   /**
    * Process arguments in context of this command.
@@ -1594,14 +1692,7 @@ class Command extends EventEmitter {
       if (this._actionHandler) {
         checkForUnknownOptions();
         checkNumberOfArguments();
-        // Collect trailing args into variadic.
-        let actionArgs = this.args;
-        const declaredArgCount = this._args.length;
-        if (declaredArgCount > 0 && this._args[declaredArgCount - 1].variadic) {
-          actionArgs = this.args.slice(0, declaredArgCount - 1);
-          actionArgs[declaredArgCount - 1] = this.args.slice(declaredArgCount - 1);
-        }
-        this._actionHandler(actionArgs);
+        this._actionHandler(this._getActionArguments());
         if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
       } else if (this.parent && this.parent.listenerCount(commandEvent)) {
         checkForUnknownOptions();
@@ -2204,7 +2295,8 @@ exports.Command = Command;
 exports.Option = Option;
 exports.Argument = Argument;
 exports.CommanderError = CommanderError;
-exports.InvalidOptionArgumentError = InvalidOptionArgumentError;
+exports.InvalidArgumentError = InvalidArgumentError;
+exports.InvalidOptionArgumentError = InvalidArgumentError; // Deprecated
 exports.Help = Help;
 
 /**

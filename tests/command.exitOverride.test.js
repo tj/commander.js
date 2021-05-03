@@ -272,12 +272,12 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expectCommanderError(caughtErr, 1, 'commander.invalidOptionArgument', "error: option '--colour <shade>' argument 'green' is invalid. Allowed choices are red, blue.");
+    expectCommanderError(caughtErr, 1, 'commander.invalidArgument', "error: option '--colour <shade>' argument 'green' is invalid. Allowed choices are red, blue.");
   });
 
-  test('when custom processing throws InvalidOptionArgumentError then throw CommanderError', () => {
+  test('when custom processing for option throws InvalidArgumentError then catch CommanderError', () => {
     function justSayNo(value) {
-      throw new commander.InvalidOptionArgumentError('NO');
+      throw new commander.InvalidArgumentError('NO');
     }
     const optionFlags = '--colour <shade>';
     const program = new commander.Command();
@@ -292,7 +292,27 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expectCommanderError(caughtErr, 1, 'commander.invalidOptionArgument', "error: option '--colour <shade>' argument 'green' is invalid. NO");
+    expectCommanderError(caughtErr, 1, 'commander.invalidArgument', "error: option '--colour <shade>' argument 'green' is invalid. NO");
+  });
+
+  test('when custom processing for argument throws InvalidArgumentError then catch CommanderError', () => {
+    function justSayNo(value) {
+      throw new commander.InvalidArgumentError('NO');
+    }
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .argument('[n]', 'number', justSayNo)
+      .action(() => {});
+
+    let caughtErr;
+    try {
+      program.parse(['green'], { from: 'user' });
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expectCommanderError(caughtErr, 1, 'commander.invalidArgument', "error: command-argument value 'green' is invalid for argument 'n'. NO");
   });
 });
 

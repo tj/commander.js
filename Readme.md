@@ -23,6 +23,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Custom option processing](#custom-option-processing)
   - [Commands](#commands)
     - [Specify the argument syntax](#specify-the-argument-syntax)
+    - [Custom argument processing](#custom-argument-processing)
     - [Action handler](#action-handler)
     - [Stand-alone executable (sub)commands](#stand-alone-executable-subcommands)
   - [Automated help](#automated-help)
@@ -342,7 +343,7 @@ function myParseInt(value, dummyPrevious) {
   // parseInt takes a string and a radix
   const parsedValue = parseInt(value, 10);
   if (isNaN(parsedValue)) {
-    throw new commander.InvalidOptionArgumentError('Not a number.');
+    throw new commander.InvalidArgumentError('Not a number.');
   }
   return parsedValue;
 }
@@ -434,6 +435,8 @@ you can instead use the following method.
 
 To configure a command, you can use `.argument()` to specify each expected command-argument. 
 You supply the argument name and an optional description. The argument may be `<required>` or `[optional]`.
+You can specify a default value for an optional command-argument.
+
 
 Example file: [argument.js](./examples/argument.js)
 
@@ -441,10 +444,10 @@ Example file: [argument.js](./examples/argument.js)
 program
   .version('0.1.0')
   .argument('<username>', 'user to login')
-  .argument('[password]', 'password for user, if required')
+  .argument('[password]', 'password for user, if required', 'no password given')
   .action((username, password) => {
     console.log('username:', username);
-    console.log('password:', password || 'no password given');
+    console.log('password:', password);
   });
 ```
 
@@ -468,6 +471,27 @@ There is a convenience method to add multiple arguments at once, but without des
 ```js
 program
   .arguments('<username> <password>');
+```
+
+### Custom argument processing
+
+You may specify a function to do custom processing of command-arguments before they are passed to the action handler.
+The callback function receives two parameters, the user specified command-argument and the previous value for the argument.
+It returns the new value for the argument.
+
+You can optionally specify the default/starting value for the argument after the function parameter.
+
+Example file: [arguments-custom-processing.js](./examples/arguments-custom-processing.js)
+
+```js
+program
+  .command('add')
+  .argument('<first>', 'integer argument', myParseInt)
+  .argument('[second]', 'integer argument', myParseInt, 1000)
+  .action((first, second) => {
+    console.log(`${first} + ${second} = ${first + second}`);
+  })
+;
 ```
 
 ### Action handler

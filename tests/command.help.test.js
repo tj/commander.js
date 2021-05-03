@@ -253,6 +253,15 @@ test('when argument described then included in helpInformation', () => {
   expect(helpInformation).toMatch(/Arguments:\n +file +input source/);
 });
 
+test('when argument described with default then included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .argument('[file]', 'input source', 'test.txt')
+    .helpOption(false);
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch(/Arguments:\n +file +input source \(default: "test.txt"\)/);
+});
+
 test('when arguments described in deprecated way then included in helpInformation', () => {
   const program = new commander.Command();
   program

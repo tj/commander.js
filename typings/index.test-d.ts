@@ -15,7 +15,8 @@ expectType<commander.Command>(new commander.Command());
 expectType<commander.Command>(new commander.Command('name'));
 expectType<commander.Option>(new commander.Option('-f'));
 expectType<commander.CommanderError>(new commander.CommanderError(1, 'code', 'message'));
-expectType<commander.InvalidOptionArgumentError>(new commander.InvalidOptionArgumentError('message'));
+expectType<commander.InvalidArgumentError>(new commander.InvalidArgumentError('message'));
+expectType<commander.InvalidArgumentError>(new commander.InvalidOptionArgumentError('message'));
 expectType<commander.Command>(commander.createCommand());
 
 // Command properties
@@ -40,6 +41,9 @@ expectType<commander.Command>(program.addCommand(new commander.Command('abc')));
 // argument
 expectType<commander.Command>(program.argument('<value>'));
 expectType<commander.Command>(program.argument('<value>', 'description'));
+expectType<commander.Command>(program.argument('[value]', 'description', 'default'));
+expectType<commander.Command>(program.argument('[value]', 'description', parseFloat));
+expectType<commander.Command>(program.argument('[value]', 'description', parseFloat, 1.23));
 
 // arguments
 expectType<commander.Command>(program.arguments('<cmd> [env]'));
