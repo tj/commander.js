@@ -667,7 +667,6 @@ class Command extends EventEmitter {
     this._name = name || '';
     this._optionValues = {};
     this._storeOptionsAsProperties = false;
-    this._actionResults = [];
     this._actionHandler = null;
     this._executableHandler = false;
     this._executableFile = null; // custom name for executable
@@ -1057,13 +1056,7 @@ class Command extends EventEmitter {
       }
       actionArgs.push(this);
 
-      const actionResult = fn.apply(this, actionArgs);
-      // Remember result in case it is async. Assume parseAsync getting called on root.
-      let rootCommand = this;
-      while (rootCommand.parent) {
-        rootCommand = rootCommand.parent;
-      }
-      rootCommand._actionResults.push(actionResult);
+      return fn.apply(this, actionArgs);
     };
     this._actionHandler = listener;
     return this;
@@ -1363,24 +1356,13 @@ class Command extends EventEmitter {
   };
 
   /**
-   * Parse `argv`, setting options and invoking commands when defined.
+   * Get user arguments implied or explicit arguments.
+   * Side-effects: set _scriptPath if args included application, and use that to set implicit command name.
    *
-   * The default expectation is that the arguments are from node and have the application as argv[0]
-   * and the script being run in argv[1], with user parameters after that.
-   *
-   * Examples:
-   *
-   *      program.parse(process.argv);
-   *      program.parse(); // implicitly use process.argv and auto-detect node vs electron conventions
-   *      program.parse(my-args, { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
-   *
-   * @param {string[]} [argv] - optional, defaults to process.argv
-   * @param {Object} [parseOptions] - optionally specify style of options with from: node/user/electron
-   * @param {string} [parseOptions.from] - where the args are from: 'node', 'user', 'electron'
-   * @return {Command} `this` command for chaining
+   * @api private
    */
 
-  parse(argv, parseOptions) {
+  _prepareUserArgs(argv, parseOptions) {
     if (argv !== undefined && !Array.isArray(argv)) {
       throw new Error('first parameter to parse must be array or undefined');
     }
@@ -1426,7 +1408,29 @@ class Command extends EventEmitter {
     // Guess name, used in usage in help.
     this._name = this._name || (this._scriptPath && path.basename(this._scriptPath, path.extname(this._scriptPath)));
 
-    // Let's go!
+    return userArgs;
+  }
+
+  /**
+   * Parse `argv`, setting options and invoking commands when defined.
+   *
+   * The default expectation is that the arguments are from node and have the application as argv[0]
+   * and the script being run in argv[1], with user parameters after that.
+   *
+   * Examples:
+   *
+   *      program.parse(process.argv);
+   *      program.parse(); // implicitly use process.argv and auto-detect node vs electron conventions
+   *      program.parse(my-args, { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
+   *
+   * @param {string[]} [argv] - optional, defaults to process.argv
+   * @param {Object} [parseOptions] - optionally specify style of options with from: node/user/electron
+   * @param {string} [parseOptions.from] - where the args are from: 'node', 'user', 'electron'
+   * @return {Command} `this` command for chaining
+   */
+
+  parse(argv, parseOptions) {
+    const userArgs = this._prepareUserArgs(argv, parseOptions);
     this._parseCommand([], userArgs);
 
     return this;
@@ -1442,9 +1446,9 @@ class Command extends EventEmitter {
    *
    * Examples:
    *
-   *      program.parseAsync(process.argv);
-   *      program.parseAsync(); // implicitly use process.argv and auto-detect node vs electron conventions
-   *      program.parseAsync(my-args, { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
+   *      await program.parseAsync(process.argv);
+   *      await program.parseAsync(); // implicitly use process.argv and auto-detect node vs electron conventions
+   *      await program.parseAsync(my-args, { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
    *
    * @param {string[]} [argv]
    * @param {Object} [parseOptions]
@@ -1452,9 +1456,11 @@ class Command extends EventEmitter {
    * @return {Promise}
    */
 
-  parseAsync(argv, parseOptions) {
-    this.parse(argv, parseOptions);
-    return Promise.all(this._actionResults).then(() => this);
+  async parseAsync(argv, parseOptions) {
+    const userArgs = this._prepareUserArgs(argv, parseOptions);
+    await this._parseCommand([], userArgs);
+
+    return this;
   };
 
   /**
@@ -1579,7 +1585,7 @@ class Command extends EventEmitter {
     if (subCommand._executableHandler) {
       this._executeSubCommand(subCommand, operands.concat(unknown));
     } else {
-      subCommand._parseCommand(operands, unknown);
+      return subCommand._parseCommand(operands, unknown);
     }
   };
 
@@ -1636,6 +1642,7 @@ class Command extends EventEmitter {
 
   /**
    * Process arguments in context of this command.
+   * Returns action result, in case it is a promise.
    *
    * @api private
    */
@@ -1647,77 +1654,80 @@ class Command extends EventEmitter {
     this.args = operands.concat(unknown);
 
     if (operands && this._findCommand(operands[0])) {
-      this._dispatchSubcommand(operands[0], operands.slice(1), unknown);
-    } else if (this._hasImplicitHelpCommand() && operands[0] === this._helpCommandName) {
+      return this._dispatchSubcommand(operands[0], operands.slice(1), unknown);
+    }
+    if (this._hasImplicitHelpCommand() && operands[0] === this._helpCommandName) {
       if (operands.length === 1) {
         this.help();
-      } else {
-        this._dispatchSubcommand(operands[1], [], [this._helpLongFlag]);
       }
-    } else if (this._defaultCommandName) {
+      return this._dispatchSubcommand(operands[1], [], [this._helpLongFlag]);
+    }
+    if (this._defaultCommandName) {
       outputHelpIfRequested(this, unknown); // Run the help for default command from parent rather than passing to default command
-      this._dispatchSubcommand(this._defaultCommandName, operands, unknown);
-    } else {
-      if (this.commands.length && this.args.length === 0 && !this._actionHandler && !this._defaultCommandName) {
-        // probably missing subcommand and no handler, user needs help
-        this.help({ error: true });
+      return this._dispatchSubcommand(this._defaultCommandName, operands, unknown);
+    }
+    if (this.commands.length && this.args.length === 0 && !this._actionHandler && !this._defaultCommandName) {
+      // probably missing subcommand and no handler, user needs help (and exit)
+      this.help({ error: true });
+    }
+
+    outputHelpIfRequested(this, parsed.unknown);
+    this._checkForMissingMandatoryOptions();
+
+    // We do not always call this check to avoid masking a "better" error, like unknown command.
+    const checkForUnknownOptions = () => {
+      if (parsed.unknown.length > 0) {
+        this.unknownOption(parsed.unknown[0]);
       }
+    };
+    const checkNumberOfArguments = () => {
+      // too few
+      this._args.forEach((arg, i) => {
+        if (arg.required && this.args[i] == null) {
+          this.missingArgument(arg.name());
+        }
+      });
+      // too many
+      if (this._args.length > 0 && this._args[this._args.length - 1].variadic) {
+        return;
+      }
+      if (this.args.length > this._args.length) {
+        this._excessArguments(this.args);
+      }
+    };
 
-      outputHelpIfRequested(this, parsed.unknown);
-      this._checkForMissingMandatoryOptions();
-
-      // We do not always call this check to avoid masking a "better" error, like unknown command.
-      const checkForUnknownOptions = () => {
-        if (parsed.unknown.length > 0) {
-          this.unknownOption(parsed.unknown[0]);
-        }
-      };
-      const checkNumberOfArguments = () => {
-        // too few
-        this._args.forEach((arg, i) => {
-          if (arg.required && this.args[i] == null) {
-            this.missingArgument(arg.name());
-          }
-        });
-        // too many
-        if (this._args.length > 0 && this._args[this._args.length - 1].variadic) {
-          return;
-        }
-        if (this.args.length > this._args.length) {
-          this._excessArguments(this.args);
-        }
-      };
-
-      const commandEvent = `command:${this.name()}`;
-      if (this._actionHandler) {
-        checkForUnknownOptions();
-        checkNumberOfArguments();
-        this._actionHandler(this._getActionArguments());
-        if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
-      } else if (this.parent && this.parent.listenerCount(commandEvent)) {
-        checkForUnknownOptions();
-        checkNumberOfArguments();
-        this.parent.emit(commandEvent, operands, unknown); // legacy
-      } else if (operands.length) {
-        if (this._findCommand('*')) { // legacy default command
-          this._dispatchSubcommand('*', operands, unknown);
-        } else if (this.listenerCount('command:*')) {
-          // skip option check, emit event for possible misspelling suggestion
-          this.emit('command:*', operands, unknown);
-        } else if (this.commands.length) {
-          this.unknownCommand();
-        } else {
-          checkForUnknownOptions();
-          checkNumberOfArguments();
-        }
+    const commandEvent = `command:${this.name()}`;
+    if (this._actionHandler) {
+      checkForUnknownOptions();
+      checkNumberOfArguments();
+      const actionResult = this._actionHandler(this._getActionArguments());
+      if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
+      return actionResult;
+    }
+    if (this.parent && this.parent.listenerCount(commandEvent)) {
+      checkForUnknownOptions();
+      checkNumberOfArguments();
+      this.parent.emit(commandEvent, operands, unknown); // legacy
+    } else if (operands.length) {
+      if (this._findCommand('*')) { // legacy default command
+        return this._dispatchSubcommand('*', operands, unknown);
+      }
+      if (this.listenerCount('command:*')) {
+        // skip option check, emit event for possible misspelling suggestion
+        this.emit('command:*', operands, unknown);
       } else if (this.commands.length) {
-        // This command has subcommands and nothing hooked up at this level, so display help.
-        this.help({ error: true });
+        this.unknownCommand();
       } else {
         checkForUnknownOptions();
         checkNumberOfArguments();
-        // fall through for caller to handle after calling .parse()
       }
+    } else if (this.commands.length) {
+      // This command has subcommands and nothing hooked up at this level, so display help (and exit).
+      this.help({ error: true });
+    } else {
+      checkForUnknownOptions();
+      checkNumberOfArguments();
+      // fall through for caller to handle after calling .parse()
     }
   };
 
