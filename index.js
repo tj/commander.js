@@ -990,35 +990,6 @@ class Command extends EventEmitter {
   };
 
   /**
-   * @returns {Command[]}
-   * @api private
-   */
-
-  _getCommandAndParents() {
-    const result = [];
-    for (let command = this; command; command = command.parent) {
-      result.push(command);
-    }
-    return result;
-  }
-
-  /**
-   * @param {Promise|undefined} previous
-   * @param {Function} fn
-   * @return {Promise|undefined}
-   * @api private
-   */
-
-  _chainOrCall(previous, fn) {
-    if (previous && previous.then && typeof previous.then === 'function') {
-      // already have a promise, chain callback
-      return previous.then(() => fn());
-    }
-    // callback might return a promise
-    return fn();
-  }
-
-  /**
    * Add hook for life-cycle event.
    *
    * @param {string} event
@@ -1746,22 +1717,22 @@ class Command extends EventEmitter {
 
       let actionResult;
       // Work in progress
-      this._getCommandAndParents().reverse()
+      getCommandAndParents(this).reverse()
         .filter(cmd => cmd._lifeCycleHook.beforeAction)
         .forEach(cmd => {
-          actionResult = this._chainOrCall(actionResult, () => {
+          actionResult = chainOrCall(actionResult, () => {
             return cmd._lifeCycleHook.beforeAction({ command: this, hookedCommand: cmd });
           });
         });
 
-      actionResult = this._chainOrCall(actionResult, () => this._actionHandler(this._getActionArguments()));
+      actionResult = chainOrCall(actionResult, () => this._actionHandler(this._getActionArguments()));
       if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
 
       // Work in progress
-      this._getCommandAndParents()
+      getCommandAndParents(this)
         .filter(cmd => cmd._lifeCycleHook.afterAction)
         .forEach(cmd => {
-          actionResult = this._chainOrCall(actionResult, () => {
+          actionResult = chainOrCall(actionResult, () => {
             return cmd._lifeCycleHook.afterAction({ command: this, hookedCommand: cmd });
           });
         });
@@ -2487,4 +2458,35 @@ function incrementNodeInspectorPort(args) {
     }
     return arg;
   });
+}
+
+/**
+ * @param {Command} startCommand
+ * @returns {Command[]}
+ * @api private
+ */
+
+function getCommandAndParents(startCommand) {
+  const result = [];
+  for (let command = startCommand; command; command = command.parent) {
+    result.push(command);
+  }
+  return result;
+}
+
+/**
+ * @param {Promise|undefined} promise
+ * @param {Function} fn
+ * @return {Promise|undefined}
+ * @api private
+ */
+
+function chainOrCall(promise, fn) {
+  // thenable
+  if (promise && promise.then && typeof promise.then === 'function') {
+    // already have a promise, chain callback
+    return promise.then(() => fn());
+  }
+  // callback might return a promise
+  return fn();
 }
