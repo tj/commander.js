@@ -993,12 +993,29 @@ class Command extends EventEmitter {
    * @returns {Command[]}
    * @api private
    */
+
   _getCommandAndParents() {
     const result = [];
     for (let command = this; command; command = command.parent) {
       result.push(command);
     }
     return result;
+  }
+
+  /**
+   * @param {Promise|undefined} previous
+   * @param {Function} fn
+   * @return {Promise|undefined}
+   * @api private
+   */
+
+  _chainOrCall(previous, fn) {
+    if (previous && previous.then && typeof previous.then === 'function') {
+      // already have a promise, chain callback
+      return previous.then(() => fn());
+    }
+    // callback might return a promise
+    return fn();
   }
 
   /**
@@ -1727,18 +1744,27 @@ class Command extends EventEmitter {
       checkForUnknownOptions();
       checkNumberOfArguments();
 
+      let actionResult;
       // Work in progress
       this._getCommandAndParents().reverse()
         .filter(cmd => cmd._lifeCycleHook.beforeAction)
-        .forEach(cmd => cmd._lifeCycleHook.beforeAction({ command: this, hookedCommand: cmd }));
+        .forEach(cmd => {
+          actionResult = this._chainOrCall(actionResult, () => {
+            return cmd._lifeCycleHook.beforeAction({ command: this, hookedCommand: cmd });
+          });
+        });
 
-      const actionResult = this._actionHandler(this._getActionArguments());
+      actionResult = this._chainOrCall(actionResult, () => this._actionHandler(this._getActionArguments()));
       if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
 
       // Work in progress
       this._getCommandAndParents()
         .filter(cmd => cmd._lifeCycleHook.afterAction)
-        .forEach(cmd => cmd._lifeCycleHook.afterAction({ command: this, hookedCommand: cmd }));
+        .forEach(cmd => {
+          actionResult = this._chainOrCall(actionResult, () => {
+            return cmd._lifeCycleHook.afterAction({ command: this, hookedCommand: cmd });
+          });
+        });
 
       return actionResult;
     }
