@@ -998,6 +998,11 @@ class Command extends EventEmitter {
    */
 
   hook(event, listener) {
+    const allowedValues = ['beforeAction', 'afterAction'];
+    if (!allowedValues.includes(event)) {
+      throw new Error(`Unexpected value for event passed to hook : '${event}'.
+Expecting one of '${allowedValues.join("', '")}'`);
+    }
     this._lifeCycleHook[event] = listener;
     return this;
   }
