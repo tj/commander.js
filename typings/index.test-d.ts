@@ -3,6 +3,8 @@ import {expectType, expectAssignable} from 'tsd';
 
 // We are are not just checking return types here, we are also implicitly checking that the expected syntax is allowed.
 
+/* eslint-disable @typescript-eslint/no-empty-function */
+
 const program: commander.Command = new commander.Command();
 // program.silly; // <-- Error, hurrah!
 
@@ -68,13 +70,19 @@ expectType<commander.Command>(program.exitOverride((err): void => {
   }
 }));
 
+// hook
+expectType<commander.Command>(program.hook('beforeAction', () => {}));
+expectType<commander.Command>(program.hook('afterAction', () => {}));
+expectType<commander.Command>(program.hook('beforeAction', async() => {}));
+expectType<commander.Command>(program.hook('beforeAction', (context) => {
+  // implicit HookContext
+  expectType<commander.Command>(context.command);
+  expectType<commander.Command>(context.hookedCommand);
+}));
+
 // action
-expectType<commander.Command>(program.action(() => {
-  // do nothing.
-}));
-expectType<commander.Command>(program.action(async() => {
-  // do nothing.
-}));
+expectType<commander.Command>(program.action(() => {}));
+expectType<commander.Command>(program.action(async() => {}));
 
 // option
 expectType<commander.Command>(program.option('-a,--alpha'));
@@ -232,9 +240,7 @@ expectType<commander.Command>(program.addHelpText('beforeAll', (context: command
 }));
 
 // on
-expectType<commander.Command>(program.on('command:foo', () => {
-  // do nothing.
-}));
+expectType<commander.Command>(program.on('command:foo', () => {}));
 
 // createCommand
 expectType<commander.Command>(program.createCommand());
