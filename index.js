@@ -678,6 +678,7 @@ class Command extends EventEmitter {
     this._argsDescription = undefined; // legacy
     this._enablePositionalOptions = false;
     this._passThroughOptions = false;
+    this._lifeCycleHook = {};
 
     // see .configureOutput() for docs
     this._outputConfiguration = {
@@ -987,6 +988,31 @@ class Command extends EventEmitter {
     }
     return this._addImplicitHelpCommand;
   };
+
+  /**
+   * @returns {Command[]}
+   * @api private
+   */
+  _getCommandAndParents() {
+    const result = [];
+    for (let command = this; command; command = command.parent) {
+      result.push(command);
+    }
+    return result;
+  }
+
+  /**
+   * Add hook for life-cycle event.
+   *
+   * @param {string} event
+   * @param {Function} listener
+   * @return {Command} `this` command for chaining
+   */
+
+  hook(event, listener) {
+    this._lifeCycleHook[event] = listener;
+    return this;
+  }
 
   /**
    * Register callback to use as replacement for calling process.exit.
@@ -1700,8 +1726,20 @@ class Command extends EventEmitter {
     if (this._actionHandler) {
       checkForUnknownOptions();
       checkNumberOfArguments();
+
+      // Work in progress
+      this._getCommandAndParents().reverse()
+        .filter(cmd => cmd._lifeCycleHook.beforeAction)
+        .forEach(cmd => cmd._lifeCycleHook.beforeAction({ command: this, hookedCommand: cmd }));
+
       const actionResult = this._actionHandler(this._getActionArguments());
       if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
+
+      // Work in progress
+      this._getCommandAndParents()
+        .filter(cmd => cmd._lifeCycleHook.afterAction)
+        .forEach(cmd => cmd._lifeCycleHook.afterAction({ command: this, hookedCommand: cmd }));
+
       return actionResult;
     }
     if (this.parent && this.parent.listenerCount(commandEvent)) {
