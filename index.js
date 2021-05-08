@@ -678,7 +678,7 @@ class Command extends EventEmitter {
     this._argsDescription = undefined; // legacy
     this._enablePositionalOptions = false;
     this._passThroughOptions = false;
-    this._lifeCycleHook = {};
+    this._lifeCycleHooks = {}; // a hash of arrays
 
     // see .configureOutput() for docs
     this._outputConfiguration = {
@@ -1003,7 +1003,11 @@ class Command extends EventEmitter {
       throw new Error(`Unexpected value for event passed to hook : '${event}'.
 Expecting one of '${allowedValues.join("', '")}'`);
     }
-    this._lifeCycleHook[event] = listener;
+    if (this._lifeCycleHooks[event]) {
+      this._lifeCycleHooks[event].push(listener);
+    } else {
+      this._lifeCycleHooks[event] = [listener];
+    }
     return this;
   }
 
@@ -1660,6 +1664,55 @@ Expecting one of '${allowedValues.join("', '")}'`);
   }
 
   /**
+   * Once we have a promise we chain, but call synchronously until then.
+   *
+   * @param {Promise|undefined} promise
+   * @param {Function} fn
+   * @return {Promise|undefined}
+   */
+
+  _chainOrCall(promise, fn) {
+    // thenable
+    if (promise && promise.then && typeof promise.then === 'function') {
+      // already have a promise, chain callback
+      return promise.then(() => fn());
+    }
+    // callback might return a promise
+    return fn();
+  }
+
+  /**
+   *
+   * @param {Promise|undefined} promise
+   * @param {string} evemt
+   * @return {Promise|undefined}
+   * @api private
+   */
+
+  _chainOrCallHooks(promise, event) {
+    let result = promise;
+    const hooks = [];
+    getCommandAndParents(this)
+      .reverse()
+      .filter(cmd => cmd._lifeCycleHooks[event] !== undefined)
+      .forEach(hookedCommand => {
+        hookedCommand._lifeCycleHooks[event].forEach((callback) => {
+          hooks.push({ hookedCommand, callback });
+        });
+      });
+    if (event.startsWith('after')) {
+      hooks.reverse();
+    }
+
+    hooks.forEach((hookDetail) => {
+      result = this._chainOrCall(result, () => {
+        return hookDetail.callback({ command: this, hookedCommand: hookDetail.hookedCommand });
+      });
+    });
+    return result;
+  }
+
+  /**
    * Process arguments in context of this command.
    * Returns action result, in case it is a promise.
    *
@@ -1721,27 +1774,10 @@ Expecting one of '${allowedValues.join("', '")}'`);
       checkNumberOfArguments();
 
       let actionResult;
-      // Work in progress
-      getCommandAndParents(this).reverse()
-        .filter(cmd => cmd._lifeCycleHook.beforeAction)
-        .forEach(cmd => {
-          actionResult = chainOrCall(actionResult, () => {
-            return cmd._lifeCycleHook.beforeAction({ command: this, hookedCommand: cmd });
-          });
-        });
-
-      actionResult = chainOrCall(actionResult, () => this._actionHandler(this._getActionArguments()));
+      actionResult = this._chainOrCallHooks(actionResult, 'beforeAction');
+      actionResult = this._chainOrCall(actionResult, () => this._actionHandler(this._getActionArguments()));
       if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
-
-      // Work in progress
-      getCommandAndParents(this)
-        .filter(cmd => cmd._lifeCycleHook.afterAction)
-        .forEach(cmd => {
-          actionResult = chainOrCall(actionResult, () => {
-            return cmd._lifeCycleHook.afterAction({ command: this, hookedCommand: cmd });
-          });
-        });
-
+      actionResult = this._chainOrCallHooks(actionResult, 'afterAction');
       return actionResult;
     }
     if (this.parent && this.parent.listenerCount(commandEvent)) {
@@ -2477,21 +2513,4 @@ function getCommandAndParents(startCommand) {
     result.push(command);
   }
   return result;
-}
-
-/**
- * @param {Promise|undefined} promise
- * @param {Function} fn
- * @return {Promise|undefined}
- * @api private
- */
-
-function chainOrCall(promise, fn) {
-  // thenable
-  if (promise && promise.then && typeof promise.then === 'function') {
-    // already have a promise, chain callback
-    return promise.then(() => fn());
-  }
-  // callback might return a promise
-  return fn();
 }
