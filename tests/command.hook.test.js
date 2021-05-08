@@ -134,3 +134,102 @@ describe('action hooks context', () => {
     expect(hook).toHaveBeenCalledWith({ command: sub, hookedCommand: sub });
   });
 });
+
+describe('action hooks async', () => {
+  test('when async beforeAction then async from before', async() => {
+    const calls = [];
+    const program = new commander.Command();
+    program
+      .hook('beforeAction', async() => {
+        await 0;
+        calls.push('before');
+      })
+      .action(() => calls.push('action'));
+    const result = program.parseAsync([], { from: 'user' });
+    expect(calls).toEqual([]);
+    await result;
+    expect(calls).toEqual(['before', 'action']);
+  });
+
+  test('when async afterAction then async from after', async() => {
+    const calls = [];
+    const program = new commander.Command();
+    program
+      .hook('afterAction', async() => {
+        await 0;
+        calls.push('after');
+      })
+      .action(() => calls.push('action'));
+    const result = program.parseAsync([], { from: 'user' });
+    expect(calls).toEqual(['action']);
+    await result;
+    expect(calls).toEqual(['action', 'after']);
+  });
+
+  test('when async action then async from action', async() => {
+    const calls = [];
+    const program = new commander.Command();
+    program
+      .hook('beforeAction', () => calls.push('before'))
+      .hook('afterAction', () => calls.push('after'))
+      .action(async() => {
+        await 0;
+        calls.push('action');
+      });
+    const result = program.parseAsync([], { from: 'user' });
+    expect(calls).toEqual(['before']);
+    await result;
+    expect(calls).toEqual(['before', 'action', 'after']);
+  });
+
+  test('when async first beforeAction then async from first before', async() => {
+    const calls = [];
+    const program = new commander.Command();
+    program
+      .hook('beforeAction', async() => {
+        await 0;
+        calls.push('1');
+      })
+      .hook('beforeAction', () => calls.push('2'))
+      .action(() => calls.push('action'));
+    const result = program.parseAsync([], { from: 'user' });
+    expect(calls).toEqual([]);
+    await result;
+    expect(calls).toEqual(['1', '2', 'action']);
+  });
+
+  test('when async second beforeAction then async from second before', async() => {
+    const calls = [];
+    const program = new commander.Command();
+    program
+      .hook('beforeAction', () => calls.push('1'))
+      .hook('beforeAction', async() => {
+        await 0;
+        calls.push('2');
+      })
+      .action(() => calls.push('action'));
+    const result = program.parseAsync([], { from: 'user' });
+    expect(calls).toEqual(['1']);
+    await result;
+    expect(calls).toEqual(['1', '2', 'action']);
+  });
+
+  test('when async hook everything then hooks called nested', async() => {
+    const calls = [];
+    const program = new commander.Command();
+    program
+      .hook('beforeAction', async() => { await 0; calls.push('pb1'); })
+      .hook('afterAction', async() => { await 0; calls.push('pa1'); });
+    program
+      .hook('beforeAction', async() => { await 0; calls.push('pb2'); })
+      .hook('afterAction', async() => { await 0; calls.push('pa2'); });
+    program.command('sub')
+      .hook('beforeAction', async() => { await 0; calls.push('sb'); })
+      .hook('afterAction', async() => { await 0; calls.push('sa'); })
+      .action(async() => { await 0; calls.push('action'); });
+    const result = program.parseAsync(['sub'], { from: 'user' });
+    expect(calls).toEqual([]);
+    await result;
+    expect(calls).toEqual(['pb1', 'pb2', 'sb', 'action', 'sa', 'pa2', 'pa1']);
+  });
+});
