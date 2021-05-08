@@ -224,7 +224,7 @@ describe('action hooks context', () => {
 });
 
 describe('action hooks async', () => {
-  test('when async beforeAction then async from before', async() => {
+  test('when async beforeAction then async from beforeAction', async() => {
     const calls = [];
     const program = new commander.Command();
     program
@@ -239,7 +239,7 @@ describe('action hooks async', () => {
     expect(calls).toEqual(['before', 'action']);
   });
 
-  test('when async afterAction then async from after', async() => {
+  test('when async afterAction then async from afterAction', async() => {
     const calls = [];
     const program = new commander.Command();
     program
@@ -270,7 +270,7 @@ describe('action hooks async', () => {
     expect(calls).toEqual(['before', 'action', 'after']);
   });
 
-  test('when async first beforeAction then async from first before', async() => {
+  test('when async first beforeAction then async from first beforeAction', async() => {
     const calls = [];
     const program = new commander.Command();
     program
@@ -286,7 +286,7 @@ describe('action hooks async', () => {
     expect(calls).toEqual(['1', '2', 'action']);
   });
 
-  test('when async second beforeAction then async from second before', async() => {
+  test('when async second beforeAction then async from second beforeAction', async() => {
     const calls = [];
     const program = new commander.Command();
     program
