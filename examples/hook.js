@@ -45,7 +45,7 @@ program.command('hello')
   .option('-e, --example')
   .action(() => console.log('Hello, world'));
 
-// Some of the hooks are async, so call parseAsync rather than parse.
+// Some of the hooks or actions are async, so call parseAsync rather than parse.
 program.parseAsync().then(() => {});
 
 // Try the following:
