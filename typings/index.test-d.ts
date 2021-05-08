@@ -224,11 +224,10 @@ expectType<commander.Command>(program.helpOption(false));
 expectType<commander.Command>(program.addHelpText('after', 'text'));
 expectType<commander.Command>(program.addHelpText('afterAll', 'text'));
 expectType<commander.Command>(program.addHelpText('before', () => 'before'));
-expectType<commander.Command>(program.addHelpText('beforeAll', (context: commander.AddHelpTextContext) => {
-  if (context.error) {
-    return; // Can return nothing to skip display
-  }
-  return context.command.name();
+expectType<commander.Command>(program.addHelpText('beforeAll', (context) => {
+  expectType<boolean>(context.error);
+  expectType<commander.Command>(context.command);
+  return '';
 }));
 
 // on
