@@ -310,7 +310,7 @@ declare namespace commander {
     addHelpCommand(enableOrNameAndArgs?: string | boolean, description?: string): this;
 
     /**
-     * Add hook for life-cycle event.
+     * Add hook for life cycle event.
      */
     hook(event: HookEvent, listener: (context: HookContext) => void | Promise<void>): this;
 
