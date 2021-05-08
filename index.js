@@ -990,7 +990,7 @@ class Command extends EventEmitter {
   };
 
   /**
-   * Add hook for life-cycle event.
+   * Add hook for life cycle event.
    *
    * @param {string} event
    * @param {Function} listener
