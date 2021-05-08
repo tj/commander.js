@@ -133,6 +133,94 @@ describe('action hooks context', () => {
     program.parse(['sub'], { from: 'user' });
     expect(hook).toHaveBeenCalledWith({ command: sub, hookedCommand: sub });
   });
+
+  test('when hook program on beforeAction then command has options set', () => {
+    expect.assertions(1);
+    const program = new commander.Command();
+    program
+      .option('--debug')
+      .hook('beforeAction', (context) => {
+        expect(context.command.opts().debug).toEqual(true);
+      })
+      .action(() => {});
+    program.parse(['--debug'], { from: 'user' });
+  });
+
+  test('when hook program on beforeAction and call sub then hookedCommand has program options set', () => {
+    expect.assertions(1);
+    const program = new commander.Command();
+    program
+      .option('--debug')
+      .hook('beforeAction', (context) => {
+        expect(context.hookedCommand.opts().debug).toEqual(true);
+      });
+    program.command('sub')
+      .action(() => {});
+    program.parse(['sub', '--debug'], { from: 'user' });
+  });
+
+  test('when hook program on beforeAction and call sub then command has sub options set', () => {
+    expect.assertions(1);
+    const program = new commander.Command();
+    program
+      .hook('beforeAction', (context) => {
+        expect(context.command.opts().debug).toEqual(true);
+      });
+    program.command('sub')
+      .option('--debug')
+      .action(() => {});
+    program.parse(['sub', '--debug'], { from: 'user' });
+  });
+
+  test('when hook program on beforeAction then command has args set', () => {
+    expect.assertions(1);
+    const program = new commander.Command();
+    program
+      .argument('[arg]')
+      .hook('beforeAction', (context) => {
+        expect(context.command.args).toEqual(['value']);
+      })
+      .action(() => {});
+    program.parse(['value'], { from: 'user' });
+  });
+
+  test('when hook program on beforeAction then command has args set with options removed', () => {
+    expect.assertions(1);
+    const program = new commander.Command();
+    program
+      .argument('[arg]')
+      .option('--debug')
+      .hook('beforeAction', (context) => {
+        expect(context.command.args).toEqual(['value']);
+      })
+      .action(() => {});
+    program.parse(['value', '--debug'], { from: 'user' });
+  });
+
+  test('when hook program on beforeAction and call sub then hookedCommand has program args set', () => {
+    expect.assertions(1);
+    const program = new commander.Command();
+    program
+      .argument('[arg]')
+      .hook('beforeAction', (context) => {
+        expect(context.hookedCommand.args).toEqual(['sub', 'value']);
+      });
+    program.command('sub')
+      .action(() => {});
+    program.parse(['sub', 'value'], { from: 'user' });
+  });
+
+  test('when hook program on beforeAction and call sub then command has sub args set', () => {
+    expect.assertions(1);
+    const program = new commander.Command();
+    program
+      .hook('beforeAction', (context) => {
+        expect(context.command.args).toEqual(['value']);
+      });
+    program.command('sub')
+      .action(() => {});
+    program.parse(['sub', 'value'], { from: 'user' });
+  });
 });
 
 describe('action hooks async', () => {
