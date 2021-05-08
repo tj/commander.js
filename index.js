@@ -1684,7 +1684,7 @@ Expecting one of '${allowedValues.join("', '")}'`);
   /**
    *
    * @param {Promise|undefined} promise
-   * @param {string} evemt
+   * @param {string} event
    * @return {Promise|undefined}
    * @api private
    */
