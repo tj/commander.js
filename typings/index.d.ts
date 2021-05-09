@@ -640,7 +640,7 @@ declare namespace commander {
      * and 'beforeAll' or 'afterAll' to affect this command and all its subcommands.
      */
     addHelpText(position: AddHelpTextPosition, text: string): this;
-    addHelpText(position: AddHelpTextPosition, text: (context: AddHelpTextContext) => string | undefined): this;
+    addHelpText(position: AddHelpTextPosition, text: (context: AddHelpTextContext) => string): this;
 
     /**
      * Add a listener (callback) for when events occur. (Implemented using EventEmitter.)
