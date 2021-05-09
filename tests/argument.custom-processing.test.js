@@ -142,3 +142,24 @@ test('when defined default value for required argument then throw', () => {
     program.argument('<number>', 'float argument', 4);
   }).toThrow();
 });
+
+test('when custom processing for argument throws plain error then not CommanderError caught', () => {
+  function justSayNo(value) {
+    throw new Error('no no no');
+  }
+  const program = new commander.Command();
+  program
+    .exitOverride()
+    .argument('[n]', 'number', justSayNo)
+    .action(() => {});
+
+  let caughtErr;
+  try {
+    program.parse(['green'], { from: 'user' });
+  } catch (err) {
+    caughtErr = err;
+  }
+
+  expect(caughtErr).toBeInstanceOf(Error);
+  expect(caughtErr).not.toBeInstanceOf(commander.CommanderError);
+});
