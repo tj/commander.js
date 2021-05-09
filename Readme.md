@@ -574,6 +574,8 @@ program
   });
 ```
 
+The callback hook can be `async`, in which case you call `.parseAsync` rather than `.parse`. You can add multiple hooks per event.
+
 The supported events are:
 
 - `beforeAction`: called before action handler for this command and its subcommands
