@@ -26,6 +26,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Custom argument processing](#custom-argument-processing)
     - [Action handler](#action-handler)
     - [Stand-alone executable (sub)commands](#stand-alone-executable-subcommands)
+  - [Life cycle hooks](#life-cycle-hooks)
   - [Automated help](#automated-help)
     - [Custom help](#custom-help)
     - [Display help from code](#display-help-from-code)
@@ -553,6 +554,35 @@ program.parse(process.argv);
 ```
 
 If the program is designed to be installed globally, make sure the executables have proper modes, like `755`.
+
+## Life cycle hooks
+
+You can add callback hooks to a command for life cycle events.
+
+Example file: [hook](./examples/hook.js)
+
+```js
+program
+  .option('-t, --trace', 'display trace statements for commands')
+  .hook('beforeAction', (context) => {
+    if (context.hookedCommand.opts().trace) {
+      const actionCommand = context.command;
+      console.log(`About to call action handler for subcommand: ${actionCommand.name()}`);
+      console.log('arguments: %O', actionCommand.args);
+      console.log('options: %o', actionCommand.opts());
+    }
+  });
+```
+
+The supported events are:
+
+- `beforeAction`: called before action handler for this command and its subcommands
+- `afterAction`: called after action handler for this command and its subcommands
+
+The hook callback is passed a context object with properties:
+
+- `command`: the command running the action handler
+- `hookedCommand`: the command which the hook was added to
 
 ## Automated help
 
