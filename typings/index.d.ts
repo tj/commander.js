@@ -161,10 +161,6 @@ declare namespace commander {
     error: boolean;
     command: Command;
   }
-  interface HookContext { // passed to listener used with .hook()
-    command: Command;
-    hookedCommand: Command;
-  }
   interface OutputConfiguration {
     writeOut?(str: string): void;
     writeErr?(str: string): void;
@@ -310,11 +306,6 @@ declare namespace commander {
     addHelpCommand(enableOrNameAndArgs?: string | boolean, description?: string): this;
 
     /**
-     * Add hook for life cycle event.
-     */
-    hook(event: HookEvent, listener: (context: HookContext) => void | Promise<void>): this;
-
-    /**
      * Register callback to use as replacement for calling process.exit.
      */
     exitOverride(callback?: (err: CommanderError) => never|void): this;
@@ -366,6 +357,16 @@ declare namespace commander {
      * @returns `this` command for chaining
      */
     action(fn: (...args: any[]) => void | Promise<void>): this;
+
+    /**
+     * Add callback called before action handler.
+     */
+     beforeAction(listener: (thisCommand: Command, actionCommand: Command) => void | Promise<void>): this;
+
+     /**
+      * Add callback called after action handler.
+      */
+     afterAction(listener: (thisCommand: Command, actionCommand: Command) => void | Promise<void>): this;
 
     /**
      * Define option with `flags`, `description` and optional

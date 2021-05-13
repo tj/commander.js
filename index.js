@@ -990,28 +990,6 @@ class Command extends EventEmitter {
   };
 
   /**
-   * Add hook for life cycle event.
-   *
-   * @param {string} event
-   * @param {Function} listener
-   * @return {Command} `this` command for chaining
-   */
-
-  hook(event, listener) {
-    const allowedValues = ['beforeAction', 'afterAction'];
-    if (!allowedValues.includes(event)) {
-      throw new Error(`Unexpected value for event passed to hook : '${event}'.
-Expecting one of '${allowedValues.join("', '")}'`);
-    }
-    if (this._lifeCycleHooks[event]) {
-      this._lifeCycleHooks[event].push(listener);
-    } else {
-      this._lifeCycleHooks[event] = [listener];
-    }
-    return this;
-  }
-
-  /**
    * Register callback to use as replacement for calling process.exit.
    *
    * @param {Function} [fn] optional callback which will be passed a CommanderError, defaults to throwing
@@ -1084,6 +1062,38 @@ Expecting one of '${allowedValues.join("', '")}'`);
     this._actionHandler = listener;
     return this;
   };
+
+  /**
+   * Add callback called before action handler.
+   *
+   * @param {Function} listener
+   * @return {Command} `this` command for chaining
+   */
+
+  beforeAction(listener) {
+    if (this._lifeCycleHooks.beforeAction) {
+      this._lifeCycleHooks.beforeAction.push(listener);
+    } else {
+      this._lifeCycleHooks.beforeAction = [listener];
+    }
+    return this;
+  }
+
+  /**
+   * Add callback called after action handler.
+   *
+   * @param {Function} listener
+   * @return {Command} `this` command for chaining
+   */
+
+  afterAction(listener) {
+    if (this._lifeCycleHooks.afterAction) {
+      this._lifeCycleHooks.afterAction.push(listener);
+    } else {
+      this._lifeCycleHooks.afterAction = [listener];
+    }
+    return this;
+  }
 
   /**
    * Factory routine to create a new unattached option.
@@ -1706,7 +1716,7 @@ Expecting one of '${allowedValues.join("', '")}'`);
 
     hooks.forEach((hookDetail) => {
       result = this._chainOrCall(result, () => {
-        return hookDetail.callback({ command: this, hookedCommand: hookDetail.hookedCommand });
+        return hookDetail.callback(hookDetail.hookedCommand, this);
       });
     });
     return result;

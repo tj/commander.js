@@ -557,16 +557,15 @@ If the program is designed to be installed globally, make sure the executables h
 
 ### Life cycle hooks
 
-You can add callback hooks to a command for life cycle events.
+You can use `.beforeAction()` and `.afterAction()` to add callbacks before and after the action handler.
 
 Example file: [hook.js](./examples/hook.js)
 
 ```js
 program
   .option('-t, --trace', 'display trace statements for commands')
-  .hook('beforeAction', (context) => {
-    if (context.hookedCommand.opts().trace) {
-      const actionCommand = context.command;
+  .beforeAction((thisCommand, actionCommand) => {
+    if (thisCommand.opts().trace) {
       console.log(`About to call action handler for subcommand: ${actionCommand.name()}`);
       console.log('arguments: %O', actionCommand.args);
       console.log('options: %o', actionCommand.opts());
@@ -574,17 +573,13 @@ program
   });
 ```
 
-The callback hook can be `async`, in which case you call `.parseAsync` rather than `.parse`. You can add multiple hooks per event.
+The callback hook can be `async`, in which case you call `.parseAsync` rather than `.parse`. You can add multiple hooks
+of the same sort to a command.
 
-The supported events are:
+The two parameters passed to the hooks are:
 
-- `beforeAction`: called before action handler for this command and its subcommands
-- `afterAction`: called after action handler for this command and its subcommands
-
-The hook callback is passed a context object with properties:
-
-- `command`: the command running the action handler
-- `hookedCommand`: the command which the hook was added to
+- `thisCommand`: the command which the hook was added to
+- `actionCommand`: the command running the action handler
 
 ## Automated help
 

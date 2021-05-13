@@ -9,22 +9,21 @@ const program = new commander.Command();
 const timeLabel = 'command duration';
 program
   .option('-p, --profile', 'show how long command takes')
-  .hook('beforeAction', (context) => {
-    if (context.hookedCommand.opts().profile) {
+  .beforeAction((thisCommand) => {
+    if (thisCommand.opts().profile) {
       console.time(timeLabel);
     }
   })
-  .hook('afterAction', (context) => {
-    if (context.hookedCommand.opts().profile) {
+  .afterAction((thisCommand) => {
+    if (thisCommand.opts().profile) {
       console.timeEnd(timeLabel);
     }
   });
 
 program
   .option('-t, --trace', 'display trace statements for commands')
-  .hook('beforeAction', (context) => {
-    if (context.hookedCommand.opts().trace) {
-      const actionCommand = context.command;
+  .beforeAction((thisCommand, actionCommand) => {
+    if (thisCommand.opts().trace) {
       console.log('>>>>');
       console.log(`About to call action handler for subcommand: ${actionCommand.name()}`);
       console.log('arguments: %O', actionCommand.args);
@@ -45,7 +44,7 @@ program.command('hello')
   .option('-e, --example')
   .action(() => console.log('Hello, world'));
 
-// Some of the hooks or actions are async, so call parseAsync rather than parse.
+// Some of the callbacks are async, so call parseAsync rather than parse.
 program.parseAsync().then(() => {});
 
 // Try the following:

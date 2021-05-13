@@ -71,13 +71,17 @@ expectType<commander.Command>(program.exitOverride((err): void => {
 }));
 
 // hook
-expectType<commander.Command>(program.hook('beforeAction', () => {}));
-expectType<commander.Command>(program.hook('afterAction', () => {}));
-expectType<commander.Command>(program.hook('beforeAction', async() => {}));
-expectType<commander.Command>(program.hook('beforeAction', (context) => {
-  // implicit HookContext
-  expectType<commander.Command>(context.command);
-  expectType<commander.Command>(context.hookedCommand);
+expectType<commander.Command>(program.beforeAction(() => {}));
+expectType<commander.Command>(program.beforeAction(async() => {}));
+expectType<commander.Command>(program.beforeAction((thisCommand, actionCommand) => {
+  expectType<commander.Command>(thisCommand);
+  expectType<commander.Command>(actionCommand);
+}));
+expectType<commander.Command>(program.afterAction(() => {}));
+expectType<commander.Command>(program.afterAction(async() => {}));
+expectType<commander.Command>(program.afterAction((thisCommand, actionCommand) => {
+  expectType<commander.Command>(thisCommand);
+  expectType<commander.Command>(actionCommand);
 }));
 
 // action

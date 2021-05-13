@@ -1,18 +1,11 @@
 const commander = require('../');
 
-test('when hook event wrong then throw', () => {
-  const program = new commander.Command();
-  expect(() => {
-    program.hook('silly', () => {});
-  }).toThrow();
-});
-
 test('when no action then action hooks not called', () => {
   const hook = jest.fn();
   const program = new commander.Command();
   program
-    .hook('beforeAction', hook)
-    .hook('afterAction', hook);
+    .beforeAction(hook)
+    .afterAction(hook);
   program.parse([], { from: 'user' });
   expect(hook).not.toHaveBeenCalled();
 });
@@ -22,7 +15,7 @@ describe('action hooks with synchronous hooks, order', () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .hook('beforeAction', () => calls.push('before'))
+      .beforeAction(() => calls.push('before'))
       .action(() => calls.push('action'));
     program.parse([], { from: 'user' });
     expect(calls).toEqual(['before', 'action']);
@@ -32,7 +25,7 @@ describe('action hooks with synchronous hooks, order', () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .hook('afterAction', () => calls.push('after'))
+      .afterAction(() => calls.push('after'))
       .action(() => calls.push('action'));
     program.parse([], { from: 'user' });
     expect(calls).toEqual(['action', 'after']);
@@ -42,8 +35,8 @@ describe('action hooks with synchronous hooks, order', () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .hook('beforeAction', () => calls.push('1'))
-      .hook('beforeAction', () => calls.push('2'))
+      .beforeAction(() => calls.push('1'))
+      .beforeAction(() => calls.push('2'))
       .action(() => calls.push('action'));
     program.parse([], { from: 'user' });
     expect(calls).toEqual(['1', '2', 'action']);
@@ -53,8 +46,8 @@ describe('action hooks with synchronous hooks, order', () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .hook('afterAction', () => calls.push('1'))
-      .hook('afterAction', () => calls.push('2'))
+      .afterAction(() => calls.push('1'))
+      .afterAction(() => calls.push('2'))
       .action(() => calls.push('action'));
     program.parse([], { from: 'user' });
     expect(calls).toEqual(['action', '2', '1']);
@@ -64,9 +57,9 @@ describe('action hooks with synchronous hooks, order', () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .hook('beforeAction', () => calls.push('program'));
+      .beforeAction(() => calls.push('program'));
     program.command('sub')
-      .hook('beforeAction', () => calls.push('sub'))
+      .beforeAction(() => calls.push('sub'))
       .action(() => calls.push('action'));
     program.parse(['sub'], { from: 'user' });
     expect(calls).toEqual(['program', 'sub', 'action']);
@@ -76,9 +69,9 @@ describe('action hooks with synchronous hooks, order', () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .hook('afterAction', () => calls.push('program'));
+      .afterAction(() => calls.push('program'));
     program.command('sub')
-      .hook('afterAction', () => calls.push('sub'))
+      .afterAction(() => calls.push('sub'))
       .action(() => calls.push('action'));
     program.parse(['sub'], { from: 'user' });
     expect(calls).toEqual(['action', 'sub', 'program']);
@@ -88,14 +81,14 @@ describe('action hooks with synchronous hooks, order', () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .hook('beforeAction', () => calls.push('pb1'))
-      .hook('afterAction', () => calls.push('pa1'));
+      .beforeAction(() => calls.push('pb1'))
+      .afterAction(() => calls.push('pa1'));
     program
-      .hook('beforeAction', () => calls.push('pb2'))
-      .hook('afterAction', () => calls.push('pa2'));
+      .beforeAction(() => calls.push('pb2'))
+      .afterAction(() => calls.push('pa2'));
     program.command('sub')
-      .hook('beforeAction', () => calls.push('sb'))
-      .hook('afterAction', () => calls.push('sa'))
+      .beforeAction(() => calls.push('sb'))
+      .afterAction(() => calls.push('sa'))
       .action(() => calls.push('action'));
     program.parse(['sub'], { from: 'user' });
     expect(calls).toEqual(['pb1', 'pb2', 'sb', 'action', 'sa', 'pa2', 'pa1']);
@@ -107,64 +100,64 @@ describe('action hooks context', () => {
     const hook = jest.fn();
     const program = new commander.Command();
     program
-      .hook('beforeAction', hook)
+      .beforeAction(hook)
       .action(() => {});
     program.parse([], { from: 'user' });
-    expect(hook).toHaveBeenCalledWith({ command: program, hookedCommand: program });
+    expect(hook).toHaveBeenCalledWith(program, program);
   });
 
   test('when hook on program and call sub then context is sub/program', () => {
     const hook = jest.fn();
     const program = new commander.Command();
     program
-      .hook('beforeAction', hook);
+      .beforeAction(hook);
     const sub = program.command('sub')
       .action(() => {});
     program.parse(['sub'], { from: 'user' });
-    expect(hook).toHaveBeenCalledWith({ command: sub, hookedCommand: program });
+    expect(hook).toHaveBeenCalledWith(program, sub);
   });
 
   test('when hook on sub and call sub then context is sub/sub', () => {
     const hook = jest.fn();
     const program = new commander.Command();
     const sub = program.command('sub')
-      .hook('beforeAction', hook)
+      .beforeAction(hook)
       .action(() => {});
     program.parse(['sub'], { from: 'user' });
-    expect(hook).toHaveBeenCalledWith({ command: sub, hookedCommand: sub });
+    expect(hook).toHaveBeenCalledWith(sub, sub);
   });
 
-  test('when hook program on beforeAction then command has options set', () => {
+  test('when hook program on beforeAction then thisCommand has options set', () => {
     expect.assertions(1);
     const program = new commander.Command();
     program
       .option('--debug')
-      .hook('beforeAction', (context) => {
-        expect(context.command.opts().debug).toEqual(true);
+      .beforeAction((thisCommand) => {
+        expect(thisCommand.opts().debug).toEqual(true);
       })
       .action(() => {});
     program.parse(['--debug'], { from: 'user' });
   });
 
-  test('when hook program on beforeAction and call sub then hookedCommand has program options set', () => {
+  test('when hook program on beforeAction and call sub then thisCommand has program options set', () => {
     expect.assertions(1);
     const program = new commander.Command();
     program
       .option('--debug')
-      .hook('beforeAction', (context) => {
-        expect(context.hookedCommand.opts().debug).toEqual(true);
+      .beforeAction((thisCommand) => {
+        expect(thisCommand.opts().debug).toEqual(true);
       });
     program.command('sub')
       .action(() => {});
     program.parse(['sub', '--debug'], { from: 'user' });
   });
 
-  test('when hook program on beforeAction and call sub then command has sub options set', () => {
+  test('when hook program on beforeAction and call sub then actionCommand has sub options set', () => {
     expect.assertions(1);
     const program = new commander.Command();
     program
-      .hook('beforeAction', (context) => {
-        expect(context.command.opts().debug).toEqual(true);
+      .beforeAction((thisCommand, actionCommand) => {
+        expect(actionCommand.opts().debug).toEqual(true);
       });
     program.command('sub')
       .option('--debug')
@@ -172,50 +165,50 @@ describe('action hooks context', () => {
     program.parse(['sub', '--debug'], { from: 'user' });
   });
 
-  test('when hook program on beforeAction then command has args set', () => {
+  test('when hook program on beforeAction then actionCommand has args set', () => {
     expect.assertions(1);
     const program = new commander.Command();
     program
       .argument('[arg]')
-      .hook('beforeAction', (context) => {
-        expect(context.command.args).toEqual(['value']);
+      .beforeAction((thisCommand, actionCommand) => {
+        expect(actionCommand.args).toEqual(['value']);
       })
       .action(() => {});
     program.parse(['value'], { from: 'user' });
   });
 
-  test('when hook program on beforeAction then command has args set with options removed', () => {
+  test('when hook program on beforeAction then actionCommand has args set with options removed', () => {
     expect.assertions(1);
     const program = new commander.Command();
     program
       .argument('[arg]')
       .option('--debug')
-      .hook('beforeAction', (context) => {
-        expect(context.command.args).toEqual(['value']);
+      .beforeAction((thisCommand, actionCommand) => {
+        expect(actionCommand.args).toEqual(['value']);
       })
       .action(() => {});
     program.parse(['value', '--debug'], { from: 'user' });
   });
 
-  test('when hook program on beforeAction and call sub then hookedCommand has program args set', () => {
+  test('when hook program on beforeAction and call sub then thisCommand has program args set', () => {
     expect.assertions(1);
     const program = new commander.Command();
     program
       .argument('[arg]')
-      .hook('beforeAction', (context) => {
-        expect(context.hookedCommand.args).toEqual(['sub', 'value']);
+      .beforeAction((thisCommand, actionCommand) => {
+        expect(thisCommand.args).toEqual(['sub', 'value']);
       });
     program.command('sub')
       .action(() => {});
     program.parse(['sub', 'value'], { from: 'user' });
   });
 
-  test('when hook program on beforeAction and call sub then command has sub args set', () => {
+  test('when hook program on beforeAction and call sub then actionCommand has sub args set', () => {
     expect.assertions(1);
     const program = new commander.Command();
     program
-      .hook('beforeAction', (context) => {
-        expect(context.command.args).toEqual(['value']);
+      .beforeAction((thisCommand, actionCommand) => {
+        expect(actionCommand.args).toEqual(['value']);
       });
     program.command('sub')
       .action(() => {});
@@ -228,7 +221,7 @@ describe('action hooks async', () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .hook('beforeAction', async() => {
+      .beforeAction(async() => {
         await 0;
         calls.push('before');
       })
@@ -243,7 +236,7 @@ describe('action hooks async', () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .hook('afterAction', async() => {
+      .afterAction(async() => {
         await 0;
         calls.push('after');
       })
@@ -258,8 +251,8 @@ describe('action hooks async', () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .hook('beforeAction', () => calls.push('before'))
-      .hook('afterAction', () => calls.push('after'))
+      .beforeAction(() => calls.push('before'))
+      .afterAction(() => calls.push('after'))
       .action(async() => {
         await 0;
         calls.push('action');
@@ -274,11 +267,11 @@ describe('action hooks async', () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .hook('beforeAction', async() => {
+      .beforeAction(async() => {
         await 0;
         calls.push('1');
       })
-      .hook('beforeAction', () => calls.push('2'))
+      .beforeAction(() => calls.push('2'))
       .action(() => calls.push('action'));
     const result = program.parseAsync([], { from: 'user' });
     expect(calls).toEqual([]);
@@ -290,8 +283,8 @@ describe('action hooks async', () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .hook('beforeAction', () => calls.push('1'))
-      .hook('beforeAction', async() => {
+      .beforeAction(() => calls.push('1'))
+      .beforeAction(async() => {
         await 0;
         calls.push('2');
       })
@@ -306,14 +299,14 @@ describe('action hooks async', () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .hook('beforeAction', async() => { await 0; calls.push('pb1'); })
-      .hook('afterAction', async() => { await 0; calls.push('pa1'); });
+      .beforeAction(async() => { await 0; calls.push('pb1'); })
+      .afterAction(async() => { await 0; calls.push('pa1'); });
     program
-      .hook('beforeAction', async() => { await 0; calls.push('pb2'); })
-      .hook('afterAction', async() => { await 0; calls.push('pa2'); });
+      .beforeAction(async() => { await 0; calls.push('pb2'); })
+      .afterAction(async() => { await 0; calls.push('pa2'); });
     program.command('sub')
-      .hook('beforeAction', async() => { await 0; calls.push('sb'); })
-      .hook('afterAction', async() => { await 0; calls.push('sa'); })
+      .beforeAction(async() => { await 0; calls.push('sb'); })
+      .afterAction(async() => { await 0; calls.push('sa'); })
       .action(async() => { await 0; calls.push('action'); });
     const result = program.parseAsync(['sub'], { from: 'user' });
     expect(calls).toEqual([]);
