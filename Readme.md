@@ -557,14 +557,14 @@ If the program is designed to be installed globally, make sure the executables h
 
 ### Life cycle hooks
 
-You can use `.beforeAction()` and `.afterAction()` to add callbacks before and after the action handler.
+You can use `.preAction()` and `.postAction()` to add callbacks before and after the action handler.
 
 Example file: [hook.js](./examples/hook.js)
 
 ```js
 program
   .option('-t, --trace', 'display trace statements for commands')
-  .beforeAction((thisCommand, actionCommand) => {
+  .preAction((thisCommand, actionCommand) => {
     if (thisCommand.opts().trace) {
       console.log(`About to call action handler for subcommand: ${actionCommand.name()}`);
       console.log('arguments: %O', actionCommand.args);

@@ -171,7 +171,7 @@ declare namespace commander {
   }
 
   type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
-  type HookEvent = 'beforeAction' | 'afterAction';
+  type HookEvent = 'preAction' | 'postAction';
 
   interface OptionValues {
     [key: string]: any;
@@ -361,12 +361,12 @@ declare namespace commander {
     /**
      * Add callback called before action handler.
      */
-     beforeAction(listener: (thisCommand: Command, actionCommand: Command) => void | Promise<void>): this;
+     preAction(listener: (thisCommand: Command, actionCommand: Command) => void | Promise<void>): this;
 
      /**
       * Add callback called after action handler.
       */
-     afterAction(listener: (thisCommand: Command, actionCommand: Command) => void | Promise<void>): this;
+     postAction(listener: (thisCommand: Command, actionCommand: Command) => void | Promise<void>): this;
 
     /**
      * Define option with `flags`, `description` and optional

@@ -1070,11 +1070,11 @@ class Command extends EventEmitter {
    * @return {Command} `this` command for chaining
    */
 
-  beforeAction(listener) {
-    if (this._lifeCycleHooks.beforeAction) {
-      this._lifeCycleHooks.beforeAction.push(listener);
+  preAction(listener) {
+    if (this._lifeCycleHooks.preAction) {
+      this._lifeCycleHooks.preAction.push(listener);
     } else {
-      this._lifeCycleHooks.beforeAction = [listener];
+      this._lifeCycleHooks.preAction = [listener];
     }
     return this;
   }
@@ -1086,11 +1086,11 @@ class Command extends EventEmitter {
    * @return {Command} `this` command for chaining
    */
 
-  afterAction(listener) {
-    if (this._lifeCycleHooks.afterAction) {
-      this._lifeCycleHooks.afterAction.push(listener);
+  postAction(listener) {
+    if (this._lifeCycleHooks.postAction) {
+      this._lifeCycleHooks.postAction.push(listener);
     } else {
-      this._lifeCycleHooks.afterAction = [listener];
+      this._lifeCycleHooks.postAction = [listener];
     }
     return this;
   }
@@ -1710,7 +1710,7 @@ class Command extends EventEmitter {
           hooks.push({ hookedCommand, callback });
         });
       });
-    if (event.startsWith('after')) {
+    if (event === 'postAction') {
       hooks.reverse();
     }
 
@@ -1784,10 +1784,10 @@ class Command extends EventEmitter {
       checkNumberOfArguments();
 
       let actionResult;
-      actionResult = this._chainOrCallHooks(actionResult, 'beforeAction');
+      actionResult = this._chainOrCallHooks(actionResult, 'preAction');
       actionResult = this._chainOrCall(actionResult, () => this._actionHandler(this._getActionArguments()));
       if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
-      actionResult = this._chainOrCallHooks(actionResult, 'afterAction');
+      actionResult = this._chainOrCallHooks(actionResult, 'postAction');
       return actionResult;
     }
     if (this.parent && this.parent.listenerCount(commandEvent)) {

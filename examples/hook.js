@@ -9,12 +9,12 @@ const program = new commander.Command();
 const timeLabel = 'command duration';
 program
   .option('-p, --profile', 'show how long command takes')
-  .beforeAction((thisCommand) => {
+  .preAction((thisCommand) => {
     if (thisCommand.opts().profile) {
       console.time(timeLabel);
     }
   })
-  .afterAction((thisCommand) => {
+  .postAction((thisCommand) => {
     if (thisCommand.opts().profile) {
       console.timeEnd(timeLabel);
     }
@@ -22,7 +22,7 @@ program
 
 program
   .option('-t, --trace', 'display trace statements for commands')
-  .beforeAction((thisCommand, actionCommand) => {
+  .preAction((thisCommand, actionCommand) => {
     if (thisCommand.opts().trace) {
       console.log('>>>>');
       console.log(`About to call action handler for subcommand: ${actionCommand.name()}`);

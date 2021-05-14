@@ -166,15 +166,15 @@ describe('Command methods that should return this for chaining', () => {
     expect(result).toBe(program);
   });
 
-  test('when call .beforeAction() then returns this', () => {
+  test('when call .preAction() then returns this', () => {
     const program = new Command();
-    const result = program.beforeAction(() => {});
+    const result = program.preAction(() => {});
     expect(result).toBe(program);
   });
 
-  test('when call .afterAction() then returns this', () => {
+  test('when call .postAction() then returns this', () => {
     const program = new Command();
-    const result = program.afterAction(() => {});
+    const result = program.postAction(() => {});
     expect(result).toBe(program);
   });
 });
