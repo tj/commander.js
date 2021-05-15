@@ -75,7 +75,7 @@ export class Option {
   /**
    * Set the default value, and optionally supply the description to be displayed in the help.
    */
-  default(value: any, description?: string): this;
+  default(value: unknown, description?: string): this;
 
   /**
    * Calculate the full description, including defaultValue etc.
@@ -295,7 +295,7 @@ export class Command {
    * @returns `this` command for chaining
    */
     argument<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
-    argument(name: string, description?: string, defaultValue?: any): this;
+    argument(name: string, description?: string, defaultValue?: unknown): this;
 
   /**
    * Define argument syntax for command, adding a prepared argument.
