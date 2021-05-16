@@ -52,5 +52,5 @@ program.parseAsync().then(() => {});
 //  node hook.js --profile hello
 //  node hook.js --trace hello --example
 //  node hook.js delay
-//  node hook.js --trace delay --message bye 5
+//  node hook.js --trace delay 5 --message bye
 //  node hook.js --profile delay
