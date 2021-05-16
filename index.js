@@ -998,7 +998,7 @@ class Command extends EventEmitter {
    */
 
   hook(event, listener) {
-    const allowedValues = ['beforeAction', 'afterAction'];
+    const allowedValues = ['preAction', 'postAction'];
     if (!allowedValues.includes(event)) {
       throw new Error(`Unexpected value for event passed to hook : '${event}'.
 Expecting one of '${allowedValues.join("', '")}'`);
@@ -1700,13 +1700,13 @@ Expecting one of '${allowedValues.join("', '")}'`);
           hooks.push({ hookedCommand, callback });
         });
       });
-    if (event.startsWith('after')) {
+    if (event === 'postAction') {
       hooks.reverse();
     }
 
     hooks.forEach((hookDetail) => {
       result = this._chainOrCall(result, () => {
-        return hookDetail.callback({ command: this, hookedCommand: hookDetail.hookedCommand });
+        return hookDetail.callback(hookDetail.hookedCommand, this);
       });
     });
     return result;
@@ -1774,10 +1774,10 @@ Expecting one of '${allowedValues.join("', '")}'`);
       checkNumberOfArguments();
 
       let actionResult;
-      actionResult = this._chainOrCallHooks(actionResult, 'beforeAction');
+      actionResult = this._chainOrCallHooks(actionResult, 'preAction');
       actionResult = this._chainOrCall(actionResult, () => this._actionHandler(this._getActionArguments()));
       if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
-      actionResult = this._chainOrCallHooks(actionResult, 'afterAction');
+      actionResult = this._chainOrCallHooks(actionResult, 'postAction');
       return actionResult;
     }
     if (this.parent && this.parent.listenerCount(commandEvent)) {

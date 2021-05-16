@@ -564,9 +564,8 @@ Example file: [hook.js](./examples/hook.js)
 ```js
 program
   .option('-t, --trace', 'display trace statements for commands')
-  .hook('beforeAction', (context) => {
-    if (context.hookedCommand.opts().trace) {
-      const actionCommand = context.command;
+  .hook('preAction', (thisCommand, actionCommand) => {
+    if (thisCommand.opts().trace) {
       console.log(`About to call action handler for subcommand: ${actionCommand.name()}`);
       console.log('arguments: %O', actionCommand.args);
       console.log('options: %o', actionCommand.opts());
@@ -578,13 +577,10 @@ The callback hook can be `async`, in which case you call `.parseAsync` rather th
 
 The supported events are:
 
-- `beforeAction`: called before action handler for this command and its subcommands
-- `afterAction`: called after action handler for this command and its subcommands
+- `preAction`: called before action handler for this command and its subcommands
+- `postAction`: called after action handler for this command and its subcommands
 
-The hook callback is passed a context object with properties:
-
-- `command`: the command running the action handler
-- `hookedCommand`: the command which the hook was added to
+The hook is passed the command it was added to, and the command running the action handler.
 
 ## Automated help
 

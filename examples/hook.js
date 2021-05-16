@@ -9,22 +9,21 @@ const program = new commander.Command();
 const timeLabel = 'command duration';
 program
   .option('-p, --profile', 'show how long command takes')
-  .hook('beforeAction', (context) => {
-    if (context.hookedCommand.opts().profile) {
+  .hook('preAction', (thisCommand) => {
+    if (thisCommand.opts().profile) {
       console.time(timeLabel);
     }
   })
-  .hook('afterAction', (context) => {
-    if (context.hookedCommand.opts().profile) {
+  .hook('postAction', (thisCommand) => {
+    if (thisCommand.opts().profile) {
       console.timeEnd(timeLabel);
     }
   });
 
 program
   .option('-t, --trace', 'display trace statements for commands')
-  .hook('beforeAction', (context) => {
-    if (context.hookedCommand.opts().trace) {
-      const actionCommand = context.command;
+  .hook('preAction', (thisCommand, actionCommand) => {
+    if (thisCommand.opts().trace) {
       console.log('>>>>');
       console.log(`About to call action handler for subcommand: ${actionCommand.name()}`);
       console.log('arguments: %O', actionCommand.args);

@@ -161,10 +161,6 @@ declare namespace commander {
     error: boolean;
     command: Command;
   }
-  interface HookContext { // passed to listener used with .hook()
-    command: Command;
-    hookedCommand: Command;
-  }
   interface OutputConfiguration {
     writeOut?(str: string): void;
     writeErr?(str: string): void;
@@ -175,7 +171,7 @@ declare namespace commander {
   }
 
   type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
-  type HookEvent = 'beforeAction' | 'afterAction';
+  type HookEvent = 'preAction' | 'postAction';
 
   interface OptionValues {
     [key: string]: any;
@@ -312,7 +308,7 @@ declare namespace commander {
     /**
      * Add hook for life cycle event.
      */
-    hook(event: HookEvent, listener: (context: HookContext) => void | Promise<void>): this;
+    hook(event: HookEvent, listener: (thisCommand: Command, actionCommand: Command) => void | Promise<void>): this;
 
     /**
      * Register callback to use as replacement for calling process.exit.
