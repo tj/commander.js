@@ -165,4 +165,10 @@ describe('Command methods that should return this for chaining', () => {
     const result = program.enablePositionalOptions();
     expect(result).toBe(program);
   });
+
+  test('when call .setOptionValue() then returns this', () => {
+    const program = new Command();
+    const result = program.setOptionValue();
+    expect(result).toBe(program);
+  });
 });

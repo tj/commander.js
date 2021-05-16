@@ -1094,11 +1094,11 @@ class Command extends EventEmitter {
       // when --no-foo we make sure default is true, unless a --foo option is already defined
       if (option.negate) {
         const positiveLongFlag = option.long.replace(/^--no-/, '--');
-        defaultValue = this._findOption(positiveLongFlag) ? this._getOptionValue(name) : true;
+        defaultValue = this._findOption(positiveLongFlag) ? this.getOptionValue(name) : true;
       }
       // preassign only if we have a default
       if (defaultValue !== undefined) {
-        this._setOptionValue(name, defaultValue);
+        this.setOptionValue(name, defaultValue);
       }
     }
 
@@ -1108,7 +1108,7 @@ class Command extends EventEmitter {
     // when it's passed assign the value
     // and conditionally invoke the callback
     this.on('option:' + oname, (val) => {
-      const oldValue = this._getOptionValue(name);
+      const oldValue = this.getOptionValue(name);
 
       // custom processing
       if (val !== null && option.parseArg) {
@@ -1129,15 +1129,15 @@ class Command extends EventEmitter {
       if (typeof oldValue === 'boolean' || typeof oldValue === 'undefined') {
         // if no value, negate false, and we have a default, then use it!
         if (val == null) {
-          this._setOptionValue(name, option.negate
+          this.setOptionValue(name, option.negate
             ? false
             : defaultValue || true);
         } else {
-          this._setOptionValue(name, val);
+          this.setOptionValue(name, val);
         }
       } else if (val !== null) {
         // reassign
-        this._setOptionValue(name, option.negate ? false : val);
+        this.setOptionValue(name, option.negate ? false : val);
       }
     });
 
@@ -1325,34 +1325,34 @@ class Command extends EventEmitter {
   };
 
   /**
-   * Store option value
+   * Retrieve option value.
+   *
+   * @param {string} key
+   * @return {Object} value
+   */
+
+  getOptionValue(key) {
+    if (this._storeOptionsAsProperties) {
+      return this[key];
+    }
+    return this._optionValues[key];
+  };
+
+  /**
+   * Store option value.
    *
    * @param {string} key
    * @param {Object} value
-   * @api private
+   * @return {Command} `this` command for chaining
    */
 
-  _setOptionValue(key, value) {
+  setOptionValue(key, value) {
     if (this._storeOptionsAsProperties) {
       this[key] = value;
     } else {
       this._optionValues[key] = value;
     }
-  };
-
-  /**
-   * Retrieve option value
-   *
-   * @param {string} key
-   * @return {Object} value
-   * @api private
-   */
-
-  _getOptionValue(key) {
-    if (this._storeOptionsAsProperties) {
-      return this[key];
-    }
-    return this._optionValues[key];
+    return this;
   };
 
   /**
@@ -1764,7 +1764,7 @@ class Command extends EventEmitter {
     // Walk up hierarchy so can call in subcommand after checking for displaying help.
     for (let cmd = this; cmd; cmd = cmd.parent) {
       cmd.options.forEach((anOption) => {
-        if (anOption.mandatory && (cmd._getOptionValue(anOption.attributeName()) === undefined)) {
+        if (anOption.mandatory && (cmd.getOptionValue(anOption.attributeName()) === undefined)) {
           cmd.missingMandatoryOptionValue(anOption);
         }
       });
