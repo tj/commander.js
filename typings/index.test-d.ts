@@ -77,7 +77,7 @@ expectType<commander.Command>(program.hook('preAction', () => {}));
 expectType<commander.Command>(program.hook('postAction', () => {}));
 expectType<commander.Command>(program.hook('preAction', async() => {}));
 expectType<commander.Command>(program.hook('preAction', (thisCommand, actionCommand) => {
-  // implicit HookContext
+  // implicit parameter types
   expectType<commander.Command>(thisCommand);
   expectType<commander.Command>(actionCommand);
 }));
