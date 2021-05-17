@@ -96,7 +96,7 @@ const program = new Command();
 Options are defined with the `.option()` method, also serving as documentation for the options. Each option can have a short flag (single character) and a long name, separated by a comma or space or vertical bar ('|').
 
 The parsed options can be accessed by calling `.opts()` on a `Command` object, and are passed to the action handler.
-You can also use `.getOptionValue()` and `.setOptionValue()`.
+You can also use `.getOptionValue()` and `.setOptionValue()` to work with a single option value.
 
 Multi-word options such as "--template-engine" are camel-cased, becoming `program.opts().templateEngine` etc.
 
