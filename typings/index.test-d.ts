@@ -1,13 +1,13 @@
 import * as commander from './index';
-import {expectType, expectAssignable} from 'tsd';
+import {expectType} from 'tsd';
 
 // We are are not just checking return types here, we are also implicitly checking that the expected syntax is allowed.
 
 const program: commander.Command = new commander.Command();
-// program.silly; // <-- Error, hurrah!
+// @ts-expect-error Check that Command is strongly typed and does not allow arbitrary properties
+program.silly; // <-- Error, hurrah!
 
-// Check for exported global Command object(s)
-expectAssignable<commander.Command>(commander); // legacy default export of program
+// Check for exported global Command object
 expectType<commander.Command>(commander.program);
 
 // Check export classes and functions exist
@@ -18,6 +18,8 @@ expectType<commander.CommanderError>(new commander.CommanderError(1, 'code', 'me
 expectType<commander.InvalidArgumentError>(new commander.InvalidArgumentError('message'));
 expectType<commander.InvalidArgumentError>(new commander.InvalidOptionArgumentError('message'));
 expectType<commander.Command>(commander.createCommand());
+expectType<commander.Option>(commander.createOption('--demo'));
+expectType<commander.Argument>(commander.createArgument('<foo>'));
 
 // Command properties
 expectType<string[]>(program.args);

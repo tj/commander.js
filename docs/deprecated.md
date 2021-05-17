@@ -42,7 +42,9 @@ const { Command } = require('commander');
 comnst program = new Command()
 ```
 
-Removed from README in Commander v5. Deprecated from Commander v7. 
+- Removed from README in Commander v5.
+- Deprecated from Commander v7. 
+- Removed from TypeScript declarations in Commander v8.
 
 ## Callback to .help() and .outputHelp()
 
