@@ -8,7 +8,6 @@ const program: commander.Command = new commander.Command();
 program.silly; // <-- Error, hurrah!
 
 // Check for exported global Command object(s)
-// expectAssignable<commander.Command>(commander); // legacy default export of program
 expectType<commander.Command>(commander.program);
 
 // Check export classes and functions exist
