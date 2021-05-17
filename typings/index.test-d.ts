@@ -7,7 +7,7 @@ const program: commander.Command = new commander.Command();
 // @ts-expect-error Check that Command is strongly typed and does not allow arbitrary properties
 program.silly; // <-- Error, hurrah!
 
-// Check for exported global Command object(s)
+// Check for exported global Command object
 expectType<commander.Command>(commander.program);
 
 // Check export classes and functions exist
