@@ -12,6 +12,7 @@ const { Option } = require('./lib/option.js');
 
 exports = module.exports = new Command();
 exports.program = exports; // More explicit access to global command.
+// Implicit export of createArgument, createCommand, and createOption.
 
 /**
  * Expose classes

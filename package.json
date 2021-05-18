@@ -30,6 +30,7 @@
   "main": "./index.js",
   "files": [
     "index.js",
+    "lib/*.js",
     "esm.mjs",
     "typings/index.d.ts",
     "package-support.json"
