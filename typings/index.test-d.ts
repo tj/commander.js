@@ -138,6 +138,13 @@ expectType<commander.Command & commander.OptionValues>(program.storeOptionsAsPro
 expectType<commander.Command & commander.OptionValues>(program.storeOptionsAsProperties(true));
 expectType<commander.Command>(program.storeOptionsAsProperties(false));
 
+// getOptionValue
+void program.getOptionValue('example');
+
+// setOptionValue
+expectType<commander.Command>(program.setOptionValue('example', 'value'));
+expectType<commander.Command>(program.setOptionValue('example', true));
+
 // combineFlagAndOptionalValue
 expectType<commander.Command>(program.combineFlagAndOptionalValue());
 expectType<commander.Command>(program.combineFlagAndOptionalValue(false));

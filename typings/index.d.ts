@@ -466,6 +466,16 @@ export class Command {
   storeOptionsAsProperties(storeAsProperties?: boolean): this;
 
   /**
+   * Retrieve option value.
+   */
+  getOptionValue(key: string): any;
+
+   /**
+   * Store option value.
+   */
+  setOptionValue(key: string, value: unknown): this;
+
+  /**
    * Alter parsing of short flags with optional values.
    *
    * @example
