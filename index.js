@@ -678,6 +678,7 @@ class Command extends EventEmitter {
     this._argsDescription = undefined; // legacy
     this._enablePositionalOptions = false;
     this._passThroughOptions = false;
+    this._lifeCycleHooks = {}; // a hash of arrays
 
     // see .configureOutput() for docs
     this._outputConfiguration = {
@@ -987,6 +988,28 @@ class Command extends EventEmitter {
     }
     return this._addImplicitHelpCommand;
   };
+
+  /**
+   * Add hook for life cycle event.
+   *
+   * @param {string} event
+   * @param {Function} listener
+   * @return {Command} `this` command for chaining
+   */
+
+  hook(event, listener) {
+    const allowedValues = ['preAction', 'postAction'];
+    if (!allowedValues.includes(event)) {
+      throw new Error(`Unexpected value for event passed to hook : '${event}'.
+Expecting one of '${allowedValues.join("', '")}'`);
+    }
+    if (this._lifeCycleHooks[event]) {
+      this._lifeCycleHooks[event].push(listener);
+    } else {
+      this._lifeCycleHooks[event] = [listener];
+    }
+    return this;
+  }
 
   /**
    * Register callback to use as replacement for calling process.exit.
@@ -1641,6 +1664,55 @@ class Command extends EventEmitter {
   }
 
   /**
+   * Once we have a promise we chain, but call synchronously until then.
+   *
+   * @param {Promise|undefined} promise
+   * @param {Function} fn
+   * @return {Promise|undefined}
+   */
+
+  _chainOrCall(promise, fn) {
+    // thenable
+    if (promise && promise.then && typeof promise.then === 'function') {
+      // already have a promise, chain callback
+      return promise.then(() => fn());
+    }
+    // callback might return a promise
+    return fn();
+  }
+
+  /**
+   *
+   * @param {Promise|undefined} promise
+   * @param {string} event
+   * @return {Promise|undefined}
+   * @api private
+   */
+
+  _chainOrCallHooks(promise, event) {
+    let result = promise;
+    const hooks = [];
+    getCommandAndParents(this)
+      .reverse()
+      .filter(cmd => cmd._lifeCycleHooks[event] !== undefined)
+      .forEach(hookedCommand => {
+        hookedCommand._lifeCycleHooks[event].forEach((callback) => {
+          hooks.push({ hookedCommand, callback });
+        });
+      });
+    if (event === 'postAction') {
+      hooks.reverse();
+    }
+
+    hooks.forEach((hookDetail) => {
+      result = this._chainOrCall(result, () => {
+        return hookDetail.callback(hookDetail.hookedCommand, this);
+      });
+    });
+    return result;
+  }
+
+  /**
    * Process arguments in context of this command.
    * Returns action result, in case it is a promise.
    *
@@ -1700,8 +1772,12 @@ class Command extends EventEmitter {
     if (this._actionHandler) {
       checkForUnknownOptions();
       checkNumberOfArguments();
-      const actionResult = this._actionHandler(this._getActionArguments());
+
+      let actionResult;
+      actionResult = this._chainOrCallHooks(actionResult, 'preAction');
+      actionResult = this._chainOrCall(actionResult, () => this._actionHandler(this._getActionArguments()));
       if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
+      actionResult = this._chainOrCallHooks(actionResult, 'postAction');
       return actionResult;
     }
     if (this.parent && this.parent.listenerCount(commandEvent)) {
@@ -2423,4 +2499,18 @@ function incrementNodeInspectorPort(args) {
     }
     return arg;
   });
+}
+
+/**
+ * @param {Command} startCommand
+ * @returns {Command[]}
+ * @api private
+ */
+
+function getCommandAndParents(startCommand) {
+  const result = [];
+  for (let command = startCommand; command; command = command.parent) {
+    result.push(command);
+  }
+  return result;
 }

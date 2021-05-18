@@ -26,6 +26,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Custom argument processing](#custom-argument-processing)
     - [Action handler](#action-handler)
     - [Stand-alone executable (sub)commands](#stand-alone-executable-subcommands)
+    - [Life cycle hooks](#life-cycle-hooks)
   - [Automated help](#automated-help)
     - [Custom help](#custom-help)
     - [Display help from code](#display-help-from-code)
@@ -556,6 +557,33 @@ program.parse(process.argv);
 ```
 
 If the program is designed to be installed globally, make sure the executables have proper modes, like `755`.
+
+### Life cycle hooks
+
+You can add callback hooks to a command for life cycle events.
+
+Example file: [hook.js](./examples/hook.js)
+
+```js
+program
+  .option('-t, --trace', 'display trace statements for commands')
+  .hook('preAction', (thisCommand, actionCommand) => {
+    if (thisCommand.opts().trace) {
+      console.log(`About to call action handler for subcommand: ${actionCommand.name()}`);
+      console.log('arguments: %O', actionCommand.args);
+      console.log('options: %o', actionCommand.opts());
+    }
+  });
+```
+
+The callback hook can be `async`, in which case you call `.parseAsync` rather than `.parse`. You can add multiple hooks per event.
+
+The supported events are:
+
+- `preAction`: called before action handler for this command and its subcommands
+- `postAction`: called after action handler for this command and its subcommands
+
+The hook is passed the command it was added to, and the command running the action handler.
 
 ## Automated help
 

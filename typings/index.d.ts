@@ -193,6 +193,7 @@ export interface OutputConfiguration {
 }
 
 type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
+type HookEvent = 'preAction' | 'postAction';
 
 export interface OptionValues {
   [key: string]: any;
@@ -327,6 +328,11 @@ export class Command {
    * @returns `this` command for chaining
    */
   addHelpCommand(enableOrNameAndArgs?: string | boolean, description?: string): this;
+
+  /**
+   * Add hook for life cycle event.
+   */
+  hook(event: HookEvent, listener: (thisCommand: Command, actionCommand: Command) => void | Promise<void>): this;
 
   /**
    * Register callback to use as replacement for calling process.exit.
