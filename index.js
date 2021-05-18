@@ -3,7 +3,10 @@ const childProcess = require('child_process');
 const path = require('path');
 const fs = require('fs');
 
-const { Argument } = require('./lib/argument');
+const { Argument } = require('./lib/argument.js');
+const { CommanderError, InvalidArgumentError } = require('./lib/error.js');
+const { Option } = require('./lib/option.js');
+const { splitOptionFlags } = require('./lib/utility');
 
 // @ts-check
 
@@ -374,199 +377,6 @@ class Help {
       }
       return ((i > 0) ? indentString : '') + line.trimRight();
     }).join('\n');
-  }
-}
-
-class Option {
-  /**
-   * Initialize a new `Option` with the given `flags` and `description`.
-   *
-   * @param {string} flags
-   * @param {string} [description]
-   */
-
-  constructor(flags, description) {
-    this.flags = flags;
-    this.description = description || '';
-
-    this.required = flags.includes('<'); // A value must be supplied when the option is specified.
-    this.optional = flags.includes('['); // A value is optional when the option is specified.
-    // variadic test ignores <value,...> et al which might be used to describe custom splitting of single argument
-    this.variadic = /\w\.\.\.[>\]]$/.test(flags); // The option can take multiple values.
-    this.mandatory = false; // The option must have a value after parsing, which usually means it must be specified on command line.
-    const optionFlags = _parseOptionFlags(flags);
-    this.short = optionFlags.shortFlag;
-    this.long = optionFlags.longFlag;
-    this.negate = false;
-    if (this.long) {
-      this.negate = this.long.startsWith('--no-');
-    }
-    this.defaultValue = undefined;
-    this.defaultValueDescription = undefined;
-    this.parseArg = undefined;
-    this.hidden = false;
-    this.argChoices = undefined;
-  }
-
-  /**
-   * Set the default value, and optionally supply the description to be displayed in the help.
-   *
-   * @param {any} value
-   * @param {string} [description]
-   * @return {Option}
-   */
-
-  default(value, description) {
-    this.defaultValue = value;
-    this.defaultValueDescription = description;
-    return this;
-  };
-
-  /**
-   * Set the custom handler for processing CLI option arguments into option values.
-   *
-   * @param {Function} [fn]
-   * @return {Option}
-   */
-
-  argParser(fn) {
-    this.parseArg = fn;
-    return this;
-  };
-
-  /**
-   * Whether the option is mandatory and must have a value after parsing.
-   *
-   * @param {boolean} [mandatory=true]
-   * @return {Option}
-   */
-
-  makeOptionMandatory(mandatory = true) {
-    this.mandatory = !!mandatory;
-    return this;
-  };
-
-  /**
-   * Hide option in help.
-   *
-   * @param {boolean} [hide=true]
-   * @return {Option}
-   */
-
-  hideHelp(hide = true) {
-    this.hidden = !!hide;
-    return this;
-  };
-
-  /**
-   * @api private
-   */
-
-  _concatValue(value, previous) {
-    if (previous === this.defaultValue || !Array.isArray(previous)) {
-      return [value];
-    }
-
-    return previous.concat(value);
-  }
-
-  /**
-   * Only allow option value to be one of choices.
-   *
-   * @param {string[]} values
-   * @return {Option}
-   */
-
-  choices(values) {
-    this.argChoices = values;
-    this.parseArg = (arg, previous) => {
-      if (!values.includes(arg)) {
-        throw new InvalidArgumentError(`Allowed choices are ${values.join(', ')}.`);
-      }
-      if (this.variadic) {
-        return this._concatValue(arg, previous);
-      }
-      return arg;
-    };
-    return this;
-  };
-
-  /**
-   * Return option name.
-   *
-   * @return {string}
-   */
-
-  name() {
-    if (this.long) {
-      return this.long.replace(/^--/, '');
-    }
-    return this.short.replace(/^-/, '');
-  };
-
-  /**
-   * Return option name, in a camelcase format that can be used
-   * as a object attribute key.
-   *
-   * @return {string}
-   * @api private
-   */
-
-  attributeName() {
-    return camelcase(this.name().replace(/^no-/, ''));
-  };
-
-  /**
-   * Check if `arg` matches the short or long flag.
-   *
-   * @param {string} arg
-   * @return {boolean}
-   * @api private
-   */
-
-  is(arg) {
-    return this.short === arg || this.long === arg;
-  };
-}
-
-/**
- * CommanderError class
- * @class
- */
-class CommanderError extends Error {
-  /**
-   * Constructs the CommanderError class
-   * @param {number} exitCode suggested exit code which could be used with process.exit
-   * @param {string} code an id string representing the error
-   * @param {string} message human-readable description of the error
-   * @constructor
-   */
-  constructor(exitCode, code, message) {
-    super(message);
-    // properly capture stack trace in Node.js
-    Error.captureStackTrace(this, this.constructor);
-    this.name = this.constructor.name;
-    this.code = code;
-    this.exitCode = exitCode;
-    this.nestedError = undefined;
-  }
-}
-
-/**
- * InvalidArgumentError class
- * @class
- */
-class InvalidArgumentError extends CommanderError {
-  /**
-   * Constructs the InvalidArgumentError class
-   * @param {string} [message] explanation of why argument is invalid
-   * @constructor
-   */
-  constructor(message) {
-    super(1, 'commander.invalidArgument', message);
-    // properly capture stack trace in Node.js
-    Error.captureStackTrace(this, this.constructor);
-    this.name = this.constructor.name;
   }
 }
 
@@ -2231,7 +2041,7 @@ Expecting one of '${allowedValues.join("', '")}'`);
     this._helpFlags = flags || this._helpFlags;
     this._helpDescription = description || this._helpDescription;
 
-    const helpFlags = _parseOptionFlags(this._helpFlags);
+    const helpFlags = splitOptionFlags(this._helpFlags);
     this._helpShortFlag = helpFlags.shortFlag;
     this._helpLongFlag = helpFlags.longFlag;
 
@@ -2309,20 +2119,6 @@ exports.InvalidOptionArgumentError = InvalidArgumentError; // Deprecated
 exports.Help = Help;
 
 /**
- * Camel-case the given `flag`
- *
- * @param {string} flag
- * @return {string}
- * @api private
- */
-
-function camelcase(flag) {
-  return flag.split('-').reduce((str, word) => {
-    return str + word[0].toUpperCase() + word.slice(1);
-  });
-}
-
-/**
  * Output help information if help flags specified
  *
  * @param {Command} cmd - command to output help for
@@ -2353,28 +2149,6 @@ function humanReadableArgName(arg) {
   return arg.required
     ? '<' + nameOutput + '>'
     : '[' + nameOutput + ']';
-}
-
-/**
- * Parse the short and long flag out of something like '-m,--mixed <value>'
- *
- * @api private
- */
-
-function _parseOptionFlags(flags) {
-  let shortFlag;
-  let longFlag;
-  // Use original very loose parsing to maintain backwards compatibility for now,
-  // which allowed for example unintended `-sw, --short-word` [sic].
-  const flagParts = flags.split(/[ |,]+/);
-  if (flagParts.length > 1 && !/^[[<]/.test(flagParts[1])) shortFlag = flagParts.shift();
-  longFlag = flagParts.shift();
-  // Add support for lone short flag without significantly changing parsing!
-  if (!shortFlag && /^-[^-]$/.test(longFlag)) {
-    shortFlag = longFlag;
-    longFlag = undefined;
-  }
-  return { shortFlag, longFlag };
 }
 
 /**
