@@ -8,6 +8,38 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [8.0.0-0] (date goes here)
+
+### Added
+
+- `.getOptionValue()` and `.setOptionValue()` ([#1521])
+- `.hook()` with support for `'preAction'` and `'postAction'` callbacks ([#1514])
+- `.argument(name, description)` for adding command-arguments ([#1490])
+  - supports default value for optional command-arguments ([#1508])
+  - supports custom processing function ([#1508])
+- `.createArgument()` factory method ([#1497])
+- the number of command-arguments is checked for programs without an action handler ([#1502])
+
+### Changed
+
+- refactor and simplify TypeScript declarations (with no default export) ([#1520])
+- `.parseAsync()` is now declared as `async` ([#1513])
+- *Breaking:* `Help` method `.visibleArguments()` returns array of `Argument` ([#1490])
+- *Breaking:* Commander 8 requires Node.js 12 or higher ([#1500])
+- *Breaking:* `CommanderError` code `commander.invalidOptionArgument` renamed `commander.invalidArgument` ([#1508])
+- *Breaking:* TypeScript declaration for `.addTextHelp()` callback no longer allows result of `undefined`, now just `string` ([#1516])
+
+### Deprecated
+
+- second parameter of `cmd.description(desc, argDescriptions)` for adding argument descriptions ([#1490])
+  - (use new `.argument(name, description)` instead)
+- `InvalidOptionArgumentError` (replaced by `InvalidArgumentError`) ([#1508])
+
+### Removed
+
+- *Breaking:* TypeScript declaration for default export of global `Command` object ([#1520])
+  - (still available as named `program` export)
+
 ## [7.2.0] (2021-03-22)
 
 ### Added
@@ -272,8 +304,18 @@ program
 [#1475]: https://github.com/tj/commander.js/pull/1475
 [#1477]: https://github.com/tj/commander.js/pull/1477
 [#1483]: https://github.com/tj/commander.js/pull/1483
+[#1490]: https://github.com/tj/commander.js/pull/1490
+[#1497]: https://github.com/tj/commander.js/pull/1497
+[#1500]: https://github.com/tj/commander.js/pull/1500
+[#1508]: https://github.com/tj/commander.js/pull/1508
+[#1513]: https://github.com/tj/commander.js/pull/1513
+[#1514]: https://github.com/tj/commander.js/pull/1514
+[#1516]: https://github.com/tj/commander.js/pull/1516
+[#1520]: https://github.com/tj/commander.js/pull/1520
+[#1521]: https://github.com/tj/commander.js/pull/1521
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[8.0.0-0]: https://github.com/tj/commander.js/compare/v7.2.0...v8.0.0-0
 [7.2.0]: https://github.com/tj/commander.js/compare/v7.1.0...v7.2.0
 [7.1.0]: https://github.com/tj/commander.js/compare/v7.0.0...v7.1.0
 [7.0.0]: https://github.com/tj/commander.js/compare/v6.2.1...v7.0.0
