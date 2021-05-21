@@ -81,4 +81,26 @@ describe('variadic argument', () => {
 
     expect(program.usage()).toBe('[options] [args...]');
   });
+
+  test('when variadic used with choices and one value then set in array', () => {
+    const program = new commander.Command();
+    let passedArg;
+    program
+      .addArgument(new commander.Argument('<value...>').choices(['one', 'two']))
+      .action((value) => { passedArg = value; });
+
+    program.parse(['one'], { from: 'user' });
+    expect(passedArg).toEqual(['one']);
+  });
+
+  test('when variadic used with choices and two values then set in array', () => {
+    const program = new commander.Command();
+    let passedArg;
+    program
+      .addArgument(new commander.Argument('<value...>').choices(['one', 'two']))
+      .action((value) => { passedArg = value; });
+
+    program.parse(['one', 'two'], { from: 'user' });
+    expect(passedArg).toEqual(['one', 'two']);
+  });
 });

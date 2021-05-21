@@ -361,8 +361,20 @@ expectType<boolean>(baseArgument.required);
 expectType<boolean>(baseArgument.variadic);
 
 // Argument methods
+
 // name
 expectType<string>(baseArgument.name());
+
+// default
+expectType<commander.Argument>(baseArgument.default(3));
+expectType<commander.Argument>(baseArgument.default(60, 'one minute'));
+
+// argParser
+expectType<commander.Argument>(baseArgument.argParser((value: string) => parseInt(value)));
+expectType<commander.Argument>(baseArgument.argParser((value: string, previous: string[]) => { return previous.concat(value); }));
+
+// choices
+expectType<commander.Argument>(baseArgument.choices(['a', 'b']));
 
 // createArgument
 expectType<commander.Argument>(program.createArgument('<name>'));
