@@ -662,7 +662,7 @@ class Command extends EventEmitter {
     this._allowUnknownOption = false;
     this._allowExcessArguments = true;
     this._args = []; // array of Argument
-    this.args = undefined; // cli args with options removed
+    this.args = null; // cli args with options removed
     this.rawArgs = null;
     this.processedArgs = null; // like .args but after custom processing and collecting variadic
     this._scriptPath = null;
