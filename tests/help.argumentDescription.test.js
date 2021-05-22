@@ -27,4 +27,10 @@ describe('argumentDescription', () => {
     const helper = new commander.Help();
     expect(helper.argumentDescription(argument)).toEqual('description (default: custom)');
   });
+
+  test('when an argument has default value and no description then still return default value', () => {
+    const argument = new commander.Argument('[n]').default('default');
+    const helper = new commander.Help();
+    expect(helper.argumentDescription(argument)).toEqual('(default: "default")');
+  });
 });
