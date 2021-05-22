@@ -656,13 +656,15 @@ class Command extends EventEmitter {
 
   constructor(name) {
     super();
-    this.commands = [];
-    this.options = [];
+    this.commands = []; // array of Command
+    this.options = []; // array of Option
     this.parent = null;
     this._allowUnknownOption = false;
     this._allowExcessArguments = true;
-    this._args = [];
+    this._args = []; // array of Argument
+    this.args = undefined; // cli args with options removed
     this.rawArgs = null;
+    this.processedArgs = null; // like .args but after custom processing and collecting variadic
     this._scriptPath = null;
     this._name = name || '';
     this._optionValues = {};
@@ -1613,13 +1615,34 @@ Expecting one of '${allowedValues.join("', '")}'`);
   };
 
   /**
-   * Package arguments (this.args) for passing to action handler based
-   * on declared arguments (this._args).
+   * Check this.args against expected this._args.
    *
    * @api private
    */
 
-  _getActionArguments() {
+  _checkNumberOfArguments() {
+    // too few
+    this._args.forEach((arg, i) => {
+      if (arg.required && this.args[i] == null) {
+        this.missingArgument(arg.name());
+      }
+    });
+    // too many
+    if (this._args.length > 0 && this._args[this._args.length - 1].variadic) {
+      return;
+    }
+    if (this.args.length > this._args.length) {
+      this._excessArguments(this.args);
+    }
+  };
+
+  /**
+   * Process this.args using this._args and save as this.processedArgs!
+   *
+   * @api private
+   */
+
+  _processArguments() {
     const myParseArg = (argument, value, previous) => {
       // Extra processing for nice error message on parsing failure.
       let parsedValue = value;
@@ -1637,7 +1660,9 @@ Expecting one of '${allowedValues.join("', '")}'`);
       return parsedValue;
     };
 
-    const actionArgs = [];
+    this._checkNumberOfArguments();
+
+    const processedArgs = [];
     this._args.forEach((declaredArg, index) => {
       let value = declaredArg.defaultValue;
       if (declaredArg.variadic) {
@@ -1658,9 +1683,9 @@ Expecting one of '${allowedValues.join("', '")}'`);
           value = myParseArg(declaredArg, value, declaredArg.defaultValue);
         }
       }
-      actionArgs[index] = value;
+      processedArgs[index] = value;
     });
-    return actionArgs;
+    this.processedArgs = processedArgs;
   }
 
   /**
@@ -1752,37 +1777,22 @@ Expecting one of '${allowedValues.join("', '")}'`);
         this.unknownOption(parsed.unknown[0]);
       }
     };
-    const checkNumberOfArguments = () => {
-      // too few
-      this._args.forEach((arg, i) => {
-        if (arg.required && this.args[i] == null) {
-          this.missingArgument(arg.name());
-        }
-      });
-      // too many
-      if (this._args.length > 0 && this._args[this._args.length - 1].variadic) {
-        return;
-      }
-      if (this.args.length > this._args.length) {
-        this._excessArguments(this.args);
-      }
-    };
 
     const commandEvent = `command:${this.name()}`;
     if (this._actionHandler) {
       checkForUnknownOptions();
-      checkNumberOfArguments();
+      this._processArguments();
 
       let actionResult;
       actionResult = this._chainOrCallHooks(actionResult, 'preAction');
-      actionResult = this._chainOrCall(actionResult, () => this._actionHandler(this._getActionArguments()));
+      actionResult = this._chainOrCall(actionResult, () => this._actionHandler(this.processedArgs));
       if (this.parent) this.parent.emit(commandEvent, operands, unknown); // legacy
       actionResult = this._chainOrCallHooks(actionResult, 'postAction');
       return actionResult;
     }
     if (this.parent && this.parent.listenerCount(commandEvent)) {
       checkForUnknownOptions();
-      checkNumberOfArguments();
+      this._processArguments();
       this.parent.emit(commandEvent, operands, unknown); // legacy
     } else if (operands.length) {
       if (this._findCommand('*')) { // legacy default command
@@ -1795,14 +1805,14 @@ Expecting one of '${allowedValues.join("', '")}'`);
         this.unknownCommand();
       } else {
         checkForUnknownOptions();
-        checkNumberOfArguments();
+        this._processArguments();
       }
     } else if (this.commands.length) {
       // This command has subcommands and nothing hooked up at this level, so display help (and exit).
       this.help({ error: true });
     } else {
       checkForUnknownOptions();
-      checkNumberOfArguments();
+      this._processArguments();
       // fall through for caller to handle after calling .parse()
     }
   };

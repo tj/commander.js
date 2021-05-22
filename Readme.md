@@ -479,7 +479,9 @@ program
 
 ### Custom argument processing
 
-You may specify a function to do custom processing of command-arguments before they are passed to the action handler.
+You may specify a function to do custom processing of command-arguments. The processed argument values are
+passed to the action handler, and saved as `.processedArgs`.
+
 The callback function receives two parameters, the user specified command-argument and the previous value for the argument.
 It returns the new value for the argument.
 
