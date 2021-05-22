@@ -37,6 +37,7 @@ class Help {
     }
     if (this.sortSubcommands) {
       visibleCommands.sort((a, b) => {
+        // @ts-ignore: overloaded return type
         return a.name().localeCompare(b.name());
       });
     }
@@ -656,13 +657,17 @@ class Command extends EventEmitter {
 
   constructor(name) {
     super();
-    this.commands = []; // array of Command
-    this.options = []; // array of Option
+    /** @type {Command[]} */
+    this.commands = [];
+    /** @type {Option[]} */
+    this.options = [];
     this.parent = null;
     this._allowUnknownOption = false;
     this._allowExcessArguments = true;
-    this._args = []; // array of Argument
-    this.args = null; // array of strings, cli args with options removed
+    /** @type {Argument[]} */
+    this._args = [];
+    /** @type {string[]} */
+    this.args = null; // cli args with options removed
     this.rawArgs = null;
     this.processedArgs = null; // like .args but after custom processing and collecting variadic
     this._scriptPath = null;
@@ -2160,6 +2165,7 @@ Expecting one of '${allowedValues.join("', '")}'`);
   alias(alias) {
     if (alias === undefined) return this._aliases[0]; // just return first, for backwards compatibility
 
+    /** @type {Command} */
     let command = this;
     if (this.commands.length !== 0 && this.commands[this.commands.length - 1]._executableHandler) {
       // assume adding alias for last added executable subcommand, rather than this
