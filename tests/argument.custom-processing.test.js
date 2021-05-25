@@ -1,6 +1,7 @@
 const commander = require('../');
 
 // Testing default value and custom processing behaviours.
+// Some double assertions in tests to check action argument and .processedArg
 
 test('when argument not specified then callback not called', () => {
   const mockCoercion = jest.fn();
@@ -34,7 +35,7 @@ test('when custom with starting value and argument not specified then callback n
   expect(mockCoercion).not.toHaveBeenCalled();
 });
 
-test('when custom with starting value and argument not specified then action argument is starting value', () => {
+test('when custom with starting value and argument not specified with action handler then action argument is starting value', () => {
   const startingValue = 1;
   let actionValue;
   const program = new commander.Command();
@@ -45,9 +46,19 @@ test('when custom with starting value and argument not specified then action arg
     });
   program.parse([], { from: 'user' });
   expect(actionValue).toEqual(startingValue);
+  expect(program.processedArgs).toEqual([startingValue]);
 });
 
-test('when default value is defined (without custom processing) and argument not specified then action argument is default value', () => {
+test('when custom with starting value and argument not specified without action handler then .processedArgs has starting value', () => {
+  const startingValue = 1;
+  const program = new commander.Command();
+  program
+    .argument('[n]', 'number', parseFloat, startingValue);
+  program.parse([], { from: 'user' });
+  expect(program.processedArgs).toEqual([startingValue]);
+});
+
+test('when default value is defined (without custom processing) and argument not specified with action handler then action argument is default value', () => {
   const defaultValue = 1;
   let actionValue;
   const program = new commander.Command();
@@ -58,6 +69,16 @@ test('when default value is defined (without custom processing) and argument not
     });
   program.parse([], { from: 'user' });
   expect(actionValue).toEqual(defaultValue);
+  expect(program.processedArgs).toEqual([defaultValue]);
+});
+
+test('when default value is defined (without custom processing) and argument not specified without action handler then .processedArgs is default value', () => {
+  const defaultValue = 1;
+  const program = new commander.Command();
+  program
+    .argument('[n]', 'number', defaultValue);
+  program.parse([], { from: 'user' });
+  expect(program.processedArgs).toEqual([defaultValue]);
 });
 
 test('when argument specified then callback called with value', () => {
@@ -71,7 +92,7 @@ test('when argument specified then callback called with value', () => {
   expect(mockCoercion).toHaveBeenCalledWith(value, undefined);
 });
 
-test('when argument specified then action value is as returned from callback', () => {
+test('when argument specified with action handler then action value is as returned from callback', () => {
   const callbackResult = 2;
   let actionValue;
   const program = new commander.Command();
@@ -84,6 +105,18 @@ test('when argument specified then action value is as returned from callback', (
     });
   program.parse(['node', 'test', 'alpha']);
   expect(actionValue).toEqual(callbackResult);
+  expect(program.processedArgs).toEqual([callbackResult]);
+});
+
+test('when argument specified without action handler then .processedArgs is as returned from callback', () => {
+  const callbackResult = 2;
+  const program = new commander.Command();
+  program
+    .argument('[n]', 'number', () => {
+      return callbackResult;
+    });
+  program.parse(['node', 'test', 'alpha']);
+  expect(program.processedArgs).toEqual([callbackResult]);
 });
 
 test('when argument specified then program.args has original rather than custom', () => {
@@ -124,6 +157,14 @@ test('when variadic argument specified multiple times then callback called with 
   expect(mockCoercion).toHaveBeenNthCalledWith(2, '2', 'callback');
 });
 
+test('when variadic argument without action handler then .processedArg has array', () => {
+  const program = new commander.Command();
+  program
+    .argument('<n...>', 'number');
+  program.parse(['1', '2'], { from: 'user' });
+  expect(program.processedArgs).toEqual([['1', '2']]);
+});
+
 test('when parseFloat "1e2" then action argument is 100', () => {
   let actionValue;
   const program = new commander.Command();
@@ -134,6 +175,7 @@ test('when parseFloat "1e2" then action argument is 100', () => {
     });
   program.parse(['1e2'], { from: 'user' });
   expect(actionValue).toEqual(100);
+  expect(program.processedArgs).toEqual([actionValue]);
 });
 
 test('when defined default value for required argument then throw', () => {
