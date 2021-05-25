@@ -25,6 +25,8 @@ expectType<commander.Argument>(commander.createArgument('<foo>'));
 
 // Command properties
 expectType<string[]>(program.args);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+expectType<any[]>(program.processedArgs);
 expectType<commander.Command[]>(program.commands);
 expectType<commander.Command | null>(program.parent);
 
