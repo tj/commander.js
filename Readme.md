@@ -131,12 +131,9 @@ if (options.pizzaType) console.log(`- ${options.pizzaType}`);
 ```
 
 ```bash
-$ pizza-options -d
-{ debug: true, small: undefined, pizzaType: undefined }
-pizza details:
 $ pizza-options -p
 error: option '-p, --pizza-type <type>' argument missing
-$ pizza-options -ds -p vegetarian
+$ pizza-options -d -s -p vegetarian
 { debug: true, small: true, pizzaType: 'vegetarian' }
 pizza details:
 - small pizza size
