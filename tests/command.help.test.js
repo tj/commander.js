@@ -281,3 +281,19 @@ test('when arguments described in deprecated way and empty description then argu
   const helpInformation = program.helpInformation();
   expect(helpInformation).toMatch(/Arguments:\n +file +input source/);
 });
+
+test('when argument has choices then choices included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .addArgument(new commander.Argument('<colour>', 'preferred colour').choices(['red', 'blue']));
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch('(choices: "red", "blue")');
+});
+
+test('when argument has choices and default then both included in helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .addArgument(new commander.Argument('<colour>', 'preferred colour').choices(['red', 'blue']).default('red'));
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch('(choices: "red", "blue", default: "red")');
+});

@@ -275,6 +275,23 @@ describe('.exitOverride and error details', () => {
     expectCommanderError(caughtErr, 1, 'commander.invalidArgument', "error: option '--colour <shade>' argument 'green' is invalid. Allowed choices are red, blue.");
   });
 
+  test('when command argument not in choices then throw CommanderError', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .addArgument(new commander.Argument('<shade>').choices(['red', 'blue']))
+      .action(() => {});
+
+    let caughtErr;
+    try {
+      program.parse(['green'], { from: 'user' });
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expectCommanderError(caughtErr, 1, 'commander.invalidArgument', "error: command-argument value 'green' is invalid for argument 'shade'. Allowed choices are red, blue.");
+  });
+
   test('when custom processing for option throws InvalidArgumentError then catch CommanderError', () => {
     function justSayNo(value) {
       throw new commander.InvalidArgumentError('NO');

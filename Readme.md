@@ -22,8 +22,9 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [More configuration](#more-configuration)
     - [Custom option processing](#custom-option-processing)
   - [Commands](#commands)
-    - [Specify the argument syntax](#specify-the-argument-syntax)
-    - [Custom argument processing](#custom-argument-processing)
+    - [Command-arguments](#command-arguments)
+      - [More configuration](#more-configuration-1)
+      - [Custom argument processing](#custom-argument-processing)
     - [Action handler](#action-handler)
     - [Stand-alone executable (sub)commands](#stand-alone-executable-subcommands)
     - [Life cycle hooks](#life-cycle-hooks)
@@ -33,7 +34,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [.usage and .name](#usage-and-name)
     - [.helpOption(flags, description)](#helpoptionflags-description)
     - [.addHelpCommand()](#addhelpcommand)
-    - [More configuration](#more-configuration-1)
+    - [More configuration](#more-configuration-2)
   - [Custom event listeners](#custom-event-listeners)
   - [Bits and pieces](#bits-and-pieces)
     - [.parse() and .parseAsync()](#parse-and-parseasync)
@@ -428,7 +429,7 @@ Configuration options can be passed with the call to `.command()` and `.addComma
 remove the command from the generated help output. Specifying `isDefault: true` will run the subcommand if no other
 subcommand is specified ([example](./examples/defaultCommand.js)).
 
-### Specify the argument syntax
+### Command-arguments
 
 For subcommands, you can specify the argument syntax in the call to `.command()` (as shown above). This
 is the only method usable for subcommands implemented using a stand-alone executable, but for other subcommands
@@ -437,7 +438,6 @@ you can instead use the following method.
 To configure a command, you can use `.argument()` to specify each expected command-argument. 
 You supply the argument name and an optional description. The argument may be `<required>` or `[optional]`.
 You can specify a default value for an optional command-argument.
-
 
 Example file: [argument.js](./examples/argument.js)
 
@@ -474,7 +474,19 @@ program
   .arguments('<username> <password>');
 ```
 
-### Custom argument processing
+#### More configuration
+
+There are some additional features available by constructing an `Argument` explicitly for less common cases.
+
+Example file: [arguments-extra.js](./examples/arguments-extra.js)
+
+```js
+program
+  .addArgument(new commander.Argument('<drink-size>', 'drink cup size').choices(['small', 'medium', 'large']))
+  .addArgument(new commander.Argument('[timeout]', 'timeout in seconds').default(60, 'one minute'))
+```
+
+#### Custom argument processing
 
 You may specify a function to do custom processing of command-arguments before they are passed to the action handler.
 The callback function receives two parameters, the user specified command-argument and the previous value for the argument.
