@@ -39,17 +39,17 @@
   "dependencies": {},
   "devDependencies": {
     "@types/jest": "^26.0.23",
-    "@types/node": "^14.17.0",
-    "@typescript-eslint/eslint-plugin": "^4.24.0",
-    "@typescript-eslint/parser": "^4.24.0",
-    "eslint": "^7.26.0",
-    "eslint-config-standard": "^16.0.2",
+    "@types/node": "^14.17.1",
+    "@typescript-eslint/eslint-plugin": "^4.25.0",
+    "@typescript-eslint/parser": "^4.25.0",
+    "eslint": "^7.27.0",
+    "eslint-config-standard": "^16.0.3",
     "eslint-plugin-jest": "^24.3.6",
-    "jest": "^26.6.3",
+    "jest": "^27.0.1",
     "standard": "^16.0.3",
-    "ts-jest": "^26.5.6",
-    "tsd": "^0.15.1",
-    "typescript": "^4.2.4"
+    "ts-jest": "^27.0.1",
+    "tsd": "^0.16.0",
+    "typescript": "^4.3.2"
   },
   "types": "typings/index.d.ts",
   "jest": {
