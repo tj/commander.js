@@ -672,7 +672,7 @@ The second parameter can be a string, or a function returning a string. The func
 ### Display help after errors
 
 The default behaviour for usage errors is to just display a short error message. 
-You can change the behaviour to show the full help after an error, or specify a custom help message.
+You can change the behaviour to show the full help or a custom help message after an error.
 
 ```js
 program.showHelpAfterError();
