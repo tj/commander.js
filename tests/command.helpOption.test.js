@@ -128,6 +128,6 @@ describe('helpOption', () => {
       .command('foo');
     expect(() => {
       program.parse(['UNKNOWN'], { from: 'user' });
-    }).toThrow("error: unknown command 'UNKNOWN'.");
+    }).toThrow("error: unknown command 'UNKNOWN'");
   });
 });

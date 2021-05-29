@@ -78,20 +78,4 @@ describe('unknownCommand', () => {
     }
     expect(caughtErr.code).toBe('commander.unknownCommand');
   });
-
-  test('when unknown subcommand then help suggestion includes command path', () => {
-    const program = new commander.Command();
-    program
-      .exitOverride()
-      .command('sub')
-      .command('subsub');
-    let caughtErr;
-    try {
-      program.parse('node test.js sub unknown'.split(' '));
-    } catch (err) {
-      caughtErr = err;
-    }
-    expect(caughtErr.code).toBe('commander.unknownCommand');
-    expect(writeErrorSpy.mock.calls[0][0]).toMatch('test sub');
-  });
 });
