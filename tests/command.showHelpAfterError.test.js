@@ -91,6 +91,19 @@ describe('showHelpAfterError with message', () => {
     expect(caughtErr.code).toBe('commander.unknownCommand');
     expect(writeMock).toHaveBeenLastCalledWith(`${customHelpMessage}\n`);
   });
+
+  test('when invalid option choice then shows help', () => {
+    const { program, writeMock } = makeProgram();
+    program.addOption(new commander.Option('--color').choices(['red', 'blue']));
+    let caughtErr;
+    try {
+      program.parse(['--color', 'pink'], { from: 'user' });
+    } catch (err) {
+      caughtErr = err;
+    }
+    expect(caughtErr.code).toBe('commander.invalidArgument');
+    expect(writeMock).toHaveBeenLastCalledWith(`${customHelpMessage}\n`);
+  });
 });
 
 test('when showHelpAfterError() and error and then shows full help', () => {
