@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - `.addArgument()` ([#1490])
 - `Argument` supports `.choices()` ([#1525])
+- client typing of `.opts()` return type using TypeScript generics ([#1539])
 
 ### Changed
 
@@ -327,6 +328,7 @@ program
 [#1521]: https://github.com/tj/commander.js/pull/1521
 [#1522]: https://github.com/tj/commander.js/pull/1522
 [#1525]: https://github.com/tj/commander.js/pull/1525
+[#1539]: https://github.com/tj/commander.js/pull/1539
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
 [8.0.0-0]: https://github.com/tj/commander.js/compare/v7.2.0...v8.0.0-0
