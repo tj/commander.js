@@ -483,8 +483,8 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
-  storeOptionsAsProperties(): this & OptionValues;
-  storeOptionsAsProperties(storeAsProperties: true): this & OptionValues;
+  storeOptionsAsProperties<T extends OptionValues>(): this & T;
+  storeOptionsAsProperties<T extends OptionValues>(storeAsProperties: true): this & T;
   storeOptionsAsProperties(storeAsProperties?: boolean): this;
 
   /**
@@ -594,7 +594,7 @@ export class Command {
   /**
    * Return an object containing options as key-value pairs
    */
-  opts(): OptionValues;
+  opts<T extends OptionValues>(): T;
 
   /**
    * Set the description.
