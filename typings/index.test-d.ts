@@ -196,6 +196,15 @@ expectType<commander.OptionValues>(opts);
 expectType(opts.foo);
 expectType(opts['bar']);
 
+// opts with generics
+interface MyCheeseOption {
+  cheese: string;
+}
+const myCheeseOption = program.opts<MyCheeseOption>();
+expectType<string>(myCheeseOption.cheese);
+// @ts-expect-error Check that options strongly typed and does not allow arbitrary properties
+expectType(myCheeseOption.foo);
+
 // description
 expectType<commander.Command>(program.description('my description'));
 expectType<string>(program.description());
