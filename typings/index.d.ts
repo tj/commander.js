@@ -389,6 +389,11 @@ export class Command {
   configureOutput(): OutputConfiguration;
 
   /**
+   * Display the help or a custom message after an error occurs.
+   */
+  showHelpAfterError(displayHelp?: boolean | string): this;
+
+  /**
    * Register callback `fn` for the command.
    *
    * @example

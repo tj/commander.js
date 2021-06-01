@@ -30,6 +30,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Life cycle hooks](#life-cycle-hooks)
   - [Automated help](#automated-help)
     - [Custom help](#custom-help)
+    - [Display help after errors](#display-help-after-errors)
     - [Display help from code](#display-help-from-code)
     - [.usage and .name](#usage-and-name)
     - [.helpOption(flags, description)](#helpoptionflags-description)
@@ -667,6 +668,23 @@ The second parameter can be a string, or a function returning a string. The func
 
 - error: a boolean for whether the help is being displayed due to a usage error
 - command: the Command which is displaying the help
+
+### Display help after errors
+
+The default behaviour for usage errors is to just display a short error message. 
+You can change the behaviour to show the full help or a custom help message after an error.
+
+```js
+program.showHelpAfterError();
+// or
+program.showHelpAfterError('(add --help for additional information)');
+```
+
+```sh
+$ pizza --unknown
+error: unknown option '--unknown'
+(add --help for additional information)
+```
 
 ### Display help from code
 

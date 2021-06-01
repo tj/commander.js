@@ -177,4 +177,10 @@ describe('Command methods that should return this for chaining', () => {
     const result = program.setOptionValue();
     expect(result).toBe(program);
   });
+
+  test('when call .showHelpAfterError() then returns this', () => {
+    const program = new Command();
+    const result = program.showHelpAfterError();
+    expect(result).toBe(program);
+  });
 });
