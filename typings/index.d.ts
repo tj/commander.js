@@ -217,6 +217,7 @@ export interface OptionValues {
 
 export class Command {
   args: string[];
+  processedArgs: any[];
   commands: Command[];
   parent: Command | null;
 
