@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [8.0.0-2] (2021-06-06)
+
+### Added
+
+- `.showHelpAfterError()` to display full help or a custom message after an error ([#1534])
+- custom argument processing function also called without action handler (only with action handler in v8.0.0-0) ([#1529])
+  
+### Changed
+
+- remove help suggestion from "unknown command" error message (see `.showHelpAfteError()`) ([#1534])
+- `Command` property `.arg` initialised to empty array (was previously undefined) ([#1529])
+
 ## [8.0.0-1] (2021-05-30)
 
 ### Added
@@ -328,9 +340,13 @@ program
 [#1521]: https://github.com/tj/commander.js/pull/1521
 [#1522]: https://github.com/tj/commander.js/pull/1522
 [#1525]: https://github.com/tj/commander.js/pull/1525
+[#1529]: https://github.com/tj/commander.js/pull/1529
+[#1534]: https://github.com/tj/commander.js/pull/1534
 [#1539]: https://github.com/tj/commander.js/pull/1539
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[8.0.0-2]: https://github.com/tj/commander.js/compare/v8.0.0-1...v8.0.0-2
+[8.0.0-1]: https://github.com/tj/commander.js/compare/v8.0.0-0...v8.0.0-1
 [8.0.0-0]: https://github.com/tj/commander.js/compare/v7.2.0...v8.0.0-0
 [7.2.0]: https://github.com/tj/commander.js/compare/v7.1.0...v7.2.0
 [7.1.0]: https://github.com/tj/commander.js/compare/v7.0.0...v7.1.0
