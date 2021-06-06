@@ -66,8 +66,8 @@ ingredient: scrambled
 The explicit way to resolve this is use `--` to indicate the end of the options and option-arguments:
 
 ```sh
-$ node cook.js -i -- egg
-technique: egg
+$ node cook.js -i -- scrambled
+technique: scrambled
 ingredient: cheese
 ```
 
