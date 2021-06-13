@@ -8,6 +8,39 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [Unreleased] (date goes here)
+
+### Migration Tips
+
+If you have a simple program without an action handler, you will now get an error if
+there are missing command-arguments.
+
+```js
+program
+  .option('-d, --debug')
+  .arguments('<file>');
+program.parse();
+```
+
+```sh
+$ node trivial.js 
+error: missing required argument 'file'
+```
+
+If you want to show the help in this situation, you could check the arguments before parsing:
+
+```js
+if (process.argv.length === 2)
+  program.help();
+program.parse();
+```
+
+Or, you might choose to show the help after any user error:
+
+```js
+program.showHelpAfterError();
+```
+
 ## [8.0.0-2] (2021-06-06)
 
 ### Added
