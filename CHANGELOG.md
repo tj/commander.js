@@ -15,21 +15,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 If you have a simple program without an action handler, you will now get an error if
 there are missing command-arguments.
 
-```
+```js
 program
-   .option('-d, --debug')
-   .arguments('<file>');
+  .option('-d, --debug')
+  .arguments('<file>');
 program.parse();
 ```
 
-```
+```sh
 $ node trivial.js 
 error: missing required argument 'file'
 ```
 
 If you want to show the help in this situation, you could check the arguments before parsing:
 
-```
+```js
 if (process.argv.length === 2)
   program.help();
 program.parse();
@@ -37,7 +37,7 @@ program.parse();
 
 Or, you might choose to show the help after any user error:
 
-```
+```js
 program.showHelpAfterError();
 ```
 
