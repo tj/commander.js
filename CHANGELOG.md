@@ -8,7 +8,45 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
-## [Unreleased] (date goes here)
+## [8.0.0] (2021-06-25)
+
+### Added
+
+- `.argument(name, description)` for adding command-arguments ([#1490])
+  - supports default value for optional command-arguments ([#1508])
+  - supports custom processing function ([#1508])
+- `.createArgument()` factory method ([#1497])
+- `.addArgument()` ([#1490])
+- `Argument` supports `.choices()` ([#1525])
+- `.showHelpAfterError()` to display full help or a custom message after an error ([#1534])
+- `.hook()` with support for `'preAction'` and `'postAction'` callbacks ([#1514])
+- client typing of `.opts()` return type using TypeScript generics ([#1539])
+- the number of command-arguments is checked for programs without an action handler ([#1502])
+- `.getOptionValue()` and `.setOptionValue()` ([#1521])
+
+### Changed
+
+- refactor and simplify TypeScript declarations (with no default export) ([#1520])
+- `.parseAsync()` is now declared as `async` ([#1513])
+- *Breaking:* `Help` method `.visibleArguments()` returns array of `Argument` ([#1490])
+- *Breaking:* Commander 8 requires Node.js 12 or higher ([#1500])
+- *Breaking:* `CommanderError` code `commander.invalidOptionArgument` renamed `commander.invalidArgument` ([#1508])
+- *Breaking:* TypeScript declaration for `.addTextHelp()` callback no longer allows result of `undefined`, now just `string` ([#1516])
+- refactor `index.tab` into a file per class ([#1522])
+- remove help suggestion from "unknown command" error message (see `.showHelpAfteError()`) ([#1534])
+- `Command` property `.arg` initialised to empty array (was previously undefined) ([#1529])
+- update dependencies
+
+### Deprecated
+
+- second parameter of `cmd.description(desc, argDescriptions)` for adding argument descriptions ([#1490])
+  - (use new `.argument(name, description)` instead)
+- `InvalidOptionArgumentError` (replaced by `InvalidArgumentError`) ([#1508])
+
+### Removed
+
+- *Breaking:* TypeScript declaration for default export of global `Command` object ([#1520])
+  - (still available as named `program` export)
 
 ### Migration Tips
 
@@ -43,60 +81,15 @@ program.showHelpAfterError();
 
 ## [8.0.0-2] (2021-06-06)
 
-### Added
-
-- `.showHelpAfterError()` to display full help or a custom message after an error ([#1534])
-- custom argument processing function also called without action handler (only with action handler in v8.0.0-0) ([#1529])
-  
-### Changed
-
-- remove help suggestion from "unknown command" error message (see `.showHelpAfteError()`) ([#1534])
-- `Command` property `.arg` initialised to empty array (was previously undefined) ([#1529])
+(Released in 8.0.0)
 
 ## [8.0.0-1] (2021-05-30)
 
-### Added
-
-- `.addArgument()` ([#1490])
-- `Argument` supports `.choices()` ([#1525])
-- client typing of `.opts()` return type using TypeScript generics ([#1539])
-
-### Changed
-
-- refactor `index.tab` into a file per class ([#1522])
-- update dependencies
+(Released in 8.0.0)
 
 ## [8.0.0-0] (2021-05-23)
 
-### Added
-
-- `.getOptionValue()` and `.setOptionValue()` ([#1521])
-- `.hook()` with support for `'preAction'` and `'postAction'` callbacks ([#1514])
-- `.argument(name, description)` for adding command-arguments ([#1490])
-  - supports default value for optional command-arguments ([#1508])
-  - supports custom processing function ([#1508])
-- `.createArgument()` factory method ([#1497])
-- the number of command-arguments is checked for programs without an action handler ([#1502])
-
-### Changed
-
-- refactor and simplify TypeScript declarations (with no default export) ([#1520])
-- `.parseAsync()` is now declared as `async` ([#1513])
-- *Breaking:* `Help` method `.visibleArguments()` returns array of `Argument` ([#1490])
-- *Breaking:* Commander 8 requires Node.js 12 or higher ([#1500])
-- *Breaking:* `CommanderError` code `commander.invalidOptionArgument` renamed `commander.invalidArgument` ([#1508])
-- *Breaking:* TypeScript declaration for `.addTextHelp()` callback no longer allows result of `undefined`, now just `string` ([#1516])
-
-### Deprecated
-
-- second parameter of `cmd.description(desc, argDescriptions)` for adding argument descriptions ([#1490])
-  - (use new `.argument(name, description)` instead)
-- `InvalidOptionArgumentError` (replaced by `InvalidArgumentError`) ([#1508])
-
-### Removed
-
-- *Breaking:* TypeScript declaration for default export of global `Command` object ([#1520])
-  - (still available as named `program` export)
+(Released in 8.0.0)
 
 ## [7.2.0] (2021-03-22)
 
@@ -378,6 +371,7 @@ program
 [#1539]: https://github.com/tj/commander.js/pull/1539
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[8.0.0]: https://github.com/tj/commander.js/compare/v7.2.0...v8.0.0
 [8.0.0-2]: https://github.com/tj/commander.js/compare/v8.0.0-1...v8.0.0-2
 [8.0.0-1]: https://github.com/tj/commander.js/compare/v8.0.0-0...v8.0.0-1
 [8.0.0-0]: https://github.com/tj/commander.js/compare/v7.2.0...v8.0.0-0
