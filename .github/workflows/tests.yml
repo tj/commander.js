@@ -19,6 +19,16 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     # Use separate run commands so command status handled correctly on Windows
+    - name: Get npm cache directory
+      id: npm-cache
+      run: |
+        echo "::set-output name=dir::$(npm config get cache)"
+    - uses: actions/cache@v1
+      with:
+        path: ${{ steps.npm-cache.outputs.dir }}
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
     - name: npm install
       run: npm ci
     - name: npm test
