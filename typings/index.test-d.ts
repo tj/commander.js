@@ -285,6 +285,9 @@ expectType<commander.Command>(program.configureHelp({
 }));
 expectType<commander.HelpConfiguration>(program.configureHelp());
 
+// copyInheritedSettings
+expectType<commander.Command>(program.copyInheritedSettings(new commander.Command()));
+
 // showHelpAfterError
 expectType<commander.Command>(program.showHelpAfterError());
 expectType<commander.Command>(program.showHelpAfterError(true));
