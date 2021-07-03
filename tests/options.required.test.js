@@ -80,3 +80,18 @@ describe('option with required value, with default', () => {
     expect(mockOptionMissingArgument).toHaveBeenCalled();
   });
 });
+
+// Compare implicit and explicit for identical results, rather than test end-to-end.
+describe('Option calling argRequired', () => {
+  test('when Option calls argRequired() then same result as <arg> in flags', () => {
+    const implicitSetting = new commander.Option('-f, --flag <arg>');
+    const explicitSetting = new commander.Option('-f, --flag').argRequired();
+    expect(explicitSetting).toEqual(implicitSetting);
+  });
+
+  test('when Option calls argRequired("value") then same result as <value> in flags', () => {
+    const implicitSetting = new commander.Option('-f, --flag <value>');
+    const explicitSetting = new commander.Option('-f, --flag').argRequired('value');
+    expect(explicitSetting).toEqual(implicitSetting);
+  });
+});

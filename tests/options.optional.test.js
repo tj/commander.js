@@ -68,3 +68,19 @@ describe('option with optional value, with default', () => {
     expect(program.opts().cheese).toBe(defaultValue);
   });
 });
+
+// Compare implicit and explicit for identical results, rather than test end-to-end.
+describe('Option calling argOptional', () => {
+  test('when Option calls argOptional() then same result as [arg] in flags', () => {
+    // Compare implicit and explicit for identical results, rather than test end-to-end.
+    const implicitSetting = new commander.Option('-f, --flag [arg]');
+    const explicitSetting = new commander.Option('-f, --flag').argOptional();
+    expect(explicitSetting).toEqual(implicitSetting);
+  });
+
+  test('when Option calls argOptional("value") then same result as [value] in flags', () => {
+    const implicitSetting = new commander.Option('-f, --flag [value]');
+    const explicitSetting = new commander.Option('-f, --flag').argOptional('value');
+    expect(explicitSetting).toEqual(implicitSetting);
+  });
+});

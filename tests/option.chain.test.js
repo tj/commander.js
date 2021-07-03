@@ -30,4 +30,16 @@ describe('Option methods that should return this for chaining', () => {
     const result = option.choices(['a']);
     expect(result).toBe(option);
   });
+
+  test('when call .argRequired() then returns this', () => {
+    const option = new Option('-e,--example');
+    const result = option.argRequired();
+    expect(result).toBe(option);
+  });
+
+  test('when call .argOptional() then returns this', () => {
+    const option = new Option('-e,--example');
+    const result = option.argOptional();
+    expect(result).toBe(option);
+  });
 });
