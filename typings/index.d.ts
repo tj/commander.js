@@ -136,20 +136,28 @@ export class Option {
   attributeName(): string;
 
   /**
-   * Option on command-line will be followed by a required option-argument.
+   * Option on command-line must be followed by an option-argument.
    *
-   * Alternative to specifying an arg in angle brackets in constructor. e.g.
+   * Alternative to specifying an arg in angle brackets in constructor.
+   * @example
+   * ```
    *   new Option('--flag <arg>')
+   *   // or
    *   new Option('--flag').argRequired()
+   * ```
    */
    argRequired(argName?: string): this;
 
   /**
-   * Option on command-line may be followed by an optional option-argument.
+   * Option on command-line may be followed by an option-argument.
    *
-   * Alternative to specifying an arg in square brackets in constructor. e.g.
+   * Alternative to specifying an arg in square brackets in constructor.
+   * @example
+   * ```
    *   new Option('--flag [arg]')
+   *   // or
    *   new Option('--flag').argOptional()
+   * ```
    */
    argOptional(argName?: string): this;
   }
@@ -258,13 +266,13 @@ export class Command {
    * The command description is supplied using `.description`, not as a parameter to `.command`.
    *
    * @example
-   * ```ts
-   *  program
-   *    .command('clone <source> [destination]')
-   *    .description('clone a repository into a newly created directory')
-   *    .action((source, destination) => {
-   *      console.log('clone command called');
-   *    });
+   * ```
+   *   program
+   *     .command('clone <source> [destination]')
+   *     .description('clone a repository into a newly created directory')
+   *     .action((source, destination) => {
+   *       console.log('clone command called');
+   *     });
    * ```
    *
    * @param nameAndArgs - command name and arguments, args are  `<required>` or `[optional]` and last may also be `variadic...`
@@ -279,10 +287,10 @@ export class Command {
    * The command description is supplied as the second parameter to `.command`.
    *
    * @example
-   * ```ts
-   *  program
-   *    .command('start <service>', 'start named service')
-   *    .command('stop [service]', 'stop named service, or all if no name supplied');
+   * ```
+   *   program
+   *     .command('start <service>', 'start named service')
+   *     .command('stop [service]', 'stop named service, or all if no name supplied');
    * ```
    *
    * @param nameAndArgs - command name and arguments, args are  `<required>` or `[optional]` and last may also be `variadic...`
@@ -324,9 +332,10 @@ export class Command {
    * indicate this with <> around the name. Put [] around the name for an optional argument.
    *
    * @example
-   *
-   *     program.argument('<input-file>');
-   *     program.argument('[output-file]');
+   * ```
+   *   program.argument('<input-file>');
+   *   program.argument('[output-file]');
+   * ```
    *
    * @returns `this` command for chaining
    */
@@ -346,8 +355,9 @@ export class Command {
    * See also .argument().
    *
    * @example
-   *
-   *     program.arguments('<cmd> [env]');
+   * ```
+   *   program.arguments('<cmd> [env]');
+   * ```
    *
    * @returns `this` command for chaining
    */
@@ -416,12 +426,14 @@ export class Command {
    * Register callback `fn` for the command.
    *
    * @example
-   *      program
-   *        .command('help')
-   *        .description('display verbose help')
-   *        .action(function() {
-   *           // output help here
-   *        });
+   * ```
+   *   program
+   *     .command('help')
+   *     .description('display verbose help')
+   *     .action(function() {
+   *       // output help here
+   *     });
+   * ```
    *
    * @returns `this` command for chaining
    */
@@ -440,32 +452,34 @@ export class Command {
    *    "-p --pepper"
    *
    * @example
-   *     // simple boolean defaulting to false
-   *     program.option('-p, --pepper', 'add pepper');
+   * ```
+   *   // simple boolean defaulting to false
+   *   program.option('-p, --pepper', 'add pepper');
    *
-   *     --pepper
-   *     program.pepper
-   *     // => Boolean
+   *   --pepper
+   *   program.pepper
+   *   // => Boolean
    *
-   *     // simple boolean defaulting to true
-   *     program.option('-C, --no-cheese', 'remove cheese');
+   *   // simple boolean defaulting to true
+   *   program.option('-C, --no-cheese', 'remove cheese');
    *
-   *     program.cheese
-   *     // => true
+   *   program.cheese
+   *   // => true
    *
-   *     --no-cheese
-   *     program.cheese
-   *     // => false
+   *   --no-cheese
+   *   program.cheese
+   *   // => false
    *
-   *     // required argument
-   *     program.option('-C, --chdir <path>', 'change the working directory');
+   *   // required argument
+   *   program.option('-C, --chdir <path>', 'change the working directory');
    *
-   *     --chdir /tmp
-   *     program.chdir
-   *     // => "/tmp"
+   *   --chdir /tmp
+   *   program.chdir
+   *   // => "/tmp"
    *
-   *     // optional argument
-   *     program.option('-c, --cheese [type]', 'add cheese [marble]');
+   *   // optional argument
+   *   program.option('-c, --cheese [type]', 'add cheese [marble]');
+   * ```
    *
    * @returns `this` command for chaining
    */
@@ -525,9 +539,11 @@ export class Command {
    * Alter parsing of short flags with optional values.
    *
    * @example
-   *    // for `.option('-f,--flag [value]'):
+   * ```
+   *   // for `.option('-f,--flag [value]'):
    *   .combineFlagAndOptionalValue(true)  // `-f80` is treated like `--flag=80`, this is the default behaviour
    *   .combineFlagAndOptionalValue(false) // `-fb` is treated like `-f -b`
+   * ```
    *
    * @returns `this` command for chaining
    */
@@ -607,11 +623,13 @@ export class Command {
    * and return argv split into operands and unknown arguments.
    *
    * @example
-   *    argv => operands, unknown
-   *    --known kkk op => [op], []
-   *    op --known kkk => [op], []
-   *    sub --unknown uuu op => [sub], [--unknown uuu op]
-   *    sub -- --unknown uuu op => [sub --unknown uuu op], []
+   * ```
+   *   argv => operands, unknown
+   *   --known kkk op => [op], []
+   *   op --known kkk => [op], []
+   *   sub --unknown uuu op => [sub], [--unknown uuu op]
+   *   sub -- --unknown uuu op => [sub --unknown uuu op], []
+   * ```
    */
   parseOptions(argv: string[]): ParseOptionsResult;
 
