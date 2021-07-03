@@ -392,10 +392,9 @@ export class Command {
   /**
    * Copy settings that are useful to have in common across root command and subcommands.
    *
-   * (Used internally when adding a command using `.command()` to copy settings
-   * from the parent command to the subcommand.)
+   * (Used internally when adding a command using `.command()` so subcommands inherit parent settings.)
    */
-   copySettings(sourceCommand: Command): this;
+   copyInheritedSettings(sourceCommand: Command): this;
 
   /**
    * Display the help or a custom message after an error occurs.

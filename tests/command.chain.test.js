@@ -184,10 +184,10 @@ describe('Command methods that should return this for chaining', () => {
     expect(result).toBe(program);
   });
 
-  test('when call .copySettings() then returns this', () => {
+  test('when call .copyInheritedSettings() then returns this', () => {
     const program = new Command();
     const cmd = new Command();
-    const result = cmd.copySettings(program);
+    const result = cmd.copyInheritedSettings(program);
     expect(result).toBe(cmd);
   });
 });
