@@ -390,6 +390,14 @@ export class Command {
   configureOutput(): OutputConfiguration;
 
   /**
+   * Copy settings that are useful to have in common across root command and subcommands.
+   *
+   * (Used internally when adding a command using `.command()` to copy settings
+   * from the parent command to the subcommand.)
+   */
+   copySettings(sourceCommand: Command): this;
+
+  /**
    * Display the help or a custom message after an error occurs.
    */
   showHelpAfterError(displayHelp?: boolean | string): this;
