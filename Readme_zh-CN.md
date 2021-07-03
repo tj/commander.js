@@ -9,6 +9,8 @@
 
 使用其他语言阅读：[English](./Readme.md) | 简体中文
 
+Note: this document still describes Commander v7 and has not yet been updated for Commander v8.
+
 - [Commander.js](#commanderjs)
   - [安装](#%e5%ae%89%e8%a3%85)
   - [声明 program 变量](#%e5%a3%b0%e6%98%8e-program-%e5%8f%98%e9%87%8f)
