@@ -134,7 +134,25 @@ export class Option {
    * as a object attribute key.
    */
   attributeName(): string;
-}
+
+  /**
+   * Option on command-line will be followed by a required option-argument.
+   *
+   * Alternative to specifying an arg in angle brackets in constructor. e.g.
+   *   new Option('--flag <arg>')
+   *   new Option('--flag').argRequired()
+   */
+   argRequired(argName?: string): this;
+
+  /**
+   * Option on command-line may be followed by an optional option-argument.
+   *
+   * Alternative to specifying an arg in square brackets in constructor. e.g.
+   *   new Option('--flag [arg]')
+   *   new Option('--flag').argOptional()
+   */
+   argOptional(argName?: string): this;
+  }
 
 export class Help {
   /** output helpWidth, long lines are wrapped to fit */

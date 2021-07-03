@@ -370,6 +370,14 @@ expectType<string>(baseOption.name());
 // attributeName
 expectType<string>(baseOption.attributeName());
 
+// argRequired
+expectType<commander.Option>(baseOption.argRequired());
+expectType<commander.Option>(baseOption.argRequired('value'));
+
+// argOptional
+expectType<commander.Option>(baseOption.argOptional());
+expectType<commander.Option>(baseOption.argOptional('value'));
+
 // Argument properties
 const baseArgument = new commander.Argument('<foo');
 expectType<string>(baseArgument.description);
