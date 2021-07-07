@@ -1,0 +1,14 @@
+name: markdown-autodocs
+
+on: [push, pull_request]
+
+jobs:        
+  auto-update-readme:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v2
+        - name: Markdown autodocs
+          uses: dineshsonachalam/markdown-autodocs@v1.0.2
+          with:
+            # Optional output file paths, defaults to '[./README.md]'.
+            output_file_paths: '[./README.md,./Readme_zh-CN.md]'

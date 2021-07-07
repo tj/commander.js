@@ -54,27 +54,20 @@ Note: this document still describes Commander v7 and has not yet been updated fo
 
 ## 安装
 
-```bash
-npm install commander
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/installation.sh) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 ## 声明 program 变量
 
 为简化使用，Commander 提供了一个全局对象。本文档的示例代码均按此方法使用：
 
-```js
-const { program } = require('commander');
-program.version('0.0.1');
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/program-variable-example1.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 如果程序较为复杂，用户需要以多种方式来使用 Commander，如单元测试等。创建本地 Command 对象是一种更好的方式：
 
-```js
-const { Command } = require('commander');
-const program = new Command();
-program.version('0.0.1');
-```
-
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/program-variable-example2.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 ## 选项
 
 Commander 使用`.option()` 方法来定义选项，同时可以附加选项的简介。每个选项可以定义一个短选项名称（-后面接单个字符）和一个长选项名称（--后面接一个或多个单词），使用逗号、空格或`|`分隔。
@@ -94,36 +87,11 @@ Commander 使用`.option()` 方法来定义选项，同时可以附加选项的�
 
 示例代码：[options-common.js](./examples/options-common.js)
 
-```js
-program
-  .option('-d, --debug', 'output extra debugging')
-  .option('-s, --small', 'small pizza size')
-  .option('-p, --pizza-type <type>', 'flavour of pizza');
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/options-common.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
-program.parse(process.argv);
-
-const options = program.opts();
-if (options.debug) console.log(options);
-console.log('pizza details:');
-if (options.small) console.log('- small pizza size');
-if (options.pizzaType) console.log(`- ${options.pizzaType}`);
-```
-
-```bash
-$ pizza-options -d
-{ debug: true, small: undefined, pizzaType: undefined }
-pizza details:
-$ pizza-options -p
-error: option '-p, --pizza-type <type>' argument missing
-$ pizza-options -ds -p vegetarian
-{ debug: true, small: true, pizzaType: 'vegetarian' }
-pizza details:
-- small pizza size
-- vegetarian
-$ pizza-options --pizza-type=cheese
-pizza details:
-- cheese
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/common-option-types-cli.sh) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 通过`program.parse(arguments)`方法处理参数，没有被使用的选项会存放在`program.args`数组中。该方法的参数是可选的，默认值为`process.argv`。
 
@@ -133,21 +101,11 @@ pizza details:
 
 示例代码：[options-defaults.js](./examples/options-defaults.js)
 
-```js
-program
-  .option('-c, --cheese <type>', 'add the specified type of cheese', 'blue');
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/options-defaults.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
-program.parse();
-
-console.log(`cheese: ${program.opts().cheese}`);
-```
-
-```bash
-$ pizza-options
-cheese: blue
-$ pizza-options --cheese stilton
-cheese: stilton
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/options-defaults-cli.sh) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 ### 其他的选项类型，取反选项，以及可选参数的选项
 
@@ -157,54 +115,21 @@ cheese: stilton
 
 示例代码：[options-negatable.js](./examples/options-negatable.js)
 
-```js
-program
-  .option('--no-sauce', 'Remove sauce')
-  .option('--cheese <flavour>', 'cheese flavour', 'mozzarella')
-  .option('--no-cheese', 'plain with no cheese')
-  .parse();
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/options-negatable.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
-const options = program.opts();
-const sauceStr = options.sauce ? 'sauce' : 'no sauce';
-const cheeseStr = (options.cheese === false) ? 'no cheese' : `${options.cheese} cheese`;
-console.log(`You ordered a pizza with ${sauceStr} and ${cheeseStr}`);
-```
-
-```bash
-$ pizza-options
-You ordered a pizza with sauce and mozzarella cheese
-$ pizza-options --sauce
-error: unknown option '--sauce'
-$ pizza-options --cheese=blue
-You ordered a pizza with sauce and blue cheese
-$ pizza-options --no-sauce --no-cheese
-You ordered a pizza with no sauce and no cheese
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/options-negatable-cli.sh) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 选项的参数使用方括号声明表示参数是可选参数（如 `--optional [value]`）。该选项在不带参数时可用作boolean选项，在带有参数时则从参数中得到值。
 
 示例代码：[options-boolean-or-value.js](./examples/options-boolean-or-value.js)
 
-```js
-program
-  .option('-c, --cheese [type]', 'Add cheese with optional type');
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/options-boolean-or-value.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
-program.parse(process.argv);
-
-const options = program.opts();
-if (options.cheese === undefined) console.log('no cheese');
-else if (options.cheese === true) console.log('add cheese');
-else console.log(`add cheese type ${options.cheese}`);
-```
-
-```bash
-$ pizza-options
-no cheese
-$ pizza-options --cheese
-add cheese
-$ pizza-options --cheese mozzarella
-add cheese type mozzarella
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/options-boolean-or-value-cli.sh) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 关于可能有歧义的用例，请见[可变参数的选项](./docs/zh-CN/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E7%9A%84%E9%80%89%E9%A1%B9.md)。
 
@@ -214,17 +139,11 @@ add cheese type mozzarella
 
 示例代码：[options-required.js](./examples/options-required.js)
 
-```js
-program
-  .requiredOption('-c, --cheese <type>', 'pizza must have cheese');
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/options-required.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
-program.parse();
-```
-
-```bash
-$ pizza
-error: required option '-c, --cheese <type>' not specified
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/options-required-cli.sh) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 ### 变长参数选项
 
@@ -232,37 +151,23 @@ error: required option '-c, --cheese <type>' not specified
 
 示例代码：[options-variadic.js](./examples/options-variadic.js)
 
-```js
-program
-  .option('-n, --number <numbers...>', 'specify numbers')
-  .option('-l, --letter [letters...]', 'specify letters');
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/options-variadic.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
-program.parse();
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/options-variadic-cli.sh) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
-console.log('Options: ', program.opts());
-console.log('Remaining arguments: ', program.args);
-```
-
-```bash
-$ collect -n 1 2 3 --letter a b c
-Options:  { number: [ '1', '2', '3' ], letter: [ 'a', 'b', 'c' ] }
-Remaining arguments:  []
-$ collect --letter=A -n80 operand
-Options:  { number: [ '80' ], letter: [ 'A' ] }
-Remaining arguments:  [ 'operand' ]
-$ collect --letter -n 1 -n 2 3 -- operand
-Options:  { number: [ '1', '2', '3' ], letter: true }
-Remaining arguments:  [ 'operand' ]
-```
 关于可能有歧义的用例，请见[可变参数的选项](./docs/zh-CN/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E7%9A%84%E9%80%89%E9%A1%B9.md)。
 
 ### 版本选项
 
 `version`方法可以设置版本，其默认选项为`-V`和`--version`，设置了版本后，命令行会输出当前的版本号。
 
-```js
-program.version('0.0.1');
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/version-option.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
+
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/version-option-output.sh) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 ```bash
 $ ./examples/pizza -V
@@ -271,9 +176,8 @@ $ ./examples/pizza -V
 
 版本选项也支持自定义设置选项名称，可以在`version`方法里再传递一些参数（长选项名称，描述信息），用法与`option`方法类似。
 
-```bash
-program.version('0.0.1', '-v, --vers', 'output the current version');
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/version-option-additional-parameter.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 ### 其他选项配置
 
@@ -281,25 +185,11 @@ program.version('0.0.1', '-v, --vers', 'output the current version');
 
 示例代码： [options-extra.js](./examples/options-extra.js)
 
-```js
-program
-  .addOption(new Option('-s, --secret').hideHelp())
-  .addOption(new Option('-t, --timeout <delay>', 'timeout in seconds').default(60, 'one minute'))
-  .addOption(new Option('-d, --drink <size>', 'drink size').choices(['small', 'medium', 'large']));
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/options-extra.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
-```bash
-$ extra --help
-Usage: help [options]
-
-Options:
-  -t, --timeout <delay>  timeout in seconds (default: one minute)
-  -d, --drink <size>     drink cup size (choices: "small", "medium", "large")
-  -h, --help             display help for command
-
-$ extra --drink huge
-error: option '-d, --drink <size>' argument 'huge' is invalid. Allowed choices are small, medium, large.
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/options-extra-cli.sh) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 ### 自定义选项处理
 
@@ -311,58 +201,11 @@ error: option '-d, --drink <size>' argument 'huge' is invalid. Allowed choices a
 
 示例代码：[options-custom-processing.js](./examples/options-custom-processing.js)
 
-```js
-function myParseInt(value, dummyPrevious) {
-  // parseInt takes a string and a radix
-  const parsedValue = parseInt(value, 10);
-  if (isNaN(parsedValue)) {
-    throw new commander.InvalidArgumentError('Not a number.');
-  }
-  return parsedValue;
-}
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/options-custom-processing.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
-function increaseVerbosity(dummyValue, previous) {
-  return previous + 1;
-}
-
-function collect(value, previous) {
-  return previous.concat([value]);
-}
-
-function commaSeparatedList(value, dummyPrevious) {
-  return value.split(',');
-}
-
-program
-  .option('-f, --float <number>', 'float argument', parseFloat)
-  .option('-i, --integer <number>', 'integer argument', myParseInt)
-  .option('-v, --verbose', 'verbosity that can be increased', increaseVerbosity, 0)
-  .option('-c, --collect <value>', 'repeatable value', collect, [])
-  .option('-l, --list <items>', 'comma separated list', commaSeparatedList)
-;
-
-program.parse();
-
-const options = program.opts();
-if (options.float !== undefined) console.log(`float: ${options.float}`);
-if (options.integer !== undefined) console.log(`integer: ${options.integer}`);
-if (options.verbose > 0) console.log(`verbosity: ${options.verbose}`);
-if (options.collect.length > 0) console.log(options.collect);
-if (options.list !== undefined) console.log(options.list);
-```
-
-```bash
-$ custom -f 1e2
-float: 100
-$ custom --integer 2
-integer: 2
-$ custom -v -v -v
-verbose: 3
-$ custom -c a -c b -c c
-[ 'a', 'b', 'c' ]
-$ custom --list x,y,z
-[ 'x', 'y', 'z' ]
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/options-custom-processing-cli.sh) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 ## 命令
 
@@ -374,27 +217,8 @@ $ custom --list x,y,z
 
 例如:
 
-```js
-// 通过绑定处理函数实现命令（这里的指令描述为放在`.command`中）
-// 返回新生成的命令（即该子命令）以供继续配置
-program
-  .command('clone <source> [destination]')
-  .description('clone a repository into a newly created directory')
-  .action((source, destination) => {
-    console.log('clone command called');
-  });
-
-// 通过独立的的可执行文件实现命令 (注意这里指令描述是作为`.command`的第二个参数)
-// 返回最顶层的命令以供继续添加子命令
-program
-  .command('start <service>', 'start named service')
-  .command('stop [service]', 'stop named service, or all if no name supplied');
-
-// 分别装配命令
-// 返回最顶层的命令以供继续添加子命令
-program
-  .addCommand(build.makeBuildCommand());  
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/command.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 使用`.command()`和`addCommand()`来传递配置的选项。当设置`hidden: true`时，该命令不会打印在帮助信息里。当设置`isDefault: true`时，若没有指定其他子命令，则会默认执行这个命令（[样例](./examples/defaultCommand.js)）。
 
@@ -404,32 +228,13 @@ program
 
 示例代码：[arguments.js](./examples/arguments.js)
 
-```js
-program
-  .version('0.1.0')
-  .arguments('<username> [password]')
-  .description('test command', {
-    username: 'user to login',
-    password: 'password for user, if required'
-  })
-  .action((username, password) => {
-    console.log('username:', username);
-    console.log('environment:', password || 'no password given');
-  });
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/argument.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 在参数名后加上`...`来声明可变参数，且只有最后一个参数支持这种用法，例如
 
-```js
-program
-  .version('0.1.0')
-  .command('rmdir <dirs...>')
-  .action(function (dirs) {
-    dirs.forEach((dir) => {
-      console.log('rmdir %s', dir);
-    });
-  });
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/vardiac-argument.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 可变参数会以数组的形式传递给处理函数。
 
@@ -439,32 +244,14 @@ program
 
 示例代码：[thank.js](./examples/thank.js)
 
-```js
-program
-  .arguments('<name>')
-  .option('-t, --title <honorific>', 'title to use before name')
-  .option('-d, --debug', 'display some debugging')
-  .action((name, options, command) => {
-    if (options.debug) {
-      console.error('Called %s with options %o', command.name(), options);
-    }
-    const title = options.title ? `${options.title} ` : '';
-    console.log(`Thank-you ${title}${name}`);
-  });
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/thank.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
+
 
 处理函数支持`async`，相应的，需要使用`.parseAsync`代替`.parse`。
 
-```js
-async function run() { /* 在这里编写代码 */ }
-
-async function main() {
-  program
-    .command('run')
-    .action(run);
-  await program.parseAsync(process.argv);
-}
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/async-action-handler.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 
 在命令行上使用命令时，选项和命令参数必须是合法的，使用未知的选项，或缺少所需的命令参数，会提示异常。
@@ -479,16 +266,8 @@ Commander 将会尝试在入口脚本（例如 `./examples/pm`）的目录中搜
 
 示例代码：[pm](./examples/pm)
 
-```js
-program
-  .version('0.1.0')
-  .command('install [name]', 'install one or more packages')
-  .command('search [query]', 'search with optional query')
-  .command('update', 'update installed packages', { executableFile: 'myUpdateSubCommand' })
-  .command('list', 'list packages installed', { isDefault: true });
-
-program.parse(process.argv);
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/pm) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 如果该命令需要支持全局安装，请确保有对应的权限，例如`755`。
 
@@ -527,28 +306,13 @@ shell spawn --help
 
 示例代码： [custom-help](./examples/custom-help)
 
-```js
-program
-  .option('-f, --foo', 'enable some foo');
-
-program.addHelpText('after', `
-
-Example call:
-  $ custom-help --help`);
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/custom-help) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 将会输出以下的帮助信息
 
-```Text
-Usage: custom-help [options]
-
-Options:
-  -f, --foo   enable some foo
-  -h, --help  display help for command
-
-Example call:
-  $ custom-help --help
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/custom-help-cli.sh) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 位置参数对应的展示方式如下：
 
@@ -576,26 +340,16 @@ Example call:
 
 通过这两个选项可以修改帮助信息的首行提示，name 属性也可以从参数中推导出来。例如：
 
-```js
-program
-  .name("my-command")
-  .usage("[global options] command")
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/usage.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
-帮助信息会首先输出：
-
-```Text
-Usage: my-command [global options] command
-```
 
 ### .helpOption(flags, description)
 
 每一个命令都带有一个默认的帮助选项。可以重写flags和description参数。传入false则会禁用内建的帮助信息。
 
-```js
-program
-  .helpOption('-e, --HELP', 'read more information');
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/help-option.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 ### .addHelpCommand()
 
@@ -603,9 +357,8 @@ program
 
 也可以自定义名字和描述：
 
-```js
-program.addHelpCommand('assist [command]', 'show assistance');
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/add-help-command.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 ### 其他帮助配置
 
@@ -620,30 +373,15 @@ program.addHelpCommand('assist [command]', 'show assistance');
 
 示例代码： [configure-help.js](./examples/configure-help.js)
 
-```
-program.configureHelp({
-  sortSubcommands: true,
-  subcommandTerm: (cmd) => cmd.name() // Just show the name, instead of short usage.
-});
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/configure-help.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 ## 自定义事件监听
 
 监听命令和选项可以执行自定义函数。
 
-```js
-program.on('option:verbose', function () {
-  process.env.VERBOSE = this.verbose;
-});
-
-program.on('command:*', function (operands) {
-  console.error(`error: unknown command '${operands[0]}'`);
-  const availableCommands = program.commands.map(cmd => cmd.name());
-  mySuggestBestMatch(operands[0], availableCommands);
-  process.exitCode = 1;
-});
-```
-
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/custom-event-listeners.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 ## 零碎知识
 
 ### .parse() 和 .parseAsync()
@@ -658,11 +396,8 @@ program.on('command:*', function (operands) {
 
 比如:
 
-```js
-program.parse(process.argv); // node
-program.parse();
-program.parse(['-f', 'filename'], { from: 'user' });
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/parse.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 ### 解析配置
 
@@ -700,16 +435,8 @@ program arg --port=80
 在 Commander 7 以前，选项的值是作为属性存储在command对象上的。
 这种处理方式便于实现，但缺点在于，选项可能会与`Command`的已有属性相冲突。通过使用`.storeOptionsAsProperties()`，可以恢复到这种旧的处理方式，并可以不加改动的继续运行遗留代码。
 
-```js
-program
-  .storeOptionsAsProperties()
-  .option('-d, --debug')
-  .action((commandAndOptions) => {
-    if (commandAndOptions.debug) {
-      console.error(`Called ${commandAndOptions.name()}`);
-    }
-  });
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/legacy-options-properties.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 ### TypeScript
 
@@ -725,10 +452,8 @@ node -r ts-node/register pm.ts
 
 使用工厂方法可以创建一个`command`，此时不需要使用`new`方法，如
 
-```bash
-const { createCommand } = require('commander');
-const program = createCommand();
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/create-command.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 `createCommand`是 command 对象的一个方法，可以创建一个新的命令（而非子命令），使用`command()`创建子命令时内部会调用该方法，具体使用方式可参考[custom-command-class.js](./examples/custom-command-class.js)。
 
@@ -736,12 +461,8 @@ const program = createCommand();
 
 Commander 是一个 CommonJS 包，支持导入到 ES 模块中去。
 
-```js
-// index.mjs
-import commander from 'commander';
-const program = commander.program;
-const newCommand = new commander.Command();
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/program-variable-example3.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 ### Node 选项 --harmony
 
@@ -764,15 +485,8 @@ const newCommand = new commander.Command();
 
 回调函数的参数为`CommanderError`，属性包括 Number 型的`exitCode`、String 型的`code`和`message`。子命令完成调用后会开始异步处理。正常情况下，打印错误信息、帮助信息或版本信息不会被重写影响，因为重写会发生在打印之后。
 
-``` js
-program.exitOverride();
-
-try {
-  program.parse(process.argv);
-} catch (err) {
-  // 自定义处理...
-}
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/Readme/exit-override.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 Commander默认用作命令行应用，其输出写入stdout和stderr。
 对于其他应用类型，这一行为可以修改。并且可以修改错误信息的展示方式。
@@ -780,21 +494,8 @@ Commander默认用作命令行应用，其输出写入stdout和stderr。
 示例代码：[configure-output.js](./examples/configure-output.js)
 
 
-```js
-function errorColor(str) {
-  // 添加ANSI转义字符，以将文本输出为红色
-  return `\x1b[31m${str}\x1b[0m`;
-}
-
-program
-  .configureOutput({
-    // Visibly override write routines as example!
-    writeOut: (str) => process.stdout.write(`[OUT] ${str}`),
-    writeErr: (str) => process.stdout.write(`[ERR] ${str}`),
-    // Highlight errors in color.
-    outputError: (str, write) => write(errorColor(str))
-  });
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/configure-output.js) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 ### 其他文档
 
@@ -809,62 +510,15 @@ program
 
 示例代码：[pizza](./examples/pizza)
 
-```js
-const { program } = require('commander');
-
-program
-  .description('An application for pizza ordering')
-  .option('-p, --peppers', 'Add peppers')
-  .option('-c, --cheese <type>', 'Add the specified type of cheese', 'marble')
-  .option('-C, --no-cheese', 'You do not want any cheese');
-
-program.parse();
-
-const options = program.opts();
-console.log('you ordered a pizza with:');
-if (options.peppers) console.log('  - peppers');
-const cheese = !options.cheese ? 'no' : options.cheese;
-console.log('  - %s cheese', cheese);
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/pizza) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 在包含多个命令的程序中，应为每个命令指定处理函数，或独立的可执行程序。
 
 示例代码：[deploy](./examples/deploy)
 
-```js
-const { Command } = require('commander');
-const program = new Command();
-
-program
-  .version('0.0.1')
-  .option('-c, --config <path>', 'set config path', './deploy.conf');
-
-program
-  .command('setup [env]')
-  .description('run setup commands for all envs')
-  .option('-s, --setup_mode <mode>', 'Which setup mode to use', 'normal')
-  .action((env, options) => {
-    env = env || 'all';
-    console.log('read config from %s', program.opts().config);
-    console.log('setup for %s env(s) with %s mode', env, options.setup_mode);
-  });
-
-program
-  .command('exec <script>')
-  .alias('ex')
-  .description('execute the given remote cmd')
-  .option('-e, --exec_mode <mode>', 'Which exec mode to use', 'fast')
-  .action((script, options) => {
-    console.log('read config from %s', program.opts().config);
-    console.log('exec "%s" using %s mode and config %s', script, options.exec_mode, program.opts().config);
-  }).addHelpText('after', `
-Examples:
-  $ deploy exec sequential
-  $ deploy exec async`
-  );
-  
-program.parse(process.argv);
-```
+<!-- MARKDOWN-AUTO-DOCS:START (CODE:src=./examples/deploy) -->
+<!-- MARKDOWN-AUTO-DOCS:END -->
 
 更多的示例代码点击[这里](https://github.com/tj/commander.js/tree/master/examples)查看。
 

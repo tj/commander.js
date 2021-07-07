@@ -1,0 +1,2 @@
+program
+  .arguments('<username> <password>');
