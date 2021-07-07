@@ -12,3 +12,7 @@ jobs:
           with:
             # Optional output file paths, defaults to '[./README.md]'.
             output_file_paths: '[./Readme.md,./Readme_zh-CN.md]'
+
+            # Categories to automatically sync or transform its contents in the markdown files.
+            # Optional defaults to '[code-block,json-to-html-table,workflow-artifact-table]'
+            categories: '[code-block]'
