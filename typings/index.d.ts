@@ -13,9 +13,9 @@ export class CommanderError extends Error {
 
   /**
    * Constructs the CommanderError class
-   * @param {number} exitCode suggested exit code which could be used with process.exit
-   * @param {string} code an id string representing the error
-   * @param {string} message human-readable description of the error
+   * @param exitCode - suggested exit code which could be used with process.exit
+   * @param code - an id string representing the error
+   * @param message - human-readable description of the error
    * @constructor
    */
   constructor(exitCode: number, code: string, message: string);
@@ -24,7 +24,7 @@ export class CommanderError extends Error {
 export class InvalidArgumentError extends CommanderError {
   /**
    * Constructs the InvalidArgumentError class
-   * @param {string} [message] explanation of why argument is invalid
+   * @param message - explanation of why argument is invalid
    * @constructor
    */
   constructor(message: string);
@@ -40,9 +40,6 @@ export class Argument {
    * Initialize a new command argument with the given name and description.
    * The default is that the argument is required, and you can explicitly
    * indicate this with <> around the name. Put [] around the name for an optional argument.
-   *
-   * @param {string} name
-   * @param {string} [description]
    */
   constructor(arg: string, description?: string);
 
@@ -241,12 +238,12 @@ export class Command {
    *
    * @example
    * ```ts
-   *  program
-   *    .command('clone <source> [destination]')
-   *    .description('clone a repository into a newly created directory')
-   *    .action((source, destination) => {
-   *      console.log('clone command called');
-   *    });
+   * program
+   *   .command('clone <source> [destination]')
+   *   .description('clone a repository into a newly created directory')
+   *   .action((source, destination) => {
+   *     console.log('clone command called');
+   *   });
    * ```
    *
    * @param nameAndArgs - command name and arguments, args are  `<required>` or `[optional]` and last may also be `variadic...`
@@ -306,9 +303,10 @@ export class Command {
    * indicate this with <> around the name. Put [] around the name for an optional argument.
    *
    * @example
-   *
-   *     program.argument('<input-file>');
-   *     program.argument('[output-file]');
+   * ```
+   * program.argument('<input-file>');
+   * program.argument('[output-file]');
+   * ```
    *
    * @returns `this` command for chaining
    */
@@ -328,8 +326,9 @@ export class Command {
    * See also .argument().
    *
    * @example
-   *
-   *     program.arguments('<cmd> [env]');
+   * ```
+   * program.arguments('<cmd> [env]');
+   * ```
    *
    * @returns `this` command for chaining
    */
@@ -338,9 +337,12 @@ export class Command {
   /**
    * Override default decision whether to add implicit help command.
    *
-   *    addHelpCommand() // force on
-   *    addHelpCommand(false); // force off
-   *    addHelpCommand('help [cmd]', 'display help for [cmd]'); // force on with custom details
+   * @example
+   * ```
+   * addHelpCommand() // force on
+   * addHelpCommand(false); // force off
+   * addHelpCommand('help [cmd]', 'display help for [cmd]'); // force on with custom details
+   * ```
    *
    * @returns `this` command for chaining
    */
@@ -375,15 +377,16 @@ export class Command {
    * applications. You can also customise the display of errors by overriding outputError.
    *
    * The configuration properties are all functions:
-   *
-   *    // functions to change where being written, stdout and stderr
-   *    writeOut(str)
-   *    writeErr(str)
-   *    // matching functions to specify width for wrapping help
-   *    getOutHelpWidth()
-   *    getErrHelpWidth()
-   *    // functions based on what is being written out
-   *    outputError(str, write) // used for displaying errors, and not used for displaying help
+   * ```
+   * // functions to change where being written, stdout and stderr
+   * writeOut(str)
+   * writeErr(str)
+   * // matching functions to specify width for wrapping help
+   * getOutHelpWidth()
+   * getErrHelpWidth()
+   * // functions based on what is being written out
+   * outputError(str, write) // used for displaying errors, and not used for displaying help
+   * ```
    */
   configureOutput(configuration: OutputConfiguration): this;
   /** Get configuration */
@@ -405,12 +408,14 @@ export class Command {
    * Register callback `fn` for the command.
    *
    * @example
-   *      program
-   *        .command('help')
-   *        .description('display verbose help')
-   *        .action(function() {
-   *           // output help here
-   *        });
+   * ```
+   * program
+   *   .command('help')
+   *   .description('display verbose help')
+   *   .action(function() {
+   *     // output help here
+   *   });
+   * ```
    *
    * @returns `this` command for chaining
    */
@@ -424,37 +429,39 @@ export class Command {
    * separated by comma, a pipe or space. The following are all valid
    * all will output this way when `--help` is used.
    *
-   *    "-p, --pepper"
-   *    "-p|--pepper"
-   *    "-p --pepper"
+   *     "-p, --pepper"
+   *     "-p|--pepper"
+   *     "-p --pepper"
    *
    * @example
-   *     // simple boolean defaulting to false
-   *     program.option('-p, --pepper', 'add pepper');
+   * ```
+   * // simple boolean defaulting to false
+   *  program.option('-p, --pepper', 'add pepper');
    *
-   *     --pepper
-   *     program.pepper
-   *     // => Boolean
+   *  --pepper
+   *  program.pepper
+   *  // => Boolean
    *
-   *     // simple boolean defaulting to true
-   *     program.option('-C, --no-cheese', 'remove cheese');
+   *  // simple boolean defaulting to true
+   *  program.option('-C, --no-cheese', 'remove cheese');
    *
-   *     program.cheese
-   *     // => true
+   *  program.cheese
+   *  // => true
    *
-   *     --no-cheese
-   *     program.cheese
-   *     // => false
+   *  --no-cheese
+   *  program.cheese
+   *  // => false
    *
-   *     // required argument
-   *     program.option('-C, --chdir <path>', 'change the working directory');
+   *  // required argument
+   *  program.option('-C, --chdir <path>', 'change the working directory');
    *
-   *     --chdir /tmp
-   *     program.chdir
-   *     // => "/tmp"
+   *  --chdir /tmp
+   *  program.chdir
+   *  // => "/tmp"
    *
-   *     // optional argument
-   *     program.option('-c, --cheese [type]', 'add cheese [marble]');
+   *  // optional argument
+   *  program.option('-c, --cheese [type]', 'add cheese [marble]');
+   * ```
    *
    * @returns `this` command for chaining
    */
@@ -514,9 +521,11 @@ export class Command {
    * Alter parsing of short flags with optional values.
    *
    * @example
-   *    // for `.option('-f,--flag [value]'):
-   *   .combineFlagAndOptionalValue(true)  // `-f80` is treated like `--flag=80`, this is the default behaviour
-   *   .combineFlagAndOptionalValue(false) // `-fb` is treated like `-f -b`
+   * ```
+   * // for `.option('-f,--flag [value]'):
+   * .combineFlagAndOptionalValue(true)  // `-f80` is treated like `--flag=80`, this is the default behaviour
+   * .combineFlagAndOptionalValue(false) // `-fb` is treated like `-f -b`
+   * ```
    *
    * @returns `this` command for chaining
    */
@@ -563,11 +572,12 @@ export class Command {
    * The default expectation is that the arguments are from node and have the application as argv[0]
    * and the script being run in argv[1], with user parameters after that.
    *
-   * Examples:
-   *
-   *      program.parse(process.argv);
-   *      program.parse(); // implicitly use process.argv and auto-detect node vs electron conventions
-   *      program.parse(my-args, { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
+   * @example
+   * ```
+   * program.parse(process.argv);
+   * program.parse(); // implicitly use process.argv and auto-detect node vs electron conventions
+   * program.parse(my-args, { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
+   * ```
    *
    * @returns `this` command for chaining
    */
@@ -581,11 +591,12 @@ export class Command {
    * The default expectation is that the arguments are from node and have the application as argv[0]
    * and the script being run in argv[1], with user parameters after that.
    *
-   * Examples:
-   *
-   *      program.parseAsync(process.argv);
-   *      program.parseAsync(); // implicitly use process.argv and auto-detect node vs electron conventions
-   *      program.parseAsync(my-args, { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
+   * @example
+   * ```
+   * program.parseAsync(process.argv);
+   * program.parseAsync(); // implicitly use process.argv and auto-detect node vs electron conventions
+   * program.parseAsync(my-args, { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
+   * ```
    *
    * @returns Promise
    */
@@ -595,12 +606,11 @@ export class Command {
    * Parse options from `argv` removing known options,
    * and return argv split into operands and unknown arguments.
    *
-   * @example
-   *    argv => operands, unknown
-   *    --known kkk op => [op], []
-   *    op --known kkk => [op], []
-   *    sub --unknown uuu op => [sub], [--unknown uuu op]
-   *    sub -- --unknown uuu op => [sub --unknown uuu op], []
+   *     argv => operands, unknown
+   *     --known kkk op => [op], []
+   *     op --known kkk => [op], []
+   *     sub --unknown uuu op => [sub], [--unknown uuu op]
+   *     sub -- --unknown uuu op => [sub --unknown uuu op], []
    */
   parseOptions(argv: string[]): ParseOptionsResult;
 
