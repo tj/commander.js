@@ -66,6 +66,15 @@ export class Argument {
    */
    choices(values: string[]): this;
 
+  /**
+   * Make option-argument required.
+   */
+   argRequired(): this;
+
+  /**
+   * Make option-argument optional.
+   */
+  argOptional(): this;
   }
 
 export class Option {

@@ -395,6 +395,12 @@ expectType<commander.Argument>(baseArgument.argParser((value: string, previous: 
 // choices
 expectType<commander.Argument>(baseArgument.choices(['a', 'b']));
 
+// argRequired
+expectType<commander.Argument>(baseArgument.argRequired());
+
+// argOptional
+expectType<commander.Argument>(baseArgument.argOptional());
+
 // createArgument
 expectType<commander.Argument>(program.createArgument('<name>'));
 expectType<commander.Argument>(program.createArgument('<name>', 'description'));
