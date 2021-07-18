@@ -703,7 +703,25 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
-   nameFromFilename(filename: string): this;
+  nameFromFilename(filename: string): this;
+
+  /**
+   * Set the directory for searching for executable subcommands of this command.
+   *
+   * @example
+   * ```ts
+   * program.executableDir(__dirname);
+   * // or
+   * program.executableDir('subcommands');
+   * ```
+   *
+   * @returns `this` command for chaining
+   */
+  executableDir(path: string): this;
+  /**
+   * Get the executable search directory.
+   */
+  executableDir(): string;
 
    /**
    * Output help information for this command.

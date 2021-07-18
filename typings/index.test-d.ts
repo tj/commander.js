@@ -231,6 +231,10 @@ expectType<string>(program.name());
 // nameFromFilename
 expectType<commander.Command>(program.nameFromFilename(__filename));
 
+// executableDir
+expectType<commander.Command>(program.executableDir(__dirname));
+expectType<string>(program.executableDir());
+
 // outputHelp
 expectType<void>(program.outputHelp());
 expectType<void>(program.outputHelp((str: string) => { return str; }));
