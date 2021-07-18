@@ -5,11 +5,11 @@ const commander = require('../');
 // This file does in-process mocking.
 // See also command.executableSubcommand.lookup.test.js
 
-function extractMockSpawnArgs(mock) {
-  expect(mock).toHaveBeenCalled();
-  // child_process.spawn(command[, args][, options])
-  return mock.mock.calls[0][1];
-}
+// function extractMockSpawnArgs(mock) {
+//   expect(mock).toHaveBeenCalled();
+//   // child_process.spawn(command[, args][, options])
+//   return mock.mock.calls[0][1];
+// }
 
 function extractMockSpawnCommand(mock) {
   expect(mock).toHaveBeenCalled();
