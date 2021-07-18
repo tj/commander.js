@@ -78,7 +78,7 @@ describe('search for subcommand', () => {
     });
   });
 
-  // We always use node on Windows, and don't spawn executable as the command.
+  // We always use node on Windows, and don't spawn executable as the command (which may be a feature or a shortcoming!?).
   describeOrSkipOnWindows('subcommand command name with no matching local file', () => {
     beforeEach(() => {
       existsSpy.mockImplementation(() => false);
@@ -110,7 +110,7 @@ describe('search for subcommand', () => {
       expect(extractMockSpawnCommand(spawnSpy)).toEqual('script-sub');
     });
 
-    test('when named pm and script arg and executableFile then spawn executableFile', () => {
+    test('when named pm and script arg and executableFile then spawn executableFile as command', () => {
       const program = new commander.Command();
       program.command('sub', 'executable description', { executableFile: 'myExecutable' });
       program.parse(['node', 'script.js', 'sub']);
@@ -119,9 +119,15 @@ describe('search for subcommand', () => {
     });
   });
 
-  // search directory
-  // - script path
-  // - script path symlink
-  // - executableDir
-  // legacy lookup
+  // search (needs a directory)
+  // - arg pwd/script searches in pwd
+  // - executableDir searches in executableDir
+  // - named pm, dir, local pm-sub (Mac/Win difference in whether uses node)
+  // - named pm, dir, local pm-sub.js
+  // - arg pwd/script, local script-sub.js
+  // - arg pwd/script.js, local script-sub.js
+  // - arg symlink to pwd/script.js, local symlink-sub.js [LEGACY]
+  // - relative executableDir + scriptDir
+  // - relative scriptDir alone (no)
+  // - relative executableDir (no)
 });
