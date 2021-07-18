@@ -4,6 +4,8 @@ const util = require('util');
 const execFileAsync = util.promisify(childProcess.execFile);
 
 // Calling node explicitly so pm works without file suffix cross-platform.
+// This file does end-to-end tests actually spawning program.
+// See also command.executableSubcommand.search.test.js
 
 // Get false positives due to use of testOrSkipOnWindows
 /* eslint-disable jest/no-standalone-expect */

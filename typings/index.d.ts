@@ -691,6 +691,39 @@ export class Command {
   name(): string;
 
   /**
+   * Set the name of the command from script filename, such as process.argv[1],
+   * or require.main.filename, or __filename.
+   *
+   * (Used internally and public although not documented in README.)
+   *
+   * @example
+   * ```ts
+   * program.nameFromFilename(require.main.filename);
+   * ```
+   *
+   * @returns `this` command for chaining
+   */
+  nameFromFilename(filename: string): this;
+
+  /**
+   * Set the directory for searching for executable subcommands of this command.
+   *
+   * @example
+   * ```ts
+   * program.executableDir(__dirname);
+   * // or
+   * program.executableDir('subcommands');
+   * ```
+   *
+   * @returns `this` command for chaining
+   */
+  executableDir(path: string): this;
+  /**
+   * Get the executable search directory.
+   */
+  executableDir(): string;
+
+   /**
    * Output help information for this command.
    *
    * Outputs built-in help, and custom text added using `.addHelpText()`.
