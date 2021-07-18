@@ -228,6 +228,9 @@ expectType<string>(program.usage());
 expectType<commander.Command>(program.name('my-name'));
 expectType<string>(program.name());
 
+// nameFromFilename
+expectType<commander.Command>(program.nameFromFilename(__filename));
+
 // outputHelp
 expectType<void>(program.outputHelp());
 expectType<void>(program.outputHelp((str: string) => { return str; }));
