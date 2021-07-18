@@ -191,7 +191,7 @@ describe('Command methods that should return this for chaining', () => {
     expect(result).toBe(cmd);
   });
 
-  test('when call .nameFromFilename() then returns this', () => {
+  test('when set .nameFromFilename() then returns this', () => {
     const program = new Command();
     const result = program.nameFromFilename('name');
     expect(result).toBe(program);
