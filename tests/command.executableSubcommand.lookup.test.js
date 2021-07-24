@@ -7,7 +7,7 @@ const execFileAsync = util.promisify(childProcess.execFile);
 // This file does end-to-end tests actually spawning program.
 // See also command.executableSubcommand.search.test.js
 
-// Get false positives due to use of testOrSkipOnWindows
+// Suppress false positive warnings due to use of testOrSkipOnWindows
 /* eslint-disable jest/no-standalone-expect */
 
 const testOrSkipOnWindows = (process.platform === 'win32') ? test.skip : test;
