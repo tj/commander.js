@@ -30,7 +30,8 @@ describe('search for subcommand', () => {
   beforeAll(() => {
     spawnSpy = jest.spyOn(childProcess, 'spawn').mockImplementation(() => {
       return {
-        on: () => {}
+        on: () => {},
+        killed: true
       };
     });
   });
