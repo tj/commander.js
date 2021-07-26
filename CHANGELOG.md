@@ -382,6 +382,7 @@ program
 [#1570]: https://github.com/tj/commander.js/pull/1570
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[8.1.0]: https://github.com/tj/commander.js/compare/v8.0.0...v8.1.0
 [8.0.0]: https://github.com/tj/commander.js/compare/v7.2.0...v8.0.0
 [8.0.0-2]: https://github.com/tj/commander.js/compare/v8.0.0-1...v8.0.0-2
 [8.0.0-1]: https://github.com/tj/commander.js/compare/v8.0.0-0...v8.0.0-1
