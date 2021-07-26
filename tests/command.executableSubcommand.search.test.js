@@ -201,13 +201,11 @@ describe('search for subcommand', () => {
     test('when script arg is link and and link-sub relative to link target then spawn local link-sub', () => {
       const program = new commander.Command();
       program.command('sub', 'executable description');
-      console.error('hello');
 
       const linkPath = path.resolve(gLocalDirectory, 'link', 'link');
       const scriptPath = path.resolve(gLocalDirectory, 'script', 'script.js');
       const scriptSubPath = path.resolve(gLocalDirectory, 'script', 'link-sub.js');
       const realPathSyncSpy = jest.spyOn(fs, 'realpathSync').mockImplementation((path) => {
-        console.error(`Calling realPathSync with ${path}`);
         return path === linkPath ? scriptPath : linkPath;
       });
       existsSpy.mockImplementation((path) => path === scriptSubPath);
@@ -252,32 +250,5 @@ describe('search for subcommand', () => {
         expect(existsSpy).toHaveBeenCalledWith(path.resolve(gLocalDirectory, `script-sub${ext}`));
       });
     });
-
-    test('when script.js arg and local script-sub.js then spawns local script-sub.js', () => {
-      const program = new commander.Command();
-      program.command('sub', 'executable description');
-      const scriptPath = path.resolve(gLocalDirectory, 'script.js');
-      const subPath = path.resolve(gLocalDirectory, 'script-sub.js');
-      existsSpy.mockImplementation((path) => path === subPath);
-      program.parse(['node', scriptPath, 'sub']);
-      expect(existsSpy).toHaveBeenCalledWith(subPath);
-      expect(extractMockSpawnArgs(spawnSpy)).toEqual([subPath]);
-    });
   });
-
-  // search (which needs a directory)
-  // - executableDir searches in executableDir
-  // - named pm, dir, local pm-sub (Mac/Win difference in whether uses node)
-  // - named pm, dir, local pm-sub.js
-  // - arg pwd/script, local script-sub.js
-  // - arg pwd/script.js, local script-sub.js
-  // - arg symlink to pwd/script.js, local symlink-sub.js [LEGACY]
-  // - relative executableDir + scriptDir
-  // - relative scriptDir alone (no)
-  // - relative executableDir (no)
-  // relative executableFile (relative to search dir)
-  // absolute executableFile  (overrides search dir)
-
-  // local over global? Known global? non-Windows only? Perhaps not bother, out of scope.
-  // test for "node" being used to run script? i.e. process.execArg or process.argv[0]. Tricky and legacy, out-of-scope for current work.
 });
