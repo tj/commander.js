@@ -285,6 +285,9 @@ expectType<commander.Command>(program.configureHelp({
 }));
 expectType<commander.HelpConfiguration>(program.configureHelp());
 
+// copyInheritedSettings
+expectType<commander.Command>(program.copyInheritedSettings(new commander.Command()));
+
 // showHelpAfterError
 expectType<commander.Command>(program.showHelpAfterError());
 expectType<commander.Command>(program.showHelpAfterError(true));
@@ -391,6 +394,12 @@ expectType<commander.Argument>(baseArgument.argParser((value: string, previous: 
 
 // choices
 expectType<commander.Argument>(baseArgument.choices(['a', 'b']));
+
+// argRequired
+expectType<commander.Argument>(baseArgument.argRequired());
+
+// argOptional
+expectType<commander.Argument>(baseArgument.argOptional());
 
 // createArgument
 expectType<commander.Argument>(program.createArgument('<name>'));
