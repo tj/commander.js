@@ -4,7 +4,7 @@ const path = require('path');
 const commander = require('../');
 
 // This file does in-process mocking. Bit clumsy but faster and less external clutter than using fixtures.
-// See also command.executableSubcommand.lookup.test.js for test using fixtures.
+// See also command.executableSubcommand.lookup.test.js for tests using fixtures.
 
 const gLocalDirectory = path.resolve(__dirname, 'fixtures'); // Real directory, although not actually searching for files in it.
 
@@ -232,12 +232,13 @@ describe('search for subcommand', () => {
     test('when name pm and script arg and relative executableFile then spawn local exec.js', () => {
       const program = new commander.Command('pm');
       const localPath = path.join('relative', 'exec.js');
+      const absolutePath = path.resolve(gLocalDirectory, localPath);
       program.command('sub', 'executable description', { executableFile: localPath });
 
-      existsSpy.mockImplementation((path) => path === localPath);
+      existsSpy.mockImplementation((path) => path === absolutePath);
       program.parse(['node', path.resolve(gLocalDirectory, 'script.js'), 'sub']);
 
-      expect(extractMockSpawnArgs(spawnSpy)).toEqual([localPath]);
+      expect(extractMockSpawnArgs(spawnSpy)).toEqual([absolutePath]);
     });
 
     test('when name pm and script arg and absolute executableFile then spawn local exec.js', () => {
