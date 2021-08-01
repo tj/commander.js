@@ -548,8 +548,9 @@ pass more arguments than declared, but you can make this an error with `.allowEx
 ### Stand-alone executable (sub)commands
 
 When `.command()` is invoked with a description argument, this tells Commander that you're going to use stand-alone executables for subcommands.
-Commander will search the executables in the directory of the entry script (like `./examples/pm`) with the name `program-subcommand`, like `pm-install`, `pm-search`.
-You can specify a custom name with the `executableFile` configuration option.
+Commander will search the files in the directory of the entry script for a file with the name combination `command-subcommand`, like `pm-install` or `pm-search` in the example below. The search includes trying common file extensions, like `.js`.
+You may specify a custom name (and path) with the `executableFile` configuration option.
+You may specify a custom search directory for subcommands with `.executableDir()`.
 
 You handle the options for an executable (sub)command in the executable, and don't declare them at the top-level.
 
@@ -557,6 +558,7 @@ Example file: [pm](./examples/pm)
 
 ```js
 program
+  .name('pm')
   .version('0.1.0')
   .command('install [name]', 'install one or more packages')
   .command('search [query]', 'search with optional query')

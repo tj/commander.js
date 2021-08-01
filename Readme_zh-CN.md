@@ -479,6 +479,7 @@ Commander 将会尝试在入口脚本（例如 `./examples/pm`）的目录中搜
 
 ```js
 program
+  .name('pm')
   .version('0.1.0')
   .command('install [name]', 'install one or more packages')
   .command('search [query]', 'search with optional query')
