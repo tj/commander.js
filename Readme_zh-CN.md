@@ -64,7 +64,6 @@ npm install commander
 
 ```js
 const { program } = require('commander');
-program.version('0.0.1');
 ```
 
 如果程序较为复杂，用户需要以多种方式来使用 Commander，如单元测试等。创建本地 Command 对象是一种更好的方式：
@@ -72,7 +71,6 @@ program.version('0.0.1');
 ```js
 const { Command } = require('commander');
 const program = new Command();
-program.version('0.0.1');
 ```
 
 ## 选项
@@ -254,6 +252,7 @@ $ collect --letter -n 1 -n 2 3 -- operand
 Options:  { number: [ '1', '2', '3' ], letter: true }
 Remaining arguments:  [ 'operand' ]
 ```
+
 关于可能有歧义的用例，请见[可变参数的选项](./docs/zh-CN/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E7%9A%84%E9%80%89%E9%A1%B9.md)。
 
 ### 版本选项
@@ -466,7 +465,6 @@ async function main() {
 }
 ```
 
-
 在命令行上使用命令时，选项和命令参数必须是合法的，使用未知的选项，或缺少所需的命令参数，会提示异常。
 如要允许使用未知的选项，可以调用`.allowUnknownOption()`。默认情况下，传入过多的参数并不报错，但也可以通过调用`.allowExcessArguments(false)`来启用过多参数的报错。
 
@@ -612,6 +610,7 @@ program.addHelpCommand('assist [command]', 'show assistance');
 内建帮助信息通过Help类进行格式化。如有需要，可以使用`.configureHelp()`来更改其数据属性和方法，或使用`.createHelp()`来创建子类，从而配置Help类的行为。
 
 数据属性包括：
+
 - `helpWidth`：指明帮助信息的宽度。可在单元测试中使用。
 - `sortSubcommands`：以字母序排列子命令
 - `sortOptions`：以字母序排列选项
@@ -620,7 +619,7 @@ program.addHelpCommand('assist [command]', 'show assistance');
 
 示例代码： [configure-help.js](./examples/configure-help.js)
 
-```
+```js
 program.configureHelp({
   sortSubcommands: true,
   subcommandTerm: (cmd) => cmd.name() // Just show the name, instead of short usage.
@@ -778,7 +777,6 @@ Commander默认用作命令行应用，其输出写入stdout和stderr。
 对于其他应用类型，这一行为可以修改。并且可以修改错误信息的展示方式。
 
 示例代码：[configure-output.js](./examples/configure-output.js)
-
 
 ```js
 function errorColor(str) {

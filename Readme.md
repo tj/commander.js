@@ -32,7 +32,8 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Custom help](#custom-help)
     - [Display help after errors](#display-help-after-errors)
     - [Display help from code](#display-help-from-code)
-    - [.usage and .name](#usage-and-name)
+    - [.name](#name)
+    - [.usage](#usage)
     - [.helpOption(flags, description)](#helpoptionflags-description)
     - [.addHelpCommand()](#addhelpcommand)
     - [More configuration](#more-configuration-2)
@@ -66,7 +67,6 @@ This is used in the examples in this README for brevity.
 
 ```js
 const { program } = require('commander');
-program.version('0.0.1');
 ```
 
 For larger programs which may use commander in multiple ways, including unit testing, it is better to create a local Command object to use.
@@ -74,7 +74,6 @@ For larger programs which may use commander in multiple ways, including unit tes
 ```js
 const { Command } = require('commander');
 const program = new Command();
-program.version('0.0.1');
 ```
 
 For named imports in ECMAScript modules, import from `commander/esm.mjs`.
@@ -92,7 +91,6 @@ And in TypeScript:
 import { Command } from 'commander';
 const program = new Command();
 ```
-
 
 ## Options
 
@@ -113,7 +111,7 @@ By default options on the command line are not positional, and can be specified 
 ### Common option types, boolean and value
 
 The two most used option types are a boolean option, and an option which takes its value
-from the following argument (declared with angle brackets like `--expect <value>`). Both are `undefined` unless specified on command line.  
+from the following argument (declared with angle brackets like `--expect <value>`). Both are `undefined` unless specified on command line.
 
 Example file: [options-common.js](./examples/options-common.js)
 
@@ -426,7 +424,7 @@ program
   .addCommand(build.makeBuildCommand());
 ```
 
-Configuration options can be passed with the call to `.command()` and `.addCommand()`. Specifying `hidden: true` will 
+Configuration options can be passed with the call to `.command()` and `.addCommand()`. Specifying `hidden: true` will
 remove the command from the generated help output. Specifying `isDefault: true` will run the subcommand if no other
 subcommand is specified ([example](./examples/defaultCommand.js)).
 
@@ -436,7 +434,7 @@ For subcommands, you can specify the argument syntax in the call to `.command()`
 is the only method usable for subcommands implemented using a stand-alone executable, but for other subcommands
 you can instead use the following method.
 
-To configure a command, you can use `.argument()` to specify each expected command-argument. 
+To configure a command, you can use `.argument()` to specify each expected command-argument.
 You supply the argument name and an optional description. The argument may be `<required>` or `[optional]`.
 You can specify a default value for an optional command-argument.
 
@@ -513,7 +511,7 @@ program
 ### Action handler
 
 The action handler gets passed a parameter for each command-argument you declared, and two additional parameters
-which are the parsed options and the command object itself. 
+which are the parsed options and the command object itself.
 
 Example file: [thank.js](./examples/thank.js)
 
@@ -630,7 +628,7 @@ shell spawn --help
 
 ### Custom help
 
-You can add extra text to be displayed along with the built-in help. 
+You can add extra text to be displayed along with the built-in help.
 
 Example file: [custom-help](./examples/custom-help)
 
@@ -664,7 +662,7 @@ The positions in order displayed are:
 - `after`: display extra information after built-in help
 - `afterAll`: add to the program for a global footer (epilog)
 
-The positions "beforeAll" and "afterAll" apply to the command and all its subcommands. 
+The positions "beforeAll" and "afterAll" apply to the command and all its subcommands.
 
 The second parameter can be a string, or a function returning a string. The function is passed a context object for your convenience. The properties are:
 
@@ -673,7 +671,7 @@ The second parameter can be a string, or a function returning a string. The func
 
 ### Display help after errors
 
-The default behaviour for usage errors is to just display a short error message. 
+The default behaviour for usage errors is to just display a short error message.
 You can change the behaviour to show the full help or a custom help message after an error.
 
 ```js
@@ -696,10 +694,23 @@ error: unknown option '--unknown'
 
 `.helpInformation()`: get the built-in command help information as a string for processing or displaying yourself.
 
-### .usage and .name
+### .name
 
-These allow you to customise the usage description in the first line of the help. The name is otherwise
-deduced from the (full) program arguments. Given:
+The command name appears in the help, and is also used for locating stand-alone executable subcommands.
+You may specify the name using `.name()` or in the constructor.
+
+```js
+program.name('pizza');
+const pm = new Command('pm');
+```
+
+For the program, Commander will
+fallback to using the script name from the full arguments passed into `.parse()`. However, the script name varies
+depending on how your program is launched so you may wish to specify it explicitly.
+
+### .usage
+
+This allows you to customise the usage description in the first line of the help. Given:
 
 ```js
 program
@@ -715,7 +726,7 @@ Usage: my-command [global options] command
 
 ### .helpOption(flags, description)
 
-By default every command has a help option. Override the default help flags and description. Pass false to disable the built-in help option.
+By default every command has a help option. You may change the default help flags and description. Pass false to disable the built-in help option.
 
 ```js
 program
@@ -747,7 +758,7 @@ There are methods getting the visible lists of arguments, options, and subcomman
 
 Example file: [configure-help.js](./examples/configure-help.js)
 
-```
+```js
 program.configureHelp({
   sortSubcommands: true,
   subcommandTerm: (cmd) => cmd.name() // Just show the name, instead of short usage.
@@ -809,7 +820,7 @@ program subcommand -b
 
 By default options are recognised before and after command-arguments. To only process options that come
 before the command-arguments, use `.passThroughOptions()`. This lets you pass the  arguments and following options through to another program
-without needing to use `--` to end the option processing. 
+without needing to use `--` to end the option processing.
 To use pass through options in a subcommand, the program needs to enable positional options.
 
 Example file: [pass-through-options.js](./examples/pass-through-options.js)
@@ -826,7 +837,7 @@ By default the option processing shows an error for an unknown option. To have a
 By default the argument processing does not display an error for more command-arguments than expected.
 To display an error for excess arguments, use`.allowExcessArguments(false)`.
 
-### Legacy options as properties 
+### Legacy options as properties
 
 Before Commander 7, the option values were stored as properties on the command.
 This was convenient to code but the downside was possible clashes with
@@ -902,7 +913,6 @@ By default Commander is configured for a command-line application and writes to 
 You can modify this behaviour for custom applications. In addition, you can modify the display of error messages.
 
 Example file: [configure-output.js](./examples/configure-output.js)
-
 
 ```js
 function errorColor(str) {
@@ -986,7 +996,7 @@ Examples:
   $ deploy exec sequential
   $ deploy exec async`
   );
-  
+
 program.parse(process.argv);
 ```
 
