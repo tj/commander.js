@@ -834,6 +834,7 @@ const { Command } = require('commander');
 const program = new Command();
 
 program
+  .name('deploy')
   .version('0.0.1')
   .option('-c, --config <path>', 'set config path', './deploy.conf');
 
