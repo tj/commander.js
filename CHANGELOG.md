@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [8.1.0] (2021-07-27)
+
+### Added
+
+- `.copyInheritedSettings()` ([#1557])
+- update Chinese translation updates for Commander v8 ([#1570])
+- `Argument` methods for `.argRequired()` and `.argOptional()` ([#1567])
+
 ## [8.0.0] (2021-06-25)
 
 ### Added
@@ -369,8 +377,12 @@ program
 [#1529]: https://github.com/tj/commander.js/pull/1529
 [#1534]: https://github.com/tj/commander.js/pull/1534
 [#1539]: https://github.com/tj/commander.js/pull/1539
+[#1557]: https://github.com/tj/commander.js/pull/1557
+[#1567]: https://github.com/tj/commander.js/pull/1567
+[#1570]: https://github.com/tj/commander.js/pull/1570
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[8.1.0]: https://github.com/tj/commander.js/compare/v8.0.0...v8.1.0
 [8.0.0]: https://github.com/tj/commander.js/compare/v7.2.0...v8.0.0
 [8.0.0-2]: https://github.com/tj/commander.js/compare/v8.0.0-1...v8.0.0-2
 [8.0.0-1]: https://github.com/tj/commander.js/compare/v8.0.0-0...v8.0.0-1
