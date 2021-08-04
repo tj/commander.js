@@ -699,16 +699,18 @@ error: unknown option '--unknown'
 ### .name
 
 The command name appears in the help, and is also used for locating stand-alone executable subcommands.
-You may specify the name using `.name()` or in the constructor.
+
+You may specify the program name using `.name()` or in the Command constructor. For the program, Commander will
+fallback to using the script name from the full arguments passed into `.parse()`. However, the script name varies
+depending on how your program is launched so you may wish to specify it explicitly.
 
 ```js
 program.name('pizza');
 const pm = new Command('pm');
 ```
 
-For the program, Commander will
-fallback to using the script name from the full arguments passed into `.parse()`. However, the script name varies
-depending on how your program is launched so you may wish to specify it explicitly.
+Subcommands get a name when specified using `.command()`. If you create the subcommand yourself to use with `.addCommand()`,
+then set the name using `.name()` or in the Command constructor.
 
 ### .usage
 
