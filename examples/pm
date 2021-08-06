@@ -5,6 +5,7 @@ const { Command } = require('../'); // include commander in git clone of command
 const program = new Command();
 
 program
+  .name('pm')
   .version('0.0.1')
   .description('Fake package manager')
   .command('install [name]', 'install one or more packages').alias('i')

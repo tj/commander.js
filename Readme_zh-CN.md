@@ -65,7 +65,6 @@ npm install commander
 
 ```js
 const { program } = require('commander');
-program.version('0.0.1');
 ```
 
 如果程序较为复杂，用户需要以多种方式来使用 Commander，如单元测试等。创建本地`Command`对象是一种更好的方式：
@@ -73,7 +72,6 @@ program.version('0.0.1');
 ```js
 const { Command } = require('commander');
 const program = new Command();
-program.version('0.0.1');
 ```
 
 要在 ECMAScript 模块中使用命名导入，可从`commander/esm.mjs`中导入。
@@ -270,6 +268,7 @@ $ collect --letter -n 1 -n 2 3 -- operand
 Options:  { number: [ '1', '2', '3' ], letter: true }
 Remaining arguments:  [ 'operand' ]
 ```
+
 关于可能有歧义的用例，请见[可变参数的选项](./docs/zh-CN/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E7%9A%84%E9%80%89%E9%A1%B9.md)。
 
 ### 版本选项
@@ -534,6 +533,7 @@ Commander 将会尝试在入口脚本（例如`./examples/pm`）的目录中搜�
 
 ```js
 program
+  .name('pm')
   .version('0.1.0')
   .command('install [name]', 'install one or more packages')
   .command('search [query]', 'search with optional query')
@@ -708,6 +708,7 @@ program.addHelpCommand('assist [command]', 'show assistance');
 内建帮助信息通过`Help`类进行格式化。如有需要，可以使用`.configureHelp()`来更改其数据属性和方法，或使用`.createHelp()`来创建子类，从而配置`Help`类的行为。
 
 数据属性包括：
+
 - `helpWidth`：指明帮助信息的宽度。可在单元测试中使用。
 - `sortSubcommands`：以字母序排列子命令
 - `sortOptions`：以字母序排列选项
@@ -862,7 +863,6 @@ Commander 默认用作命令行应用，其输出写入 stdout 和 stderr。
 
 示例代码：[configure-output.js](./examples/configure-output.js)
 
-
 ```js
 function errorColor(str) {
   // 添加 ANSI 转义字符，以将文本输出为红色
@@ -919,6 +919,7 @@ const { Command } = require('commander');
 const program = new Command();
 
 program
+  .name('deploy')
   .version('0.0.1')
   .option('-c, --config <path>', 'set config path', './deploy.conf');
 
