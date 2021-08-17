@@ -100,6 +100,10 @@ export class Option {
   default(value: unknown, description?: string): this;
 
   /**
+   */
+  env(name: string): this;
+
+  /**
    * Calculate the full description, including defaultValue etc.
    */
   fullDescription(): string;
