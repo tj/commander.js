@@ -13,7 +13,7 @@ describe.each(['-f, --foo <required-arg>', '-f, --foo [optional-arg]'])('option 
     process.env.BAR = 'env';
     program.addOption(new commander.Option(fooFlags).env('BAR'));
     program.parse([], { from: 'user' });
-    expect(program.opts().foo).toEqual('env');
+    expect(program.opts().foo).toBe('env');
     delete process.env.BAR;
   });
 
@@ -22,7 +22,7 @@ describe.each(['-f, --foo <required-arg>', '-f, --foo [optional-arg]'])('option 
     process.env.BAR = 'env';
     program.addOption(new commander.Option(fooFlags).env('BAR'));
     program.parse(['--foo', 'cli'], { from: 'user' });
-    expect(program.opts().foo).toEqual('cli');
+    expect(program.opts().foo).toBe('cli');
     delete process.env.BAR;
   });
 
@@ -30,7 +30,7 @@ describe.each(['-f, --foo <required-arg>', '-f, --foo [optional-arg]'])('option 
     const program = new commander.Command();
     program.addOption(new commander.Option(fooFlags).env('BAR').default('default'));
     program.parse([], { from: 'user' });
-    expect(program.opts().foo).toEqual('default');
+    expect(program.opts().foo).toBe('default');
   });
 
   test('when default and env defined and no cli then option from env', () => {
@@ -38,7 +38,7 @@ describe.each(['-f, --foo <required-arg>', '-f, --foo [optional-arg]'])('option 
     process.env.BAR = 'env';
     program.addOption(new commander.Option(fooFlags).env('BAR').default('default'));
     program.parse([], { from: 'user' });
-    expect(program.opts().foo).toEqual('env');
+    expect(program.opts().foo).toBe('env');
     delete process.env.BAR;
   });
 
@@ -47,7 +47,7 @@ describe.each(['-f, --foo <required-arg>', '-f, --foo [optional-arg]'])('option 
     process.env.BAR = 'env';
     program.addOption(new commander.Option(fooFlags).env('BAR').default('default'));
     program.parse(['--foo', 'cli'], { from: 'user' });
-    expect(program.opts().foo).toEqual('cli');
+    expect(program.opts().foo).toBe('cli');
     delete process.env.BAR;
   });
 });
@@ -170,5 +170,36 @@ describe('boolean flag and negatable', () => {
     program.parse(['--foo'], { from: 'user' });
     expect(program.opts().foo).toBe(true);
     delete process.env.NO_BAR;
+  });
+});
+
+describe('custom argParser', () => {
+  test('when env defined and no cli then custom parse from env', () => {
+    const program = new commander.Command();
+    process.env.BAR = 'env';
+    program.addOption(new commander.Option('-f, --foo <required>').env('BAR').argParser(str => str.toUpperCase()));
+    program.parse([], { from: 'user' });
+    expect(program.opts().foo).toBe('ENV');
+    delete process.env.BAR;
+  });
+});
+
+describe('variadic', () => {
+  test('when env defined and no cli then array from env', () => {
+    const program = new commander.Command();
+    process.env.BAR = 'env';
+    program.addOption(new commander.Option('-f, --foo <required...>').env('BAR'));
+    program.parse([], { from: 'user' });
+    expect(program.opts().foo).toEqual(['env']);
+    delete process.env.BAR;
+  });
+
+  test('when env defined and cli then array from cli', () => {
+    const program = new commander.Command();
+    process.env.BAR = 'env';
+    program.addOption(new commander.Option('-f, --foo <required...>').env('BAR'));
+    program.parse(['--foo', 'cli'], { from: 'user' });
+    expect(program.opts().foo).toEqual(['cli']);
+    delete process.env.BAR;
   });
 });
