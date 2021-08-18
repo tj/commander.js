@@ -194,7 +194,7 @@ describe('variadic', () => {
     delete process.env.BAR;
   });
 
-  test.skip('when env defined and cli then array from cli', () => {
+  test('when env defined and cli then array from cli', () => {
     const program = new commander.Command();
     process.env.BAR = 'env';
     program.addOption(new commander.Option('-f, --foo <required...>').env('BAR'));
