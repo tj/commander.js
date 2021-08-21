@@ -345,6 +345,9 @@ const baseOption = new commander.Option('-f,--foo', 'foo description');
 expectType<commander.Option>(baseOption.default(3));
 expectType<commander.Option>(baseOption.default(60, 'one minute'));
 
+// env
+expectType<commander.Option>(baseOption.env('PORT'));
+
 // fullDescription
 expectType<string>(baseOption.fullDescription());
 
