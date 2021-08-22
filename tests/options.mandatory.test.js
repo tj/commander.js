@@ -194,7 +194,6 @@ describe('required command option with mandatory value specified', () => {
 
     expect(program.opts().port).toBe('bar');
   });
-
 });
 
 describe('required command option with mandatory value not specified', () => {
