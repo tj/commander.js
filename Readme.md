@@ -93,7 +93,6 @@ import { Command } from 'commander';
 const program = new Command();
 ```
 
-
 ## Options
 
 Options are defined with the `.option()` method, also serving as documentation for the options. Each option can have a short flag (single character) and a long name, separated by a comma or space or vertical bar ('|').
@@ -907,7 +906,6 @@ By default Commander is configured for a command-line application and writes to 
 You can modify this behaviour for custom applications. In addition, you can modify the display of error messages.
 
 Example file: [configure-output.js](./examples/configure-output.js)
-
 
 ```js
 function errorColor(str) {
