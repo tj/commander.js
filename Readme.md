@@ -93,7 +93,6 @@ import { Command } from 'commander';
 const program = new Command();
 ```
 
-
 ## Options
 
 Options are defined with the `.option()` method, also serving as documentation for the options. Each option can have a short flag (single character) and a long name, separated by a comma or space or vertical bar ('|').
@@ -308,13 +307,14 @@ program.version('0.0.1', '-v, --vers', 'output the current version');
 You can add most options using the `.option()` method, but there are some additional features available
 by constructing an `Option` explicitly for less common cases.
 
-Example file: [options-extra.js](./examples/options-extra.js)
+Example files: [options-extra.js](./examples/options-extra.js), [options-env.js](./examples/options-env.js)
 
 ```js
 program
   .addOption(new Option('-s, --secret').hideHelp())
   .addOption(new Option('-t, --timeout <delay>', 'timeout in seconds').default(60, 'one minute'))
-  .addOption(new Option('-d, --drink <size>', 'drink size').choices(['small', 'medium', 'large']));
+  .addOption(new Option('-d, --drink <size>', 'drink size').choices(['small', 'medium', 'large']))
+  .addOption(new Option('-p, --port <number>', 'port number').env('PORT'));
 ```
 
 ```bash
@@ -324,10 +324,14 @@ Usage: help [options]
 Options:
   -t, --timeout <delay>  timeout in seconds (default: one minute)
   -d, --drink <size>     drink cup size (choices: "small", "medium", "large")
+  -p, --port <number>    port number (env: PORT)
   -h, --help             display help for command
 
 $ extra --drink huge
 error: option '-d, --drink <size>' argument 'huge' is invalid. Allowed choices are small, medium, large.
+
+$ PORT=80 extra 
+Options:  { timeout: 60, port: '80' }
 ```
 
 ### Custom option processing
@@ -902,7 +906,6 @@ By default Commander is configured for a command-line application and writes to 
 You can modify this behaviour for custom applications. In addition, you can modify the display of error messages.
 
 Example file: [configure-output.js](./examples/configure-output.js)
-
 
 ```js
 function errorColor(str) {

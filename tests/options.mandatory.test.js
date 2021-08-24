@@ -166,7 +166,7 @@ describe('required program option with mandatory value not specified', () => {
 });
 
 describe('required command option with mandatory value specified', () => {
-  test('when command has required value specified then specified value', () => {
+  test('when command has required value specified then no error and option has specified value', () => {
     const program = new commander.Command();
     let cmdOptions;
     program
@@ -180,6 +180,19 @@ describe('required command option with mandatory value specified', () => {
     program.parse(['node', 'test', 'sub', '--subby', 'blue']);
 
     expect(cmdOptions.subby).toBe('blue');
+  });
+
+  test('when command has required value specified using env then no error and option has specified value', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .addOption(new commander.Option('-p, --port <number>', 'port number').makeOptionMandatory().env('FOO'));
+
+    process.env.FOO = 'bar';
+    program.parse([], { from: 'user' });
+    delete process.env.FOO;
+
+    expect(program.opts().port).toBe('bar');
   });
 });
 

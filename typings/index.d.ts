@@ -44,29 +44,29 @@ export class Argument {
   constructor(arg: string, description?: string);
 
   /**
-  * Return argument name.
-  */
+   * Return argument name.
+   */
   name(): string;
 
   /**
    * Set the default value, and optionally supply the description to be displayed in the help.
    */
-   default(value: unknown, description?: string): this;
+  default(value: unknown, description?: string): this;
 
   /**
    * Set the custom handler for processing CLI command arguments into argument values.
    */
-   argParser<T>(fn: (value: string, previous: T) => T): this;
+  argParser<T>(fn: (value: string, previous: T) => T): this;
 
   /**
    * Only allow argument value to be one of choices.
    */
-   choices(values: string[]): this;
+  choices(values: string[]): this;
 
   /**
    * Make option-argument required.
    */
-   argRequired(): this;
+  argRequired(): this;
 
   /**
    * Make option-argument optional.
@@ -98,6 +98,12 @@ export class Option {
    * Set the default value, and optionally supply the description to be displayed in the help.
    */
   default(value: unknown, description?: string): this;
+
+  /**
+   * Set environment variable to check for option value.
+   * Priority order of option values is default < env < cli
+   */
+  env(name: string): this;
 
   /**
    * Calculate the full description, including defaultValue etc.
