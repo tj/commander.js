@@ -70,7 +70,7 @@
     ]
   },
   "engines": {
-    "node": ">= 12"
+    "node": "^12.20.0 || >=14"
   },
   "support": true
 }
