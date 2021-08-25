@@ -24,6 +24,13 @@ describe('optionDescription', () => {
     expect(helper.optionDescription(option)).toEqual('description (default: "default")');
   });
 
+  test('when option has env then return description and env name', () => {
+    const description = 'description';
+    const option = new commander.Option('-a', description).env('ENV');
+    const helper = new commander.Help();
+    expect(helper.optionDescription(option)).toEqual('description (env: ENV)');
+  });
+
   test('when option has default value description then return description and custom default description', () => {
     const description = 'description';
     const defaultValueDescription = 'custom';

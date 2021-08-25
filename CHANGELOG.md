@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 
 - `.copyInheritedSettings()` ([#1557])
-- update Chinese translation updates for Commander v8 ([#1570])
+- update Chinese translations of documentation for Commander v8 ([#1570])
 - `Argument` methods for `.argRequired()` and `.argOptional()` ([#1567])
 
 ## [8.0.0] (2021-06-25)

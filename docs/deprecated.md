@@ -39,7 +39,7 @@ The global Command object is exported as `program` from Commander v5, or import 
 const { program } = require('commander');
 // or
 const { Command } = require('commander');
-comnst program = new Command()
+const program = new Command()
 ```
 
 - Removed from README in Commander v5.
