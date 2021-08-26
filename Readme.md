@@ -66,28 +66,26 @@ Commander exports a global object which is convenient for quick programs.
 This is used in the examples in this README for brevity.
 
 ```js
+// CommonJS (.cjs)
 const { program } = require('commander');
 ```
 
 For larger programs which may use commander in multiple ways, including unit testing, it is better to create a local Command object to use.
 
 ```js
+// CommonJS (.cjs)
 const { Command } = require('commander');
 const program = new Command();
 ```
 
-For named imports in ECMAScript modules, import from `commander/esm.mjs`.
-
 ```js
-// index.mjs
-import { Command } from 'commander/esm.mjs';
+// ECMAScript (.mjs)
+import { Command } from 'commander';
 const program = new Command();
 ```
 
-And in TypeScript:
-
 ```ts
-// index.ts
+// TypeScript (.ts)
 import { Command } from 'commander';
 const program = new Command();
 ```
@@ -1014,8 +1012,8 @@ More samples can be found in the [examples](https://github.com/tj/commander.js/t
 
 ## Support
 
-The current version of Commander is fully supported on Long Term Support versions of node, and requires at least node v12.
-(For older versions of node, use an older version of Commander. Commander version 2.x has the widest support.)
+The current version of Commander is fully supported on Long Term Support versions of Node.js, and requires at least v12.20.0.
+(For older versions of Node.js, use an older version of Commander. Commander version 2.x has the widest support.)
 
 The main forum for free and community support is the project [Issues](https://github.com/tj/commander.js/issues) on GitHub.
 
