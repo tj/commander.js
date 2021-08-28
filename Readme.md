@@ -11,6 +11,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
 
 - [Commander.js](#commanderjs)
   - [Installation](#installation)
+  - [Quick Start](#quickstart)
   - [Declaring _program_ variable](#declaring-program-variable)
   - [Options](#options)
     - [Common option types, boolean and value](#common-option-types-boolean-and-value)
@@ -58,6 +59,21 @@ For information about terms used in this document see: [terminology](./docs/term
 ```bash
 npm install commander
 ```
+
+## Quick Start
+
+```js
+const { program } = require("commander");
+
+program
+    .command('list') // The name of your command
+    .description('List all pizza types available') // a discription of the command
+    .action(() => console.log("All pizza types")); // What will happen when the command is executed? as a callback function
+
+program.parse();
+```
+
+[More Examples](#examples)
 
 ## Declaring _program_ variable
 
