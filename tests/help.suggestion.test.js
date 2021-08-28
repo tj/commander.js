@@ -1,4 +1,4 @@
-const { Command } = require('../typings');
+const { Command } = require('../');
 
 function getSuggestion(program, arg) {
   let message = '';
