@@ -66,9 +66,9 @@ npm install commander
 const { program } = require("commander");
 
 program
-    .command('list') // The name of your command
-    .description('List all pizza types available') // a discription of the command
-    .action(() => console.log("All pizza types")); // What will happen when the command is executed? as a callback function
+    .command('list') // add a subcommand named "list"
+    .description('List all pizza types available') // a discription of the subcommand
+    .action(() => console.log("All pizza types")); // What will happen when the subcommand is executed? as a callback function
 
 program.parse();
 ```
