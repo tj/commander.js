@@ -11,24 +11,25 @@ function getSuggestion(program, arg) {
   } catch (err) {
   }
 
-  const match = message.match(/Did you mean (.*)\?/);
-  return match ? match[1] : null;
+  const match = message.match(/Did you mean (one of )?(.*)\?/);
+  return match ? match[2] : null;
 };
 
 test.each([
   ['yyy', ['zzz'], null, 'none similar'],
-  ['a', ['ab'], null, 'no suggestions for single char'],
-  ['ab', ['a'], null, 'no suggestions of single char'],
+  ['a', ['b'], null, 'one edit away but not similar'],
+  ['a', ['ab'], 'ab', 'one edit away'],
+  ['ab', ['a'], null, 'one edit away'],
   ['at', ['cat'], 'cat', '1 insertion'],
   ['cat', ['at'], 'at', '1 deletion'],
   ['bat', ['cat'], 'cat', '1 substitution'],
   ['act', ['cat'], 'cat', '1 transposition'],
   ['cxx', ['cat'], null, '2 edits away and short string'],
   ['caxx', ['cart'], 'cart', '2 edits away and longer string'],
-  ['1234567xxx', ['1234567890'], null, '3 edits away is too far'],
-  ['xat', ['rat', 'cat', 'bat'], 'rat', 'first of similar possibles'],
-  ['cart', ['camb', 'cant', 'bard'], 'cant', 'closest of different edit distances'],
-  ['carte', ['crate', 'carted'], 'carted', 'most similar of same edit distances (longer)']
+  ['1234567', ['1234567890'], '1234567890', '3 edits away is similar for long string'],
+  ['123456', ['1234567890'], null, '4 edits is too far'],
+  ['xat', ['rat', 'cat', 'bat'], 'bat, cat, rat', 'sorted possibles'],
+  ['cart', ['camb', 'cant', 'bard'], 'cant', 'only closest of different edit distances']
 ])('when cli of %s and commands %j then suggest %s because %s', (arg, commandNames, expected) => {
   const program = new Command();
   commandNames.forEach(name => { program.command(name); });
@@ -36,7 +37,7 @@ test.each([
   expect(suggestion).toBe(expected);
 });
 
-test('when similar single alias then suggest alias', () => {
+test('when similar alias then suggest alias', () => {
   const program = new Command();
   program.command('xyz')
     .alias('car');
@@ -44,21 +45,21 @@ test('when similar single alias then suggest alias', () => {
   expect(suggestion).toBe('car');
 });
 
-test('when similar hidden alias then suggest alias', () => {
+test('when similar hidden alias then not suggested', () => {
   const program = new Command();
   program.command('xyz')
     .alias('visible')
     .alias('silent');
   const suggestion = getSuggestion(program, 'slent');
-  expect(suggestion).toBe('silent');
+  expect(suggestion).toBe(null);
 });
 
-test('when similar command and alias then suggest command', () => {
+test('when similar command and alias then suggest both', () => {
   const program = new Command();
   program.command('aaaaa')
     .alias('cat');
   program.command('bat');
   program.command('ccccc');
   const suggestion = getSuggestion(program, 'mat');
-  expect(suggestion).toBe('bat');
+  expect(suggestion).toBe('bat, cat');
 });
