@@ -7,7 +7,10 @@ function getSuggestion(program, arg) {
     writeErr: (str) => { message = str; }
   });
   try {
-    program.parse([arg], { from: 'user' });
+    // Passing in an array for a few of the tests.
+    const args = Array.isArray(arg) ? arg : [arg];
+    expect(Array.isArray(args)).toBeTruthy();
+    program.parse(args, { from: 'user' });
   } catch (err) {
   }
 
@@ -97,4 +100,78 @@ test('when help option disabled then not candidate for suggestion', () => {
   program.helpOption(false);
   const suggestion = getSuggestion(program, '--hepl');
   expect(suggestion).toBe(null);
+});
+
+// Easy to just run same tests as for commands with cut and paste!
+// Note: length calculations disregard the leading --
+test.each([
+  ['--yyy', ['--zzz'], null, 'none similar'],
+  ['--a', ['--b'], null, 'one edit away but not similar'],
+  ['--a', ['--ab'], '--ab', 'one edit away'],
+  ['--ab', ['--a'], null, 'one edit away'],
+  ['--at', ['--cat'], '--cat', '1 insertion'],
+  ['--cat', ['--at'], '--at', '1 deletion'],
+  ['--bat', ['--cat'], '--cat', '1 substitution'],
+  ['--act', ['--cat'], '--cat', '1 transposition'],
+  ['--cxx', ['--cat'], null, '2 edits away and short string'],
+  ['--caxx', ['--cart'], '--cart', '2 edits away and longer string'],
+  ['--1234567', ['--1234567890'], '--1234567890', '3 edits away is similar for long string'],
+  ['--123456', ['--1234567890'], null, '4 edits is too far'],
+  ['--xat', ['--rat', '--cat', '--bat'], '--bat, --cat, --rat', 'sorted possibles'],
+  ['--cart', ['--camb', '--cant', '--bard'], '--cant', 'only closest of different edit distances']
+])('when cli of %s and options %j then suggest %s because %s', (arg, commandNames, expected) => {
+  const program = new Command();
+  commandNames.forEach(name => { program.option(name); });
+  const suggestion = getSuggestion(program, arg);
+  expect(suggestion).toBe(expected);
+});
+
+test('when no options then no suggestion', () => {
+  // Checking nothing blows up as much as no suggestion!
+  const program = new Command();
+  program
+    .exitOverride()
+    .helpOption(false);
+  const suggestion = getSuggestion(program, '--option');
+  expect(suggestion).toBe(null);
+});
+
+test('when subcommand option then candidate for subcommand option suggestion', () => {
+  const program = new Command();
+  program.exitOverride();
+  program.command('sub')
+    .option('-l,--local');
+  const suggestion = getSuggestion(program, ['sub', '--loca']);
+  expect(suggestion).toBe('--local');
+});
+
+test('when global option then candidate for subcommand option suggestion', () => {
+  const program = new Command();
+  program.exitOverride();
+  program.option('-g, --global');
+  program.command('sub');
+  const suggestion = getSuggestion(program, ['sub', '--globla']);
+  expect(suggestion).toBe('--global');
+});
+
+test('when global option but positionalOptions then not candidate for subcommand suggestion', () => {
+  const program = new Command();
+  program
+    .exitOverride()
+    .enablePositionalOptions();
+  program.option('-g, --global');
+  program.command('sub');
+  const suggestion = getSuggestion(program, ['sub', '--globla']);
+  expect(suggestion).toBe(null);
+});
+
+test('when global and local options then both candidates', () => {
+  const program = new Command();
+  program
+    .exitOverride();
+  program.option('--cat');
+  program.command('sub')
+    .option('--rat');
+  const suggestion = getSuggestion(program, ['sub', '--bat']);
+  expect(suggestion).toBe('--cat, --rat');
 });
