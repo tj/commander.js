@@ -63,3 +63,38 @@ test('when similar command and alias then suggest both', () => {
   const suggestion = getSuggestion(program, 'mat');
   expect(suggestion).toBe('bat, cat');
 });
+
+test('when implicit help command then help is candidate for suggestion', () => {
+  const program = new Command();
+  program.command('sub');
+  const suggestion = getSuggestion(program, 'hepl');
+  expect(suggestion).toBe('help');
+});
+
+test('when help command disabled then not candidate for suggestion', () => {
+  const program = new Command();
+  program.addHelpCommand(false);
+  program.command('sub');
+  const suggestion = getSuggestion(program, 'hepl');
+  expect(suggestion).toBe(null);
+});
+
+test('when default help option then --help is candidate for suggestion', () => {
+  const program = new Command();
+  const suggestion = getSuggestion(program, '--hepl');
+  expect(suggestion).toBe('--help');
+});
+
+test('when custom help option then --custom-help is candidate for suggestion', () => {
+  const program = new Command();
+  program.helpOption('-H, --custom-help');
+  const suggestion = getSuggestion(program, '--custom-hepl');
+  expect(suggestion).toBe('--custom-help');
+});
+
+test('when help option disabled then not candidate for suggestion', () => {
+  const program = new Command();
+  program.helpOption(false);
+  const suggestion = getSuggestion(program, '--hepl');
+  expect(suggestion).toBe(null);
+});
