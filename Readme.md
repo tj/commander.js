@@ -12,6 +12,8 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
 - [Commander.js](#commanderjs)
   - [Installation](#installation)
   - [Quick Start](#quickstart)
+    - [Subcommands](#subcommands)
+    - [Options](#options)
   - [Declaring _program_ variable](#declaring-program-variable)
   - [Options](#options)
     - [Common option types, boolean and value](#common-option-types-boolean-and-value)
@@ -62,6 +64,8 @@ npm install commander
 
 ## Quick Start
 
+### Subcommands
+
 ```js
 const { program } = require("commander");
 
@@ -71,6 +75,19 @@ program
     .action(() => console.log("All pizza types")); // What will happen when the subcommand is executed? as a callback function
 
 program.parse();
+```
+
+### Options
+
+```js
+program
+    .option('-d, --debug', 'output extra debugging')
+    .option('-s, --small', 'small pizza size')
+    .option('-p, --pizza-type <type>', 'flavour of pizza');
+
+program.parse();
+
+console.log(program.opts()); // output { debug: true, small: true, pizzaType: '<type>' }
 ```
 
 [More Examples](#examples)
