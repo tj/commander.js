@@ -1,4 +1,4 @@
-const { Command } = require('../');
+const { Command, Option } = require('../');
 
 function getSuggestion(program, arg) {
   let message = '';
@@ -174,4 +174,26 @@ test('when global and local options then both candidates', () => {
     .option('--rat');
   const suggestion = getSuggestion(program, ['sub', '--bat']);
   expect(suggestion).toBe('--cat, --rat');
+});
+
+test('when command hidden then not suggested as candidate', () => {
+  const program = new Command();
+  program.command('secret', { hidden: true });
+  const suggestion = getSuggestion(program, 'secrt');
+  expect(suggestion).toBe(null);
+});
+
+test('when option hidden then not suggested as candidate', () => {
+  const program = new Command();
+  program.addOption(new Option('--secret').hideHelp());
+  const suggestion = getSuggestion(program, '--secrt');
+  expect(suggestion).toBe(null);
+});
+
+test('when may be duplicate identical candidates then only return one', () => {
+  const program = new Command();
+  program.exitOverride();
+  program.command('sub');
+  const suggestion = getSuggestion(program, ['sub', '--hepl']);
+  expect(suggestion).toBe('--help');
 });
