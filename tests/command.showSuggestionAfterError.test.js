@@ -9,7 +9,7 @@ function getSuggestion(program, arg) {
     });
 
   try {
-    program.parse(arg, { from: 'user' });
+    program.parse([arg], { from: 'user' });
   } catch (err) {
   }
 
