@@ -1,15 +1,23 @@
 const { Command, Option } = require('../');
 
+// Note: setting up shared command configuration in getSuggestion,
+// and looking for possible subcommand 'sub'.
+
 function getSuggestion(program, arg) {
   let message = '';
-  program.exitOverride();
-  program.configureOutput({
-    writeErr: (str) => { message = str; }
-  });
+  program
+    .showSuggestionAfterError() // make sure on
+    .exitOverride()
+    .configureOutput({
+      writeErr: (str) => { message = str; }
+    });
+  // Do the same setup for subcommand.
+  const sub = program._findCommand('sub');
+  if (sub) sub.copyInheritedSettings(program);
+
   try {
     // Passing in an array for a few of the tests.
     const args = Array.isArray(arg) ? arg : [arg];
-    expect(Array.isArray(args)).toBeTruthy();
     program.parse(args, { from: 'user' });
   } catch (err) {
   }
@@ -130,7 +138,6 @@ test('when no options then no suggestion', () => {
   // Checking nothing blows up as much as no suggestion!
   const program = new Command();
   program
-    .exitOverride()
     .helpOption(false);
   const suggestion = getSuggestion(program, '--option');
   expect(suggestion).toBe(null);
@@ -138,7 +145,6 @@ test('when no options then no suggestion', () => {
 
 test('when subcommand option then candidate for subcommand option suggestion', () => {
   const program = new Command();
-  program.exitOverride();
   program.command('sub')
     .option('-l,--local');
   const suggestion = getSuggestion(program, ['sub', '--loca']);
@@ -147,7 +153,6 @@ test('when subcommand option then candidate for subcommand option suggestion', (
 
 test('when global option then candidate for subcommand option suggestion', () => {
   const program = new Command();
-  program.exitOverride();
   program.option('-g, --global');
   program.command('sub');
   const suggestion = getSuggestion(program, ['sub', '--globla']);
@@ -157,7 +162,6 @@ test('when global option then candidate for subcommand option suggestion', () =>
 test('when global option but positionalOptions then not candidate for subcommand suggestion', () => {
   const program = new Command();
   program
-    .exitOverride()
     .enablePositionalOptions();
   program.option('-g, --global');
   program.command('sub');
@@ -167,8 +171,6 @@ test('when global option but positionalOptions then not candidate for subcommand
 
 test('when global and local options then both candidates', () => {
   const program = new Command();
-  program
-    .exitOverride();
   program.option('--cat');
   program.command('sub')
     .option('--rat');
@@ -192,7 +194,6 @@ test('when option hidden then not suggested as candidate', () => {
 
 test('when may be duplicate identical candidates then only return one', () => {
   const program = new Command();
-  program.exitOverride();
   program.command('sub');
   const suggestion = getSuggestion(program, ['sub', '--hepl']);
   expect(suggestion).toBe('--help');

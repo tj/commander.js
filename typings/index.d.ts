@@ -412,7 +412,7 @@ export class Command {
    *
    * (Used internally when adding a command using `.command()` so subcommands inherit parent settings.)
    */
-   copyInheritedSettings(sourceCommand: Command): this;
+  copyInheritedSettings(sourceCommand: Command): this;
 
   /**
    * Display the help or a custom message after an error occurs.
@@ -420,6 +420,11 @@ export class Command {
   showHelpAfterError(displayHelp?: boolean | string): this;
 
   /**
+   * Display suggestion of similar commands for unknown commands, or options for unknown options.
+   */
+  showSuggestionAfterError(displaySuggestion?: boolean): this;
+
+   /**
    * Register callback `fn` for the command.
    *
    * @example
