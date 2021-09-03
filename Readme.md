@@ -692,7 +692,7 @@ error: unknown option '--unknown'
 (add --help for additional information)
 ```
 
-You can also show suggestions after an error for an unrecognised command or option.
+You can also show suggestions after an error for an unknown command or option.
 
 ```js
 program.showSuggestionAfterError();
