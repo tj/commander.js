@@ -110,6 +110,16 @@ test('when help option disabled then not candidate for suggestion', () => {
   expect(suggestion).toBe(null);
 });
 
+test('when command:* listener and unknown command then no suggestion', () => {
+  // Because one use for command:* was to handle unknown commands.
+  // Listener actually stops error being thrown, but we just care about affect on suggestion in this test.
+  const program = new Command();
+  program.on('command:*', () => {});
+  program.command('rat');
+  const suggestion = getSuggestion(program, 'cat');
+  expect(suggestion).toBe(null);
+});
+
 // Easy to just run same tests as for commands with cut and paste!
 // Note: length calculations disregard the leading --
 test.each([
