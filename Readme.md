@@ -692,6 +692,18 @@ error: unknown option '--unknown'
 (add --help for additional information)
 ```
 
+You can also show suggestions after an error for an unknown command or option.
+
+```js
+program.showSuggestionAfterError();
+```
+
+```sh
+$ pizza --hepl
+error: unknown option '--hepl'
+(Did you mean --help?)
+```
+
 ### Display help from code
 
 `.help()`: display help information and exit immediately. You can optionally pass `{ error: true }` to display on stderr and exit with an error status.

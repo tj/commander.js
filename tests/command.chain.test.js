@@ -184,6 +184,12 @@ describe('Command methods that should return this for chaining', () => {
     expect(result).toBe(program);
   });
 
+  test('when call .showSuggestionAfterError() then returns this', () => {
+    const program = new Command();
+    const result = program.showSuggestionAfterError();
+    expect(result).toBe(program);
+  });
+
   test('when call .copyInheritedSettings() then returns this', () => {
     const program = new Command();
     const cmd = new Command();

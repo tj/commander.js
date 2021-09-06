@@ -293,6 +293,10 @@ expectType<commander.Command>(program.showHelpAfterError());
 expectType<commander.Command>(program.showHelpAfterError(true));
 expectType<commander.Command>(program.showHelpAfterError('See --help'));
 
+// showSuggestionAfterError
+expectType<commander.Command>(program.showSuggestionAfterError());
+expectType<commander.Command>(program.showSuggestionAfterError(false));
+
 // configureOutput
 expectType<commander.Command>(program.configureOutput({ }));
 expectType<commander.OutputConfiguration>(program.configureOutput());
