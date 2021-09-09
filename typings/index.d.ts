@@ -126,12 +126,6 @@ export class Option {
   hideHelp(hide?: boolean): this;
 
   /**
-   * Validation of option argument failed.
-   * Intended for use from custom argument processing functions.
-   */
-  argumentRejected(messsage: string): never;
-
-  /**
    * Only allow option value to be one of choices.
    */
   choices(values: string[]): this;

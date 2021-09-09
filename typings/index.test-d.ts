@@ -368,9 +368,6 @@ expectType<commander.Option>(baseOption.hideHelp());
 expectType<commander.Option>(baseOption.hideHelp(true));
 expectType<commander.Option>(baseOption.hideHelp(false));
 
-// argumentRejected
-expectType<never>(baseOption.argumentRejected('failed'));
-
 // choices
 expectType<commander.Option>(baseOption.choices(['a', 'b']));
 
