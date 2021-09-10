@@ -19,6 +19,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - show error for unknown global option before subcommand (rather than just help) ([#1590])
 
+### Removed
+
+- TypeScript declaration of unimplemented `Option` method `argumentRejected`
+
 ## [8.1.0] (2021-07-27)
 
 ### Added
