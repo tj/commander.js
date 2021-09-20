@@ -196,4 +196,10 @@ describe('Command methods that should return this for chaining', () => {
     const result = cmd.copyInheritedSettings(program);
     expect(result).toBe(cmd);
   });
+
+  test('when call .mergeConfig() then returns this', () => {
+    const program = new Command();
+    const result = program.mergeConfig({});
+    expect(result).toBe(program);
+  });
 });

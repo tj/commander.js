@@ -27,6 +27,16 @@ describe.each(['-f, --foo <required-arg>', '-f, --foo [optional-arg]'])('option 
     delete process.env.BAR;
   });
 
+  test('when env defined and config then option from env', () => {
+    const program = new commander.Command();
+    process.env.BAR = 'env';
+    program.addOption(new commander.Option(fooFlags).env('BAR'));
+    program.parse([], { from: 'user' });
+    program.mergeConfig({ });
+    expect(program.opts().foo).toBe('env');
+    delete process.env.BAR;
+  });
+
   test('when default and env undefined and no cli then option from default', () => {
     const program = new commander.Command();
     program.addOption(new commander.Option(fooFlags).env('BAR').default('default'));
