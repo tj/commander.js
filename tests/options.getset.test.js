@@ -22,3 +22,38 @@ describe.each([true, false])('storeOptionsAsProperties is %s', (storeOptionsAsPr
     expect(program.opts().cheese).toBe(cheeseType);
   });
 });
+
+test('when setOptionValueWithSource then value returned by opts', () => {
+  const program = new commander.Command();
+  const cheeseValue = 'blue';
+  program
+    .option('--cheese [type]', 'cheese type')
+    .setOptionValue('cheese', cheeseValue);
+  expect(program.opts().cheese).toBe(cheeseValue);
+});
+
+test('when setOptionValueWithSource then source returned by getOptionValueSource', () => {
+  const program = new commander.Command();
+  program
+    .option('--cheese [type]', 'cheese type')
+    .setOptionValueWithSource('cheese', 'blue', 'config');
+  expect(program.getOptionValueSource('cheese')).toBe('config');
+});
+
+test('when option value parsed from env then option source is env', () => {
+  const program = new commander.Command();
+  process.env.BAR = 'env';
+  program
+    .addOption(new commander.Option('-f, --foo').env('BAR'));
+  program.parse([], { from: 'user' });
+  expect(program.getOptionValueSource('foo')).toBe('env');
+  delete process.env.BAR;
+});
+
+test('when option value parsed from cli then option source is cli', () => {
+  const program = new commander.Command();
+  program
+    .addOption(new commander.Option('-f, --foo').env('BAR'));
+  program.parse(['--foo'], { from: 'user' });
+  expect(program.getOptionValueSource('foo')).toBe('cli');
+});

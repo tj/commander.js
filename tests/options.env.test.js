@@ -27,6 +27,26 @@ describe.each(['-f, --foo <required-arg>', '-f, --foo [optional-arg]'])('option 
     delete process.env.BAR;
   });
 
+  test('when env defined and value source is config then option from env', () => {
+    const program = new commander.Command();
+    process.env.BAR = 'env';
+    program.addOption(new commander.Option(fooFlags).env('BAR'));
+    program.setOptionValueWithSource('foo', 'config', 'config');
+    program.parse([], { from: 'user' });
+    expect(program.opts().foo).toBe('env');
+    delete process.env.BAR;
+  });
+
+  test('when env defined and value source is unspecified then option unchanged', () => {
+    const program = new commander.Command();
+    process.env.BAR = 'env';
+    program.addOption(new commander.Option(fooFlags).env('BAR'));
+    program.setOptionValue('foo', 'client');
+    program.parse([], { from: 'user' });
+    expect(program.opts().foo).toBe('client');
+    delete process.env.BAR;
+  });
+
   test('when default and env undefined and no cli then option from default', () => {
     const program = new commander.Command();
     program.addOption(new commander.Option(fooFlags).env('BAR').default('default'));
