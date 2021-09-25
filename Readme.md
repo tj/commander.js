@@ -778,13 +778,6 @@ You can execute custom actions by listening to command and option events.
 program.on('option:verbose', function () {
   process.env.VERBOSE = this.opts().verbose;
 });
-
-program.on('command:*', function (operands) {
-  console.error(`error: unknown command '${operands[0]}'`);
-  const availableCommands = program.commands.map(cmd => cmd.name());
-  mySuggestBestMatch(operands[0], availableCommands);
-  process.exitCode = 1;
-});
 ```
 
 ## Bits and pieces
