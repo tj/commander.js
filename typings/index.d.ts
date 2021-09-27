@@ -425,10 +425,10 @@ export class Command {
    * @example
    * ```
    * program
-   *   .command('help')
-   *   .description('display verbose help')
+   *   .command('serve')
+   *   .description('start service')
    *   .action(function() {
-   *     // output help here
+   *     // do work here
    *   });
    * ```
    *
