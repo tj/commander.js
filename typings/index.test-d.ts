@@ -155,6 +155,12 @@ void program.getOptionValue('example');
 expectType<commander.Command>(program.setOptionValue('example', 'value'));
 expectType<commander.Command>(program.setOptionValue('example', true));
 
+// setOptionValueWithSource
+expectType<commander.Command>(program.setOptionValueWithSource('example', [], 'cli'));
+
+// getOptionValueSource
+expectType<commander.OptionValueSource>(program.getOptionValueSource('example'));
+
 // combineFlagAndOptionalValue
 expectType<commander.Command>(program.combineFlagAndOptionalValue());
 expectType<commander.Command>(program.combineFlagAndOptionalValue(false));
