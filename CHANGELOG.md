@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [8.3.0] (2021-10-16)
+
+### Added
+
+- `.getOptionValueSource()` and `.setOptionValueWithSource()`, where expected values for source are one of 'default', 'env', 'config', 'cli' ([#1613])
+
+### Deprecated
+
+- `.command('*')`, use default command instead ([#1612])
+- `on('command:*')`, use `.showSuggestionAfterError()` instead ([#1612])
+
+
 ## [8.2.0] (2021-09-10)
 
 ### Added
@@ -397,8 +409,11 @@ program
 [#1570]: https://github.com/tj/commander.js/pull/1570
 [#1587]: https://github.com/tj/commander.js/pull/1587
 [#1590]: https://github.com/tj/commander.js/pull/1590
+[#1612]: https://github.com/tj/commander.js/pull/1612
+[#1613]: https://github.com/tj/commander.js/pull/1613
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[8.3.0]: https://github.com/tj/commander.js/compare/v8.2.0...v8.3.0
 [8.2.0]: https://github.com/tj/commander.js/compare/v8.1.0...v8.2.0
 [8.1.0]: https://github.com/tj/commander.js/compare/v8.0.0...v8.1.0
 [8.0.0]: https://github.com/tj/commander.js/compare/v7.2.0...v8.0.0
