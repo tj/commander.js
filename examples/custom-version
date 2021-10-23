@@ -14,5 +14,5 @@ program
 program.parse(process.argv);
 
 // Try the following:
-// node custom-version -v
-// node custom-version --VERSION
+//    node custom-version -v
+//    node custom-version --VERSION

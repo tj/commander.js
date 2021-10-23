@@ -18,6 +18,6 @@ program.parse();
 console.log('Options: ', program.opts());
 
 // Try the following:
-// node options-extra.js --help
-// node options-extra.js --drink huge
-// PORT=80 node options-extra.js
+//    node options-extra.js --help
+//    node options-extra.js --drink huge
+//    PORT=80 node options-extra.js
