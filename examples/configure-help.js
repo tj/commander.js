@@ -21,4 +21,4 @@ program
 program.parse();
 
 // Try the following:
-// node configure-help.js --help
+//    node configure-help.js --help

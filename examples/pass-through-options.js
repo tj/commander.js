@@ -17,7 +17,6 @@ program
 program.parse();
 
 // Try the following:
-//
 //    node pass-through-options.js git status
 //    node pass-through-options.js git --version
 //    node pass-through-options.js --dry-run git checkout -b new-branch

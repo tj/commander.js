@@ -28,6 +28,6 @@ Examples:
 program.parse();
 
 // Try the following:
-//  node custom-help-text.js --help
-//  node custom-help-text.js extra --help
-//  node custom-help-text.js
+//    node custom-help-text.js --help
+//    node custom-help-text.js extra --help
+//    node custom-help-text.js

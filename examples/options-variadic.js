@@ -16,6 +16,6 @@ console.log('Options: ', program.opts());
 console.log('Remaining arguments: ', program.args);
 
 // Try the following:
-//  node options-variadic.js -n 1 2 3 --letter a b c
-//  node options-variadic.js --letter=A -n80 operand
-//  node options-variadic.js --letter -n 1 -n 2 3 -- operand
+//    node options-variadic.js -n 1 2 3 --letter a b c
+//    node options-variadic.js --letter=A -n80 operand
+//    node options-variadic.js --letter -n 1 -n 2 3 -- operand

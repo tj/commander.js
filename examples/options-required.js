@@ -4,11 +4,6 @@
 //    Required option
 //    You may specify a required (mandatory) option using `.requiredOption`.
 //    The option must be specified on the command line, or by having a default value.
-//
-// Example output pretending command called pizza (or try directly with `node options-required.js`)
-//
-// $ pizza
-// error: required option '-c, --cheese <type>' not specified
 
 // const commander = require('commander'); // (normal include)
 const commander = require('../'); // include commander in git clone of commander repo
@@ -18,3 +13,9 @@ program
   .requiredOption('-c, --cheese <type>', 'pizza must have cheese');
 
 program.parse();
+
+console.log(`Cheese type: ${program.opts().cheese}`);
+
+// Try the following:
+//    node options-required.js
+//    node options-required.js --cheese blue

@@ -16,3 +16,9 @@ program
 program.parse(process.argv);
 
 if (!program.args.length) program.help();
+
+// Try the following on macOS or Linux:
+//    ./description -h
+//
+// Try the following:
+//    node description -h

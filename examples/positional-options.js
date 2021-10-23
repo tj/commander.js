@@ -20,7 +20,6 @@ program
 program.parse();
 
 // Try the following:
-//
 //    node positional-options.js upload test.js
 //    node positional-options.js -p upload test.js
 //    node positional-options.js upload -p 8080 test.js

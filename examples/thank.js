@@ -21,6 +21,6 @@ program
 program.parse();
 
 // Try the following:
-//   node thank.js John
-//   node thank.js Doe --title Mr
-//   node thank.js --debug Doe --title Mr
+//    node thank.js John
+//    node thank.js Doe --title Mr
+//    node thank.js --debug Doe --title Mr

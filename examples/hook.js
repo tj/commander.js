@@ -48,9 +48,9 @@ program.command('hello')
 program.parseAsync().then(() => {});
 
 // Try the following:
-//  node hook.js hello
-//  node hook.js --profile hello
-//  node hook.js --trace hello --example
-//  node hook.js delay
-//  node hook.js --trace delay 5 --message bye
-//  node hook.js --profile delay
+//    node hook.js hello
+//    node hook.js --profile hello
+//    node hook.js --trace hello --example
+//    node hook.js delay
+//    node hook.js --trace delay 5 --message bye
+//    node hook.js --profile delay
