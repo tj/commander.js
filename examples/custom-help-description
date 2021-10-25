@@ -9,7 +9,7 @@ const program = new Command();
 program
   .helpOption('-c, --HELP', 'custom help message')
   .option('-s, --sessions', 'add session support')
-  .option('-t, --template <engine>', 'specify template engine (jade|ejs) [jade]', 'jade');
+  .option('-t, --template <engine>', 'specify template engine', 'jade');
 
 program
   .command('child')
@@ -19,3 +19,7 @@ program
   });
 
 program.parse(process.argv);
+
+// Try the following:
+// node custom-help-description -c
+// node custom-help-description child --HELP

@@ -155,6 +155,12 @@ void program.getOptionValue('example');
 expectType<commander.Command>(program.setOptionValue('example', 'value'));
 expectType<commander.Command>(program.setOptionValue('example', true));
 
+// setOptionValueWithSource
+expectType<commander.Command>(program.setOptionValueWithSource('example', [], 'cli'));
+
+// getOptionValueSource
+expectType<commander.OptionValueSource>(program.getOptionValueSource('example'));
+
 // combineFlagAndOptionalValue
 expectType<commander.Command>(program.combineFlagAndOptionalValue());
 expectType<commander.Command>(program.combineFlagAndOptionalValue(false));
@@ -300,6 +306,10 @@ expectType<commander.Command>(program.showHelpAfterError());
 expectType<commander.Command>(program.showHelpAfterError(true));
 expectType<commander.Command>(program.showHelpAfterError('See --help'));
 
+// showSuggestionAfterError
+expectType<commander.Command>(program.showSuggestionAfterError());
+expectType<commander.Command>(program.showSuggestionAfterError(false));
+
 // configureOutput
 expectType<commander.Command>(program.configureOutput({ }));
 expectType<commander.OutputConfiguration>(program.configureOutput());
@@ -370,9 +380,6 @@ expectType<commander.Option>(baseOption.makeOptionMandatory(true));
 expectType<commander.Option>(baseOption.hideHelp());
 expectType<commander.Option>(baseOption.hideHelp(true));
 expectType<commander.Option>(baseOption.hideHelp(false));
-
-// argumentRejected
-expectType<never>(baseOption.argumentRejected('failed'));
 
 // choices
 expectType<commander.Option>(baseOption.choices(['a', 'b']));

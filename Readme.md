@@ -95,7 +95,8 @@ const program = new Command();
 Options are defined with the `.option()` method, also serving as documentation for the options. Each option can have a short flag (single character) and a long name, separated by a comma or space or vertical bar ('|').
 
 The parsed options can be accessed by calling `.opts()` on a `Command` object, and are passed to the action handler.
-You can also use `.getOptionValue()` and `.setOptionValue()` to work with a single option value.
+(You can also use `.getOptionValue()` and `.setOptionValue()` to work with a single option value,
+and `.getOptionValueSource()` and `.setOptionValueWithSource()` when it matters where the option value came from.)
 
 Multi-word options such as "--template-engine" are camel-cased, becoming `program.opts().templateEngine` etc.
 
@@ -691,6 +692,18 @@ error: unknown option '--unknown'
 (add --help for additional information)
 ```
 
+You can also show suggestions after an error for an unknown command or option.
+
+```js
+program.showSuggestionAfterError();
+```
+
+```sh
+$ pizza --hepl
+error: unknown option '--hepl'
+(Did you mean --help?)
+```
+
 ### Display help from code
 
 `.help()`: display help information and exit immediately. You can optionally pass `{ error: true }` to display on stderr and exit with an error status.
@@ -779,13 +792,6 @@ You can execute custom actions by listening to command and option events.
 ```js
 program.on('option:verbose', function () {
   process.env.VERBOSE = this.opts().verbose;
-});
-
-program.on('command:*', function (operands) {
-  console.error(`error: unknown command '${operands[0]}'`);
-  const availableCommands = program.commands.map(cmd => cmd.name());
-  mySuggestBestMatch(operands[0], availableCommands);
-  process.exitCode = 1;
 });
 ```
 

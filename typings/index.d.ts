@@ -126,12 +126,6 @@ export class Option {
   hideHelp(hide?: boolean): this;
 
   /**
-   * Validation of option argument failed.
-   * Intended for use from custom argument processing functions.
-   */
-  argumentRejected(messsage: string): never;
-
-  /**
    * Only allow option value to be one of choices.
    */
   choices(values: string[]): this;
@@ -220,8 +214,9 @@ export interface OutputConfiguration {
 
 }
 
-type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
-type HookEvent = 'preAction' | 'postAction';
+export type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
+export type HookEvent = 'preAction' | 'postAction';
+export type OptionValueSource = 'default' | 'env' | 'config' | 'cli';
 
 export interface OptionValues {
   [key: string]: any;
@@ -412,7 +407,7 @@ export class Command {
    *
    * (Used internally when adding a command using `.command()` so subcommands inherit parent settings.)
    */
-   copyInheritedSettings(sourceCommand: Command): this;
+  copyInheritedSettings(sourceCommand: Command): this;
 
   /**
    * Display the help or a custom message after an error occurs.
@@ -420,15 +415,20 @@ export class Command {
   showHelpAfterError(displayHelp?: boolean | string): this;
 
   /**
+   * Display suggestion of similar commands for unknown commands, or options for unknown options.
+   */
+  showSuggestionAfterError(displaySuggestion?: boolean): this;
+
+   /**
    * Register callback `fn` for the command.
    *
    * @example
    * ```
    * program
-   *   .command('help')
-   *   .description('display verbose help')
+   *   .command('serve')
+   *   .description('start service')
    *   .action(function() {
-   *     // output help here
+   *     // do work here
    *   });
    * ```
    *
@@ -527,12 +527,22 @@ export class Command {
    */
   getOptionValue(key: string): any;
 
-   /**
+  /**
    * Store option value.
    */
   setOptionValue(key: string, value: unknown): this;
 
   /**
+   * Store option value and where the value came from.
+   */
+  setOptionValueWithSource(key: string, value: unknown, source: OptionValueSource): this;
+
+  /**
+   * Retrieve option value source.
+   */
+  getOptionValueSource(key: string): OptionValueSource;
+
+   /**
    * Alter parsing of short flags with optional values.
    *
    * @example

@@ -95,4 +95,19 @@ describe('unknownOption', () => {
     }
     expect(caughtErr.code).toBe('commander.unknownOption');
   });
+
+  test('when specify unknown global option before subcommand then error', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride();
+    program.command('sub');
+
+    let caughtErr;
+    try {
+      program.parse(['--NONSENSE', 'sub'], { from: 'user' });
+    } catch (err) {
+      caughtErr = err;
+    }
+    expect(caughtErr.code).toBe('commander.unknownOption');
+  });
 });
