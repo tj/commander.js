@@ -72,7 +72,7 @@ export class Argument {
    * Make option-argument optional.
    */
   argOptional(): this;
-  }
+}
 
 export class Option {
   flags: string;
@@ -93,6 +93,8 @@ export class Option {
   argChoices?: string[];
 
   constructor(flags: string, description?: string);
+
+  constructor(config: { flags: string; description?: string });
 
   /**
    * Set the default value, and optionally supply the description to be displayed in the help.
@@ -188,7 +190,12 @@ export class Help {
    * Wrap the given string to width characters per line, with lines after the first indented.
    * Do not wrap if insufficient room for wrapping (minColumnWidth), or string is manually formatted.
    */
-  wrap(str: string, width: number, indent: number, minColumnWidth?: number): string;
+  wrap(
+    str: string,
+    width: number,
+    indent: number,
+    minColumnWidth?: number
+  ): string;
 
   /** Generate the built-in help text. */
   formatHelp(cmd: Command, helper: Help): string;
@@ -196,12 +203,14 @@ export class Help {
 export type HelpConfiguration = Partial<Help>;
 
 export interface ParseOptions {
-  from: 'node' | 'electron' | 'user';
+  from: "node" | "electron" | "user";
 }
-export interface HelpContext { // optional parameter for .help() and .outputHelp()
+export interface HelpContext {
+  // optional parameter for .help() and .outputHelp()
   error: boolean;
 }
-export interface AddHelpTextContext { // passed to text function used with .addHelpText()
+export interface AddHelpTextContext {
+  // passed to text function used with .addHelpText()
   error: boolean;
   command: Command;
 }
@@ -211,12 +220,11 @@ export interface OutputConfiguration {
   getOutHelpWidth?(): number;
   getErrHelpWidth?(): number;
   outputError?(str: string, write: (str: string) => void): void;
-
 }
 
-export type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
-export type HookEvent = 'preAction' | 'postAction';
-export type OptionValueSource = 'default' | 'env' | 'config' | 'cli';
+export type AddHelpTextPosition = "beforeAll" | "before" | "after" | "afterAll";
+export type HookEvent = "preAction" | "postAction";
+export type OptionValueSource = "default" | "env" | "config" | "cli";
 
 export interface OptionValues {
   [key: string]: any;
@@ -260,7 +268,10 @@ export class Command {
    * @param opts - configuration options
    * @returns new command
    */
-  command(nameAndArgs: string, opts?: CommandOptions): ReturnType<this['createCommand']>;
+  command(
+    nameAndArgs: string,
+    opts?: CommandOptions
+  ): ReturnType<this["createCommand"]>;
   /**
    * Define a command, implemented in a separate executable file.
    *
@@ -279,7 +290,11 @@ export class Command {
    * @param opts - configuration options
    * @returns `this` command for chaining
    */
-  command(nameAndArgs: string, description: string, opts?: ExecutableCommandOptions): this;
+  command(
+    nameAndArgs: string,
+    description: string,
+    opts?: ExecutableCommandOptions
+  ): this;
 
   /**
    * Factory routine to create a new unattached command.
@@ -320,8 +335,13 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
-    argument<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
-    argument(name: string, description?: string, defaultValue?: unknown): this;
+  argument<T>(
+    flags: string,
+    description: string,
+    fn: (value: string, previous: T) => T,
+    defaultValue?: T
+  ): this;
+  argument(name: string, description?: string, defaultValue?: unknown): this;
 
   /**
    * Define argument syntax for command, adding a prepared argument.
@@ -356,17 +376,26 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
-  addHelpCommand(enableOrNameAndArgs?: string | boolean, description?: string): this;
+  addHelpCommand(
+    enableOrNameAndArgs?: string | boolean,
+    description?: string
+  ): this;
 
   /**
    * Add hook for life cycle event.
    */
-  hook(event: HookEvent, listener: (thisCommand: Command, actionCommand: Command) => void | Promise<void>): this;
+  hook(
+    event: HookEvent,
+    listener: (
+      thisCommand: Command,
+      actionCommand: Command
+    ) => void | Promise<void>
+  ): this;
 
   /**
    * Register callback to use as replacement for calling process.exit.
    */
-  exitOverride(callback?: (err: CommanderError) => never|void): this;
+  exitOverride(callback?: (err: CommanderError) => never | void): this;
 
   /**
    * You can customise the help with a subclass of Help by overriding createHelp,
@@ -419,7 +448,7 @@ export class Command {
    */
   showSuggestionAfterError(displaySuggestion?: boolean): this;
 
-   /**
+  /**
    * Register callback `fn` for the command.
    *
    * @example
@@ -480,10 +509,24 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
-  option(flags: string, description?: string, defaultValue?: string | boolean): this;
-  option<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
+  option(
+    flags: string,
+    description?: string,
+    defaultValue?: string | boolean
+  ): this;
+  option<T>(
+    flags: string,
+    description: string,
+    fn: (value: string, previous: T) => T,
+    defaultValue?: T
+  ): this;
   /** @deprecated since v7, instead use choices or a custom function */
-  option(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
+  option(
+    flags: string,
+    description: string,
+    regexp: RegExp,
+    defaultValue?: string | boolean
+  ): this;
 
   /**
    * Define a required option, which must have a value after parsing. This usually means
@@ -491,10 +534,24 @@ export class Command {
    *
    * The `flags` string contains the short and/or long flags, separated by comma, a pipe or space.
    */
-  requiredOption(flags: string, description?: string, defaultValue?: string | boolean): this;
-  requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
+  requiredOption(
+    flags: string,
+    description?: string,
+    defaultValue?: string | boolean
+  ): this;
+  requiredOption<T>(
+    flags: string,
+    description: string,
+    fn: (value: string, previous: T) => T,
+    defaultValue?: T
+  ): this;
   /** @deprecated since v7, instead use choices or a custom function */
-  requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
+  requiredOption(
+    flags: string,
+    description: string,
+    regexp: RegExp,
+    defaultValue?: string | boolean
+  ): this;
 
   /**
    * Factory routine to create a new unattached option.
@@ -519,7 +576,9 @@ export class Command {
    * @returns `this` command for chaining
    */
   storeOptionsAsProperties<T extends OptionValues>(): this & T;
-  storeOptionsAsProperties<T extends OptionValues>(storeAsProperties: true): this & T;
+  storeOptionsAsProperties<T extends OptionValues>(
+    storeAsProperties: true
+  ): this & T;
   storeOptionsAsProperties(storeAsProperties?: boolean): this;
 
   /**
@@ -535,14 +594,18 @@ export class Command {
   /**
    * Store option value and where the value came from.
    */
-  setOptionValueWithSource(key: string, value: unknown, source: OptionValueSource): this;
+  setOptionValueWithSource(
+    key: string,
+    value: unknown,
+    source: OptionValueSource
+  ): this;
 
   /**
    * Retrieve option value source.
    */
   getOptionValueSource(key: string): OptionValueSource;
 
-   /**
+  /**
    * Alter parsing of short flags with optional values.
    *
    * @example
@@ -652,7 +715,10 @@ export class Command {
 
   description(str: string): this;
   /** @deprecated since v8, instead use .argument to add command argument with description */
-  description(str: string, argsDescription: {[argName: string]: string}): this;
+  description(
+    str: string,
+    argsDescription: { [argName: string]: string }
+  ): this;
   /**
    * Get the description.
    */
@@ -744,7 +810,10 @@ export class Command {
    * and 'beforeAll' or 'afterAll' to affect this command and all its subcommands.
    */
   addHelpText(position: AddHelpTextPosition, text: string): this;
-  addHelpText(position: AddHelpTextPosition, text: (context: AddHelpTextContext) => string): this;
+  addHelpText(
+    position: AddHelpTextPosition,
+    text: (context: AddHelpTextContext) => string
+  ): this;
 
   /**
    * Add a listener (callback) for when events occur. (Implemented using EventEmitter.)
