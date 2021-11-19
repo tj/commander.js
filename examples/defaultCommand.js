@@ -5,13 +5,6 @@ const commander = require('../'); // include commander in git clone of commander
 const program = new commander.Command();
 
 // Example program using the command configuration option isDefault to specify the default command.
-//
-// $ node defaultCommand.js build
-// build
-// $ node defaultCommand.js serve -p 8080
-// server on port 8080
-// $ node defaultCommand.js -p 443
-// server on port 443
 
 program
   .command('build')
@@ -36,3 +29,8 @@ program
   });
 
 program.parse(process.argv);
+
+// Try the following:
+//    node defaultCommand.js build
+//    node defaultCommand.js serve -p 8080
+//    node defaultCommand.js -p 443

@@ -17,3 +17,11 @@ console.log('you ordered a pizza with:');
 if (options.peppers) console.log('  - peppers');
 const cheese = !options.cheese ? 'no' : options.cheese;
 console.log('  - %s cheese', cheese);
+
+// Try the following on macOS or Linux:
+//    ./pizza --help    
+//
+// Try the following:
+//    ./pizza --help    
+//    node pizza --peppers --cheese=blue
+//    node pizza --no-cheese

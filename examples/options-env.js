@@ -22,17 +22,17 @@ program.parse();
 console.log(program.opts());
 
 // Try the following:
-// node options-env.js --help
+//    node options-env.js --help
 //
-// node options-env.js
-// PORT=9001 node options-env.js
-// PORT=9001 node options-env.js --port 123
+//    node options-env.js
+//    PORT=9001 node options-env.js
+//    PORT=9001 node options-env.js --port 123
 //
-// COLOUR= node options-env.js
-// COLOUR= node options-env.js --no-colour
-// NO_COLOUR= node options-env.js
-// NO_COLOUR= node options-env.js --colour
+//    COLOUR= node options-env.js
+//    COLOUR= node options-env.js --no-colour
+//    NO_COLOUR= node options-env.js
+//    NO_COLOUR= node options-env.js --colour
 //
-// SIZE=small node options-env.js
-// SIZE=enormous node options-env.js
-// SIZE=enormous node options-env.js --size=large
+//    SIZE=small node options-env.js
+//    SIZE=enormous node options-env.js
+//    SIZE=enormous node options-env.js --size=large
