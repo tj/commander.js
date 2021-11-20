@@ -142,6 +142,9 @@ export class Option {
   attributeName(): string;
 }
 
+export class OptionConfig extends Option{
+  constructor(config: {flags: string; description?: string});
+}
 export class Help {
   /** output helpWidth, long lines are wrapped to fit */
   helpWidth?: number;

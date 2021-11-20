@@ -142,7 +142,7 @@ expectType<commander.Option>(program.createOption('a, --alpha', 'description'));
 
 // addOption
 expectType<commander.Command>(program.addOption(new commander.Option('-s,--simple')));
-
+expectType<commander.Command>(program.addOption(new commander.OptionConfig({flags: '-s. --simple'})));
 // storeOptionsAsProperties
 expectType<commander.Command & commander.OptionValues>(program.storeOptionsAsProperties());
 expectType<commander.Command & commander.OptionValues>(program.storeOptionsAsProperties(true));
