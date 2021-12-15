@@ -84,27 +84,25 @@ describe('boolean flag on command', () => {
   });
 });
 
-// This is a somewhat undocumented special behaviour which appears in some examples.
-// When a flag has a non-boolean default, it is used as the value (only) when the flag is specified.
-//
 // boolean flag with non-boolean default
+// NB: behaviour changed in Commander v9 to have default be default
 describe('boolean flag with non-boolean default', () => {
-  test('when flag not specified then value is undefined', () => {
+  test('when flag not specified then value is "default"', () => {
     const flagValue = 'black';
     const program = new commander.Command();
     program
       .option('--olives', 'Add olives? Sorry we only have black.', flagValue);
     program.parse(['node', 'test']);
-    expect(program.opts().olives).toBeUndefined();
+    expect(program.opts().olives).toBe(flagValue);
   });
 
-  test('when flag specified then value is "default" value', () => {
+  test('when flag specified then value is true', () => {
     const flagValue = 'black';
     const program = new commander.Command();
     program
       .option('-v, --olives', 'Add olives? Sorry we only have black.', flagValue);
     program.parse(['node', 'test', '--olives']);
-    expect(program.opts().olives).toBe(flagValue);
+    expect(program.opts().olives).toBe(true);
   });
 
   test('when flag implied and negated then value is false', () => {
