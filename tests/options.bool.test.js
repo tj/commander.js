@@ -85,13 +85,14 @@ describe('boolean flag on command', () => {
 });
 
 // boolean flag with non-boolean default
-// NB: behaviour changed in Commander v9 to have default be default
+// NB: behaviour changed in Commander v9 to have default be default.
+// These tests no longer match likely uses, but retained and updated to match current behaviour.
 describe('boolean flag with non-boolean default', () => {
   test('when flag not specified then value is "default"', () => {
     const flagValue = 'black';
     const program = new commander.Command();
     program
-      .option('--olives', 'Add olives? Sorry we only have black.', flagValue);
+      .option('--olives', 'Add green olives?', flagValue);
     program.parse(['node', 'test']);
     expect(program.opts().olives).toBe(flagValue);
   });
@@ -100,16 +101,16 @@ describe('boolean flag with non-boolean default', () => {
     const flagValue = 'black';
     const program = new commander.Command();
     program
-      .option('-v, --olives', 'Add olives? Sorry we only have black.', flagValue);
+      .option('-v, --olives', 'Add green olives?', flagValue);
     program.parse(['node', 'test', '--olives']);
     expect(program.opts().olives).toBe(true);
   });
 
-  test('when flag implied and negated then value is false', () => {
+  test('when combo flag and negated then value is false', () => {
     const flagValue = 'black';
     const program = new commander.Command();
     program
-      .option('-v, --olives', 'Add olives? Sorry we only have black.', flagValue)
+      .option('-v, --olives', 'Add green olives?', flagValue)
       .option('--no-olives');
     program.parse(['node', 'test', '--olives', '--no-olives']);
     expect(program.opts().olives).toBe(false);
