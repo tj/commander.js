@@ -64,12 +64,12 @@ export class Argument {
   choices(values: string[]): this;
 
   /**
-   * Make option-argument required.
+   * Make argument required.
    */
   argRequired(): this;
 
   /**
-   * Make option-argument optional.
+   * Make argument optional.
    */
   argOptional(): this;
   }

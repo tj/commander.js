@@ -8,13 +8,6 @@ const program = new commander.Command();
 // .command() can add a subcommand with an action handler or an executable.
 // .addCommand() adds a prepared command with an action handler.
 
-// Example output:
-//
-// $ node nestedCommands.js brew tea
-// brew tea
-// $ node nestedCommands.js heat jug
-// heat jug
-
 // Add nested commands using `.command()`.
 const brew = program.command('brew');
 brew
@@ -47,3 +40,7 @@ function makeHeatCommand() {
 program.addCommand(makeHeatCommand());
 
 program.parse(process.argv);
+
+// Try the following:
+//    node nestedCommands.js brew tea
+//    node nestedCommands.js heat jug

@@ -25,7 +25,7 @@ program
 program.parse();
 
 // Try the following:
-//  node configure-output.js --version
-//  node configure-output.js --unknown
-//  node configure-output.js --help
-//  node configure-output.js
+//    node configure-output.js --version
+//    node configure-output.js --unknown
+//    node configure-output.js --help
+//    node configure-output.js

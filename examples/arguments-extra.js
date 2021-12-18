@@ -17,7 +17,7 @@ program
 program.parse();
 
 // Try the following:
-//  node arguments-extra.js --help
-//  node arguments-extra.js huge
-//  node arguments-extra.js small
-//  node arguments-extra.js medium 30
+//    node arguments-extra.js --help
+//    node arguments-extra.js huge
+//    node arguments-extra.js small
+//    node arguments-extra.js medium 30

@@ -18,4 +18,4 @@ Example call:
 program.parse(process.argv);
 
 // Try the following:
-//  node custom-help --help
+//    node custom-help --help
