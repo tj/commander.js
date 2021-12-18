@@ -48,3 +48,10 @@ test('when optional with preset and variadic used then preset is concatenated', 
   program.parse(['-n', 'one', '-n', '-n', 'three'], { from: 'user' });
   expect(program.opts().name).toEqual(['one', 'two', 'three']);
 });
+
+test('when negated with string preset used then value is preset', () => {
+  const program = new Command();
+  program.addOption(new Option('--no-colour').preset('foo'));
+  program.parse(['--no-colour'], { from: 'user' });
+  expect(program.opts().colour).toBe('foo');
+});
