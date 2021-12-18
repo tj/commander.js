@@ -100,7 +100,7 @@ export class Option {
   default(value: unknown, description?: string): this;
 
   /**
-   * Preset to use instead of `true` for boolean option, or optional without an option argument.
+   * Preset to use when option used without option-argument, especially optional but also boolean and negated.
    * The custom processing (parseArg) is called.
    *
    * @example
