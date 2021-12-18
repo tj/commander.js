@@ -330,8 +330,8 @@ Options:
 $ extra --drink huge
 error: option '-d, --drink <size>' argument 'huge' is invalid. Allowed choices are small, medium, large.
 
-$ PORT=80 extra 
-Options:  { timeout: 60, port: '80' }
+$ PORT=80 extra --donate
+Options:  { timeout: 60, donate: 20, port: '80' }
 ```
 
 ### Custom option processing
