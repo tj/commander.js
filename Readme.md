@@ -32,7 +32,8 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Custom help](#custom-help)
     - [Display help after errors](#display-help-after-errors)
     - [Display help from code](#display-help-from-code)
-    - [.usage and .name](#usage-and-name)
+    - [.name](#name)
+    - [.usage](#usage)
     - [.helpOption(flags, description)](#helpoptionflags-description)
     - [.addHelpCommand()](#addhelpcommand)
     - [More configuration](#more-configuration-2)
@@ -65,30 +66,26 @@ Commander exports a global object which is convenient for quick programs.
 This is used in the examples in this README for brevity.
 
 ```js
+// CommonJS (.cjs)
 const { program } = require('commander');
-program.version('0.0.1');
 ```
 
 For larger programs which may use commander in multiple ways, including unit testing, it is better to create a local Command object to use.
 
 ```js
+// CommonJS (.cjs)
 const { Command } = require('commander');
 const program = new Command();
-program.version('0.0.1');
 ```
 
-For named imports in ECMAScript modules, import from `commander/esm.mjs`.
-
 ```js
-// index.mjs
-import { Command } from 'commander/esm.mjs';
+// ECMAScript (.mjs)
+import { Command } from 'commander';
 const program = new Command();
 ```
 
-And in TypeScript:
-
 ```ts
-// index.ts
+// TypeScript (.ts)
 import { Command } from 'commander';
 const program = new Command();
 ```
@@ -555,8 +552,9 @@ pass more arguments than declared, but you can make this an error with `.allowEx
 ### Stand-alone executable (sub)commands
 
 When `.command()` is invoked with a description argument, this tells Commander that you're going to use stand-alone executables for subcommands.
-Commander will search the executables in the directory of the entry script (like `./examples/pm`) with the name `program-subcommand`, like `pm-install`, `pm-search`.
-You can specify a custom name with the `executableFile` configuration option.
+Commander will search the files in the directory of the entry script for a file with the name combination `command-subcommand`, like `pm-install` or `pm-search` in the example below. The search includes trying common file extensions, like `.js`.
+You may specify a custom name (and path) with the `executableFile` configuration option.
+You may specify a custom search directory for subcommands with `.executableDir()`.
 
 You handle the options for an executable (sub)command in the executable, and don't declare them at the top-level.
 
@@ -564,6 +562,7 @@ Example file: [pm](./examples/pm)
 
 ```js
 program
+  .name('pm')
   .version('0.1.0')
   .command('install [name]', 'install one or more packages')
   .command('search [query]', 'search with optional query')
@@ -713,10 +712,25 @@ error: unknown option '--hepl'
 
 `.helpInformation()`: get the built-in command help information as a string for processing or displaying yourself.
 
-### .usage and .name
+### .name
 
-These allow you to customise the usage description in the first line of the help. The name is otherwise
-deduced from the (full) program arguments. Given:
+The command name appears in the help, and is also used for locating stand-alone executable subcommands.
+
+You may specify the program name using `.name()` or in the Command constructor. For the program, Commander will
+fallback to using the script name from the full arguments passed into `.parse()`. However, the script name varies
+depending on how your program is launched so you may wish to specify it explicitly.
+
+```js
+program.name('pizza');
+const pm = new Command('pm');
+```
+
+Subcommands get a name when specified using `.command()`. If you create the subcommand yourself to use with `.addCommand()`,
+then set the name using `.name()` or in the Command constructor.
+
+### .usage
+
+This allows you to customise the usage description in the first line of the help. Given:
 
 ```js
 program
@@ -732,7 +746,7 @@ Usage: my-command [global options] command
 
 ### .helpOption(flags, description)
 
-By default every command has a help option. Override the default help flags and description. Pass false to disable the built-in help option.
+By default every command has a help option. You may change the default help flags and description. Pass false to disable the built-in help option.
 
 ```js
 program
@@ -969,6 +983,7 @@ const { Command } = require('commander');
 const program = new Command();
 
 program
+  .name('deploy')
   .version('0.0.1')
   .option('-c, --config <path>', 'set config path', './deploy.conf');
 
@@ -1003,8 +1018,8 @@ More samples can be found in the [examples](https://github.com/tj/commander.js/t
 
 ## Support
 
-The current version of Commander is fully supported on Long Term Support versions of node, and requires at least node v12.
-(For older versions of node, use an older version of Commander.)
+The current version of Commander is fully supported on Long Term Support versions of Node.js, and requires at least v12.20.0.
+(For older versions of Node.js, use an older version of Commander.)
 
 The main forum for free and community support is the project [Issues](https://github.com/tj/commander.js/issues) on GitHub.
 

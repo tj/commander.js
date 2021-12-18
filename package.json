@@ -27,7 +27,6 @@
     "typescript-checkJS": "tsc --allowJS --checkJS index.js lib/*.js --noEmit",
     "test-all": "npm run test && npm run lint && npm run typescript-lint && npm run typescript-checkJS && npm run test-esm"
   },
-  "main": "./index.js",
   "files": [
     "index.js",
     "lib/*.js",
@@ -36,6 +35,14 @@
     "package-support.json"
   ],
   "type": "commonjs",
+  "main": "./index.js",
+  "exports": {
+    ".": {
+      "require": "./index.js",
+      "import": "./esm.mjs"
+      },
+    "./esm.mjs": "./esm.mjs"
+  },
   "dependencies": {},
   "devDependencies": {
     "@types/jest": "^26.0.23",
@@ -63,7 +70,7 @@
     ]
   },
   "engines": {
-    "node": ">= 12"
+    "node": "^12.20.0 || >=14"
   },
   "support": true
 }

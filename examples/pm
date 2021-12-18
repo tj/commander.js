@@ -12,6 +12,7 @@ const program = new Command();
 // Only `install` and `list` are implemented, see pm-install and pm-list.js
 
 program
+  .name('pm')
   .version('0.0.1')
   .description('Fake package manager')
   .command('install [name]', 'install one or more packages').alias('i')
