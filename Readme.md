@@ -324,7 +324,7 @@ Options:
   -t, --timeout <delay>  timeout in seconds (default: one minute)
   -d, --drink <size>     drink cup size (choices: "small", "medium", "large")
   -p, --port <number>    port number (env: PORT)
-  --donate [amount]
+  --donate [amount]      optional donation in dollars (preset: 20)
   -h, --help             display help for command
 
 $ extra --drink huge
