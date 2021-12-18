@@ -24,6 +24,13 @@ describe('optionDescription', () => {
     expect(helper.optionDescription(option)).toEqual('description (default: "default")');
   });
 
+  test('when option has preset value then return description and default value', () => {
+    const description = 'description';
+    const option = new commander.Option('-a', description).preset('abc');
+    const helper = new commander.Help();
+    expect(helper.optionDescription(option)).toEqual('description (preset: "abc")');
+  });
+
   test('when option has env then return description and env name', () => {
     const description = 'description';
     const option = new commander.Option('-a', description).env('ENV');
