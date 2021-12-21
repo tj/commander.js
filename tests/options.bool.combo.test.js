@@ -96,28 +96,51 @@ describe('boolean option combo, default false, short flags', () => {
   });
 });
 
-// This is a somewhat undocumented special behaviour which appears in some examples.
-// When a flag has a non-boolean default, it is used as the value (only) when the flag is specified.
-//
-// boolean option combo with non-boolean default
+// boolean option combo with non-boolean default.
+// Changed behaviour to normal default in Commander 9.
 describe('boolean option combo with non-boolean default', () => {
-  test('when boolean combo not specified then value is undefined', () => {
-    const flagValue = 'red';
-    const program = createPepperProgramWithDefault(flagValue);
+  test('when boolean combo not specified then value is default', () => {
+    const program = createPepperProgramWithDefault('default');
     program.parse(['node', 'test']);
-    expect(program.opts().pepper).toBeUndefined();
+    expect(program.opts().pepper).toBe('default');
   });
 
-  test('when boolean combo positive then value is "default" value', () => {
-    const flagValue = 'red';
-    const program = createPepperProgramWithDefault(flagValue);
+  test('when boolean combo positive then value is true', () => {
+    const program = createPepperProgramWithDefault('default');
     program.parse(['node', 'test', '--pepper']);
-    expect(program.opts().pepper).toBe(flagValue);
+    expect(program.opts().pepper).toBe(true);
   });
 
   test('when boolean combo negative then value is false', () => {
-    const flagValue = 'red';
-    const program = createPepperProgramWithDefault(flagValue);
+    const program = createPepperProgramWithDefault('default');
+    program.parse(['node', 'test', '--no-pepper']);
+    expect(program.opts().pepper).toBe(false);
+  });
+});
+
+describe('boolean option combo with non-boolean default and preset', () => {
+  function createPepperProgramWithDefaultAndPreset() {
+    const program = new commander.Command();
+    program
+      .addOption(new commander.Option('-p, --pepper').default('default').preset('preset'))
+      .option('-P, --no-pepper', 'remove pepper');
+    return program;
+  }
+
+  test('when boolean combo not specified then value is default', () => {
+    const program = createPepperProgramWithDefaultAndPreset();
+    program.parse(['node', 'test']);
+    expect(program.opts().pepper).toBe('default');
+  });
+
+  test('when boolean combo positive then value is preset', () => {
+    const program = createPepperProgramWithDefaultAndPreset();
+    program.parse(['node', 'test', '--pepper']);
+    expect(program.opts().pepper).toBe('preset');
+  });
+
+  test('when boolean combo negative then value is false', () => {
+    const program = createPepperProgramWithDefaultAndPreset();
     program.parse(['node', 'test', '--no-pepper']);
     expect(program.opts().pepper).toBe(false);
   });

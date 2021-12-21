@@ -362,6 +362,10 @@ const baseOption = new commander.Option('-f,--foo', 'foo description');
 expectType<commander.Option>(baseOption.default(3));
 expectType<commander.Option>(baseOption.default(60, 'one minute'));
 
+// preset
+expectType<commander.Option>(baseOption.preset(123));
+expectType<commander.Option>(baseOption.preset('abc'));
+
 // env
 expectType<commander.Option>(baseOption.env('PORT'));
 
@@ -389,6 +393,9 @@ expectType<string>(baseOption.name());
 
 // attributeName
 expectType<string>(baseOption.attributeName());
+
+// isBoolean
+expectType<boolean>(baseOption.isBoolean());
 
 // Argument properties
 const baseArgument = new commander.Argument('<foo');

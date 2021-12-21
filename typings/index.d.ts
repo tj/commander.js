@@ -100,6 +100,18 @@ export class Option {
   default(value: unknown, description?: string): this;
 
   /**
+   * Preset to use when option used without option-argument, especially optional but also boolean and negated.
+   * The custom processing (parseArg) is called.
+   *
+   * @example
+   * ```ts
+   * new Option('--color').default('GREYSCALE').preset('RGB');
+   * new Option('--donate [amount]').preset('20').argParser(parseFloat);
+   * ```
+   */
+   preset(arg: unknown): this;
+
+  /**
    * Set environment variable to check for option value.
    * Priority order of option values is default < env < cli
    */
@@ -140,6 +152,14 @@ export class Option {
    * as a object attribute key.
    */
   attributeName(): string;
+
+  /**
+   * Return whether a boolean option.
+   *
+   * Options are one of boolean, negated, required argument, or optional argument.
+   */
+   isBoolean(): boolean;
+
 }
 
 export class Help {

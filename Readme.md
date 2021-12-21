@@ -146,7 +146,7 @@ pizza details:
 
 ### Default option value
 
-You can specify a default value for an option which takes a value.
+You can specify a default value for an option.
 
 Example file: [options-defaults.js](./examples/options-defaults.js)
 
@@ -172,7 +172,7 @@ You can define a boolean option long name with a leading `no-` to set the option
 Defined alone this also makes the option true by default.
 
 If you define `--foo` first, adding `--no-foo` does not change the default value from what it would
-otherwise be. You can specify a default boolean value for a boolean option and it can be overridden on command line.
+otherwise be.
 
 Example file: [options-negatable.js](./examples/options-negatable.js)
 
@@ -312,7 +312,8 @@ program
   .addOption(new Option('-s, --secret').hideHelp())
   .addOption(new Option('-t, --timeout <delay>', 'timeout in seconds').default(60, 'one minute'))
   .addOption(new Option('-d, --drink <size>', 'drink size').choices(['small', 'medium', 'large']))
-  .addOption(new Option('-p, --port <number>', 'port number').env('PORT'));
+  .addOption(new Option('-p, --port <number>', 'port number').env('PORT'))
+  .addOption(new Option('--donate [amount]', 'optional donation in dollars').preset('20').argParser(parseFloat));
 ```
 
 ```bash
@@ -323,13 +324,14 @@ Options:
   -t, --timeout <delay>  timeout in seconds (default: one minute)
   -d, --drink <size>     drink cup size (choices: "small", "medium", "large")
   -p, --port <number>    port number (env: PORT)
+  --donate [amount]      optional donation in dollars (preset: 20)
   -h, --help             display help for command
 
 $ extra --drink huge
 error: option '-d, --drink <size>' argument 'huge' is invalid. Allowed choices are small, medium, large.
 
-$ PORT=80 extra 
-Options:  { timeout: 60, port: '80' }
+$ PORT=80 extra --donate
+Options:  { timeout: 60, donate: 20, port: '80' }
 ```
 
 ### Custom option processing
