@@ -40,12 +40,11 @@
     ".": {
       "require": "./index.js",
       "import": "./esm.mjs"
-      },
+    },
     "./esm.mjs": "./esm.mjs"
   },
-  "dependencies": {},
   "devDependencies": {
-    "@types/jest": "^26.0.23",
+    "@types/jest": "^27.0.3",
     "@types/node": "^14.17.3",
     "@typescript-eslint/eslint-plugin": "^4.27.0",
     "@typescript-eslint/parser": "^4.27.0",
