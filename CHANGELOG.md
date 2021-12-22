@@ -8,6 +8,34 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [9.0.0-0] (2021-12-22)
+
+### Added
+
+- simpler ECMAScript import ([#1589])
+- Option.preset() allows specifying value/arg for option when used without option-argument (especially optional, but also boolean option) ([#1652])
+- `.executableDir()` for custom search for subcommands ([#1571])
+- throw with helpful message if pass `Option` to `.option()` or `.requiredOption()` ([#1655])
+
+### Changed
+
+- *Breaking:* Commander 9 requires Node.js v12.20.0 or higher
+- update package-lock.json to lockfile@2 format ([#1659])
+- `showSuggestionAfterError` is now on by default ([#1657])
+- *Breaking:* default value specified for boolean option now always used as default value (see .preset() to match some previous behaviours) ([#1652])
+- default value for boolean option only shown in help if true/false ([#1652])
+- use command name as prefix for subcommand stand-alone executable name (with fallback to script name for backwards compatibility) ([#1571])
+- allow absolute path with `executableFile` ([#1571])
+- removed restriction that nested subcommands must specify `executableFile` ([#1571])
+
+### Fixed
+
+- option with optional argument not supplied on command line now works when option already has a value, whether from default value or from previous arguments ([#1652])
+
+### Removed
+
+- *Breaking:* removed internal fallback to `require.main.filename` when script not known from arguments passed to `.parse()` (can supply details using `.name()`, and `.executableDir()` or `executableFile`) ([#1571])
+
 ## [8.3.0] (2021-10-22)
 
 ### Added
@@ -492,14 +520,14 @@ to expand `-fb` to `-f -b` rather than `-f b`.
 ### Added
 
 * automatically wrap and indent help descriptions for options and commands ([#1051])
-* `.exitOverride()` allows override of calls to `process.exit` for additional error handling and to keep program running ([#1040])
+* `.exitOverride()` allows override of calls to `process.exit` for additional error handling and to keep program running ([#1040])
 * support for declaring required options with `.requiredOptions()` ([#1071])
 * GitHub Actions support ([#1027])
 * translation links in README
 
 ### Changed
 
-* dev: switch tests from Sinon+Should to Jest with major rewrite of tests ([#1035])
+* dev: switch tests from Sinon+Should to Jest with major rewrite of tests ([#1035])
 * call default subcommand even when there are unknown options ([#1047])
 * *Breaking* Commander is only officially supported on Node 8 and above, and requires Node 6 ([#1053])
 
@@ -918,6 +946,8 @@ program
 
 * Initial release
 
+<!-- markdown reference links -->
+
 [#948]: https://github.com/tj/commander.js/issues/948
 [#1032]: https://github.com/tj/commander.js/issues/1032
 [#1250]: https://github.com/tj/commander.js/pull/1250
@@ -972,10 +1002,16 @@ program
 [#1557]: https://github.com/tj/commander.js/pull/1557
 [#1567]: https://github.com/tj/commander.js/pull/1567
 [#1570]: https://github.com/tj/commander.js/pull/1570
+[#1571]: https://github.com/tj/commander.js/pull/1571
 [#1587]: https://github.com/tj/commander.js/pull/1587
+[#1589]: https://github.com/tj/commander.js/pull/1589
 [#1590]: https://github.com/tj/commander.js/pull/1590
 [#1612]: https://github.com/tj/commander.js/pull/1612
 [#1613]: https://github.com/tj/commander.js/pull/1613
+[#1652]: https://github.com/tj/commander.js/pull/1652
+[#1655]: https://github.com/tj/commander.js/pull/1655
+[#1657]: https://github.com/tj/commander.js/pull/1657
+[#1659]: https://github.com/tj/commander.js/pull/1659
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
@@ -990,21 +1026,21 @@ program
 [#809]: https://github.com/tj/commander.js/issues/809
 [#962]: https://github.com/tj/commander.js/issues/962
 [#995]: https://github.com/tj/commander.js/issues/995
-[#1062]: https://github.com/tj/commander.js/pull/1062
-[#1088]: https://github.com/tj/commander.js/issues/1088
-[#1119]: https://github.com/tj/commander.js/pull/1119
-[#1133]: https://github.com/tj/commander.js/pull/1133
-[#1138]: https://github.com/tj/commander.js/pull/1138
-[#1145]: https://github.com/tj/commander.js/pull/1145
-[#1146]: https://github.com/tj/commander.js/pull/1146
-[#1149]: https://github.com/tj/commander.js/pull/1149
-[#1153]: https://github.com/tj/commander.js/issues/1153
-[#1159]: https://github.com/tj/commander.js/pull/1159
-[#1165]: https://github.com/tj/commander.js/pull/1165
-[#1169]: https://github.com/tj/commander.js/pull/1169
-[#1172]: https://github.com/tj/commander.js/pull/1172
-[#1179]: https://github.com/tj/commander.js/pull/1179
-[#1180]: https://github.com/tj/commander.js/pull/1180
+[#1062]: https://github.com/tj/commander.js/pull/1062
+[#1088]: https://github.com/tj/commander.js/issues/1088
+[#1119]: https://github.com/tj/commander.js/pull/1119
+[#1133]: https://github.com/tj/commander.js/pull/1133
+[#1138]: https://github.com/tj/commander.js/pull/1138
+[#1145]: https://github.com/tj/commander.js/pull/1145
+[#1146]: https://github.com/tj/commander.js/pull/1146
+[#1149]: https://github.com/tj/commander.js/pull/1149
+[#1153]: https://github.com/tj/commander.js/issues/1153
+[#1159]: https://github.com/tj/commander.js/pull/1159
+[#1165]: https://github.com/tj/commander.js/pull/1165
+[#1169]: https://github.com/tj/commander.js/pull/1169
+[#1172]: https://github.com/tj/commander.js/pull/1172
+[#1179]: https://github.com/tj/commander.js/pull/1179
+[#1180]: https://github.com/tj/commander.js/pull/1180
 [#1184]: https://github.com/tj/commander.js/pull/1184
 [#1191]: https://github.com/tj/commander.js/pull/1191
 [#1195]: https://github.com/tj/commander.js/pull/1195
@@ -1018,20 +1054,20 @@ program
 <!-- Referenced in 4.x -->
 [#1027]: https://github.com/tj/commander.js/pull/1027
 [#1035]: https://github.com/tj/commander.js/pull/1035
-[#1040]: https://github.com/tj/commander.js/pull/1040
-[#1047]: https://github.com/tj/commander.js/pull/1047
-[#1048]: https://github.com/tj/commander.js/pull/1048
-[#1049]: https://github.com/tj/commander.js/pull/1049
-[#1051]: https://github.com/tj/commander.js/pull/1051
-[#1052]: https://github.com/tj/commander.js/pull/1052
-[#1053]: https://github.com/tj/commander.js/pull/1053
-[#1071]: https://github.com/tj/commander.js/pull/1071
-[#1081]: https://github.com/tj/commander.js/pull/1081
-[#1091]: https://github.com/tj/commander.js/pull/1091
-[#1096]: https://github.com/tj/commander.js/pull/1096
-[#1102]: https://github.com/tj/commander.js/pull/1102
-[#1118]: https://github.com/tj/commander.js/pull/1118
-[#1157]: https://github.com/tj/commander.js/pull/1157
+[#1040]: https://github.com/tj/commander.js/pull/1040
+[#1047]: https://github.com/tj/commander.js/pull/1047
+[#1048]: https://github.com/tj/commander.js/pull/1048
+[#1049]: https://github.com/tj/commander.js/pull/1049
+[#1051]: https://github.com/tj/commander.js/pull/1051
+[#1052]: https://github.com/tj/commander.js/pull/1052
+[#1053]: https://github.com/tj/commander.js/pull/1053
+[#1071]: https://github.com/tj/commander.js/pull/1071
+[#1081]: https://github.com/tj/commander.js/pull/1081
+[#1091]: https://github.com/tj/commander.js/pull/1091
+[#1096]: https://github.com/tj/commander.js/pull/1096
+[#1102]: https://github.com/tj/commander.js/pull/1102
+[#1118]: https://github.com/tj/commander.js/pull/1118
+[#1157]: https://github.com/tj/commander.js/pull/1157
 [#806]: https://github.com/tj/commander.js/issues/806
 
 <!-- Referenced in 3.x -->
@@ -1054,6 +1090,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[9.0.0-0]: https://github.com/tj/commander.js/compare/v8.3.0...v9.0.0-0
 [8.3.0]: https://github.com/tj/commander.js/compare/v8.2.0...v8.3.0
 [8.2.0]: https://github.com/tj/commander.js/compare/v8.1.0...v8.2.0
 [8.1.0]: https://github.com/tj/commander.js/compare/v8.0.0...v8.1.0
