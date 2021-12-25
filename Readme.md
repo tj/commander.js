@@ -535,6 +535,20 @@ program
   });
 ```
 
+If you prefer, you can work with the command directly and skip declaring the parameters for the action handler. The `this` keyword is set to the running command and can be used from a function expression (but not from an arrow function).
+
+Example file: [action-this.js](./examples/action-this.js)
+
+```js
+program
+  .command('serve')
+  .argument('<script>')
+  .option('-p, --port <number>', 'port number', 80)
+  .action(function() {
+    console.error('Run script %s on port %s', this.args[0], this.opts().port);
+  });
+```
+
 You may supply an `async` action handler, in which case you call `.parseAsync` rather than `.parse`.
 
 ```js

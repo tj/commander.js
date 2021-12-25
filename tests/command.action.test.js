@@ -12,6 +12,16 @@ test('when .action called then command passed to action', () => {
   expect(actionMock).toHaveBeenCalledWith(cmd.opts(), cmd);
 });
 
+test('when .action called then this is set to command', () => {
+  const program = new commander.Command();
+  let actionThis;
+  const cmd = program
+    .command('info')
+    .action(function() { actionThis = this; });
+  program.parse(['node', 'test', 'info']);
+  expect(actionThis).toBe(cmd);
+});
+
 test('when .action called then program.args only contains args', () => {
   // At one time program.args was being modified to contain the same args as the call to .action
   // and so included the command as an extra and unexpected complex item in array.
