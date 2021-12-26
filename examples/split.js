@@ -10,9 +10,8 @@ program
 program.parse();
 
 const options = program.opts();
-const separator = options.separator || ',';
 const limit = options.first ? 1 : undefined;
-console.log(program.args[0].split(separator, limit));
+console.log(program.args[0].split(options.separator, limit));
 
 // Try the following:
 //    node split -s / --fits a/b/c
