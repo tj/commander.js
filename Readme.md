@@ -62,7 +62,8 @@ npm install commander
 
 ## Quick Start
 
-You write code to describe your options and and command-arguments and subcommands. Commander looks after parsing the arguments,
+You write code to describe your command line interface.
+Commander looks after parsing the arguments into options and command-arguments,
 displays usage errors for problems, and implements a help system.
 
 Commander is strict and displays an error for unrecognised options.

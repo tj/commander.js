@@ -2,6 +2,8 @@
 const { Command } = require('../'); // include commander in git clone of commander repo
 const program = new Command();
 
+// This is used as an example in the README for the Quick Start.
+
 program
   .name('string-util')
   .version('0.8.0');
