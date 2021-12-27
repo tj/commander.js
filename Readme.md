@@ -11,6 +11,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
 
 - [Commander.js](#commanderjs)
   - [Installation](#installation)
+  - [Quick Start](#quick-start)
   - [Declaring _program_ variable](#declaring-program-variable)
   - [Options](#options)
     - [Common option types, boolean and value](#common-option-types-boolean-and-value)
@@ -48,7 +49,6 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Debugging stand-alone executable subcommands](#debugging-stand-alone-executable-subcommands)
     - [Override exit and output handling](#override-exit-and-output-handling)
     - [Additional documentation](#additional-documentation)
-  - [Examples](#examples)
   - [Support](#support)
     - [Commander for enterprise](#commander-for-enterprise)
 
@@ -59,6 +59,85 @@ For information about terms used in this document see: [terminology](./docs/term
 ```bash
 npm install commander
 ```
+
+## Quick Start
+
+You write code to describe your command line interface.
+Commander looks after parsing the arguments into options and command-arguments,
+displays usage errors for problems, and implements a help system.
+
+Commander is strict and displays an error for unrecognised options.
+The two most used option types are a boolean option, and an option which takes its value from the following argument.
+
+Example file: [split.js](./examples/split.js)
+
+```js
+const { program } = require('commander');
+
+program
+  .option('--first')
+  .option('-s, --separator <char>');
+
+program.parse();
+
+const options = program.opts();
+const limit = options.first ? 1 : undefined;
+console.log(program.args[0].split(options.separator, limit));
+```
+
+```sh
+$ node split.js -s / --fits a/b/c
+error: unknown option '--fits'
+(Did you mean --first?)
+$ node split.js -s / --first a/b/c
+[ 'a' ]
+```
+
+Here is a more complete program using a subcommand and with descriptions for the help. In a multi-command program, you have an action handler for each command (or stand-alone executables for the commands).
+
+Example file: [string-util.js](./examples/string-util.js)
+
+```js
+const { Command } = require('commander');
+const program = new Command();
+
+program
+  .name('string-util')
+  .description('CLI to some JavaScript string utilities')
+  .version('0.8.0');
+
+program.command('split')
+  .description('Split a string into substrings and display as an array')
+  .argument('<string>', 'string to split')
+  .option('--first', 'display just the first substring')
+  .option('-s, --separator <char>', 'separator character', ',')
+  .action((str, options) => {
+    const limit = options.first ? 1 : undefined;
+    console.log(str.split(options.separator, limit));
+  });
+
+program.parse();
+```
+
+```sh
+$ node string-util.js help split
+Usage: string-util split [options] <string>
+
+Split a string into substrings and display as an array.
+
+Arguments:
+  string                  string to split
+
+Options:
+  --first                 display just the first substring
+  -s, --separator <char>  separator character (default: ",")
+  -h, --help              display help for command
+
+$ node string-util.js split --separator=/ a/b/c
+[ 'a', 'b', 'c' ]
+```
+
+More samples can be found in the [examples](https://github.com/tj/commander.js/tree/master/examples) directory.
 
 ## Declaring _program_ variable
 
@@ -965,72 +1044,6 @@ There is more information available about:
 
 - [deprecated](./docs/deprecated.md) features still supported for backwards compatibility
 - [options taking varying arguments](./docs/options-taking-varying-arguments.md)
-
-## Examples
-
-In a single command program, you might not need an action handler.
-
-Example file: [pizza](./examples/pizza)
-
-```js
-const { program } = require('commander');
-
-program
-  .description('An application for pizza ordering')
-  .option('-p, --peppers', 'Add peppers')
-  .option('-c, --cheese <type>', 'Add the specified type of cheese', 'marble')
-  .option('-C, --no-cheese', 'You do not want any cheese');
-
-program.parse();
-
-const options = program.opts();
-console.log('you ordered a pizza with:');
-if (options.peppers) console.log('  - peppers');
-const cheese = !options.cheese ? 'no' : options.cheese;
-console.log('  - %s cheese', cheese);
-```
-
-In a multi-command program, you will have action handlers for each command (or stand-alone executables for the commands).
-
-Example file: [deploy](./examples/deploy)
-
-```js
-const { Command } = require('commander');
-const program = new Command();
-
-program
-  .name('deploy')
-  .version('0.0.1')
-  .option('-c, --config <path>', 'set config path', './deploy.conf');
-
-program
-  .command('setup [env]')
-  .description('run setup commands for all envs')
-  .option('-s, --setup_mode <mode>', 'Which setup mode to use', 'normal')
-  .action((env, options) => {
-    env = env || 'all';
-    console.log('read config from %s', program.opts().config);
-    console.log('setup for %s env(s) with %s mode', env, options.setup_mode);
-  });
-
-program
-  .command('exec <script>')
-  .alias('ex')
-  .description('execute the given remote cmd')
-  .option('-e, --exec_mode <mode>', 'Which exec mode to use', 'fast')
-  .action((script, options) => {
-    console.log('read config from %s', program.opts().config);
-    console.log('exec "%s" using %s mode and config %s', script, options.exec_mode, program.opts().config);
-  }).addHelpText('after', `
-Examples:
-  $ deploy exec sequential
-  $ deploy exec async`
-  );
-
-program.parse(process.argv);
-```
-
-More samples can be found in the [examples](https://github.com/tj/commander.js/tree/master/examples) directory.
 
 ## Support
 
