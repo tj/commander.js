@@ -376,6 +376,7 @@ expectType<commander.Option>(baseOption.hideHelp(false));
 
 // choices
 expectType<commander.Option>(baseOption.choices(['a', 'b']));
+expectType<commander.Option>(baseOption.choices(['a', 'b'] as const));
 
 // name
 expectType<string>(baseOption.name());
@@ -404,6 +405,7 @@ expectType<commander.Argument>(baseArgument.argParser((value: string, previous: 
 
 // choices
 expectType<commander.Argument>(baseArgument.choices(['a', 'b']));
+expectType<commander.Argument>(baseArgument.choices(['a', 'b'] as const));
 
 // argRequired
 expectType<commander.Argument>(baseArgument.argRequired());
