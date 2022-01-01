@@ -205,15 +205,3 @@ test('when custom processing for argument throws plain error then not CommanderE
   expect(caughtErr).toBeInstanceOf(Error);
   expect(caughtErr).not.toBeInstanceOf(commander.CommanderError);
 });
-
-// this is the happy path, testing failure case in command.exitOverride.test.js
-test('when argument argument in choices then argument set', () => {
-  const program = new commander.Command();
-  let shade;
-  program
-    .exitOverride()
-    .addArgument(new commander.Argument('<shade>').choices(['red', 'blue']))
-    .action((shadeParam) => { shade = shadeParam; });
-  program.parse(['red'], { from: 'user' });
-  expect(shade).toBe('red');
-});
