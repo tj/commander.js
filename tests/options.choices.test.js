@@ -39,4 +39,19 @@ describe('choices parameter is treated as readonly, per TypeScript declaration',
     option.argChoices.push('purple');
     expect(param).toEqual(original);
   });
+
+  test('when choices called and parameter changed the choices does not change', () => {
+    const program = new commander.Command();
+    const param = ['red', 'blue'];
+    program
+      .exitOverride()
+      .configureOutput({
+        writeErr: () => {}
+      })
+      .addOption(new commander.Option('--colour <shade>').choices(param));
+    param.push('orange');
+    expect(() => {
+      program.parse(['--colour', 'orange'], { from: 'user' });
+    }).toThrow();
+  });
 });
