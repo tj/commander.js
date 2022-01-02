@@ -7,7 +7,8 @@ const javascriptSettings = {
   rules: {
     'no-else-return': ['error', { allowElseIf: false }],
     'space-before-function-paren': ['error', 'never'],
-    semi: ['error', 'always']
+    semi: ['error', 'always'],
+    'no-extra-semi': 'error'
   }
 };
 

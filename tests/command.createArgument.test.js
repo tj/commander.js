@@ -4,13 +4,13 @@ class MyArgument extends commander.Argument {
   constructor(name, description) {
     super(name, description);
     this.myProperty = 'MyArgument';
-  };
+  }
 }
 
 class MyCommand extends commander.Command {
   createArgument(name, description) {
     return new MyArgument(name, description);
-  };
+  }
 
   // createCommand for testing .command('sub <file>')
   createCommand(name) {

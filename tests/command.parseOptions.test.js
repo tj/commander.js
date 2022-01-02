@@ -19,7 +19,7 @@ describe('regression tests', () => {
       .action((id, cmd) => {
       });
     return program;
-  };
+  }
 
   // https://github.com/tj/commander.js/issues/1032
   test('when specify subcommand and argument then program.args not empty', () => {
@@ -54,7 +54,7 @@ describe('parseOptions', () => {
     program
       .action(() => { });
     return program;
-  };
+  }
 
   // Subcommands are just another potential operand as far as parseOptions is concerned, so limited testing of subcommand as such.
 
@@ -231,7 +231,7 @@ describe('Utility Conventions', () => {
     program
       .action(() => { });
     return program;
-  };
+  }
 
   test('when program has combo known boolean short flags then arg removed', () => {
     const program = createProgram();

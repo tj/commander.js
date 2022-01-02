@@ -103,7 +103,7 @@ test('when action is async then can await parseAsync', async() => {
   async function delay() {
     await new Promise(resolve => setTimeout(resolve, 100));
     asyncFinished = true;
-  };
+  }
   const program = new commander.Command();
   program
     .action(delay);
