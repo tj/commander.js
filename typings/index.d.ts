@@ -698,7 +698,7 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
-  aliases(aliases: string[]): this;
+  aliases(aliases: readonly string[]): this;
   /**
    * Get aliases for the command.
    */

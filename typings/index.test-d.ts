@@ -224,6 +224,7 @@ expectType<string>(program.alias());
 
 // aliases
 expectType<commander.Command>(program.aliases(['first-alias', 'second-alias']));
+expectType<commander.Command>(program.aliases(['first-alias', 'second-alias'] as const));
 expectType<string[]>(program.aliases());
 
 // usage
