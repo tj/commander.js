@@ -6,8 +6,6 @@ const javascriptSettings = {
   ],
   rules: {
     'no-else-return': ['error', { allowElseIf: false }],
-    'no-var': 'warn',
-    'one-var': 'off',
     'space-before-function-paren': ['error', 'never'],
     semi: ['error', 'always']
   }
@@ -28,8 +26,6 @@ const typescriptSettings = {
   ],
   rules: {
     'no-else-return': ['error', { allowElseIf: false }],
-    'no-var': 'warn',
-    'one-var': 'off',
     'space-before-function-paren': ['error', 'never'],
     semi: 'off',
     '@typescript-eslint/semi': ['error', 'always'],
