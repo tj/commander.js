@@ -50,9 +50,11 @@
     "@typescript-eslint/parser": "^4.27.0",
     "eslint": "^7.29.0",
     "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.3",
     "eslint-plugin-jest": "^24.3.6",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.2.0",
     "jest": "^27.0.4",
-    "standard": "^16.0.3",
     "ts-jest": "^27.0.3",
     "tsd": "^0.17.0",
     "typescript": "^4.3.4"
