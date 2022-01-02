@@ -7,7 +7,8 @@ import { expectType } from 'tsd';
 
 const program: commander.Command = new commander.Command();
 // @ts-expect-error Check that Command is strongly typed and does not allow arbitrary properties
-expectType<undefined>(program.silly); // <-- Error, hurrah!
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
+program.silly; // <-- Error, hurrah!
 
 // Check for exported global Command object
 expectType<commander.Command>(commander.program);
