@@ -72,7 +72,7 @@ export class Argument {
    * Make argument optional.
    */
   argOptional(): this;
-  }
+}
 
 export class Option {
   flags: string;
@@ -109,7 +109,7 @@ export class Option {
    * new Option('--donate [amount]').preset('20').argParser(parseFloat);
    * ```
    */
-   preset(arg: unknown): this;
+  preset(arg: unknown): this;
 
   /**
    * Set environment variable to check for option value.
@@ -158,8 +158,7 @@ export class Option {
    *
    * Options are one of boolean, negated, required argument, or optional argument.
    */
-   isBoolean(): boolean;
-
+  isBoolean(): boolean;
 }
 
 export class Help {
@@ -340,8 +339,8 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
-    argument<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
-    argument(name: string, description?: string, defaultValue?: unknown): this;
+  argument<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
+  argument(name: string, description?: string, defaultValue?: unknown): this;
 
   /**
    * Define argument syntax for command, adding a prepared argument.
@@ -439,7 +438,7 @@ export class Command {
    */
   showSuggestionAfterError(displaySuggestion?: boolean): this;
 
-   /**
+  /**
    * Register callback `fn` for the command.
    *
    * @example
@@ -562,7 +561,7 @@ export class Command {
    */
   getOptionValueSource(key: string): OptionValueSource;
 
-   /**
+  /**
    * Alter parsing of short flags with optional values.
    *
    * @example
@@ -759,7 +758,7 @@ export class Command {
    */
   executableDir(): string;
 
-   /**
+  /**
    * Output help information for this command.
    *
    * Outputs built-in help, and custom text added using `.addHelpText()`.
