@@ -19,13 +19,14 @@
     "url": "https://github.com/tj/commander.js.git"
   },
   "scripts": {
-    "lint": "eslint index.js esm.mjs \"lib/*.js\" \"tests/**/*.js\"",
-    "typescript-lint": "eslint typings/*.ts tests/*.ts",
+    "lint": "npm run lint:javascript && npm run lint:typescript",
+    "lint:javascript": "eslint index.js esm.mjs \"lib/*.js\" \"tests/**/*.js\"",
+    "lint:typescript": "eslint typings/*.ts tests/*.ts",
     "test": "jest && npm run test-typings",
     "test-esm": "node --experimental-modules ./tests/esm-imports-test.mjs",
     "test-typings": "tsd",
     "typescript-checkJS": "tsc --allowJS --checkJS index.js lib/*.js --noEmit",
-    "test-all": "npm run test && npm run lint && npm run typescript-lint && npm run typescript-checkJS && npm run test-esm"
+    "test-all": "npm run test && npm run lint && npm run typescript-checkJS && npm run test-esm"
   },
   "files": [
     "index.js",
