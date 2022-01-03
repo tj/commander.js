@@ -58,6 +58,12 @@ describe('Command methods that should return this for chaining', () => {
     expect(result).toBe(program);
   });
 
+  test('when call .addCommonOption() then returns this', () => {
+    const program = new Command();
+    const result = program.addCommonOption(new Option('-e'));
+    expect(result).toBe(program);
+  });
+
   test('when call .option() then returns this', () => {
     const program = new Command();
     const result = program.option('-e');
@@ -200,6 +206,13 @@ describe('Command methods that should return this for chaining', () => {
     const program = new Command();
     const cmd = new Command();
     const result = cmd.copyInheritedSettings(program);
+    expect(result).toBe(cmd);
+  });
+
+  test('when call .copyCommonOptions() then returns this', () => {
+    const program = new Command();
+    const cmd = new Command();
+    const result = cmd.copyCommonOptions(program);
     expect(result).toBe(cmd);
   });
 
