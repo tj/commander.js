@@ -187,6 +187,7 @@ expectType<commander.Command>(program.parse(process.argv));
 expectType<commander.Command>(program.parse(['node', 'script.js'], { from: 'node' }));
 expectType<commander.Command>(program.parse(['node', 'script.js'], { from: 'electron' }));
 expectType<commander.Command>(program.parse(['--option'], { from: 'user' }));
+expectType<commander.Command>(program.parse(['node', 'script.js'] as const));
 
 // parseAsync, same tests as parse
 expectType<Promise<commander.Command>>(program.parseAsync());
@@ -194,6 +195,7 @@ expectType<Promise<commander.Command>>(program.parseAsync(process.argv));
 expectType<Promise<commander.Command>>(program.parseAsync(['node', 'script.js'], { from: 'node' }));
 expectType<Promise<commander.Command>>(program.parseAsync(['node', 'script.js'], { from: 'electron' }));
 expectType<Promise<commander.Command>>(program.parseAsync(['--option'], { from: 'user' }));
+expectType<Promise<commander.Command>>(program.parseAsync(['node', 'script.js'] as const));
 
 // parseOptions (and ParseOptionsResult)
 expectType<{operands: string[]; unknown: string[]}>(program.parseOptions(['node', 'script.js', 'hello']));
@@ -224,6 +226,7 @@ expectType<string>(program.alias());
 
 // aliases
 expectType<commander.Command>(program.aliases(['first-alias', 'second-alias']));
+expectType<commander.Command>(program.aliases(['first-alias', 'second-alias'] as const));
 expectType<string[]>(program.aliases());
 
 // usage

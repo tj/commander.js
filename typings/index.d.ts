@@ -626,7 +626,7 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
-  parse(argv?: string[], options?: ParseOptions): this;
+  parse(argv?: readonly string[], options?: ParseOptions): this;
 
   /**
    * Parse `argv`, setting options and invoking commands when defined.
@@ -645,7 +645,7 @@ export class Command {
    *
    * @returns Promise
    */
-  parseAsync(argv?: string[], options?: ParseOptions): Promise<this>;
+  parseAsync(argv?: readonly string[], options?: ParseOptions): Promise<this>;
 
   /**
    * Parse options from `argv` removing known options,
@@ -698,7 +698,7 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
-  aliases(aliases: string[]): this;
+  aliases(aliases: readonly string[]): this;
   /**
    * Get aliases for the command.
    */
