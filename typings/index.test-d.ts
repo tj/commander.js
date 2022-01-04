@@ -1,5 +1,5 @@
 import * as commander from './index';
-import {expectType} from 'tsd';
+import { expectType } from 'tsd';
 
 // We are are not just checking return types here, we are also implicitly checking that the expected syntax is allowed.
 
@@ -7,6 +7,7 @@ import {expectType} from 'tsd';
 
 const program: commander.Command = new commander.Command();
 // @ts-expect-error Check that Command is strongly typed and does not allow arbitrary properties
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 program.silly; // <-- Error, hurrah!
 
 // Check for exported global Command object
@@ -204,7 +205,7 @@ expectType<{operands: string[]; unknown: string[]}>(program.parseOptions(['node'
 const opts = program.opts();
 expectType<commander.OptionValues>(opts);
 expectType(opts.foo);
-expectType(opts['bar']);
+expectType(opts.bar);
 
 // opts with generics
 interface MyCheeseOption {
@@ -218,7 +219,7 @@ expectType(myCheeseOption.foo);
 // description
 expectType<commander.Command>(program.description('my description'));
 expectType<string>(program.description());
-expectType<commander.Command>(program.description('my description of command with arg foo', { foo: 'foo description'})); // deprecated
+expectType<commander.Command>(program.description('my description of command with arg foo', { foo: 'foo description' })); // deprecated
 
 // alias
 expectType<commander.Command>(program.alias('my alias'));
@@ -245,8 +246,11 @@ expectType<commander.Command>(program.executableDir(__dirname));
 expectType<string>(program.executableDir());
 
 // outputHelp
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 expectType<void>(program.outputHelp());
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 expectType<void>(program.outputHelp((str: string) => { return str; }));
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 expectType<void>(program.outputHelp({ error: true }));
 
 // help

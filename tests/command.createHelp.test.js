@@ -10,7 +10,7 @@ test('when override createCommand then affects help', () => {
   class MyCommand extends commander.Command {
     createHelp() {
       return Object.assign(new MyHelp(), this.configureHelp());
-    };
+    }
   }
 
   const program = new MyCommand();

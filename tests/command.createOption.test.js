@@ -4,13 +4,13 @@ class MyOption extends commander.Option {
   constructor(flags, description) {
     super(flags, description);
     this.myProperty = 'MyOption';
-  };
+  }
 }
 
 class MyCommand extends commander.Command {
   createOption(flags, description) {
     return new MyOption(flags, description);
-  };
+  }
 }
 
 test('when override createOption then used for option()', () => {
