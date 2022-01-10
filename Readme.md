@@ -186,7 +186,7 @@ By default options on the command line are not positional, and can be specified 
 
 There are additional related routines for when `.opts()` is not enough:
 
-- `.optsWithGlobals()` returns the command option values merged with the global options from the program (and intermediate commands)
+- `.optsWithGlobals()` returns merged local and global option values
 - `.getOptionValue()` and `.setOptionValue()` work with a single option value
 - `.getOptionValueSource()` and `.setOptionValueWithSource()` include where the option value came from
 
