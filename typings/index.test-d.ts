@@ -216,6 +216,18 @@ expectType<string>(myCheeseOption.cheese);
 // @ts-expect-error Check that options strongly typed and does not allow arbitrary properties
 expectType(myCheeseOption.foo);
 
+// optsWithGlobals
+const optsWithGlobals = program.optsWithGlobals();
+expectType<commander.OptionValues>(optsWithGlobals);
+expectType(optsWithGlobals.foo);
+expectType(optsWithGlobals.bar);
+
+// optsWithGlobals with generics
+const myCheeseOptionWithGlobals = program.optsWithGlobals<MyCheeseOption>();
+expectType<string>(myCheeseOptionWithGlobals.cheese);
+// @ts-expect-error Check that options strongly typed and does not allow arbitrary properties
+expectType(myCheeseOptionWithGlobals.foo);
+
 // description
 expectType<commander.Command>(program.description('my description'));
 expectType<string>(program.description());

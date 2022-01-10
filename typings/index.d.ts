@@ -664,6 +664,12 @@ export class Command {
   opts<T extends OptionValues>(): T;
 
   /**
+   * Return an object containing options as key-value pairs, merging the local options with
+   * the global options from the program (and intermediate commands).
+   */
+  optsWithGlobals<T extends OptionValues>(): T;
+
+  /**
    * Set the description.
    *
    * @returns `this` command for chaining
