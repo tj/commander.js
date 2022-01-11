@@ -659,9 +659,14 @@ export class Command {
   parseOptions(argv: string[]): ParseOptionsResult;
 
   /**
-   * Return an object containing options as key-value pairs
+   * Return an object containing local option values as key-value pairs
    */
   opts<T extends OptionValues>(): T;
+
+  /**
+   * Return an object containing merged local and global option values as key-value pairs.
+   */
+  optsWithGlobals<T extends OptionValues>(): T;
 
   /**
    * Set the description.
