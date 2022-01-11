@@ -31,6 +31,13 @@ export class InvalidArgumentError extends CommanderError {
 }
 export { InvalidArgumentError as InvalidOptionArgumentError }; // deprecated old name
 
+export interface ErrorOptions { // optional parameter for error()
+  /** an id string representing the error */
+  code?: string;
+  /** suggested exit code which could be used with process.exit */
+  exitCode?: number;
+}
+
 export class Argument {
   description: string;
   required: boolean;
@@ -386,6 +393,11 @@ export class Command {
    * Register callback to use as replacement for calling process.exit.
    */
   exitOverride(callback?: (err: CommanderError) => never|void): this;
+
+  /**
+   * Display error message and exit (or call exitOverride).
+   */
+  error(message: string, errorOptions?: ErrorOptions): never;
 
   /**
    * You can customise the help with a subclass of Help by overriding createHelp,
