@@ -1008,7 +1008,7 @@ If you are using VSCode to debug executable subcommands you need to set the `"au
 
 This routine is available to invoke the Commander error handling for your own error conditions. (See also the next section about exit handling.)
 
-As well as an error message, you can optionally specify the `exitCode` (used with `process.exit`)
+As well as the error message, you can optionally specify the `exitCode` (used with `process.exit`)
 and `code` (used with `CommanderError`).
 
 ```js
