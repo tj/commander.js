@@ -75,6 +75,12 @@ expectType<commander.Command>(program.exitOverride((err): void => {
   }
 }));
 
+// error
+expectType<never>(program.error('Goodbye'));
+expectType<never>(program.error('Goodbye', { code: 'my.error' }));
+expectType<never>(program.error('Goodbye', { exitCode: 2 }));
+expectType<never>(program.error('Goodbye', { code: 'my.error', exitCode: 2 }));
+
 // hook
 expectType<commander.Command>(program.hook('preAction', () => {}));
 expectType<commander.Command>(program.hook('postAction', () => {}));

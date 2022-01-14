@@ -47,6 +47,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [createCommand()](#createcommand)
     - [Node options such as `--harmony`](#node-options-such-as---harmony)
     - [Debugging stand-alone executable subcommands](#debugging-stand-alone-executable-subcommands)
+    - [Display error](#display-error)
     - [Override exit and output handling](#override-exit-and-output-handling)
     - [Additional documentation](#additional-documentation)
   - [Support](#support)
@@ -1002,6 +1003,18 @@ If you are using the node inspector for [debugging](https://nodejs.org/en/docs/g
 the inspector port is incremented by 1 for the spawned subcommand.
 
 If you are using VSCode to debug executable subcommands you need to set the `"autoAttachChildProcesses": true` flag in your launch.json configuration.
+
+### Display error
+
+This routine is available to invoke the Commander error handling for your own error conditions. (See also the next section about exit handling.)
+
+As well as the error message, you can optionally specify the `exitCode` (used with `process.exit`)
+and `code` (used with `CommanderError`).
+
+```js
+program.exit('Password must be longer than four characters');
+program.exit('Custom processing has failed', { exitCode: 2, code: 'my.custom.error' });
+```
 
 ### Override exit and output handling
 

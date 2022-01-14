@@ -331,6 +331,21 @@ describe('.exitOverride and error details', () => {
 
     expectCommanderError(caughtErr, 1, 'commander.invalidArgument', "error: command-argument value 'green' is invalid for argument 'n'. NO");
   });
+
+  test('when call error() then throw CommanderError', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride();
+
+    let caughtErr;
+    try {
+      program.error('message');
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expectCommanderError(caughtErr, 1, 'commander.error', 'message');
+  });
 });
 
 test('when no override and error then exit(1)', () => {
