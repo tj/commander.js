@@ -1012,8 +1012,8 @@ As well as the error message, you can optionally specify the `exitCode` (used wi
 and `code` (used with `CommanderError`).
 
 ```js
-program.exit('Password must be longer than four characters');
-program.exit('Custom processing has failed', { exitCode: 2, code: 'my.custom.error' });
+program.error('Password must be longer than four characters');
+program.error('Custom processing has failed', { exitCode: 2, code: 'my.custom.error' });
 ```
 
 ### Override exit and output handling
