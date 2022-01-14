@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [9.0.0-1] (2022-01-15)
+
+### Added
+
+- .`error()` for generating errors from client code just like Commander generated errors, with support for  `.configureOutput()`, `.exitOverride()`, and `.showHelpAfterError()` ([#1675])
+- `.optsWithGlobals()` to return merged local and global options ([#1671])
+
 ## [9.0.0-0] (2021-12-22)
 
 ### Added
@@ -1012,6 +1019,8 @@ program
 [#1655]: https://github.com/tj/commander.js/pull/1655
 [#1657]: https://github.com/tj/commander.js/pull/1657
 [#1659]: https://github.com/tj/commander.js/pull/1659
+[#1671]: https://github.com/tj/commander.js/pull/1671
+[#1675]: https://github.com/tj/commander.js/pull/1675
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
@@ -1090,6 +1099,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[9.0.0-1]: https://github.com/tj/commander.js/compare/v9.0.0-0...v9.0.0-1
 [9.0.0-0]: https://github.com/tj/commander.js/compare/v8.3.0...v9.0.0-0
 [8.3.0]: https://github.com/tj/commander.js/compare/v8.2.0...v8.3.0
 [8.2.0]: https://github.com/tj/commander.js/compare/v8.1.0...v8.2.0
