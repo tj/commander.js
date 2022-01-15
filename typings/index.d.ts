@@ -119,6 +119,11 @@ export class Option {
   preset(arg: unknown): this;
 
   /**
+   * Set options names that are exclusive to this option.
+   */
+  exclusive(names: string[]): this;
+
+  /**
    * Set environment variable to check for option value.
    * Priority order of option values is default < env < cli
    */
