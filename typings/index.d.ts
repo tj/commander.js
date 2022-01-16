@@ -61,7 +61,7 @@ export class Argument {
   /**
    * Only allow argument value to be one of choices.
    */
-  choices(values: string[]): this;
+  choices(values: readonly string[]): this;
 
   /**
    * Make option-argument required.
