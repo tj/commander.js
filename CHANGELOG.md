@@ -8,14 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
-## [9.0.0-1] (2022-01-15)
-
-### Added
-
-- .`error()` for generating errors from client code just like Commander generated errors, with support for  `.configureOutput()`, `.exitOverride()`, and `.showHelpAfterError()` ([#1675])
-- `.optsWithGlobals()` to return merged local and global options ([#1671])
-
-## [9.0.0-0] (2021-12-22)
+## [9.0.0] (2022-01-28)
 
 ### Added
 
@@ -23,6 +16,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Option.preset() allows specifying value/arg for option when used without option-argument (especially optional, but also boolean option) ([#1652])
 - `.executableDir()` for custom search for subcommands ([#1571])
 - throw with helpful message if pass `Option` to `.option()` or `.requiredOption()` ([#1655])
+- .`error()` for generating errors from client code just like Commander generated errors, with support for  `.configureOutput()`, `.exitOverride()`, and `.showHelpAfterError()` ([#1675])
+- `.optsWithGlobals()` to return merged local and global options ([#1671])
 
 ### Changed
 
@@ -42,6 +37,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 - *Breaking:* removed internal fallback to `require.main.filename` when script not known from arguments passed to `.parse()` (can supply details using `.name()`, and `.executableDir()` or `executableFile`) ([#1571])
+
+
+## [9.0.0-1] (2022-01-15)
+
+(Released in 9.0.0)
+
+## [9.0.0-0] (2021-12-22)
+
+(Released in 9.0.0)
 
 ## [8.3.0] (2021-10-22)
 
@@ -1099,6 +1103,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[9.0.0]: https://github.com/tj/commander.js/compare/v8.3.0...v9.0.0
 [9.0.0-1]: https://github.com/tj/commander.js/compare/v9.0.0-0...v9.0.0-1
 [9.0.0-0]: https://github.com/tj/commander.js/compare/v8.3.0...v9.0.0-0
 [8.3.0]: https://github.com/tj/commander.js/compare/v8.2.0...v8.3.0
