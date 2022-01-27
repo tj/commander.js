@@ -29,6 +29,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - use command name as prefix for subcommand stand-alone executable name (with fallback to script name for backwards compatibility) ([#1571])
 - allow absolute path with `executableFile` ([#1571])
 - removed restriction that nested subcommands must specify `executableFile` ([#1571])
+- TypeScript: allow passing readonly string array to `.choices()` [(#1667)]
+- TypeScript: allow passing readonly string array to `.parse()`, `.parseAsync()`, `.aliases()` [(#1669)]
 
 ### Fixed
 
@@ -1023,6 +1025,8 @@ program
 [#1655]: https://github.com/tj/commander.js/pull/1655
 [#1657]: https://github.com/tj/commander.js/pull/1657
 [#1659]: https://github.com/tj/commander.js/pull/1659
+[#1667]: https://github.com/tj/commander.js/pull/1667
+[#1669]: https://github.com/tj/commander.js/pull/1669
 [#1671]: https://github.com/tj/commander.js/pull/1671
 [#1675]: https://github.com/tj/commander.js/pull/1675
 
