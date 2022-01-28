@@ -6,10 +6,10 @@ const javascriptSettings = {
   ],
   rules: {
     'no-else-return': ['error', { allowElseIf: false }],
-    'no-var': 'warn',
-    'one-var': 'off',
     'space-before-function-paren': ['error', 'never'],
-    semi: ['error', 'always']
+    // manual "semistandard" settings
+    semi: ['error', 'always'],
+    'no-extra-semi': 'error'
   }
 };
 
@@ -22,17 +22,12 @@ const typescriptSettings = {
     '@typescript-eslint'
   ],
   extends: [
-    'eslint:recommended',
-    'plugin:@typescript-eslint/eslint-recommended',
-    'plugin:@typescript-eslint/recommended'
+    'standard-with-typescript'
   ],
   rules: {
     'no-else-return': ['error', { allowElseIf: false }],
-    'no-var': 'warn',
-    'one-var': 'off',
-    'space-before-function-paren': ['error', 'never'],
-    semi: 'off',
-    '@typescript-eslint/semi': ['error', 'always'],
+    'space-before-function-paren': 'off',
+    '@typescript-eslint/space-before-function-paren': ['error', 'never'],
     '@typescript-eslint/member-delimiter-style': [
       'error',
       {
@@ -46,9 +41,11 @@ const typescriptSettings = {
         }
       }
     ],
-    // Add some "standard" rules by hand, as eslint-config-standard-with-typescript painful to keep up to date
-    quotes: ['error', 'single'],
-    'no-trailing-spaces': 'error'
+    // manual "semistandard" settings
+    semi: 'off',
+    '@typescript-eslint/semi': ['error', 'always'],
+    'no-extra-semi': 'off',
+    '@typescript-eslint/no-extra-semi': ['error']
   }
 };
 

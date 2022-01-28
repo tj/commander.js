@@ -6,7 +6,7 @@ import * as commander from '../';
 // Similar tests to esm-imports-test.js
 
 // eslint-disable-next-line @typescript-eslint/ban-types
-function checkClass(obj: object, name: string) {
+function checkClass(obj: object, name: string): void {
   expect(typeof obj).toEqual('object');
   expect(obj.constructor.name).toEqual(name);
 }
@@ -42,7 +42,6 @@ test('InvalidArgumentError', () => {
 test('InvalidOptionArgumentError', () => { // Deprecated
   checkClass(new InvalidOptionArgumentError('failed'), 'InvalidArgumentError');
 });
-
 
 test('Help', () => {
   checkClass(new Help(), 'Help');

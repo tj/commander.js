@@ -15,7 +15,7 @@ function getSuggestion(program, arg) {
 
   const match = message.match(/Did you mean (one of )?(.*)\?/);
   return match ? match[2] : null;
-};
+}
 
 test('when unknown command and showSuggestionAfterError() then show suggestion', () => {
   const program = new Command();

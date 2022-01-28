@@ -24,7 +24,7 @@ function getSuggestion(program, arg) {
 
   const match = message.match(/Did you mean (one of )?(.*)\?/);
   return match ? match[2] : null;
-};
+}
 
 test.each([
   ['yyy', ['zzz'], null, 'none similar'],

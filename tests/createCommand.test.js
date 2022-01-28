@@ -12,12 +12,12 @@ test('when subclass overrides createCommand then subcommand is subclass', () => 
     constructor(name) {
       super();
       this.myProperty = 'myClass';
-    };
+    }
 
     createCommand(name) {
       return new MyClass(name);
-    };
-  };
+    }
+  }
   const program = new MyClass();
   const sub = program.command('sub');
   expect(sub.myProperty).toEqual('myClass');

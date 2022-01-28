@@ -22,7 +22,7 @@ describe(".command('*')", () => {
     try {
       program.parse(['node', 'test']);
     } catch (err) {
-      ;
+
     }
     expect(mockAction).not.toHaveBeenCalled();
     writeMock.mockRestore();

@@ -59,12 +59,20 @@ describe('option with optional value, with default', () => {
     expect(program.opts().cheese).toBe(cheeseType);
   });
 
-  test('when option specified without value then value is default', () => {
+  test('when option specified without value then value is true', () => {
     const defaultValue = 'default';
     const program = new commander.Command();
     program
       .option('--cheese [type]', 'cheese type', defaultValue);
     program.parse(['node', 'test', '--cheese']);
-    expect(program.opts().cheese).toBe(defaultValue);
+    expect(program.opts().cheese).toBe(true);
+  });
+
+  test('when option specified without value and preset then value is preset', () => {
+    const program = new commander.Command();
+    program
+      .addOption(new commander.Option('--cheese [type]').preset('preset'));
+    program.parse(['node', 'test', '--cheese']);
+    expect(program.opts().cheese).toBe('preset');
   });
 });

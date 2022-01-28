@@ -1,5 +1,5 @@
 import * as commander from './index';
-import {expectType} from 'tsd';
+import { expectType } from 'tsd';
 
 // We are are not just checking return types here, we are also implicitly checking that the expected syntax is allowed.
 
@@ -7,6 +7,7 @@ import {expectType} from 'tsd';
 
 const program: commander.Command = new commander.Command();
 // @ts-expect-error Check that Command is strongly typed and does not allow arbitrary properties
+// eslint-disable-next-line @typescript-eslint/no-unused-expressions
 program.silly; // <-- Error, hurrah!
 
 // Check for exported global Command object
@@ -73,6 +74,12 @@ expectType<commander.Command>(program.exitOverride((err): void => {
     // Async callback from spawn events, not useful to throw.
   }
 }));
+
+// error
+expectType<never>(program.error('Goodbye'));
+expectType<never>(program.error('Goodbye', { code: 'my.error' }));
+expectType<never>(program.error('Goodbye', { exitCode: 2 }));
+expectType<never>(program.error('Goodbye', { code: 'my.error', exitCode: 2 }));
 
 // hook
 expectType<commander.Command>(program.hook('preAction', () => {}));
@@ -187,6 +194,7 @@ expectType<commander.Command>(program.parse(process.argv));
 expectType<commander.Command>(program.parse(['node', 'script.js'], { from: 'node' }));
 expectType<commander.Command>(program.parse(['node', 'script.js'], { from: 'electron' }));
 expectType<commander.Command>(program.parse(['--option'], { from: 'user' }));
+expectType<commander.Command>(program.parse(['node', 'script.js'] as const));
 
 // parseAsync, same tests as parse
 expectType<Promise<commander.Command>>(program.parseAsync());
@@ -194,6 +202,7 @@ expectType<Promise<commander.Command>>(program.parseAsync(process.argv));
 expectType<Promise<commander.Command>>(program.parseAsync(['node', 'script.js'], { from: 'node' }));
 expectType<Promise<commander.Command>>(program.parseAsync(['node', 'script.js'], { from: 'electron' }));
 expectType<Promise<commander.Command>>(program.parseAsync(['--option'], { from: 'user' }));
+expectType<Promise<commander.Command>>(program.parseAsync(['node', 'script.js'] as const));
 
 // parseOptions (and ParseOptionsResult)
 expectType<{operands: string[]; unknown: string[]}>(program.parseOptions(['node', 'script.js', 'hello']));
@@ -202,7 +211,7 @@ expectType<{operands: string[]; unknown: string[]}>(program.parseOptions(['node'
 const opts = program.opts();
 expectType<commander.OptionValues>(opts);
 expectType(opts.foo);
-expectType(opts['bar']);
+expectType(opts.bar);
 
 // opts with generics
 interface MyCheeseOption {
@@ -213,10 +222,22 @@ expectType<string>(myCheeseOption.cheese);
 // @ts-expect-error Check that options strongly typed and does not allow arbitrary properties
 expectType(myCheeseOption.foo);
 
+// optsWithGlobals
+const optsWithGlobals = program.optsWithGlobals();
+expectType<commander.OptionValues>(optsWithGlobals);
+expectType(optsWithGlobals.foo);
+expectType(optsWithGlobals.bar);
+
+// optsWithGlobals with generics
+const myCheeseOptionWithGlobals = program.optsWithGlobals<MyCheeseOption>();
+expectType<string>(myCheeseOptionWithGlobals.cheese);
+// @ts-expect-error Check that options strongly typed and does not allow arbitrary properties
+expectType(myCheeseOptionWithGlobals.foo);
+
 // description
 expectType<commander.Command>(program.description('my description'));
 expectType<string>(program.description());
-expectType<commander.Command>(program.description('my description of command with arg foo', { foo: 'foo description'})); // deprecated
+expectType<commander.Command>(program.description('my description of command with arg foo', { foo: 'foo description' })); // deprecated
 
 // alias
 expectType<commander.Command>(program.alias('my alias'));
@@ -224,6 +245,7 @@ expectType<string>(program.alias());
 
 // aliases
 expectType<commander.Command>(program.aliases(['first-alias', 'second-alias']));
+expectType<commander.Command>(program.aliases(['first-alias', 'second-alias'] as const));
 expectType<string[]>(program.aliases());
 
 // usage
@@ -234,9 +256,19 @@ expectType<string>(program.usage());
 expectType<commander.Command>(program.name('my-name'));
 expectType<string>(program.name());
 
+// nameFromFilename
+expectType<commander.Command>(program.nameFromFilename(__filename));
+
+// executableDir
+expectType<commander.Command>(program.executableDir(__dirname));
+expectType<string>(program.executableDir());
+
 // outputHelp
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 expectType<void>(program.outputHelp());
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 expectType<void>(program.outputHelp((str: string) => { return str; }));
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 expectType<void>(program.outputHelp({ error: true }));
 
 // help
@@ -355,6 +387,10 @@ const baseOption = new commander.Option('-f,--foo', 'foo description');
 expectType<commander.Option>(baseOption.default(3));
 expectType<commander.Option>(baseOption.default(60, 'one minute'));
 
+// preset
+expectType<commander.Option>(baseOption.preset(123));
+expectType<commander.Option>(baseOption.preset('abc'));
+
 // env
 expectType<commander.Option>(baseOption.env('PORT'));
 
@@ -376,12 +412,16 @@ expectType<commander.Option>(baseOption.hideHelp(false));
 
 // choices
 expectType<commander.Option>(baseOption.choices(['a', 'b']));
+expectType<commander.Option>(baseOption.choices(['a', 'b'] as const));
 
 // name
 expectType<string>(baseOption.name());
 
 // attributeName
 expectType<string>(baseOption.attributeName());
+
+// isBoolean
+expectType<boolean>(baseOption.isBoolean());
 
 // Argument properties
 const baseArgument = new commander.Argument('<foo');
@@ -404,6 +444,7 @@ expectType<commander.Argument>(baseArgument.argParser((value: string, previous: 
 
 // choices
 expectType<commander.Argument>(baseArgument.choices(['a', 'b']));
+expectType<commander.Argument>(baseArgument.choices(['a', 'b'] as const));
 
 // argRequired
 expectType<commander.Argument>(baseArgument.argRequired());

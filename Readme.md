@@ -11,6 +11,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
 
 - [Commander.js](#commanderjs)
   - [Installation](#installation)
+  - [Quick Start](#quick-start)
   - [Declaring _program_ variable](#declaring-program-variable)
   - [Options](#options)
     - [Common option types, boolean and value](#common-option-types-boolean-and-value)
@@ -32,7 +33,8 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Custom help](#custom-help)
     - [Display help after errors](#display-help-after-errors)
     - [Display help from code](#display-help-from-code)
-    - [.usage and .name](#usage-and-name)
+    - [.name](#name)
+    - [.usage](#usage)
     - [.helpOption(flags, description)](#helpoptionflags-description)
     - [.addHelpCommand()](#addhelpcommand)
     - [More configuration](#more-configuration-2)
@@ -45,9 +47,9 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [createCommand()](#createcommand)
     - [Node options such as `--harmony`](#node-options-such-as---harmony)
     - [Debugging stand-alone executable subcommands](#debugging-stand-alone-executable-subcommands)
+    - [Display error](#display-error)
     - [Override exit and output handling](#override-exit-and-output-handling)
     - [Additional documentation](#additional-documentation)
-  - [Examples](#examples)
   - [Support](#support)
     - [Commander for enterprise](#commander-for-enterprise)
 
@@ -59,36 +61,111 @@ For information about terms used in this document see: [terminology](./docs/term
 npm install commander
 ```
 
+## Quick Start
+
+You write code to describe your command line interface.
+Commander looks after parsing the arguments into options and command-arguments,
+displays usage errors for problems, and implements a help system.
+
+Commander is strict and displays an error for unrecognised options.
+The two most used option types are a boolean option, and an option which takes its value from the following argument.
+
+Example file: [split.js](./examples/split.js)
+
+```js
+const { program } = require('commander');
+
+program
+  .option('--first')
+  .option('-s, --separator <char>');
+
+program.parse();
+
+const options = program.opts();
+const limit = options.first ? 1 : undefined;
+console.log(program.args[0].split(options.separator, limit));
+```
+
+```sh
+$ node split.js -s / --fits a/b/c
+error: unknown option '--fits'
+(Did you mean --first?)
+$ node split.js -s / --first a/b/c
+[ 'a' ]
+```
+
+Here is a more complete program using a subcommand and with descriptions for the help. In a multi-command program, you have an action handler for each command (or stand-alone executables for the commands).
+
+Example file: [string-util.js](./examples/string-util.js)
+
+```js
+const { Command } = require('commander');
+const program = new Command();
+
+program
+  .name('string-util')
+  .description('CLI to some JavaScript string utilities')
+  .version('0.8.0');
+
+program.command('split')
+  .description('Split a string into substrings and display as an array')
+  .argument('<string>', 'string to split')
+  .option('--first', 'display just the first substring')
+  .option('-s, --separator <char>', 'separator character', ',')
+  .action((str, options) => {
+    const limit = options.first ? 1 : undefined;
+    console.log(str.split(options.separator, limit));
+  });
+
+program.parse();
+```
+
+```sh
+$ node string-util.js help split
+Usage: string-util split [options] <string>
+
+Split a string into substrings and display as an array.
+
+Arguments:
+  string                  string to split
+
+Options:
+  --first                 display just the first substring
+  -s, --separator <char>  separator character (default: ",")
+  -h, --help              display help for command
+
+$ node string-util.js split --separator=/ a/b/c
+[ 'a', 'b', 'c' ]
+```
+
+More samples can be found in the [examples](https://github.com/tj/commander.js/tree/master/examples) directory.
+
 ## Declaring _program_ variable
 
 Commander exports a global object which is convenient for quick programs.
 This is used in the examples in this README for brevity.
 
 ```js
+// CommonJS (.cjs)
 const { program } = require('commander');
-program.version('0.0.1');
 ```
 
 For larger programs which may use commander in multiple ways, including unit testing, it is better to create a local Command object to use.
 
 ```js
+// CommonJS (.cjs)
 const { Command } = require('commander');
 const program = new Command();
-program.version('0.0.1');
 ```
 
-For named imports in ECMAScript modules, import from `commander/esm.mjs`.
-
 ```js
-// index.mjs
-import { Command } from 'commander/esm.mjs';
+// ECMAScript (.mjs)
+import { Command } from 'commander';
 const program = new Command();
 ```
 
-And in TypeScript:
-
 ```ts
-// index.ts
+// TypeScript (.ts)
 import { Command } from 'commander';
 const program = new Command();
 ```
@@ -98,8 +175,6 @@ const program = new Command();
 Options are defined with the `.option()` method, also serving as documentation for the options. Each option can have a short flag (single character) and a long name, separated by a comma or space or vertical bar ('|').
 
 The parsed options can be accessed by calling `.opts()` on a `Command` object, and are passed to the action handler.
-(You can also use `.getOptionValue()` and `.setOptionValue()` to work with a single option value,
-and `.getOptionValueSource()` and `.setOptionValueWithSource()` when it matters where the option value came from.)
 
 Multi-word options such as "--template-engine" are camel-cased, becoming `program.opts().templateEngine` etc.
 
@@ -109,6 +184,12 @@ For example `-a -b -p 80` may be written as `-ab -p80` or even `-abp80`.
 You can use `--` to indicate the end of the options, and any remaining arguments will be used without being interpreted.
 
 By default options on the command line are not positional, and can be specified before or after other arguments.
+
+There are additional related routines for when `.opts()` is not enough:
+
+- `.optsWithGlobals()` returns merged local and global option values
+- `.getOptionValue()` and `.setOptionValue()` work with a single option value
+- `.getOptionValueSource()` and `.setOptionValueWithSource()` include where the option value came from
 
 ### Common option types, boolean and value
 
@@ -149,7 +230,7 @@ pizza details:
 
 ### Default option value
 
-You can specify a default value for an option which takes a value.
+You can specify a default value for an option.
 
 Example file: [options-defaults.js](./examples/options-defaults.js)
 
@@ -175,7 +256,7 @@ You can define a boolean option long name with a leading `no-` to set the option
 Defined alone this also makes the option true by default.
 
 If you define `--foo` first, adding `--no-foo` does not change the default value from what it would
-otherwise be. You can specify a default boolean value for a boolean option and it can be overridden on command line.
+otherwise be.
 
 Example file: [options-negatable.js](./examples/options-negatable.js)
 
@@ -315,7 +396,8 @@ program
   .addOption(new Option('-s, --secret').hideHelp())
   .addOption(new Option('-t, --timeout <delay>', 'timeout in seconds').default(60, 'one minute'))
   .addOption(new Option('-d, --drink <size>', 'drink size').choices(['small', 'medium', 'large']))
-  .addOption(new Option('-p, --port <number>', 'port number').env('PORT'));
+  .addOption(new Option('-p, --port <number>', 'port number').env('PORT'))
+  .addOption(new Option('--donate [amount]', 'optional donation in dollars').preset('20').argParser(parseFloat));
 ```
 
 ```bash
@@ -326,13 +408,14 @@ Options:
   -t, --timeout <delay>  timeout in seconds (default: one minute)
   -d, --drink <size>     drink cup size (choices: "small", "medium", "large")
   -p, --port <number>    port number (env: PORT)
+  --donate [amount]      optional donation in dollars (preset: 20)
   -h, --help             display help for command
 
 $ extra --drink huge
 error: option '-d, --drink <size>' argument 'huge' is invalid. Allowed choices are small, medium, large.
 
-$ PORT=80 extra 
-Options:  { timeout: 60, port: '80' }
+$ PORT=80 extra --donate
+Options:  { timeout: 60, donate: 20, port: '80' }
 ```
 
 ### Custom option processing
@@ -536,6 +619,20 @@ program
   });
 ```
 
+If you prefer, you can work with the command directly and skip declaring the parameters for the action handler. The `this` keyword is set to the running command and can be used from a function expression (but not from an arrow function).
+
+Example file: [action-this.js](./examples/action-this.js)
+
+```js
+program
+  .command('serve')
+  .argument('<script>')
+  .option('-p, --port <number>', 'port number', 80)
+  .action(function() {
+    console.error('Run script %s on port %s', this.args[0], this.opts().port);
+  });
+```
+
 You may supply an `async` action handler, in which case you call `.parseAsync` rather than `.parse`.
 
 ```js
@@ -555,8 +652,9 @@ pass more arguments than declared, but you can make this an error with `.allowEx
 ### Stand-alone executable (sub)commands
 
 When `.command()` is invoked with a description argument, this tells Commander that you're going to use stand-alone executables for subcommands.
-Commander will search the executables in the directory of the entry script (like `./examples/pm`) with the name `program-subcommand`, like `pm-install`, `pm-search`.
-You can specify a custom name with the `executableFile` configuration option.
+Commander will search the files in the directory of the entry script for a file with the name combination `command-subcommand`, like `pm-install` or `pm-search` in the example below. The search includes trying common file extensions, like `.js`.
+You may specify a custom name (and path) with the `executableFile` configuration option.
+You may specify a custom search directory for subcommands with `.executableDir()`.
 
 You handle the options for an executable (sub)command in the executable, and don't declare them at the top-level.
 
@@ -564,6 +662,7 @@ Example file: [pm](./examples/pm)
 
 ```js
 program
+  .name('pm')
   .version('0.1.0')
   .command('install [name]', 'install one or more packages')
   .command('search [query]', 'search with optional query')
@@ -713,10 +812,25 @@ error: unknown option '--hepl'
 
 `.helpInformation()`: get the built-in command help information as a string for processing or displaying yourself.
 
-### .usage and .name
+### .name
 
-These allow you to customise the usage description in the first line of the help. The name is otherwise
-deduced from the (full) program arguments. Given:
+The command name appears in the help, and is also used for locating stand-alone executable subcommands.
+
+You may specify the program name using `.name()` or in the Command constructor. For the program, Commander will
+fallback to using the script name from the full arguments passed into `.parse()`. However, the script name varies
+depending on how your program is launched so you may wish to specify it explicitly.
+
+```js
+program.name('pizza');
+const pm = new Command('pm');
+```
+
+Subcommands get a name when specified using `.command()`. If you create the subcommand yourself to use with `.addCommand()`,
+then set the name using `.name()` or in the Command constructor.
+
+### .usage
+
+This allows you to customise the usage description in the first line of the help. Given:
 
 ```js
 program
@@ -732,7 +846,7 @@ Usage: my-command [global options] command
 
 ### .helpOption(flags, description)
 
-By default every command has a help option. Override the default help flags and description. Pass false to disable the built-in help option.
+By default every command has a help option. You may change the default help flags and description. Pass false to disable the built-in help option.
 
 ```js
 program
@@ -890,6 +1004,18 @@ the inspector port is incremented by 1 for the spawned subcommand.
 
 If you are using VSCode to debug executable subcommands you need to set the `"autoAttachChildProcesses": true` flag in your launch.json configuration.
 
+### Display error
+
+This routine is available to invoke the Commander error handling for your own error conditions. (See also the next section about exit handling.)
+
+As well as the error message, you can optionally specify the `exitCode` (used with `process.exit`)
+and `code` (used with `CommanderError`).
+
+```js
+program.error('Password must be longer than four characters');
+program.error('Custom processing has failed', { exitCode: 2, code: 'my.custom.error' });
+```
+
 ### Override exit and output handling
 
 By default Commander calls `process.exit` when it detects errors, or after displaying the help or version. You can override
@@ -936,75 +1062,10 @@ There is more information available about:
 - [deprecated](./docs/deprecated.md) features still supported for backwards compatibility
 - [options taking varying arguments](./docs/options-taking-varying-arguments.md)
 
-## Examples
-
-In a single command program, you might not need an action handler.
-
-Example file: [pizza](./examples/pizza)
-
-```js
-const { program } = require('commander');
-
-program
-  .description('An application for pizza ordering')
-  .option('-p, --peppers', 'Add peppers')
-  .option('-c, --cheese <type>', 'Add the specified type of cheese', 'marble')
-  .option('-C, --no-cheese', 'You do not want any cheese');
-
-program.parse();
-
-const options = program.opts();
-console.log('you ordered a pizza with:');
-if (options.peppers) console.log('  - peppers');
-const cheese = !options.cheese ? 'no' : options.cheese;
-console.log('  - %s cheese', cheese);
-```
-
-In a multi-command program, you will have action handlers for each command (or stand-alone executables for the commands).
-
-Example file: [deploy](./examples/deploy)
-
-```js
-const { Command } = require('commander');
-const program = new Command();
-
-program
-  .version('0.0.1')
-  .option('-c, --config <path>', 'set config path', './deploy.conf');
-
-program
-  .command('setup [env]')
-  .description('run setup commands for all envs')
-  .option('-s, --setup_mode <mode>', 'Which setup mode to use', 'normal')
-  .action((env, options) => {
-    env = env || 'all';
-    console.log('read config from %s', program.opts().config);
-    console.log('setup for %s env(s) with %s mode', env, options.setup_mode);
-  });
-
-program
-  .command('exec <script>')
-  .alias('ex')
-  .description('execute the given remote cmd')
-  .option('-e, --exec_mode <mode>', 'Which exec mode to use', 'fast')
-  .action((script, options) => {
-    console.log('read config from %s', program.opts().config);
-    console.log('exec "%s" using %s mode and config %s', script, options.exec_mode, program.opts().config);
-  }).addHelpText('after', `
-Examples:
-  $ deploy exec sequential
-  $ deploy exec async`
-  );
-
-program.parse(process.argv);
-```
-
-More samples can be found in the [examples](https://github.com/tj/commander.js/tree/master/examples) directory.
-
 ## Support
 
-The current version of Commander is fully supported on Long Term Support versions of node, and requires at least node v12.
-(For older versions of node, use an older version of Commander.)
+The current version of Commander is fully supported on Long Term Support versions of Node.js, and requires at least v12.20.0.
+(For older versions of Node.js, use an older version of Commander.)
 
 The main forum for free and community support is the project [Issues](https://github.com/tj/commander.js/issues) on GitHub.
 
