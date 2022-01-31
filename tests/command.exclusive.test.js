@@ -7,9 +7,9 @@ describe('command with exclusive options', () => {
     program
       .exitOverride()
       .command('foo')
-      .option('-s, --silent', "Don't print anything")
+      .addOption(new commander.Option('-s, --silent', "Don't print anything").env('SILENT'))
       .addOption(
-        new commander.Option('-j, --json', 'Format output as json').exclusive([
+        new commander.Option('-j, --json', 'Format output as json').env('JSON').exclusive([
           'silent'
         ])
       )
@@ -18,14 +18,19 @@ describe('command with exclusive options', () => {
     return { program, actionMock };
   }
 
-  test('should call action if there are no explicit exlucsive options set', () => {
+  beforeEach(() => {
+    delete process.env.SILENT;
+    delete process.env.JSON;
+  });
+
+  test('should call action if there are no explicit exclusive options set', () => {
     const { program, actionMock } = makeProgram();
     program.parse('node test.js foo --json'.split(' '));
     expect(actionMock).toHaveBeenCalledTimes(1);
     expect(actionMock).toHaveBeenCalledWith({ json: true }, expect.any(Object));
   });
 
-  test('should call action when there are no implicit exlucsive options set', () => {
+  test('should call action when there are no implicit exclusive options set', () => {
     const { program, actionMock } = makeProgram();
     program.parse('node test.js foo --silent'.split(' '));
     expect(actionMock).toHaveBeenCalledTimes(1);
@@ -40,6 +45,47 @@ describe('command with exclusive options', () => {
 
     expect(() => {
       program.parse('node test.js foo --silent --json'.split(' '));
-    }).toThrow("error: option '-j, --json' cannot be used with '-s, --silent'");
+    }).toThrow("error: option '-j, --json' cannot be used with option '-s, --silent'");
+  });
+
+  test('should report the env variable as the exclusive option source, when exclusive option is set', () => {
+    const { program } = makeProgram();
+
+    process.env.SILENT = true;
+
+    expect(() => {
+      program.parse('node test.js foo --json'.split(' '));
+    }).toThrow("error: option '-j, --json' cannot be used with environment variable 'SILENT'");
+  });
+
+  test('should report the env variable as the configured option source, when configured option is set', () => {
+    const { program } = makeProgram();
+
+    process.env.JSON = true;
+
+    expect(() => {
+      program.parse('node test.js foo --silent'.split(' '));
+    }).toThrow("error: environment variable 'JSON' cannot be used with option '-s, --silent'");
+  });
+
+  test('should report both env variables as sources, when configured option and exclusive option are set', () => {
+    const { program } = makeProgram();
+
+    process.env.SILENT = true;
+    process.env.JSON = true;
+
+    expect(() => {
+      program.parse('node test.js foo'.split(' '));
+    }).toThrow("error: environment variable 'JSON' cannot be used with environment variable 'SILENT'");
+  });
+
+  test('should exit with error if default value is conflicting', () => {
+    const { program } = makeProgram();
+
+    program.commands[0].addOption(new commander.Option('-d, --debug', 'print debug logs').default(true).exclusive('silent'));
+
+    expect(() => {
+      program.parse('node test.js foo --silent'.split(' '));
+    }).toThrow("error: option 'debug' with default value cannot be used with option '-s, --silent'");
   });
 });

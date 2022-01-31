@@ -297,3 +297,11 @@ test('when argument has choices and default then both included in helpInformatio
   const helpInformation = program.helpInformation();
   expect(helpInformation).toMatch('(choices: "red", "blue", default: "red")');
 });
+
+test('when option has exclusive names they are included in the helpInformation', () => {
+  const program = new commander.Command();
+  program
+    .addOption(new commander.Option('-p, --port <portNumber>').exclusive(['disable-server', 'use-default-port']));
+  const helpInformation = program.helpInformation();
+  expect(helpInformation).toMatch('(exclusive: disable-server, use-default-port)');
+});
