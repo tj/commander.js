@@ -218,6 +218,9 @@ export class Help {
 
   /** Generate the built-in help text. */
   formatHelp(cmd: Command, helper: Help): string;
+
+  /** Update given file with output of help */
+  updateFileWithHelp(cmd: Command, fileToUpdate: string, textToReplace: string): void;
 }
 export type HelpConfiguration = Partial<Help>;
 

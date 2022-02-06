@@ -124,3 +124,67 @@ describe('help command processed on correct command', () => {
     }).toThrow('program');
   });
 });
+
+describe('help file updating', () => {
+  test('when file does not contain the comment', () => {
+    const help = new commander.Help();
+    const fileToUpdateContent = `
+      the documentation content
+    `;
+    const textToReplace = '<!-- Commander help //-->';
+    const helpText = `
+      output of help
+    `;
+
+    const actual = help._updateFileWithHelp(fileToUpdateContent, textToReplace, helpText);
+
+    expect(actual).toEqual(fileToUpdateContent);
+  });
+
+  test('when file does contain the comment, but no code block', () => {
+    const help = new commander.Help();
+    const fileToUpdateContent = `
+    the documentation content
+      <!-- Commander help //-->
+`;
+    const textToReplace = '<!-- Commander help //-->';
+    const helpText = `
+      output of help
+    `;
+
+    const actual = help._updateFileWithHelp(fileToUpdateContent, textToReplace, helpText);
+
+    expect(actual).toEqual(fileToUpdateContent);
+  });
+
+  test('when file does contain the comment and code block', () => {
+    const help = new commander.Help();
+    const fileToUpdateContent = `
+      the documentation content
+      <!-- Commander help //-->
+
+      \`\`\`
+      this should be replaced
+      \`\`\`
+    `;
+    const textToReplace = '<!-- Commander help //-->';
+    const helpText = 'output of help';
+
+    const actual = help._updateFileWithHelp(fileToUpdateContent, textToReplace, helpText);
+
+    expect(actual).toMatchInlineSnapshot(`
+"
+      the documentation content
+      <!-- Commander help //-->
+
+\`\`\`
+output of help
+\`\`\`
+    "
+`);
+
+    const actualAgain = help._updateFileWithHelp(actual, textToReplace, helpText);
+    // It should not change when run multiple times
+    expect(actual).toEqual(actualAgain);
+  });
+});

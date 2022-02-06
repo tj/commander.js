@@ -732,6 +732,17 @@ shell help spawn
 shell spawn --help
 ```
 
+The output of `help` can also be added to a file. To automatically update `README.md` with help, make sure it contains:
+
+```md
+<!-- Commander help //-->
+
+`` `
+`` `
+```
+
+Run you program with `UPDATE_HELP_FILE=README.md program --help` and Commender will replace the body of ` ``` ` with the `help` output.
+
 ### Custom help
 
 You can add extra text to be displayed along with the built-in help.
