@@ -79,13 +79,14 @@ describe('command with exclusive options', () => {
     }).toThrow("error: environment variable 'JSON' cannot be used with environment variable 'SILENT'");
   });
 
-  test('should exit with error if default value is conflicting', () => {
-    const { program } = makeProgram();
+  test('should allow default value with exclusive option', () => {
+    const { program, actionMock } = makeProgram();
 
     program.commands[0].addOption(new commander.Option('-d, --debug', 'print debug logs').default(true).exclusive('silent'));
 
-    expect(() => {
-      program.parse('node test.js foo --silent'.split(' '));
-    }).toThrow("error: option 'debug' with default value cannot be used with option '-s, --silent'");
+    program.parse('node test.js foo --silent'.split(' '));
+
+    expect(actionMock).toHaveBeenCalledTimes(1);
+    expect(actionMock).toHaveBeenCalledWith({ debug: true, silent: true }, expect.any(Object));
   });
 });
