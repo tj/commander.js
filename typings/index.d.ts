@@ -119,9 +119,9 @@ export class Option {
   preset(arg: unknown): this;
 
   /**
-   * Set options names that are exclusive to this option.
+   * Set options names that conflict with this option.
    */
-  exclusive(names: string[]): this;
+  conflicts(names: string[]): this;
 
   /**
    * Set environment variable to check for option value.

@@ -1,6 +1,6 @@
 const commander = require('../');
 
-describe('command with exclusive options', () => {
+describe('command with conflicting options', () => {
   function makeProgram() {
     const actionMock = jest.fn();
     const program = new commander.Command();
@@ -9,7 +9,7 @@ describe('command with exclusive options', () => {
       .command('foo')
       .addOption(new commander.Option('-s, --silent', "Don't print anything").env('SILENT'))
       .addOption(
-        new commander.Option('-j, --json', 'Format output as json').env('JSON').exclusive([
+        new commander.Option('-j, --json', 'Format output as json').env('JSON').conflicts([
           'silent'
         ])
       )
@@ -23,14 +23,14 @@ describe('command with exclusive options', () => {
     delete process.env.JSON;
   });
 
-  test('should call action if there are no explicit exclusive options set', () => {
+  test('should call action if there are no explicit conflicting options set', () => {
     const { program, actionMock } = makeProgram();
     program.parse('node test.js foo --json'.split(' '));
     expect(actionMock).toHaveBeenCalledTimes(1);
     expect(actionMock).toHaveBeenCalledWith({ json: true }, expect.any(Object));
   });
 
-  test('should call action when there are no implicit exclusive options set', () => {
+  test('should call action when there are no implicit conflicting options set', () => {
     const { program, actionMock } = makeProgram();
     program.parse('node test.js foo --silent'.split(' '));
     expect(actionMock).toHaveBeenCalledTimes(1);
@@ -40,7 +40,7 @@ describe('command with exclusive options', () => {
     );
   });
 
-  test('should exit with error if exclusive options were set', () => {
+  test('should exit with error if conflicting options were set', () => {
     const { program } = makeProgram();
 
     expect(() => {
@@ -48,7 +48,7 @@ describe('command with exclusive options', () => {
     }).toThrow("error: option '-j, --json' cannot be used with option '-s, --silent'");
   });
 
-  test('should report the env variable as the exclusive option source, when exclusive option is set', () => {
+  test('should report the env variable as the conflicting option source, when conflicting option is set', () => {
     const { program } = makeProgram();
 
     process.env.SILENT = true;
@@ -68,7 +68,7 @@ describe('command with exclusive options', () => {
     }).toThrow("error: environment variable 'JSON' cannot be used with option '-s, --silent'");
   });
 
-  test('should report both env variables as sources, when configured option and exclusive option are set', () => {
+  test('should report both env variables as sources, when configured option and conflicting option are set', () => {
     const { program } = makeProgram();
 
     process.env.SILENT = true;
@@ -79,10 +79,10 @@ describe('command with exclusive options', () => {
     }).toThrow("error: environment variable 'JSON' cannot be used with environment variable 'SILENT'");
   });
 
-  test('should allow default value with exclusive option', () => {
+  test('should allow default value with a conflicting option', () => {
     const { program, actionMock } = makeProgram();
 
-    program.commands[0].addOption(new commander.Option('-d, --debug', 'print debug logs').default(true).exclusive('silent'));
+    program.commands[0].addOption(new commander.Option('-d, --debug', 'print debug logs').default(true).conflicts(['silent']));
 
     program.parse('node test.js foo --silent'.split(' '));
 
