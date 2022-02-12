@@ -346,7 +346,7 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expectCommanderError(caughtErr, 1, 'commander.conflictingOptionPresent', "error: option '--debug' cannot be used with option '--silent'");
+    expectCommanderError(caughtErr, 1, 'commander.conflictingOption', "error: option '--debug' cannot be used with option '--silent'");
   });
 
   test('when call error() then throw CommanderError', () => {
