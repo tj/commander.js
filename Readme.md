@@ -410,6 +410,7 @@ Options:
   -d, --drink <size>     drink cup size (choices: "small", "medium", "large")
   -p, --port <number>    port number (env: PORT)
   --donate [amount]      optional donation in dollars (preset: 20)
+  -d, --disable-server   disables the server
   -h, --help             display help for command
 
 $ extra --drink huge
