@@ -6,6 +6,9 @@ describe('command with conflicting options', () => {
     const program = new commander.Command();
     program
       .exitOverride()
+      .configureOutput({
+        writeErr: () => {}
+      })
       .command('foo')
       .addOption(new commander.Option('-s, --silent', "Don't print anything").env('SILENT'))
       .addOption(
