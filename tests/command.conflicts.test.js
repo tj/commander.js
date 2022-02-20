@@ -24,6 +24,7 @@ describe('command with conflicting options', () => {
   beforeEach(() => {
     delete process.env.SILENT;
     delete process.env.JSON;
+    delete process.env.NO_COLOR;
   });
 
   test('should call action if there are no explicit conflicting options set', () => {
@@ -91,5 +92,35 @@ describe('command with conflicting options', () => {
 
     expect(actionMock).toHaveBeenCalledTimes(1);
     expect(actionMock).toHaveBeenCalledWith({ debug: true, silent: true }, expect.any(Object));
+  });
+
+  test('should report conflict on negated option flag', () => {
+    const { program } = makeProgram();
+
+    program
+      .command('bar')
+      .addOption(new commander.Option('--red').conflicts(['color']))
+      .addOption(new commander.Option('--color'))
+      .addOption(new commander.Option('-N, --no-color'));
+
+    expect(() => {
+      program.parse('node test.js bar --red -N'.split(' '));
+    }).toThrow("error: option '--red' cannot be used with option '-N, --no-color'");
+  });
+
+  test('should report conflict on negated option env variable', () => {
+    const { program } = makeProgram();
+
+    process.env.NO_COLOR = true;
+
+    program
+      .command('bar')
+      .addOption(new commander.Option('--red').conflicts(['color']))
+      .addOption(new commander.Option('--color'))
+      .addOption(new commander.Option('-N, --no-color').env('NO_COLOR'));
+
+    expect(() => {
+      program.parse('node test.js bar --red'.split(' '));
+    }).toThrow("error: option '--red' cannot be used with environment variable 'NO_COLOR'");
   });
 });
