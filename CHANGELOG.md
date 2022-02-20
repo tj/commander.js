@@ -281,14 +281,14 @@ program
   .command('compress <filename>')
   .option('-t, --trace')
   // Old code before Commander 7
-  .action((filename, cmd)) => {
+  .action((filename, cmd) => {
     if (cmd.trace) console.log(`Command name is ${cmd.name()}`);
   });
 ```
 
 ```js
   // New code
-  .action((filename, options, command)) => {
+  .action((filename, options, command) => {
     if (options.trace) console.log(`Command name is ${command.name()}`);
   });
 ```
@@ -301,14 +301,14 @@ program
   .storeOptionsAsProperties(false)
   .option('-t, --trace')
   // Old code before Commander 7
-  .action((filename, command)) => {
+  .action((filename, command) => {
     if (command.opts().trace) console.log(`Command name is ${command.name()}`);
   });
 ```
 
 ```js
    // New code
-   .action((filename, options, command)) => {
+   .action((filename, options, command) => {
       if (command.opts().trace) console.log(`Command name is ${command.name()}`);
    });
 ```
