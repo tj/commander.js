@@ -24,7 +24,8 @@ describe('command with conflicting options', () => {
   beforeEach(() => {
     delete process.env.SILENT;
     delete process.env.JSON;
-    delete process.env.NO_COLOR;
+    delete process.env.DUAL;
+    delete process.env.NO_DUAL;
   });
 
   test('should call action if there are no explicit conflicting options set', () => {
@@ -122,5 +123,108 @@ describe('command with conflicting options', () => {
     expect(() => {
       program.parse('node test.js bar --red'.split(' '));
     }).toThrow("error: option '--red' cannot be used with environment variable 'NO_COLOR'");
+  });
+
+  test('should report correct error for shorthand negated option', () => {
+    const { program } = makeProgram();
+
+    program
+      .command('bar')
+      .addOption(new commander.Option('--red'))
+      .addOption(new commander.Option('-N, --no-color').conflicts(['red']));
+
+    expect(() => {
+      program.parse('node test.js bar --red -N'.split(' '));
+    }).toThrow("error: option '-N, --no-color' cannot be used with option '--red'");
+  });
+
+  test('should report correct error for positive option when negated is configured', () => {
+    const { program } = makeProgram();
+
+    program
+      .command('bar')
+      .addOption(new commander.Option('--red'))
+      .addOption(new commander.Option('--dual').env('DUAL').conflicts('red'))
+      .addOption(new commander.Option('--no-dual').env('NO_DUAL'));
+
+    expect(() => {
+      program.parse('node test.js bar --red --dual'.split(' '));
+    }).toThrow("error: option '--dual' cannot be used with option '--red'");
+  });
+
+  test('should report correct error for negated option when positive is configured', () => {
+    const { program } = makeProgram();
+
+    program
+      .command('bar')
+      .addOption(new commander.Option('--red'))
+      .addOption(new commander.Option('--dual').env('DUAL').conflicts('red'))
+      .addOption(new commander.Option('--no-dual').env('NO_DUAL'));
+
+    expect(() => {
+      program.parse('node test.js bar --red --no-dual'.split(' '));
+    }).toThrow("error: option '--no-dual' cannot be used with option '--red'");
+  });
+
+  test('should report correct error for positive env variable when negated is configured', () => {
+    const { program } = makeProgram();
+
+    program
+      .command('bar')
+      .addOption(new commander.Option('--red'))
+      .addOption(new commander.Option('--dual').env('DUAL').conflicts('red'))
+      .addOption(new commander.Option('--no-dual').env('NO_DUAL'));
+
+    process.env.DUAL = 'true';
+    expect(() => {
+      program.parse('node test.js bar --red'.split(' '));
+    }).toThrow("error: environment variable 'DUAL' cannot be used with option '--red'");
+  });
+
+  test('should report correct error for negated env variable when positive is configured', () => {
+    const { program } = makeProgram();
+
+    program
+      .command('bar')
+      .addOption(new commander.Option('--red'))
+      .addOption(new commander.Option('--dual').env('DUAL').conflicts('red'))
+      .addOption(new commander.Option('--no-dual').env('NO_DUAL'));
+
+    process.env.NO_DUAL = 'true';
+    expect(() => {
+      program.parse('node test.js bar --red'.split(' '));
+    }).toThrow("error: environment variable 'NO_DUAL' cannot be used with option '--red'");
+  });
+
+  test('should report correct error for positive option with string value when negated is configured', () => {
+    const { program } = makeProgram();
+
+    program
+      .command('bar')
+      .addOption(new commander.Option('--red'))
+      .addOption(new commander.Option('--dual2 <str>').conflicts('red'))
+      .addOption(new commander.Option('--no-dual2').preset('BAD'));
+
+    expect(() => {
+      program.parse('node test.js bar --red --dual2 foo'.split(' '));
+    }).toThrow("error: option '--dual2 <str>' cannot be used with option '--red'");
+
+    // expect(() => {
+    //   program.parse('node test.js bar --red --no-dual2'.split(' '));
+    // }).toThrow("error: option '--no-dual2' cannot be used with option '--red'");
+  });
+
+  test('should report correct error for negated option with preset when negated is configured', () => {
+    const { program } = makeProgram();
+
+    program
+      .command('bar')
+      .addOption(new commander.Option('--red'))
+      .addOption(new commander.Option('--dual2 <str>').conflicts('red'))
+      .addOption(new commander.Option('--no-dual2').preset('BAD'));
+
+    expect(() => {
+      program.parse('node test.js bar --red --no-dual2'.split(' '));
+    }).toThrow("error: option '--no-dual2' cannot be used with option '--red'");
   });
 });
