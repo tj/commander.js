@@ -13,7 +13,7 @@ program
   .addOption(new Option('-d, --drink <size>', 'drink cup size').choices(['small', 'medium', 'large']))
   .addOption(new Option('-p, --port <number>', 'port number').env('PORT'))
   .addOption(new Option('--donate [amount]', 'optional donation in dollars').preset('20').argParser(parseFloat))
-  .addOption(new Option('--disable-server', 'disables the server').conflicts(['port']));
+  .addOption(new Option('--disable-server', 'disables the server').conflicts(['port'])); // or `.conflicts('port')` for a single conflict
 
 program.parse();
 

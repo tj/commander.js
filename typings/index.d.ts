@@ -119,9 +119,9 @@ export class Option {
   preset(arg: unknown): this;
 
   /**
-   * Set options names that conflict with this option.
+   * Set options name(s) that conflict with this option.
    */
-  conflicts(names: string[]): this;
+  conflicts(names: string | string[]): this;
 
   /**
    * Set environment variable to check for option value.

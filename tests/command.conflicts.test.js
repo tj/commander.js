@@ -144,7 +144,7 @@ describe('command with conflicting options', () => {
     program
       .command('bar')
       .addOption(new commander.Option('--red'))
-      .addOption(new commander.Option('--dual').env('DUAL').conflicts('red'))
+      .addOption(new commander.Option('--dual').env('DUAL').conflicts(['red']))
       .addOption(new commander.Option('--no-dual').env('NO_DUAL'));
 
     expect(() => {
@@ -158,7 +158,7 @@ describe('command with conflicting options', () => {
     program
       .command('bar')
       .addOption(new commander.Option('--red'))
-      .addOption(new commander.Option('--dual').env('DUAL').conflicts('red'))
+      .addOption(new commander.Option('--dual').env('DUAL').conflicts(['red']))
       .addOption(new commander.Option('--no-dual').env('NO_DUAL'));
 
     expect(() => {
@@ -172,7 +172,7 @@ describe('command with conflicting options', () => {
     program
       .command('bar')
       .addOption(new commander.Option('--red'))
-      .addOption(new commander.Option('--dual').env('DUAL').conflicts('red'))
+      .addOption(new commander.Option('--dual').env('DUAL').conflicts(['red']))
       .addOption(new commander.Option('--no-dual').env('NO_DUAL'));
 
     process.env.DUAL = 'true';
@@ -187,7 +187,7 @@ describe('command with conflicting options', () => {
     program
       .command('bar')
       .addOption(new commander.Option('--red'))
-      .addOption(new commander.Option('--dual').env('DUAL').conflicts('red'))
+      .addOption(new commander.Option('--dual').env('DUAL').conflicts(['red']))
       .addOption(new commander.Option('--no-dual').env('NO_DUAL'));
 
     process.env.NO_DUAL = 'true';
@@ -202,7 +202,7 @@ describe('command with conflicting options', () => {
     program
       .command('bar')
       .addOption(new commander.Option('--red'))
-      .addOption(new commander.Option('--dual2 <str>').conflicts('red'))
+      .addOption(new commander.Option('--dual2 <str>').conflicts(['red']))
       .addOption(new commander.Option('--no-dual2').preset('BAD'));
 
     expect(() => {
@@ -216,11 +216,41 @@ describe('command with conflicting options', () => {
     program
       .command('bar')
       .addOption(new commander.Option('--red'))
-      .addOption(new commander.Option('--dual2 <str>').conflicts('red'))
+      .addOption(new commander.Option('--dual2 <str>').conflicts(['red']))
       .addOption(new commander.Option('--no-dual2').preset('BAD'));
 
     expect(() => {
       program.parse('node test.js bar --red --no-dual2'.split(' '));
     }).toThrow("error: option '--no-dual2' cannot be used with option '--red'");
+  });
+
+  test('should not throw error on when conflicts is invoked with a single string that includes another option', () => {
+    const { program } = makeProgram();
+
+    const actionMock = jest.fn();
+
+    program
+      .command('bar')
+      .addOption(new commander.Option('--a'))
+      .addOption(new commander.Option('--b').conflicts('aa'))
+      .action(actionMock);
+
+    program.parse('node test.js bar --a --b'.split(' '));
+
+    expect(actionMock).toHaveBeenCalledTimes(1);
+    expect(actionMock).toHaveBeenCalledWith({ a: true, b: true }, expect.any(Object));
+  });
+
+  test('should throw error on when conflicts is invoked with a single string that equals another option', () => {
+    const { program } = makeProgram();
+
+    program
+      .command('bar')
+      .addOption(new commander.Option('--a'))
+      .addOption(new commander.Option('--b').conflicts('a'));
+
+    expect(() => {
+      program.parse('node test.js bar --a --b'.split(' '));
+    }).toThrow("error: option '--b' cannot be used with option '--a'");
   });
 });
