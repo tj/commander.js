@@ -208,10 +208,6 @@ describe('command with conflicting options', () => {
     expect(() => {
       program.parse('node test.js bar --red --dual2 foo'.split(' '));
     }).toThrow("error: option '--dual2 <str>' cannot be used with option '--red'");
-
-    // expect(() => {
-    //   program.parse('node test.js bar --red --no-dual2'.split(' '));
-    // }).toThrow("error: option '--no-dual2' cannot be used with option '--red'");
   });
 
   test('should report correct error for negated option with preset when negated is configured', () => {
