@@ -224,7 +224,7 @@ describe('command with conflicting options', () => {
     }).toThrow("error: option '--no-dual2' cannot be used with option '--red'");
   });
 
-  test('should not throw error on when conflicts is invoked with a single string that includes another option', () => {
+  test('should not throw error when conflicts is invoked with a single string that includes another option', () => {
     const { program } = makeProgram();
 
     const actionMock = jest.fn();
@@ -241,7 +241,7 @@ describe('command with conflicting options', () => {
     expect(actionMock).toHaveBeenCalledWith({ a: true, b: true }, expect.any(Object));
   });
 
-  test('should throw error on when conflicts is invoked with a single string that equals another option', () => {
+  test('should throw error when conflicts is invoked with a single string that equals another option', () => {
     const { program } = makeProgram();
 
     program
