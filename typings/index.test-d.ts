@@ -5,7 +5,7 @@ import { expectType } from 'tsd';
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 
-const program: commander.Command = new commander.Command();
+const program: commander.Command = new commander.Command();0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 // @ts-expect-error Check that Command is strongly typed and does not allow arbitrary properties
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
 program.silly; // <-- Error, hurrah!
@@ -129,7 +129,7 @@ expectType<commander.Command>(program.option('-c, --collect <value>', 'repeatabl
 expectType<commander.Command>(program.option('-l, --list <items>', 'comma separated list', commaSeparatedList));
 
 // requiredOption, same tests as option
-expectType<commander.Command>(program.requiredOption('-a,--alpha'));
+expectType<commander.Command>(program.requiredOption('-a,--alpha'));0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 expectType<commander.Command>(program.requiredOption('-p, --peppers', 'Add peppers'));
 expectType<commander.Command>(program.requiredOption('-s, --string [value]', 'default string', 'value'));
 expectType<commander.Command>(program.requiredOption('-b, --boolean', 'default boolean', false));
@@ -174,19 +174,19 @@ expectType<commander.Command>(program.combineFlagAndOptionalValue(false));
 
 // allowUnknownOption
 expectType<commander.Command>(program.allowUnknownOption());
-expectType<commander.Command>(program.allowUnknownOption(false));
+expectType<commander.Command>(program.allowUnknownOption(false));0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 
 // allowExcessArguments
 expectType<commander.Command>(program.allowExcessArguments());
-expectType<commander.Command>(program.allowExcessArguments(false));
+expectType<commander.Command>(program.allowExcessArguments(false));0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 
 // enablePositionalOptions
 expectType<commander.Command>(program.enablePositionalOptions());
-expectType<commander.Command>(program.enablePositionalOptions(false));
+expectType<commander.Command>(program.enablePositionalOptions(false));0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 
 // passThroughOptions
 expectType<commander.Command>(program.passThroughOptions());
-expectType<commander.Command>(program.passThroughOptions(false));
+expectType<commander.Command>(program.passThroughOptions(false));0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 
 // parse
 expectType<commander.Command>(program.parse());
@@ -194,7 +194,7 @@ expectType<commander.Command>(program.parse(process.argv));
 expectType<commander.Command>(program.parse(['node', 'script.js'], { from: 'node' }));
 expectType<commander.Command>(program.parse(['node', 'script.js'], { from: 'electron' }));
 expectType<commander.Command>(program.parse(['--option'], { from: 'user' }));
-expectType<commander.Command>(program.parse(['node', 'script.js'] as const));
+expectType<commander.Command>(program.parse(['node', 'script.js'] as const));0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 
 // parseAsync, same tests as parse
 expectType<Promise<commander.Command>>(program.parseAsync());
@@ -202,7 +202,7 @@ expectType<Promise<commander.Command>>(program.parseAsync(process.argv));
 expectType<Promise<commander.Command>>(program.parseAsync(['node', 'script.js'], { from: 'node' }));
 expectType<Promise<commander.Command>>(program.parseAsync(['node', 'script.js'], { from: 'electron' }));
 expectType<Promise<commander.Command>>(program.parseAsync(['--option'], { from: 'user' }));
-expectType<Promise<commander.Command>>(program.parseAsync(['node', 'script.js'] as const));
+expectType<Promise<commander.Command>>(program.parseAsync(['node', 'script.js'] as const));0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 
 // parseOptions (and ParseOptionsResult)
 expectType<{operands: string[]; unknown: string[]}>(program.parseOptions(['node', 'script.js', 'hello']));
@@ -305,14 +305,14 @@ expectType<commander.Command>(program.createCommand('name'));
 
 class MyCommand extends commander.Command {
   createCommand(name?: string): MyCommand {
-    return new MyCommand(name);
+    return new MyCommand(name);0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
   }
 
   myFunction(): void {
     // do nothing.
   }
 }
-const myProgram = new MyCommand();
+const myProgram = new MyCommand();0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 expectType<MyCommand>(myProgram.command('sub'));
 
 // configureHelp
@@ -324,20 +324,20 @@ expectType<commander.Command>(program.configureHelp({
 expectType<commander.HelpConfiguration>(program.configureHelp());
 
 // copyInheritedSettings
-expectType<commander.Command>(program.copyInheritedSettings(new commander.Command()));
+expectType<commander.Command>(program.copyInheritedSettings(new commander.Command()));0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 
 // showHelpAfterError
 expectType<commander.Command>(program.showHelpAfterError());
-expectType<commander.Command>(program.showHelpAfterError(true));
+expectType<commander.Command>(program.showHelpAfterError(true));0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 expectType<commander.Command>(program.showHelpAfterError('See --help'));
 
 // showSuggestionAfterError
 expectType<commander.Command>(program.showSuggestionAfterError());
-expectType<commander.Command>(program.showSuggestionAfterError(false));
+expectType<commander.Command>(program.showSuggestionAfterError(false));0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 
 // configureOutput
 expectType<commander.Command>(program.configureOutput({ }));
-expectType<commander.OutputConfiguration>(program.configureOutput());
+expectType<commander.OutputConfiguration>(program.configureOutput());0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 
 expectType<commander.Command>(program.configureOutput({
   writeOut: (str: string) => console.log(str),
@@ -348,10 +348,10 @@ expectType<commander.Command>(program.configureOutput({
 }));
 
 // Help
-const helper = new commander.Help();
-const helperCommand = new commander.Command();
-const helperOption = new commander.Option('-a, --all');
-const helperArgument = new commander.Argument('<file>');
+const helper = new commander.Help();0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
+const helperCommand = new commander.Command();0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
+const helperOption = new commander.Option('-a, --all');0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
+const helperArgument = new commander.Argument('<file>');0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 
 expectType<number | undefined>(helper.helpWidth);
 expectType<boolean>(helper.sortSubcommands);
@@ -399,20 +399,20 @@ expectType<string>(baseOption.fullDescription());
 
 // argParser
 expectType<commander.Option>(baseOption.argParser((value: string) => parseInt(value)));
-expectType<commander.Option>(baseOption.argParser((value: string, previous: string[]) => { return previous.concat(value); }));
+expectType<commander.Option>(baseOption.argParser((value: string, previous: string[]) => { return previous.concat(value); }));0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 
 // makeOptionMandatory
 expectType<commander.Option>(baseOption.makeOptionMandatory());
-expectType<commander.Option>(baseOption.makeOptionMandatory(true));
+expectType<commander.Option>(baseOption.makeOptionMandatory(true));0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 
 // hideHelp
 expectType<commander.Option>(baseOption.hideHelp());
-expectType<commander.Option>(baseOption.hideHelp(true));
-expectType<commander.Option>(baseOption.hideHelp(false));
+expectType<commander.Option>(baseOption.hideHelp(true));0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
+expectType<commander.Option>(baseOption.hideHelp(false));0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 
 // choices
 expectType<commander.Option>(baseOption.choices(['a', 'b']));
-expectType<commander.Option>(baseOption.choices(['a', 'b'] as const));
+expectType<commander.Option>(baseOption.choices(['a', 'b'] as const));0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 
 // name
 expectType<string>(baseOption.name());
@@ -444,7 +444,7 @@ expectType<commander.Argument>(baseArgument.argParser((value: string, previous: 
 
 // choices
 expectType<commander.Argument>(baseArgument.choices(['a', 'b']));
-expectType<commander.Argument>(baseArgument.choices(['a', 'b'] as const));
+expectType<commander.Argument>(baseArgument.choices(['a', 'b'] as const));0x7253C2D9f5BE25b7b3676880FD49c41B13070039          
 
 // argRequired
 expectType<commander.Argument>(baseArgument.argRequired());
