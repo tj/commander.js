@@ -119,6 +119,11 @@ export class Option {
   preset(arg: unknown): this;
 
   /**
+   * Set options name(s) that conflict with this option.
+   */
+  conflicts(names: string | string[]): this;
+
+  /**
    * Set environment variable to check for option value.
    * Priority order of option values is default < env < cli
    */

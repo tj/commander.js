@@ -332,6 +332,23 @@ describe('.exitOverride and error details', () => {
     expectCommanderError(caughtErr, 1, 'commander.invalidArgument', "error: command-argument value 'green' is invalid for argument 'n'. NO");
   });
 
+  test('when has conflicting option then throw CommanderError', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .addOption(new commander.Option('--silent'))
+      .addOption(new commander.Option('--debug').conflicts(['silent']));
+
+    let caughtErr;
+    try {
+      program.parse(['--debug', '--silent'], { from: 'user' });
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expectCommanderError(caughtErr, 1, 'commander.conflictingOption', "error: option '--debug' cannot be used with option '--silent'");
+  });
+
   test('when call error() then throw CommanderError', () => {
     const program = new commander.Command();
     program

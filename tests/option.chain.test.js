@@ -36,4 +36,10 @@ describe('Option methods that should return this for chaining', () => {
     const result = option.env('e');
     expect(result).toBe(option);
   });
+
+  test('when call .conflicts() then returns this', () => {
+    const option = new Option('-e,--example <value>');
+    const result = option.conflicts(['a']);
+    expect(result).toBe(option);
+  });
 });

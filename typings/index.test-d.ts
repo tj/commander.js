@@ -414,6 +414,10 @@ expectType<commander.Option>(baseOption.hideHelp(false));
 expectType<commander.Option>(baseOption.choices(['a', 'b']));
 expectType<commander.Option>(baseOption.choices(['a', 'b'] as const));
 
+// conflicts
+expectType<commander.Option>(baseOption.conflicts('a'));
+expectType<commander.Option>(baseOption.conflicts(['a', 'b']));
+
 // name
 expectType<string>(baseOption.name());
 
