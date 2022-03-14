@@ -389,7 +389,7 @@ program.version('0.0.1', '-v, --vers', 'output the current version');
 You can add most options using the `.option()` method, but there are some additional features available
 by constructing an `Option` explicitly for less common cases.
 
-Example files: [options-extra.js](./examples/options-extra.js), [options-env.js](./examples/options-env.js)
+Example files: [options-extra.js](./examples/options-extra.js), [options-env.js](./examples/options-env.js), [options-conflicts.js](./examples/options-conflicts.js)
 
 ```js
 program
@@ -398,7 +398,7 @@ program
   .addOption(new Option('-d, --drink <size>', 'drink size').choices(['small', 'medium', 'large']))
   .addOption(new Option('-p, --port <number>', 'port number').env('PORT'))
   .addOption(new Option('--donate [amount]', 'optional donation in dollars').preset('20').argParser(parseFloat))
-  .addOption(new Option('--disable-server', 'disables the server').conflicts(['port'])); // or `.conflicts('port')` for a single conflict
+  .addOption(new Option('--disable-server', 'disables the server').conflicts('port'));
 ```
 
 ```bash
