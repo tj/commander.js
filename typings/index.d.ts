@@ -119,7 +119,14 @@ export class Option {
   preset(arg: unknown): this;
 
   /**
-   * Set options name(s) that conflict with this option.
+   * Add option name(s) that conflict with this option.
+   * An error will be displayed if conflicting options are found during parsing.
+   *
+   * @example
+   * ```ts
+   * new Option('--rgb').conflicts('cmyk');
+   * new Option('--js').conflicts(['ts', 'jsx']);
+   * ```
    */
   conflicts(names: string | string[]): this;
 
