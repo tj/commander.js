@@ -39,9 +39,9 @@
   "main": "./index.js",
   "exports": {
     ".": {
+      "types": "./typings/index.d.ts",
       "require": "./index.js",
-      "import": "./esm.mjs",
-      "types": "./typings/index.d.ts"
+      "import": "./esm.mjs"
     },
     "./esm.mjs": "./esm.mjs"
   },
