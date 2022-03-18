@@ -39,6 +39,7 @@
   "main": "./index.js",
   "exports": {
     ".": {
+      "types": "./typings/index.d.ts",
       "require": "./index.js",
       "import": "./esm.mjs"
     },
