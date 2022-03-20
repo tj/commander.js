@@ -235,6 +235,9 @@ pizza details:
 Multiple boolean short options may be combined together following the dash, and may be followed by a single short option taking a value.
 For example `-d -s -p cheese` may be written as `-ds -p cheese` or even `-dsp cheese`.
 
+Options with an expected option-argument are greedy and will consume the following argument whatever the value.
+So `--id -xyz` reads `-xyz` as the option-argument.
+
 `program.parse(arguments)` processes the arguments, leaving any args not consumed by the program options in the `program.args` array. The parameter is optional and defaults to `process.argv`.
 
 ### Default option value
@@ -319,8 +322,8 @@ $ pizza-options --cheese mozzarella
 add cheese type mozzarella
 ```
 
-A space-separated argument is only consumed by an optional
-if it does not start with a dash. So `id` behaves as a boolean option for `--id -5`, but you can use a combined form if needed like `--id=-5`.
+Options with an optional option-argument are not greedy and will ignore arguments starting with a dash.
+So `id` behaves as a boolean option for `--id -5`, but you can use a combined form if needed like `--id=-5`.
 
 For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-taking-varying-arguments.md).
 
