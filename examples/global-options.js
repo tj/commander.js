@@ -1,8 +1,13 @@
 #!/usr/bin/env node
 
-// This example shows a couple of ways of adding a common option to all the subcommands.
-// We are using one level of subcommands. (Adding options to just the leaf subcommands
-// with deeper nesting would be a little more work.)
+// This example shows a couple of ways to add a "global" option to all of the subcommands.
+// The first approach is to use a subclass and add the option as the subcommand is created.
+// The second approach is to loop over the subcommands after they have been created.
+//
+// The code in this example assumes there is just one level of subcommands.
+//
+// (A different pattern for a "global" option is to add it to the root command, rather
+// than to the subcommand. That is not shown here.)
 
 // const { Command } = require('commander'); // (normal include)
 const { Command } = require('../'); // include commander in git clone of commander repo
@@ -40,6 +45,7 @@ program.commands.forEach((cmd) => {
 program.parse();
 
 // Try the following:
+//    node common-options.js --help
 //    node common-options.js print --help
 //    node common-options.js serve --help
 //    node common-options.js serve --debug --verbose
