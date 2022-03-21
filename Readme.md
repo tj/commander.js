@@ -178,8 +178,14 @@ The parsed options can be accessed by calling `.opts()` on a `Command` object, a
 
 Multi-word options such as "--template-engine" are camel-cased, becoming `program.opts().templateEngine` etc.
 
-Multiple short flags may optionally be combined in a single argument following the dash: boolean flags, followed by a single option taking a value (possibly followed by the value).
-For example `-a -b -p 80` may be written as `-ab -p80` or even `-abp80`.
+An option and its option-argument can be separated by a space, or combined into the same argument. The option-argument can follow the short option directly or follow an `=` for a long option.
+
+```bash
+serve -p 80
+serve -p80
+serve --port 80
+serve --port=80
+```
 
 You can use `--` to indicate the end of the options, and any remaining arguments will be used without being interpreted.
 
@@ -225,6 +231,12 @@ $ pizza-options --pizza-type=cheese
 pizza details:
 - cheese
 ```
+
+Multiple boolean short options may be combined together following the dash, and may be followed by a single short option taking a value.
+For example `-d -s -p cheese` may be written as `-ds -p cheese` or even `-dsp cheese`.
+
+Options with an expected option-argument are greedy and will consume the following argument whatever the value.
+So `--id -xyz` reads `-xyz` as the option-argument.
 
 `program.parse(arguments)` processes the arguments, leaving any args not consumed by the program options in the `program.args` array. The parameter is optional and defaults to `process.argv`.
 
@@ -309,6 +321,9 @@ add cheese
 $ pizza-options --cheese mozzarella
 add cheese type mozzarella
 ```
+
+Options with an optional option-argument are not greedy and will ignore arguments starting with a dash.
+So `id` behaves as a boolean option for `--id -5`, but you can use a combined form if needed like `--id=-5`.
 
 For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-taking-varying-arguments.md).
 
