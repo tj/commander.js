@@ -8,7 +8,8 @@ describe('command with conflicting options', () => {
     program
       .exitOverride()
       .configureOutput({
-        writeErr: () => {}
+        writeErr: () => {},
+        writeOut: () => {}
       })
       .command('foo')
       .addOption(new commander.Option('-s, --silent', "Don't print anything").env('SILENT'))
