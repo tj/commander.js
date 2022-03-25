@@ -269,7 +269,7 @@ describe('command with conflicting options', () => {
       exception = err;
     }
     expect(exception).not.toBeUndefined();
-    expect(exception.code).toBe('commander.conflictingOption.');
+    expect(exception.code).toBe('commander.conflictingOption');
   });
 
   test('when conflict on program calling action subcommand with help then show help', () => {
@@ -305,6 +305,6 @@ describe('command with conflicting options', () => {
       exception = err;
     }
     expect(exception).not.toBeUndefined();
-    expect(exception.code).toBe('commander.conflictingOption.');
+    expect(exception.code).toBe('commander.conflictingOption');
   });
 });
