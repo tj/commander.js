@@ -1,3 +1,4 @@
+const path = require('path');
 const commander = require('../');
 
 describe('command with conflicting options', () => {
@@ -7,7 +8,8 @@ describe('command with conflicting options', () => {
     program
       .exitOverride()
       .configureOutput({
-        writeErr: () => {}
+        writeErr: () => {},
+        writeOut: () => {}
       })
       .command('foo')
       .addOption(new commander.Option('-s, --silent', "Don't print anything").env('SILENT'))
@@ -252,5 +254,58 @@ describe('command with conflicting options', () => {
     expect(() => {
       program.parse('node test.js bar --a --b'.split(' '));
     }).toThrow("error: option '--b' cannot be used with option '--a'");
+  });
+
+  test('when conflict on program calling action subcommand then throw conflict', () => {
+    const { program } = makeProgram();
+    let exception;
+
+    program
+      .addOption(new commander.Option('--black'))
+      .addOption(new commander.Option('--white').conflicts('black'));
+
+    try {
+      program.parse('--white --black foo'.split(' '), { from: 'user' });
+    } catch (err) {
+      exception = err;
+    }
+    expect(exception).not.toBeUndefined();
+    expect(exception.code).toBe('commander.conflictingOption');
+  });
+
+  test('when conflict on program calling action subcommand with help then show help', () => {
+    const { program } = makeProgram();
+    let exception;
+
+    program
+      .addOption(new commander.Option('--black'))
+      .addOption(new commander.Option('--white').conflicts('black'));
+
+    try {
+      program.parse('--white --black foo --help'.split(' '), { from: 'user' });
+    } catch (err) {
+      exception = err;
+    }
+    expect(exception).not.toBeUndefined();
+    expect(exception.code).toBe('commander.helpDisplayed');
+  });
+
+  test('when conflict on program calling external subcommand then throw conflict', () => {
+    const { program } = makeProgram();
+    let exception;
+
+    program
+      .addOption(new commander.Option('--black'))
+      .addOption(new commander.Option('--white').conflicts('black'));
+    const pm = path.join(__dirname, './fixtures/pm');
+    program.command('ext', 'external command', { executableFile: pm });
+
+    try {
+      program.parse('--white --black ext'.split(' '), { from: 'user' });
+    } catch (err) {
+      exception = err;
+    }
+    expect(exception).not.toBeUndefined();
+    expect(exception.code).toBe('commander.conflictingOption');
   });
 });
