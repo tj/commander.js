@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [9.2.0] (2022-04-15)
+
+### Added
+
+- conditional export of 'types' for upcoming TypeScript module resolution ([#1703])
+- example file showing two ways to add global options to subcommands ([#1708])
+
+### Fixed
+
+- detect option conflicts in parent commands of called subcommand ([#1710])
+
 ## [9.1.0] (2022-03-19)
 
 ### Added
@@ -1039,6 +1050,9 @@ program
 [#1675]: https://github.com/tj/commander.js/pull/1675
 [#1678]: https://github.com/tj/commander.js/pull/1678
 [#1698]: https://github.com/tj/commander.js/pull/1698
+[#1703]: https://github.com/tj/commander.js/pull/1703
+[#1708]: https://github.com/tj/commander.js/pull/1708
+[#1710]: https://github.com/tj/commander.js/pull/1710
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
