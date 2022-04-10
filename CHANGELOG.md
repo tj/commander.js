@@ -1135,6 +1135,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[9.2.0]: https://github.com/tj/commander.js/compare/v9.1.0...v9.2.0
 [9.1.0]: https://github.com/tj/commander.js/compare/v9.0.0...v9.1.0
 [9.0.0]: https://github.com/tj/commander.js/compare/v8.3.0...v9.0.0
 [9.0.0-1]: https://github.com/tj/commander.js/compare/v9.0.0-0...v9.0.0-1
