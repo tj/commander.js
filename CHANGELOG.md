@@ -19,13 +19,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - detect option conflicts in parent commands of called subcommand ([#1710])
 
+### Changed
+
+- replace deprecated `String.prototype.substr` ([#1706])
+
 ## [9.1.0] (2022-03-19)
 
 ### Added
 
 - Option `.conflicts()` to set conflicting options which can not be specified together ([#1678])
 - (developer) CodeQL configuration for GitHub Actions ([#1698])
-
 
 ## [9.0.0] (2022-01-28)
 
@@ -1051,6 +1054,7 @@ program
 [#1678]: https://github.com/tj/commander.js/pull/1678
 [#1698]: https://github.com/tj/commander.js/pull/1698
 [#1703]: https://github.com/tj/commander.js/pull/1703
+[#1706]: https://github.com/tj/commander.js/pull/1706
 [#1708]: https://github.com/tj/commander.js/pull/1708
 [#1710]: https://github.com/tj/commander.js/pull/1710
 
