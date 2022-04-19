@@ -1,24 +1,24 @@
 #!/usr/bin/env node
 
-// This example shows specifying the arguments using argument() function.
+// This example shows specifying the command arguments using argument() function.
 
 // const { Command } = require('commander'); // (normal include)
 const { Command } = require('../'); // include commander in git clone of commander repo
 const program = new Command();
 
 program
-  .version('0.1.0')
-  .argument('<username>', 'user to login')
-  .argument('[password]', 'password for user, if required', 'no password given')
-  .description('example program for argument')
-  .action((username, password) => {
-    console.log('username:', username);
-    console.log('password:', password);
+  .name('connect')
+  .argument('<server>', 'connect to the specified server')
+  .argument('[user]', 'user account for connection', 'guest')
+  .description('Example program with argument descriptions')
+  .action((server, user) => {
+    console.log('server:', server);
+    console.log('user:', user);
   });
 
 program.parse();
 
 // Try the following:
-//    node arguments.js --help
-//    node arguments.js user
-//    node arguments.js user secret
+//    node argument.js --help
+//    node argument.js main.remote.site
+//    node argument.js main.remote.site admin
