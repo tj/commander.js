@@ -37,6 +37,66 @@ describe('option with required value, no default', () => {
     // Assert
     expect(mockOptionMissingArgument).toHaveBeenCalled();
   });
+
+  test('when option value not specified and other options follow then error', () => {
+    // Arrange. Mock error routine to allow interception.
+    const mockOptionMissingArgument = jest.fn(() => {
+      throw new Error('optionMissingArgument');
+    });
+    const program = new commander.Command();
+    program.optionMissingArgument = mockOptionMissingArgument;
+    program
+      .option('--cheese <type>', 'cheese type')
+      .option('--sauce <type>', 'sauce type');
+
+    // Act. The throw is due to the above mock, and not default behaviour.
+    expect(() => {
+      program.parse(['node', 'test', '--cheese', '--sauce', 'red']);
+    }).toThrow();
+
+    // Assert
+    expect(mockOptionMissingArgument).toHaveBeenCalled();
+  });
+
+  test('when option value not specified and other options follow using alternate long option syntax then error', () => {
+    // Arrange. Mock error routine to allow interception.
+    const mockOptionMissingArgument = jest.fn(() => {
+      throw new Error('optionMissingArgument');
+    });
+    const program = new commander.Command();
+    program.optionMissingArgument = mockOptionMissingArgument;
+    program
+      .option('--cheese <type>', 'cheese type')
+      .option('--sauce <type>', 'sauce type');
+
+    // Act. The throw is due to the above mock, and not default behaviour.
+    expect(() => {
+      program.parse(['node', 'test', '--cheese', '--sauce=red']);
+    }).toThrow();
+
+    // Assert
+    expect(mockOptionMissingArgument).toHaveBeenCalled();
+  });
+
+  test('when option value not specified and other options follow using alternate short option syntax then error', () => {
+    // Arrange. Mock error routine to allow interception.
+    const mockOptionMissingArgument = jest.fn(() => {
+      throw new Error('optionMissingArgument');
+    });
+    const program = new commander.Command();
+    program.optionMissingArgument = mockOptionMissingArgument;
+    program
+      .option('--cheese <type>', 'cheese type')
+      .option('-s --sauce <type>', 'sauce type');
+
+    // Act. The throw is due to the above mock, and not default behaviour.
+    expect(() => {
+      program.parse(['node', 'test', '--cheese', '-sred']);
+    }).toThrow();
+
+    // Assert
+    expect(mockOptionMissingArgument).toHaveBeenCalled();
+  });
 });
 
 // option with required value, with default
@@ -74,26 +134,6 @@ describe('option with required value, with default', () => {
     // Act. The throw is due to the above mock, and not default behaviour.
     expect(() => {
       program.parse(['node', 'test', '--cheese']);
-    }).toThrow();
-
-    // Assert
-    expect(mockOptionMissingArgument).toHaveBeenCalled();
-  });
-
-  test('when option value not specified and other options follow then error', () => {
-    // Arrange. Mock error routine to allow interception.
-    const mockOptionMissingArgument = jest.fn(() => {
-      throw new Error('optionMissingArgument');
-    });
-    const program = new commander.Command();
-    program.optionMissingArgument = mockOptionMissingArgument;
-    program
-      .option('--cheese <type>', 'cheese type')
-      .option('--sauce <type>', 'sauce type');
-
-    // Act. The throw is due to the above mock, and not default behaviour.
-    expect(() => {
-      program.parse(['node', 'test', '--cheese', '--sauce', 'red']);
     }).toThrow();
 
     // Assert
