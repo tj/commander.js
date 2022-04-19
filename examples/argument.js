@@ -10,9 +10,9 @@ program
   .name('connect')
   .argument('<server>', 'connect to the specified server')
   .argument('[user]', 'user account for connection', 'guest')
-  .description('example program with argument descriptions')
+  .description('Example program with argument descriptions')
   .action((server, user) => {
-    console.log('username:', server);
+    console.log('server:', server);
     console.log('user:', user);
   });
 
