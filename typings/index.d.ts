@@ -523,10 +523,10 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
-  option(flags: string, description?: string, defaultValue?: string | boolean): this;
+  option(flags: string, description?: string, defaultValue?: string | boolean | string[]): this;
   option<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
   /** @deprecated since v7, instead use choices or a custom function */
-  option(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
+  option(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean | string[]): this;
 
   /**
    * Define a required option, which must have a value after parsing. This usually means
@@ -534,10 +534,10 @@ export class Command {
    *
    * The `flags` string contains the short and/or long flags, separated by comma, a pipe or space.
    */
-  requiredOption(flags: string, description?: string, defaultValue?: string | boolean): this;
+  requiredOption(flags: string, description?: string, defaultValue?: string | boolean | string[]): this;
   requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
   /** @deprecated since v7, instead use choices or a custom function */
-  requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean): this;
+  requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean | string[]): this;
 
   /**
    * Factory routine to create a new unattached option.
