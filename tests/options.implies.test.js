@@ -1,7 +1,6 @@
 const { Command, Option } = require('../');
 
 describe('check priotities', () => {
-
   test('when source undefined and implied undefined then implied is undefined', () => {
     const program = new Command();
     program
@@ -62,3 +61,7 @@ describe('check priotities', () => {
     delete process.env[envName];
   });
 });
+
+// Can store a value that is not actually an option (!)
+
+// Can store more than one implied key
