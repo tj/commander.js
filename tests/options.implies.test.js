@@ -62,6 +62,55 @@ describe('check priorities', () => {
   });
 });
 
-// Can store a value that is not actually an option (!)
+test('when imply non-option then ok and stored', () => {
+  const program = new Command();
+  program
+    .addOption(new Option('--foo').implies({ bar: 'implied' }));
+  program.parse(['--foo'], { from: 'user' });
+  expect(program.opts()).toEqual({ foo: true, bar: 'implied' });
+});
 
-// Can store more than one implied key
+test('when imply multiple values then store multiple values', () => {
+  const program = new Command();
+  program
+    .addOption(new Option('--foo').implies({ one: 'ONE', two: 'TWO' }))
+    .option('--one')
+    .option('--two');
+  program.parse(['--foo'], { from: 'user' });
+  expect(program.opts()).toEqual({ foo: true, one: 'ONE', two: 'TWO' });
+});
+
+test('when imply from positive option then positive implied', () => {
+  const program = new Command();
+  program
+    .addOption(new Option('--foo').implies({ implied: 'POSITIVE' }))
+    .addOption(new Option('--no-foo').implies({ implied: 'NEGATIVE' }));
+  program.parse(['--foo'], { from: 'user' });
+  expect(program.opts()).toEqual({ foo: true, implied: 'POSITIVE' });
+});
+
+test('when imply from negative option then negative implied', () => {
+  const program = new Command();
+  program
+    .addOption(new Option('--foo').implies({ implied: 'POSITIVE' }))
+    .addOption(new Option('--no-foo').implies({ implied: 'NEGATIVE' }));
+  program.parse(['--no-foo'], { from: 'user' });
+  expect(program.opts()).toEqual({ foo: false, implied: 'NEGATIVE' });
+});
+
+test('when imply from lone negative option then negative implied', () => {
+  const program = new Command();
+  program
+    .addOption(new Option('--no-foo').implies({ implied: 'NEGATIVE' }));
+  program.parse(['--no-foo'], { from: 'user' });
+  expect(program.opts()).toEqual({ foo: false, implied: 'NEGATIVE' });
+});
+
+test('when imply from negative option with preset then negative implied', () => {
+  const program = new Command();
+  program
+    .addOption(new Option('--foo').implies({ implied: 'POSITIVE' }))
+    .addOption(new Option('--no-foo').implies({ implied: 'NEGATIVE' }).preset('FALSE'));
+  program.parse(['--no-foo'], { from: 'user' });
+  expect(program.opts()).toEqual({ foo: 'FALSE', implied: 'NEGATIVE' });
+});
