@@ -14,7 +14,9 @@ program
   .addOption(new Option('-d, --drink <size>', 'drink cup size').choices(['small', 'medium', 'large']))
   .addOption(new Option('-p, --port <number>', 'port number').env('PORT'))
   .addOption(new Option('--donate [amount]', 'optional donation in dollars').preset('20').argParser(parseFloat))
-  .addOption(new Option('--disable-server', 'disables the server').conflicts('port'));
+  .addOption(new Option('--disable-server', 'disables the server').conflicts('port'))
+  .addOption(new Option('-c, --cheese <type>', 'add the specified type of cheese').implies({ dairy: true }))
+  .addOption(new Option('--dairy', 'may contain dairy'));
 
 program.parse();
 
@@ -27,3 +29,4 @@ console.log('Options: ', program.opts());
 //    node options-extra.js --donate
 //    node options-extra.js --donate 30.50
 //    node options-extra.js --disable-server --port 8000
+//    node options-extra.js --cheese=blue
