@@ -1,6 +1,6 @@
 const { Command, Option } = require('../');
 
-describe('check priotities', () => {
+describe('check priorities', () => {
   test('when source undefined and implied undefined then implied is undefined', () => {
     const program = new Command();
     program
