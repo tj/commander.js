@@ -131,7 +131,7 @@ export class Option {
   conflicts(names: string | string[]): this;
 
   /**
-   * Specify implied option values for when this option is set and the implied option is not.
+   * Specify implied option values for when this option is set and the implied options are not.
    *
    * @example
    * program
