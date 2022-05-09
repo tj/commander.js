@@ -133,6 +133,8 @@ export class Option {
   /**
    * Specify implied option values for when this option is set and the implied options are not.
    *
+   * The custom processing (parseArg) is not called on the implied values.
+   *
    * @example
    * program
    *   .addOption(new Option('--quiet').implies({ logLevel: 'off' }))
