@@ -114,3 +114,22 @@ test('when imply from negative option with preset then negative implied', () => 
   program.parse(['--no-foo'], { from: 'user' });
   expect(program.opts()).toEqual({ foo: 'FALSE', implied: 'NEGATIVE' });
 });
+
+test('when chained implies then only explicitly trigger', () => {
+  const program = new Command();
+  program
+    .addOption(new Option('--one').implies({ two: true }))
+    .addOption(new Option('--two').implies({ three: true }))
+    .addOption(new Option('--three'));
+  program.parse(['--one'], { from: 'user' });
+  expect(program.opts()).toEqual({ one: true, two: true });
+});
+
+test('when looped implies then no infinite loop', () => {
+  const program = new Command();
+  program
+    .addOption(new Option('--ying').implies({ yang: true }))
+    .addOption(new Option('--yang').implies({ ying: true }));
+  program.parse(['--ying'], { from: 'user' });
+  expect(program.opts()).toEqual({ ying: true, yang: true });
+});
