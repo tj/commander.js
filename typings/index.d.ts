@@ -131,6 +131,16 @@ export class Option {
   conflicts(names: string | string[]): this;
 
   /**
+   * Specify implied option values for when this option is set and the implied option is not.
+   *
+   * @example
+   * program
+   *   .addOption(new Option('--quiet').implies({ logLevel: 'off' }))
+   *   .addOption(new Option('--log-level <level>').choices(['info', 'warning', 'error', 'off']).default('info'));
+   */
+  implies(optionValues: OptionValues): this;
+
+  /**
    * Set environment variable to check for option value.
    * Priority order of option values is default < env < cli
    */
