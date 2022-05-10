@@ -137,8 +137,8 @@ export class Option {
    *
    * @example
    * program
-   *   .addOption(new Option('--quiet').implies({ logLevel: 'off' }))
-   *   .addOption(new Option('--log-level <level>').choices(['info', 'warning', 'error', 'off']).default('info'));
+   *   .addOption(new Option('--log', 'write logging information to file'))
+   *   .addOption(new Option('--trace', 'log extra details').implies({ log: 'trace.txt' }));
    */
   implies(optionValues: OptionValues): this;
 
