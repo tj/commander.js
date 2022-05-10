@@ -80,6 +80,16 @@ test('when imply multiple values then store multiple values', () => {
   expect(program.opts()).toEqual({ foo: true, one: 'ONE', two: 'TWO' });
 });
 
+test('when imply multiple times then store multiple values', () => {
+  const program = new Command();
+  program
+    .addOption(new Option('--foo').implies({ one: 'ONE' }).implies({ two: 'TWO' }))
+    .option('--one')
+    .option('--two');
+  program.parse(['--foo'], { from: 'user' });
+  expect(program.opts()).toEqual({ foo: true, one: 'ONE', two: 'TWO' });
+});
+
 test('when imply from positive option then positive implied', () => {
   const program = new Command();
   program
@@ -132,4 +142,31 @@ test('when looped implies then no infinite loop', () => {
     .addOption(new Option('--yang').implies({ ying: true }));
   program.parse(['--ying'], { from: 'user' });
   expect(program.opts()).toEqual({ ying: true, yang: true });
+});
+
+test('when conflict with implied value then throw', () => {
+  const program = new Command();
+  program
+    .exitOverride()
+    .configureOutput({
+      writeErr: () => {}
+    })
+    .addOption(new Option('--unary'))
+    .addOption(new Option('--binary').conflicts('unary'))
+    .addOption(new Option('--one').implies({ unary: true }));
+
+  expect(() => {
+    program.parse(['--binary', '--one'], { from: 'user' });
+  }).toThrow();
+});
+
+test('when requiredOption with implied value then not throw', () => {
+  const program = new Command();
+  program
+    .requiredOption('--target <target-file>')
+    .addOption(new Option('--default-target').implies({ target: 'default-file' }));
+
+  expect(() => {
+    program.parse(['--default-target'], { from: 'user' });
+  }).not.toThrow();
 });
