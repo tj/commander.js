@@ -414,8 +414,7 @@ program
   .addOption(new Option('-p, --port <number>', 'port number').env('PORT'))
   .addOption(new Option('--donate [amount]', 'optional donation in dollars').preset('20').argParser(parseFloat))
   .addOption(new Option('--disable-server', 'disables the server').conflicts('port'))
-  .addOption(new Option('-c, --cheese <type>', 'add the specified type of cheese').implies({ dairy: true }))
-  .addOption(new Option('--dairy', 'may contain dairy'));
+  .addOption(new Option('--free-drink', 'small drink included free ').implies({ drink: 'small' }));
 ```
 
 ```console
@@ -426,23 +425,19 @@ Options:
   -t, --timeout <delay>  timeout in seconds (default: one minute)
   -d, --drink <size>     drink cup size (choices: "small", "medium", "large")
   -p, --port <number>    port number (env: PORT)
-  --donate [amount]      optional donation in dollars (preset: 20)
+  --donate [amount]      optional donation in dollars (preset: "20")
   --disable-server       disables the server
-  -c, --cheese <type>    add the specified type of cheese
-  --dairy                may contain dairy
+  --free-drink           small drink included free
   -h, --help             display help for command
 
 $ extra --drink huge
 error: option '-d, --drink <size>' argument 'huge' is invalid. Allowed choices are small, medium, large.
 
-$ PORT=80 extra --donate
-Options:  { timeout: 60, donate: 20, port: '80' }
+$ PORT=80 extra --donate --free-drink
+Options:  { timeout: 60, donate: 20, port: '80', freeDrink: true, drink: 'small' }
 
 $ extra --disable-server --port 8000
 error: option '--disable-server' cannot be used with option '-p, --port <number>'
-
-% extra --cheese=blue
-Options:  { timeout: 60, cheese: 'blue', dairy: true }
 ```
 
 ### Custom option processing
