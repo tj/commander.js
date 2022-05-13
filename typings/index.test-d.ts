@@ -418,6 +418,9 @@ expectType<commander.Option>(baseOption.choices(['a', 'b'] as const));
 expectType<commander.Option>(baseOption.conflicts('a'));
 expectType<commander.Option>(baseOption.conflicts(['a', 'b']));
 
+// implies
+expectType<commander.Option>(baseOption.implies({ option: 'VALUE', colour: false }));
+
 // name
 expectType<string>(baseOption.name());
 

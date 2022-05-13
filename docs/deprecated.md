@@ -13,6 +13,7 @@ They are currently still available for backwards compatibility, but should not b
   - [.command('*')](#command)
   - [cmd.description(cmdDescription, argDescriptions)](#cmddescriptioncmddescription-argdescriptions)
   - [InvalidOptionArgumentError](#invalidoptionargumenterror)
+  - [Short option flag longer than a single character](#short-option-flag-longer-than-a-single-character)
 
 ## RegExp .option() parameter
 
@@ -183,3 +184,9 @@ function myParseInt(value, dummyPrevious) {
 ```
 
 Deprecated from Commander v8.
+
+## Short option flag longer than a single character
+
+Short option flags like `-ws` were never supported, but the old README did not make this clear. The README now states that short options are a single character.
+
+README updated in Commander v3. Deprecated from Commander v9.

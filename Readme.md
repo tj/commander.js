@@ -57,7 +57,7 @@ For information about terms used in this document see: [terminology](./docs/term
 
 ## Installation
 
-```bash
+```sh
 npm install commander
 ```
 
@@ -86,7 +86,7 @@ const limit = options.first ? 1 : undefined;
 console.log(program.args[0].split(options.separator, limit));
 ```
 
-```sh
+```console
 $ node split.js -s / --fits a/b/c
 error: unknown option '--fits'
 (Did you mean --first?)
@@ -120,7 +120,7 @@ program.command('split')
 program.parse();
 ```
 
-```sh
+```console
 $ node string-util.js help split
 Usage: string-util split [options] <string>
 
@@ -180,7 +180,7 @@ Multi-word options such as "--template-engine" are camel-cased, becoming `progra
 
 An option and its option-argument can be separated by a space, or combined into the same argument. The option-argument can follow the short option directly or follow an `=` for a long option.
 
-```bash
+```sh
 serve -p 80
 serve -p80
 serve --port 80
@@ -219,7 +219,7 @@ if (options.small) console.log('- small pizza size');
 if (options.pizzaType) console.log(`- ${options.pizzaType}`);
 ```
 
-```bash
+```console
 $ pizza-options -p
 error: option '-p, --pizza-type <type>' argument missing
 $ pizza-options -d -s -p vegetarian
@@ -255,7 +255,7 @@ program.parse();
 console.log(`cheese: ${program.opts().cheese}`);
 ```
 
-```bash
+```console
 $ pizza-options
 cheese: blue
 $ pizza-options --cheese stilton
@@ -285,7 +285,7 @@ const cheeseStr = (options.cheese === false) ? 'no cheese' : `${options.cheese} 
 console.log(`You ordered a pizza with ${sauceStr} and ${cheeseStr}`);
 ```
 
-```bash
+```console
 $ pizza-options
 You ordered a pizza with sauce and mozzarella cheese
 $ pizza-options --sauce
@@ -313,7 +313,7 @@ else if (options.cheese === true) console.log('add cheese');
 else console.log(`add cheese type ${options.cheese}`);
 ```
 
-```bash
+```console
 $ pizza-options
 no cheese
 $ pizza-options --cheese
@@ -340,7 +340,7 @@ program
 program.parse();
 ```
 
-```bash
+```console
 $ pizza
 error: required option '-c, --cheese <type>' not specified
 ```
@@ -365,7 +365,7 @@ console.log('Options: ', program.opts());
 console.log('Remaining arguments: ', program.args);
 ```
 
-```bash
+```console
 $ collect -n 1 2 3 --letter a b c
 Options:  { number: [ '1', '2', '3' ], letter: [ 'a', 'b', 'c' ] }
 Remaining arguments:  []
@@ -387,7 +387,7 @@ The optional `version` method adds handling for displaying the command version. 
 program.version('0.0.1');
 ```
 
-```bash
+```console
 $ ./examples/pizza -V
 0.0.1
 ```
@@ -404,7 +404,7 @@ program.version('0.0.1', '-v, --vers', 'output the current version');
 You can add most options using the `.option()` method, but there are some additional features available
 by constructing an `Option` explicitly for less common cases.
 
-Example files: [options-extra.js](./examples/options-extra.js), [options-env.js](./examples/options-env.js), [options-conflicts.js](./examples/options-conflicts.js)
+Example files: [options-extra.js](./examples/options-extra.js), [options-env.js](./examples/options-env.js), [options-conflicts.js](./examples/options-conflicts.js), [options-implies.js](./examples/options-implies.js)
 
 ```js
 program
@@ -413,10 +413,11 @@ program
   .addOption(new Option('-d, --drink <size>', 'drink size').choices(['small', 'medium', 'large']))
   .addOption(new Option('-p, --port <number>', 'port number').env('PORT'))
   .addOption(new Option('--donate [amount]', 'optional donation in dollars').preset('20').argParser(parseFloat))
-  .addOption(new Option('--disable-server', 'disables the server').conflicts('port'));
+  .addOption(new Option('--disable-server', 'disables the server').conflicts('port'))
+  .addOption(new Option('--free-drink', 'small drink included free ').implies({ drink: 'small' }));
 ```
 
-```bash
+```console
 $ extra --help
 Usage: help [options]
 
@@ -424,15 +425,16 @@ Options:
   -t, --timeout <delay>  timeout in seconds (default: one minute)
   -d, --drink <size>     drink cup size (choices: "small", "medium", "large")
   -p, --port <number>    port number (env: PORT)
-  --donate [amount]      optional donation in dollars (preset: 20)
+  --donate [amount]      optional donation in dollars (preset: "20")
   --disable-server       disables the server
+  --free-drink           small drink included free
   -h, --help             display help for command
 
 $ extra --drink huge
 error: option '-d, --drink <size>' argument 'huge' is invalid. Allowed choices are small, medium, large.
 
-$ PORT=80 extra --donate
-Options:  { timeout: 60, donate: 20, port: '80' }
+$ PORT=80 extra --donate --free-drink
+Options:  { timeout: 60, donate: 20, port: '80', freeDrink: true, drink: 'small' }
 
 $ extra --disable-server --port 8000
 error: option '--disable-server' cannot be used with option '-p, --port <number>'
@@ -489,7 +491,7 @@ if (options.collect.length > 0) console.log(options.collect);
 if (options.list !== undefined) console.log(options.list);
 ```
 
-```bash
+```console
 $ custom -f 1e2
 float: 100
 $ custom --integer 2
@@ -728,7 +730,7 @@ help option is `-h,--help`.
 
 Example file: [pizza](./examples/pizza)
 
-```bash
+```console
 $ node ./examples/pizza --help
 Usage: pizza [options]
 
@@ -744,7 +746,7 @@ Options:
 A `help` command is added by default if your command has subcommands. It can be used alone, or with a subcommand name to show
 further help for the subcommand. These are effectively the same if the `shell` program has implicit help:
 
-```bash
+```sh
 shell help
 shell --help
 
@@ -806,7 +808,7 @@ program.showHelpAfterError();
 program.showHelpAfterError('(add --help for additional information)');
 ```
 
-```sh
+```console
 $ pizza --unknown
 error: unknown option '--unknown'
 (add --help for additional information)
@@ -818,7 +820,7 @@ You can also show suggestions after an error for an unknown command or option.
 program.showSuggestionAfterError();
 ```
 
-```sh
+```console
 $ pizza --hepl
 error: unknown option '--hepl'
 (Did you mean --help?)
@@ -991,7 +993,7 @@ program
 
 If you use `ts-node` and  stand-alone executable subcommands written as `.ts` files, you need to call your program through node to get the subcommands called correctly. e.g.
 
-```bash
+```sh
 node -r ts-node/register pm.ts
 ```
 
