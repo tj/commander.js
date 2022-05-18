@@ -11,6 +11,7 @@
 
 - [Commander.js](#commanderjs)
   - [安装](#%e5%ae%89%e8%a3%85)
+  - [快速开始](#%E5%BF%AB%E9%80%9F%E5%BC%80%E5%A7%8B)
   - [声明 program 变量](#%e5%a3%b0%e6%98%8e-program-%e5%8f%98%e9%87%8f)
   - [选项](#%e9%80%89%e9%a1%b9)
     - [常用选项类型，boolean 型选项和带参数的选项](#%e5%b8%b8%e7%94%a8%e9%80%89%e9%a1%b9%e7%b1%bb%e5%9e%8bboolean-%e5%9e%8b%e9%80%89%e9%a1%b9%e5%92%8c%e5%b8%a6%e5%8f%82%e6%95%b0%e9%80%89%e9%a1%b9)
@@ -55,37 +56,113 @@
 
 ## 安装
 
-```bash
+```sh
 npm install commander
 ```
+
+## 快速开始
+
+编写代码来描述你的命令行界面。
+Commander 负责将参数解析为选项和命令参数，为问题显示使用错误，并实现一个有帮助的系统。
+
+Commander 是严格的，并且会针对无法识别的选项显示错误。
+两种最常用的选项类型是布尔选项，和从参数中获取值的选项。
+
+示例代码：[split.js](./examples/split.js)
+
+```js
+const { program } = require('commander');
+
+program
+  .option('--first')
+  .option('-s, --separator <char>');
+
+program.parse();
+
+const options = program.opts();
+const limit = options.first ? 1 : undefined;
+console.log(program.args[0].split(options.separator, limit));
+```
+
+```console
+$ node split.js -s / --fits a/b/c
+error: unknown option '--fits'
+(Did you mean --first?)
+$ node split.js -s / --first a/b/c
+[ 'a' ]
+```
+
+这是一个使用子命令并带有帮助描述的更完整的程序。在多命令程序中，每个命令（或命令的独立可执行文件）都有一个操作处理程序。
+
+示例代码：[string-util.js](./examples/string-util.js)
+
+```js
+const { Command } = require('commander');
+const program = new Command();
+
+program
+  .name('string-util')
+  .description('CLI to some JavaScript string utilities')
+  .version('0.8.0');
+
+program.command('split')
+  .description('Split a string into substrings and display as an array')
+  .argument('<string>', 'string to split')
+  .option('--first', 'display just the first substring')
+  .option('-s, --separator <char>', 'separator character', ',')
+  .action((str, options) => {
+    const limit = options.first ? 1 : undefined;
+    console.log(str.split(options.separator, limit));
+  });
+
+program.parse();
+```
+
+```console
+$ node string-util.js help split
+Usage: string-util split [options] <string>
+
+Split a string into substrings and display as an array.
+
+Arguments:
+  string                  string to split
+
+Options:
+  --first                 display just the first substring
+  -s, --separator <char>  separator character (default: ",")
+  -h, --help              display help for command
+
+$ node string-util.js split --separator=/ a/b/c
+[ 'a', 'b', 'c' ]
+```
+
+More samples can be found in the [examples](https://github.com/tj/commander.js/tree/master/examples) directory.
 
 ## 声明 program 变量
 
 为简化使用，Commander 提供了一个全局对象。本文档的示例代码均按此方法使用：
 
 ```js
+// CommonJS (.cjs)
 const { program } = require('commander');
 ```
 
-如果程序较为复杂，用户需要以多种方式来使用 Commander，如单元测试等。创建本地`Command`对象是一种更好的方式：
+如果程序较为复杂，用户需要以多种方式来使用 Commander，如单元测试等。创建本地 Command 对象是一种更好的方式：
 
 ```js
+// CommonJS (.cjs)
 const { Command } = require('commander');
 const program = new Command();
 ```
 
-要在 ECMAScript 模块中使用命名导入，可从`commander/esm.mjs`中导入。
-
 ```js
-// index.mjs
-import { Command } from 'commander/esm.mjs';
+// ECMAScript (.mjs)
+import { Command } from 'commander';
 const program = new Command();
 ```
 
-TypeScript 用法：
-
 ```ts
-// index.ts
+// TypeScript (.ts)
 import { Command } from 'commander';
 const program = new Command();
 ```
