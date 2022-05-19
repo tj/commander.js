@@ -171,16 +171,28 @@ const program = new Command();
 
 Commander 使用`.option()`方法来定义选项，同时可以附加选项的简介。每个选项可以定义一个短选项名称（-后面接单个字符）和一个长选项名称（--后面接一个或多个单词），使用逗号、空格或`|`分隔。
 
-解析后的选项可以通过`Command`对象上的`.opts()`方法获取，同时会被传递给命令处理函数。可以使用`.getOptionValue()`和`.setOptionValue()`操作单个选项的值。
+解析后的选项可以通过`Command`对象上的`.opts()`方法获取，同时会被传递给命令处理函数。
 
 对于多个单词的长选项，选项名会转为驼峰命名法（camel-case），例如`--template-engine`选项可通过`program.opts().templateEngine`获取。
 
-多个短选项可以合并简写，其中最后一个选项可以附加参数。
-例如，`-a -b -p 80`也可以写为`-ab -p80`，甚至进一步简化为`-abp80`。
+选项及其选项参数可以用空格分隔，也可以组合成同一个参数。选项参数可以直接跟在短选项之后，也可以在长选项后面加上 `=`。
+
+```sh
+serve -p 80
+serve -p80
+serve --port 80
+serve --port=80
+```
 
 `--`可以标记选项的结束，后续的参数均不会被命令解释，可以正常使用。
 
 默认情况下，选项在命令行中的顺序不固定，一个选项可以在其他参数之前或之后指定。
+
+当`.opts()`不够用时，还有其他相关方法：
+
+- `.optsWithGlobals()`返回合并的本地和全局选项值
+- `.getOptionValue()`和`.setOptionValue()`操作单个选项的值
+- `.getOptionValueSource()`和`.setOptionValueWithSource()`包括选项值的来源
 
 ### 常用选项类型，boolean 型选项和带参数选项
 
@@ -203,7 +215,7 @@ if (options.small) console.log('- small pizza size');
 if (options.pizzaType) console.log(`- ${options.pizzaType}`);
 ```
 
-```bash
+```console
 $ pizza-options -p
 error: option '-p, --pizza-type <type>' argument missing
 $ pizza-options -d -s -p vegetarian
@@ -215,6 +227,12 @@ $ pizza-options --pizza-type=cheese
 pizza details:
 - cheese
 ```
+
+多个布尔短选项可以在破折号之后组合在一起，并且可以跟一个取值的单一选项。
+例如 `-d -s -p cheese` 可以写成 `-ds -p cheese` 甚至 `-dsp cheese`。
+
+具有预期选项参数的选项是贪婪的，并且无论值如何，都会消耗参数。
+所以 `--id -xyz` 读取 `-xyz` 作为选项参数。
 
 通过`program.parse(arguments)`方法处理参数，没有被使用的选项会存放在`program.args`数组中。该方法的参数是可选的，默认值为`process.argv`。
 
@@ -233,7 +251,7 @@ program.parse();
 console.log(`cheese: ${program.opts().cheese}`);
 ```
 
-```bash
+```console
 $ pizza-options
 cheese: blue
 $ pizza-options --cheese stilton
@@ -244,7 +262,7 @@ cheese: stilton
 
 可以定义一个以`no-`开头的 boolean 型长选项。在命令行中使用该选项时，会将对应选项的值置为`false`。当只定义了带`no-`的选项，未定义对应不带`no-`的选项时，该选项的默认值会被置为`true`。
 
-如果已经定义了`--foo`，那么再定义`--no-foo`并不会改变它本来的默认值。可以为一个 boolean 类型的选项指定一个默认的布尔值，在命令行里可以重写它的值。
+如果已经定义了`--foo`，那么再定义`--no-foo`并不会改变它本来的默认值。
 
 示例代码：[options-negatable.js](./examples/options-negatable.js)
 
@@ -261,7 +279,7 @@ const cheeseStr = (options.cheese === false) ? 'no cheese' : `${options.cheese} 
 console.log(`You ordered a pizza with ${sauceStr} and ${cheeseStr}`);
 ```
 
-```bash
+```console
 $ pizza-options
 You ordered a pizza with sauce and mozzarella cheese
 $ pizza-options --sauce
@@ -288,7 +306,7 @@ else if (options.cheese === true) console.log('add cheese');
 else console.log(`add cheese type ${options.cheese}`);
 ```
 
-```bash
+```console
 $ pizza-options
 no cheese
 $ pizza-options --cheese
@@ -296,6 +314,8 @@ add cheese
 $ pizza-options --cheese mozzarella
 add cheese type mozzarella
 ```
+
+带有可选选项参数的选项不是贪婪的，并且会忽略以破折号开头的参数。因此对于`--id -5`，`id`表现为布尔选项，但如果需要，您可以使用组合形式，例如 `--id=-5`。
 
 关于可能有歧义的用例，请见[可变参数的选项](./docs/zh-CN/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E7%9A%84%E9%80%89%E9%A1%B9.md)。
 
@@ -312,7 +332,7 @@ program
 program.parse();
 ```
 
-```bash
+```console
 $ pizza
 error: required option '-c, --cheese <type>' not specified
 ```
@@ -334,7 +354,7 @@ console.log('Options: ', program.opts());
 console.log('Remaining arguments: ', program.args);
 ```
 
-```bash
+```console
 $ collect -n 1 2 3 --letter a b c
 Options:  { number: [ '1', '2', '3' ], letter: [ 'a', 'b', 'c' ] }
 Remaining arguments:  []
@@ -356,7 +376,7 @@ Remaining arguments:  [ 'operand' ]
 program.version('0.0.1');
 ```
 
-```bash
+```console
 $ ./examples/pizza -V
 0.0.1
 ```
@@ -371,26 +391,40 @@ program.version('0.0.1', '-v, --vers', 'output the current version');
 
 大多数情况下，选项均可通过`.option()`方法添加。但对某些不常见的用例，也可以直接构造`Option`对象，对选项进行更详尽的配置。
 
-示例代码：[options-extra.js](./examples/options-extra.js)
+示例代码：[options-extra.js](./examples/options-extra.js), [options-env.js](./examples/options-env.js), [options-conflicts.js](./examples/options-conflicts.js), [options-implies.js](./examples/options-implies.js)
 
 ```js
 program
   .addOption(new Option('-s, --secret').hideHelp())
   .addOption(new Option('-t, --timeout <delay>', 'timeout in seconds').default(60, 'one minute'))
-  .addOption(new Option('-d, --drink <size>', 'drink size').choices(['small', 'medium', 'large']));
+  .addOption(new Option('-d, --drink <size>', 'drink size').choices(['small', 'medium', 'large']))
+  .addOption(new Option('-p, --port <number>', 'port number').env('PORT'))
+  .addOption(new Option('--donate [amount]', 'optional donation in dollars').preset('20').argParser(parseFloat))
+  .addOption(new Option('--disable-server', 'disables the server').conflicts('port'))
+  .addOption(new Option('--free-drink', 'small drink included free ').implies({ drink: 'small' }));
 ```
 
-```bash
+```console
 $ extra --help
 Usage: help [options]
 
 Options:
   -t, --timeout <delay>  timeout in seconds (default: one minute)
   -d, --drink <size>     drink cup size (choices: "small", "medium", "large")
+  -p, --port <number>    port number (env: PORT)
+  --donate [amount]      optional donation in dollars (preset: "20")
+  --disable-server       disables the server
+  --free-drink           small drink included free
   -h, --help             display help for command
 
 $ extra --drink huge
 error: option '-d, --drink <size>' argument 'huge' is invalid. Allowed choices are small, medium, large.
+
+$ PORT=80 extra --donate --free-drink
+Options:  { timeout: 60, donate: 20, port: '80', freeDrink: true, drink: 'small' }
+
+$ extra --disable-server --port 8000
+error: option '--disable-server' cannot be used with option '-p, --port <number>'
 ```
 
 ### 自定义选项处理
@@ -443,7 +477,7 @@ if (options.collect.length > 0) console.log(options.collect);
 if (options.list !== undefined) console.log(options.list);
 ```
 
-```bash
+```console
 $ custom -f 1e2
 float: 100
 $ custom --integer 2
