@@ -35,7 +35,7 @@
     - [使用代码展示帮助信息](#%E4%BD%BF%E7%94%A8%E4%BB%A3%E7%A0%81%E5%B1%95%E7%A4%BA%E5%B8%AE%E5%8A%A9%E4%BF%A1%E6%81%AF)
     - [.name](#name)
     - [.usage](#usage)
-    - [.description 和 .summary](#.description%20%E5%92%8C%20.summary)
+    - [.description 和 .summary](#description-%E5%92%8C-summary)
     - [.helpOption(flags, description)](#helpoptionflags-description)
     - [.addHelpCommand()](#addhelpcommand)
     - [其他帮助配置](#%E5%85%B6%E4%BB%96%E5%B8%AE%E5%8A%A9%E9%85%8D%E7%BD%AE)
