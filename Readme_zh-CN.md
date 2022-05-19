@@ -137,7 +137,7 @@ $ node string-util.js split --separator=/ a/b/c
 [ 'a', 'b', 'c' ]
 ```
 
-More samples can be found in the [examples](https://github.com/tj/commander.js/tree/master/examples) directory.
+更多示例可以在 [examples](https://github.com/tj/commander.js/tree/master/examples) 目录中找到。
 
 ## 声明 program 变量
 
