@@ -617,6 +617,20 @@ program
   });
 ```
 
+如果你愿意，你可以跳过为处理函数声明参数直接使用 command。 `this` 关键字设置为运行命令，可以在函数表达式中使用（但不能从箭头函数中使用）。
+
+示例代码：[action-this.js](./examples/action-this.js)
+
+```js
+program
+  .command('serve')
+  .argument('<script>')
+  .option('-p, --port <number>', 'port number', 80)
+  .action(function() {
+    console.error('Run script %s on port %s', this.args[0], this.opts().port);
+  });
+```
+
 处理函数支持`async`，相应的，需要使用`.parseAsync`代替`.parse`。
 
 ```js
@@ -636,7 +650,9 @@ async function main() {
 ### 独立的可执行（子）命令
 
 当`.command()`带有描述参数时，就意味着使用独立的可执行文件作为子命令。
-Commander 将会尝试在入口脚本（例如`./examples/pm`）的目录中搜索`program-command`形式的可执行文件，例如`pm-install`、`pm-search`。通过配置选项`executableFile`可以自定义名字。
+Commander 会尝试在入口脚本的目录中搜索名称组合为 `command-subcommand` 的文件，如以下示例中的 `pm-install` 或 `pm-search`。搜索包括尝试常见的文件扩展名，如`.js`。
+你可以使用 `executableFile` 配置选项指定自定义名称（和路径）。
+你可以使用 `.executableDir()` 为子命令指定自定义搜索目录。
 
 你可以在可执行文件里处理（子）命令的选项，而不必在顶层声明它们。
 
@@ -689,7 +705,7 @@ program
 
 示例代码：[pizza](./examples/pizza)
 
-```bash
+```console
 $ node ./examples/pizza --help
 Usage: pizza [options]
 
@@ -704,7 +720,7 @@ Options:
 
 如果你的命令中包含了子命令，会默认添加`help`命令，它可以单独使用，也可以与子命令一起使用来提示更多帮助信息。用法与`shell`程序类似：
 
-```bash
+```sh
 shell help
 shell --help
 
@@ -765,10 +781,22 @@ program.showHelpAfterError();
 program.showHelpAfterError('(add --help for additional information)');
 ```
 
-```sh
+```console
 $ pizza --unknown
 error: unknown option '--unknown'
 (add --help for additional information)
+```
+
+你还可以在出现未知命令或选项的错误后显示建议。
+
+```js
+program.showSuggestionAfterError();
+```
+
+```console
+$ pizza --hepl
+error: unknown option '--hepl'
+(Did you mean --help?)
 ```
 
 ### 使用代码展示帮助信息
@@ -779,9 +807,22 @@ error: unknown option '--unknown'
 
 `.helpInformation()`：得到字符串形式的内建的帮助信息，以便用于自定义的处理及展示。
 
-### .usage 和 .name
+### .name
 
-通过这两个选项可以修改帮助信息的首行提示，`name`属性也可以从参数中推导出来。例如：
+命令名称出现在帮助中，也用于定位独立的可执行子命令。
+
+你可以使用 `.name()` 或在 Command 构造函数中指定程序名称。对于 program ，Commander 会使用传递给 `.parse()` 的完整参数中的脚本名称。但是，脚本名称会根据程序的启动方式而有所不同，因此您可能希望明确指定它。
+
+```js
+program.name('pizza');
+const pm = new Command('pm');
+```
+
+使用 `.command()` 指定时，子命令会获得名称。如果您自己创建子命令以与 `.addCommand()` 一起使用，则使用 `.name()` 或在 Command 构造函数中设置名称。
+
+### .usage
+
+通过这个选项可以修改帮助信息的首行提示，例如：
 
 ```js
 program
@@ -797,7 +838,7 @@ Usage: my-command [global options] command
 
 ### .helpOption(flags, description)
 
-每一个命令都带有一个默认的帮助选项。可以重写`flags`和`description`参数。传入`false`则会禁用内建的帮助信息。
+每一个命令都带有一个默认的帮助选项。你可以改变 `flags` 和 `description` 参数。传入 `false` 则会禁用内建的帮助信息。
 
 ```js
 program
@@ -916,7 +957,7 @@ program
 
 如果你使用 ts-node，并有`.ts`文件作为独立可执行文件，那么需要用 node 运行你的程序以使子命令能正确调用，例如：
 
-```bash
+```sh
 node -r ts-node/register pm.ts
 ```
 
@@ -945,6 +986,17 @@ const program = createCommand();
 如果使用 node inspector 的`node -inspect`等命令来[调试](https://nodejs.org/en/docs/guides/debugging-getting-started/)可执行命令，对于生成的子命令，inspector 端口会递增 1。
 
 如果想使用 VSCode 调试，则需要在`launch.json`配置文件里设置`"autoAttachChildProcesses": true`。
+
+### 显示错误
+
+你可用于针对自己的错误情况调用 Commander 错误处理。（另请参阅下一节有关退出处理的内容）
+
+除了错误消息，你还可以选择指定 `exitCode`（与 `process.exit` 一起使用）和 `code`（与 `CommanderError` 一起使用）
+
+```js
+program.error('Password must be longer than four characters');
+program.error('Custom processing has failed', { exitCode: 2, code: 'my.custom.error' });
+```
 
 ### 重写退出和输出
 
@@ -990,76 +1042,10 @@ program
 - [不再推荐使用的功能](./docs/zh-CN/%E4%B8%8D%E5%86%8D%E6%8E%A8%E8%8D%90%E4%BD%BF%E7%94%A8%E7%9A%84%E5%8A%9F%E8%83%BD.md)。这些功能仍受到支持，以保证向后兼容。
 - [可变参数的选项](./docs/zh-CN/%E5%8F%AF%E5%8F%98%E5%8F%82%E6%95%B0%E7%9A%84%E9%80%89%E9%A1%B9.md)
 
-## 例子
-
-在只包含一个命令的程序中，无需定义处理函数。
-
-示例代码：[pizza](./examples/pizza)
-
-```js
-const { program } = require('commander');
-
-program
-  .description('An application for pizza ordering')
-  .option('-p, --peppers', 'Add peppers')
-  .option('-c, --cheese <type>', 'Add the specified type of cheese', 'marble')
-  .option('-C, --no-cheese', 'You do not want any cheese');
-
-program.parse();
-
-const options = program.opts();
-console.log('you ordered a pizza with:');
-if (options.peppers) console.log('  - peppers');
-const cheese = !options.cheese ? 'no' : options.cheese;
-console.log('  - %s cheese', cheese);
-```
-
-在包含多个命令的程序中，应为每个命令指定处理函数，或独立的可执行程序。
-
-示例代码：[deploy](./examples/deploy)
-
-```js
-const { Command } = require('commander');
-const program = new Command();
-
-program
-  .name('deploy')
-  .version('0.0.1')
-  .option('-c, --config <path>', 'set config path', './deploy.conf');
-
-program
-  .command('setup [env]')
-  .description('run setup commands for all envs')
-  .option('-s, --setup_mode <mode>', 'Which setup mode to use', 'normal')
-  .action((env, options) => {
-    env = env || 'all';
-    console.log('read config from %s', program.opts().config);
-    console.log('setup for %s env(s) with %s mode', env, options.setup_mode);
-  });
-
-program
-  .command('exec <script>')
-  .alias('ex')
-  .description('execute the given remote cmd')
-  .option('-e, --exec_mode <mode>', 'Which exec mode to use', 'fast')
-  .action((script, options) => {
-    console.log('read config from %s', program.opts().config);
-    console.log('exec "%s" using %s mode and config %s', script, options.exec_mode, program.opts().config);
-  }).addHelpText('after', `
-Examples:
-  $ deploy exec sequential
-  $ deploy exec async`
-  );
-
-program.parse(process.argv);
-```
-
-更多的示例代码点击[这里](https://github.com/tj/commander.js/tree/master/examples)查看。
-
 ## 支持
 
-当前版本的 Commander 在 LTS 版本的 Node 上完全支持。Node 版本应不低于v12。
-（使用更低版本 Node 的用户建议安装更低版本的 Commander。Commander 2.x 具有最广泛的支持。）
+当前版本的 Commander 在 LTS 版本的 Node.js 上完全支持。并且至少需要 v12.20.0。
+（使用更低版本 Node.js 的用户建议安装更低版本的 Commander）
 
 社区支持请访问项目的 [Issues](https://github.com/tj/commander.js/issues)。
 
