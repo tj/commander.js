@@ -35,6 +35,7 @@
     - [使用代码展示帮助信息](#%E4%BD%BF%E7%94%A8%E4%BB%A3%E7%A0%81%E5%B1%95%E7%A4%BA%E5%B8%AE%E5%8A%A9%E4%BF%A1%E6%81%AF)
     - [.name](#name)
     - [.usage](#usage)
+    - [.description 和 .summary](#.description%20%E5%92%8C%20.summary)
     - [.helpOption(flags, description)](#helpoptionflags-description)
     - [.addHelpCommand()](#addhelpcommand)
     - [其他帮助配置](#%E5%85%B6%E4%BB%96%E5%B8%AE%E5%8A%A9%E9%85%8D%E7%BD%AE)
@@ -788,10 +789,10 @@ error: unknown option '--unknown'
 (add --help for additional information)
 ```
 
-你还可以在出现未知命令或选项的错误后显示建议。
+默认行为是在出现未知命令或选项错误后建议正确拼写。你可以禁用此功能。
 
 ```js
-program.showSuggestionAfterError();
+program.showSuggestionAfterError(false);
 ```
 
 ```console
@@ -835,6 +836,19 @@ program
 
 ```Text
 Usage: my-command [global options] command
+```
+
+### .description 和 .summary
+
+description 出现在命令的帮助中。当列为程序的子命令时，你可以选择提供更短的 summary 以供使用。
+
+```js
+program
+  .command("duplicate")
+  .summary("make a copy")
+  .description(`Make a copy of the current project.
+This may require additional disk space.
+  `);
 ```
 
 ### .helpOption(flags, description)
