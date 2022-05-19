@@ -202,7 +202,7 @@ export class Help {
 
   /** Get the command term to show in the list of subcommands. */
   subcommandTerm(cmd: Command): string;
-  /** Get the command description to show in the list of subcommands. */
+  /** Get the command summary to show in the list of subcommands. */
   subcommandDescription(cmd: Command): string;
   /** Get the option term to show in the list of options. */
   optionTerm(option: Option): string;
@@ -717,6 +717,18 @@ export class Command {
    * Get the description.
    */
   description(): string;
+
+  /**
+   * Set the summary. Used when listed as subcommand of parent.
+   *
+   * @returns `this` command for chaining
+   */
+
+  summary(str: string): this;
+  /**
+   * Get the summary.
+   */
+  summary(): string;
 
   /**
    * Set an alias for the command.

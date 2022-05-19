@@ -35,6 +35,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Display help from code](#display-help-from-code)
     - [.name](#name)
     - [.usage](#usage)
+    - [.description and .summary](#description-and-summary)
     - [.helpOption(flags, description)](#helpoptionflags-description)
     - [.addHelpCommand()](#addhelpcommand)
     - [More configuration](#more-configuration-2)
@@ -814,10 +815,11 @@ error: unknown option '--unknown'
 (add --help for additional information)
 ```
 
-You can also show suggestions after an error for an unknown command or option.
+The default behaviour is to suggest correct spelling after an error for an unknown command or option. You
+can disable this.
 
 ```js
-program.showSuggestionAfterError();
+program.showSuggestionAfterError(false);
 ```
 
 ```console
@@ -864,6 +866,20 @@ The help will start with:
 
 ```Text
 Usage: my-command [global options] command
+```
+
+### .description and .summary
+
+The description appears in the help for the command. You can optionally supply a shorter
+summary to use when listed as a subcommand of the program.
+
+```js
+program
+  .command("duplicate")
+  .summary("make a copy")
+  .description(`Make a copy of the current project.
+This may require additional disk space.
+  `);
 ```
 
 ### .helpOption(flags, description)
