@@ -170,3 +170,34 @@ test('when requiredOption with implied value then not throw', () => {
     program.parse(['--default-target'], { from: 'user' });
   }).not.toThrow();
 });
+
+test('when implies on program and use subcommand then program updated', () => {
+  const program = new Command();
+  program
+    .addOption(new Option('--foo').implies({ bar: 'implied' }));
+  program
+    .command('sub')
+    .action(() => {});
+  program.parse(['--foo', 'sub'], { from: 'user' });
+  expect(program.opts().bar).toEqual('implied');
+});
+
+test('when option with implies used multiple times then implied gets single value', () => {
+  const program = new Command();
+  program
+    .addOption(new Option('--foo').implies({ bar: 'implied' }))
+    .option('-b, --bar <value...>');
+  program.parse(['--foo', '--foo'], { from: 'user' });
+  expect(program.opts().bar).toEqual('implied');
+});
+
+test('when implied option has custom processing then custom processing not called', () => {
+  let called = false;
+  const program = new Command();
+  program
+    .addOption(new Option('--foo').implies({ bar: true }))
+    .option('-b, --bar', 'description', () => { called = true; });
+  program.parse(['--foo'], { from: 'user' });
+  expect(program.opts().bar).toEqual(true);
+  expect(called).toEqual(false);
+});
