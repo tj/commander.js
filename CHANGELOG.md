@@ -8,6 +8,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [9.3.0] (2022-05-28)
+
+### Added
+
+- `.summary()` for a short summary to use instead of description when listing subcommands in help ([#1726])
+- `Option.implies()` to set other option values when the option is specified ([#1724])
+- updated Chinese README with 9.x changes ([#1727])
+
+### Fixed
+
+- TypeScript: add `string[]` to `.options()` default value parameter type for use with variadic options ([#1721])
+
+### Deprecated
+
+- multi-character short option flag (e.g. `-ws`) ([#1718])
+
 ## [9.2.0] (2022-04-15)
 
 ### Added
@@ -1057,6 +1073,11 @@ program
 [#1706]: https://github.com/tj/commander.js/pull/1706
 [#1708]: https://github.com/tj/commander.js/pull/1708
 [#1710]: https://github.com/tj/commander.js/pull/1710
+[#1718]: https://github.com/tj/commander.js/pull/1718
+[#1721]: https://github.com/tj/commander.js/pull/1721
+[#1724]: https://github.com/tj/commander.js/pull/1724
+[#1726]: https://github.com/tj/commander.js/pull/1726
+[#1727]: https://github.com/tj/commander.js/pull/1727
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
@@ -1135,6 +1156,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[9.3.0]: https://github.com/tj/commander.js/compare/v9.2.0...v9.3.0
 [9.2.0]: https://github.com/tj/commander.js/compare/v9.1.0...v9.2.0
 [9.1.0]: https://github.com/tj/commander.js/compare/v9.0.0...v9.1.0
 [9.0.0]: https://github.com/tj/commander.js/compare/v8.3.0...v9.0.0
