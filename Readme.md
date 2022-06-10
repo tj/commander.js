@@ -88,8 +88,8 @@ console.log(program.args[0].split(options.separator, limit));
 ```
 
 ```console
-$ node split.js -s / --fits a/b/c
-error: unknown option '--fits'
+$ node split.js -s / --first a/b/c
+error: unknown option '--first'
 (Did you mean --first?)
 $ node split.js -s / --first a/b/c
 [ 'a' ]
