@@ -8,6 +8,7 @@ export const {
   createOption,
   CommanderError,
   InvalidArgumentError,
+  InvalidOptionArgumentError, // deprecated old name
   Command,
   Argument,
   Option,
