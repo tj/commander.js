@@ -29,7 +29,7 @@ type StringImpliedType<S extends string, /* fallback to boolean */ F extends boo
 
 type StringTypedArguments<S extends string, T, /* default type */ D extends T | undefined> =
   S extends `${infer A} ${infer Rest}`
-    ? [StringTypedArguments<A, T, D>, ...StringTypedArguments<Rest, T, D>]
+    ? [...StringTypedArguments<A, T, D>, ...StringTypedArguments<Rest, T, D>]
     : [D extends undefined
         ? S extends `[${infer N}]`
           ? T | undefined
@@ -38,7 +38,7 @@ type StringTypedArguments<S extends string, T, /* default type */ D extends T | 
 
 type StringUntypedArguments<S extends string, /* default type */ D> =
   S extends `${infer A} ${infer Rest}`
-    ? [StringUntypedArguments<A, D>, ...StringUntypedArguments<Rest, D>]
+    ? [...StringUntypedArguments<A, D>, ...StringUntypedArguments<Rest, D>]
     : [StringImpliedType<S>];
 
 type StringTypedOption<S extends string, T, /* default type */ D extends T | undefined> =
