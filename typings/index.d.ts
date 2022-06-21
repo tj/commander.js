@@ -54,6 +54,9 @@ type StringTypedOption<S extends string, T, /* default type */ D extends T | und
             ? { [K in CamelCase<S>]?: T }
             : { [K in CamelCase<S>]: T };
 
+type StringUntypedOption<S extends string, /* default type */ D extends StringImpliedType<S, true> | undefined> =
+  StringTypedOption<S, StringImpliedType<S, true>, D>;
+
 export class CommanderError extends Error {
   code: string;
   exitCode: number;
@@ -586,8 +589,8 @@ export class Command<Args extends unknown[] = [], Options extends { [K: string]:
    *
    * @returns `this` command for chaining
    */
-  option<Flags extends string>(flags: Flags, description?: string): Command<Args, Options & StringTypedOption<Flags, StringImpliedType<Flags, true>, undefined>>;
-  option<Flags extends string, D extends StringImpliedType<Flags, true> | undefined>(flags: Flags, description: string, defaultValue: D): Command<Args, Options & StringTypedOption<Flags, StringImpliedType<Flags, true>, D>>;
+  option<Flags extends string>(flags: Flags, description?: string): Command<Args, Options & StringUntypedOption<Flags, undefined>>;
+  option<Flags extends string, D extends StringImpliedType<Flags, true> | undefined>(flags: Flags, description: string, defaultValue: D): Command<Args, Options & StringUntypedOption<Flags, D>>;
   option<Flags extends string, T>(flags: Flags, description: string, fn: (value: string, previous: T) => T): Command<Args, Options & StringTypedOption<Flags, T, undefined>>;
   option<Flags extends string, T, D extends T | undefined>(flags: Flags, description: string, fn: (value: string, previous: T) => T, defaultValue: D): Command<Args, Options & StringTypedOption<Flags, T, D>>;
   /** @deprecated since v7, instead use choices or a custom function */
@@ -599,8 +602,8 @@ export class Command<Args extends unknown[] = [], Options extends { [K: string]:
    *
    * The `flags` string contains the short and/or long flags, separated by comma, a pipe or space.
    */
-  requiredOption<Flags extends string>(flags: Flags, description?: string): Command<Args, Options & Required<StringTypedOption<Flags, StringImpliedType<Flags, true>, undefined>>>;
-  requiredOption<Flags extends string, D extends StringImpliedType<Flags, true> | undefined>(flags: Flags, description: string, defaultValue: D): Command<Args, Options & Required<StringTypedOption<Flags, StringImpliedType<Flags, true>, D>>>;
+  requiredOption<Flags extends string>(flags: Flags, description?: string): Command<Args, Options & Required<StringUntypedOption<Flags, undefined>>>;
+  requiredOption<Flags extends string, D extends StringImpliedType<Flags, true> | undefined>(flags: Flags, description: string, defaultValue: D): Command<Args, Options & Required<StringUntypedOption<Flags, D>>>;
   requiredOption<Flags extends string, T>(flags: Flags, description: string, fn: (value: string, previous: T) => T): Command<Args, Options & Required<StringTypedOption<Flags, T, undefined>>>;
   requiredOption<Flags extends string, T, D extends T | undefined>(flags: Flags, description: string, fn: (value: string, previous: T) => T, defaultValue: D): Command<Args, Options & Required<StringTypedOption<Flags, T, D>>>;
   /** @deprecated since v7, instead use choices or a custom function */
