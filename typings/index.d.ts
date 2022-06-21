@@ -28,14 +28,14 @@ type StringImpliedType<S extends string, /* fallback to boolean */ F extends boo
             : never;
 
 type StringTypedArgument<S extends string, T, /* default type */ D> =
-  D extends undefined
+  undefined extends D
     ? S extends `[${infer N}]`
       ? T | undefined
       : T
     : T;
 
 type StringUntypedArgument<S extends string, /* default type */ D> =
-  D extends undefined
+  undefined extends D
     ? StringImpliedType<S>
     : NonNullable<StringImpliedType<S>>;
 
@@ -53,7 +53,7 @@ type StringTypedOption<S extends string, T, /* default type */ D> =
         ? StringTypedOption<Arg, T, D>
         : S extends `no-${infer Rest}` // Check the leading `no-`
           ? { [K in CamelCase<Rest>]: T }
-          : D extends undefined
+          : undefined extends D
             ? { [K in CamelCase<S>]?: T }
             : { [K in CamelCase<S>]: T };
 
