@@ -44,7 +44,7 @@ type StringArguments<S extends string, /* default type */ D> =
     ? [StringUntypedArgument<A, D>, ...StringArguments<Rest, D>]
     : [StringUntypedArgument<S, D>];
 
-type StringTypedOption<S extends string, T, /* default type */ D extends T | undefined> =
+type StringTypedOption<S extends string, T, /* default type */ D> =
   S extends `${infer Flags} <${infer N}>` | `${infer Flags} [${infer N}]` // Trim the ending ` <xxx>` or ` [xxx]`
     ? StringTypedOption<Flags, T, D>
     : S extends `-${infer Arg}, ${infer Rest}` // Trim the leading `-xxx, `
@@ -57,7 +57,7 @@ type StringTypedOption<S extends string, T, /* default type */ D extends T | und
             ? { [K in CamelCase<S>]?: T }
             : { [K in CamelCase<S>]: T };
 
-type StringUntypedOption<S extends string, /* default type */ D extends StringImpliedType<S, true> | undefined> =
+type StringUntypedOption<S extends string, /* default type */ D> =
   StringTypedOption<S, StringImpliedType<S, true>, D>;
 
 export class CommanderError extends Error {
