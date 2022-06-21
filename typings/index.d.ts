@@ -4,6 +4,55 @@
 // Using method rather than property for method-signature-style, to document method overloads separately. Allow either.
 /* eslint-disable @typescript-eslint/method-signature-style */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
+type CamelCase<S extends string> = S extends `${infer W}-${infer Rest}`
+  ? CamelCase<`${W}${Capitalize<Rest>}`>
+  : S;
+
+type StringImpliedType<S extends string, /* fallback to boolean */ F extends boolean = false> =
+  S extends `${infer B}<${infer N}...>`
+    ? [string, ...string[]]
+    : S extends `${infer B}[${infer N}...]`
+      ? F extends true
+        ? string[] | boolean
+        : string[]
+      : S extends `${infer B}<${infer N}>`
+        ? string
+        : S extends `${infer B}[${infer N}]`
+          ? F extends true
+            ? string | boolean
+            : string | undefined
+          : F extends true
+            ? boolean
+            : never;
+
+type StringTypedArguments<S extends string, T, /* default type */ D extends T | undefined> =
+  S extends `${infer A} ${infer Rest}`
+    ? [StringTypedArguments<A, T, D>, ...StringTypedArguments<Rest, T, D>]
+    : [D extends undefined
+        ? S extends `[${infer N}]`
+          ? T | undefined
+          : T
+        : T];
+
+type StringUntypedArguments<S extends string, /* default type */ D> =
+  S extends `${infer A} ${infer Rest}`
+    ? [StringUntypedArguments<A, D>, ...StringUntypedArguments<Rest, D>]
+    : [StringImpliedType<S>];
+
+type StringTypedOption<S extends string, T, /* default type */ D extends T | undefined> =
+  S extends `${infer Flags} <${infer N}>` | `${infer Flags} [${infer N}]` // Trim the ending ` <xxx>` or ` [xxx]`
+    ? StringTypedOption<Flags, T, D>
+    : S extends `-${infer Arg}, ${infer Rest}` // Trim the leading `-xxx, `
+      ? StringTypedOption<Rest, T, D>
+      : S extends `-${infer Arg}` // Trim the leading `-`.
+        ? StringTypedOption<Arg, T, D>
+        : S extends `no-${infer Rest}` // Check the leading `no-`
+          ? { [K in CamelCase<Rest>]: T }
+          : D extends undefined
+            ? { [K in CamelCase<S>]?: T }
+            : { [K in CamelCase<S>]: T };
 
 export class CommanderError extends Error {
   code: string;
@@ -272,7 +321,7 @@ export interface OptionValues {
   [key: string]: any;
 }
 
-export class Command {
+export class Command<Args extends unknown[] = [], Options extends { [K: string]: unknown } = {}> {
   args: string[];
   processedArgs: any[];
   commands: Command[];
@@ -370,8 +419,10 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
-  argument<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
-  argument(name: string, description?: string, defaultValue?: unknown): this;
+  argument<Flags extends string, T>(flags: Flags, description: string, fn: (value: string, previous: T) => T): Command<[...Args, ...StringTypedArguments<Flags, T, undefined>], Options>;
+  argument<Flags extends string, T, D extends T | undefined>(flags: Flags, description: string, fn: (value: string, previous: T) => T, defaultValue: D): Command<[...Args, ...StringTypedArguments<Flags, T, D>], Options>;
+  argument<Name extends string>(name: Name, description?: string): Command<[...Args, ...StringUntypedArguments<Name, undefined>], Options>;
+  argument<Name extends string, D extends StringImpliedType<Name> | undefined>(name: Name, description: string, defaultValue: D): Command<[...Args, ...StringUntypedArguments<Name, D>], Options>;
 
   /**
    * Define argument syntax for command, adding a prepared argument.
@@ -489,7 +540,7 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
-  action(fn: (...args: any[]) => void | Promise<void>): this;
+  action(fn: (this: this, ...args: [...Args, Options, this]) => (void | Promise<void>)): this;
 
   /**
    * Define option with `flags`, `description` and optional
@@ -535,8 +586,10 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
-  option(flags: string, description?: string, defaultValue?: string | boolean | string[]): this;
-  option<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
+  option<Flags extends string>(flags: Flags, description?: string): Command<Args, Options & StringTypedOption<Flags, StringImpliedType<Flags, true>, undefined>>;
+  option<Flags extends string, D extends StringImpliedType<Flags, true> | undefined>(flags: Flags, description: string, defaultValue: D): Command<Args, Options & StringTypedOption<Flags, StringImpliedType<Flags, true>, D>>;
+  option<Flags extends string, T>(flags: Flags, description: string, fn: (value: string, previous: T) => T): Command<Args, Options & StringTypedOption<Flags, T, undefined>>;
+  option<Flags extends string, T, D extends T | undefined>(flags: Flags, description: string, fn: (value: string, previous: T) => T, defaultValue: D): Command<Args, Options & StringTypedOption<Flags, T, D>>;
   /** @deprecated since v7, instead use choices or a custom function */
   option(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean | string[]): this;
 
@@ -546,8 +599,10 @@ export class Command {
    *
    * The `flags` string contains the short and/or long flags, separated by comma, a pipe or space.
    */
-  requiredOption(flags: string, description?: string, defaultValue?: string | boolean | string[]): this;
-  requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
+  requiredOption<Flags extends string>(flags: Flags, description?: string): Command<Args, Options & Required<StringTypedOption<Flags, StringImpliedType<Flags, true>, undefined>>>;
+  requiredOption<Flags extends string, D extends StringImpliedType<Flags, true> | undefined>(flags: Flags, description: string, defaultValue: D): Command<Args, Options & Required<StringTypedOption<Flags, StringImpliedType<Flags, true>, D>>>;
+  requiredOption<Flags extends string, T>(flags: Flags, description: string, fn: (value: string, previous: T) => T): Command<Args, Options & Required<StringTypedOption<Flags, T, undefined>>>;
+  requiredOption<Flags extends string, T, D extends T | undefined>(flags: Flags, description: string, fn: (value: string, previous: T) => T, defaultValue: D): Command<Args, Options & Required<StringTypedOption<Flags, T, D>>>;
   /** @deprecated since v7, instead use choices or a custom function */
   requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean | string[]): this;
 
@@ -573,24 +628,24 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
-  storeOptionsAsProperties<T extends OptionValues>(): this & T;
-  storeOptionsAsProperties<T extends OptionValues>(storeAsProperties: true): this & T;
+  storeOptionsAsProperties<T extends OptionValues>(): this & T & Options;
+  storeOptionsAsProperties<T extends OptionValues>(storeAsProperties: true): this & T & Options;
   storeOptionsAsProperties(storeAsProperties?: boolean): this;
 
   /**
    * Retrieve option value.
    */
-  getOptionValue(key: string): any;
+  getOptionValue<K extends string>(key: K): Options[K];
 
   /**
    * Store option value.
    */
-  setOptionValue(key: string, value: unknown): this;
+  setOptionValue<K extends string, V>(key: K, value: V): Command<Args, { [OK in keyof Options]: OK extends K ? V : Options[OK] }>;
 
   /**
    * Store option value and where the value came from.
    */
-  setOptionValueWithSource(key: string, value: unknown, source: OptionValueSource): this;
+  setOptionValueWithSource<K extends string, V>(key: K, value: V, source: OptionValueSource): Command<Args, { [OK in keyof Options]: OK extends K ? V : Options[OK] }>;
 
   /**
    * Retrieve option value source.
@@ -697,12 +752,12 @@ export class Command {
   /**
    * Return an object containing local option values as key-value pairs
    */
-  opts<T extends OptionValues>(): T;
+  opts<T extends OptionValues>(): T & Options;
 
   /**
    * Return an object containing merged local and global option values as key-value pairs.
    */
-  optsWithGlobals<T extends OptionValues>(): T;
+  optsWithGlobals<T extends OptionValues>(): T & Options;
 
   /**
    * Set the description.
