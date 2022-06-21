@@ -27,19 +27,22 @@ type StringImpliedType<S extends string, /* fallback to boolean */ F extends boo
             ? boolean
             : never;
 
-type StringTypedArguments<S extends string, T, /* default type */ D extends T | undefined> =
-  S extends `${infer A} ${infer Rest}`
-    ? [...StringTypedArguments<A, T, D>, ...StringTypedArguments<Rest, T, D>]
-    : [D extends undefined
-        ? S extends `[${infer N}]`
-          ? T | undefined
-          : T
-        : T];
+type StringTypedArgument<S extends string, T, /* default type */ D> =
+  D extends undefined
+    ? S extends `[${infer N}]`
+      ? T | undefined
+      : T
+    : T;
 
-type StringUntypedArguments<S extends string, /* default type */ D> =
+type StringUntypedArgument<S extends string, /* default type */ D> =
+  D extends undefined
+    ? StringImpliedType<S>
+    : NonNullable<StringImpliedType<S>>;
+
+type StringArguments<S extends string, /* default type */ D> =
   S extends `${infer A} ${infer Rest}`
-    ? [...StringUntypedArguments<A, D>, ...StringUntypedArguments<Rest, D>]
-    : [StringImpliedType<S>];
+    ? [StringUntypedArgument<A, D>, ...StringArguments<Rest, D>]
+    : [StringUntypedArgument<S, D>];
 
 type StringTypedOption<S extends string, T, /* default type */ D extends T | undefined> =
   S extends `${infer Flags} <${infer N}>` | `${infer Flags} [${infer N}]` // Trim the ending ` <xxx>` or ` [xxx]`
@@ -422,10 +425,10 @@ export class Command<Args extends unknown[] = [], Options extends { [K: string]:
    *
    * @returns `this` command for chaining
    */
-  argument<Flags extends string, T>(flags: Flags, description: string, fn: (value: string, previous: T) => T): Command<[...Args, ...StringTypedArguments<Flags, T, undefined>], Options>;
-  argument<Flags extends string, T, D extends T | undefined>(flags: Flags, description: string, fn: (value: string, previous: T) => T, defaultValue: D): Command<[...Args, ...StringTypedArguments<Flags, T, D>], Options>;
-  argument<Name extends string>(name: Name, description?: string): Command<[...Args, ...StringUntypedArguments<Name, undefined>], Options>;
-  argument<Name extends string, D extends StringImpliedType<Name> | undefined>(name: Name, description: string, defaultValue: D): Command<[...Args, ...StringUntypedArguments<Name, D>], Options>;
+  argument<Flags extends string, T>(flags: Flags, description: string, fn: (value: string, previous: T) => T): Command<[...Args, StringTypedArgument<Flags, T, undefined>], Options>;
+  argument<Flags extends string, T, D extends T | undefined>(flags: Flags, description: string, fn: (value: string, previous: T) => T, defaultValue: D): Command<[...Args, StringTypedArgument<Flags, T, D>], Options>;
+  argument<Name extends string>(name: Name, description?: string): Command<[...Args, StringUntypedArgument<Name, undefined>], Options>;
+  argument<Name extends string, D extends StringImpliedType<Name> | undefined>(name: Name, description: string, defaultValue: D): Command<[...Args, StringUntypedArgument<Name, D>], Options>;
 
   /**
    * Define argument syntax for command, adding a prepared argument.
@@ -446,7 +449,7 @@ export class Command<Args extends unknown[] = [], Options extends { [K: string]:
    *
    * @returns `this` command for chaining
    */
-  arguments<Names extends string>(names: Names): Command<[...Args, ...StringUntypedArguments<Names, undefined>], Options>;
+  arguments<Names extends string>(names: Names): Command<[...Args, ...StringArguments<Names, undefined>], Options>;
 
   /**
    * Override default decision whether to add implicit help command.
