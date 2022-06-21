@@ -443,7 +443,7 @@ export class Command<Args extends unknown[] = [], Options extends { [K: string]:
    *
    * @returns `this` command for chaining
    */
-  arguments(names: string): this;
+  arguments<Names extends string>(names: Names): Command<[...Args, ...StringUntypedArguments<Names, undefined>], Options>;
 
   /**
    * Override default decision whether to add implicit help command.
