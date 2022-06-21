@@ -4,22 +4,21 @@
 // Using method rather than property for method-signature-style, to document method overloads separately. Allow either.
 /* eslint-disable @typescript-eslint/method-signature-style */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 type CamelCase<S extends string> = S extends `${infer W}-${infer Rest}`
   ? CamelCase<`${W}${Capitalize<Rest>}`>
   : S;
 
 type StringImpliedType<S extends string, /* fallback to boolean */ F extends boolean = false> =
-  S extends `${infer B}<${infer N}...>`
+  S extends `${string}<${string}...>`
     ? [string, ...string[]]
-    : S extends `${infer B}[${infer N}...]`
+    : S extends `${string}[${string}...]`
       ? F extends true
         ? string[] | boolean
         : string[]
-      : S extends `${infer B}<${infer N}>`
+      : S extends `${string}<${string}>`
         ? string
-        : S extends `${infer B}[${infer N}]`
+        : S extends `${string}[${string}]`
           ? F extends true
             ? string | boolean
             : string | undefined
@@ -29,7 +28,7 @@ type StringImpliedType<S extends string, /* fallback to boolean */ F extends boo
 
 type StringTypedArgument<S extends string, T, /* default type */ D> =
   undefined extends D
-    ? S extends `[${infer N}]`
+    ? S extends `[${string}]`
       ? T | undefined
       : T
     : T;
@@ -45,9 +44,9 @@ type StringArguments<S extends string> =
     : [StringUntypedArgument<S, undefined>];
 
 type StringTypedOption<S extends string, T, /* default type */ D> =
-  S extends `${infer Flags} <${infer N}>` | `${infer Flags} [${infer N}]` // Trim the ending ` <xxx>` or ` [xxx]`
+  S extends `${infer Flags} <${string}>` | `${infer Flags} [${string}]` // Trim the ending ` <xxx>` or ` [xxx]`
     ? StringTypedOption<Flags, T, D>
-    : S extends `-${infer Arg}, ${infer Rest}` // Trim the leading `-xxx, `
+    : S extends `-${string}, ${infer Rest}` // Trim the leading `-xxx, `
       ? StringTypedOption<Rest, T, D>
       : S extends `-${infer Arg}` // Trim the leading `-`.
         ? StringTypedOption<Arg, T, D>
