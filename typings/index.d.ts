@@ -39,10 +39,10 @@ type StringUntypedArgument<S extends string, /* default type */ D> =
     ? StringImpliedType<S>
     : NonNullable<StringImpliedType<S>>;
 
-type StringArguments<S extends string, /* default type */ D> =
+type StringArguments<S extends string> =
   S extends `${infer A} ${infer Rest}`
-    ? [StringUntypedArgument<A, D>, ...StringArguments<Rest, D>]
-    : [StringUntypedArgument<S, D>];
+    ? [StringUntypedArgument<A, undefined>, ...StringArguments<Rest>]
+    : [StringUntypedArgument<S, undefined>];
 
 type StringTypedOption<S extends string, T, /* default type */ D> =
   S extends `${infer Flags} <${infer N}>` | `${infer Flags} [${infer N}]` // Trim the ending ` <xxx>` or ` [xxx]`
@@ -449,7 +449,7 @@ export class Command<Args extends unknown[] = [], Options extends { [K: string]:
    *
    * @returns `this` command for chaining
    */
-  arguments<Names extends string>(names: Names): Command<[...Args, ...StringArguments<Names, undefined>], Options>;
+  arguments<Names extends string>(names: Names): Command<[...Args, ...StringArguments<Names>], Options>;
 
   /**
    * Override default decision whether to add implicit help command.
