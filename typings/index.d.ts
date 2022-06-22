@@ -371,7 +371,7 @@ export class Command<Args extends unknown[] = [], Options extends { [K: string]:
    * @param opts - configuration options
    * @returns new command
    */
-  command<T extends string>(nameAndArgs: T, opts?: CommandOptions): Command<StringCommand<T>>;
+  command<T extends string>(nameAndArgs: T, opts?: CommandOptions): (<T>() => T extends this['createCommand'] ? 1 : 2) extends (<T>() => T extends Command['createCommand'] ? 1 : 2) ? Command<StringCommand<T>> : ReturnType<this['createCommand']>;
   /**
    * Define a command, implemented in a separate executable file.
    *
