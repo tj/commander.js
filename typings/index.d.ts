@@ -760,6 +760,7 @@ export class Command<Args extends unknown[] = [], Options extends { [K: string]:
    * Return an object containing local option values as key-value pairs
    */
   opts<T extends OptionValues>(): T & Options;
+  opts(): Options;
 
   /**
    * Return an object containing merged local and global option values as key-value pairs.
