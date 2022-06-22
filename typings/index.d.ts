@@ -46,7 +46,7 @@ type StringArguments<S extends string> =
 type StringCommand<S extends string> =
   S extends `${string} ${infer Rest}`
     ? StringArguments<Rest>
-    : never;
+    : [];
 
 type StringTypedOption<S extends string, T, /* default type */ D> =
   S extends `${infer Flags} <${string}>` | `${infer Flags} [${string}]` | `${infer Flags} ` // Trim the ending ` <xxx>` or ` [xxx]` or ` `
