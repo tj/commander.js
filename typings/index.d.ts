@@ -92,7 +92,7 @@ export interface ErrorOptions { // optional parameter for error()
   exitCode?: number;
 }
 
-export class Argument {
+export class Argument<Arg extends string, T = StringImpliedType<Arg>, D = undefined> {
   description: string;
   required: boolean;
   variadic: boolean;
@@ -102,7 +102,7 @@ export class Argument {
    * The default is that the argument is required, and you can explicitly
    * indicate this with <> around the name. Put [] around the name for an optional argument.
    */
-  constructor(arg: string, description?: string);
+  constructor(arg: Arg, description?: string);
 
   /**
    * Return argument name.
@@ -112,12 +112,12 @@ export class Argument {
   /**
    * Set the default value, and optionally supply the description to be displayed in the help.
    */
-  default(value: unknown, description?: string): this;
+  default<D2>(value: D2, description?: string): Argument<Arg, T, D2>;
 
   /**
    * Set the custom handler for processing CLI command arguments into argument values.
    */
-  argParser<T>(fn: (value: string, previous: T) => T): this;
+  argParser<T2>(fn: (value: string, previous: T2) => T2): Argument<Arg, T2, D>;
 
   /**
    * Only allow argument value to be one of choices.
@@ -135,8 +135,8 @@ export class Argument {
   argOptional(): this;
 }
 
-export class Option {
-  flags: string;
+export class Option<Flags extends string, T = StringImpliedType<Flags, true>, D = undefined> {
+  flags: Flags;
   description: string;
 
   required: boolean; // A value must be supplied when the option is specified.
@@ -144,21 +144,21 @@ export class Option {
   variadic: boolean;
   mandatory: boolean; // The option must have a value after parsing, which usually means it must be specified on command line.
   optionFlags: string;
-  short?: string;
-  long?: string;
+  short: string | undefined;
+  long: string | undefined;
   negate: boolean;
-  defaultValue?: any;
-  defaultValueDescription?: string;
-  parseArg?: <T>(value: string, previous: T) => T;
+  defaultValue: D;
+  defaultValueDescription: string | undefined;
+  parseArg: ((value: string, previous: T) => T) | undefined;
   hidden: boolean;
-  argChoices?: string[];
+  argChoices: string[] | undefined;
 
-  constructor(flags: string, description?: string);
+  constructor(flags: Flags, description?: string);
 
   /**
    * Set the default value, and optionally supply the description to be displayed in the help.
    */
-  default(value: unknown, description?: string): this;
+  default<D2>(value: D2, description?: string): Option<Flags, T, D2>;
 
   /**
    * Preset to use when option used without option-argument, especially optional but also boolean and negated.
@@ -210,7 +210,7 @@ export class Option {
   /**
    * Set the custom handler for processing CLI option arguments into option values.
    */
-  argParser<T>(fn: (value: string, previous: T) => T): this;
+  argParser<T2>(fn: (value: string, previous: T2) => T2): Option<Flags, T2, D>;
 
   /**
    * Whether the option is mandatory and must have a value after parsing.
@@ -259,13 +259,13 @@ export class Help {
   /** Get the command summary to show in the list of subcommands. */
   subcommandDescription(cmd: Command): string;
   /** Get the option term to show in the list of options. */
-  optionTerm(option: Option): string;
+  optionTerm(option: Option<any>): string;
   /** Get the option description to show in the list of options. */
-  optionDescription(option: Option): string;
+  optionDescription(option: Option<any>): string;
   /** Get the argument term to show in the list of arguments. */
-  argumentTerm(argument: Argument): string;
+  argumentTerm(argument: Argument<any>): string;
   /** Get the argument description to show in the list of arguments. */
-  argumentDescription(argument: Argument): string;
+  argumentDescription(argument: Argument<any>): string;
 
   /** Get the command usage to be displayed at the top of the built-in help. */
   commandUsage(cmd: Command): string;
@@ -275,9 +275,9 @@ export class Help {
   /** Get an array of the visible subcommands. Includes a placeholder for the implicit help command, if there is one. */
   visibleCommands(cmd: Command): Command[];
   /** Get an array of the visible options. Includes a placeholder for the implicit help option, if there is one. */
-  visibleOptions(cmd: Command): Option[];
+  visibleOptions(cmd: Command): Array<Option<any>>;
   /** Get an array of the arguments which have descriptions. */
-  visibleArguments(cmd: Command): Argument[];
+  visibleArguments(cmd: Command): Array<Argument<any>>;
 
   /** Get the longest command term length. */
   longestSubcommandTermLength(cmd: Command, helper: Help): number;
@@ -408,7 +408,7 @@ export class Command<Args extends unknown[] = [], Options extends { [K: string]:
    * See .argument() for creating an attached argument, which uses this routine to
    * create the argument. You can override createArgument to return a custom argument.
    */
-  createArgument(name: string, description?: string): Argument;
+  createArgument<Arg extends string>(name: Arg, description?: string): Argument<Arg>;
 
   /**
    * Define argument syntax for command.
@@ -434,7 +434,7 @@ export class Command<Args extends unknown[] = [], Options extends { [K: string]:
    *
    * @returns `this` command for chaining
    */
-  addArgument(arg: Argument): this;
+  addArgument<Arg extends string, T, D>(arg: Argument<Arg, T, D>): Command<[...Args, StringTypedArgument<Arg, T, D>], Options>;
 
   /**
    * Define argument syntax for command, adding multiple at once (without descriptions).
@@ -618,14 +618,14 @@ export class Command<Args extends unknown[] = [], Options extends { [K: string]:
    * create the option. You can override createOption to return a custom option.
    */
 
-  createOption(flags: string, description?: string): Option;
+  createOption<Flags extends string>(flags: Flags, description?: string): Option<Flags>;
 
   /**
    * Add a prepared Option.
    *
    * See .option() and .requiredOption() for creating and attaching an option in a single call.
    */
-  addOption(option: Option): this;
+  addOption<Flags extends string, T, D>(option: Option<Flags, T, D>): Command<Args, Options & StringTypedOption<Flags, T, D>>;
 
   /**
    * Whether to store option values as properties on command object,
@@ -933,7 +933,7 @@ export interface ParseOptionsResult {
 }
 
 export function createCommand(name?: string): Command;
-export function createOption(flags: string, description?: string): Option;
-export function createArgument(name: string, description?: string): Argument;
+export function createOption<Flags extends string>(flags: Flags, description?: string): Option<Flags>;
+export function createArgument<Arg extends string>(name: Arg, description?: string): Argument<Arg>;
 
 export const program: Command;
