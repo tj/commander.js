@@ -24,7 +24,7 @@ type StringImpliedType<S extends string, /* fallback to boolean */ F extends boo
             : string | undefined
           : F extends true
             ? boolean
-            : never;
+            : string;
 
 type StringTypedArgument<S extends string, T, /* default type */ D> =
   undefined extends D
