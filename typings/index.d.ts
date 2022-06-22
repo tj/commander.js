@@ -43,6 +43,11 @@ type StringArguments<S extends string> =
     ? [StringUntypedArgument<A, undefined>, ...StringArguments<Rest>]
     : [StringUntypedArgument<S, undefined>];
 
+type StringCommand<S extends string> =
+  S extends `${string} ${infer Rest}`
+    ? StringArguments<Rest>
+    : never;
+
 type StringTypedOption<S extends string, T, /* default type */ D> =
   S extends `${infer Flags} <${string}>` | `${infer Flags} [${string}]` | `${infer Flags} ` // Trim the ending ` <xxx>` or ` [xxx]` or ` `
     ? StringTypedOption<Flags, T, D>
@@ -366,7 +371,7 @@ export class Command<Args extends unknown[] = [], Options extends { [K: string]:
    * @param opts - configuration options
    * @returns new command
    */
-  command(nameAndArgs: string, opts?: CommandOptions): ReturnType<this['createCommand']>;
+  command<T extends string>(nameAndArgs: T, opts?: CommandOptions): Command<StringCommand<T>>;
   /**
    * Define a command, implemented in a separate executable file.
    *
@@ -385,7 +390,7 @@ export class Command<Args extends unknown[] = [], Options extends { [K: string]:
    * @param opts - configuration options
    * @returns `this` command for chaining
    */
-  command(nameAndArgs: string, description: string, opts?: ExecutableCommandOptions): this;
+  command<T extends string>(nameAndArgs: T, description: string, opts?: ExecutableCommandOptions): Command<StringCommand<T>>;
 
   /**
    * Factory routine to create a new unattached command.
