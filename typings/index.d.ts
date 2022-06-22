@@ -135,14 +135,14 @@ export class Argument<Arg extends string, T = StringImpliedType<Arg>, D = undefi
   argOptional(): this;
 }
 
-export class Option<Flags extends string, T = StringImpliedType<Flags, true>, D = undefined> {
+export class Option<Flags extends string, T = StringImpliedType<Flags, true>, D = undefined, M = false> {
   flags: Flags;
   description: string;
 
-  required: boolean; // A value must be supplied when the option is specified.
-  optional: boolean; // A value is optional when the option is specified.
-  variadic: boolean;
-  mandatory: boolean; // The option must have a value after parsing, which usually means it must be specified on command line.
+  required: Flags extends `${string}<${string}>${string}` ? true : false; // A value must be supplied when the option is specified.
+  optional: Flags extends `${string}<${string}>${string}` ? false : true; // A value is optional when the option is specified.
+  variadic: Flags extends `${string}[${string}...]${string}` | `${string}<${string}...>${string}` ? true : false;
+  mandatory: M; // The option must have a value after parsing, which usually means it must be specified on command line.
   optionFlags: string;
   short: string | undefined;
   long: string | undefined;
@@ -158,7 +158,7 @@ export class Option<Flags extends string, T = StringImpliedType<Flags, true>, D 
   /**
    * Set the default value, and optionally supply the description to be displayed in the help.
    */
-  default<D2>(value: D2, description?: string): Option<Flags, T, D2>;
+  default<D2>(value: D2, description?: string): Option<Flags, T, D2, M>;
 
   /**
    * Preset to use when option used without option-argument, especially optional but also boolean and negated.
@@ -210,12 +210,12 @@ export class Option<Flags extends string, T = StringImpliedType<Flags, true>, D 
   /**
    * Set the custom handler for processing CLI option arguments into option values.
    */
-  argParser<T2>(fn: (value: string, previous: T2) => T2): Option<Flags, T2, D>;
+  argParser<T2>(fn: (value: string, previous: T2) => T2): Option<Flags, T2, D, M>;
 
   /**
    * Whether the option is mandatory and must have a value after parsing.
    */
-  makeOptionMandatory(mandatory?: boolean): this;
+  makeOptionMandatory<M2 extends boolean = true>(mandatory?: M2): Option<Flags, T, D, M2>;
 
   /**
    * Hide option in help.
@@ -625,7 +625,7 @@ export class Command<Args extends unknown[] = [], Options extends { [K: string]:
    *
    * See .option() and .requiredOption() for creating and attaching an option in a single call.
    */
-  addOption<Flags extends string, T, D>(option: Option<Flags, T, D>): Command<Args, Options & StringTypedOption<Flags, T, D>>;
+  addOption<Flags extends string, T, D, M>(option: Option<Flags, T, D, M>): Command<Args, Options & M extends true ? Required<StringTypedOption<Flags, T, D>> : StringTypedOption<Flags, T, D>>;
 
   /**
    * Whether to store option values as properties on command object,
