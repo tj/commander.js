@@ -44,12 +44,12 @@ type StringArguments<S extends string> =
     : [StringUntypedArgument<S, undefined>];
 
 type StringTypedOption<S extends string, T, /* default type */ D> =
-  S extends `${infer Flags} <${string}>` | `${infer Flags} [${string}]` // Trim the ending ` <xxx>` or ` [xxx]`
+  S extends `${infer Flags} <${string}>` | `${infer Flags} [${string}]` | `${infer Flags} ` // Trim the ending ` <xxx>` or ` [xxx]` or ` `
     ? StringTypedOption<Flags, T, D>
-    : S extends `-${string}, ${infer Rest}` // Trim the leading `-xxx, `
+    : S extends `-${string},${infer Rest}` // Trim the leading `-xxx,`
       ? StringTypedOption<Rest, T, D>
-      : S extends `-${infer Arg}` // Trim the leading `-`.
-        ? StringTypedOption<Arg, T, D>
+      : S extends `-${infer Rest}` | ` ${infer Rest}` // Trim the leading `-` or ' '.
+        ? StringTypedOption<Rest, T, D>
         : S extends `no-${infer Rest}` // Check the leading `no-`
           ? { [K in CamelCase<Rest>]: T }
           : undefined extends D
