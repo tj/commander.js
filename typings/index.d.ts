@@ -59,6 +59,8 @@ type StringTypedOption<S extends string, T, /* default type */ D> =
 type StringUntypedOption<S extends string, /* default type */ D> =
   StringTypedOption<S, StringImpliedType<S, true>, D>;
 
+type MergeOptions<A, B> = (A & B) extends infer O ? {[K in keyof O]: O[K]} : never;
+
 export class CommanderError extends Error {
   code: string;
   exitCode: number;
@@ -591,10 +593,10 @@ export class Command<Args extends unknown[] = [], Options extends { [K: string]:
    *
    * @returns `this` command for chaining
    */
-  option<Flags extends string>(flags: Flags, description?: string): Command<Args, Options & StringUntypedOption<Flags, undefined>>;
-  option<Flags extends string, D extends StringImpliedType<Flags, true> | undefined>(flags: Flags, description: string, defaultValue: D): Command<Args, Options & StringUntypedOption<Flags, D>>;
-  option<Flags extends string, T>(flags: Flags, description: string, fn: (value: string, previous: T) => T): Command<Args, Options & StringTypedOption<Flags, T, undefined>>;
-  option<Flags extends string, T, D extends T | undefined>(flags: Flags, description: string, fn: (value: string, previous: T) => T, defaultValue: D): Command<Args, Options & StringTypedOption<Flags, T, D>>;
+  option<Flags extends string>(flags: Flags, description?: string): Command<Args, MergeOptions<Options, StringUntypedOption<Flags, undefined>>>;
+  option<Flags extends string, D extends StringImpliedType<Flags, true> | undefined>(flags: Flags, description: string, defaultValue: D): Command<Args, MergeOptions<Options, StringUntypedOption<Flags, D>>>;
+  option<Flags extends string, T>(flags: Flags, description: string, fn: (value: string, previous: T) => T): Command<Args, MergeOptions<Options, StringTypedOption<Flags, T, undefined>>>;
+  option<Flags extends string, T, D extends T | undefined>(flags: Flags, description: string, fn: (value: string, previous: T) => T, defaultValue: D): Command<Args, MergeOptions<Options, StringTypedOption<Flags, T, D>>>;
   /** @deprecated since v7, instead use choices or a custom function */
   option(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean | string[]): this;
 
@@ -604,10 +606,10 @@ export class Command<Args extends unknown[] = [], Options extends { [K: string]:
    *
    * The `flags` string contains the short and/or long flags, separated by comma, a pipe or space.
    */
-  requiredOption<Flags extends string>(flags: Flags, description?: string): Command<Args, Options & Required<StringUntypedOption<Flags, undefined>>>;
-  requiredOption<Flags extends string, D extends StringImpliedType<Flags, true> | undefined>(flags: Flags, description: string, defaultValue: D): Command<Args, Options & Required<StringUntypedOption<Flags, D>>>;
-  requiredOption<Flags extends string, T>(flags: Flags, description: string, fn: (value: string, previous: T) => T): Command<Args, Options & Required<StringTypedOption<Flags, T, undefined>>>;
-  requiredOption<Flags extends string, T, D extends T | undefined>(flags: Flags, description: string, fn: (value: string, previous: T) => T, defaultValue: D): Command<Args, Options & Required<StringTypedOption<Flags, T, D>>>;
+  requiredOption<Flags extends string>(flags: Flags, description?: string): Command<Args, MergeOptions<Options, Required<StringUntypedOption<Flags, undefined>>>>;
+  requiredOption<Flags extends string, D extends StringImpliedType<Flags, true> | undefined>(flags: Flags, description: string, defaultValue: D): Command<Args, MergeOptions<Options, Required<StringUntypedOption<Flags, D>>>>;
+  requiredOption<Flags extends string, T>(flags: Flags, description: string, fn: (value: string, previous: T) => T): Command<Args, MergeOptions<Options, Required<StringTypedOption<Flags, T, undefined>>>>;
+  requiredOption<Flags extends string, T, D extends T | undefined>(flags: Flags, description: string, fn: (value: string, previous: T) => T, defaultValue: D): Command<Args, MergeOptions<Options, Required<StringTypedOption<Flags, T, D>>>>;
   /** @deprecated since v7, instead use choices or a custom function */
   requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean | string[]): this;
 
@@ -625,7 +627,7 @@ export class Command<Args extends unknown[] = [], Options extends { [K: string]:
    *
    * See .option() and .requiredOption() for creating and attaching an option in a single call.
    */
-  addOption<Flags extends string, T, D, M>(option: Option<Flags, T, D, M>): Command<Args, Options & M extends true ? Required<StringTypedOption<Flags, T, D>> : StringTypedOption<Flags, T, D>>;
+  addOption<Flags extends string, T, D, M>(option: Option<Flags, T, D, M>): Command<Args, MergeOptions<Options, M extends true ? Required<StringTypedOption<Flags, T, D>> : StringTypedOption<Flags, T, D>>>;
 
   /**
    * Whether to store option values as properties on command object,
