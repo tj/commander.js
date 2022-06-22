@@ -547,7 +547,8 @@ export class Command<Args extends unknown[] = [], Options extends { [K: string]:
    *
    * @returns `this` command for chaining
    */
-  action(fn: (this: this, ...args: [...Args, Options, this]) => (void | Promise<void>)): this;
+  action(fn: (this: this, ...args: [...Args, Options, this]) => void | Promise<void>): this;
+  action<A extends unknown[], O extends OptionValues>(fn: (this: this, ...args: [...A, ...Args, O & Options, this]) => void | Promise<void>): this;
 
   /**
    * Define option with `flags`, `description` and optional
