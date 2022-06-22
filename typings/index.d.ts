@@ -266,13 +266,13 @@ export class Help {
   /** Get the command summary to show in the list of subcommands. */
   subcommandDescription(cmd: Command): string;
   /** Get the option term to show in the list of options. */
-  optionTerm(option: Option<any>): string;
+  optionTerm(option: Option<any, any, any, any>): string;
   /** Get the option description to show in the list of options. */
-  optionDescription(option: Option<any>): string;
+  optionDescription(option: Option<any, any, any, any>): string;
   /** Get the argument term to show in the list of arguments. */
-  argumentTerm(argument: Argument<any>): string;
+  argumentTerm(argument: Argument<any, any, any>): string;
   /** Get the argument description to show in the list of arguments. */
-  argumentDescription(argument: Argument<any>): string;
+  argumentDescription(argument: Argument<any, any, any>): string;
 
   /** Get the command usage to be displayed at the top of the built-in help. */
   commandUsage(cmd: Command): string;
@@ -282,9 +282,9 @@ export class Help {
   /** Get an array of the visible subcommands. Includes a placeholder for the implicit help command, if there is one. */
   visibleCommands(cmd: Command): Command[];
   /** Get an array of the visible options. Includes a placeholder for the implicit help option, if there is one. */
-  visibleOptions(cmd: Command): Array<Option<any>>;
+  visibleOptions(cmd: Command): Array<Option<any, any, any, any>>;
   /** Get an array of the arguments which have descriptions. */
-  visibleArguments(cmd: Command): Array<Argument<any>>;
+  visibleArguments(cmd: Command): Array<Argument<any, any, any>>;
 
   /** Get the longest command term length. */
   longestSubcommandTermLength(cmd: Command, helper: Help): number;
