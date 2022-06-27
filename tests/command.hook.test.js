@@ -320,4 +320,40 @@ describe('action hooks async', () => {
     await result;
     expect(calls).toEqual(['pb1', 'pb2', 'sb', 'action', 'sa', 'pa2', 'pa1']);
   });
+
+  test('preSubcommand hook should work', async() => {
+    const calls = [];
+    const program = new commander.Command();
+    program
+      .hook('preSubcommand', async() => { await 0; calls.push(0); });
+    program.command('sub')
+      .action(async() => { await 1; calls.push(1); });
+    program.action(async() => { await 2; calls.push(2); });
+    const result = program.parseAsync(['sub'], { from: 'user' });
+    expect(calls).toEqual([]);
+    await result;
+    expect(calls).toEqual([0, 1]);
+  });
+  test('preSubcommand hook should effective for direct subcommands', async() => {
+    const calls = [];
+    const program = new commander.Command();
+    program
+      .hook('preSubcommand', async(thisCommand, subCommand) => {
+        await 'preSubcommand';
+        calls.push('preSubcommand');
+        calls.push(subCommand.name());
+      });
+    program
+      .command('first')
+      .action(async() => { await 'first'; calls.push('first'); })
+      .command('second')
+      .action(async() => { await 'second'; calls.push('second'); })
+      .command('third')
+      .action(async() => { await 'third'; calls.push('third'); });
+    program.action(async() => { await 2; calls.push(2); });
+    const result = program.parseAsync(['first', 'second', 'third'], { from: 'user' });
+    expect(calls).toEqual([]);
+    await result;
+    expect(calls).toEqual(['preSubcommand', 'first', 'third']);
+  });
 });

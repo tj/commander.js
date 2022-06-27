@@ -701,7 +701,10 @@ If the program is designed to be installed globally, make sure the executables h
 
 You can add callback hooks to a command for life cycle events.
 
-Example file: [hook.js](./examples/hook.js)
+Example file:
+
+- [hook.js](./examples/hook.js)
+- [pre-subcommand-hook.js](./examples/pre-subcommand-hook.js)
 
 ```js
 program
@@ -723,6 +726,8 @@ The supported events are:
 - `postAction`: called after action handler for this command and its subcommands
 
 The hook is passed the command it was added to, and the command running the action handler.
+
+- `preSubcommand`: called before subcommand parsed. The hook is passed the command it was added to, and its direct subcommands
 
 ## Automated help
 

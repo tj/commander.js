@@ -678,7 +678,10 @@ program.parse(process.argv);
 
 可以在命令的生命周期事件上设置回调函数。
 
-示例代码：[hook.js](./examples/hook.js)
+示例代码：
+
+- [hook.js](./examples/hook.js)
+- [pre-subcommand-hook.js](./examples/pre-subcommand-hook.js)
 
 ```js
 program
@@ -700,6 +703,8 @@ program
 - `postAction`：在本命令或其子命令的处理函数执行后
 
 钩子函数的参数为添加上钩子的命令，及实际执行的命令。
+
+- `preSubcommand`：在子命令解析之前调用，钩子函数的参数为添加上钩子的命令，以及其直接子命令
 
 ## 自动化帮助信息
 
