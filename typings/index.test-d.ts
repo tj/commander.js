@@ -90,6 +90,12 @@ expectType<commander.Command>(program.hook('preAction', (thisCommand, actionComm
   expectType<commander.Command>(thisCommand);
   expectType<commander.Command>(actionCommand);
 }));
+expectType<commander.Command>(program.hook('preSubcommand', () => {}));
+expectType<commander.Command>(program.hook('preSubcommand', (thisCommand, subcommand) => {
+  // implicit parameter types
+  expectType<commander.Command>(thisCommand);
+  expectType<commander.Command>(subcommand);
+}));
 
 // action
 expectType<commander.Command>(program.action(() => {}));

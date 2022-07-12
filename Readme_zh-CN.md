@@ -696,10 +696,10 @@ program
 
 支持的事件有：
 
-- `preAction`：在本命令或其子命令的处理函数执行前
-- `postAction`：在本命令或其子命令的处理函数执行后
-
-钩子函数的参数为添加上钩子的命令，及实际执行的命令。
+| 事件名称 | 触发时机 | 参数列表 |
+| :-- | :-- | :-- |
+| `preAction`, `postAction` | 本命令或其子命令的处理函数执行前/后 |   `(thisCommand, actionCommand)` |
+| `preSubcommand` | 在其直接子命令解析之前调用  | `(thisCommand, subcommand)` |
 
 ## 自动化帮助信息
 

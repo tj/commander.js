@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 
 // const commander = require('commander'); // (normal include)
-const commander = require('../'); // include commander in git clone of commander repo
-const program = new commander.Command();
+const { Command, Option } = require('../'); // include commander in git clone of commander repo
+const program = new Command();
 
 // This example shows using some hooks for life cycle events.
 
 const timeLabel = 'command duration';
 program
-  .option('-p, --profile', 'show how long command takes')
+  .option('--profile', 'show how long command takes')
   .hook('preAction', (thisCommand) => {
     if (thisCommand.opts().profile) {
       console.time(timeLabel);
@@ -21,7 +21,7 @@ program
   });
 
 program
-  .option('-t, --trace', 'display trace statements for commands')
+  .option('--trace', 'display trace statements for commands')
   .hook('preAction', (thisCommand, actionCommand) => {
     if (thisCommand.opts().trace) {
       console.log('>>>>');
@@ -32,25 +32,34 @@ program
     }
   });
 
-program.command('delay')
-  .option('--message <value>', 'custom message to display', 'Thanks for waiting')
-  .argument('[seconds]', 'how long to delay', '1')
-  .action(async(waitSeconds, options) => {
-    await new Promise(resolve => setTimeout(resolve, parseInt(waitSeconds) * 1000));
-    console.log(options.message);
+program
+  .option('--env <filename>', 'specify environment file')
+  .hook('preSubcommand', (thisCommand, subcommand) => {
+    if (thisCommand.opts().env) {
+      // One use case for this hook is modifying environment variables before
+      // parsing the subcommand, say by reading .env file.
+      console.log(`Reading ${thisCommand.opts().env}...`);
+      process.env.PORT = 80;
+      console.log(`About to call subcommand: ${subcommand.name()}`);
+    }
   });
 
-program.command('hello')
-  .option('-e, --example')
-  .action(() => console.log('Hello, world'));
+program.command('start')
+  .argument('[script]', 'script name', 'server.js')
+  .option('-d, --delay <seconds>', 'how long to delay before starting')
+  .addOption(new Option('-p, --port <number>', 'port number').default(8080).env('PORT'))
+  .action(async(script, options) => {
+    if (options.delay) {
+      await new Promise(resolve => setTimeout(resolve, parseInt(options.delay) * 1000));
+    }
+    console.log(`Starting ${script} on port ${options.port}`);
+  });
 
 // Some of the hooks or actions are async, so call parseAsync rather than parse.
 program.parseAsync().then(() => {});
 
 // Try the following:
-//    node hook.js hello
-//    node hook.js --profile hello
-//    node hook.js --trace hello --example
-//    node hook.js delay
-//    node hook.js --trace delay 5 --message bye
-//    node hook.js --profile delay
+//    node hook.js start
+//    node hook.js --trace start --port 9000 test.js
+//    node hook.js --profile start --delay 5
+//    node hook.js --env=production.env start

@@ -719,10 +719,10 @@ The callback hook can be `async`, in which case you call `.parseAsync` rather th
 
 The supported events are:
 
-- `preAction`: called before action handler for this command and its subcommands
-- `postAction`: called after action handler for this command and its subcommands
-
-The hook is passed the command it was added to, and the command running the action handler.
+| event name | when hook called | callback parameters |
+| :-- | :-- | :-- |
+| `preAction`, `postAction` |  before/after action handler for this command and its nested subcommands |   `(thisCommand, actionCommand)` |
+| `preSubcommand` | before parsing direct subcommand  | `(thisCommand, subcommand)` |
 
 ## Automated help
 

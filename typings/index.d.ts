@@ -265,7 +265,7 @@ export interface OutputConfiguration {
 }
 
 export type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
-export type HookEvent = 'preAction' | 'postAction';
+export type HookEvent = 'preSubcommand' | 'preAction' | 'postAction';
 export type OptionValueSource = 'default' | 'env' | 'config' | 'cli';
 
 export interface OptionValues {
