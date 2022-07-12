@@ -701,10 +701,7 @@ If the program is designed to be installed globally, make sure the executables h
 
 You can add callback hooks to a command for life cycle events.
 
-Example file:
-
-- [hook.js](./examples/hook.js)
-- [pre-subcommand-hook.js](./examples/pre-subcommand-hook.js)
+Example file: [hook.js](./examples/hook.js)
 
 ```js
 program

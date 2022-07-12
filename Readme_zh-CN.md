@@ -678,10 +678,7 @@ program.parse(process.argv);
 
 可以在命令的生命周期事件上设置回调函数。
 
-示例代码：
-
-- [hook.js](./examples/hook.js)
-- [pre-subcommand-hook.js](./examples/pre-subcommand-hook.js)
+示例代码：[hook.js](./examples/hook.js)
 
 ```js
 program
