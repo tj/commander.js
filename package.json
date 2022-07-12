@@ -46,7 +46,7 @@
     "./esm.mjs": "./esm.mjs"
   },
   "devDependencies": {
-    "@types/jest": "^27.0.3",
+    "@types/jest": "^28.1.4",
     "@types/node": "^16.11.15",
     "@typescript-eslint/eslint-plugin": "^5.30.6",
     "@typescript-eslint/parser": "^5.30.6",
@@ -57,10 +57,10 @@
     "eslint-plugin-jest": "^26.5.3",
     "eslint-plugin-n": "^15.2.4",
     "eslint-plugin-promise": "^6.0.0",
-    "jest": "^27.0.4",
-    "ts-jest": "^27.0.3",
-    "tsd": "^0.17.0",
-    "typescript": "^4.3.4"
+    "jest": "^28.1.2",
+    "ts-jest": "^28.0.5",
+    "tsd": "^0.22.0",
+    "typescript": "^4.7.4"
   },
   "types": "typings/index.d.ts",
   "jest": {
