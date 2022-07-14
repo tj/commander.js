@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [9.4.0] (2022-07-15)
+
+### Added
+
+- `preSubcommand` hook called before direct subcommands ([#1763])
+
+### Fixed
+
+- export `InvalidOptionArgumentError` in esm ([#1756])
+
+### Changed
+
+- update dependencies ([#1767])
+
 ## [9.3.0] (2022-05-28)
 
 ### Added
@@ -1078,6 +1092,9 @@ program
 [#1724]: https://github.com/tj/commander.js/pull/1724
 [#1726]: https://github.com/tj/commander.js/pull/1726
 [#1727]: https://github.com/tj/commander.js/pull/1727
+[#1756]: https://github.com/tj/commander.js/pull/1756
+[#1763]: https://github.com/tj/commander.js/pull/1763
+[#1767]: https://github.com/tj/commander.js/pull/1767
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
@@ -1156,6 +1173,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[9.4.0]: https://github.com/tj/commander.js/compare/v9.3.0...v9.4.0
 [9.3.0]: https://github.com/tj/commander.js/compare/v9.2.0...v9.3.0
 [9.2.0]: https://github.com/tj/commander.js/compare/v9.1.0...v9.2.0
 [9.1.0]: https://github.com/tj/commander.js/compare/v9.0.0...v9.1.0
