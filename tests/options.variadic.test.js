@@ -167,4 +167,15 @@ describe('variadic special cases', () => {
 
     expect(program.options[0].variadic).toBeFalsy();
   });
+
+  test('when option flags arguments includes -- then some literals the argument values includes all of them except --', () => {
+    // This might be used to describe coercion for comma separated values, and is not variadic.
+    const program = new commander.Command();
+    program
+      .option('-a, --arguments [values...]');
+
+    program.parse(['--arguments', '--', 'one', 'two', '-non-option', 'four'], { from: 'user' });
+
+    expect(program.opts().arguments).toEqual(['one', 'two', '-non-option', 'four']);
+  });
 });
