@@ -266,7 +266,7 @@ export interface OutputConfiguration {
 
 export type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
 export type HookEvent = 'preSubcommand' | 'preAction' | 'postAction';
-export type OptionValueSource = 'default' | 'env' | 'config' | 'cli';
+export type OptionValueSource = 'default' | 'implied' | 'config' | 'env' | 'cli' | 'unknown';
 
 export interface OptionValues {
   [key: string]: any;
