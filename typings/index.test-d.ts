@@ -104,6 +104,7 @@ expectType<commander.Command>(program.action(async() => {}));
 // option
 expectType<commander.Command>(program.option('-a,--alpha'));
 expectType<commander.Command>(program.option('-p, --peppers', 'Add peppers'));
+expectType<commander.Command>(program.option('-p, --port <number>', 'port number', 80));
 expectType<commander.Command>(program.option('-s, --string [value]', 'default string', 'value'));
 expectType<commander.Command>(program.option('-b, --boolean', 'default boolean', false));
 expectType<commander.Command>(program.option('--drink <size', 'drink size', /small|medium|large/)); // deprecated
@@ -137,6 +138,7 @@ expectType<commander.Command>(program.option('-l, --list <items>', 'comma separa
 // requiredOption, same tests as option
 expectType<commander.Command>(program.requiredOption('-a,--alpha'));
 expectType<commander.Command>(program.requiredOption('-p, --peppers', 'Add peppers'));
+expectType<commander.Command>(program.requiredOption('-n, --number <number>', 'default number', 80));
 expectType<commander.Command>(program.requiredOption('-s, --string [value]', 'default string', 'value'));
 expectType<commander.Command>(program.requiredOption('-b, --boolean', 'default boolean', false));
 expectType<commander.Command>(program.requiredOption('--drink <size', 'drink size', /small|medium|large/)); // deprecated
