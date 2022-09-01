@@ -266,7 +266,7 @@ export interface OutputConfiguration {
 
 export type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
 export type HookEvent = 'preSubcommand' | 'preAction' | 'postAction';
-export type OptionValueSource = 'default' | 'implied' | 'config' | 'env' | 'cli' | 'unknown';
+export type OptionValueSource = 'default' | 'implied' | 'config' | 'env' | 'cli' | null;
 
 export interface OptionValues {
   [key: string]: any;
@@ -595,7 +595,7 @@ export class Command {
   /**
    * Retrieve option value source.
    */
-  getOptionValueSource(key: string): OptionValueSource;
+  getOptionValueSource(key: string): OptionValueSource | undefined;
 
   /**
    * Alter parsing of short flags with optional values.
