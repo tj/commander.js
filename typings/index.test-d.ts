@@ -30,7 +30,7 @@ expectType<string[]>(program.args);
 expectType<any[]>(program.processedArgs);
 expectType<commander.Command[]>(program.commands);
 expectType<commander.Command | null>(program.parent);
-expectType<ReadonlyArray<Readonly<commander.Option>>>(program.options);
+expectType<commander.Option[]>(program.options);
 
 // version
 expectType<commander.Command>(program.version('1.2.3'));

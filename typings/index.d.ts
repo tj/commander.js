@@ -277,7 +277,7 @@ export class Command {
   processedArgs: any[];
   commands: Command[];
   parent: Command | null;
-  readonly options: ReadonlyArray<Readonly<Option>>;
+  readonly options: Option[];
 
   constructor(name?: string);
 
