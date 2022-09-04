@@ -144,7 +144,7 @@ export class Option {
 
   /**
    * Set environment variable to check for option value.
-   * Priority order of option values is default < env < cli
+   * Priority order of option sources is default < config < env < cli
    */
   env(name: string): this;
 
@@ -266,7 +266,7 @@ export interface OutputConfiguration {
 
 export type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
 export type HookEvent = 'preSubcommand' | 'preAction' | 'postAction';
-export type OptionValueSource = 'default' | 'implied' | 'env' | 'config' | 'cli';
+export type OptionValueSource = 'default' | 'config' | 'env' | 'cli' | 'implied';
 
 export interface OptionValues {
   [key: string]: any;
