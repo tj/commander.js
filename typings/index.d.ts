@@ -595,7 +595,7 @@ export class Command {
   /**
    * Retrieve option value source.
    */
-  getOptionValueSource(key: string): OptionValueSource;
+  getOptionValueSource(key: string): OptionValueSource | undefined;
 
   /**
    * Alter parsing of short flags with optional values.
