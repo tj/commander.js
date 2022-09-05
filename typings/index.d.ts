@@ -144,7 +144,9 @@ export class Option {
 
   /**
    * Set environment variable to check for option value.
-   * Priority order of option sources is default < config < env < cli
+   *
+   * An environment variables is only used if when processed the current option value is
+   * undefined, or the source of the current value is 'default' or 'config' or 'env'.
    */
   env(name: string): this;
 
