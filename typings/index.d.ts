@@ -144,7 +144,9 @@ export class Option {
 
   /**
    * Set environment variable to check for option value.
-   * Priority order of option values is default < env < cli
+   *
+   * An environment variables is only used if when processed the current option value is
+   * undefined, or the source of the current value is 'default' or 'config' or 'env'.
    */
   env(name: string): this;
 
@@ -266,7 +268,7 @@ export interface OutputConfiguration {
 
 export type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
 export type HookEvent = 'preSubcommand' | 'preAction' | 'postAction';
-export type OptionValueSource = 'default' | 'env' | 'config' | 'cli';
+export type OptionValueSource = 'default' | 'config' | 'env' | 'cli' | 'implied';
 
 export interface OptionValues {
   [key: string]: any;
@@ -595,7 +597,7 @@ export class Command {
   /**
    * Retrieve option value source.
    */
-  getOptionValueSource(key: string): OptionValueSource;
+  getOptionValueSource(key: string): OptionValueSource | undefined;
 
   /**
    * Alter parsing of short flags with optional values.
