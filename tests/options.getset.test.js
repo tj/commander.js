@@ -28,7 +28,7 @@ test('when setOptionValueWithSource then value returned by opts', () => {
   const cheeseValue = 'blue';
   program
     .option('--cheese [type]', 'cheese type')
-    .setOptionValue('cheese', cheeseValue);
+    .setOptionValueWithSource('cheese', cheeseValue, 'cli');
   expect(program.opts().cheese).toBe(cheeseValue);
 });
 
@@ -56,4 +56,13 @@ test('when option value parsed from cli then option source is cli', () => {
     .addOption(new commander.Option('-f, --foo').env('BAR'));
   program.parse(['--foo'], { from: 'user' });
   expect(program.getOptionValueSource('foo')).toBe('cli');
+});
+
+test('when setOptionValue then clears previous source', () => {
+  const program = new commander.Command();
+  program
+    .option('--foo', 'description', 'default value');
+  expect(program.getOptionValueSource('foo')).toBe('default');
+  program.setOptionValue('foo', 'bar');
+  expect(program.getOptionValueSource('foo')).toBeUndefined();
 });
