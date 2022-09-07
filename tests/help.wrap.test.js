@@ -97,7 +97,7 @@ Options:
     expect(program.helpInformation()).toBe(expectedOutput);
   });
 
-  test('when long command description then wrap and indent', () => {
+  test('when long subcommand description then wrap and indent', () => {
     const program = new commander.Command();
     program
       .configureHelp({ helpWidth: 80 })
@@ -142,7 +142,7 @@ Commands:
     expect(program.helpInformation()).toBe(expectedOutput);
   });
 
-  test('when option descripton preformatted then only add small indent', () => {
+  test('when option description pre-formatted then only add small indent', () => {
     // #396: leave custom format alone, apart from space-space indent
     const optionSpec = '-t, --time <HH:MM>';
     const program = new commander.Command();
@@ -166,6 +166,27 @@ Options:
   -h, --help          display help for command
 `;
 
+    expect(program.helpInformation()).toBe(expectedOutput);
+  });
+
+  test('when command description long then wrapped', () => {
+    const program = new commander.Command();
+    program
+      .configureHelp({ helpWidth: 80 })
+      .description(`Do fugiat eiusmod ipsum laboris excepteur pariatur sint ullamco tempor labore eu Do fugiat eiusmod ipsum laboris excepteur pariatur sint ullamco tempor labore eu
+After line break Do fugiat eiusmod ipsum laboris excepteur pariatur sint ullamco tempor labore eu Do fugiat eiusmod ipsum laboris excepteur pariatur sint ullamco tempor labore eu`);
+    const expectedOutput = `Usage:  [options]
+
+Do fugiat eiusmod ipsum laboris excepteur pariatur sint ullamco tempor labore
+eu Do fugiat eiusmod ipsum laboris excepteur pariatur sint ullamco tempor
+labore eu
+After line break Do fugiat eiusmod ipsum laboris excepteur pariatur sint
+ullamco tempor labore eu Do fugiat eiusmod ipsum laboris excepteur pariatur
+sint ullamco tempor labore eu
+
+Options:
+  -h, --help  display help for command
+`;
     expect(program.helpInformation()).toBe(expectedOutput);
   });
 });
