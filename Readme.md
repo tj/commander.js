@@ -330,7 +330,7 @@ For information about possible ambiguous cases, see [options taking varying argu
 
 ### Required option
 
-You may specify a required (mandatory) option using `.requiredOption`. The option must have a value after parsing, usually specified on the command line, or perhaps from a default value (say from environment). The method is otherwise the same as `.option` in format, taking flags and description, and optional default value or custom processing.
+You may specify a required (mandatory) option using `.requiredOption()`. The option must have a value after parsing, usually specified on the command line, or perhaps from a default value (say from environment). The method is otherwise the same as `.option()` in format, taking flags and description, and optional default value or custom processing.
 
 Example file: [options-required.js](./examples/options-required.js)
 
@@ -440,6 +440,8 @@ Options:  { timeout: 60, donate: 20, port: '80', freeDrink: true, drink: 'small'
 $ extra --disable-server --port 8000
 error: option '--disable-server' cannot be used with option '-p, --port <number>'
 ```
+
+Specify a required (mandatory) option using the `Option` method `.makeOptionMandatory()`. This matches the `Command` method [.requiredOption()](#required-option).
 
 ### Custom option processing
 
