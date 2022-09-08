@@ -541,6 +541,7 @@ Configuration options can be passed with the call to `.command()` and `.addComma
 remove the command from the generated help output. Specifying `isDefault: true` will run the subcommand if no other
 subcommand is specified ([example](./examples/defaultCommand.js)).
 
+For safety, `.addCommand()` does not automatically copy the inherited settings from the parent command. There is a helper routine `.copyInheritedSettings()` for copying the settings when they are wanted.
 ### Command-arguments
 
 For subcommands, you can specify the argument syntax in the call to `.command()` (as shown above). This
