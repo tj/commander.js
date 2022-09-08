@@ -29,8 +29,8 @@ expectType<string[]>(program.args);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 expectType<any[]>(program.processedArgs);
 expectType<commander.Command[]>(program.commands);
-expectType<commander.Command | null>(program.parent);
 expectType<commander.Option[]>(program.options);
+expectType<commander.Command | null>(program.parent);
 
 // version
 expectType<commander.Command>(program.version('1.2.3'));
