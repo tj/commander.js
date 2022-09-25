@@ -41,11 +41,18 @@ ${' '.repeat(10)}${'a '.repeat(5)}a`);
     expect(wrapped).toEqual(text);
   });
 
-  test('when text has line breaks then respect and indent', () => {
+  test('when text has line break then respect and indent', () => {
     const text = 'term description\nanother line';
     const helper = new commander.Help();
     const wrapped = helper.wrap(text, 78, 5);
     expect(wrapped).toEqual('term description\n     another line');
+  });
+
+  test('when text has consecutive line breaks then respect and indent', () => {
+    const text = 'term description\n\nanother line';
+    const helper = new commander.Help();
+    const wrapped = helper.wrap(text, 78, 5);
+    expect(wrapped).toEqual('term description\n\n     another line');
   });
 
   test('when text already formatted with line breaks and indent then do not touch', () => {
