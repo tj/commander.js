@@ -55,6 +55,20 @@ ${' '.repeat(10)}${'a '.repeat(5)}a`);
     expect(wrapped).toEqual('term description\n\n     another line');
   });
 
+  test('when text has Windows line break then respect and indent', () => {
+    const text = 'term description\r\nanother line';
+    const helper = new commander.Help();
+    const wrapped = helper.wrap(text, 78, 5);
+    expect(wrapped).toEqual('term description\n     another line');
+  });
+
+  test('when text has Windows consecutive line breaks then respect and indent', () => {
+    const text = 'term description\r\n\r\nanother line';
+    const helper = new commander.Help();
+    const wrapped = helper.wrap(text, 78, 5);
+    expect(wrapped).toEqual('term description\n\n     another line');
+  });
+
   test('when text already formatted with line breaks and indent then do not touch', () => {
     const text = 'term a '.repeat(25) + '\n   ' + 'a '.repeat(25) + 'a';
     const helper = new commander.Help();
