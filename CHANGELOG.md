@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [9.4.1] (2022-09-30)
+
+### Fixed
+
+- `.setOptionValue()` now also clears option source ([#1795])
+- TypeScript: add `implied` to `OptionValueSource` for option values set by using `.implies()` ([#1794])
+- TypeScript : add `undefined` to return type of `.getOptionValueSource()` ([#1794])
+
+### Changed
+
+- additions to README
+
 ## [9.4.0] (2022-07-15)
 
 ### Added
@@ -1095,6 +1107,8 @@ program
 [#1756]: https://github.com/tj/commander.js/pull/1756
 [#1763]: https://github.com/tj/commander.js/pull/1763
 [#1767]: https://github.com/tj/commander.js/pull/1767
+[#1794]: https://github.com/tj/commander.js/pull/1794
+[#1795]: https://github.com/tj/commander.js/pull/1795
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
@@ -1173,6 +1187,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[9.4.1]: https://github.com/tj/commander.js/compare/v9.4.0...v9.4.1
 [9.4.0]: https://github.com/tj/commander.js/compare/v9.3.0...v9.4.0
 [9.3.0]: https://github.com/tj/commander.js/compare/v9.2.0...v9.3.0
 [9.2.0]: https://github.com/tj/commander.js/compare/v9.1.0...v9.2.0
