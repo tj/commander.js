@@ -209,7 +209,7 @@ export class Help {
   /** Get the option term to show in the list of options. */
   optionTerm(option: Option): string;
   /** Get the option description to show in the list of options. */
-  optionDescription(option: Option): string;
+  optionDescription(option: Option, cmd?: Command): string;
   /** Get the argument term to show in the list of arguments. */
   argumentTerm(argument: Argument): string;
   /** Get the argument description to show in the list of arguments. */

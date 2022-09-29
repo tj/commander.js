@@ -1,6 +1,6 @@
 // Example translation dictionary. The keys stay the same, and the values are the desired translation.
 
-export const translations = {
+const translations = {
   // errors
   // commander.missingArgument
   "error: missing required argument '{0}'": "error: missing required argument '{0}'",
@@ -19,7 +19,7 @@ export const translations = {
   // commander.invalidArgument for option from env
   "error: option '{0}' value '{1}' from env '{2}' is invalid.": "error: option '{0}' value '{1}' from env '{2}' is invalid.",
   // commander.invalidArgument for command-argument
-  "error: command-argument value '{0}' is invalid for argument '{1}": "error: command-argument value '{0}' is invalid for argument '{1}."
+  "error: command-argument value '{0}' is invalid for argument '{1}": "error: command-argument value '{0}' is invalid for argument '{1}.",
   // ToDo
   // - choices error message for Option and Argument throwing commander.invalidArgument
   // - suggestSimilar for unknown option
@@ -37,8 +37,21 @@ export const translations = {
   // - see also visibleCommand
 
   // Help
-  // - titles
-  // - usage parts
-  // - order of term/description for right to left languages ????
-  // - option (default: 1, env: FOO, preset: 23) et al
+  // titles
+  'Usage:': 'Usage:',
+  'Arguments:': 'Arguments:',
+  'Options:': 'Options:',
+  'Commands:': 'Commands:',
+  // usage
+  '[options]': '[options]',
+  '[command]': '[command]',
+  // list separator (nothing fancy!)
+  ', ': ', ',
+  // option description
+  'choices: {0}': 'choices: {0}',
+  'default: {0}': 'default: {0}',
+  'preset: {0}': 'preset: {0}',
+  'env: {0}': 'env: {0}'
 };
+
+exports.translations = translations;
