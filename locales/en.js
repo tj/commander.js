@@ -45,8 +45,6 @@ const translations = {
   // usage
   '[options]': '[options]',
   '[command]': '[command]',
-  // list separator (nothing fancy!)
-  ', ': ', ',
   // option description
   'choices: {0}': 'choices: {0}',
   'default: {0}': 'default: {0}',
