@@ -17,7 +17,7 @@ const translations = {
   // commander.invalidArgument
   // - option from cli
   "error: option '{0}' argument '{1}' is invalid.": "error: option '{0}' argument '{1}' is invalid.",
-  // - choices
+  // - choices, used for both option and argument
   'Allowed choices are {0}.': 'Allowed choices are {0}.',
   // - option from env
   "error: option '{0}' value '{1}' from env '{2}' is invalid.": "error: option '{0}' value '{1}' from env '{2}' is invalid.",
@@ -32,13 +32,8 @@ const translations = {
   '\n(Did you mean one of {0}?)': '\n(Did you mean one of {0}?)',
   '\n(Did you mean {0}?)': '\n(Did you mean {0}?)',
 
-  // help option, help command, version option
-  // Needs refactor to work. Under user control anyway, so not essential.
-  // help option
-  // - see also visibleOptions
-  // version option
-  // help command
-  // - see also visibleCommand
+  // version option description
+  'output the version number': 'output the version number',
 
   // Help
   // titles

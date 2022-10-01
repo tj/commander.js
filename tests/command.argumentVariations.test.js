@@ -11,6 +11,7 @@ test.each(getSingleArgCases('<explicit-required>'))('when add "<arg>" using %s t
     variadic: false,
     description: ''
   };
+  delete argument._i18n; // hack, only added for new style arguments
   expect(argument).toEqual(expectedShape);
 });
 
@@ -22,6 +23,7 @@ test.each(getSingleArgCases('implicit-required'))('when add "arg" using %s then 
     variadic: false,
     description: ''
   };
+  delete argument._i18n; // hack, only added for new style arguments
   expect(argument).toEqual(expectedShape);
 });
 
@@ -33,6 +35,7 @@ test.each(getSingleArgCases('[optional]'))('when add "[arg]" using %s then argum
     variadic: false,
     description: ''
   };
+  delete argument._i18n; // hack, only added for new style arguments
   expect(argument).toEqual(expectedShape);
 });
 
@@ -44,6 +47,7 @@ test.each(getSingleArgCases('<explicit-required...>'))('when add "<arg...>" usin
     variadic: true,
     description: ''
   };
+  delete argument._i18n; // hack, only added for new style arguments
   expect(argument).toEqual(expectedShape);
 });
 
@@ -55,6 +59,7 @@ test.each(getSingleArgCases('implicit-required...'))('when add "arg..." using %s
     variadic: true,
     description: ''
   };
+  delete argument._i18n; // hack, only added for new style arguments
   expect(argument).toEqual(expectedShape);
 });
 
@@ -66,6 +71,7 @@ test.each(getSingleArgCases('[optional...]'))('when add "[arg...]" using %s then
     variadic: true,
     description: ''
   };
+  delete argument._i18n; // hack, only added for new style arguments
   expect(argument).toEqual(expectedShape);
 });
 
