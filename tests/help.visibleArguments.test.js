@@ -23,6 +23,7 @@ describe('visibleArguments', () => {
     const helper = new commander.Help();
     const visibleArguments = helper.visibleArguments(program);
     expect(visibleArguments.length).toEqual(1);
+    visibleArguments[0]._i18n = undefined; // hack, match fresh Argument
     expect(visibleArguments[0]).toEqual(new commander.Argument('<file>', 'file description'));
   });
 
@@ -35,6 +36,7 @@ describe('visibleArguments', () => {
     const helper = new commander.Help();
     const visibleArguments = helper.visibleArguments(program);
     expect(visibleArguments.length).toEqual(1);
+    visibleArguments[0]._i18n = undefined; // hack, match fresh Argument
     expect(visibleArguments[0]).toEqual(new commander.Argument('<file>', 'file description'));
   });
 
@@ -45,7 +47,9 @@ describe('visibleArguments', () => {
     const helper = new commander.Help();
     const visibleArguments = helper.visibleArguments(program);
     expect(visibleArguments.length).toEqual(2);
+    visibleArguments[0]._i18n = undefined; // hack, match fresh Argument
     expect(visibleArguments[0]).toEqual(new commander.Argument('<file1>', 'file1 description'));
+    visibleArguments[1]._i18n = undefined; // hack, match fresh Argument
     expect(visibleArguments[1]).toEqual(new commander.Argument('<file2>'));
   });
 
@@ -59,7 +63,9 @@ describe('visibleArguments', () => {
     const helper = new commander.Help();
     const visibleArguments = helper.visibleArguments(program);
     expect(visibleArguments.length).toEqual(2);
+    visibleArguments[0]._i18n = undefined; // hack, match fresh Argument
     expect(visibleArguments[0]).toEqual(new commander.Argument('<file1>', 'file1 description'));
+    visibleArguments[1]._i18n = undefined; // hack, match fresh Argument
     expect(visibleArguments[1]).toEqual(new commander.Argument('<file2>'));
   });
 });

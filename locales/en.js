@@ -34,6 +34,8 @@ const translations = {
 
   // version option description
   'output the version number': 'output the version number',
+  // help option and help command description
+  'display help for command': 'display help for command',
 
   // Help
   // titles
