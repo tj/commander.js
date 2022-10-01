@@ -16,21 +16,21 @@ const translations = {
   "error: unknown command '{0}'": "error: unknown command '{0}'",
   // commander.invalidArgument for option from cli
   "error: option '{0}' argument '{1}' is invalid.": "error: option '{0}' argument '{1}' is invalid.",
+  'Allowed choices are {0}.': 'Allowed choices are {0}.',
   // commander.invalidArgument for option from env
   "error: option '{0}' value '{1}' from env '{2}' is invalid.": "error: option '{0}' value '{1}' from env '{2}' is invalid.",
   // commander.invalidArgument for command-argument
   "error: command-argument value '{0}' is invalid for argument '{1}": "error: command-argument value '{0}' is invalid for argument '{1}.",
   // ToDo
-  // - choices error message for Option and Argument throwing commander.invalidArgument
   // - suggestSimilar for unknown option
   // - suggestSimilar for and unknown command
   // - commander.excessArguments
   //   rework for program/subcommand, plural, multiple arguments ????
   // - order of error/detail for right to left languages ????
 
-  // need to lazy load translations after configureString has been added ????
+  // help option, help command, version option
+  // Needs refactor to work. Under user control anyway, so not essential.
   // help option
-  // - translate where used, not called too often per command?
   // - see also visibleOptions
   // version option
   // help command
