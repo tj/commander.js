@@ -3,6 +3,15 @@ const commander = require('../');
 // Do some low-level checks that the multiple ways of specifying command arguments produce same internal result,
 // and not exhaustively testing all methods elsewhere.
 
+/**
+ * Not quite a deep equal. Ignore `_i18n` which is not present in a `new Argument()`.
+ */
+function expectArgumentsEqual(a, b) {
+  a._i18n = undefined; // NB: side-effect!
+  expect(a).toEqual(b);
+}
+/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["expect", "expectArgumentsEqual"] }] */
+
 test.each(getSingleArgCases('<explicit-required>'))('when add "<arg>" using %s then argument required', (methodName, cmd) => {
   const argument = cmd._args[0];
   const expectedShape = {
@@ -11,8 +20,7 @@ test.each(getSingleArgCases('<explicit-required>'))('when add "<arg>" using %s t
     variadic: false,
     description: ''
   };
-  delete argument._i18n; // hack, only added for new style arguments
-  expect(argument).toEqual(expectedShape);
+  expectArgumentsEqual(argument, expectedShape);
 });
 
 test.each(getSingleArgCases('implicit-required'))('when add "arg" using %s then argument required', (methodName, cmd) => {
@@ -23,8 +31,7 @@ test.each(getSingleArgCases('implicit-required'))('when add "arg" using %s then 
     variadic: false,
     description: ''
   };
-  delete argument._i18n; // hack, only added for new style arguments
-  expect(argument).toEqual(expectedShape);
+  expectArgumentsEqual(argument, expectedShape);
 });
 
 test.each(getSingleArgCases('[optional]'))('when add "[arg]" using %s then argument optional', (methodName, cmd) => {
@@ -35,8 +42,7 @@ test.each(getSingleArgCases('[optional]'))('when add "[arg]" using %s then argum
     variadic: false,
     description: ''
   };
-  delete argument._i18n; // hack, only added for new style arguments
-  expect(argument).toEqual(expectedShape);
+  expectArgumentsEqual(argument, expectedShape);
 });
 
 test.each(getSingleArgCases('<explicit-required...>'))('when add "<arg...>" using %s then argument required and variadic', (methodName, cmd) => {
@@ -47,8 +53,7 @@ test.each(getSingleArgCases('<explicit-required...>'))('when add "<arg...>" usin
     variadic: true,
     description: ''
   };
-  delete argument._i18n; // hack, only added for new style arguments
-  expect(argument).toEqual(expectedShape);
+  expectArgumentsEqual(argument, expectedShape);
 });
 
 test.each(getSingleArgCases('implicit-required...'))('when add "arg..." using %s then argument required and variadic', (methodName, cmd) => {
@@ -59,8 +64,7 @@ test.each(getSingleArgCases('implicit-required...'))('when add "arg..." using %s
     variadic: true,
     description: ''
   };
-  delete argument._i18n; // hack, only added for new style arguments
-  expect(argument).toEqual(expectedShape);
+  expectArgumentsEqual(argument, expectedShape);
 });
 
 test.each(getSingleArgCases('[optional...]'))('when add "[arg...]" using %s then argument optional and variadic', (methodName, cmd) => {
@@ -71,8 +75,7 @@ test.each(getSingleArgCases('[optional...]'))('when add "[arg...]" using %s then
     variadic: true,
     description: ''
   };
-  delete argument._i18n; // hack, only added for new style arguments
-  expect(argument).toEqual(expectedShape);
+  expectArgumentsEqual(argument, expectedShape);
 });
 
 function getSingleArgCases(arg) {

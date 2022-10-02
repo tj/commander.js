@@ -3,6 +3,15 @@ const commander = require('../');
 // These are tests of the Help class, not of the Command help.
 // There is some overlap with the higher level Command tests (which predate Help).
 
+/**
+ * Not quite a deep equal. Ignore `_i18n` which is not present in a `new Argument()`.
+ */
+function expectArgumentsEqual(a, b) {
+  a._i18n = undefined; // NB: side-effect!
+  expect(a).toEqual(b);
+}
+/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["expect", "expectArgumentsEqual"] }] */
+
 describe('visibleArguments', () => {
   test('when no arguments then empty array', () => {
     const program = new commander.Command();
@@ -23,8 +32,7 @@ describe('visibleArguments', () => {
     const helper = new commander.Help();
     const visibleArguments = helper.visibleArguments(program);
     expect(visibleArguments.length).toEqual(1);
-    visibleArguments[0]._i18n = undefined; // hack, match fresh Argument
-    expect(visibleArguments[0]).toEqual(new commander.Argument('<file>', 'file description'));
+    expectArgumentsEqual(visibleArguments[0], new commander.Argument('<file>', 'file description'));
   });
 
   test('when argument and legacy argument description then returned', () => {
@@ -36,8 +44,7 @@ describe('visibleArguments', () => {
     const helper = new commander.Help();
     const visibleArguments = helper.visibleArguments(program);
     expect(visibleArguments.length).toEqual(1);
-    visibleArguments[0]._i18n = undefined; // hack, match fresh Argument
-    expect(visibleArguments[0]).toEqual(new commander.Argument('<file>', 'file description'));
+    expectArgumentsEqual(visibleArguments[0], new commander.Argument('<file>', 'file description'));
   });
 
   test('when arguments and some described then all returned', () => {
@@ -47,10 +54,8 @@ describe('visibleArguments', () => {
     const helper = new commander.Help();
     const visibleArguments = helper.visibleArguments(program);
     expect(visibleArguments.length).toEqual(2);
-    visibleArguments[0]._i18n = undefined; // hack, match fresh Argument
-    expect(visibleArguments[0]).toEqual(new commander.Argument('<file1>', 'file1 description'));
-    visibleArguments[1]._i18n = undefined; // hack, match fresh Argument
-    expect(visibleArguments[1]).toEqual(new commander.Argument('<file2>'));
+    expectArgumentsEqual(visibleArguments[0], new commander.Argument('<file1>', 'file1 description'));
+    expectArgumentsEqual(visibleArguments[1], new commander.Argument('<file2>'));
   });
 
   test('when arguments and some legacy described then all returned', () => {
@@ -63,9 +68,7 @@ describe('visibleArguments', () => {
     const helper = new commander.Help();
     const visibleArguments = helper.visibleArguments(program);
     expect(visibleArguments.length).toEqual(2);
-    visibleArguments[0]._i18n = undefined; // hack, match fresh Argument
-    expect(visibleArguments[0]).toEqual(new commander.Argument('<file1>', 'file1 description'));
-    visibleArguments[1]._i18n = undefined; // hack, match fresh Argument
-    expect(visibleArguments[1]).toEqual(new commander.Argument('<file2>'));
+    expectArgumentsEqual(visibleArguments[0], new commander.Argument('<file1>', 'file1 description'));
+    expectArgumentsEqual(visibleArguments[1], new commander.Argument('<file2>'));
   });
 });
