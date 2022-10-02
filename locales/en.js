@@ -23,8 +23,12 @@ const translations = {
   "error: option '{0}' value '{1}' from env '{2}' is invalid.": "error: option '{0}' value '{1}' from env '{2}' is invalid.",
   // - command-argument
   "error: command-argument value '{0}' is invalid for argument '{1}": "error: command-argument value '{0}' is invalid for argument '{1}.",
-  // ToDo
   // - commander.excessArguments
+  "error: too many arguments for command '{0}'": "error: too many arguments for command '{0}'",
+  'error: too many arguments': 'error: too many arguments',
+
+  // ToDo
+  // - 
   //   rework for program/subcommand, plural, multiple arguments ????
   // - order of error/detail for right to left languages ????
 

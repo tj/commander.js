@@ -152,7 +152,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(stderrSpy).toHaveBeenCalled();
-    expectCommanderError(caughtErr, 1, 'commander.excessArguments', 'error: too many arguments. Expected 0 arguments but got 1.');
+    expectCommanderError(caughtErr, 1, 'commander.excessArguments', 'error: too many arguments');
   });
 
   test('when specify command with excess argument then throw CommanderError', () => {
@@ -171,7 +171,7 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(stderrSpy).toHaveBeenCalled();
-    expectCommanderError(caughtErr, 1, 'commander.excessArguments', "error: too many arguments for 'speak'. Expected 0 arguments but got 1.");
+    expectCommanderError(caughtErr, 1, 'commander.excessArguments', "error: too many arguments for command 'speak'");
   });
 
   test('when specify --help then throw CommanderError', () => {
