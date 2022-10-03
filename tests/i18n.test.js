@@ -2,6 +2,10 @@
 
 const { I18n } = require('../lib/i18n.js');
 
+// Currently testing back to node 12 on master branch, and node 12 does not have full ICU.
+const nodeMajor = parseInt(process.versions.node.split('.')[0]);
+const describeOrSkipOnNode12 = (nodeMajor <= 12) ? describe.skip : describe;
+
 describe('using t for tagged template literals', () => {
   test('when use t from unconfigured object then returns interpolated string', () => {
     const i18n = new I18n();
@@ -57,6 +61,22 @@ describe('formatList', () => {
     expect(i18n.formatList(list)).toEqual(list.join(', '));
   });
 
+  test('when set localeName to en then returns 1, 2', () => {
+    const i18n = new I18n();
+    i18n.localeName('en');
+    const list = ['1', '2'];
+    expect(i18n.formatList(list)).toEqual('1, 2');
+  });
+
+  test('when set localeName to en and disjunction then returns 1 or 2', () => {
+    const i18n = new I18n();
+    i18n.localeName('en');
+    const list = ['1', '2'];
+    expect(i18n.formatList(list, 'disjunction')).toEqual('1 or 2');
+  });
+});
+
+describeOrSkipOnNode12('formatList with es locale (skipped in node 12)', () => {
   test('when set localeName to es then returns 1 y 2', () => {
     const i18n = new I18n();
     i18n.localeName('es');
@@ -76,20 +96,6 @@ describe('formatList', () => {
     i18n.localeName('es');
     const list = ['1', '2'];
     expect(i18n.formatList(list, 'disjunction')).toEqual('1 o 2');
-  });
-
-  test('when set localeName to en then returns 1, 2', () => {
-    const i18n = new I18n();
-    i18n.localeName('en');
-    const list = ['1', '2'];
-    expect(i18n.formatList(list)).toEqual('1, 2');
-  });
-
-  test('when set localeName to en and disjunction then returns 1 or 2', () => {
-    const i18n = new I18n();
-    i18n.localeName('en');
-    const list = ['1', '2'];
-    expect(i18n.formatList(list, 'disjunction')).toEqual('1 or 2');
   });
 });
 
