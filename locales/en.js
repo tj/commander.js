@@ -28,8 +28,8 @@ const translations = {
   'error: too many arguments': 'error: too many arguments',
 
   // suggest similar
-  '\n(Did you mean one of {0}?)': '\n(Did you mean one of {0}?)',
-  '\n(Did you mean {0}?)': '\n(Did you mean {0}?)',
+  '(Did you mean one of {0}?)': '(Did you mean one of {0}?)',
+  '(Did you mean {0}?)': '(Did you mean {0}?)',
 
   // version option description
   'output the version number': 'output the version number',

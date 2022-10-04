@@ -15,8 +15,8 @@ const translations = {
   "error: too many arguments for command '{0}'": "eraro: tro multaj argumentoj por komando '{0}'",
   'error: too many arguments': 'eraro: tro multaj argumentoj',
 
-  '\n(Did you mean one of {0}?)': '\n(Ĉu vi volis diri unu el {0}?)',
-  '\n(Did you mean {0}?)': '\n(Ĉu vi celis {0}?)',
+  '(Did you mean one of {0}?)': '(Ĉu vi volis diri unu el {0}?)',
+  '(Did you mean {0}?)': '(Ĉu vi celis {0}?)',
 
   'output the version number': 'eligi la versinumeron',
   'display help for command': 'montri helpon por komando',
