@@ -333,6 +333,15 @@ expectType<commander.Command>(program.configureHelp({
 }));
 expectType<commander.HelpConfiguration>(program.configureHelp());
 
+// configureStrings
+expectType<commander.Command>(program.configureStrings({ 'Help:': 'Assist:' }));
+expectType<commander.Command>(program.configureStrings({ 'Help:': 'Assist:' }, 'any-locale'));
+
+// locale
+expectType<commander.Command>(program.locale('en'));
+// @ts-expect-error only allow known translations
+expectType<commander.Command>(program.locale('zz'));
+
 // copyInheritedSettings
 expectType<commander.Command>(program.copyInheritedSettings(new commander.Command()));
 

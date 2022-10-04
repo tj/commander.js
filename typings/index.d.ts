@@ -269,6 +269,7 @@ export interface OutputConfiguration {
 export type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
 export type HookEvent = 'preSubcommand' | 'preAction' | 'postAction';
 export type OptionValueSource = 'default' | 'config' | 'env' | 'cli' | 'implied';
+export type CommanderLocales = 'en' | 'eo-t-en';
 
 export interface OptionValues {
   [key: string]: any;
@@ -458,6 +459,21 @@ export class Command {
   configureOutput(configuration: OutputConfiguration): this;
   /** Get configuration */
   configureOutput(): OutputConfiguration;
+
+  /**
+   * Update strings with passed dictionary.
+   *
+   * See also `.locale()` for loading built-in translations.
+   */
+  configureStrings(dictionary: Record<string, string>, locale?: string): this;
+
+  /**
+   * Load built-in string translations. Throws if locale is not recognised
+   * or is not found.
+   *
+   * See also `configureStrings()` for supplying your own strings.
+   */
+  locale(locale: CommanderLocales): this;
 
   /**
    * Copy settings that are useful to have in common across root command and subcommands.

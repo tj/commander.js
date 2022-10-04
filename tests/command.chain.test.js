@@ -154,6 +154,18 @@ describe('Command methods that should return this for chaining', () => {
     expect(result).toBe(program);
   });
 
+  test('when call .configureStrings() then returns this', () => {
+    const program = new Command();
+    const result = program.configureStrings({ });
+    expect(result).toBe(program);
+  });
+
+  test('when call .locale() then returns this', () => {
+    const program = new Command();
+    const result = program.locale('en');
+    expect(result).toBe(program);
+  });
+
   test('when call .passThroughOptions() then returns this', () => {
     const program = new Command();
     const result = program.passThroughOptions();
