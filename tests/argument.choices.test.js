@@ -25,6 +25,20 @@ test('when command argument is not in choices then error', () => {
   }).toThrow();
 });
 
+test('when argument missing i18n then parseArgs error still produced', () => {
+  // Just in case, we have a fallback behaviour so can still produce error message
+  // if i18n support has not been injected when argument added to command.
+  const argument = new commander.Argument('<shade>').choices(['red', 'blue']);
+  let err;
+  try {
+    argument.parseArg('orange');
+  } catch (e) {
+    err = e;
+  }
+  expect(err).not.toBeUndefined();
+  expect(err.message).toEqual('Allowed choices are red, blue.');
+});
+
 describe('choices parameter is treated as readonly, per TypeScript declaration', () => {
   test('when choices called then parameter does not change', () => {
     // Unlikely this could break, but check the API we are declaring in TypeScript.
