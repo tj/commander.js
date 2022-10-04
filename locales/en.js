@@ -1,4 +1,4 @@
-// Example translation dictionary. The keys stay the same, and the values are the desired translation.
+// Example translation dictionary. The keys stay the same in each translation, and the values are the desired translation.
 
 const translations = {
   // errors
@@ -27,11 +27,6 @@ const translations = {
   "error: too many arguments for command '{0}'": "error: too many arguments for command '{0}'",
   'error: too many arguments': 'error: too many arguments',
 
-  // ToDo
-  // - 
-  //   rework for program/subcommand, plural, multiple arguments ????
-  // - order of error/detail for right to left languages ????
-
   // suggest similar
   '\n(Did you mean one of {0}?)': '\n(Did you mean one of {0}?)',
   '\n(Did you mean {0}?)': '\n(Did you mean {0}?)',
@@ -50,7 +45,7 @@ const translations = {
   // usage
   '[options]': '[options]',
   '[command]': '[command]',
-  // option description
+  // option details (after description)
   'choices: {0}': 'choices: {0}',
   'default: {0}': 'default: {0}',
   'preset: {0}': 'preset: {0}',
