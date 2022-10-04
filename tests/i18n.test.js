@@ -111,7 +111,7 @@ describe('loadLocale', () => {
     const i18n = new I18n();
     expect(() => {
       i18n.loadLocale('x');
-    }).toThrow();
+    }).toThrow("Commander: unrecognised locale 'x'");
   });
 
   test('when valid locale but not translated then throws', () => {
@@ -119,8 +119,10 @@ describe('loadLocale', () => {
     expect(() => {
       // Change target if add a translation for isiZulu.
       i18n.loadLocale('zu');
-    }).toThrow();
+    }).toThrow("Commander: translations not found for locale 'zu'");
   });
+
+  // Add more tests when have a detectable locale
 });
 
 describe('accumulate strings', () => {
