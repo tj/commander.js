@@ -35,8 +35,10 @@ program
   .exitOverride()
   .allowExcessArguments(false);
 
+// program with help command AND subcommands AND action handler to generate various messages!
 program
   .version('0.1.2')
+  .addHelpCommand(true)
   .argument('<my-arg>', 'my-description')
   .option('-d <my-value>', 'my default', 'foo')
   .addOption(new Option('-e <my-value>', 'my environment variable').env('FOO'))
