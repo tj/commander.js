@@ -23,7 +23,7 @@ const translations = {
   // - option from env
   "error: option '{0}' value '{1}' from env '{2}' is invalid.": "错误: 来自环境变量 {2} 的选项 '{0}' 的值 '{1}' 是无效的。",
   // - command-argument
-  "error: command-argument value '{0}' is invalid for argument '{1}": "错误: 命令参数的值 '{0}' 对参数 '{1}' 无效。",
+  "error: command-argument value '{0}' is invalid for argument '{1}'.": "错误: 命令参数的值 '{0}' 对参数 '{1}' 无效。",
   // - commander.excessArguments
   "error: too many arguments for command '{0}'": "错误: 命令 '{0}' 收到了过多的参数",
   'error: too many arguments': '错误: 过多的参数',
