@@ -269,7 +269,7 @@ export interface OutputConfiguration {
 export type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
 export type HookEvent = 'preSubcommand' | 'preAction' | 'postAction';
 export type OptionValueSource = 'default' | 'config' | 'env' | 'cli' | 'implied';
-export type CommanderLocales = 'en' | 'eo-t-en';
+export type CommanderLocales = 'en' | 'zh-CN';
 
 export interface OptionValues {
   [key: string]: any;
