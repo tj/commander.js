@@ -107,5 +107,5 @@ run(['1', '2', '3']);
 run(['serve', '1', '2', '3']);
 
 // Try the following:
-//    node locale-ever-message en
-//    node locale-ever-message zh-CN
+//    node translations.js en
+//    node translations.js zh-CN
