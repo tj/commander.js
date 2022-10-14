@@ -9,7 +9,9 @@ const translations = {
   // commander.missingMandatoryOptionValue
   "error: required option '{0}' not specified": "error: required option '{0}' not specified",
   // commander.conflictingOption
-  'error: {0} cannot be used with {1}': 'error: {0} cannot be used with {1}',
+  // The environment variable is only displayed if caused conflict, and uses same format as in help.
+  // e.g. option '-r, --rat' (env: RAT) cannot be used with option '-c, --cat'
+  "error: option '{0}'{1} cannot be used with option '{2}'{3}": "error: option '{0}'{1} cannot be used with option '{2}'{3}",
   // commander.unknownOption
   "error: unknown option '{0}'": "error: unknown option '{0}'",
   // commander.unknownCommand

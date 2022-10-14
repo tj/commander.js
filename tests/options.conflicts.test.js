@@ -62,7 +62,7 @@ describe('command with conflicting options', () => {
 
     expect(() => {
       program.parse('node test.js foo --json'.split(' '));
-    }).toThrow("error: option '-j, --json' cannot be used with environment variable 'SILENT'");
+    }).toThrow("error: option '-j, --json' cannot be used with option '-s, --silent' (env: SILENT)");
   });
 
   test('should report the env variable as the configured option source, when configured option is set', () => {
@@ -72,7 +72,7 @@ describe('command with conflicting options', () => {
 
     expect(() => {
       program.parse('node test.js foo --silent'.split(' '));
-    }).toThrow("error: environment variable 'JSON' cannot be used with option '-s, --silent'");
+    }).toThrow("error: option '-j, --json' (env: JSON) cannot be used with option '-s, --silent'");
   });
 
   test('should report both env variables as sources, when configured option and conflicting option are set', () => {
@@ -83,7 +83,7 @@ describe('command with conflicting options', () => {
 
     expect(() => {
       program.parse('node test.js foo'.split(' '));
-    }).toThrow("error: environment variable 'JSON' cannot be used with environment variable 'SILENT'");
+    }).toThrow("error: option '-j, --json' (env: JSON) cannot be used with option '-s, --silent' (env: SILENT)");
   });
 
   test('should allow default value with a conflicting option', () => {
@@ -124,7 +124,7 @@ describe('command with conflicting options', () => {
 
     expect(() => {
       program.parse('node test.js bar --red'.split(' '));
-    }).toThrow("error: option '--red' cannot be used with environment variable 'NO_COLOR'");
+    }).toThrow("error: option '--red' cannot be used with option '-N, --no-color' (env: NO_COLOR)");
   });
 
   test('should report correct error for shorthand negated option', () => {
@@ -180,7 +180,7 @@ describe('command with conflicting options', () => {
     process.env.DUAL = 'true';
     expect(() => {
       program.parse('node test.js bar --red'.split(' '));
-    }).toThrow("error: environment variable 'DUAL' cannot be used with option '--red'");
+    }).toThrow("error: option '--dual' (env: DUAL) cannot be used with option '--red'");
   });
 
   test('should report correct error for negated env variable when positive is configured', () => {
@@ -195,7 +195,7 @@ describe('command with conflicting options', () => {
     process.env.NO_DUAL = 'true';
     expect(() => {
       program.parse('node test.js bar --red'.split(' '));
-    }).toThrow("error: environment variable 'NO_DUAL' cannot be used with option '--red'");
+    }).toThrow("error: option '--no-dual' (env: NO_DUAL) cannot be used with option '--red'");
   });
 
   test('should report correct error for positive option with string value when negated is configured', () => {
