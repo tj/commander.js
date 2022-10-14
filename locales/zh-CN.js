@@ -10,7 +10,7 @@ const translations = {
   // commander.missingMandatoryOptionValue
   "error: required option '{0}' not specified": "错误: 未指定必要的选项 '{0}'",
   // commander.conflictingOption
-  'error: {0} cannot be used with {1}': '错误: 选项 {0} 不能与 {1} 共同使用',
+  "error: option '{0}'{1} cannot be used with option '{2}'{3}": "错误: 选项 '{0}'{1} 不能与 '{2}'{3} 共同使用",
   // commander.unknownOption
   "error: unknown option '{0}'": "错误: 未知的选项 '{0}'",
   // commander.unknownCommand
