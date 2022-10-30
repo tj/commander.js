@@ -1011,7 +1011,15 @@ program
 
 ### TypeScript
 
-If you use `ts-node` and  stand-alone executable subcommands written as `.ts` files, you need to call your program through node to get the subcommands called correctly. e.g.
+extra-typings: There is an optional project to infer extra type information from the option and argument definitions.
+This changes the action handler and `.opts()` from weakly typed to strongly typed.
+See [commander-js/extra-typings](https://github.com/commander-js/extra-typings) for more.
+
+```
+import { Command } from '@commander-js/extra-typings';
+```
+
+ts-node: If you use `ts-node` and  stand-alone executable subcommands written as `.ts` files, you need to call your program through node to get the subcommands called correctly. e.g.
 
 ```sh
 node -r ts-node/register pm.ts
