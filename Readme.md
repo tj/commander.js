@@ -1012,7 +1012,7 @@ program
 ### TypeScript
 
 extra-typings: There is an optional project to infer extra type information from the option and argument definitions.
-This changes the action handler and `.opts()` from weakly typed to strongly typed.
+This adds strong typing to the options returned by `.opts()` and the parameters to `.action()`.
 See [commander-js/extra-typings](https://github.com/commander-js/extra-typings) for more.
 
 ```
