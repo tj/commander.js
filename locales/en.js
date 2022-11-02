@@ -1,4 +1,5 @@
 // Example translation dictionary. The keys stay the same in each translation, and the values are the desired translation.
+// Language tags used for locales: https://www.iana.org/assignments/language-subtag-registry/language-subtag-registry
 
 const translations = {
   // errors
