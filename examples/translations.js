@@ -73,6 +73,10 @@ if (!locale) {
   process.exit(2);
 }
 
+// show error if locale is not found
+const checkLocale = new Command();
+checkLocale.locale(locale);
+
 run(locale, ['--help']);
 
 // commander.missingArgument
