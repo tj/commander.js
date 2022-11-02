@@ -43,7 +43,7 @@ const translations = {
   // titles
   // 'Usage:': 'Usage:',
   'Arguments:': 'Argumente:',
-  'Options:': 'Optionen :',
+  'Options:': 'Optionen:',
   'Commands:': 'Kommandos:',
   // usage
   '[options]': '[Optionen]',
