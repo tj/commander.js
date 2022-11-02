@@ -1,4 +1,5 @@
-// Partial translation using strings from https://github.com/yargs/yargs/blob/main/locales/es.json
+// Partial translation using strings from https://github.com/yargs/yargs/blob/main/locales/fi.json
+// Starting point for full translation, PR welcome!
 
 const translations = {
   // errors
