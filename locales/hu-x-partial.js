@@ -4,7 +4,7 @@
 const translations = {
   // errors
   // commander.missingArgument
-  "error: missing required argument '{0}'": "Hiba: Hiányzó kötelező argumentum '{0}'",
+  "error: missing required argument '{0}'": "hiba: hiányzó kötelező argumentum '{0}'",
   // commander.optionMissingArgument
   // "error: option '{0}' argument missing": "error: option '{0}' argument missing",
   // commander.missingMandatoryOptionValue
@@ -28,7 +28,7 @@ const translations = {
   // "error: command-argument value '{0}' is invalid for argument '{1}'.": "error: command-argument value '{0}' is invalid for argument '{1}'.",
   // - commander.excessArguments
   // "error: too many arguments for command '{0}'": "error: too many arguments for command '{0}'",
-  'error: too many arguments': 'Hiba: túl argumentumok',
+  'error: too many arguments': 'hiba: túl argumentumok',
 
   // suggest similar
   // '(Did you mean one of {0}?)': '(Did you mean one of {0}?)',

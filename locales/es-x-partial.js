@@ -4,7 +4,7 @@
 const translations = {
   // errors
   // commander.missingArgument
-  "error: missing required argument '{0}'": "Error: falta argumento requerido '{0}'",
+  "error: missing required argument '{0}'": "error: falta argumento requerido '{0}'",
   // commander.optionMissingArgument
   // "error: option '{0}' argument missing": "error: option '{0}' argument missing",
   // commander.missingMandatoryOptionValue
@@ -28,7 +28,7 @@ const translations = {
   // "error: command-argument value '{0}' is invalid for argument '{1}'.": "error: command-argument value '{0}' is invalid for argument '{1}'.",
   // - commander.excessArguments
   // "error: too many arguments for command '{0}'": "error: too many arguments for command '{0}'",
-  'error: too many arguments': 'Error: demasiados argumentos',
+  'error: too many arguments': 'error: demasiados argumentos',
 
   // suggest similar
   // '(Did you mean one of {0}?)': '(Did you mean one of {0}?)',
