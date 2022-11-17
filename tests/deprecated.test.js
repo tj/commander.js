@@ -21,7 +21,7 @@ describe('option with regular expression instead of custom processing function',
     expect(program.opts().cheese).toEqual('tasty');
   });
 
-  test('when argument does mot matches regexp then value is default', () => {
+  test('when argument does not match regexp then value is default', () => {
     const program = new commander.Command();
     program
       .option('--cheese <type>', 'cheese type', /mild|tasty/, 'mild');

@@ -142,7 +142,7 @@ Commands:
     expect(program.helpInformation()).toBe(expectedOutput);
   });
 
-  test('when option descripton preformatted then only add small indent', () => {
+  test('when option description preformatted then only add small indent', () => {
     // #396: leave custom format alone, apart from space-space indent
     const optionSpec = '-t, --time <HH:MM>';
     const program = new commander.Command();
