@@ -31,6 +31,7 @@
   "files": [
     "index.js",
     "lib/*.js",
+    "locales/*.json",
     "esm.mjs",
     "typings/index.d.ts",
     "package-support.json"
