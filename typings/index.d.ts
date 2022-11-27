@@ -714,7 +714,7 @@ export class Command {
 
   description(str: string): this;
   /** @deprecated since v8, instead use .argument to add command argument with description */
-  description(str: string, argsDescription: {[argName: string]: string}): this;
+  description(str: string, argsDescription: { [argName: string]: string }): this;
   /**
    * Get the description.
    */

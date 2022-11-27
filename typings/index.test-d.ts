@@ -211,7 +211,7 @@ expectType<Promise<commander.Command>>(program.parseAsync(['--option'], { from: 
 expectType<Promise<commander.Command>>(program.parseAsync(['node', 'script.js'] as const));
 
 // parseOptions (and ParseOptionsResult)
-expectType<{operands: string[]; unknown: string[]}>(program.parseOptions(['node', 'script.js', 'hello']));
+expectType<{ operands: string[]; unknown: string[] }>(program.parseOptions(['node', 'script.js', 'hello']));
 
 // opts
 const opts = program.opts();
