@@ -1,0 +1,15 @@
+{
+  "error: missing required argument '{0}'": "fout: missend verplicht argument '{0}'",
+  "error: too many arguments": "fout: te veel argumenten",
+
+  "output the version number": "Toon versienummer",
+  "display help for command": "Toon help",
+
+  "Arguments:": "Argumenten:",
+  "Options:": "Opties:",
+  "Commands:": "Commando's:",
+  "[options]": "[opties]",
+  "[command]": "[commando]",
+  "choices: {0}": "keuzes: {0}",
+  "default: {0}": "standaard: {0}"
+}

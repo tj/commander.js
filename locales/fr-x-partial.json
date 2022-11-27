@@ -1,0 +1,16 @@
+{
+  "error: missing required argument '{0}'": "erreur : argument requis manquant '{0}'",
+  "error: unknown command '{0}'": "erreur : commande inconnue '{0}'",
+  "error: too many arguments": "erreur : trop d'arguments",
+
+  "output the version number": "affiche le numéro de version",
+  "display help for command": "affiche l'aide",
+
+  "Arguments:": "Arguments :",
+  "Options:": "Options :",
+  "Commands:": "Commandes :",
+  "[options]": "[options]",
+  "[command]": "[commande]",
+  "choices: {0}": "choix : {0}",
+  "default: {0}": "défaut : {0}"
+}

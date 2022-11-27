@@ -1,0 +1,15 @@
+{
+  "error: missing required argument '{0}'": "hiba: hiányzó kötelező argumentum '{0}'",
+  "error: too many arguments": "hiba: túl argumentumok",
+
+  "output the version number": "verziószám megjelenítése",
+  "display help for command": "súgo megjelenítése",
+
+  "Arguments:": "Argumentumok:",
+  "Options:": "Opciók:",
+  "Commands:": "Parancsok:",
+  "[options]": "[opciók]",
+  "[command]": "[parancs]",
+  "choices: {0}": "lehetőségek: {0}",
+  "default: {0}": "alapértelmezett: {0}"
+}

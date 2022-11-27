@@ -1,0 +1,15 @@
+{
+  "error: missing required argument '{0}'": "virhe: pakollinen argumentti puuttuu '{0}'",
+  "error: too many arguments": "virhe: liikaa argumentteja",
+
+  "output the version number": "näytä versionumero",
+  "display help for command": "näytä ohje",
+
+  "Arguments:": "Argumentteja:",
+  "Options:": "Valinnat:",
+  "Commands:": "Komennot:",
+  "[options]": "[valinnat]",
+  "[command]": "[komento]",
+  "choices: {0}": "vaihtoehdot: {0}",
+  "default: {0}": "oletusarvo: {0}"
+}

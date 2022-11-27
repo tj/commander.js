@@ -1,0 +1,14 @@
+{
+  "error: missing required argument '{0}'": "गलती: आवश्यक तर्क गुम '{0}'",
+
+  "output the version number": "Version संख्या दिखाएँ",
+  "display help for command": "सहायता दिखाएँ",
+
+  "Arguments:": "बहस:",
+  "Options:": "विकल्प:",
+  "Commands:": "आदेश:",
+  "[options]": "[विकल्प]",
+  "[command]": "[आदेश]",
+  "choices: {0}": "विकल्प: {0}",
+  "default: {0}": "डिफॉल्ट: {0}"
+}

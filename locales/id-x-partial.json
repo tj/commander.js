@@ -1,0 +1,15 @@
+{
+  "error: missing required argument '{0}'": "kesalahan: kurang argumen wajib '{0}'",
+  "error: too many arguments": "kesalahan: terlalu banyak argumen",
+
+  "output the version number": "lihat nomor versi",
+  "display help for command": "lihat bantuan",
+
+  "Arguments:": "Argumen:",
+  "Options:": "Pilihan:",
+  "Commands:": "Perintah:",
+  "[options]": "[pilihan]",
+  "[command]": "[perintah]",
+  "choices: {0}": "pilihan: {0}",
+  "default: {0}": "bawaan: {0}"
+}

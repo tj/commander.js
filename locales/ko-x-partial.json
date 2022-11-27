@@ -1,0 +1,15 @@
+{
+  "error: missing required argument '{0}'": "오류: 필수 인수가 주어지지 않았습니다 '{0}'",
+  "error: too many arguments": "오류: 인수가 너무 많습니다",
+
+  "output the version number": "버전 표시",
+  "display help for command": "도움말 표시",
+
+  "Arguments:": "인수가:",
+  "Options:": "옵션:",
+  "Commands:": "명령:",
+  "[options]": "[옵션]",
+  "[command]": "[명령]",
+  "choices: {0}": "선택지: {0}",
+  "default: {0}": "기본값: {0}"
+}

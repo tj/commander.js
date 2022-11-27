@@ -1,0 +1,12 @@
+{
+  "output the version number": "バージョンを表示",
+  "display help for command": "ヘルプを表示",
+
+  "Arguments:": "アーギュメント:",
+  "Options:": "オプション:",
+  "Commands:": "コマンド:",
+  "[options]": "[オプション]",
+  "[command]": "[コマンド]",
+  "choices: {0}": "選択してください: {0}",
+  "default: {0}": "デフォルト: {0}"
+}

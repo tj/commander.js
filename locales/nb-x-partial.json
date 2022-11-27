@@ -1,0 +1,15 @@
+{
+  "error: missing required argument '{0}'": "feil: mangler obligatorisk argument '{0}'",
+  "error: too many arguments": "feil: for mange argumenter",
+
+  "output the version number": "vis versjonsnummer",
+  "display help for command": "vis hjelp",
+
+  "Arguments:": "Argumenter:",
+  "Options:": "Alternativer:",
+  "Commands:": "Kommandoer:",
+  "[options]": "[alternativer]",
+  "[command]": "[kommando]",
+  "choices: {0}": "valg: {0}",
+  "default: {0}": "standard: {0}"
+}
