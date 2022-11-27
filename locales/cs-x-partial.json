@@ -1,0 +1,15 @@
+{
+  "error: missing required argument '{0}'": "chyba: chybí požadovaný argument '{0}'",
+  "error: too many arguments": "chyba: Příliš mnoho argumentů",
+
+  "output the version number": "zobrazit číslo verze",
+  "display help for command": "zobrazit nápovědu",
+
+  "Arguments:": "Argumenty:",
+  "Options:": "Možnosti:",
+  "Commands:": "Příkazy:",
+  "[options]": "[možnosti]",
+  "[command]": "[příkaz]",
+  "choices: {0}": "volby: {0}",
+  "default: {0}": "výchozí: {0}"
+}
