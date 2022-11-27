@@ -152,3 +152,10 @@ describe('accumulate strings', () => {
   // 'when loadLocale then updateStrings then accumulates'
   // 'when loadLocale then loadLocale then accumulates'
 });
+
+test('when set localeName and get localeName then returns localeName', () => {
+  const i18n = new I18n();
+  const exampleName = 'my-locale';
+  i18n.localeName(exampleName);
+  expect(i18n.localeName()).toEqual(exampleName);
+});
