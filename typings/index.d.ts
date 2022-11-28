@@ -277,8 +277,8 @@ export interface OptionValues {
 export class Command {
   args: string[];
   processedArgs: any[];
-  readonly commands: Command[];
-  readonly options: Option[];
+  readonly commands: readonly Command[];
+  readonly options: readonly Option[];
   parent: Command | null;
 
   constructor(name?: string);
