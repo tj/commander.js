@@ -51,7 +51,7 @@ test('when showGlobalOptions:true and sortOptions: true then global options sort
     .option('-1')
     .option('-5');
   const sub2 = sub1.command('sub2');
-  expect(sub2.helpInformation()).toContain(`Global Options
+  expect(sub2.helpInformation()).toContain(`Global Options:
   -1
   -2
   -3
