@@ -29,4 +29,4 @@ program.parse();
 
 // Try the following:
 //    node global-options-nested.js --global sub --local
-//    node optsWithGlobals.js sub --help
+//    node global-options-nested.js sub --help
