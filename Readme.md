@@ -915,6 +915,7 @@ The data properties are:
 - `helpWidth`: specify the wrap width, useful for unit tests
 - `sortSubcommands`: sort the subcommands alphabetically
 - `sortOptions`: sort the options alphabetically
+- `showGlobalOptions`: show a section with the global options from the parent command(s)
 
 There are methods getting the visible lists of arguments, options, and subcommands. There are methods for formatting the items in the lists, with each item having a _term_ and _description_. Take a look at `.formatHelp()` to see how they are used.
 
