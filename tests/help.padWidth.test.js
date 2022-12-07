@@ -28,6 +28,19 @@ describe('padWidth', () => {
     expect(helper.padWidth(program, helper)).toEqual(longestThing.length);
   });
 
+  test('when global option term longest return global option length', () => {
+    const longestThing = '--very-long-thing-bigger-than-others';
+    const program = new commander.Command();
+    program
+      .argument('<file>', 'desc')
+      .option(longestThing)
+      .configureHelp({ showGlobalOptions: true });
+    const sub = program
+      .command('sub');
+    const helper = sub.createHelp();
+    expect(helper.padWidth(sub, helper)).toEqual(longestThing.length);
+  });
+
   test('when command term longest return command length', () => {
     const longestThing = 'very-long-thing-bigger-than-others';
     const program = new commander.Command();

@@ -199,6 +199,7 @@ export class Help {
   helpWidth?: number;
   sortSubcommands: boolean;
   sortOptions: boolean;
+  showGlobalOptions: boolean;
 
   constructor();
 
@@ -224,6 +225,8 @@ export class Help {
   visibleCommands(cmd: Command): Command[];
   /** Get an array of the visible options. Includes a placeholder for the implicit help option, if there is one. */
   visibleOptions(cmd: Command): Option[];
+  /** Get an array of the visible global options. (Not including help.) */
+  visibleGlobalOptions(cmd: Command): Option[];
   /** Get an array of the arguments which have descriptions. */
   visibleArguments(cmd: Command): Argument[];
 
@@ -231,6 +234,8 @@ export class Help {
   longestSubcommandTermLength(cmd: Command, helper: Help): number;
   /** Get the longest option term length. */
   longestOptionTermLength(cmd: Command, helper: Help): number;
+  /** Get the longest global option term length. */
+  longestGlobalOptionTermLength(cmd: Command, helper: Help): number;
   /** Get the longest argument term length. */
   longestArgumentTermLength(cmd: Command, helper: Help): number;
   /** Calculate the pad width from the maximum term length. */
