@@ -600,9 +600,14 @@ export class Command {
   setOptionValueWithSource(key: string, value: unknown, source: OptionValueSource): this;
 
   /**
-   * Retrieve option value source.
+   * Get source of option value.
    */
   getOptionValueSource(key: string): OptionValueSource | undefined;
+
+  /**
+    * Get source of option value. See also .optsWithGlobals().
+   */
+  getOptionValueSourceWithGlobals(key: string): OptionValueSource | undefined;
 
   /**
    * Alter parsing of short flags with optional values.
