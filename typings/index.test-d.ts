@@ -174,6 +174,9 @@ expectType<commander.Command>(program.setOptionValueWithSource('example', [], 'c
 // getOptionValueSource
 expectType<commander.OptionValueSource | undefined>(program.getOptionValueSource('example'));
 
+// getOptionValueSourceWithGlobals
+expectType<commander.OptionValueSource | undefined>(program.getOptionValueSourceWithGlobals('example'));
+
 // combineFlagAndOptionalValue
 expectType<commander.Command>(program.combineFlagAndOptionalValue());
 expectType<commander.Command>(program.combineFlagAndOptionalValue(false));
