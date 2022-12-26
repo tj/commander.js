@@ -270,9 +270,7 @@ export type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
 export type HookEvent = 'preSubcommand' | 'preAction' | 'postAction';
 export type OptionValueSource = 'default' | 'config' | 'env' | 'cli' | 'implied';
 
-export interface OptionValues {
-  [key: string]: any;
-}
+export type OptionValues = Record<string, any>;
 
 export class Command {
   args: string[];
@@ -715,7 +713,7 @@ export class Command {
 
   description(str: string): this;
   /** @deprecated since v8, instead use .argument to add command argument with description */
-  description(str: string, argsDescription: { [argName: string]: string }): this;
+  description(str: string, argsDescription: Record<string, string>): this;
   /**
    * Get the description.
    */
