@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
-## [9.5.0] (2022-01-07)
+## [9.5.0] (2023-01-07)
 
 ### Added
 
