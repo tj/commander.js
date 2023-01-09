@@ -543,6 +543,8 @@ Configuration options can be passed with the call to `.command()` and `.addComma
 remove the command from the generated help output. Specifying `isDefault: true` will run the subcommand if no other
 subcommand is specified ([example](./examples/defaultCommand.js)).
 
+You can add alternative names for a command with `.alias()`. ([example](./examples/alias.js))
+
 For safety, `.addCommand()` does not automatically copy the inherited settings from the parent command. There is a helper routine `.copyInheritedSettings()` for copying the settings when they are wanted.
 
 ### Command-arguments
@@ -915,6 +917,7 @@ The data properties are:
 - `helpWidth`: specify the wrap width, useful for unit tests
 - `sortSubcommands`: sort the subcommands alphabetically
 - `sortOptions`: sort the options alphabetically
+- `showGlobalOptions`: show a section with the global options from the parent command(s)
 
 There are methods getting the visible lists of arguments, options, and subcommands. There are methods for formatting the items in the lists, with each item having a _term_ and _description_. Take a look at `.formatHelp()` to see how they are used.
 

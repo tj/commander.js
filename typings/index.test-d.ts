@@ -175,6 +175,9 @@ expectType<commander.Command>(program.setOptionValueWithSource('example', [], 'c
 // getOptionValueSource
 expectType<commander.OptionValueSource | undefined>(program.getOptionValueSource('example'));
 
+// getOptionValueSourceWithGlobals
+expectType<commander.OptionValueSource | undefined>(program.getOptionValueSourceWithGlobals('example'));
+
 // combineFlagAndOptionalValue
 expectType<commander.Command>(program.combineFlagAndOptionalValue());
 expectType<commander.Command>(program.combineFlagAndOptionalValue(false));
@@ -367,6 +370,7 @@ const helperArgument = new commander.Argument('<file>');
 expectType<number | undefined>(helper.helpWidth);
 expectType<boolean>(helper.sortSubcommands);
 expectType<boolean>(helper.sortOptions);
+expectType<boolean>(helper.showGlobalOptions);
 
 expectType<string>(helper.subcommandTerm(helperCommand));
 expectType<string>(helper.commandUsage(helperCommand));
@@ -379,10 +383,12 @@ expectType<string>(helper.argumentDescription(helperArgument));
 
 expectType<commander.Command[]>(helper.visibleCommands(helperCommand));
 expectType<commander.Option[]>(helper.visibleOptions(helperCommand));
+expectType<commander.Option[]>(helper.visibleGlobalOptions(helperCommand));
 expectType<commander.Argument[]>(helper.visibleArguments(helperCommand));
 
 expectType<number>(helper.longestSubcommandTermLength(helperCommand, helper));
 expectType<number>(helper.longestOptionTermLength(helperCommand, helper));
+expectType<number>(helper.longestGlobalOptionTermLength(helperCommand, helper));
 expectType<number>(helper.longestArgumentTermLength(helperCommand, helper));
 expectType<number>(helper.padWidth(helperCommand, helper));
 

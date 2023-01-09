@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [9.5.0] (2023-01-07)
+
+### Added
+
+- `.getOptionValueSourceWithGlobals()` ([#1832])
+- `showGlobalOptions` for `.configureHelp{}` and `Help` ([#1828])
+
 ## [9.4.1] (2022-09-30)
 
 ### Fixed
@@ -93,8 +100,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - use command name as prefix for subcommand stand-alone executable name (with fallback to script name for backwards compatibility) ([#1571])
 - allow absolute path with `executableFile` ([#1571])
 - removed restriction that nested subcommands must specify `executableFile` ([#1571])
-- TypeScript: allow passing readonly string array to `.choices()` [(#1667)]
-- TypeScript: allow passing readonly string array to `.parse()`, `.parseAsync()`, `.aliases()` [(#1669)]
+- TypeScript: allow passing readonly string array to `.choices()` ([#1667])
+- TypeScript: allow passing readonly string array to `.parse()`, `.parseAsync()`, `.aliases()` ([#1669])
 
 ### Fixed
 
@@ -103,7 +110,6 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Removed
 
 - *Breaking:* removed internal fallback to `require.main.filename` when script not known from arguments passed to `.parse()` (can supply details using `.name()`, and `.executableDir()` or `executableFile`) ([#1571])
-
 
 ## [9.0.0-1] (2022-01-15)
 
@@ -286,8 +292,8 @@ program.showHelpAfterError();
 ### Changed
 
 - *Breaking:* options are stored safely by default, not as properties on the command ([#1409])
-    - this especially affects accessing options on program, use `program.opts()`
-    - revert behaviour with `.storeOptionsAsProperties()`
+  - this especially affects accessing options on program, use `program.opts()`
+  - revert behaviour with `.storeOptionsAsProperties()`
 - *Breaking:* action handlers are passed options and command separately ([#1409])
 - deprecated callback parameter to `.help()` and `.outputHelp()` (removed from README) ([#1296])
 - *Breaking:* errors now displayed using `process.stderr.write()` instead of `console.error()`
@@ -306,9 +312,9 @@ program.showHelpAfterError();
 ### Deleted
 
 - *Breaking:* `.passCommandToAction()` ([#1409])
-    - no longer needed as action handler is passed options and command
+  - no longer needed as action handler is passed options and command
 - *Breaking:* "extra arguments" parameter to action handler ([#1409])
-    - if being used to detect excess arguments, there is now an error available by setting `.allowExcessArguments(false)`
+  - if being used to detect excess arguments, there is now an error available by setting `.allowExcessArguments(false)`
 
 ### Migration Tips
 
@@ -393,7 +399,7 @@ program
 
 ### Fixed
 
-- some tests failed if directory path included a space ([1390])
+- some tests failed if directory path included a space ([#1390])
 
 ## [6.2.0] (2020-10-25)
 
@@ -1065,6 +1071,7 @@ program
 [#1490]: https://github.com/tj/commander.js/pull/1490
 [#1497]: https://github.com/tj/commander.js/pull/1497
 [#1500]: https://github.com/tj/commander.js/pull/1500
+[#1502]: https://github.com/tj/commander.js/pull/1502
 [#1508]: https://github.com/tj/commander.js/pull/1508
 [#1513]: https://github.com/tj/commander.js/pull/1513
 [#1514]: https://github.com/tj/commander.js/pull/1514
@@ -1109,6 +1116,8 @@ program
 [#1767]: https://github.com/tj/commander.js/pull/1767
 [#1794]: https://github.com/tj/commander.js/pull/1794
 [#1795]: https://github.com/tj/commander.js/pull/1795
+[#1832]: https://github.com/tj/commander.js/pull/1832
+[#1828]: https://github.com/tj/commander.js/pull/1828
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
@@ -1149,6 +1158,7 @@ program
 [#1248]: https://github.com/tj/commander.js/pull/1248
 
 <!-- Referenced in 4.x -->
+[#933]: https://github.com/tj/commander.js/pull/933
 [#1027]: https://github.com/tj/commander.js/pull/1027
 [#1035]: https://github.com/tj/commander.js/pull/1035
 [#1040]: https://github.com/tj/commander.js/pull/1040
@@ -1187,6 +1197,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[9.5.0]: https://github.com/tj/commander.js/compare/v9.4.1...v9.5.0
 [9.4.1]: https://github.com/tj/commander.js/compare/v9.4.0...v9.4.1
 [9.4.0]: https://github.com/tj/commander.js/compare/v9.3.0...v9.4.0
 [9.3.0]: https://github.com/tj/commander.js/compare/v9.2.0...v9.3.0

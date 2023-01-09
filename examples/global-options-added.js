@@ -7,7 +7,7 @@
 // The code in this example assumes there is just one level of subcommands.
 //
 // (A different pattern for a "global" option is to add it to the root command, rather
-// than to the subcommand. That is not shown here.)
+// than to the subcommand. See global-options-nested.js.)
 
 // const { Command } = require('commander'); // (normal include)
 const { Command } = require('../'); // include commander in git clone of commander repo
@@ -45,7 +45,7 @@ program.commands.forEach((cmd) => {
 program.parse();
 
 // Try the following:
-//    node common-options.js --help
-//    node common-options.js print --help
-//    node common-options.js serve --help
-//    node common-options.js serve --debug --verbose
+//    node global-options-added.js --help
+//    node global-options-added.js print --help
+//    node global-options-added.js serve --help
+//    node global-options-added.js serve --debug --verbose
