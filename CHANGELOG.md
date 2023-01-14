@@ -8,6 +8,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [10.0.0] (2023-01-13)
+
+### Added
+
+- wrap command description in help ([#1804])
+
+### Changed
+
+- *Breaking:* Commander 10 requires Node.js v14 or higher
+
 ## [9.5.0] (2023-01-07)
 
 ### Added
@@ -1116,6 +1126,7 @@ program
 [#1767]: https://github.com/tj/commander.js/pull/1767
 [#1794]: https://github.com/tj/commander.js/pull/1794
 [#1795]: https://github.com/tj/commander.js/pull/1795
+[#1804]: https://github.com/tj/commander.js/pull/1804
 [#1832]: https://github.com/tj/commander.js/pull/1832
 [#1828]: https://github.com/tj/commander.js/pull/1828
 
@@ -1197,6 +1208,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[10.0.0]: https://github.com/tj/commander.js/compare/v9.5.0...v10.0.0
 [9.5.0]: https://github.com/tj/commander.js/compare/v9.4.1...v9.5.0
 [9.4.1]: https://github.com/tj/commander.js/compare/v9.4.0...v9.4.1
 [9.4.0]: https://github.com/tj/commander.js/compare/v9.3.0...v9.4.0
