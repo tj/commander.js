@@ -89,7 +89,6 @@ export class Option {
   optional: boolean; // A value is optional when the option is specified.
   variadic: boolean;
   mandatory: boolean; // The option must have a value after parsing, which usually means it must be specified on command line.
-  optionFlags: string;
   short?: string;
   long?: string;
   negate: boolean;
