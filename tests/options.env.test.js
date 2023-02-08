@@ -206,12 +206,27 @@ describe('custom argParser', () => {
 });
 
 describe('variadic', () => {
-  test('when env defined and no cli then array from env', () => {
+  test('when env defined and no cli then array from env with single value', () => {
     const program = new commander.Command();
     process.env.BAR = 'env';
     program.addOption(new commander.Option('-f, --foo <required...>').env('BAR'));
     program.parse([], { from: 'user' });
     expect(program.opts().foo).toEqual(['env']);
+    delete process.env.BAR;
+  });
+
+  test('when env defined and no cli then array from env with multiple values', () => {
+    const program = new commander.Command();
+    process.env.BAR = 'firstItem secondItem thirdItem';
+    program.addOption(
+      new commander.Option('-f, --foo <required...>').env('BAR')
+    );
+    program.parse([], { from: 'user' });
+    expect(program.opts().foo).toEqual([
+      'firstItem',
+      'secondItem',
+      'thirdItem'
+    ]);
     delete process.env.BAR;
   });
 
