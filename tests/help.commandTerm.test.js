@@ -40,4 +40,14 @@ describe('subcommandTerm', () => {
     const helper = new commander.Help();
     expect(helper.subcommandTerm(command)).toEqual('program|alias [options] <argument>');
   });
+
+  test('when command has usage then returns name|alias (usage)', () => {
+    const command = new commander.Command('program')
+      .usage('<argument> [options]')
+      .alias('alias')
+      .option('-a,--all')
+      .argument('<argument>');
+    const helper = new commander.Help();
+    expect(helper.subcommandTerm(command)).toEqual('program|alias <argument> [options]');
+  });
 });
