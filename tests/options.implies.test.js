@@ -201,3 +201,14 @@ test('when implied option has custom processing then custom processing not calle
   expect(program.opts().bar).toEqual(true);
   expect(called).toEqual(false);
 });
+
+test('when passed string then treat as boolean', () => {
+  // Do something sensible instead of something silly if user passes just name of option.
+  // https://github.com/tj/commander.js/issues/1852
+  const program = new Command();
+  program
+    .addOption(new Option('--foo').implies('bar'))
+    .option('-b, --bar', 'description');
+  program.parse(['--foo'], { from: 'user' });
+  expect(program.opts().bar).toEqual(true);
+});
