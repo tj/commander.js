@@ -3,7 +3,6 @@
 const { Command, Option } = require('../'); // include commander in git clone of commander repo
 const program = new Command();
 
-// You can use .conflicts() with a single string, which is the camel-case name of the conflicting option.
 program
   .addOption(new Option('--quiet').implies({ logLevel: 'off' }))
   .addOption(new Option('--log-level <level>').choices(['info', 'warning', 'error', 'off']).default('info'))
