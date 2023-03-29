@@ -919,7 +919,7 @@ The data properties are:
 - `sortOptions`: sort the options alphabetically
 - `showGlobalOptions`: show a section with the global options from the parent command(s)
 
-There are methods getting the visible lists of arguments, options, and subcommands. There are methods for formatting the items in the lists, with each item having a _term_ and _description_. Take a look at `.formatHelp()` to see how they are used.
+You can override any method on the [Help](./lib/help.js) class. There are methods getting the visible lists of arguments, options, and subcommands. There are methods for formatting the items in the lists, with each item having a _term_ and _description_. Take a look at `.formatHelp()` to see how they are used.
 
 Example file: [configure-help.js](./examples/configure-help.js)
 
