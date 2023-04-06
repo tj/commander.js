@@ -761,6 +761,8 @@ shell help spawn
 shell spawn --help
 ```
 
+Long descriptions are wrapped to fit the available width. (However, a  description that includes a line-break followed by whitespace is assumed to be pre-formatted and not wrapped.)
+
 ### Custom help
 
 You can add extra text to be displayed along with the built-in help.
