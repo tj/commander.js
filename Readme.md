@@ -730,6 +730,8 @@ The supported events are:
 | `preAction`, `postAction` |  before/after action handler for this command and its nested subcommands |   `(thisCommand, actionCommand)` |
 | `preSubcommand` | before parsing direct subcommand  | `(thisCommand, subcommand)` |
 
+For an overview of the life cycle events see [parsing life cycle and hooks](./docs/parsing-and-hooks.md).
+
 ## Automated help
 
 The help information is auto-generated based on the information commander already knows about your program. The default
@@ -1116,6 +1118,7 @@ There is more information available about:
 
 - [deprecated](./docs/deprecated.md) features still supported for backwards compatibility
 - [options taking varying arguments](./docs/options-taking-varying-arguments.md)
+- [parsing life cycle and hooks](./docs/parsing-and-hooks.md)
 
 ## Support
 
