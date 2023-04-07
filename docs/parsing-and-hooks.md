@@ -9,7 +9,7 @@ Starting with top-level command (program):
 - parse env: look for environment variables (for this command)
 - process implied: set any implied option values (for this command)
 - if the first arg is a subcommand
-    - call `preSubcommand` hook
+    - call `preSubcommand` hooks
     - pass remaining arguments to subcommand, and process same way
 
 Once reach final (leaf) command:
@@ -18,6 +18,6 @@ Once reach final (leaf) command:
 - check for conflicting options
 - check for unknown options
 - process remaining args as command-arguments
-- call `preAction` hook
+- call `preAction` hooks
 - call action handler
-- call `postAction` hook
+- call `postAction` hooks
