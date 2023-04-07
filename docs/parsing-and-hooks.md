@@ -14,10 +14,10 @@ Starting with top-level command (program):
 
 Once reach final (leaf) command:
 
-  - check for missing mandatory options
-  - check for conflicting options
-  - check for unknown options
-  - process remaining args as command-arguments
-  - call `preAction` hook
-  - call action handler
-  - call `postAction` hook
+- check for missing mandatory options
+- check for conflicting options
+- check for unknown options
+- process remaining args as command-arguments
+- call `preAction` hook
+- call action handler
+- call `postAction` hook
