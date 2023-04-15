@@ -8,6 +8,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [10.0.1] (2023-04-15)
+
+### Added
+
+- improvements to documentation ([#1858], [#1859], [#1860])
+
+### Fixed
+
+- remove unused `Option.optionFlags` property from TypeScript definition ([#1844])
+
+### Changed
+
+- assume boolean option intended if caller passes string instead of hash to `.implies()` ([#1854])
+
 ## [10.0.0] (2023-01-13)
 
 ### Added
@@ -1129,6 +1143,11 @@ program
 [#1804]: https://github.com/tj/commander.js/pull/1804
 [#1832]: https://github.com/tj/commander.js/pull/1832
 [#1828]: https://github.com/tj/commander.js/pull/1828
+[#1844]: https://github.com/tj/commander.js/pull/1844
+[#1854]: https://github.com/tj/commander.js/pull/1854
+[#1858]: https://github.com/tj/commander.js/pull/1858
+[#1859]: https://github.com/tj/commander.js/pull/1859
+[#1860]: https://github.com/tj/commander.js/pull/1860
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
@@ -1208,6 +1227,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[10.0.1]: https://github.com/tj/commander.js/compare/v10.0.0...v10.0.1
 [10.0.0]: https://github.com/tj/commander.js/compare/v9.5.0...v10.0.0
 [9.5.0]: https://github.com/tj/commander.js/compare/v9.4.1...v9.5.0
 [9.4.1]: https://github.com/tj/commander.js/compare/v9.4.0...v9.4.1
