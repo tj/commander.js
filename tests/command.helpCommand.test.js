@@ -123,4 +123,41 @@ describe('help command processed on correct command', () => {
       program.parse('node test.js help'.split(' '));
     }).toThrow('program');
   });
+
+  test('when no long help flag then "help sub" works', () => {
+    const program = new commander.Command();
+    program.exitOverride();
+    program.helpOption('-H');
+    const sub = program.command('sub');
+    // Patch help for easy way to check called.
+    sub.help = () => { throw new Error('sub help'); };
+    expect(() => {
+      program.parse(['help', 'sub'], { from: 'user' });
+    }).toThrow('sub help');
+  });
+
+  test('when no help options in sub then "help sub" works', () => {
+    const program = new commander.Command();
+    program.exitOverride();
+    const sub = program.command('sub')
+      .helpOption(false);
+    // Patch help for easy way to check called.
+    sub.help = () => { throw new Error('sub help'); };
+    expect(() => {
+      program.parse(['help', 'sub'], { from: 'user' });
+    }).toThrow('sub help');
+  });
+
+  test('when different help options in sub then "help sub" works', () => {
+    const program = new commander.Command();
+    program.exitOverride();
+    const sub = program.command('sub');
+    program.helpOption('-h, --help');
+    sub.helpOption('-a, --assist');
+    // Patch help for easy way to check called.
+    sub.help = () => { throw new Error('sub help'); };
+    expect(() => {
+      program.parse(['help', 'sub'], { from: 'user' });
+    }).toThrow('sub help');
+  });
 });
