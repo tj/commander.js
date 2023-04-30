@@ -48,6 +48,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [createCommand()](#createcommand)
     - [Node options such as `--harmony`](#node-options-such-as---harmony)
     - [Debugging stand-alone executable subcommands](#debugging-stand-alone-executable-subcommands)
+    - [npm run-script](#npm-run-script)
     - [Display error](#display-error)
     - [Override exit and output handling](#override-exit-and-output-handling)
     - [Additional documentation](#additional-documentation)
@@ -1060,6 +1061,17 @@ If you are using the node inspector for [debugging](https://nodejs.org/en/docs/g
 the inspector port is incremented by 1 for the spawned subcommand.
 
 If you are using VSCode to debug executable subcommands you need to set the `"autoAttachChildProcesses": true` flag in your launch.json configuration.
+
+### npm run-script
+
+By default when you call your program using run-script, `npm` will parse any options on the command-line and they will not reach your program. Use
+ `--` to stop the npm option parsing and pass through all the arguments.
+
+ The synopsis for [npm run-script](https://docs.npmjs.com/cli/v9/commands/npm-run-script) explicitly shows the `--` for this reason:
+
+```console
+npm run-script <command> [-- <args>]
+```
 
 ### Display error
 
