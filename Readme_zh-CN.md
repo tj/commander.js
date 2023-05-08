@@ -46,6 +46,7 @@
     - [作为属性的遗留选项](#%E4%BD%9C%E4%B8%BA%E5%B1%9E%E6%80%A7%E7%9A%84%E9%81%97%E7%95%99%E9%80%89%E9%A1%B9)
     - [TypeScript](#typescript)
     - [createCommand()](#createCommand)
+    - [suggestSimilar()](#suggestSimilar)
     - [Node 选项，如 --harmony](#node-%E9%80%89%E9%A1%B9%EF%BC%8C%E5%A6%82---harmony)
     - [调试子命令](#%e8%b0%83%e8%af%95%e5%ad%90%e5%91%bd%e4%bb%a4)
     - [显示错误](#%E6%98%BE%E7%A4%BA%E9%94%99%E8%AF%AF)
@@ -986,6 +987,15 @@ const program = createCommand();
 ```
 
 `createCommand`同时也是`Command`对象的一个方法，可以创建一个新的命令（而非子命令），使用`.command()`创建子命令时内部会调用该方法，具体使用方式可参考 [custom-command-class.js](./examples/custom-command-class.js)。
+
+### suggestSimilar()
+
+This function find close matches, restricted to same number of edits, using the
+[Damerau–Levenshtein distance](https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance) algorithm.
+
+It is used internally and exported for convenience. 
+
+It returns a line "\n(Did you mean...)" or an empty string.
 
 ### Node 选项，如 --harmony
 

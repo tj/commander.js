@@ -479,3 +479,6 @@ expectType<commander.Argument>(baseArgument.argOptional());
 // createArgument
 expectType<commander.Argument>(program.createArgument('<name>'));
 expectType<commander.Argument>(program.createArgument('<name>', 'description'));
+
+// suggestSimilar
+expectType<string>(commander.suggestSimilar('fool', ['bar', 'foo']));

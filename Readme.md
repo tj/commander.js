@@ -46,6 +46,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Legacy options as properties](#legacy-options-as-properties)
     - [TypeScript](#typescript)
     - [createCommand()](#createcommand)
+    - [suggestSimilar()](#suggestsimilar)
     - [Node options such as `--harmony`](#node-options-such-as---harmony)
     - [Debugging stand-alone executable subcommands](#debugging-stand-alone-executable-subcommands)
     - [Display error](#display-error)
@@ -1044,6 +1045,15 @@ const program = createCommand();
 `createCommand` is also a method of the Command object, and creates a new command rather than a subcommand. This gets used internally
 when creating subcommands using `.command()`, and you may override it to
 customise the new subcommand (example file [custom-command-class.js](./examples/custom-command-class.js)).
+
+### suggestSimilar()
+
+This function find close matches, restricted to same number of edits, using the
+[Damerau–Levenshtein distance](https://en.wikipedia.org/wiki/Damerau%E2%80%93Levenshtein_distance) algorithm.
+
+It is used internally and exported for convenience. 
+
+It returns a line "\n(Did you mean...)" or an empty string.
 
 ### Node options such as `--harmony`
 

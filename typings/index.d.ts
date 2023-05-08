@@ -887,3 +887,10 @@ export function createOption(flags: string, description?: string): Option;
 export function createArgument(name: string, description?: string): Argument;
 
 export const program: Command;
+
+/**
+ * Find close matches, restricted to same number of edits.
+ * If any matches are found, it returns a line "\n(Did you mean...)"
+ * otherwise an empty string.
+ */
+export function suggestSimilar(word: string, candidates: readonly string[]): string;
