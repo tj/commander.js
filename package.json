@@ -33,17 +33,27 @@
     "lib/*.js",
     "esm.mjs",
     "typings/index.d.ts",
+    "typings/esm.d.mts",
     "package-support.json"
   ],
   "type": "commonjs",
   "main": "./index.js",
   "exports": {
     ".": {
-      "types": "./typings/index.d.ts",
-      "require": "./index.js",
-      "import": "./esm.mjs"
+      "require": {
+        "types": "./typings/index.d.ts",
+        "default": "./index.js"
+      },
+      "import": {
+        "types": "./typings/esm.d.mts",
+        "default": "./esm.mjs"
+      },
+      "default": "./index.js"
     },
-    "./esm.mjs": "./esm.mjs"
+    "./esm.mjs": {
+      "types": "./typings/esm.d.mts",
+      "import": "./esm.mjs"
+    }
   },
   "devDependencies": {
     "@types/jest": "^29.2.4",
