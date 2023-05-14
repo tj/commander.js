@@ -14,7 +14,7 @@ const javascriptSettings = {
 };
 
 const typescriptSettings = {
-  files: ['*.ts'],
+  files: ['*.ts', '*.mts'],
   parserOptions: {
     project: './tsconfig.json'
   },
