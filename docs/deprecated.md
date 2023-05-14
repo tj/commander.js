@@ -9,11 +9,12 @@ They are currently still available for backwards compatibility, but should not b
   - [Default import of global Command object](#default-import-of-global-command-object)
   - [Callback to .help() and .outputHelp()](#callback-to-help-and-outputhelp)
   - [.on('--help')](#on--help)
-  - [.on('command:*')](#oncommand)
-  - [.command('*')](#command)
+  - [.on('command:\*')](#oncommand)
+  - [.command('\*')](#command)
   - [cmd.description(cmdDescription, argDescriptions)](#cmddescriptioncmddescription-argdescriptions)
   - [InvalidOptionArgumentError](#invalidoptionargumenterror)
   - [Short option flag longer than a single character](#short-option-flag-longer-than-a-single-character)
+  - [Import from `commander/esm.mjs`](#import-from-commanderesmmjs)
 
 ## RegExp .option() parameter
 
@@ -190,3 +191,19 @@ Deprecated from Commander v8.
 Short option flags like `-ws` were never supported, but the old README did not make this clear. The README now states that short options are a single character.
 
 README updated in Commander v3. Deprecated from Commander v9.
+
+## Import from `commander/esm.mjs`
+
+The first support for named imports required an explicit entry file.
+
+```js
+import { Command } from 'commander/esm.mjs';
+```
+
+This is no longer required, just import directly from the module.
+
+```js
+import { Command } from 'commander';
+```
+
+README updated in Commander v9. Deprecated from Commander v9.
