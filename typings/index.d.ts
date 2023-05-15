@@ -890,7 +890,7 @@ export const program: Command;
 
 /**
  * Find close matches, restricted to same number of edits.
- * If any matches are found, it returns a line "\n(Did you mean...)"
- * otherwise an empty string.
+ * Returns array of matches sorted by similarity score, best to worst.
+ * If no matches of given score, returns empty array.
  */
-export function suggestSimilar(word: string, candidates: readonly string[]): string;
+export function computeSimilar(word: string, candidates: readonly string[]): string[];

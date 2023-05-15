@@ -481,4 +481,4 @@ expectType<commander.Argument>(program.createArgument('<name>'));
 expectType<commander.Argument>(program.createArgument('<name>', 'description'));
 
 // suggestSimilar
-expectType<string>(commander.suggestSimilar('fool', ['bar', 'foo']));
+expectType<string[]>(commander.computeSimilar('fool', ['bar', 'foo']));
