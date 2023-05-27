@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [11.0.0] (2023-06-16)
+
+### Fixed
+
+- help command works when help option is disabled ([#1864])
+
+### Changed
+
+- leading and trailing spaces are now ignored by the .arguments() method ([#1874])
+- refine "types" exports for ESM to follow TypeScript guidelines ([#1886])
+- *Breaking:* Commander 11 requires Node.js v16 or higher
+
 ## [10.0.1] (2023-04-15)
 
 ### Added
@@ -1148,6 +1160,9 @@ program
 [#1858]: https://github.com/tj/commander.js/pull/1858
 [#1859]: https://github.com/tj/commander.js/pull/1859
 [#1860]: https://github.com/tj/commander.js/pull/1860
+[#1864]: https://github.com/tj/commander.js/pull/1864
+[#1874]: https://github.com/tj/commander.js/pull/1874
+[#1886]: https://github.com/tj/commander.js/pull/1886
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
@@ -1227,6 +1242,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[11.0.0]: https://github.com/tj/commander.js/compare/v10.0.1...v11.0.0
 [10.0.1]: https://github.com/tj/commander.js/compare/v10.0.0...v10.0.1
 [10.0.0]: https://github.com/tj/commander.js/compare/v9.5.0...v10.0.0
 [9.5.0]: https://github.com/tj/commander.js/compare/v9.4.1...v9.5.0
