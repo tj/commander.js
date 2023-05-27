@@ -278,11 +278,11 @@ expectType<commander.Command>(program.executableDir(__dirname));
 expectType<string>(program.executableDir());
 
 // outputHelp
-// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type, @typescript-eslint/no-confusing-void-expression
 expectType<void>(program.outputHelp());
-// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type, @typescript-eslint/no-confusing-void-expression
 expectType<void>(program.outputHelp((str: string) => { return str; }));
-// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type, @typescript-eslint/no-confusing-void-expression
 expectType<void>(program.outputHelp({ error: true }));
 
 // help
@@ -354,8 +354,8 @@ expectType<commander.Command>(program.configureOutput({ }));
 expectType<commander.OutputConfiguration>(program.configureOutput());
 
 expectType<commander.Command>(program.configureOutput({
-  writeOut: (str: string) => console.log(str),
-  writeErr: (str: string) => console.error(str),
+  writeOut: (str: string) => { console.log(str); },
+  writeErr: (str: string) => { console.error(str); },
   getOutHelpWidth: () => 80,
   getErrHelpWidth: () => 80,
   outputError: (str: string, write: (str: string) => void) => { write(str); }
