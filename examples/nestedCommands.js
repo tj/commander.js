@@ -23,6 +23,12 @@ brew
 
 // Add nested commands using `.addCommand().
 // The command could be created separately in another module.
+/**
+ * Creates a new commander.Command object with two sub-commands: "jug" and "pot".
+ * When "jug" is executed, it logs "heat jug" to the console.
+ * When "pot" is executed, it logs "heat pot" to the console.
+ * @returns {commander.Command} A new commander.Command object with the "heat" command and its sub-commands.
+ */
 function makeHeatCommand() {
   const heat = new commander.Command('heat');
   heat
