@@ -419,6 +419,12 @@ export class Command {
   hook(event: HookEvent, listener: (thisCommand: Command, actionCommand: Command) => void | Promise<void>): this;
 
   /**
+   * Add hook to await argument and option values before calling action handlers for this command and its nested subcommands.
+   * Useful for asynchronous custom processing (parseArg) of arguments and option-arguments.
+   */
+  awaitHook(): this;
+
+  /**
    * Register callback to use as replacement for calling process.exit.
    */
   exitOverride(callback?: (err: CommanderError) => never | void): this;

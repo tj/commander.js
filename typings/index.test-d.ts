@@ -98,6 +98,9 @@ expectType<commander.Command>(program.hook('preSubcommand', (thisCommand, subcom
   expectType<commander.Command>(subcommand);
 }));
 
+// awaitHook
+expectType<commander.Command>(program.awaitHook());
+
 // action
 expectType<commander.Command>(program.action(() => {}));
 expectType<commander.Command>(program.action(async() => {}));

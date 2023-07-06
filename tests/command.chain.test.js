@@ -172,6 +172,12 @@ describe('Command methods that should return this for chaining', () => {
     expect(result).toBe(program);
   });
 
+  test('when call .awaitHook() then returns this', () => {
+    const program = new Command();
+    const result = program.awaitHook();
+    expect(result).toBe(program);
+  });
+
   test('when call .setOptionValue() then returns this', () => {
     const program = new Command();
     const result = program.setOptionValue('foo', 'bar');
