@@ -95,10 +95,15 @@ describe('return type', () => {
       error => jest.fn().mockRejectedValue(error)
     );
 
+    const args = mockCoercions.map(fn => (
+      new commander.Argument('[arg]', 'desc')
+        .argParser(fn)
+        .chainArgParserCalls()
+    ));
     const program = new commander.Command();
     program
-      .argument('[arg]', 'desc', mockCoercions[0])
-      .argument('[arg]', 'desc', mockCoercions[1])
+      .addArgument(args[0])
+      .addArgument(args[1])
       .action(() => { });
 
     const result = program.parseAsync(['1', '2'], { from: 'user' });
@@ -114,14 +119,18 @@ describe('return type', () => {
 
     const program = new commander.Command();
     program
-      .option('-a [arg]', 'desc', mockCoercion)
+      .addOption(
+        new commander.Option('-a [arg]', 'desc')
+          .argParser(mockCoercion)
+          .chainArgParserCalls()
+      )
       .action(() => { });
 
     const result = program.parseAsync(
       ['-a', '1', '-a', '2', '-a', '3'], { from: 'user' }
     );
     await expect(result).rejects.toBeInstanceOf(MyError);
-    expect(mockCoercion).toHaveBeenCalledTimes(3);
+    expect(mockCoercion).toHaveBeenCalledTimes(1);
   });
 });
 
