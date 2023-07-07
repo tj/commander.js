@@ -145,6 +145,27 @@ describe('awaitHook with options', () => {
     expect(program.getOptionValueSource('b')).toEqual('implied');
   });
 
+  test('when awaitHook and non-variadic repeated option with chained asynchronous custom processing then .opts() resolved from chain', async() => {
+    const args = ['-a', '1', '-a', '2'];
+    const resolvedValues = { a: '12' };
+    const coercion = async(value, previousValue) => (
+      previousValue === undefined ? value : previousValue + value
+    );
+    const awaited = { a: coercion(args.slice(1)[0], undefined) };
+    const mockCoercion = jest.fn().mockImplementation(coercion);
+
+    const option = new commander.Option('-a [arg]', 'desc')
+      .argParser(mockCoercion)
+      .chainArgParserCalls();
+
+    const program = new commander.Command();
+    program
+      .addOption(option);
+
+    await testWithOptions(program, args, resolvedValues, awaited);
+    expect(program.getOptionValueSource('a')).toEqual('cli');
+  });
+
   test('when awaitHook and variadic option with chained asynchronous custom processing then .opts() resolved from chain', async() => {
     const args = ['-a', '1', '2'];
     const resolvedValues = { a: '12' };
