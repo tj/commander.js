@@ -60,9 +60,13 @@ describe('awaitHook with arguments', () => {
     const awaited = [coercion(args[0], undefined)];
     const mockCoercion = jest.fn().mockImplementation(coercion);
 
+    const argument = new commander.Argument('<arg...>', 'desc')
+      .argParser(mockCoercion)
+      .chainArgParserCalls();
+
     const program = new commander.Command();
     program
-      .argument('<arg...>', 'desc', mockCoercion);
+      .addArgument(argument);
 
     await testWithArguments(program, args, resolvedValues, awaited);
   });
@@ -150,9 +154,13 @@ describe('awaitHook with options', () => {
     const awaited = { a: coercion(args.slice(1)[0], undefined) };
     const mockCoercion = jest.fn().mockImplementation(coercion);
 
+    const option = new commander.Option('-a <arg...>', 'desc')
+      .argParser(mockCoercion)
+      .chainArgParserCalls();
+
     const program = new commander.Command();
     program
-      .option('-a <arg...>', 'desc', mockCoercion);
+      .addOption(option);
 
     await testWithOptions(program, args, resolvedValues, awaited);
     expect(program.getOptionValueSource('a')).toEqual('cli');

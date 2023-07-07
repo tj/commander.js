@@ -66,6 +66,11 @@ export class Argument {
   argParser<T>(fn: (value: string, previous: T) => T): this;
 
   /**
+   * When set to true, next call to the function provided via .argParser() will be chained to its return value if it is thenable.
+   */
+  chainArgParserCalls(chained: boolean): this;
+
+  /**
    * Only allow argument value to be one of choices.
    */
   choices(values: readonly string[]): this;
@@ -158,6 +163,11 @@ export class Option {
    * Set the custom handler for processing CLI option arguments into option values.
    */
   argParser<T>(fn: (value: string, previous: T) => T): this;
+
+  /**
+   * When set to true, next call to the function provided via .argParser() will be chained to its return value if it is thenable.
+   */
+  chainArgParserCalls(chained: boolean): this;
 
   /**
    * Whether the option is mandatory and must have a value after parsing.

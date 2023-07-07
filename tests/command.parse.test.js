@@ -121,7 +121,7 @@ describe('return type', () => {
       ['-a', '1', '-a', '2', '-a', '3'], { from: 'user' }
     );
     await expect(result).rejects.toBeInstanceOf(MyError);
-    expect(mockCoercion).toHaveBeenCalledTimes(1);
+    expect(mockCoercion).toHaveBeenCalledTimes(3);
   });
 });
 

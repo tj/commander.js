@@ -9,7 +9,8 @@ test.each(getSingleArgCases('<explicit-required>'))('when add "<arg>" using %s t
     _name: 'explicit-required',
     required: true,
     variadic: false,
-    description: ''
+    description: '',
+    chained: false
   };
   expect(argument).toEqual(expectedShape);
 });
@@ -20,7 +21,8 @@ test.each(getSingleArgCases('implicit-required'))('when add "arg" using %s then 
     _name: 'implicit-required',
     required: true,
     variadic: false,
-    description: ''
+    description: '',
+    chained: false
   };
   expect(argument).toEqual(expectedShape);
 });
@@ -31,7 +33,8 @@ test.each(getSingleArgCases('[optional]'))('when add "[arg]" using %s then argum
     _name: 'optional',
     required: false,
     variadic: false,
-    description: ''
+    description: '',
+    chained: false
   };
   expect(argument).toEqual(expectedShape);
 });
@@ -42,7 +45,8 @@ test.each(getSingleArgCases('<explicit-required...>'))('when add "<arg...>" usin
     _name: 'explicit-required',
     required: true,
     variadic: true,
-    description: ''
+    description: '',
+    chained: false
   };
   expect(argument).toEqual(expectedShape);
 });
@@ -53,7 +57,8 @@ test.each(getSingleArgCases('implicit-required...'))('when add "arg..." using %s
     _name: 'implicit-required',
     required: true,
     variadic: true,
-    description: ''
+    description: '',
+    chained: false
   };
   expect(argument).toEqual(expectedShape);
 });
@@ -64,7 +69,8 @@ test.each(getSingleArgCases('[optional...]'))('when add "[arg...]" using %s then
     _name: 'optional',
     required: false,
     variadic: true,
-    description: ''
+    description: '',
+    chained: false
   };
   expect(argument).toEqual(expectedShape);
 });
