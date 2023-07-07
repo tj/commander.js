@@ -13,6 +13,12 @@ describe('Argument methods that should return this for chaining', () => {
     expect(result).toBe(argument);
   });
 
+  test('when call .chainArgParserCalls() then returns this', () => {
+    const argument = new Argument('<value>');
+    const result = argument.chainArgParserCalls();
+    expect(result).toBe(argument);
+  });
+
   test('when call .choices() then returns this', () => {
     const argument = new Argument('<value>');
     const result = argument.choices(['a']);

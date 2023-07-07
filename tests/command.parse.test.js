@@ -88,17 +88,26 @@ describe('return type', () => {
     expect(result).toBe(program);
   });
 
-  test('when await .parseAsync and asynchronous custom processing for arguments fails then rejects', async() => {
-    const promises = [];
+  const makeMockCoercion = (errors, promises, condition) => (
+    jest.fn().mockImplementation(
+      (value) => {
+        if (condition?.()) {
+          return value;
+        }
 
-    class MyError extends Error {}
-    const mockCoercion = jest.fn().mockImplementation(
-      () => {
-        const promise = Promise.reject(new MyError());
+        const error = new Error();
+        errors.push(error);
+        const promise = Promise.reject(error);
         promises.push(promise);
         return promise;
       }
-    );
+    )
+  );
+
+  test('when await .parseAsync and asynchronous custom processing for arguments fails then rejects', async() => {
+    const promises = [];
+    const errors = [];
+    const mockCoercion = makeMockCoercion(errors, promises);
 
     const program = new commander.Command();
     program
@@ -108,24 +117,22 @@ describe('return type', () => {
       .action(() => { });
 
     const result = program.parseAsync(['1', '2'], { from: 'user' });
-    promises.push(result);
-    await Promise.allSettled(promises);
 
-    await expect(result).rejects.toBeInstanceOf(MyError);
+    let caught;
+    try {
+      await result;
+    } catch (value) {
+      caught = value;
+    }
+
+    expect(errors).toContain(caught);
     expect(mockCoercion).toHaveBeenCalledTimes(2);
   });
 
   test('when await .parseAsync and asynchronous custom processing for options fails then rejects', async() => {
     const promises = [];
-
-    class MyError extends Error {}
-    const mockCoercion = jest.fn().mockImplementation(
-      () => {
-        const promise = Promise.reject(new MyError());
-        promises.push(promise);
-        return promise;
-      }
-    );
+    const errors = [];
+    const mockCoercion = makeMockCoercion(errors, promises);
 
     const program = new commander.Command();
     program
@@ -135,26 +142,23 @@ describe('return type', () => {
       .action(() => { });
 
     const result = program.parseAsync(['-a', '1', '-b', '2'], { from: 'user' });
-    promises.push(result);
-    await Promise.allSettled(promises);
 
-    await expect(result).rejects.toBeInstanceOf(MyError);
+    let caught;
+    try {
+      await result;
+    } catch (value) {
+      caught = value;
+    }
+
+    expect(errors).toContain(caught);
     expect(mockCoercion).toHaveBeenCalledTimes(2);
   });
 
   test('when await .parseAsync and asynchronous custom processing fails for overwritten non-variadic option then rejects', async() => {
     const promises = [];
-
-    class MyError extends Error {}
-    const mockCoercion = jest.fn().mockImplementation(
-      value => {
-        if (!promises.length) {
-          const promise = Promise.reject(new MyError());
-          promises.push(promise);
-          return promise;
-        }
-        return value;
-      }
+    const errors = [];
+    const mockCoercion = makeMockCoercion(
+      errors, promises, () => promises.length
     );
 
     const program = new commander.Command();
@@ -166,10 +170,15 @@ describe('return type', () => {
     const result = program.parseAsync(
       ['-a', '1', '-a', '2', '-a', '3'], { from: 'user' }
     );
-    promises.push(result);
-    await Promise.allSettled(promises);
 
-    await expect(result).rejects.toBeInstanceOf(MyError);
+    let caught;
+    try {
+      await result;
+    } catch (value) {
+      caught = value;
+    }
+
+    expect(errors[0]).toBe(caught);
     expect(mockCoercion).toHaveBeenCalledTimes(3);
   });
 });

@@ -13,6 +13,12 @@ describe('Option methods that should return this for chaining', () => {
     expect(result).toBe(option);
   });
 
+  test('when call .chainArgParserCalls() then returns this', () => {
+    const option = new Option('-e,--example <value>');
+    const result = option.chainArgParserCalls();
+    expect(result).toBe(option);
+  });
+
   test('when call .makeOptionMandatory() then returns this', () => {
     const option = new Option('-e,--example <value>');
     const result = option.makeOptionMandatory();

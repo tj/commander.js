@@ -51,7 +51,7 @@ describe('awaitHook with arguments', () => {
     await testWithArguments(program, args, resolvedValues, awaited);
   });
 
-  test('when awaitHook and variadic argument with asynchronous custom processing then .processedArgs and actioon arguments resolved from thenable chain', async() => {
+  test('when awaitHook and variadic argument with chained asynchronous custom processing then .processedArgs and actioon arguments resolved from chain', async() => {
     const args = ['1', '2'];
     const resolvedValues = ['12'];
     const coercion = async(value, previousValue) => (
@@ -145,7 +145,7 @@ describe('awaitHook with options', () => {
     expect(program.getOptionValueSource('b')).toEqual('implied');
   });
 
-  test('when awaitHook and variadic option with asynchronous custom processing then .opts() resolved from thenable chain', async() => {
+  test('when awaitHook and variadic option with chained asynchronous custom processing then .opts() resolved from chain', async() => {
     const args = ['-a', '1', '2'];
     const resolvedValues = { a: '12' };
     const coercion = async(value, previousValue) => (
