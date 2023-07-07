@@ -89,48 +89,88 @@ describe('return type', () => {
   });
 
   test('when await .parseAsync and asynchronous custom processing for arguments fails then rejects', async() => {
+    const promises = [];
+
     class MyError extends Error {}
-    const errors = [new MyError(), new MyError()];
-    const mockCoercions = errors.map(
-      error => jest.fn().mockRejectedValue(error)
+    const mockCoercion = jest.fn().mockImplementation(
+      () => {
+        const promise = Promise.reject(new MyError());
+        promises.push(promise);
+        return promise;
+      }
     );
 
-    const args = mockCoercions.map(fn => (
-      new commander.Argument('[arg]', 'desc')
-        .argParser(fn)
-        .chainArgParserCalls()
-    ));
     const program = new commander.Command();
     program
-      .addArgument(args[0])
-      .addArgument(args[1])
+      .argument('[arg]', 'desc', mockCoercion)
+      .argument('[arg]', 'desc', mockCoercion)
+      .awaitHook()
       .action(() => { });
 
     const result = program.parseAsync(['1', '2'], { from: 'user' });
+    promises.push(result);
+    await Promise.allSettled(promises);
+
     await expect(result).rejects.toBeInstanceOf(MyError);
-    mockCoercions.forEach(fn => expect(fn).toHaveBeenCalledTimes(1));
+    expect(mockCoercion).toHaveBeenCalledTimes(2);
   });
 
-  test('when await .parseAsync and asynchronous custom processing for repeated non-variadic option always fails then rejects', async() => {
+  test('when await .parseAsync and asynchronous custom processing for options fails then rejects', async() => {
+    const promises = [];
+
     class MyError extends Error {}
     const mockCoercion = jest.fn().mockImplementation(
-      () => Promise.reject(new MyError())
+      () => {
+        const promise = Promise.reject(new MyError());
+        promises.push(promise);
+        return promise;
+      }
     );
 
     const program = new commander.Command();
     program
-      .addOption(
-        new commander.Option('-a [arg]', 'desc')
-          .argParser(mockCoercion)
-          .chainArgParserCalls()
-      )
+      .option('-a [arg]', 'desc', mockCoercion)
+      .option('-b [arg]', 'desc', mockCoercion)
+      .awaitHook()
+      .action(() => { });
+
+    const result = program.parseAsync(['-a', '1', '-b', '2'], { from: 'user' });
+    promises.push(result);
+    await Promise.allSettled(promises);
+
+    await expect(result).rejects.toBeInstanceOf(MyError);
+    expect(mockCoercion).toHaveBeenCalledTimes(2);
+  });
+
+  test('when await .parseAsync and asynchronous custom processing fails for overwritten non-variadic option then rejects', async() => {
+    const promises = [];
+
+    class MyError extends Error {}
+    const mockCoercion = jest.fn().mockImplementation(
+      value => {
+        if (!promises.length) {
+          const promise = Promise.reject(new MyError());
+          promises.push(promise);
+          return promise;
+        }
+        return value;
+      }
+    );
+
+    const program = new commander.Command();
+    program
+      .option('-a [arg]', 'desc', mockCoercion)
+      .awaitHook()
       .action(() => { });
 
     const result = program.parseAsync(
       ['-a', '1', '-a', '2', '-a', '3'], { from: 'user' }
     );
+    promises.push(result);
+    await Promise.allSettled(promises);
+
     await expect(result).rejects.toBeInstanceOf(MyError);
-    expect(mockCoercion).toHaveBeenCalledTimes(1);
+    expect(mockCoercion).toHaveBeenCalledTimes(3);
   });
 });
 
