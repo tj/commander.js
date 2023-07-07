@@ -87,6 +87,42 @@ describe('return type', () => {
     const result = await program.parseAsync(['node', 'test']);
     expect(result).toBe(program);
   });
+
+  test('when await .parseAsync and asynchronous custom processing for arguments fails then rejects', async() => {
+    class MyError extends Error {}
+    const errors = [new MyError(), new MyError()];
+    const mockCoercions = errors.map(
+      error => jest.fn().mockRejectedValue(error)
+    );
+
+    const program = new commander.Command();
+    program
+      .argument('[arg]', 'desc', mockCoercions[0])
+      .argument('[arg]', 'desc', mockCoercions[1])
+      .action(() => { });
+
+    const result = program.parseAsync(['1', '2'], { from: 'user' });
+    await expect(result).rejects.toBeInstanceOf(MyError);
+    mockCoercions.forEach(fn => expect(fn).toHaveBeenCalledTimes(1));
+  });
+
+  test('when await .parseAsync and asynchronous custom processing for repeated non-variadic option always fails then rejects', async() => {
+    class MyError extends Error {}
+    const mockCoercion = jest.fn().mockImplementation(
+      () => Promise.reject(new MyError())
+    );
+
+    const program = new commander.Command();
+    program
+      .option('-a [arg]', 'desc', mockCoercion)
+      .action(() => { });
+
+    const result = program.parseAsync(
+      ['-a', '1', '-a', '2', '-a', '3'], { from: 'user' }
+    );
+    await expect(result).rejects.toBeInstanceOf(MyError);
+    expect(mockCoercion).toHaveBeenCalledTimes(1);
+  });
 });
 
 // Easy mistake to make when writing unit tests

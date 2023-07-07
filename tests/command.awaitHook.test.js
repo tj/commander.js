@@ -8,7 +8,7 @@ describe('awaitHook with arguments', () => {
       .action((...args) => {
         actionValues = args.slice(0, resolvedValues.length);
       });
-  
+
     const result = program.parseAsync(args, { from: 'user' });
     expect(program.processedArgs).toEqual(awaited);
     await result;
@@ -73,7 +73,7 @@ describe('awaitHook with options', () => {
     program
       .awaitHook()
       .action(() => {});
-  
+
     const result = program.parseAsync(args, { from: 'user' });
     expect(program.opts()).toEqual(awaited);
     await result;
