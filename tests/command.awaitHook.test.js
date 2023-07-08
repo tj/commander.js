@@ -5,13 +5,12 @@ const makeThenable = (function() {
   return (value) => {
     if (cache.has(value)) {
       return cache.get(value);
-    } else {
-      const thenable = {
-        then: (fn) => makeThenable(fn(value))
-      };
-      cache.set(value, thenable);
-      return thenable;
     }
+    const thenable = {
+      then: (fn) => makeThenable(fn(value))
+    };
+    cache.set(value, thenable);
+    return thenable;
   };
 })();
 
