@@ -3,6 +3,9 @@ const commander = require('../');
 // These are tests of the Help class, not of the Command help.
 // There is some overlap with the higher level Command tests (which predate Help).
 
+// ECMAScript 12.2 White Space
+const whitespaces = '\t\v\f\ufeff \u00a0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u202f\u205f\u3000';
+
 describe('wrap', () => {
   test('when string fits into width then returns input', () => {
     const text = 'a '.repeat(24) + 'a';
@@ -13,6 +16,13 @@ describe('wrap', () => {
 
   test('when string shorter than indent then returns input', () => {
     const text = 'a';
+    const helper = new commander.Help();
+    const wrapped = helper.wrap(text, 50, 3);
+    expect(wrapped).toEqual(text);
+  });
+
+  test('when string and indent have equal length then returns input', () => {
+    const text = 'aaa';
     const helper = new commander.Help();
     const wrapped = helper.wrap(text, 50, 3);
     expect(wrapped).toEqual(text);
@@ -34,11 +44,45 @@ ${'a '.repeat(5)}a`);
 ${' '.repeat(10)}${'a '.repeat(5)}a`);
   });
 
-  test('when width < 40 then do not wrap', () => {
+  test('when word exceeds width then wrap word overflow', () => {
+    const text = 'a'.repeat(60);
+    const helper = new commander.Help();
+    const wrapped = helper.wrap(text, 50, 0);
+    expect(wrapped).toEqual(`${'a'.repeat(49)}
+${'a'.repeat(11)}`);
+  });
+
+  test('when word exceeds width then wrap word overflow and indent', () => {
+    const text = 'a'.repeat(60);
+    const helper = new commander.Help();
+    const wrapped = helper.wrap(text, 50, 3);
+    expect(wrapped).toEqual(`${'a'.repeat(49)}
+   ${'a'.repeat(11)}`);
+  });
+
+  test('when negative shift and first word exceeds right table width then place in overflow', () => {
+    const text = ' '.repeat(5) + 'a'.repeat(49);
+    const helper = new commander.Help();
+    const wrapped = helper.wrap(text, 50, 5, 40, -5);
+    expect(wrapped).toEqual(`
+${'a'.repeat(49)}`);
+  });
+
+  test('when negative shift and first word exceeds overflow width then place in overflow', () => {
+    const text = ' '.repeat(5) + 'a'.repeat(60);
+    const helper = new commander.Help();
+    const wrapped = helper.wrap(text, 50, 5, 40, -5);
+    expect(wrapped).toEqual(`
+${'a'.repeat(49)}
+${'a'.repeat(11)}`);
+  });
+
+  test('when width < 40 then wrap but do not indent', () => {
     const text = 'a '.repeat(30) + 'a';
     const helper = new commander.Help();
-    const wrapped = helper.wrap(text, 39, 0);
-    expect(wrapped).toEqual(text);
+    const wrapped = helper.wrap(text, 39, 10);
+    expect(wrapped).toEqual(`${'a '.repeat(18)}a
+${'a '.repeat(11)}a`);
   });
 
   test('when text has line break then respect and indent', () => {
@@ -67,6 +111,33 @@ ${' '.repeat(10)}${'a '.repeat(5)}a`);
     const helper = new commander.Help();
     const wrapped = helper.wrap(text, 78, 5);
     expect(wrapped).toEqual('term description\n\n     another line');
+  });
+
+  test('when more whitespaces after line than available width then collapse all', () => {
+    const text = `abcd${whitespaces}\ne`;
+    const helper = new commander.Help();
+    const wrapped = helper.wrap(text, 5, 0);
+    expect(wrapped).toEqual('abcd\ne');
+  });
+
+  test('when line of whitespaces then do not indent', () => {
+    const text = whitespaces;
+    const helper = new commander.Help();
+    const wrapped = helper.wrap(text, 50, 0, 40, 3, 3, 3);
+    expect(wrapped).toEqual('');
+  });
+
+  test('when not pre-formatted then trim ends of output lines', () => {
+    const text = '\na\n' + // original table
+      '\n\na ' + // new column
+      '\n\na '; // overflow
+    const helper = new commander.Help();
+    const wrapped = helper.wrap(text, 50, 3, 40, -3, 3, 3);
+    expect(wrapped).toEqual(`
+   a
+       a
+
+    a`);
   });
 
   test('when text already formatted with line breaks and indent then do not touch', () => {
@@ -141,23 +212,26 @@ Commands:
     expect(program.helpInformation()).toBe(expectedOutput);
   });
 
-  test('when not enough room then help not wrapped', () => {
-    // Not wrapping if less than 40 columns available for wrapping.
+  test('when not enough room then help wrapped but not indented', () => {
+    // Here, a limiting case is considered. Removal of one character from the command name will make 40 columns available for wrapping, which is the default minimum value for overflowing text width.
     const program = new commander.Command();
-    const commandDescription = 'description text of very long command which should not be automatically be wrapped. Do fugiat eiusmod ipsum laboris excepteur pariatur sint ullamco tempor labore eu.';
+    const commandDescription = 'very long command description text which should be wrapped but not indented. Do fugiat eiusmod ipsum laboris excepteur pariatur sint ullamco tempor labore eu.';
     program
       .configureHelp({ helpWidth: 60 })
-      .command('1234567801234567890x', commandDescription);
+      .command('0123456789abcdef+', commandDescription);
 
     const expectedOutput =
 `Usage:  [options] [command]
 
 Options:
-  -h, --help            display help for command
+  -h, --help         display help for command
 
 Commands:
-  1234567801234567890x  ${commandDescription}
-  help [command]        display help for command
+  0123456789abcdef+  very long command description text
+which should be wrapped but not indented. Do fugiat eiusmod
+ipsum laboris excepteur pariatur sint ullamco tempor labore
+eu.
+  help [command]     display help for command
 `;
 
     expect(program.helpInformation()).toBe(expectedOutput);
@@ -180,10 +254,10 @@ Time can also be specified using special values:
 
 Options:
   ${optionSpec}  select time
-  
+
   Time can also be specified using special values:
     "dawn" - From night to sunrise.
-  
+
   -h, --help          display help for command
 `;
 

@@ -241,10 +241,19 @@ export class Help {
   padWidth(cmd: Command, helper: Help): number;
 
   /**
-   * Wrap the given string to width characters per line, with lines after the first indented.
-   * Do not wrap if insufficient room for wrapping (minColumnWidth), or string is manually formatted.
+   * Merge left table defined by first `leftTableLength` characters of `str` with right table defined by remaining characters, wrapping the output to `width - 1` characters per line. Table rows in both input and output are separated by line breaks.
+   *
+   * Do not wrap if right table text is manually formatted.
+   *
+   * Input table rows are indented by `globalIndent - Math.min(0, fullIndent)` and overflowing new table lines by `fullIndent` if it is positive and does not cause overflow display to be too narrow, where `fullIndent = globalIndent + leftTableWidth + tableGap + overflowShift` with `leftTableWidth` being the computed width of the left table. `leftTableWidth` and `tableGap` are omitted from the computation if right table text is manually formatted.
+   *
+   * `leftTableLength`, `overflowShift`, `globalIndent` and `tableGap` all default to 0.
+   *
+   * Overflow display is considered too narrow when available width is less than `minOverflowWidth` which defaults to 40.
+   *
+   * Unless `preformatted` is specified explicitly, right table text is considered manually formatted if it includes a line break followed by a whitespace.
    */
-  wrap(str: string, width: number, indent: number, minColumnWidth?: number): string;
+  wrap(str: string, width: number, leftTableLength?: number, minOverflowWidth?: number, overflowShift?: number, globalIndent?: number, tableGap?: number, preformatted?: boolean): string;
 
   /** Generate the built-in help text. */
   formatHelp(cmd: Command, helper: Help): string;
