@@ -60,7 +60,7 @@ ${'a'.repeat(11)}`);
    ${'a'.repeat(11)}`);
   });
 
-  test('when negative shift and first word exceeds right table width then place in overflow', () => {
+  test('when negative shift and first word exceeds column width then place in overflow', () => {
     const text = ' '.repeat(5) + 'a'.repeat(49);
     const helper = new commander.Help();
     const wrapped = helper.wrap(text, 50, 5, 40, -5);
@@ -128,9 +128,9 @@ ${'a '.repeat(11)}a`);
   });
 
   test('when not pre-formatted then trim ends of output lines', () => {
-    const text = '\na\n' + // original table
-      '\n\na ' + // new column
-      '\n\na '; // overflow
+    const text = '\na\n' + // leadingStr (first column)
+      '\n\na ' + // text to wrap and indent (new, second column) before overflow
+      '\n\na '; // overflowing lines of the text (column overflow)
     const helper = new commander.Help();
     const wrapped = helper.wrap(text, 50, 3, 40, -3, 3, 3);
     expect(wrapped).toEqual(`

@@ -241,19 +241,19 @@ export class Help {
   padWidth(cmd: Command, helper: Help): number;
 
   /**
-   * Merge left table defined by first `leftTableLength` characters of `str` with right table defined by remaining characters, wrapping the output to `width - 1` characters per line. Table rows in both input and output are separated by line breaks.
+   * Merge left text column defined by first `leadingStrLength` characters of `str` with right text column defined by remaining characters, wrapping the output to `width - 1` characters per line.
    *
-   * Do not wrap if right table text is manually formatted.
+   * Do not wrap if right column text is manually formatted.
    *
-   * Input table rows are indented by `globalIndent - Math.min(0, fullIndent)` and overflowing new table lines by `fullIndent` if it is positive and does not cause overflow display to be too narrow, where `fullIndent = globalIndent + leftTableWidth + tableGap + overflowShift` with `leftTableWidth` being the computed width of the left table. `leftTableWidth` and `tableGap` are omitted from the computation if right table text is manually formatted.
+   * Lines containing left column are indented by `globalIndent - Math.min(0, fullIndent)` and all new lines due to overflow by `fullIndent` if it is positive and does not cause text display width to be too narrow, where `fullIndent = globalIndent + leadingStrWidth + columnGap + overflowShift` with `leadingStrWidth` being the computed width of the left column. `leadingStrWidth` and `columnGap` are omitted from the computation if right column text is manually formatted.
    *
-   * `leftTableLength`, `overflowShift`, `globalIndent` and `tableGap` all default to 0.
+   * `leadingStrLength`, `overflowShift`, `globalIndent` and `columnGap` all default to 0.
    *
-   * Overflow display is considered too narrow when available width is less than `minOverflowWidth` which defaults to 40.
+   * Text display width is considered too narrow when it is less than `minWidthGuideline` which defaults to 40.
    *
-   * Unless `preformatted` is specified explicitly, right table text is considered manually formatted if it includes a line break followed by a whitespace.
+   * Unless `preformatted` is specified explicitly, right column text is considered manually formatted if it includes a line break followed by a whitespace.
    */
-  wrap(str: string, width: number, leftTableLength?: number, minOverflowWidth?: number, overflowShift?: number, globalIndent?: number, tableGap?: number, preformatted?: boolean): string;
+  wrap(str: string, width: number, leadingStrLength?: number, minWidthGuideline?: number, overflowShift?: number, globalIndent?: number, columnGap?: number, preformatted?: boolean): string;
 
   /** Generate the built-in help text. */
   formatHelp(cmd: Command, helper: Help): string;
