@@ -63,7 +63,7 @@ ${'a'.repeat(11)}`);
   test('when negative shift and first word exceeds column width then place in overflow', () => {
     const text = ' '.repeat(5) + 'a'.repeat(49);
     const helper = new commander.Help();
-    const wrapped = helper.wrap(text, 50, 5, 40, -5);
+    const wrapped = helper.wrap(text, 50, 5, { overflowShift: -5 });
     expect(wrapped).toEqual(`
 ${'a'.repeat(49)}`);
   });
@@ -71,7 +71,7 @@ ${'a'.repeat(49)}`);
   test('when negative shift and first word exceeds overflow width then place in overflow', () => {
     const text = ' '.repeat(5) + 'a'.repeat(60);
     const helper = new commander.Help();
-    const wrapped = helper.wrap(text, 50, 5, 40, -5);
+    const wrapped = helper.wrap(text, 50, 5, { overflowShift: -5 });
     expect(wrapped).toEqual(`
 ${'a'.repeat(49)}
 ${'a'.repeat(11)}`);
@@ -116,14 +116,18 @@ ${'a '.repeat(11)}a`);
   test('when more whitespaces after line than available width then collapse all', () => {
     const text = `abcd${whitespaces}\ne`;
     const helper = new commander.Help();
-    const wrapped = helper.wrap(text, 5, 0);
+    const wrapped = helper.wrap(text, 5);
     expect(wrapped).toEqual('abcd\ne');
   });
 
   test('when line of whitespaces then do not indent', () => {
     const text = whitespaces;
     const helper = new commander.Help();
-    const wrapped = helper.wrap(text, 50, 0, 40, 3, 3, 3);
+    const wrapped = helper.wrap(text, 50, {
+      overflowShift: 3,
+      globalIndent: 3,
+      columnGap: 3
+    });
     expect(wrapped).toEqual('');
   });
 
@@ -132,7 +136,11 @@ ${'a '.repeat(11)}a`);
       '\n\na ' + // text to wrap and indent (new, second column) before overflow
       '\n\na '; // overflowing lines of the text (column overflow)
     const helper = new commander.Help();
-    const wrapped = helper.wrap(text, 50, 3, 40, -3, 3, 3);
+    const wrapped = helper.wrap(text, 50, 3, {
+      overflowShift: -3,
+      globalIndent: 3,
+      columnGap: 3
+    });
     expect(wrapped).toEqual(`
    a
        a

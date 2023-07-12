@@ -193,6 +193,15 @@ export class Option {
   isBoolean(): boolean;
 }
 
+export interface WrapOptions {
+  leadingStrLength?: number;
+  minWidthGuideline?: number;
+  preformatted?: boolean;
+  overflowShift?: number;
+  globalIndent?: number;
+  columnGap?: number;
+}
+
 export class Help {
   /** output helpWidth, long lines are wrapped to fit */
   helpWidth?: number;
@@ -253,7 +262,10 @@ export class Help {
    *
    * Unless `preformatted` is specified explicitly, right column text is considered manually formatted if it includes a line break followed by a whitespace.
    */
-  wrap(str: string, width: number, leadingStrLength?: number, minWidthGuideline?: number, overflowShift?: number, globalIndent?: number, columnGap?: number, preformatted?: boolean): string;
+  wrap(str: string, width: number, options?: WrapOptions): string;
+  wrap(str: string, width: number, leadingStrLength: number, options?: WrapOptions): string;
+  wrap(str: string, width: number, leadingStrLength: number, minWidthGuideline: number, options?: WrapOptions): string;
+  wrap(str: string, width: number, leadingStrLength: number, minWidthGuideline: number, preformatted: boolean, options?: WrapOptions): string;
 
   /** Generate the built-in help text. */
   formatHelp(cmd: Command, helper: Help): string;
