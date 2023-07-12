@@ -205,6 +205,8 @@ export interface WrapOptions {
 export class Help {
   /** output helpWidth, long lines are wrapped to fit */
   helpWidth?: number;
+  minWidthGuideline: number;
+  preformatted?: boolean;
   sortSubcommands: boolean;
   sortOptions: boolean;
   showGlobalOptions: boolean;
