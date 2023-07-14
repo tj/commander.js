@@ -208,4 +208,10 @@ describe('Command methods that should return this for chaining', () => {
     const result = program.nameFromFilename('name');
     expect(result).toBe(program);
   });
+
+  test('when call .group() then returns this', () => {
+    const program = new Command();
+    const result = program.group('My Commands:');
+    expect(result).toBe(program);
+  });
 });
