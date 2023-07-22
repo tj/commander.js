@@ -42,4 +42,10 @@ describe('Option methods that should return this for chaining', () => {
     const result = option.conflicts(['a']);
     expect(result).toBe(option);
   });
+
+  test('when set .helpGroup() then returns this', () => {
+    const option = new Option('-e,--example <value>');
+    const result = option.helpGroup('Option:');
+    expect(result).toBe(option);
+  });
 });
