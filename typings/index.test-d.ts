@@ -36,12 +36,13 @@ expectType<commander.Command | null>(program.parent);
 expectType<commander.Command>(program.version('1.2.3'));
 expectType<commander.Command>(program.version('1.2.3', '-r,--revision'));
 expectType<commander.Command>(program.version('1.2.3', '-r,--revision', 'show revision information'));
+expectType<commander.Command>(program.version('1.2.3', '-r,--revision', 'show revision information', { helpGroup: 'Version Group:' }));
 
 // command (and CommandOptions)
 expectType<commander.Command>(program.command('action'));
 expectType<commander.Command>(program.command('action', { isDefault: true, hidden: true, noHelp: true }));
 expectType<commander.Command>(program.command('exec', 'exec description'));
-expectType<commander.Command>(program.command('exec', 'exec description', { isDefault: true, hidden: true, noHelp: true, executableFile: 'foo' }));
+expectType<commander.Command>(program.command('exec', 'exec description', { isDefault: true, hidden: true, noHelp: true, executableFile: 'foo', helpGroup: 'Exteneral Group:' }));
 
 // addCommand
 expectType<commander.Command>(program.addCommand(new commander.Command('abc')));
@@ -62,6 +63,7 @@ expectType<commander.Command>(program.addHelpCommand(false));
 expectType<commander.Command>(program.addHelpCommand(true));
 expectType<commander.Command>(program.addHelpCommand('compress <file>'));
 expectType<commander.Command>(program.addHelpCommand('compress <file>', 'compress target file'));
+expectType<commander.Command>(program.addHelpCommand('compress <file>', 'compress target file', { helpGroup: 'Help Group:' }));
 
 // exitOverride
 expectType<commander.Command>(program.exitOverride());
@@ -270,6 +272,10 @@ expectType<string>(program.usage());
 expectType<commander.Command>(program.name('my-name'));
 expectType<string>(program.name());
 
+// helpGroup
+expectType<commander.Command>(program.helpGroup('My Group:'));
+expectType<string>(program.helpGroup());
+
 // nameFromFilename
 expectType<commander.Command>(program.nameFromFilename(__filename));
 
@@ -297,6 +303,7 @@ expectType<string>(program.helpInformation({ error: true }));
 // helpOption
 expectType<commander.Command>(program.helpOption('-h,--help'));
 expectType<commander.Command>(program.helpOption('-h,--help', 'custom description'));
+expectType<commander.Command>(program.helpOption('-h,--help', 'custom description', { helpGroup: 'Help Group:' }));
 expectType<commander.Command>(program.helpOption(undefined, 'custom description'));
 expectType<commander.Command>(program.helpOption(false));
 
@@ -403,6 +410,9 @@ const baseOption = new commander.Option('-f,--foo', 'foo description');
 // default
 expectType<commander.Option>(baseOption.default(3));
 expectType<commander.Option>(baseOption.default(60, 'one minute'));
+
+// helpGroup
+expectType<commander.Option>(baseOption.helpGroup('Example Group:'));
 
 // preset
 expectType<commander.Option>(baseOption.preset(123));

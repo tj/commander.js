@@ -106,6 +106,11 @@ export class Option {
   default(value: unknown, description?: string): this;
 
   /**
+   * Set the help group of the option. Used as the title in the help. e.g. 'Options:'
+   */
+  helpGroup(title: string): this;
+
+  /**
    * Preset to use when option used without option-argument, especially optional but also boolean and negated.
    * The custom processing (parseArg) is called.
    *
@@ -293,7 +298,7 @@ export class Command {
    *
    * You can optionally supply the  flags and description to override the defaults.
    */
-  version(str: string, flags?: string, description?: string): this;
+  version(str: string, flags?: string, description?: string, versionOpts?: { helpGroup?: string }): this;
 
   /**
    * Define a command, implemented using an action handler.
@@ -411,7 +416,7 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
-  addHelpCommand(enableOrNameAndArgs?: string | boolean, description?: string): this;
+  addHelpCommand(enableOrNameAndArgs?: string | boolean, description?: string, helpOpts?: { helpGroup?: string }): this;
 
   /**
    * Add hook for life cycle event.
@@ -789,6 +794,15 @@ export class Command {
   name(): string;
 
   /**
+   * Set the help group of the command. Used as the title in the help. e.g. 'Commands:'
+   */
+  helpGroup(str: string): this;
+  /**
+   * Get the help group of the command.
+   */
+  helpGroup(): string;
+
+  /**
    * Set the name of the command from script filename, such as process.argv[1],
    * or require.main.filename, or __filename.
    *
@@ -841,7 +855,7 @@ export class Command {
    * flags and help description for your command. Pass in false
    * to disable the built-in help option.
    */
-  helpOption(flags?: string | boolean, description?: string): this;
+  helpOption(flags?: string | boolean, description?: string, helpOpts?: { helpGroup?: string }): this;
 
   /**
    * Output help information and exit.
@@ -872,6 +886,7 @@ export interface CommandOptions {
   isDefault?: boolean;
   /** @deprecated since v7, replaced by hidden */
   noHelp?: boolean;
+  helpGroup?: string;
 }
 export interface ExecutableCommandOptions extends CommandOptions {
   executableFile?: string;
