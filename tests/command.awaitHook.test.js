@@ -1,3 +1,10 @@
+/* eslint 'jest/expect-expect': [
+  'warn',
+  {
+    assertFunctionNames: ['expect', 'testWithArguments', 'testWithOptions']
+  }
+] */
+
 const commander = require('../');
 
 const makeThenable = (function() {
@@ -39,7 +46,7 @@ describe('awaitHook with arguments', () => {
     expect(actionValues).toEqual(resolvedValues);
   }
 
-  test('when awaitHook and arguments with custom processing then .processedArgs and actioon arguments resolved from callback', async() => {
+  test('when awaitHook and arguments with custom processing then .processedArgs and action arguments resolved from callback', async() => {
     const args = ['1', '2'];
     const resolvedValues = [3, 4];
     const awaited = [
@@ -58,7 +65,7 @@ describe('awaitHook with arguments', () => {
     await testWithArguments(program, args, resolvedValues, awaited);
   });
 
-  test('when awaitHook and arguments not specified with default values then .processedArgs and actioon arguments resolved from default values', async() => {
+  test('when awaitHook and arguments not specified with default values then .processedArgs and action arguments resolved from default values', async() => {
     const args = [];
     const resolvedValues = [1, 2];
     const awaited = [
@@ -74,7 +81,7 @@ describe('awaitHook with arguments', () => {
     await testWithArguments(program, args, resolvedValues, awaited);
   });
 
-  test('when awaitHook and variadic argument with chained asynchronous custom processing then .processedArgs and actioon arguments resolved from chain', async() => {
+  test('when awaitHook and variadic argument with chained asynchronous custom processing then .processedArgs and action arguments resolved from chain', async() => {
     const args = ['1', '2'];
     const resolvedValues = ['12'];
     const coercion = (value, previousValue) => {
@@ -227,5 +234,37 @@ describe('awaitHook with options', () => {
 
     await testWithOptions(program, args, resolvedValues, awaited);
     expect(program.getOptionValueSource('a')).toEqual('cli');
+  });
+
+  test('when awaitHook with subcommand and options with custom processing then global .opts() resolved from callback before local option-argument parser is called', async() => {
+    const arr = [];
+
+    const coercion = (value) => {
+      return new Promise((resolve) => {
+        setImmediate(() => {
+          arr.push(value);
+          resolve(value);
+        });
+      });
+    };
+    const mockCoercion = jest.fn().mockImplementation(coercion);
+
+    const syncCoercion = (value) => {
+      arr.push(value);
+      return value;
+    };
+    const mockSyncCoercion = jest.fn().mockImplementation(syncCoercion);
+
+    const program = new commander.Command();
+    program
+      .option('-a <arg>', 'desc', mockCoercion)
+      .awaitHook()
+      .command('subcommand')
+      .option('-b <arg>', 'desc', mockSyncCoercion)
+      .action(() => {});
+
+    const args = ['-a', '1', 'subcommand', '-b', '2'];
+    await program.parseAsync(args, { from: 'user' });
+    expect(arr).toEqual(['1', '2']);
   });
 });
