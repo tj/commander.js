@@ -83,23 +83,33 @@ expectType<never>(program.error('Goodbye', { exitCode: 2 }));
 expectType<never>(program.error('Goodbye', { code: 'my.error', exitCode: 2 }));
 
 // hook
-expectType<commander.Command>(program.hook('preAction', () => {}));
-expectType<commander.Command>(program.hook('postAction', () => {}));
-expectType<commander.Command>(program.hook('preAction', async() => {}));
-expectType<commander.Command>(program.hook('preAction', (thisCommand, actionCommand) => {
-  // implicit parameter types
-  expectType<commander.Command>(thisCommand);
-  expectType<commander.Command>(actionCommand);
-}));
 expectType<commander.Command>(program.hook('preSubcommand', () => {}));
 expectType<commander.Command>(program.hook('preSubcommand', (thisCommand, subcommand) => {
   // implicit parameter types
   expectType<commander.Command>(thisCommand);
   expectType<commander.Command>(subcommand);
 }));
+expectType<commander.Command>(program.hook('postArguments', () => {}));
+expectType<commander.Command>(program.hook('postArguments', async() => {}));
+expectType<commander.Command>(program.hook('postArguments', (thisCommand, leafCommand) => {
+  // implicit parameter types
+  expectType<commander.Command>(thisCommand);
+  expectType<commander.Command>(leafCommand);
+}));
+expectType<commander.Command>(program.hook('preAction', () => {}));
+expectType<commander.Command>(program.hook('preAction', async() => {}));
+expectType<commander.Command>(program.hook('preAction', (thisCommand, actionCommand) => {
+  // implicit parameter types
+  expectType<commander.Command>(thisCommand);
+  expectType<commander.Command>(actionCommand);
+}));
+expectType<commander.Command>(program.hook('postAction', () => {}));
 
 // awaitHook
 expectType<commander.Command>(program.awaitHook());
+expectType<commander.Command>(program.awaitHook(true));
+expectType<commander.Command>(program.awaitHook(false));
+expectType<commander.Command>(program.awaitHook(undefined));
 
 // action
 expectType<commander.Command>(program.action(() => {}));
@@ -421,6 +431,11 @@ expectType<string>(baseOption.fullDescription());
 expectType<commander.Option>(baseOption.argParser((value: string) => parseInt(value)));
 expectType<commander.Option>(baseOption.argParser((value: string, previous: string[]) => { return previous.concat(value); }));
 
+// chainArgParserCalls
+expectType<commander.Option>(baseOption.chainArgParserCalls());
+expectType<commander.Option>(baseOption.chainArgParserCalls(true));
+expectType<commander.Option>(baseOption.chainArgParserCalls(false));
+
 // makeOptionMandatory
 expectType<commander.Option>(baseOption.makeOptionMandatory());
 expectType<commander.Option>(baseOption.makeOptionMandatory(true));
@@ -468,6 +483,11 @@ expectType<commander.Argument>(baseArgument.default(60, 'one minute'));
 // argParser
 expectType<commander.Argument>(baseArgument.argParser((value: string) => parseInt(value)));
 expectType<commander.Argument>(baseArgument.argParser((value: string, previous: string[]) => { return previous.concat(value); }));
+
+// chainArgParserCalls
+expectType<commander.Argument>(baseArgument.chainArgParserCalls());
+expectType<commander.Argument>(baseArgument.chainArgParserCalls(true));
+expectType<commander.Argument>(baseArgument.chainArgParserCalls(false));
 
 // choices
 expectType<commander.Argument>(baseArgument.choices(['a', 'b']));

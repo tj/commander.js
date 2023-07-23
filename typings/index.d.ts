@@ -68,7 +68,7 @@ export class Argument {
   /**
    * When set to true, next call to the function provided via .argParser() will be chained to its return value if it is thenable.
    */
-  chainArgParserCalls(chained: boolean): this;
+  chainArgParserCalls(chained?: boolean): this;
 
   /**
    * Only allow argument value to be one of choices.
@@ -167,7 +167,7 @@ export class Option {
   /**
    * When set to true, next call to the function provided via .argParser() will be chained to its return value if it is thenable.
    */
-  chainArgParserCalls(chained: boolean): this;
+  chainArgParserCalls(chained?: boolean): this;
 
   /**
    * Whether the option is mandatory and must have a value after parsing.
