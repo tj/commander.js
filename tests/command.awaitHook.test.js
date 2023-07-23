@@ -32,7 +32,6 @@ describe('awaitHook with arguments', () => {
   async function testWithArguments(program, args, resolvedValues, awaited) {
     let actionValues;
     program
-      .awaitHook()
       .action((...args) => {
         actionValues = args.slice(0, resolvedValues.length);
       });
@@ -108,7 +107,6 @@ describe('awaitHook with arguments', () => {
 describe('awaitHook with options', () => {
   async function testWithOptions(program, args, resolvedValues, awaited) {
     program
-      .awaitHook()
       .action(() => {});
 
     const result = program.parseAsync(args, { from: 'user' });
@@ -258,7 +256,6 @@ describe('awaitHook with options', () => {
     const program = new commander.Command();
     program
       .option('-a <arg>', 'desc', mockCoercion)
-      .awaitHook()
       .command('subcommand')
       .option('-b <arg>', 'desc', mockSyncCoercion)
       .action(() => {});

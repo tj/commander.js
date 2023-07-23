@@ -281,7 +281,7 @@ export interface OutputConfiguration {
 }
 
 export type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
-export type HookEvent = 'preSubcommand' | 'preAction' | 'postAction';
+export type HookEvent = 'preSubcommand' | 'postArguments' | 'preAction' | 'postAction';
 export type OptionValueSource = 'default' | 'config' | 'env' | 'cli' | 'implied';
 
 export type OptionValues = Record<string, any>;
@@ -429,10 +429,19 @@ export class Command {
   hook(event: HookEvent, listener: (thisCommand: Command, actionCommand: Command) => void | Promise<void>): this;
 
   /**
-   * Add hook to await argument and option values before calling action handlers for this command and its nested subcommands.
+   * Add hook to await argument and option values.
    * Useful for asynchronous custom processing (parseArg) of arguments and option-arguments.
+   *
+   * Hook behaviour depends on the value of `enabled`:
+   * - If the value is `false`, do not await anything.
+   * - If the value is `true`, await for this command before dispatching subcommand; and for action command before calling action handlers if the "should await" condition applies (see below).
+   * - If the value is `undefined`, await for this command before dispatching subcommand if the "should await" condition applies (see below); and await for action command in the same manner as if the value were `true`, but only if this command is the top level command (i.e. has no parent).
+   *
+   * The "should await" condition for a command is as follows:
+   * - either the method was called with an `enabled` value of `true` on the nearest command ancestor for which the method was called with an `enabled` value other than `undefined`;
+   * - or there is no such ancestor and `parseAsync()` was called on the top-level command.
    */
-  awaitHook(): this;
+  awaitHook(enabled?: boolean | undefined): this;
 
   /**
    * Register callback to use as replacement for calling process.exit.
