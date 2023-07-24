@@ -243,7 +243,6 @@ describe('action hooks async', () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .awaitHook(false)
       .hook('postAction', async() => {
         await 0;
         calls.push('after');
