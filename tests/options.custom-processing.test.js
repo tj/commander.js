@@ -139,3 +139,49 @@ test('when commaSeparatedList x,y,z then value is [x, y, z]', () => {
   program.parse(['node', 'test', '--list', 'x,y,z']);
   expect(program.opts().list).toEqual(['x', 'y', 'z']);
 });
+
+test('when custom non-variadic repeated with .chainArgParserCalls(true) then parsed to chain', async() => {
+  const args = ['-a', '1', '-a', '2'];
+  const resolvedValue = '12';
+  const coercion = async(value, previousValue) => (
+    previousValue === undefined ? value : previousValue + value
+  );
+  const awaited = coercion(args[1], undefined);
+  const mockCoercion = jest.fn().mockImplementation(coercion);
+
+  const option = new commander.Option('-a <arg...>', 'desc')
+    .argParser(mockCoercion)
+    .chainArgParserCalls(true);
+
+  const program = new commander.Command();
+  program
+    .addOption(option)
+    .action(() => {});
+
+  program.parse(args, { from: 'user' });
+  expect(program.opts()).toEqual({ a: awaited });
+  await expect(program.opts().a).resolves.toEqual(resolvedValue);
+});
+
+test('when custom variadic with .chainArgParserCalls(true) then parsed to chain', async() => {
+  const args = ['-a', '1', '2'];
+  const resolvedValue = '12';
+  const coercion = async(value, previousValue) => (
+    previousValue === undefined ? value : previousValue + value
+  );
+  const awaited = coercion(args[1], undefined);
+  const mockCoercion = jest.fn().mockImplementation(coercion);
+
+  const option = new commander.Option('-a <arg...>', 'desc')
+    .argParser(mockCoercion)
+    .chainArgParserCalls(true);
+
+  const program = new commander.Command();
+  program
+    .addOption(option)
+    .action(() => {});
+
+  program.parse(args, { from: 'user' });
+  expect(program.opts()).toEqual({ a: awaited });
+  await expect(program.opts().a).resolves.toEqual(resolvedValue);
+});

@@ -418,6 +418,12 @@ expectType<string>(baseOption.fullDescription());
 expectType<commander.Option>(baseOption.argParser((value: string) => parseInt(value)));
 expectType<commander.Option>(baseOption.argParser((value: string, previous: string[]) => { return previous.concat(value); }));
 
+// chainArgParserCalls
+expectType<commander.Option>(baseOption.chainArgParserCalls());
+expectType<commander.Option>(baseOption.chainArgParserCalls(true));
+expectType<commander.Option>(baseOption.chainArgParserCalls(false));
+expectType<commander.Option>(baseOption.chainArgParserCalls(undefined));
+
 // makeOptionMandatory
 expectType<commander.Option>(baseOption.makeOptionMandatory());
 expectType<commander.Option>(baseOption.makeOptionMandatory(true));
@@ -465,6 +471,12 @@ expectType<commander.Argument>(baseArgument.default(60, 'one minute'));
 // argParser
 expectType<commander.Argument>(baseArgument.argParser((value: string) => parseInt(value)));
 expectType<commander.Argument>(baseArgument.argParser((value: string, previous: string[]) => { return previous.concat(value); }));
+
+// chainArgParserCalls
+expectType<commander.Argument>(baseArgument.chainArgParserCalls());
+expectType<commander.Argument>(baseArgument.chainArgParserCalls(true));
+expectType<commander.Argument>(baseArgument.chainArgParserCalls(false));
+expectType<commander.Argument>(baseArgument.chainArgParserCalls(undefined));
 
 // choices
 expectType<commander.Argument>(baseArgument.choices(['a', 'b']));
