@@ -258,7 +258,6 @@ describe('action hooks async', () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .awaitHook(false)
       .hook('preAction', () => calls.push('before'))
       .hook('postAction', () => calls.push('after'))
       .action(async() => {
@@ -291,7 +290,6 @@ describe('action hooks async', () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .awaitHook(false)
       .hook('preAction', () => calls.push('1'))
       .hook('preAction', async() => {
         await 0;
