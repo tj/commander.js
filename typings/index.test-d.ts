@@ -214,6 +214,12 @@ expectType<Promise<commander.Command>>(program.parseAsync(['node', 'script.js'],
 expectType<Promise<commander.Command>>(program.parseAsync(['--option'], { from: 'user' }));
 expectType<Promise<commander.Command>>(program.parseAsync(['node', 'script.js'] as const));
 
+// await
+expectType<commander.Command>(program.await());
+expectType<commander.Command>(program.await(true));
+expectType<commander.Command>(program.await(false));
+expectType<commander.Command>(program.await(undefined));
+
 // parseOptions (and ParseOptionsResult)
 expectType<{ operands: string[]; unknown: string[] }>(program.parseOptions(['node', 'script.js', 'hello']));
 

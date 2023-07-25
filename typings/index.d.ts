@@ -705,6 +705,13 @@ export class Command {
   parseAsync(argv?: readonly string[], options?: ParseOptions): Promise<this>;
 
   /**
+   * When set to `true`, thenable option and argument values will be awaited right after they are parsed and processed.
+   * When set to `undefined` (the default), inherit the behaviour from ancestor commands, or only await when `.parseAsync()` has been called.
+   * Useful for asynchronous custom processing (`parseArg`) of arguments and option-arguments.
+   */
+  await(enabled?: boolean | undefined): this;
+
+  /**
    * Parse options from `argv` removing known options,
    * and return argv split into operands and unknown arguments.
    *

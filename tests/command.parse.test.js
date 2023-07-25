@@ -87,6 +87,101 @@ describe('return type', () => {
     const result = await program.parseAsync(['node', 'test']);
     expect(result).toBe(program);
   });
+
+  const makeMockCoercion = (errors, promises, condition) => (
+    jest.fn().mockImplementation(
+      (value) => {
+        if (condition?.()) {
+          return value;
+        }
+
+        const error = new Error();
+        errors.push(error);
+        const promise = Promise.reject(error);
+        promises.push(promise);
+        return promise;
+      }
+    )
+  );
+
+  test('when await .parseAsync and asynchronous custom processing for arguments fails then rejects', async() => {
+    const promises = [];
+    const errors = [];
+    const mockCoercion = makeMockCoercion(errors, promises);
+
+    const program = new commander.Command();
+    program
+      .argument('[arg]', 'desc', mockCoercion)
+      .argument('[arg]', 'desc', mockCoercion)
+      .action(() => { });
+
+    const result = program.parseAsync(['1', '2'], { from: 'user' });
+
+    let caught;
+    try {
+      await result;
+    } catch (value) {
+      caught = value;
+    }
+
+    expect(errors).toContain(caught);
+    expect(mockCoercion).toHaveBeenCalledTimes(2);
+  });
+
+  test('when await .parseAsync and asynchronous custom processing for options fails then rejects', async() => {
+    const promises = [];
+    const errors = [];
+    const mockCoercion = makeMockCoercion(errors, promises);
+
+    const program = new commander.Command();
+    program
+      .option('-a [arg]', 'desc', mockCoercion)
+      .option('-b [arg]', 'desc', mockCoercion)
+      .action(() => { });
+
+    const result = program.parseAsync(['-a', '1', '-b', '2'], { from: 'user' });
+
+    let caught;
+    try {
+      await result;
+    } catch (value) {
+      caught = value;
+    }
+
+    expect(errors).toContain(caught);
+    expect(mockCoercion).toHaveBeenCalledTimes(2);
+  });
+
+  test('when await .parseAsync and not chained asynchronous custom processing fails for overwritten non-variadic option then rejects', async() => {
+    const promises = [];
+    const errors = [];
+    const mockCoercion = makeMockCoercion(
+      errors, promises, () => promises.length
+    );
+
+    const option = new commander.Option('-a [arg]', 'desc')
+      .argParser(mockCoercion)
+      .chainArgParserCalls(false);
+
+    const program = new commander.Command();
+    program
+      .addOption(option)
+      .action(() => { });
+
+    const result = program.parseAsync(
+      ['-a', '1', '-a', '2', '-a', '3'], { from: 'user' }
+    );
+
+    let caught;
+    try {
+      await result;
+    } catch (value) {
+      caught = value;
+    }
+
+    expect(errors[0]).toBe(caught);
+    expect(mockCoercion).toHaveBeenCalledTimes(3);
+  });
 });
 
 // Easy mistake to make when writing unit tests
