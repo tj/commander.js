@@ -66,8 +66,8 @@ export class Argument {
   argParser<T>(fn: (value: string, previous: T) => T): this;
 
   /**
-   * When set to true, next call to the function provided via .argParser() will be chained to its return value if it is thenable.
-   * When set to undefined (the default), only chain when .parseAsync() has been called.
+   * When set to `true`, next call to the function provided via `.argParser()` will be chained to its return value if it is thenable.
+   * When set to `undefined` (the default), only chain when `.parseAsync()` has been called.
    */
   chainArgParserCalls(chained?: boolean | undefined): this;
 
@@ -166,8 +166,8 @@ export class Option {
   argParser<T>(fn: (value: string, previous: T) => T): this;
 
   /**
-   * When set to true, next call to the function provided via .argParser() will be chained to its return value if it is thenable.
-   * When set to undefined (the default), only chain when .parseAsync() has been called.
+   * When set to `true`, next call to the function provided via `.argParser()` will be chained to its return value if it is thenable.
+   * When set to `undefined` (the default), only chain when `.parseAsync()` has been called.
    */
   chainArgParserCalls(chained?: boolean | undefined): this;
 
