@@ -206,7 +206,7 @@ test('when custom processing for argument throws plain error then not CommanderE
   expect(caughtErr).not.toBeInstanceOf(commander.CommanderError);
 });
 
-test('when custom with .chainArgParserCalls(true) then parsed to chain', async() => {
+test('when custom variadic with .chainArgParserCalls(true) then parsed to chain', async() => {
   const args = ['1', '2'];
   const resolvedValue = '12';
   const coercion = async(value, previousValue) => (
