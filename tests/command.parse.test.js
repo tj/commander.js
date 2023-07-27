@@ -95,7 +95,7 @@ describe('return type', () => {
           return value;
         }
 
-        const error = new Error();
+        const error = {}; // not Error so that unhandled promise rejections are properly reported
         errors.push(error);
         const promise = Promise.reject(error);
         promises.push(promise);
@@ -179,7 +179,7 @@ describe('return type', () => {
       caught = value;
     }
 
-    expect(errors[0]).toBe(caught);
+    expect(caught).toBe(errors[0]);
     expect(mockCoercion).toHaveBeenCalledTimes(3);
   });
 });
