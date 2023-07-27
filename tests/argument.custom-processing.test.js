@@ -209,17 +209,18 @@ test('when custom processing for argument throws plain error then not CommanderE
 test('when async custom variadic then parsed to chain', async() => {
   const args = ['1', '2'];
   const resolvedValue = '12';
-  const mockCoercion = jest.fn().mockImplementation(
-    async(value, previousValue) => (
-      previousValue === undefined ? value : previousValue + value
-    )
+  const coercion = async(value, previousValue) => (
+    previousValue === undefined ? value : previousValue + value
   );
+  const awaited = coercion(args[0], undefined);
+  const mockCoercion = jest.fn().mockImplementation(coercion);
 
   const program = new commander.Command();
   program
     .argument('<arg...>', 'desc', mockCoercion)
     .action(() => {});
 
-  await program.parseAsync(args, { from: 'user' });
-  expect(program.processedArgs[0]).toEqual(resolvedValue);
+  program.parseAsync(args, { from: 'user' });
+  expect(program.processedArgs[0]).toEqual(awaited);
+  await expect(program.processedArgs[0]).resolves.toEqual(resolvedValue);
 });

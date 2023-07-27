@@ -214,12 +214,6 @@ expectType<Promise<commander.Command>>(program.parseAsync(['node', 'script.js'],
 expectType<Promise<commander.Command>>(program.parseAsync(['--option'], { from: 'user' }));
 expectType<Promise<commander.Command>>(program.parseAsync(['node', 'script.js'] as const));
 
-// await
-expectType<commander.Command>(program.await());
-expectType<commander.Command>(program.await(true));
-expectType<commander.Command>(program.await(false));
-expectType<commander.Command>(program.await(undefined));
-
 // parseOptions (and ParseOptionsResult)
 expectType<{ operands: string[]; unknown: string[] }>(program.parseOptions(['node', 'script.js', 'hello']));
 
@@ -428,7 +422,6 @@ expectType<commander.Option>(baseOption.argParser((value: string, previous: stri
 expectType<commander.Option>(baseOption.chainArgParserCalls());
 expectType<commander.Option>(baseOption.chainArgParserCalls(true));
 expectType<commander.Option>(baseOption.chainArgParserCalls(false));
-expectType<commander.Option>(baseOption.chainArgParserCalls(undefined));
 
 // makeOptionMandatory
 expectType<commander.Option>(baseOption.makeOptionMandatory());
@@ -482,7 +475,6 @@ expectType<commander.Argument>(baseArgument.argParser((value: string, previous: 
 expectType<commander.Argument>(baseArgument.chainArgParserCalls());
 expectType<commander.Argument>(baseArgument.chainArgParserCalls(true));
 expectType<commander.Argument>(baseArgument.chainArgParserCalls(false));
-expectType<commander.Argument>(baseArgument.chainArgParserCalls(undefined));
 
 // choices
 expectType<commander.Argument>(baseArgument.choices(['a', 'b']));

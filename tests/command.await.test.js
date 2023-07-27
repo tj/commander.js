@@ -80,7 +80,7 @@ describe('await arguments', () => {
     await testWithArguments(program, args, resolvedValues, awaited);
   });
 
-  test('when variadic argument with chained asynchronous custom processing then .processedArgs and action arguments resolved from chain', async() => {
+  test('when variadic argument with asynchronous custom processing then .processedArgs and action arguments resolved from chain', async() => {
     const args = ['1', '2'];
     const resolvedValues = ['12'];
     const coercion = (value, previousValue) => {
@@ -92,13 +92,9 @@ describe('await arguments', () => {
     const awaited = [(await chainedAwaited(coercion, args)).thenable];
     const mockCoercion = jest.fn().mockImplementation(coercion);
 
-    const argument = new commander.Argument('<arg...>', 'desc')
-      .argParser(mockCoercion)
-      .chainArgParserCalls();
-
     const program = new commander.Command();
     program
-      .addArgument(argument);
+      .argument('<arg...>', 'desc', mockCoercion);
 
     await testWithArguments(program, args, resolvedValues, awaited);
   });
@@ -178,7 +174,7 @@ describe('await options', () => {
     expect(program.getOptionValueSource('b')).toEqual('implied');
   });
 
-  test('when non-variadic repeated option with chained asynchronous custom processing then .opts() resolved from chain', async() => {
+  test('when non-variadic repeated option with asynchronous custom processing then .opts() resolved from chain', async() => {
     const args = ['-a', '1', '-a', '2'];
     const resolvedValues = { a: '12' };
     const coercion = (value, previousValue) => {
@@ -194,19 +190,15 @@ describe('await options', () => {
     };
     const mockCoercion = jest.fn().mockImplementation(coercion);
 
-    const option = new commander.Option('-a [arg]', 'desc')
-      .argParser(mockCoercion)
-      .chainArgParserCalls();
-
     const program = new commander.Command();
     program
-      .addOption(option);
+      .option('-a [arg]', 'desc', mockCoercion);
 
     await testWithOptions(program, args, resolvedValues, awaited);
     expect(program.getOptionValueSource('a')).toEqual('cli');
   });
 
-  test('when variadic option with chained asynchronous custom processing then .opts() resolved from chain', async() => {
+  test('when variadic option with asynchronous custom processing then .opts() resolved from chain', async() => {
     const args = ['-a', '1', '2'];
     const resolvedValues = { a: '12' };
     const coercion = (value, previousValue) => {
@@ -222,13 +214,9 @@ describe('await options', () => {
     };
     const mockCoercion = jest.fn().mockImplementation(coercion);
 
-    const option = new commander.Option('-a <arg...>', 'desc')
-      .argParser(mockCoercion)
-      .chainArgParserCalls();
-
     const program = new commander.Command();
     program
-      .addOption(option);
+      .option('-a <arg...>', 'desc', mockCoercion);
 
     await testWithOptions(program, args, resolvedValues, awaited);
     expect(program.getOptionValueSource('a')).toEqual('cli');

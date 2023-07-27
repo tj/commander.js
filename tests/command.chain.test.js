@@ -166,12 +166,6 @@ describe('Command methods that should return this for chaining', () => {
     expect(result).toBe(program);
   });
 
-  test('when call .await() then returns this', () => {
-    const program = new Command();
-    const result = program.await();
-    expect(result).toBe(program);
-  });
-
   test('when call .hook() then returns this', () => {
     const program = new Command();
     const result = program.hook('preAction', () => {});

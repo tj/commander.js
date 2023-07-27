@@ -66,10 +66,9 @@ export class Argument {
   argParser<T>(fn: (value: string, previous: T) => T): this;
 
   /**
-   * When set to `true`, next call to the function provided via `.argParser()` will be chained to its return value if it is thenable.
-   * When set to `undefined` (the default), only chain when `.parseAsync()` has been called.
+   * When set to `true` (the default), next call to the function provided via `.argParser()` will be chained to its return value if it is thenable.
    */
-  chainArgParserCalls(chained?: boolean | undefined): this;
+  chainArgParserCalls(chained?: boolean): this;
 
   /**
    * Only allow argument value to be one of choices.
@@ -166,10 +165,9 @@ export class Option {
   argParser<T>(fn: (value: string, previous: T) => T): this;
 
   /**
-   * When set to `true`, next call to the function provided via `.argParser()` will be chained to its return value if it is thenable.
-   * When set to `undefined` (the default), only chain when `.parseAsync()` has been called.
+   * When set to `true` (the default), next call to the function provided via `.argParser()` will be chained to its return value if it is thenable.
    */
-  chainArgParserCalls(chained?: boolean | undefined): this;
+  chainArgParserCalls(chained?: boolean): this;
 
   /**
    * Whether the option is mandatory and must have a value after parsing.
@@ -703,13 +701,6 @@ export class Command {
    * @returns Promise
    */
   parseAsync(argv?: readonly string[], options?: ParseOptions): Promise<this>;
-
-  /**
-   * When set to `true`, thenable option and argument values will be awaited right after they are parsed and processed.
-   * When set to `undefined` (the default), inherit the behaviour from ancestor commands, or only await when `.parseAsync()` has been called.
-   * Useful for asynchronous custom processing (`parseArg`) of arguments and option-arguments.
-   */
-  await(enabled?: boolean | undefined): this;
 
   /**
    * Parse options from `argv` removing known options,
