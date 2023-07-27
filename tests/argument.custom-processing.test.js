@@ -206,30 +206,20 @@ test('when custom processing for argument throws plain error then not CommanderE
   expect(caughtErr).not.toBeInstanceOf(commander.CommanderError);
 });
 
-test('when custom variadic with .chainArgParserCalls(true) then parsed to chain', async() => {
+test('when async custom variadic then parsed to chain', async() => {
   const args = ['1', '2'];
   const resolvedValue = '12';
-  const coercion = async(value, previousValue) => (
-    previousValue === undefined ? value : previousValue + value
+  const mockCoercion = jest.fn().mockImplementation(
+    async(value, previousValue) => (
+      previousValue === undefined ? value : previousValue + value
+    )
   );
-  const awaited = coercion(args[0], undefined);
-  const mockCoercion = jest.fn().mockImplementation(coercion);
-
-  const argument = new commander.Argument('<arg...>', 'desc')
-    .argParser(mockCoercion)
-    .chainArgParserCalls(true);
-
-  let actionValue;
 
   const program = new commander.Command();
   program
-    .addArgument(argument)
-    .action((value) => {
-      actionValue = value;
-    });
+    .argument('<arg...>', 'desc', mockCoercion)
+    .action(() => {});
 
-  program.parse(args, { from: 'user' });
-  expect(program.processedArgs[0]).toEqual(awaited);
-  expect(actionValue).toEqual(awaited);
-  await expect(actionValue).resolves.toEqual(resolvedValue);
+  await program.parseAsync(args, { from: 'user' });
+  expect(program.processedArgs[0]).toEqual(resolvedValue);
 });
