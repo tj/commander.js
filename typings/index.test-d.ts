@@ -170,7 +170,6 @@ expectType<commander.Command>(program.setOptionValue('example', 'value'));
 expectType<commander.Command>(program.setOptionValue('example', true));
 
 // setOptionValueWithSource
-expectType<commander.Command>(program.setOptionValueWithSource('example', []));
 expectType<commander.Command>(program.setOptionValueWithSource('example', [], 'config'));
 
 // getOptionValueSource

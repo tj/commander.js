@@ -595,7 +595,7 @@ export class Command {
   /**
    * Store option value and where the value came from.
    */
-  setOptionValueWithSource(key: string, value: unknown, source?: 'config'): this;
+  setOptionValueWithSource(key: string, value: unknown, source: 'config'): this;
 
   /**
    * Get source of option value.
