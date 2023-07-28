@@ -5,9 +5,10 @@ The processing starts with an array of args. Each command processes and removes 
 Starting with top-level command (program):
 
 * process options for this command (includes calling or chaining provided argParsers[^1])
-  * recognised options from args (and remove them)
+  * recognised options from args
   * options based on environment variables
 * set implied option values (for this command)
+* remove recognised options from args
 * await thenable option values if parsing with `parseAsync()`
 * if the first arg is a subcommand
   * call or chain `preSubcommand` hooks[^1]
