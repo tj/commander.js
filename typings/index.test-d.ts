@@ -173,10 +173,10 @@ expectType<commander.Command>(program.setOptionValue('example', true));
 expectType<commander.Command>(program.setOptionValueWithSource('example', [], 'config'));
 
 // getOptionValueSource
-expectType<commander.OptionValueSource | undefined>(program.getOptionValueSource('example'));
+expectType<string | undefined>(program.getOptionValueSource('example'));
 
 // getOptionValueSourceWithGlobals
-expectType<commander.OptionValueSource | undefined>(program.getOptionValueSourceWithGlobals('example'));
+expectType<string | undefined>(program.getOptionValueSourceWithGlobals('example'));
 
 // combineFlagAndOptionalValue
 expectType<commander.Command>(program.combineFlagAndOptionalValue());
