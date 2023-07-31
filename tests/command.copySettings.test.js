@@ -18,6 +18,28 @@ test('when add subcommand with .command() then calls copyInheritedSettings from 
   expect(copySettingMock).toHaveBeenCalledWith(program);
 });
 
+test('when copyInheritedSettings on command with subcommand hierarchy then copies recursively', () => {
+  const source = new commander.Command();
+  const cmd = new commander.Command();
+
+  const descendants = Array.from({ length: 4 }, (_, i) => (
+    new commander.Command(String(i))
+  ));
+  const parents = [cmd, cmd, descendants[0], descendants[1]];
+  descendants.forEach((descendant, i) => {
+    descendant.copyInheritedSettings = jest.fn().mockImplementation(
+      descendant.copyInheritedSettings
+    );
+    parents[i].addCommand(descendant);
+  });
+
+  cmd.copyInheritedSettings(source);
+  descendants.forEach((descendant, i) => {
+    const copySettingMock = descendant.copyInheritedSettings;
+    expect(copySettingMock).toHaveBeenCalledWith(parents[i]);
+  });
+});
+
 describe('copyInheritedSettings property tests', () => {
   test('when copyInheritedSettings then copies outputConfiguration(config)', () => {
     const source = new commander.Command();
