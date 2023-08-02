@@ -84,3 +84,11 @@ test('when storeOptionsAsProperties() after adding option then throw', () => {
     program.storeOptionsAsProperties(false);
   }).toThrow();
 });
+
+test('when storeOptionsAsProperties() after setting option value then throw', () => {
+  const program = new commander.Command();
+  program.setOptionValue('foo', 'bar');
+  expect(() => {
+    program.storeOptionsAsProperties(false);
+  }).toThrow();
+});
