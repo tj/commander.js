@@ -44,10 +44,12 @@ describe('copyInheritedSettings property tests', () => {
 
     source.helpOption('-Z, --zz', 'ddd');
     cmd.copyInheritedSettings(source);
+    expect(cmd._hasHelpOption).toBeTruthy();
     expect(cmd._helpFlags).toBe('-Z, --zz');
     expect(cmd._helpDescription).toBe('ddd');
     expect(cmd._helpShortFlag).toBe('-Z');
     expect(cmd._helpLongFlag).toBe('--zz');
+    expect(cmd._helpOptionName).toBe('zz');
   });
 
   test('when copyInheritedSettings then copies addHelpCommand(name, description)', () => {
