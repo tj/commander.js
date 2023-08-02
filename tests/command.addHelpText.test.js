@@ -181,7 +181,7 @@ describe('context checks with full parse', () => {
   });
 
   test('when help requested then context.error is false', () => {
-    let context = {};
+    let context;
     const program = new commander.Command();
     program
       .exitOverride()
@@ -193,7 +193,7 @@ describe('context checks with full parse', () => {
   });
 
   test('when help for error then context.error is true', () => {
-    let context = {};
+    let context;
     const program = new commander.Command();
     program
       .exitOverride()
@@ -206,7 +206,7 @@ describe('context checks with full parse', () => {
   });
 
   test('when help on program then context.command is program', () => {
-    let context = {};
+    let context;
     const program = new commander.Command();
     program
       .exitOverride()
@@ -218,7 +218,7 @@ describe('context checks with full parse', () => {
   });
 
   test('when help on subcommand and "before" subcommand then context.command is subcommand', () => {
-    let context = {};
+    let context;
     const program = new commander.Command();
     program
       .exitOverride();
@@ -231,7 +231,7 @@ describe('context checks with full parse', () => {
   });
 
   test('when help on subcommand and "beforeAll" on program then context.command is subcommand', () => {
-    let context = {};
+    let context;
     const program = new commander.Command();
     program
       .exitOverride()
