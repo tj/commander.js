@@ -546,8 +546,6 @@ subcommand is specified ([example](./examples/defaultCommand.js)).
 
 You can add alternative names for a command with `.alias()`. ([example](./examples/alias.js))
 
-`.command()` automatically copies the inherited settings from the parent command to the newly created subcommand. This is only done during creation, any later setting changes to the parent are not inherited.
-
 For safety, `.addCommand()` does not automatically copy the inherited settings from the parent command. There is a helper routine `.copyInheritedSettings()` for copying the settings when they are wanted.
 
 ### Command-arguments
