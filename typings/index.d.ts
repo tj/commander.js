@@ -694,13 +694,15 @@ export class Command {
 
   /**
    * Parse options from `argv` removing known options,
-   * and return argv split into operands and unknown arguments.
+   * and return argv split into operands and unknown arguments,
+   * as well as a boolean indicating whether a help flag had been found before encountering a subcommand.
    *
-   *     argv => operands, unknown
-   *     --known kkk op => [op], []
-   *     op --known kkk => [op], []
-   *     sub --unknown uuu op => [sub], [--unknown uuu op]
-   *     sub -- --unknown uuu op => [sub --unknown uuu op], []
+   *     argv => operands, unknown, displayHelp
+   *     --known kkk op => [op], [], false
+   *     op --known kkk => [op], [], false
+   *     sub --unknown uuu op => [sub], [--unknown uuu op], false
+   *     sub -- --unknown uuu op => [sub --unknown uuu op], [], false
+   *     --help => [], [], true
    */
   parseOptions(argv: string[]): ParseOptionsResult;
 
@@ -880,6 +882,7 @@ export interface ExecutableCommandOptions extends CommandOptions {
 export interface ParseOptionsResult {
   operands: string[];
   unknown: string[];
+  displayHelp: boolean;
 }
 
 export function createCommand(name?: string): Command;
