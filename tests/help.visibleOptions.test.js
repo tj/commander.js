@@ -68,6 +68,14 @@ describe('implicit help', () => {
     expect(helper.visibleOptions(program)).toEqual([]);
   });
 
+  test('when only short flag and short flag obscured then implicit help hidden', () => {
+    const program = new commander.Command();
+    program.helpOption('-h');
+    program.addOption(new commander.Option('-h, --help').hideHelp());
+    const helper = new commander.Help();
+    expect(helper.visibleOptions(program)).toEqual([]);
+  });
+
   test('when only long flag and long flag obscured then implicit help hidden', () => {
     const program = new commander.Command();
     program.helpOption('--help');
