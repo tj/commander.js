@@ -362,7 +362,7 @@ describe('program with action handler and positionalOptions and subcommand', () 
 
 // ------------------------------------------------------------------------------
 
-describe('illegal passThroughOptions', () => {
+describe('broken passThrough', () => {
   test('when program not positional and turn on passThroughOptions in subcommand then error', () => {
     const program = new commander.Command();
     const sub = program.command('sub');
