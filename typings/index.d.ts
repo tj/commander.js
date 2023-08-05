@@ -281,6 +281,11 @@ export class Command {
   processedArgs: any[];
   readonly commands: readonly Command[];
   readonly options: readonly Option[];
+  parents: Command[];
+  /**
+   * Last added parent command,
+   * or parent command in last parse call.
+   */
   parent: Command | null;
 
   constructor(name?: string);
