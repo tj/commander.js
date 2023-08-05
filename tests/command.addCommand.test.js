@@ -30,6 +30,7 @@ test('when commands added using .addCommand and .command then internals similar'
   expect(cmd2.parent).toBe(program2);
 
   for (const key of Object.keys(cmd1)) {
+    if (key === '_implicitlyCreated') continue; // expected to differ
     switch (typeof cmd1[key]) {
       case 'string':
       case 'boolean':
