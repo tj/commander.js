@@ -981,8 +981,8 @@ program -b subcommand
 program subcommand -b
 ```
 
-By default options are recognised before and after command-arguments. To only process options that come
-before the command-arguments, use `.passThroughOptions()`. This lets you pass the  arguments and following options through to another program
+By default, options are recognised before and after command-arguments. To only process options that come
+before the command-arguments (and before any unknown options), use `.passThroughOptions()`. This lets you pass the arguments and following options through to another program
 without needing to use `--` to end the option processing.
 To use pass through options in a subcommand, the program needs to enable positional options.
 
