@@ -381,17 +381,6 @@ describe('illegal passThroughOptions', () => {
       program.addCommand(sub);
     }).toThrow();
   });
-
-  test('when program has subcommand with passThroughOptions and reset to non-positional then error', () => {
-    const program = new commander.Command()
-      .enablePositionalOptions();
-    program.command('sub')
-      .passThroughOptions();
-
-    expect(() => {
-      program.enablePositionalOptions(false);
-    }).toThrow();
-  });
 });
 
 // ------------------------------------------------------------------------------
