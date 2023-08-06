@@ -695,7 +695,7 @@ export class Command {
   /**
    * Parse options from `argv` removing known options,
    * and return argv split into operands and unknown arguments,
-   * as well as a boolean indicating whether a help flag had been found before encountering a subcommand (or before encountering either a subcommand or a command-argument when the default command is being invoked implicitly).
+   * as well as a boolean indicating whether a help flag had been found before entering a subcommand.
    *
    *     argv => operands, unknown, displayHelp
    *     --known kkk op => [op], [], false
@@ -703,6 +703,7 @@ export class Command {
    *     sub --unknown uuu op => [sub], [--unknown uuu op], false
    *     sub -- --unknown uuu op => [sub --unknown uuu op], [], false
    *     --help => [], [], true
+   *     sub --help => [], ['--help'], false
    */
   parseOptions(argv: string[]): ParseOptionsResult;
 
