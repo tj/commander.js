@@ -92,4 +92,12 @@ describe('allowUnknownOption', () => {
       program.parse(['node', 'test', 'sub', '-m']);
     }).not.toThrow();
   });
+
+  test('when specify unknown program option and allowUnknownOption then unknown option parsed as operand', () => {
+    const program = new commander.Command();
+    program
+      .allowUnknownOption();
+    const result = program.parseOptions(['-m']);
+    expect(result).toEqual({ operands: ['-m'], unknown: [] });
+  });
 });
