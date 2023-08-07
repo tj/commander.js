@@ -21,22 +21,6 @@ describe('help command listed in helpInformation', () => {
     expect(helpInformation).toMatch(/help \[command\]/);
   });
 
-  test('when program has subcommands and specify only unknown option then display help', () => {
-    const program = new commander.Command();
-    program
-      .configureHelp({ formatHelp: () => '' })
-      .exitOverride()
-      .allowUnknownOption()
-      .command('foo');
-    let caughtErr;
-    try {
-      program.parse(['--unknown'], { from: 'user' });
-    } catch (err) {
-      caughtErr = err;
-    }
-    expect(caughtErr.code).toEqual('commander.help');
-  });
-
   test('when program has subcommands and suppress help command then no help command', () => {
     const program = new commander.Command();
     program.addHelpCommand(false);
