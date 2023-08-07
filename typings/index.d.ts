@@ -608,6 +608,16 @@ export class Command {
   getOptionValueSourceWithGlobals(key: string): OptionValueSource | undefined;
 
   /**
+   * When set to `true`, handle options with optional option-arguments as prescribed by POSIX,
+   * i.e. only allow providing values for such option-arguments by combining them with a flag
+   * (e.g. `-cmozzarella`, `--cheese=mozzarella`).
+   *
+   * @returns `this` command for chaining
+   */
+
+  strictOptionalOptionArguments(strict?: boolean): this;
+
+  /**
    * Alter parsing of short flags with optional values.
    *
    * @example
