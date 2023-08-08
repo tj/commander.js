@@ -207,7 +207,7 @@ export class Help {
   /** Get the command summary to show in the list of subcommands. */
   subcommandDescription(cmd: Command): string;
   /** Get the option term to show in the list of options. */
-  optionTerm(option: Option): string;
+  optionTerm(option: Option, cmd?: Command): string;
   /** Get the option description to show in the list of options. */
   optionDescription(option: Option): string;
   /** Get the argument term to show in the list of arguments. */

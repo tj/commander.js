@@ -377,6 +377,7 @@ expectType<string>(helper.commandUsage(helperCommand));
 expectType<string>(helper.commandDescription(helperCommand));
 expectType<string>(helper.subcommandDescription(helperCommand));
 expectType<string>(helper.optionTerm(helperOption));
+expectType<string>(helper.optionTerm(helperOption, helperCommand));
 expectType<string>(helper.optionDescription(helperOption));
 expectType<string>(helper.argumentTerm(helperArgument));
 expectType<string>(helper.argumentDescription(helperArgument));
