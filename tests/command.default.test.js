@@ -3,7 +3,12 @@ const commander = require('../');
 const path = require('path');
 const util = require('util');
 
-const execFileAsync = util.promisify(childProcess.execFile);
+const execFileAsync = function(...args) {
+  if (args.length < 3) args.push({});
+  args[2].env ??= { ...process.env };
+  delete args[2].env.FORCE_COLOR;
+  return util.promisify(childProcess.execFile).apply(this, args);
+};
 
 describe('default executable command', () => {
   // Calling node explicitly so pm works without file suffix cross-platform.

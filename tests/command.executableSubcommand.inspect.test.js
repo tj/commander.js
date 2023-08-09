@@ -2,7 +2,12 @@ const childProcess = require('child_process');
 const path = require('path');
 const util = require('util');
 
-const execFileAsync = util.promisify(childProcess.execFile);
+const execFileAsync = function(...args) {
+  if (args.length < 3) args.push({});
+  args[2].env ??= { ...process.env };
+  delete args[2].env.FORCE_COLOR;
+  return util.promisify(childProcess.execFile).apply(this, args);
+};
 
 // Test the special handling for --inspect to increment fixed debug port numbers.
 // If we reuse port we can get conflicts because port not released fast enough.
