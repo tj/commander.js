@@ -15,6 +15,7 @@ They are currently still available for backwards compatibility, but should not b
   - [InvalidOptionArgumentError](#invalidoptionargumenterror)
   - [Short option flag longer than a single character](#short-option-flag-longer-than-a-single-character)
   - [Import from `commander/esm.mjs`](#import-from-commanderesmmjs)
+  - [Version string retrieval](#version-string-retrieval)
 
 ## RegExp .option() parameter
 
@@ -207,3 +208,17 @@ import { Command } from 'commander';
 ```
 
 README updated in Commander v9. Deprecated from Commander v9.
+
+## Version string retrieval
+
+The version string passed to `.version()` was stored internally. The string could be accessed two ways, although neither
+was ever described in the README.
+
+```js
+program.storeOptionsAsProperties();
+program.version('1.0.0');
+console.log(program.version());
+console.log(program.opts().version); // only when using legacy storeOptionAsProperties
+``
+
+Deprecated from Commander v11.
