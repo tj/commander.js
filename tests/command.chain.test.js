@@ -4,6 +4,12 @@ const { Command, Option, Argument } = require('../');
 // parse and parseAsync are tested in command.parse.test.js
 
 describe('Command methods that should return this for chaining', () => {
+  test('when call .suppressWarnings() then returns this', () => {
+    const program = new Command();
+    const result = program.suppressWarnings();
+    expect(result).toBe(program);
+  });
+
   test('when call .command() with description for stand-alone executable then returns this', () => {
     const program = new Command();
     const result = program.command('foo', 'foo description');

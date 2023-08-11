@@ -32,6 +32,10 @@ expectType<readonly commander.Command[]>(program.commands);
 expectType<readonly commander.Option[]>(program.options);
 expectType<commander.Command | null>(program.parent);
 
+// suppressWarnings
+expectType<commander.Command>(program.suppressWarnings());
+expectType<commander.Command>(program.suppressWarnings(false));
+
 // version
 expectType<commander.Command>(program.version('1.2.3'));
 expectType<commander.Command>(program.version('1.2.3', '-r,--revision'));

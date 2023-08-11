@@ -286,6 +286,15 @@ export class Command {
   constructor(name?: string);
 
   /**
+   * Suppress warnings about library usage patterns that are not always wrong
+   * but are often connected with a developer mistake,
+   * or a different pattern better suited for the use case scenario is offered.
+   *
+   * @return {Command} `this` command for chaining
+   */
+  suppressWarnings(suppress?: boolean): this;
+
+  /**
    * Set the program version to `str`.
    *
    * This method auto-registers the "-V, --version" flag
