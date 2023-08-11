@@ -81,7 +81,7 @@ test('when storeOptionsAsProperties() after adding option then throw', () => {
   const program = new commander.Command();
   program.option('--port <number>', 'port number', '80');
   expect(() => {
-    program.storeOptionsAsProperties(false);
+    program.storeOptionsAsProperties();
   }).toThrow();
 });
 
@@ -89,6 +89,6 @@ test('when storeOptionsAsProperties() after setting option value then throw', ()
   const program = new commander.Command();
   program.setOptionValue('foo', 'bar');
   expect(() => {
-    program.storeOptionsAsProperties(false);
+    program.storeOptionsAsProperties();
   }).toThrow();
 });
