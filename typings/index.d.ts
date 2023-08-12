@@ -293,7 +293,7 @@ export class Command {
    *
    * You can optionally supply the  flags and description to override the defaults.
    */
-  version(str?: string, flags?: string, description?: string): this;
+  version(str: string, flags?: string, description?: string): this;
 
   /**
    * Define a command, implemented using an action handler.
