@@ -131,3 +131,121 @@ describe('helpOption', () => {
     }).toThrow("error: unknown command 'UNKNOWN'");
   });
 });
+
+describe('obscured help flags', () => {
+  test('when obscured default help short flag parsed then outputHelp() not called', () => {
+    const program = new commander.Command();
+    program.outputHelp = jest.fn().mockImplementation(
+      program.outputHelp.bind(program)
+    );
+    program
+      .exitOverride()
+      .option('-h');
+    expect(() => {
+      program.parse(['-h'], { from: 'user' });
+    }).not.toThrow();
+    expect(program.outputHelp).not.toHaveBeenCalled();
+  });
+
+  test('when obscured default help long flag parsed then outputHelp() not called', () => {
+    const program = new commander.Command();
+    program.outputHelp = jest.fn().mockImplementation(
+      program.outputHelp.bind(program)
+    );
+    program
+      .exitOverride()
+      .option('--help');
+    expect(() => {
+      program.parse(['--help'], { from: 'user' });
+    }).not.toThrow();
+    expect(program.outputHelp).not.toHaveBeenCalled();
+  });
+
+  test('when both default help flags obscured and short flag parsed then outputHelp() not called', () => {
+    const program = new commander.Command();
+    program.outputHelp = jest.fn().mockImplementation(
+      program.outputHelp.bind(program)
+    );
+    program
+      .exitOverride()
+      .option('-h, --help');
+    expect(() => {
+      program.parse(['-h'], { from: 'user' });
+    }).not.toThrow();
+    expect(program.outputHelp).not.toHaveBeenCalled();
+  });
+
+  test('when both default help flags obscured and long flag parsed then outputHelp() not called', () => {
+    const program = new commander.Command();
+    program.outputHelp = jest.fn().mockImplementation(
+      program.outputHelp.bind(program)
+    );
+    program
+      .exitOverride()
+      .option('-h, --help');
+    expect(() => {
+      program.parse(['--help'], { from: 'user' });
+    }).not.toThrow();
+    expect(program.outputHelp).not.toHaveBeenCalled();
+  });
+
+  test('when obscured custom help short flag parsed then outputHelp() not called', () => {
+    const program = new commander.Command();
+    program.outputHelp = jest.fn().mockImplementation(
+      program.outputHelp.bind(program)
+    );
+    program
+      .exitOverride()
+      .helpOption('-c, --custom-help')
+      .option('-c');
+    expect(() => {
+      program.parse(['-c'], { from: 'user' });
+    }).not.toThrow();
+    expect(program.outputHelp).not.toHaveBeenCalled();
+  });
+
+  test('when obscured custom help long flag parsed then outputHelp() not called', () => {
+    const program = new commander.Command();
+    program.outputHelp = jest.fn().mockImplementation(
+      program.outputHelp.bind(program)
+    );
+    program
+      .exitOverride()
+      .helpOption('-c, --custom-help')
+      .option('--custom-help');
+    expect(() => {
+      program.parse(['--custom-help'], { from: 'user' });
+    }).not.toThrow();
+    expect(program.outputHelp).not.toHaveBeenCalled();
+  });
+
+  test('when both custom help flags obscured and short flag parsed then outputHelp() not called', () => {
+    const program = new commander.Command();
+    program.outputHelp = jest.fn().mockImplementation(
+      program.outputHelp.bind(program)
+    );
+    program
+      .exitOverride()
+      .helpOption('-c, --custom-help')
+      .option('-c, --custom-help');
+    expect(() => {
+      program.parse(['-c'], { from: 'user' });
+    }).not.toThrow();
+    expect(program.outputHelp).not.toHaveBeenCalled();
+  });
+
+  test('when both custom help flags obscured and long flag parsed then outputHelp() not called', () => {
+    const program = new commander.Command();
+    program.outputHelp = jest.fn().mockImplementation(
+      program.outputHelp.bind(program)
+    );
+    program
+      .exitOverride()
+      .helpOption('-c, --custom-help')
+      .option('-c, --custom-help');
+    expect(() => {
+      program.parse(['--custom-help'], { from: 'user' });
+    }).not.toThrow();
+    expect(program.outputHelp).not.toHaveBeenCalled();
+  });
+});
