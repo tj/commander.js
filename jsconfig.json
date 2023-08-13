@@ -1,5 +1,5 @@
 {
-  "extends": "./tsconfig",
+  "extends": "./tsconfig.base",
   "compilerOptions": {
     "allowJs": true,
     "checkJs": true,
