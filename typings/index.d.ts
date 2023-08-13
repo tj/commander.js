@@ -819,7 +819,7 @@ export class Command {
   /**
    * Get the executable search directory.
    */
-  executableDir(): string;
+  executableDir(): string | null;
 
   /**
    * Output help information for this command.
