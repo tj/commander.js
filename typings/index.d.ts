@@ -875,6 +875,7 @@ export interface CommandOptions {
 }
 export interface ExecutableCommandOptions extends CommandOptions {
   executableFile?: string;
+  helpFlags?: string;
 }
 
 export interface ParseOptionsResult {
