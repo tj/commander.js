@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig",
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "noImplicitAny": false,
+    "noImplicitThis": false
+  },
+  "include": [
+    "**/*.ts",
+    "index.js",
+    "lib/**/*.js"
+  ]
+}
