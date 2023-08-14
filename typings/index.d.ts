@@ -281,6 +281,7 @@ export class Command {
   processedArgs: any[];
   readonly commands: readonly Command[];
   readonly options: readonly Option[];
+  readonly registeredArguments: readonly Argument[];
   parent: Command | null;
 
   constructor(name?: string);
