@@ -25,7 +25,7 @@
     "test": "jest && npm run test-typings",
     "test-esm": "node ./tests/esm-imports-test.mjs",
     "test-typings": "tsd",
-    "typescript-checkJS": "tsc --allowJS --checkJS index.js lib/*.js --noEmit",
+    "typescript-checkJS": "tsc -p lib/jsconfig.json",
     "test-all": "npm run test && npm run lint && npm run typescript-checkJS && npm run test-esm"
   },
   "files": [

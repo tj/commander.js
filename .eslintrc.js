@@ -16,7 +16,7 @@ const javascriptSettings = {
 const typescriptSettings = {
   files: ['*.ts', '*.mts'],
   parserOptions: {
-    project: './tsconfig.json'
+    project: './typings/tsconfig.json'
   },
   plugins: [
     '@typescript-eslint'

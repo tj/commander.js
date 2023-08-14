@@ -1,0 +1,14 @@
+{
+  /* Type checking for the JavaScript files. In particular, this does check the JSDoc. */
+  /* Used by VSCode and `npm run typescript-checkJS`. */
+  /* Visit https://aka.ms/tsconfig to read more about this file */
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "checkJs": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": false,
+    "skipLibCheck": true,
+    "noEmit": true,
+  }
+}
