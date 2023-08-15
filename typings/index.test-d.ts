@@ -410,6 +410,7 @@ expectType<commander.Option>(baseOption.preset('abc'));
 
 // env
 expectType<commander.Option>(baseOption.env('PORT'));
+expectType<string | undefined>(baseOption.env());
 
 // fullDescription
 expectType<string>(baseOption.fullDescription());

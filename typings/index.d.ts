@@ -142,12 +142,13 @@ export class Option {
   implies(optionValues: OptionValues): this;
 
   /**
-   * Set environment variable to check for option value.
+   * Get or set environment variable to check for option value.
    *
    * An environment variables is only used if when processed the current option value is
    * undefined, or the source of the current value is 'default' or 'config' or 'env'.
    */
   env(name: string): this;
+  env(): string | undefined;
 
   /**
    * Calculate the full description, including defaultValue etc.
