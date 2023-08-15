@@ -12,9 +12,7 @@
     "skipLibCheck": false, /* we want to check our hand crafted definitions */
   },
   "include": [
-      "examples/**/*.ts",
-      "tests/**/*.ts",
-      "typings/**/*.ts",
-      "typings/**/*.mts",
-    ],
+    "**/*.ts",
+    "**/*.mts"
+  ],
 }

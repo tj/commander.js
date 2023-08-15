@@ -35,12 +35,12 @@
     "esModuleInterop": true
   },
   "include": [
+    /* opt-in JavaScript */
     "*.js",
     "*.mjs",
-    "examples/**/*.ts", /* just ts, js low priority */
     "lib/**/*.js",
-    "tests/**/*.ts", /* just ts, js|cjs|mjs low priority */
-    "typings/**/*.ts",
-    "typings/**/*.mts",
+    /* all the TypeScript */
+    "**/*.ts",
+    "**/*.mts"
   ],
 }
