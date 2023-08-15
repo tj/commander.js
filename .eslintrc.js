@@ -16,7 +16,8 @@ const javascriptSettings = {
 const typescriptSettings = {
   files: ['*.ts', '*.mts'],
   parserOptions: {
-    project: './typings/tsconfig.json'
+    /* Use strict settings to enable extra checks */
+    project: './tsconfig.strict.json'
   },
   plugins: [
     '@typescript-eslint'

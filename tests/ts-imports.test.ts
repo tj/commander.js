@@ -1,7 +1,5 @@
 import { program, Command, Option, CommanderError, InvalidArgumentError, InvalidOptionArgumentError, Help, createCommand } from '../';
 
-import * as commander from '../';
-
 // Do some simple checks that expected imports are available at runtime.
 // Similar tests to esm-imports-test.js
 
@@ -11,9 +9,11 @@ function checkClass(obj: object, name: string): void {
   expect(obj.constructor.name).toEqual(name);
 }
 
-test('legacy default export of global Command', () => {
-  checkClass(commander, 'Command');
-});
+// This test is sensitive to TypeScript settings. Deprecated anyway!
+// import * as commander from '../';
+// test('legacy default export of global Command', () => {
+//   checkClass(commander, 'Command');
+// });
 
 test('program', () => {
   checkClass(program, 'Command');

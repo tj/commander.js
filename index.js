@@ -1,4 +1,3 @@
-// @ts-check
 const { Argument } = require('./lib/argument.js');
 const { Command } = require('./lib/command.js');
 const { CommanderError, InvalidArgumentError } = require('./lib/error.js');

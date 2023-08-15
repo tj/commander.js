@@ -22,11 +22,11 @@
     "lint": "npm run lint:javascript && npm run lint:typescript",
     "lint:javascript": "eslint index.js esm.mjs \"lib/*.js\" \"tests/**/*.js\"",
     "lint:typescript": "eslint typings/*.ts tests/*.ts",
-    "test": "jest && npm run test-typings",
+    "test": "jest && npm run check-types-strict",
     "test-esm": "node ./tests/esm-imports-test.mjs",
-    "test-typings": "tsd",
-    "typescript-checkJS": "tsc -p lib/jsconfig.json",
-    "test-all": "npm run test && npm run lint && npm run typescript-checkJS && npm run test-esm"
+    "check-types-strict": "tsd && tsc -p tsconfig.strict.json",
+    "check-types-loose": "tsc",
+    "test-all": "npm run test && npm run lint && npm run check-types-loose && npm run test-esm"
   },
   "files": [
     "index.js",
@@ -77,7 +77,7 @@
     "testEnvironment": "node",
     "collectCoverage": true,
     "transform": {
-      "^.+\\.tsx?$": "ts-jest"
+      "^.+\\.tsx?$": ["ts-jest", "tsconfig.strict.json"]
     },
     "testPathIgnorePatterns": [
       "/node_modules/"
