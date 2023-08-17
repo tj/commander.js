@@ -1,6 +1,10 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "node16",
+    "esModuleInterop": true, /*
+      should be the default with node16,
+      but ts-jest overwrites it with false unless explicitly set
+    */
     "lib": [
       "es6"
     ],
