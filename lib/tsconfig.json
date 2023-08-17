@@ -1,16 +1,11 @@
 {
   "extends": "../tsconfig.base.json",
   "compilerOptions": {
-    "rootDir": "..",
     "composite": true,
     "noEmit": false,
     "declaration": true,
     "declarationDir": "../typings",
     "declarationMap": true,
     "emitDeclarationOnly": true
-  },
-  "include": [
-    "../*",
-    "../lib/**/*"
-  ]
+  }
 }

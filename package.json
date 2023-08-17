@@ -23,7 +23,7 @@
     "build:clean": "tsc -b --clean",
     "watch": "npm run -s build:clean && tsc -b lib --watch",
     "lint": "npm run lint:javascript && npm run lint:typescript",
-    "lint:javascript": "eslint index.js esm.mjs \"lib/**/*.js\" \"tests/**/*.js\"",
+    "lint:javascript": "eslint \"lib/**/*.js\" \"tests/**/*.js\"",
     "lint:typescript": "eslint \"typings/**/*.ts\" \"tests/**/*.ts\"",
     "test": "jest && npm run test-typings",
     "test-esm": "node ./tests/esm-imports-test.mjs",
@@ -36,30 +36,26 @@
     "typings:restore": "shx rm -rf typings && shx mv typings.tmp typings && npm run -s build:clean"
   },
   "files": [
-    "index.js",
-    "lib/*.js",
-    "esm.mjs",
-    "typings/index.d.ts",
-    "typings/esm.d.mts",
-    "package-support.json"
+    "lib/**/*.js",
+    "typings/**/*.d.ts"
   ],
   "type": "commonjs",
-  "main": "./index.js",
+  "main": "./lib/exports/index.js",
   "exports": {
     ".": {
       "require": {
-        "types": "./typings/index.d.ts",
-        "default": "./index.js"
+        "types": "./typings/exports/index.d.ts",
+        "default": "./lib/exports/index.js"
       },
       "import": {
-        "types": "./typings/esm.d.mts",
-        "default": "./esm.mjs"
+        "types": "./typings/exports/esm.d.mts",
+        "default": "./lib/exports/esm.mjs"
       },
-      "default": "./index.js"
+      "default": "./lib/exports/index.js"
     },
     "./esm.mjs": {
-      "types": "./typings/esm.d.mts",
-      "import": "./esm.mjs"
+      "types": "./typings/exports/esm.d.mts",
+      "import": "./lib/exports/esm.mjs"
     }
   },
   "devDependencies": {
@@ -80,7 +76,7 @@
     "tsd": "^0.28.1",
     "typescript": "^5.0.4"
   },
-  "types": "typings/index.d.ts",
+  "types": "typings/exports/index.d.ts",
   "jest": {
     "testEnvironment": "node",
     "collectCoverage": true,
