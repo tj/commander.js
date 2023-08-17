@@ -1,0 +1,19 @@
+{ /* 
+    Override to include just TypeScript files and use stricter settings than we do with JavaScript.
+    Used by:
+    - npm run-scripts
+    - eslint
+  */
+  /* Visit https://aka.ms/tsconfig to read more about tsconfig configuration. */
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noImplicitAny": true, 
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+  },
+  "include": [
+    /* All TypeScript targets from tsconfig.json include. */
+    "**/*.ts",
+    "**/*.mts"
+  ],
+}

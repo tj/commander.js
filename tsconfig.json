@@ -4,13 +4,12 @@
     In particular, this picks up some problems in the JSDoc in the JavaScript files, and validates the code
     is consistent with the JSDoc.
      
-    A complication is that TypeScript does not directly support different config for .ts/.js. To avoid drowning
-    in strict errors that are tedious to avoid in JavaScript the settings here are not strict. There is a
-    another config with strict settings for opt-in use.
+    A complication is that TypeScript and VSCode do not directly support different config for .ts/.js,
+    To avoid drowning in strict errors that are tedious to avoid in JavaScript the settings here turn off some checks.
      
-    The settings here are used by VSCode, and TypeScript checks are enabled in included JavaScript files.
-    eslint supports custom config and uses the strict settings for TypeScript files.
-    To strictly check the published type definitions, there is a one script using the strict settings.
+    The settings here are used by VSCode, so TypeScript checks are enabled in included JavaScript files.
+    
+    See also tsconfig.js.json and tsconfig.ts.json.
   */
   /* Visit https://aka.ms/tsconfig to read more about tsconfig configuration. */
   "compilerOptions": {
@@ -18,8 +17,10 @@
     "lib": [
         "es6"
     ],
+    "allowJs": true,
+    "checkJs": true,
     
-    /* less strict settings to avoid excessive work in JavaScript */
+    /* less strict settings to match current JavaScript lib code */
     "noImplicitAny": false, 
     "noImplicitThis": false,
     "strictNullChecks": false,
@@ -29,18 +30,20 @@
       "jest"
     ],
     "noEmit": true, /* just type checking and not emitting transpiled files */
+    "skipLibCheck": false, /* we want to check our hand crafted definitions */
     "forceConsistentCasingInFileNames": true,
-    "allowJs": true,
-    "checkJs": true,
-    "esModuleInterop": true
+    "esModuleInterop": true /* avoid warning about import from ./index.js in esm.mjs, to be revisited */
   },
   "include": [
-    /* opt-in JavaScript */
+    /* JavaScript. Should match includes tsconfig.js.json. */
     "*.js",
     "*.mjs",
     "lib/**/*.js",
-    /* all the TypeScript */
+    /* TypeScript. Should match includes in tsconfig.ts.json. */
     "**/*.ts",
     "**/*.mts"
   ],
+  "exclude": [
+    "node_modules"
+  ]
 }
