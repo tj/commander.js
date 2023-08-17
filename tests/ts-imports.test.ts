@@ -1,6 +1,6 @@
-import { program, Command, Option, CommanderError, InvalidArgumentError, InvalidOptionArgumentError, Help, createCommand } from '../';
-
 import * as commander from '../';
+
+const { program, Command, Option, CommanderError, InvalidArgumentError, InvalidOptionArgumentError, Help, createCommand } = commander;
 
 // Do some simple checks that expected imports are available at runtime.
 // Similar tests to esm-imports-test.js
@@ -11,38 +11,54 @@ function checkClass(obj: object, name: string): void {
   expect(obj.constructor.name).toEqual(name);
 }
 
-test('legacy default export of global Command', () => {
-  checkClass(commander, 'Command');
+describe('commander', () => {
+  test.each([
+    'program',
+    'createCommand',
+    'createArgument',
+    'createOption',
+    'CommanderError',
+    'InvalidArgumentError',
+    'InvalidOptionArgumentError',
+    'Command',
+    'Argument',
+    'Option',
+    'Help'
+  ])('has %s', (key) => {
+    expect(commander).toHaveProperty(key);
+  });
 });
 
-test('program', () => {
-  checkClass(program, 'Command');
-});
+describe('class name', () => {
+  test('program', () => {
+    checkClass(program, 'Command');
+  });
 
-test('createCommand', () => {
-  checkClass(createCommand(), 'Command');
-});
+  test('createCommand', () => {
+    checkClass(createCommand(), 'Command');
+  });
 
-test('Command', () => {
-  checkClass(new Command('name'), 'Command');
-});
+  test('Command', () => {
+    checkClass(new Command('name'), 'Command');
+  });
 
-test('Option', () => {
-  checkClass(new Option('-e, --example', 'description'), 'Option');
-});
+  test('Option', () => {
+    checkClass(new Option('-e, --example', 'description'), 'Option');
+  });
 
-test('CommanderError', () => {
-  checkClass(new CommanderError(1, 'code', 'failed'), 'CommanderError');
-});
+  test('CommanderError', () => {
+    checkClass(new CommanderError(1, 'code', 'failed'), 'CommanderError');
+  });
 
-test('InvalidArgumentError', () => {
-  checkClass(new InvalidArgumentError('failed'), 'InvalidArgumentError');
-});
+  test('InvalidArgumentError', () => {
+    checkClass(new InvalidArgumentError('failed'), 'InvalidArgumentError');
+  });
 
-test('InvalidOptionArgumentError', () => { // Deprecated
-  checkClass(new InvalidOptionArgumentError('failed'), 'InvalidArgumentError');
-});
+  test('InvalidOptionArgumentError', () => { // Deprecated
+    checkClass(new InvalidOptionArgumentError('failed'), 'InvalidArgumentError');
+  });
 
-test('Help', () => {
-  checkClass(new Help(), 'Help');
+  test('Help', () => {
+    checkClass(new Help(), 'Help');
+  });
 });
