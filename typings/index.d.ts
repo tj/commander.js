@@ -595,17 +595,17 @@ export class Command {
   /**
    * Store option value and where the value came from.
    */
-  setOptionValueWithSource(key: string, value: unknown, source: OptionValueSource): this;
+  setOptionValueWithSource(key: string, value: unknown, source?: OptionValueSource | string | undefined): this;
 
   /**
    * Get source of option value.
    */
-  getOptionValueSource(key: string): OptionValueSource | undefined;
+  getOptionValueSource(key: string): OptionValueSource | string | undefined;
 
   /**
     * Get source of option value. See also .optsWithGlobals().
    */
-  getOptionValueSourceWithGlobals(key: string): OptionValueSource | undefined;
+  getOptionValueSourceWithGlobals(key: string): OptionValueSource | string | undefined;
 
   /**
    * Alter parsing of short flags with optional values.
@@ -819,7 +819,7 @@ export class Command {
   /**
    * Get the executable search directory.
    */
-  executableDir(): string;
+  executableDir(): string | null;
 
   /**
    * Output help information for this command.

@@ -173,10 +173,10 @@ expectType<commander.Command>(program.setOptionValue('example', true));
 expectType<commander.Command>(program.setOptionValueWithSource('example', [], 'cli'));
 
 // getOptionValueSource
-expectType<commander.OptionValueSource | undefined>(program.getOptionValueSource('example'));
+expectType<string | undefined>(program.getOptionValueSource('example'));
 
 // getOptionValueSourceWithGlobals
-expectType<commander.OptionValueSource | undefined>(program.getOptionValueSourceWithGlobals('example'));
+expectType<string | undefined>(program.getOptionValueSourceWithGlobals('example'));
 
 // combineFlagAndOptionalValue
 expectType<commander.Command>(program.combineFlagAndOptionalValue());
@@ -275,7 +275,7 @@ expectType<commander.Command>(program.nameFromFilename(__filename));
 
 // executableDir
 expectType<commander.Command>(program.executableDir(__dirname));
-expectType<string>(program.executableDir());
+expectType<string | null>(program.executableDir());
 
 // outputHelp
 // eslint-disable-next-line @typescript-eslint/no-invalid-void-type, @typescript-eslint/no-confusing-void-expression
