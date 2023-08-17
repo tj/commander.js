@@ -19,14 +19,21 @@
     "url": "https://github.com/tj/commander.js.git"
   },
   "scripts": {
+    "build": "npm run -s build:clean && tsc -b lib",
+    "build:clean": "tsc -b --clean",
+    "watch": "npm run -s build:clean && tsc -b lib --watch",
     "lint": "npm run lint:javascript && npm run lint:typescript",
-    "lint:javascript": "eslint index.js esm.mjs \"lib/*.js\" \"tests/**/*.js\"",
-    "lint:typescript": "eslint typings/*.ts tests/*.ts",
+    "lint:javascript": "eslint index.js esm.mjs \"lib/**/*.js\" \"tests/**/*.js\"",
+    "lint:typescript": "eslint \"typings/**/*.ts\" \"tests/**/*.ts\"",
     "test": "jest && npm run test-typings",
     "test-esm": "node ./tests/esm-imports-test.mjs",
-    "test-typings": "tsd",
-    "typescript-checkJS": "tsc --allowJS --checkJS index.js lib/*.js --noEmit",
-    "test-all": "npm run test && npm run lint && npm run typescript-checkJS && npm run test-esm"
+    "test-typings": "(npm run typings:backup && npm run build && tsd && npm run typings:restore) || npm run typings:restore",
+    "test-all": "npm run test && npm run lint && npm run test-esm",
+    "typecheck": "(npm run typings:backup && tsc -b && npm run typings:restore) || npm run typings:restore",
+    "typecheck-jest": "(npm run typings:backup && tsc -b tests/tsconfig.jest.json && npm run typings:restore) || npm run typings:restore",
+    "typecheck-all": "(npm run typings:backup && tsc -b && tsc -b tests/tsconfig.jest.json && npm run typings:restore) || npm run typings:restore",
+    "typings:backup": "shx rm -rf typings.tmp && shx cp -r typings typings.tmp",
+    "typings:restore": "shx rm -rf typings && shx mv typings.tmp typings && npm run -s build:clean"
   },
   "files": [
     "index.js",
@@ -68,6 +75,7 @@
     "eslint-plugin-n": "^15.6.0",
     "eslint-plugin-promise": "^6.1.1",
     "jest": "^29.3.1",
+    "shx": "^0.3.4",
     "ts-jest": "^29.0.3",
     "tsd": "^0.28.1",
     "typescript": "^5.0.4"
@@ -77,12 +85,20 @@
     "testEnvironment": "node",
     "collectCoverage": true,
     "transform": {
-      "^.+\\.tsx?$": "ts-jest"
+      "^.+\\.tsx?$": [
+        "ts-jest",
+        {
+          "tsconfig": "tests/tsconfig.jest.json"
+        }
+      ]
     },
     "testPathIgnorePatterns": [
       "/node_modules/"
     ]
   },
+	"tsd": {
+		"directory": "tests"
+	},
   "engines": {
     "node": ">=16"
   },

@@ -19,6 +19,12 @@ Follow the existing code style. Check the tests succeed, including lint.
 - `npm run test`
 - `npm run lint`
 
+Specify the types for all public fields and methods using [the TypeScript flavour of JSDoc](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html). Before submitting a pull request, regenerate TypeScript declaration files (`.d.ts`) with the following command:
+
+- `npm run build`
+
+You can also use `npm run watch` if you want them regenerated automatically as you make changes to the code.
+
 Don't update the CHANGELOG or command version number. That gets done by maintainers when preparing the release.
 
 Useful things to include in your request description are:

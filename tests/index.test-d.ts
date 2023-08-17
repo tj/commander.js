@@ -1,4 +1,4 @@
-import * as commander from './index';
+import * as commander from '../typings/index';
 import { expectType } from 'tsd';
 
 // We are are not just checking return types here, we are also implicitly checking that the expected syntax is allowed.

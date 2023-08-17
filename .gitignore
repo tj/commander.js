@@ -4,3 +4,5 @@ node_modules
 .idea
 .vscode/
 coverage/
+*.tsbuildinfo
+*.tmp
