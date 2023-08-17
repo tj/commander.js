@@ -35,7 +35,7 @@
     "esModuleInterop": true /* avoid warning about import from ./index.js in esm.mjs, to be revisited */
   },
   "include": [
-    /* JavaScript. Should match includes tsconfig.js.json. */
+    /* JavaScript. Should match includes in tsconfig.js.json. */
     "*.js",
     "*.mjs",
     "lib/**/*.js",
