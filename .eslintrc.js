@@ -50,6 +50,7 @@ const typescriptSettings = {
 };
 
 module.exports = {
+  ignorePatterns: ['/typings/**/*.d.ts'],
   plugins: ['jest'],
   parserOptions: {
     ecmaVersion: 8
