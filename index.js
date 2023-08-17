@@ -10,9 +10,18 @@ const { Option } = require('./lib/option.js');
  * Expose the root command.
  */
 
-exports = module.exports = new Command();
-exports.program = exports; // More explicit access to global command.
-// Implicit export of createArgument, createCommand, and createOption.
+const program = new Command();
+exports = module.exports = program;
+exports.program = program; // more explicit access to global command (deprecated)
+
+// Support aggregated import (import * as commander) in TypeScript.
+// Do not delete these lines even if they seem redundant!
+// @ts-ignore
+exports.createCommand = program.createCommand;
+// @ts-ignore
+exports.createArgument = program.createArgument;
+// @ts-ignore
+exports.createOption = program.createOption;
 
 /**
  * Expose classes

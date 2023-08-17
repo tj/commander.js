@@ -11,7 +11,7 @@ function checkClass(obj: object, name: string): void {
   expect(obj.constructor.name).toEqual(name);
 }
 
-describe('commander (check that "esModuleInterop": true is set in TSConfig if this block fails)', () => {
+describe('commander', () => {
   test.each([
     'program',
     'createCommand',
@@ -29,7 +29,7 @@ describe('commander (check that "esModuleInterop": true is set in TSConfig if th
   });
 });
 
-describe('class name as expected', () => {
+describe('class name', () => {
   test('program', () => {
     checkClass(program, 'Command');
   });
