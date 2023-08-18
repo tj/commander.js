@@ -16,11 +16,8 @@ exports.program = program; // more explicit access to global command (deprecated
 
 // Support aggregated import (import * as commander) in TypeScript.
 // Do not delete these lines even if they seem redundant!
-// @ts-ignore
 exports.createCommand = program.createCommand;
-// @ts-ignore
 exports.createArgument = program.createArgument;
-// @ts-ignore
 exports.createOption = program.createOption;
 
 /**
