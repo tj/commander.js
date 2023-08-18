@@ -282,7 +282,7 @@ export class Command {
   readonly commands: readonly Command[];
   readonly options: readonly Option[];
   readonly registeredArguments: readonly Argument[];
-  /** @deprecated */
+  /** @deprecated Use `.registeredArguments` instead. */
   readonly _args: readonly Argument[]; // added here for strikethrough highlighting in editors
   parent: Command | null;
 
