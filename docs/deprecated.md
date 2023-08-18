@@ -15,6 +15,7 @@ They are currently still available for backwards compatibility, but should not b
   - [InvalidOptionArgumentError](#invalidoptionargumenterror)
   - [Short option flag longer than a single character](#short-option-flag-longer-than-a-single-character)
   - [Import from `commander/esm.mjs`](#import-from-commanderesmmjs)
+  - [.\_args](#_args)
 
 ## RegExp .option() parameter
 
@@ -207,3 +208,17 @@ import { Command } from 'commander';
 ```
 
 README updated in Commander v9. Deprecated from Commander v9.
+
+## ._args
+
+The registered command argument instances have been made accessible via `.registeredArguments`.
+
+```js
+const program = new Command().arguments('arg1 <arg2> [arg3]');
+const argumentNamesForUsage = program.registeredArguments
+  .map(arg => arg.required ? `< ${arg.name()} >` : `[ ${arg.name()} ]`)
+  .join(' ');
+program.usage('program ' + argumentNamesForUsage);
+```
+
+The older name of the property was `_args`. It was never documented but is still available so that old code relying on it keeps working. Do not use it.
