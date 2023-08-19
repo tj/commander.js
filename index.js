@@ -11,8 +11,8 @@ const { Option } = require('./lib/option.js');
  */
 
 const program = new Command();
-exports = module.exports = program;
-exports.program = program; // more explicit access to global command (deprecated)
+exports = module.exports = program; // default export (deprecated)
+exports.program = program; // more explicit access to global command
 
 // Support aggregated import (import * as commander) in TypeScript.
 // Do not delete these lines even if they seem redundant!
