@@ -9,13 +9,6 @@ function checkClass(obj: object, name: string): void {
   expect(obj.constructor.name).toEqual(name);
 }
 
-// This test is sensitive to TypeScript settings, and not modern import style.
-// Possible fixes in a pending PR: https://github.com/tj/commander.js/pull/1974
-// import * as commander from '../';
-// test('legacy default export of global Command', () => {
-//   checkClass(commander, 'Command');
-// });
-
 test('program', () => {
   checkClass(program, 'Command');
 });
