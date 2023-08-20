@@ -1,6 +1,6 @@
-import * as commander from '../';
+import { program, Command, Option, CommanderError, InvalidArgumentError, InvalidOptionArgumentError, Help, createCommand } from '../';
 
-const { program, Command, Option, CommanderError, InvalidArgumentError, InvalidOptionArgumentError, Help, createCommand } = commander;
+import * as commander from '../';
 
 // Do some simple checks that expected imports are available at runtime.
 // Similar tests to esm-imports-test.js
