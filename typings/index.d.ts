@@ -294,6 +294,10 @@ export class Command {
    * You can optionally supply the  flags and description to override the defaults.
    */
   version(str: string, flags?: string, description?: string): this;
+  /**
+   * Get the program version.
+   */
+  version(): string | undefined;
 
   /**
    * Define a command, implemented using an action handler.
