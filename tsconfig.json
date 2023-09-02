@@ -1,10 +1,10 @@
 {
   /*
-    TypeScript is being used to do type checking across both JavaScript and TypeScript file.
+    TypeScript is being used to do type checking across both JavaScript and TypeScript files.
     In particular, this picks up some problems in the JSDoc in the JavaScript files, and validates the code
     is consistent with the JSDoc.
      
-    The settings here are used by VSCode, and TypeScript checks are enabled in JavaScript files. 
+    The settings here are used by VSCode.
     
     See also tsconfig.js.json and tsconfig.ts.json.
   */
@@ -17,10 +17,11 @@
     "allowJs": true,
     "checkJs": true,
     
-    /* less strict settings to match current JavaScript lib code */
+    /* Strict by default, but dial it down to reduce churn in our JavaScript code. */
+    "strict": true,
     "noImplicitAny": false, 
-    "noImplicitThis": false,
     "strictNullChecks": false,
+    "useUnknownInCatchVariables": false,
 
     "types": [
       "node",
