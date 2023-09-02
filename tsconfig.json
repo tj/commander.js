@@ -4,19 +4,16 @@
     In particular, this picks up some problems in the JSDoc in the JavaScript files, and validates the code
     is consistent with the JSDoc.
      
-    A complication is that TypeScript and VSCode do not directly support different config for .ts/.js,
-    To avoid drowning in strict errors that are tedious to avoid in JavaScript the settings here turn off some checks.
-     
-    The settings here are used by VSCode, so TypeScript checks are enabled in included JavaScript files.
+    The settings here are used by VSCode, and TypeScript checks are enabled in JavaScript files. 
     
     See also tsconfig.js.json and tsconfig.ts.json.
   */
   /* Visit https://aka.ms/tsconfig to read more about tsconfig configuration. */
   "compilerOptions": {
-    "module": "commonjs",
-    "lib": [
-        "es6"
-    ],
+    "lib": ["es2021"],
+    "module": "node16",
+    "target": "es2021",
+
     "allowJs": true,
     "checkJs": true,
     
