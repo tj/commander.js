@@ -5,6 +5,14 @@
 /* eslint-disable @typescript-eslint/method-signature-style */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+// This is a trick to encourage editor to suggest the known literals while still
+// allowing any BaseType value.
+// References:
+// - https://github.com/microsoft/TypeScript/issues/29729
+// - https://github.com/sindresorhus/type-fest/blob/main/source/literal-union.d.ts
+// - https://github.com/sindresorhus/type-fest/blob/main/source/primitive.d.ts
+type LiteralUnion<LiteralType, BaseType extends string | number> = LiteralType | (BaseType & Record<never, never>);
+
 export class CommanderError extends Error {
   code: string;
   exitCode: number;
@@ -272,7 +280,8 @@ export interface OutputConfiguration {
 
 export type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
 export type HookEvent = 'preSubcommand' | 'preAction' | 'postAction';
-export type OptionValueSource = 'default' | 'config' | 'env' | 'cli' | 'implied';
+// The source is a string so author can define their own too.
+export type OptionValueSource = LiteralUnion<'default' | 'config' | 'env' | 'cli' | 'implied', string> | undefined;
 
 export type OptionValues = Record<string, any>;
 
@@ -294,6 +303,10 @@ export class Command {
    * You can optionally supply the  flags and description to override the defaults.
    */
   version(str: string, flags?: string, description?: string): this;
+  /**
+   * Get the program version.
+   */
+  version(): string | undefined;
 
   /**
    * Define a command, implemented using an action handler.

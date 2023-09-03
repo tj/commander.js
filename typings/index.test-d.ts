@@ -36,6 +36,7 @@ expectType<commander.Command | null>(program.parent);
 expectType<commander.Command>(program.version('1.2.3'));
 expectType<commander.Command>(program.version('1.2.3', '-r,--revision'));
 expectType<commander.Command>(program.version('1.2.3', '-r,--revision', 'show revision information'));
+expectType<string | undefined>(program.version());
 
 // command (and CommandOptions)
 expectType<commander.Command>(program.command('action'));

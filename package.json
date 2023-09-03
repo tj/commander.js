@@ -73,16 +73,6 @@
     "typescript": "^5.0.4"
   },
   "types": "typings/index.d.ts",
-  "jest": {
-    "testEnvironment": "node",
-    "collectCoverage": true,
-    "transform": {
-      "^.+\\.tsx?$": "ts-jest"
-    },
-    "testPathIgnorePatterns": [
-      "/node_modules/"
-    ]
-  },
   "engines": {
     "node": ">=16"
   },
