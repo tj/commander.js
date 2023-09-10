@@ -4,7 +4,7 @@ const commander = require('../');
 // and not exhaustively testing all methods elsewhere.
 
 test.each(getSingleArgCases('<explicit-required>'))('when add "<arg>" using %s then argument required', (methodName, cmd) => {
-  const argument = cmd._args[0];
+  const argument = cmd.registeredArguments[0];
   const expectedShape = {
     _name: 'explicit-required',
     required: true,
@@ -15,7 +15,7 @@ test.each(getSingleArgCases('<explicit-required>'))('when add "<arg>" using %s t
 });
 
 test.each(getSingleArgCases('implicit-required'))('when add "arg" using %s then argument required', (methodName, cmd) => {
-  const argument = cmd._args[0];
+  const argument = cmd.registeredArguments[0];
   const expectedShape = {
     _name: 'implicit-required',
     required: true,
@@ -26,7 +26,7 @@ test.each(getSingleArgCases('implicit-required'))('when add "arg" using %s then 
 });
 
 test.each(getSingleArgCases('[optional]'))('when add "[arg]" using %s then argument optional', (methodName, cmd) => {
-  const argument = cmd._args[0];
+  const argument = cmd.registeredArguments[0];
   const expectedShape = {
     _name: 'optional',
     required: false,
@@ -37,7 +37,7 @@ test.each(getSingleArgCases('[optional]'))('when add "[arg]" using %s then argum
 });
 
 test.each(getSingleArgCases('<explicit-required...>'))('when add "<arg...>" using %s then argument required and variadic', (methodName, cmd) => {
-  const argument = cmd._args[0];
+  const argument = cmd.registeredArguments[0];
   const expectedShape = {
     _name: 'explicit-required',
     required: true,
@@ -48,7 +48,7 @@ test.each(getSingleArgCases('<explicit-required...>'))('when add "<arg...>" usin
 });
 
 test.each(getSingleArgCases('implicit-required...'))('when add "arg..." using %s then argument required and variadic', (methodName, cmd) => {
-  const argument = cmd._args[0];
+  const argument = cmd.registeredArguments[0];
   const expectedShape = {
     _name: 'implicit-required',
     required: true,
@@ -59,7 +59,7 @@ test.each(getSingleArgCases('implicit-required...'))('when add "arg..." using %s
 });
 
 test.each(getSingleArgCases('[optional...]'))('when add "[arg...]" using %s then argument optional and variadic', (methodName, cmd) => {
-  const argument = cmd._args[0];
+  const argument = cmd.registeredArguments[0];
   const expectedShape = {
     _name: 'optional',
     required: false,
@@ -79,8 +79,8 @@ function getSingleArgCases(arg) {
 }
 
 test.each(getMultipleArgCases('<first>', '[second]'))('when add two arguments using %s then two arguments', (methodName, cmd) => {
-  expect(cmd._args[0].name()).toEqual('first');
-  expect(cmd._args[1].name()).toEqual('second');
+  expect(cmd.registeredArguments[0].name()).toEqual('first');
+  expect(cmd.registeredArguments[1].name()).toEqual('second');
 });
 
 function getMultipleArgCases(arg1, arg2) {
@@ -99,6 +99,6 @@ test('when add arguments using multiple methods then all added', () => {
   cmd.arguments('<arg3> <arg4>');
   cmd.argument('<arg5>');
   cmd.addArgument(new commander.Argument('arg6'));
-  const argNames = cmd._args.map(arg => arg.name());
+  const argNames = cmd.registeredArguments.map(arg => arg.name());
   expect(argNames).toEqual(['arg1', 'arg2', 'arg3', 'arg4', 'arg5', 'arg6']);
 });
