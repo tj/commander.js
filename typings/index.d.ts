@@ -510,51 +510,27 @@ export class Command {
   action(fn: (...args: any[]) => void | Promise<void>): this;
 
   /**
-   * Define option with `flags`, `description` and optional
-   * coercion `fn`.
+   * Define option with `flags`, `description`, and optional argument parsing function or `defaultValue` or both.
    *
-   * The `flags` string contains the short and/or long flags,
-   * separated by comma, a pipe or space. The following are all valid
-   * all will output this way when `--help` is used.
+   * The `flags` string contains the short and/or long flags, separated by comma, a pipe or space. A required
+   * option-argument is indicated by `<>` and an optional option-argument by `[]`.
    *
-   *     "-p, --pepper"
-   *     "-p|--pepper"
-   *     "-p --pepper"
+   * See the README for more details, and see also addOption() and requiredOption().
    *
    * @example
-   * ```
-   * // simple boolean defaulting to false
-   *  program.option('-p, --pepper', 'add pepper');
    *
-   *  --pepper
-   *  program.pepper
-   *  // => Boolean
-   *
-   *  // simple boolean defaulting to true
-   *  program.option('-C, --no-cheese', 'remove cheese');
-   *
-   *  program.cheese
-   *  // => true
-   *
-   *  --no-cheese
-   *  program.cheese
-   *  // => false
-   *
-   *  // required argument
-   *  program.option('-C, --chdir <path>', 'change the working directory');
-   *
-   *  --chdir /tmp
-   *  program.chdir
-   *  // => "/tmp"
-   *
-   *  // optional argument
-   *  program.option('-c, --cheese [type]', 'add cheese [marble]');
+   * ```js
+   * program
+   *     .option('-p, --pepper', 'add pepper')
+   *     .option('-p, --pizza-type <TYPE>', 'type of pizza') // required option-argument
+   *     .option('-c, --cheese [CHEESE]', 'add extra cheese', 'mozzarella') // optional option-argument with default
+   *     .option('-t, --tip <VALUE>', 'add tip to purchase cost', parseFloat) // custom parse function
    * ```
    *
    * @returns `this` command for chaining
    */
   option(flags: string, description?: string, defaultValue?: string | boolean | string[]): this;
-  option<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
+  option<T>(flags: string, description: string, parseArg: (value: string, previous: T) => T, defaultValue?: T): this;
   /** @deprecated since v7, instead use choices or a custom function */
   option(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean | string[]): this;
 
@@ -565,7 +541,7 @@ export class Command {
    * The `flags` string contains the short and/or long flags, separated by comma, a pipe or space.
    */
   requiredOption(flags: string, description?: string, defaultValue?: string | boolean | string[]): this;
-  requiredOption<T>(flags: string, description: string, fn: (value: string, previous: T) => T, defaultValue?: T): this;
+  requiredOption<T>(flags: string, description: string, parseArg: (value: string, previous: T) => T, defaultValue?: T): this;
   /** @deprecated since v7, instead use choices or a custom function */
   requiredOption(flags: string, description: string, regexp: RegExp, defaultValue?: string | boolean | string[]): this;
 
