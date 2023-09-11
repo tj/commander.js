@@ -30,6 +30,7 @@ expectType<string[]>(program.args);
 expectType<any[]>(program.processedArgs);
 expectType<readonly commander.Command[]>(program.commands);
 expectType<readonly commander.Option[]>(program.options);
+expectType<readonly commander.Argument[]>(program.registeredArguments);
 expectType<commander.Command | null>(program.parent);
 
 // version
