@@ -14,6 +14,8 @@ const program = new Command();
 exports = module.exports = program; // default export (deprecated)
 exports.program = program; // more explicit access to global command
 
+// createArgument, createCommand, and createOption are implicitly available as they are methods on program.
+
 /**
  * Expose classes
  */
@@ -26,14 +28,3 @@ exports.Help = Help;
 exports.CommanderError = CommanderError;
 exports.InvalidArgumentError = InvalidArgumentError;
 exports.InvalidOptionArgumentError = InvalidArgumentError; // Deprecated
-
-/**
- * Expose object factory functions.
- *
- * These are present implicitly, but need to be explicit
- * to work with TypeScript whole module import (import * as foo) when esModuleInterop: true.
- */
-
-exports.createCommand = program.createCommand;
-exports.createArgument = program.createArgument;
-exports.createOption = program.createOption;
