@@ -15,6 +15,7 @@ They are currently still available for backwards compatibility, but should not b
   - [InvalidOptionArgumentError](#invalidoptionargumenterror)
   - [Short option flag longer than a single character](#short-option-flag-longer-than-a-single-character)
   - [Import from `commander/esm.mjs`](#import-from-commanderesmmjs)
+  - [cmd.\_args](#cmd_args)
 
 ## RegExp .option() parameter
 
@@ -207,3 +208,19 @@ import { Command } from 'commander';
 ```
 
 README updated in Commander v9. Deprecated from Commander v9.
+
+## cmd._args
+
+This was always private, but was previously the only way to access the command `Argument` array.
+
+```js
+const registeredArguments = program._args;
+```
+
+The registered command arguments are now accessible via `.registeredArguments`.
+
+```js
+const registeredArguments = program.registeredArguments;
+```
+
+Deprecated from Commander v11.

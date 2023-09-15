@@ -30,12 +30,14 @@ expectType<string[]>(program.args);
 expectType<any[]>(program.processedArgs);
 expectType<readonly commander.Command[]>(program.commands);
 expectType<readonly commander.Option[]>(program.options);
+expectType<readonly commander.Argument[]>(program.registeredArguments);
 expectType<commander.Command | null>(program.parent);
 
 // version
 expectType<commander.Command>(program.version('1.2.3'));
 expectType<commander.Command>(program.version('1.2.3', '-r,--revision'));
 expectType<commander.Command>(program.version('1.2.3', '-r,--revision', 'show revision information'));
+expectType<string | undefined>(program.version());
 
 // command (and CommandOptions)
 expectType<commander.Command>(program.command('action'));
@@ -275,7 +277,7 @@ expectType<commander.Command>(program.nameFromFilename(__filename));
 
 // executableDir
 expectType<commander.Command>(program.executableDir(__dirname));
-expectType<string>(program.executableDir());
+expectType<string | null>(program.executableDir());
 
 // outputHelp
 // eslint-disable-next-line @typescript-eslint/no-invalid-void-type, @typescript-eslint/no-confusing-void-expression

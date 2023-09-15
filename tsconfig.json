@@ -30,7 +30,7 @@
     "noEmit": true, /* just type checking and not emitting transpiled files */
     "skipLibCheck": false, /* we want to check our hand crafted definitions */
     "forceConsistentCasingInFileNames": true,
-    "esModuleInterop": true /* recommended TypeScript config, and tests/ts-imports.tst.ts covers related "import * as commander" behaviour */
+    "esModuleInterop": true /* common TypeScript config */
   },
   "include": [
     /* JavaScript. Should match includes in tsconfig.js.json. */
