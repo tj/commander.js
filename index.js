@@ -6,13 +6,11 @@ const { Option } = require('./lib/option.js');
 
 // @ts-check
 
-/**
- * Expose the root command.
- */
+exports.program = new Command();
 
-exports = module.exports = new Command();
-exports.program = exports; // More explicit access to global command.
-// Implicit export of createArgument, createCommand, and createOption.
+exports.createCommand = (name) => new Command(name);
+exports.createOption = (flags, description) => new Option(flags, description);
+exports.createArgument = (name, description) => new Argument(name, description);
 
 /**
  * Expose classes
