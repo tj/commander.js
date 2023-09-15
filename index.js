@@ -8,10 +8,8 @@ const { Option } = require('./lib/option.js');
  * Expose the root command.
  */
 
-const program = new Command();
-exports = module.exports = program; // default export (deprecated)
-exports.program = program; // more explicit access to global command
-
+exports = module.exports = new Command();
+exports.program = exports; // More explicit access to global command.
 // createArgument, createCommand, and createOption are implicitly available as they are methods on program.
 
 /**
