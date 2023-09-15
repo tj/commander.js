@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const program = require('../../');
+const { program } = require('../../');
 
 program
   .command('try-ts', 'test file extension lookup')

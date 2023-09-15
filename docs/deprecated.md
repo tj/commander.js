@@ -58,6 +58,7 @@ const program = new Command()
 - Removed from README in Commander v5.
 - Deprecated from Commander v7.
 - Removed from TypeScript declarations in Commander v8.
+- Removed from CommonJS in Commander v12. Deprecated and gone!
 
 ## Callback to .help() and .outputHelp()
 

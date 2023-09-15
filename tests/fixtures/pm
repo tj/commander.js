@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var program = require('../../');
+var { program } = require('../../');
 
 program
   .version('0.0.1')
