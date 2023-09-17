@@ -398,9 +398,25 @@ expectType<string>(helper.wrap('a b c', 50, 3));
 
 expectType<string>(helper.formatHelp(helperCommand, helper));
 
-// Option methods
-
+// Option properties
 const baseOption = new commander.Option('-f,--foo', 'foo description');
+expectType<string>(baseOption.flags);
+expectType<string>(baseOption.description);
+expectType<boolean>(baseOption.required);
+expectType<boolean>(baseOption.optional);
+expectType<boolean>(baseOption.variadic);
+expectType<boolean>(baseOption.mandatory);
+expectType<string | undefined>(baseOption.short);
+expectType<string | undefined>(baseOption.long);
+expectType<boolean>(baseOption.negate);
+expectType<any>(baseOption.defaultValue);
+expectType<string | undefined>(baseOption.defaultValueDescription);
+expectType<unknown>(baseOption.presetArg);
+expectType<string | undefined>(baseOption.envVar);
+expectType<boolean>(baseOption.hidden);
+expectType<string[] | undefined>(baseOption.argChoices);
+
+// Option methods
 
 // default
 expectType<commander.Option>(baseOption.default(3));
@@ -454,6 +470,9 @@ const baseArgument = new commander.Argument('<foo');
 expectType<string>(baseArgument.description);
 expectType<boolean>(baseArgument.required);
 expectType<boolean>(baseArgument.variadic);
+expectType<any>(baseArgument.defaultValue);
+expectType<string | undefined>(baseArgument.defaultValueDescription);
+expectType<string[] | undefined>(baseArgument.argChoices);
 
 // Argument methods
 

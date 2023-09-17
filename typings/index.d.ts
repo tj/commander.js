@@ -50,6 +50,9 @@ export class Argument {
   description: string;
   required: boolean;
   variadic: boolean;
+  defaultValue?: any;
+  defaultValueDescription?: string;
+  argChoices?: string[];
 
   /**
    * Initialize a new command argument with the given name and description.
@@ -102,6 +105,8 @@ export class Option {
   negate: boolean;
   defaultValue?: any;
   defaultValueDescription?: string;
+  presetArg?: unknown;
+  envVar?: string;
   parseArg?: <T>(value: string, previous: T) => T;
   hidden: boolean;
   argChoices?: string[];
