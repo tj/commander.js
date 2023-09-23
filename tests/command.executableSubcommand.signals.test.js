@@ -30,17 +30,17 @@ describeOrSkipOnWindows('signals', () => {
 
   test('when executable subcommand sent signal then program exit code is non-zero', () => {
     const { status } = childProcess.spawnSync(pmPath, ['terminate'], {});
-    expect(status).not.toEqual(0);
+    expect(status).toBeGreaterThan(0);
   });
 
   test('when command has exitOverride and executable subcommand sent signal then exit code is non-zero', () => {
     const { status } = childProcess.spawnSync(pmPath, ['exit-override', 'terminate'], {});
-    expect(status).not.toEqual(0);
+    expect(status).toBeGreaterThan(0);
   });
-});
 
-// // Not a signal test, but closely related code so adding here.
-test('when command has exitOverride and executable subcommand fails then program exit code is subcommand exit code', () => {
-  const { status } = childProcess.spawnSync(pmPath, ['exit-override', 'fail'], {});
-  expect(status).toEqual(42);
+  // Not a signal test, but closely related code so adding here.
+  test('when command has exitOverride and executable subcommand fails then program exit code is subcommand exit code', () => {
+    const { status } = childProcess.spawnSync(pmPath, ['exit-override', 'fail'], {});
+    expect(status).toEqual(42);
+  });
 });
