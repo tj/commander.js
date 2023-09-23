@@ -16,10 +16,11 @@ exports.createArgument = (name, description) => new Argument(name, description);
  * Expose classes
  */
 
-exports.Argument = Argument;
 exports.Command = Command;
-exports.CommanderError = CommanderError;
+exports.Option = Option;
+exports.Argument = Argument;
 exports.Help = Help;
+
+exports.CommanderError = CommanderError;
 exports.InvalidArgumentError = InvalidArgumentError;
 exports.InvalidOptionArgumentError = InvalidArgumentError; // Deprecated
-exports.Option = Option;
