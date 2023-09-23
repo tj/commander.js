@@ -11,6 +11,7 @@
           "node",
           "jest"
         ],
+        "esModuleInterop": true, // Mainly so can test an import problem which only occurs with this option on!
         "noEmit": true,
         "forceConsistentCasingInFileNames": true
     },

@@ -3,6 +3,8 @@
 const path = require('node:path');
 const { program } = require('../../');
 
+process.env.FORCE_COLOR = 0; // work-around bug in Jest: https://github.com/jestjs/jest/issues/14391
+
 program
   .version('0.0.1')
   .command('install [name]', 'install one or more packages').alias('i')
