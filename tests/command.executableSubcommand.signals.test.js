@@ -37,10 +37,10 @@ describeOrSkipOnWindows('signals', () => {
     const { status } = childProcess.spawnSync(pmPath, ['exit-override', 'terminate'], {});
     expect(status).toBeGreaterThan(0);
   });
-});
 
-// Not a signal test, but closely related code so adding here.
-test('when command has exitOverride and executable subcommand fails then program exit code is subcommand exit code', () => {
-  const { status } = childProcess.spawnSync(pmPath, ['exit-override', 'fail'], {});
-  expect(status).toEqual(42);
+  // Not a signal test, but closely related code so adding here.
+  test('when command has exitOverride and executable subcommand fails then program exit code is subcommand exit code', () => {
+    const { status } = childProcess.spawnSync(pmPath, ['exit-override', 'fail'], {});
+    expect(status).toEqual(42);
+  });
 });
