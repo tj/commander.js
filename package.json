@@ -22,11 +22,11 @@
     "lint": "npm run lint:javascript && npm run lint:typescript",
     "lint:javascript": "eslint index.js esm.mjs \"lib/*.js\" \"tests/**/*.js\"",
     "lint:typescript": "eslint typings/*.ts tests/*.ts",
-    "test": "jest && npm run test-typings",
+    "test": "jest && npm run typecheck-ts",
     "test-esm": "node ./tests/esm-imports-test.mjs",
-    "test-typings": "tsd",
-    "typescript-checkJS": "tsc --allowJS --checkJS index.js lib/*.js --noEmit",
-    "test-all": "npm run test && npm run lint && npm run typescript-checkJS && npm run test-esm"
+    "typecheck-ts": "tsd && tsc -p tsconfig.ts.json",
+    "typecheck-js": "tsc -p tsconfig.js.json",
+    "test-all": "npm run test && npm run lint && npm run typecheck-js && npm run test-esm"
   },
   "files": [
     "index.js",
