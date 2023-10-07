@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - TypeScript: update `OptionValueSource` to allow any string, to match supported use of custom sources ([#1983])
 - TypeScript: add that `Command.version()` can also be used as getter ([#1982])
-- TypeScript: add null return type to `Commands.executableDir()`, when not configured ([#1965])
+- TypeScript: add null return type to `Commands.executableDir()`, for when not configured ([#1965])
 - subcommands with an executable handler and only a short help flag are now handled correctly by the parent's help command ([#1930])
 
 ### Added
@@ -22,7 +22,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - `registeredArguments` property on `Command` with the array of defined `Argument` (like `Command.options` for `Option`) ([#2010])
 - TypeScript declarations for Option properties: `envVar`, `presetArg` ([#2019])
 - TypeScript declarations for Argument properties: `argChoices`, `defaultValue`, `defaultValueDescription` ([#2019])
-- example file which shows how to use custom usage in the list of subcommands ([#1896])
+- example file which shows how to configure help to display any custom usage in the list of subcommands ([#1896])
+
+### Changed
+
+- (developer) refactor TypeScript configs for multiple use-cases, and enable checks in JavaScript files in supporting editors ([#1969])
 
 ### Deprecated
 
