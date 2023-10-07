@@ -74,7 +74,7 @@
   },
   "types": "typings/index.d.ts",
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "support": true
 }
