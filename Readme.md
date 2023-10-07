@@ -327,7 +327,7 @@ add cheese type mozzarella
 Options with an optional option-argument are not greedy and will ignore arguments starting with a dash.
 So `id` behaves as a boolean option for `--id -5`, but you can use a combined form if needed like `--id=-5`.
 
-For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-taking-varying-arguments.md).
+For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-in-depth.md).
 
 ### Required option
 
@@ -379,7 +379,7 @@ Options:  { number: [ '1', '2', '3' ], letter: true }
 Remaining arguments:  [ 'operand' ]
 ```
 
-For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-taking-varying-arguments.md).
+For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-in-depth.md).
 
 ### Version option
 
@@ -1131,7 +1131,7 @@ program
 There is more information available about:
 
 - [deprecated](./docs/deprecated.md) features still supported for backwards compatibility
-- [options taking varying arguments](./docs/options-taking-varying-arguments.md)
+- [options taking varying arguments](./docs/options-in-depth.md)
 - [parsing life cycle and hooks](./docs/parsing-and-hooks.md)
 
 ## Support

@@ -4,8 +4,6 @@ const { CommanderError, InvalidArgumentError } = require('./lib/error.js');
 const { Help } = require('./lib/help.js');
 const { Option } = require('./lib/option.js');
 
-// @ts-check
-
 exports.program = new Command();
 
 exports.createCommand = (name) => new Command(name);
