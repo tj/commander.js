@@ -1190,6 +1190,7 @@ program
 [#1896]: https://github.com/tj/commander.js/pull/1896
 [#1930]: https://github.com/tj/commander.js/pull/1930
 [#1965]: https://github.com/tj/commander.js/pull/1965
+[#1969]: https://github.com/tj/commander.js/pull/1969
 [#1982]: https://github.com/tj/commander.js/pull/1982
 [#1983]: https://github.com/tj/commander.js/pull/1983
 [#2010]: https://github.com/tj/commander.js/pull/2010
