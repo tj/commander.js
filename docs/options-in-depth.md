@@ -6,7 +6,7 @@ and subtle issues in depth.
 
 - [Options taking varying numbers of option-arguments](#options-taking-varying-numbers-of-option-arguments)
   - [Parsing ambiguity](#parsing-ambiguity)
-    - [Alternative: Make  `--` part of your syntax](#alternative-make-----part-of-your-syntax)
+    - [Alternative: Make `--` part of your syntax](#alternative-make----part-of-your-syntax)
     - [Alternative: Put options last](#alternative-put-options-last)
     - [Alternative: Use options instead of command-arguments](#alternative-use-options-instead-of-command-arguments)
 - [Combining short options, and options taking arguments](#combining-short-options-and-options-taking-arguments)
@@ -76,7 +76,7 @@ ingredient: cheese
 
 If you want to avoid your users needing to learn when to use `--`, there are a few approaches you could take.
 
-#### Alternative: Make  `--` part of your syntax
+#### Alternative: Make `--` part of your syntax
 
 Rather than trying to teach your users what `--` does, you could just make it part of your syntax.
 
@@ -170,7 +170,7 @@ if (opts.halal) console.log(`halal servings: ${opts.halal}`);
 ```sh
 $ collect -o 3
 other servings: 3
-$ collect -o3 
+$ collect -o3
 other servings: 3
 $ collect -l -v
 vegan servings: true
@@ -194,7 +194,7 @@ Before Commander v5, combining a short option and the value was not supported, a
 So `-avl` expanded to `-a -v -l`.
 
 If you want backwards compatible behaviour, or prefer combining short options as booleans to combining short option and value,
-you may change the behavior.
+you may change the behaviour.
 
 To modify the parsing of options taking an optional value:
 
