@@ -8,6 +8,30 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [11.1.0] (2023-10-13)
+
+### Fixed
+
+- TypeScript: update `OptionValueSource` to allow any string, to match supported use of custom sources ([#1983])
+- TypeScript: add that `Command.version()` can also be used as getter ([#1982])
+- TypeScript: add null return type to `Commands.executableDir()`, for when not configured ([#1965])
+- subcommands with an executable handler and only a short help flag are now handled correctly by the parent's help command ([#1930])
+
+### Added
+
+- `registeredArguments` property on `Command` with the array of defined `Argument` (like `Command.options` for `Option`) ([#2010])
+- TypeScript declarations for Option properties: `envVar`, `presetArg` ([#2019])
+- TypeScript declarations for Argument properties: `argChoices`, `defaultValue`, `defaultValueDescription` ([#2019])
+- example file which shows how to configure help to display any custom usage in the list of subcommands ([#1896])
+
+### Changed
+
+- (developer) refactor TypeScript configs for multiple use-cases, and enable checks in JavaScript files in supporting editors ([#1969])
+
+### Deprecated
+
+- `Command._args` was private anyway, but now available as `registeredArguments` ([#2010])
+
 ## [11.0.0] (2023-06-16)
 
 ### Fixed
@@ -1163,6 +1187,14 @@ program
 [#1864]: https://github.com/tj/commander.js/pull/1864
 [#1874]: https://github.com/tj/commander.js/pull/1874
 [#1886]: https://github.com/tj/commander.js/pull/1886
+[#1896]: https://github.com/tj/commander.js/pull/1896
+[#1930]: https://github.com/tj/commander.js/pull/1930
+[#1965]: https://github.com/tj/commander.js/pull/1965
+[#1969]: https://github.com/tj/commander.js/pull/1969
+[#1982]: https://github.com/tj/commander.js/pull/1982
+[#1983]: https://github.com/tj/commander.js/pull/1983
+[#2010]: https://github.com/tj/commander.js/pull/2010
+[#2019]: https://github.com/tj/commander.js/pull/2019
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
@@ -1242,6 +1274,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[11.1.0]: https://github.com/tj/commander.js/compare/v11.0.0...v11.1.0
 [11.0.0]: https://github.com/tj/commander.js/compare/v10.0.1...v11.0.0
 [10.0.1]: https://github.com/tj/commander.js/compare/v10.0.0...v10.0.1
 [10.0.0]: https://github.com/tj/commander.js/compare/v9.5.0...v10.0.0
