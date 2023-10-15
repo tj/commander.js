@@ -8,6 +8,25 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [Unreleased] (date goes here)
+
+### Changed
+
+- *Breaking:* Commander 12 requires Node.js v18 or higher
+
+### Removed
+
+- *Breaking:* removed default export of a global Command instance from CommonJS
+
+### Migration Tips
+
+If you are using the [deprecated](./docs/deprecated.md#default-import-of-global-command-object) default import of the global Command object, you need to switch to using a named import (or create a new `Command`).
+
+```js
+// const program = require('commander');
+const { program } = require('commander');
+```
+
 ## [11.0.0] (2023-06-16)
 
 ### Fixed
