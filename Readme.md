@@ -967,6 +967,8 @@ program.parse(); // Implicit, and auto-detect electron
 program.parse(['-f', 'filename'], { from: 'user' });
 ```
 
+If you want to parse multiple times, create a new program each time. Calling parse does not clear out any previous state.
+
 ### Parsing Configuration
 
 If the default parsing does not suit your needs, there are some behaviours to support other usage patterns.
