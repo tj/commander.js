@@ -65,7 +65,7 @@
     "eslint-config-standard-with-typescript": "^39.1.1",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^27.1.7",
-    "eslint-plugin-n": "^15.6.0",
+    "eslint-plugin-n": "^16.2.0",
     "eslint-plugin-promise": "^6.1.1",
     "jest": "^29.3.1",
     "ts-jest": "^29.0.3",
