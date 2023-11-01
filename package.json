@@ -26,7 +26,9 @@
     "test-esm": "node ./tests/esm-imports-test.mjs",
     "typecheck-ts": "tsd && tsc -p tsconfig.ts.json",
     "typecheck-js": "tsc -p tsconfig.js.json",
-    "test-all": "npm run test && npm run lint && npm run typecheck-js && npm run test-esm"
+    "test-all": "npm run test && npm run lint && npm run typecheck-js && npm run test-esm",
+    "prepack": "node -p 'require(`fs`).renameSync(`./Readme.md`, `./_Readme.md`)'",
+    "postpack": "node -p 'require(`fs`).renameSync(`./_Readme.md`, `./Readme.md`)'"
   },
   "files": [
     "index.js",
