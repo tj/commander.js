@@ -34,7 +34,7 @@ The newer functionality is the Option `.choices()` method, or using a custom opt
 This was an option passed to `.command()` to hide the command from the built-in help:
 
 ```js
-program.command('example', 'examnple command', { noHelp: true });
+program.command('example', 'example command', { noHelp: true });
 ```
 
 The option was renamed `hidden` in Commander v5.1. Deprecated from Commander v7.
