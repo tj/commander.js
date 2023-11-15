@@ -4,20 +4,21 @@ These features are deprecated, which means they may go away in a future major ve
 They are currently still available for backwards compatibility, but should not be used in new code.
 
 - [Deprecated](#deprecated)
-  - [RegExp .option() parameter](#regexp-option-parameter)
-  - [noHelp](#nohelp)
-  - [Default import of global Command object](#default-import-of-global-command-object)
-  - [Callback to .help() and .outputHelp()](#callback-to-help-and-outputhelp)
-  - [.on('--help')](#on--help)
-  - [.on('command:\*')](#oncommand)
-  - [.command('\*')](#command)
-  - [cmd.description(cmdDescription, argDescriptions)](#cmddescriptioncmddescription-argdescriptions)
-  - [InvalidOptionArgumentError](#invalidoptionargumenterror)
-  - [Short option flag longer than a single character](#short-option-flag-longer-than-a-single-character)
-  - [Import from `commander/esm.mjs`](#import-from-commanderesmmjs)
-  - [cmd.\_args](#cmd_args)
+    - [RegExp .option() parameter](#regexp-option-parameter)
+    - [noHelp](#nohelp)
+    - [Callback to .help() and .outputHelp()](#callback-to-help-and-outputhelp)
+    - [.on('--help')](#on--help)
+    - [.on('command:\*')](#oncommand)
+    - [.command('\*')](#command)
+    - [cmd.description(cmdDescription, argDescriptions)](#cmddescriptioncmddescription-argdescriptions)
+    - [InvalidOptionArgumentError](#invalidoptionargumenterror)
+    - [Short option flag longer than a single character](#short-option-flag-longer-than-a-single-character)
+    - [Import from `commander/esm.mjs`](#import-from-commanderesmmjs)
+    - [cmd.\_args](#cmd_args)
+  - [Removed](#removed)
+    - [Default import of global Command object](#default-import-of-global-command-object)
 
-## RegExp .option() parameter
+### RegExp .option() parameter
 
 The `.option()` method allowed a RegExp as the third parameter to restrict what values were accepted.
 
@@ -29,7 +30,7 @@ Removed from README in Commander v3. Deprecated from Commander v7.
 
 The newer functionality is the Option `.choices()` method, or using a custom option processing function.
 
-## noHelp
+### noHelp
 
 This was an option passed to `.command()` to hide the command from the built-in help:
 
@@ -39,29 +40,7 @@ program.command('example', 'example command', { noHelp: true });
 
 The option was renamed `hidden` in Commander v5.1. Deprecated from Commander v7.
 
-## Default import of global Command object
-
-The default import was a global Command object.
-
-```js
-const program = require('commander');
-```
-
-The global Command object is exported as `program` from Commander v5, or import the Command object.
-
-```js
-const { program } = require('commander');
-// or
-const { Command } = require('commander');
-const program = new Command()
-```
-
-- Removed from README in Commander v5.
-- Deprecated from Commander v7.
-- Removed from TypeScript declarations in Commander v8.
-- Removed from CommonJS in Commander v12. Deprecated and gone!
-
-## Callback to .help() and .outputHelp()
+### Callback to .help() and .outputHelp()
 
 These routines allowed a callback parameter to process the built-in help before display.
 
@@ -79,7 +58,7 @@ console.error(colors.red(program.helpInformation()));
 
 Deprecated from Commander v7.
 
-## .on('--help')
+### .on('--help')
 
 This was the way to add custom help after the built-in help. From Commander v3.0.0 this used the custom long help option flags, if changed.
 
@@ -104,7 +83,7 @@ Examples:
 
 Deprecated from Commander v7.
 
-## .on('command:*')
+### .on('command:*')
 
 This was emitted when the command argument did not match a known subcommand (as part of the implementation of `.command('*')`).
 
@@ -115,7 +94,7 @@ or for custom behaviour catch the `commander.unknownCommand` error.
 
 Deprecated from Commander v8.3.
 
-## .command('*')
+### .command('*')
 
 This was used to add a default command to the program.
 
@@ -135,7 +114,7 @@ program
 
 Removed from README in Commander v5. Deprecated from Commander v8.3.
 
-## cmd.description(cmdDescription, argDescriptions)
+### cmd.description(cmdDescription, argDescriptions)
 
 This was used to add command argument descriptions for the help.
 
@@ -158,7 +137,7 @@ program
 
 Deprecated from Commander v8.
 
-## InvalidOptionArgumentError
+### InvalidOptionArgumentError
 
 This was used for throwing an error from custom option processing, for a nice error message.
 
@@ -188,13 +167,13 @@ function myParseInt(value, dummyPrevious) {
 
 Deprecated from Commander v8.
 
-## Short option flag longer than a single character
+### Short option flag longer than a single character
 
 Short option flags like `-ws` were never supported, but the old README did not make this clear. The README now states that short options are a single character.
 
 README updated in Commander v3. Deprecated from Commander v9.
 
-## Import from `commander/esm.mjs`
+### Import from `commander/esm.mjs`
 
 The first support for named imports required an explicit entry file.
 
@@ -210,7 +189,7 @@ import { Command } from 'commander';
 
 README updated in Commander v9. Deprecated from Commander v9.
 
-## cmd._args
+### cmd._args
 
 This was always private, but was previously the only way to access the command `Argument` array.
 
@@ -225,3 +204,27 @@ const registeredArguments = program.registeredArguments;
 ```
 
 Deprecated from Commander v11.
+
+## Removed
+
+### Default import of global Command object
+
+The default import was a global Command object.
+
+```js
+const program = require('commander');
+```
+
+The global Command object is exported as `program` from Commander v5, or import the Command object.
+
+```js
+const { program } = require('commander');
+// or
+const { Command } = require('commander');
+const program = new Command()
+```
+
+- Removed from README in Commander v5.
+- Deprecated from Commander v7.
+- Removed from TypeScript declarations in Commander v8.
+- Removed from CommonJS in Commander v12. Deprecated and gone!
