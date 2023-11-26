@@ -57,7 +57,7 @@ describe('copyInheritedSettings property tests', () => {
     source.addHelpCommand('HELP [cmd]', 'ddd');
     cmd.copyInheritedSettings(source);
     cmd.helpCommand(true);
-    const helpCommand = cmd.helpCommand();
+    const helpCommand = cmd.getHelpCommand();
     expect(helpCommand).toBeTruthy();
     expect(helpCommand.name()).toBe('HELP');
     expect(helpCommand.description()).toBe('ddd');
