@@ -1095,7 +1095,7 @@ By default, Commander calls `process.exit` when it detects errors, or after disp
 this behaviour and optionally supply a callback. The default override throws a `CommanderError`.
 
 The override callback is passed a `CommanderError` with properties `exitCode` number, `code` string, and `message`.
-Commander expects the callback to terminate the normal program flow, and will throw the error if the callback returns.
+Commander expects the callback to terminate the normal program flow, and will call `process.exit` if the callback returns.
 The normal display of error messages or version or help is not affected by the override which is called after the display.
 
 ```js
