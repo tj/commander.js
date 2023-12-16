@@ -362,13 +362,25 @@ describe('program with action handler and positionalOptions and subcommand', () 
 
 // ------------------------------------------------------------------------------
 
-test('when program not positional and turn on passthrough in subcommand then error', () => {
-  const program = new commander.Command();
-  const sub = program.command('sub');
+describe('broken passThrough', () => {
+  test('when program not positional and turn on passThroughOptions in subcommand then error', () => {
+    const program = new commander.Command();
+    const sub = program.command('sub');
 
-  expect(() => {
-    sub.passThroughOptions();
-  }).toThrow();
+    expect(() => {
+      sub.passThroughOptions();
+    }).toThrow();
+  });
+
+  test('when program not positional and add subcommand with passThroughOptions then error', () => {
+    const program = new commander.Command();
+    const sub = new commander.Command('sub')
+      .passThroughOptions();
+
+    expect(() => {
+      program.addCommand(sub);
+    }).toThrow();
+  });
 });
 
 // ------------------------------------------------------------------------------

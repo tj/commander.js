@@ -1138,7 +1138,7 @@ There is more information available about:
 
 ## Support
 
-The current version of Commander is fully supported on Long Term Support versions of Node.js, and requires at least v16.
+The current version of Commander is fully supported on Long Term Support versions of Node.js, and requires at least v18.
 (For older versions of Node.js, use an older version of Commander.)
 
 The main forum for free and community support is the project [Issues](https://github.com/tj/commander.js/issues) on GitHub.

@@ -1,6 +1,6 @@
 {
   "name": "commander",
-  "version": "11.1.0",
+  "version": "12.0.0-0",
   "description": "the complete solution for node.js command-line programs",
   "keywords": [
     "commander",
@@ -16,7 +16,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/tj/commander.js.git"
+    "url": "git+https://github.com/tj/commander.js.git"
   },
   "scripts": {
     "lint": "npm run lint:javascript && npm run lint:typescript",
@@ -74,7 +74,7 @@
   },
   "types": "typings/index.d.ts",
   "engines": {
-    "node": ">=16"
+    "node": ">=18"
   },
   "support": true
 }

@@ -1059,7 +1059,7 @@ program
 
 ## 支持
 
-当前版本的 Commander 在 LTS 版本的 Node.js 上完全支持。并且至少需要 v16。
+当前版本的 Commander 在 LTS 版本的 Node.js 上完全支持。并且至少需要 v18。
 （使用更低版本 Node.js 的用户建议安装更低版本的 Commander）
 
 社区支持请访问项目的 [Issues](https://github.com/tj/commander.js/issues)。
