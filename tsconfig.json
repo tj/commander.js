@@ -1,18 +1,47 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "lib": [
-            "es6"
-        ],
-        "noImplicitAny": true,
-        "noImplicitThis": true,
-        "strictNullChecks": true,
-        "types": [
-          "node",
-          "jest"
-        ],
-        "noEmit": true,
-        "forceConsistentCasingInFileNames": true
-    },
-    "include": ["**/*.ts"],
+  /*
+    TypeScript is being used to do type checking across both JavaScript and TypeScript files.
+    In particular, this picks up some problems in the JSDoc in the JavaScript files, and validates the code
+    is consistent with the JSDoc.
+     
+    The settings here are used by VSCode.
+    
+    See also tsconfig.js.json and tsconfig.ts.json.
+  */
+  /* Visit https://aka.ms/tsconfig to read more about tsconfig configuration. */
+  "compilerOptions": {
+    "lib": ["es2021"],
+    "module": "node16",
+    "target": "es2021",
+
+    "allowJs": true,
+    "checkJs": true,
+    
+    /* Strict by default, but dial it down to reduce churn in our JavaScript code. */
+    "strict": true,
+    "noImplicitAny": false, 
+    "strictNullChecks": false,
+    "useUnknownInCatchVariables": false,
+
+    "types": [
+      "node",
+      "jest"
+    ],
+    "noEmit": true, /* just type checking and not emitting transpiled files */
+    "skipLibCheck": false, /* we want to check our hand crafted definitions */
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true /* common TypeScript config */
+  },
+  "include": [
+    /* JavaScript. Should match includes in tsconfig.js.json. */
+    "*.js",
+    "*.mjs",
+    "lib/**/*.js",
+    /* TypeScript. Should match includes in tsconfig.ts.json. */
+    "**/*.ts",
+    "**/*.mts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

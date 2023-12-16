@@ -191,7 +191,7 @@ serve --port=80
 
 You can use `--` to indicate the end of the options, and any remaining arguments will be used without being interpreted.
 
-By default options on the command line are not positional, and can be specified before or after other arguments.
+By default, options on the command line are not positional, and can be specified before or after other arguments.
 
 There are additional related routines for when `.opts()` is not enough:
 
@@ -234,7 +234,7 @@ pizza details:
 - cheese
 ```
 
-Multiple boolean short options may be combined together following the dash, and may be followed by a single short option taking a value.
+Multiple boolean short options may be combined following the dash, and may be followed by a single short option taking a value.
 For example `-d -s -p cheese` may be written as `-ds -p cheese` or even `-dsp cheese`.
 
 Options with an expected option-argument are greedy and will consume the following argument whatever the value.
@@ -327,7 +327,7 @@ add cheese type mozzarella
 Options with an optional option-argument are not greedy and will ignore arguments starting with a dash.
 So `id` behaves as a boolean option for `--id -5`, but you can use a combined form if needed like `--id=-5`.
 
-For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-taking-varying-arguments.md).
+For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-in-depth.md).
 
 ### Required option
 
@@ -379,7 +379,7 @@ Options:  { number: [ '1', '2', '3' ], letter: true }
 Remaining arguments:  [ 'operand' ]
 ```
 
-For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-taking-varying-arguments.md).
+For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-in-depth.md).
 
 ### Version option
 
@@ -678,7 +678,7 @@ async function main() {
 }
 ```
 
-A command's options and arguments on the command line are validated when the command is used. Any unknown options or missing arguments will be reported as an error. You can suppress the unknown option checks with `.allowUnknownOption()`. By default it is not an error to
+A command's options and arguments on the command line are validated when the command is used. Any unknown options or missing arguments will be reported as an error. You can suppress the unknown option checks with `.allowUnknownOption()`. By default, it is not an error to
 pass more arguments than declared, but you can make this an error with `.allowExcessArguments(false)`.
 
 ### Stand-alone executable (sub)commands
@@ -766,7 +766,7 @@ shell help spawn
 shell spawn --help
 ```
 
-Long descriptions are wrapped to fit the available width. (However, a  description that includes a line-break followed by whitespace is assumed to be pre-formatted and not wrapped.)
+Long descriptions are wrapped to fit the available width. (However, a description that includes a line-break followed by whitespace is assumed to be pre-formatted and not wrapped.)
 
 ### Custom help
 
@@ -854,8 +854,8 @@ error: unknown option '--hepl'
 The command name appears in the help, and is also used for locating stand-alone executable subcommands.
 
 You may specify the program name using `.name()` or in the Command constructor. For the program, Commander will
-fallback to using the script name from the full arguments passed into `.parse()`. However, the script name varies
-depending on how your program is launched so you may wish to specify it explicitly.
+fall back to using the script name from the full arguments passed into `.parse()`. However, the script name varies
+depending on how your program is launched, so you may wish to specify it explicitly.
 
 ```js
 program.name('pizza');
@@ -897,7 +897,7 @@ This may require additional disk space.
 
 ### .helpOption(flags, description)
 
-By default every command has a help option. You may change the default help flags and description. Pass false to disable the built-in help option.
+By default, every command has a help option. You may change the default help flags and description. Pass false to disable the built-in help option.
 
 ```js
 program
@@ -967,11 +967,13 @@ program.parse(); // Implicit, and auto-detect electron
 program.parse(['-f', 'filename'], { from: 'user' });
 ```
 
+If you want to parse multiple times, create a new program each time. Calling parse does not clear out any previous state.
+
 ### Parsing Configuration
 
 If the default parsing does not suit your needs, there are some behaviours to support other usage patterns.
 
-By default program options are recognised before and after subcommands. To only look for program options before subcommands, use `.enablePositionalOptions()`. This lets you use
+By default, program options are recognised before and after subcommands. To only look for program options before subcommands, use `.enablePositionalOptions()`. This lets you use
 an option for a different purpose in subcommands.
 
 Example file: [positional-options.js](./examples/positional-options.js)
@@ -983,8 +985,8 @@ program -b subcommand
 program subcommand -b
 ```
 
-By default options are recognised before and after command-arguments. To only process options that come
-before the command-arguments, use `.passThroughOptions()`. This lets you pass the  arguments and following options through to another program
+By default, options are recognised before and after command-arguments. To only process options that come
+before the command-arguments, use `.passThroughOptions()`. This lets you pass the arguments and following options through to another program
 without needing to use `--` to end the option processing.
 To use pass through options in a subcommand, the program needs to enable positional options.
 
@@ -997,15 +999,15 @@ program --port=80 arg
 program arg --port=80
 ```
 
-By default the option processing shows an error for an unknown option. To have an unknown option treated as an ordinary command-argument and continue looking for options, use `.allowUnknownOption()`. This lets you mix known and unknown options.
+By default, the option processing shows an error for an unknown option. To have an unknown option treated as an ordinary command-argument and continue looking for options, use `.allowUnknownOption()`. This lets you mix known and unknown options.
 
-By default the argument processing does not display an error for more command-arguments than expected.
+By default, the argument processing does not display an error for more command-arguments than expected.
 To display an error for excess arguments, use`.allowExcessArguments(false)`.
 
 ### Legacy options as properties
 
 Before Commander 7, the option values were stored as properties on the command.
-This was convenient to code but the downside was possible clashes with
+This was convenient to code, but the downside was possible clashes with
 existing properties of `Command`. You can revert to the old behaviour to run unmodified legacy code by using `.storeOptionsAsProperties()`.
 
 ```js
@@ -1029,7 +1031,7 @@ See [commander-js/extra-typings](https://github.com/commander-js/extra-typings) 
 import { Command } from '@commander-js/extra-typings';
 ```
 
-ts-node: If you use `ts-node` and  stand-alone executable subcommands written as `.ts` files, you need to call your program through node to get the subcommands called correctly. e.g.
+ts-node: If you use `ts-node` and stand-alone executable subcommands written as `.ts` files, you need to call your program through node to get the subcommands called correctly. e.g.
 
 ```sh
 node -r ts-node/register pm.ts
@@ -1059,14 +1061,14 @@ You can enable `--harmony` option in two ways:
 
 An executable subcommand is launched as a separate child process.
 
-If you are using the node inspector for [debugging](https://nodejs.org/en/docs/guides/debugging-getting-started/) executable subcommands using `node --inspect` et al,
+If you are using the node inspector for [debugging](https://nodejs.org/en/docs/guides/debugging-getting-started/) executable subcommands using `node --inspect` et al.,
 the inspector port is incremented by 1 for the spawned subcommand.
 
 If you are using VSCode to debug executable subcommands you need to set the `"autoAttachChildProcesses": true` flag in your launch.json configuration.
 
 ### npm run-script
 
-By default when you call your program using run-script, `npm` will parse any options on the command-line and they will not reach your program. Use
+By default, when you call your program using run-script, `npm` will parse any options on the command-line and they will not reach your program. Use
  `--` to stop the npm option parsing and pass through all the arguments.
 
  The synopsis for [npm run-script](https://docs.npmjs.com/cli/v9/commands/npm-run-script) explicitly shows the `--` for this reason:
@@ -1089,7 +1091,7 @@ program.error('Custom processing has failed', { exitCode: 2, code: 'my.custom.er
 
 ### Override exit and output handling
 
-By default Commander calls `process.exit` when it detects errors, or after displaying the help or version. You can override
+By default, Commander calls `process.exit` when it detects errors, or after displaying the help or version. You can override
 this behaviour and optionally supply a callback. The default override throws a `CommanderError`.
 
 The override callback is passed a `CommanderError` with properties `exitCode` number, `code` string, and `message`. The default override behaviour is to throw the error, except for async handling of executable subcommand completion which carries on. The normal display of error messages or version or help
@@ -1105,7 +1107,7 @@ try {
 }
 ```
 
-By default Commander is configured for a command-line application and writes to stdout and stderr.
+By default, Commander is configured for a command-line application and writes to stdout and stderr.
 You can modify this behaviour for custom applications. In addition, you can modify the display of error messages.
 
 Example file: [configure-output.js](./examples/configure-output.js)
@@ -1131,7 +1133,7 @@ program
 There is more information available about:
 
 - [deprecated](./docs/deprecated.md) features still supported for backwards compatibility
-- [options taking varying arguments](./docs/options-taking-varying-arguments.md)
+- [options taking varying arguments](./docs/options-in-depth.md)
 - [parsing life cycle and hooks](./docs/parsing-and-hooks.md)
 
 ## Support
