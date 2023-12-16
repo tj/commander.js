@@ -130,9 +130,16 @@ describe('Command methods that should return this for chaining', () => {
     expect(result).toBe(program);
   });
 
-  test('when call .helpOption() then returns this', () => {
+  test('when call .helpOption(flags) then returns this', () => {
     const program = new Command();
-    const result = program.helpOption(false);
+    const flags = '-h, --help';
+    const result = program.helpOption(flags);
+    expect(result).toBe(program);
+  });
+
+  test('when call .addHelpOption() then returns this', () => {
+    const program = new Command();
+    const result = program.addHelpOption(new Option('-h, --help'));
     expect(result).toBe(program);
   });
 
