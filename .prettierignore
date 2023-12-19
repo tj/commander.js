@@ -1,0 +1,6 @@
+# opt-in, so exclude everything
+**.*
+# add back the filetypes we want to format
+!**.js
+!**.mjs
+!**.cjs
