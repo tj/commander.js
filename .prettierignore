@@ -1,5 +1,9 @@
-# opt-in, so exclude everything
+# exclude everything, and opt-in to types we want to format
 **.*
-# add back the filetypes we want to format
-!**.{js,mjs,cjs}
-!**.{ts,mts,cts}
+# add the filetypes we want to format
+!**.js
+!**.mjs
+!**.cjs
+!**.ts
+!**.mts
+!**.cts
