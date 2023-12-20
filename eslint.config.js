@@ -2,7 +2,7 @@ const globals = require('globals');
 const esLintjs = require('@eslint/js');
 const jest = require('eslint-plugin-jest');
 const prettier = require('eslint-config-prettier');
-const jsdoc = require('eslint-plugin-jsdoc');
+// const jsdoc = require('eslint-plugin-jsdoc');
 const { FlatCompat } = require('@eslint/eslintrc'); // For reading original (non-flat) configs into flat format.
 
 // Jest is in process of updating for flat config support, so mixture of approaches.
@@ -21,7 +21,8 @@ module.exports = [
     rules: {
       'no-unused-vars': 'off', // lots in tests, minimise churn to start with
       'no-else-return': ['error', { allowElseIf: false }],
-      // 'jsdoc/tag-lines': ['warn', "always", {"startLines":1}]
+      // 'jsdoc/tag-lines': 'off',
+      // 'jsdoc/require-jsdoc': 'off',
     },
     languageOptions: {
       globals: {
