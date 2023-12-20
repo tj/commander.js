@@ -409,6 +409,7 @@ expectType<boolean>(baseOption.mandatory);
 expectType<string | undefined>(baseOption.short);
 expectType<string | undefined>(baseOption.long);
 expectType<boolean>(baseOption.negate);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 expectType<any>(baseOption.defaultValue);
 expectType<string | undefined>(baseOption.defaultValueDescription);
 expectType<unknown>(baseOption.presetArg);
@@ -470,6 +471,7 @@ const baseArgument = new commander.Argument('<foo');
 expectType<string>(baseArgument.description);
 expectType<boolean>(baseArgument.required);
 expectType<boolean>(baseArgument.variadic);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 expectType<any>(baseArgument.defaultValue);
 expectType<string | undefined>(baseArgument.defaultValueDescription);
 expectType<string[] | undefined>(baseArgument.argChoices);
