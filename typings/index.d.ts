@@ -419,18 +419,32 @@ export class Command {
   arguments(names: string): this;
 
   /**
-   * Override default decision whether to add implicit help command.
+   * Customise or override default help command. By default a help command is automatically added if your command has subcommands.
+   * 
+   * Please note: the API is deliberately similar to `.command()` so that a new command is returned if you pass the
+   * command name alone. In all other cases, it returns `this` for chaining.
    *
    * @example
+   * ```ts
+   * program.helpCommand('help [cmd]'); // returns help command for further configuration (see next example)
+   * program.helpCommand('help [cmd]').description('show help'); // change help command name and description
+   * program.helpCommand('help [cmd]', 'show help'); // change help command name and description, returns program for chaining
+   * program.helpCommand(false); // suppress default help command, returns program
+   * program.helpCommand(true); // add help command even if no subcommands, returns program
    * ```
-   * addHelpCommand() // force on
-   * addHelpCommand(false); // force off
-   * addHelpCommand('help [cmd]', 'display help for [cmd]'); // force on with custom details
-   * ```
-   *
-   * @returns `this` command for chaining
    */
-  addHelpCommand(enableOrNameAndArgs?: string | boolean, description?: string): this;
+  helpCommand(nameAndArgs: string): ReturnType<this['createCommand']>;
+  helpCommand(nameAndArgs: string, description?: string): this;
+  helpCommand(enable: Boolean): this;
+
+  /**
+   * Add prepared custom help command.
+   */
+  addHelpCommand(cmd: Command): this;
+  /** @deprecated since v12, instead use helpCommand */
+  addHelpCommand(nameAndArgs: string, description?: string): this;
+  /** @deprecated since v12, instead use helpCommand */
+  addHelpCommand(enable?: boolean): this;
 
   /**
    * Add hook for life cycle event.

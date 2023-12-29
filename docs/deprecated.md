@@ -16,6 +16,7 @@ They are currently still available for backwards compatibility, but should not b
   - [Short option flag longer than a single character](#short-option-flag-longer-than-a-single-character)
   - [Import from `commander/esm.mjs`](#import-from-commanderesmmjs)
   - [cmd.\_args](#cmd_args)
+  - [.addHelpCommand(string|boolean|undefined)](#addhelpcommandstringbooleanundefined)
 
 ## RegExp .option() parameter
 
@@ -224,3 +225,25 @@ const registeredArguments = program.registeredArguments;
 ```
 
 Deprecated from Commander v11.
+
+## .addHelpCommand(string|boolean|undefined)
+
+This was originally used with a variety of parameters, but not by passing a Command object despite the "add" name.
+
+```js
+program.addHelpCommand('HELP');
+program.addHelpCommand('HELP', 'SHOW HELP');
+program.addHelpCommand(false);
+
+```
+
+In new code you configure the
+help command with `.helpCommand()`. Or use the new-style `.addHelpCommand()` which takes a Command object, like `.addCommand()`.
+
+```js
+program.addHelpCommand(new Command('HELP'));
+
+program.helpCommand('HELP');
+program.helpCommand('HELP', 'SHOW HELP');
+program.helpCommand(false);
+```

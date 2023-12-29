@@ -54,13 +54,24 @@ describe('copyInheritedSettings property tests', () => {
     const source = new commander.Command();
     const cmd = new commander.Command();
 
-    source.addHelpCommand('HELP [cmd]', 'ddd');
+    source.helpCommand('HELP [cmd]', 'ddd');
     cmd.copyInheritedSettings(source);
-    cmd.helpCommand(true);
-    const helpCommand = cmd.getHelpCommand();
+    cmd.helpCommand(true); // force enable
+    const helpCommand = cmd._getHelpCommand();
     expect(helpCommand).toBeTruthy();
     expect(helpCommand.name()).toBe('HELP');
     expect(helpCommand.description()).toBe('ddd');
+  });
+
+  test('when copyInheritedSettings then does not copy help enable override', () => {
+    const source = new commander.Command();
+    const cmd = new commander.Command();
+
+    // Legacy behaviour, force enable does not inherit, 
+    // largely so deprecated program.addHelpCommand(true) does not inherit.
+    source.helpCommand(true);
+    cmd.copyInheritedSettings(source);
+    expect(cmd._addHelpOption).toBeUndefined();
   });
 
   test('when copyInheritedSettings then copies configureHelp(config)', () => {
