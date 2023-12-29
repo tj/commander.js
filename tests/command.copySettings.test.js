@@ -67,7 +67,7 @@ describe('copyInheritedSettings property tests', () => {
     const source = new commander.Command();
     const cmd = new commander.Command();
 
-    // Legacy behaviour, force enable does not inherit, 
+    // Legacy behaviour, force enable does not inherit,
     // largely so deprecated program.addHelpCommand(true) does not inherit.
     source.helpCommand(true);
     cmd.copyInheritedSettings(source);
