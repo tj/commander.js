@@ -65,7 +65,7 @@ describe('Command methods that should return this for chaining', () => {
   test('when call .helpCommand(name) then returns new command', () => {
     const program = new Command();
     const result = program.helpCommand();
-    expect(result).not.toBe(program);
+    expect(result).toBe(program);
   });
 
   test('when call .helpCommand(name, description) then returns this', () => {

@@ -421,21 +421,14 @@ export class Command {
   /**
    * Customise or override default help command. By default a help command is automatically added if your command has subcommands.
    *
-   * Please note: the API is deliberately similar to `.command()` so that a new command is returned if you pass the
-   * command name alone. In all other cases, it returns `this` for chaining.
-   *
    * @example
    * ```ts
-   * // Returns new help command for configuration
    * program.helpCommand('help [cmd]');
-   * program.helpCommand('help [cmd]').description('show help');
-   * // Returns `this` for chaining.
    * program.helpCommand('help [cmd]', 'show help');
    * program.helpCommand(false); // suppress default help command
    * program.helpCommand(true); // add help command even if no subcommands
    * ```
    */
-  helpCommand(nameAndArgs: string): ReturnType<this['createCommand']>;
   helpCommand(nameAndArgs: string, description?: string): this;
   helpCommand(enable: boolean): this;
 

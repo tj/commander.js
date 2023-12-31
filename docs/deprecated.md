@@ -237,13 +237,13 @@ program.addHelpCommand(false);
 
 ```
 
-In new code you configure the
-help command with `.helpCommand()`. Or use the new-style `.addHelpCommand()` which takes a Command object, like `.addCommand()`.
+In new code you configure the help command with `.helpCommand()`. Or use `.addHelpCommand()` which now takes a Command object, like `.addCommand()`.
 
 ```js
-program.addHelpCommand(new Command('HELP'));
-
-program.helpCommand('HELP');
-program.helpCommand('HELP', 'SHOW HELP');
+program.helpCommand('HELP [command]');
+program.helpCommand('HELP', 'show help');
 program.helpCommand(false);
+
+program.addHelpCommand(new Command('HELP').argument('[command]').description('show help'));
+
 ```
