@@ -906,7 +906,7 @@ program
 
 ### .helpCommand()
 
-A help command is added by default if your command has subcommands. You can explicitly turn on or off the implicit help command with `.addHelpCommand(true)` and `.addHelpCommand(false)`.
+A help command is added by default if your command has subcommands. You can explicitly turn on or off the implicit help command with `.helpCommand(true)` and `.helpCommand(false)`.
 
 You can both turn on and customise the help command by supplying the name and description:
 

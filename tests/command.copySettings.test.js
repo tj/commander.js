@@ -67,8 +67,8 @@ describe('copyInheritedSettings property tests', () => {
     const source = new commander.Command();
     const cmd = new commander.Command();
 
-    // Legacy behaviour, force enable does not inherit,
-    // largely so deprecated program.addHelpCommand(true) does not inherit.
+    // Existing behaviour, force enable/disable does not inherit,
+    // largely so (probably redundant) program.helpCommand(true) does not inherit to leaf subcommands.
     source.helpCommand(true);
     cmd.copyInheritedSettings(source);
     expect(cmd._addHelpOption).toBeUndefined();

@@ -67,6 +67,12 @@ expectType<commander.Command>(program.addHelpCommand(true));
 expectType<commander.Command>(program.addHelpCommand('assist [cmd]'));
 expectType<commander.Command>(program.addHelpCommand('assist [file]', 'display help'));
 
+// helpCommand
+expectType<commander.Command>(program.helpCommand(false));
+expectType<commander.Command>(program.helpCommand(true));
+expectType<commander.Command>(program.helpCommand('assist [cmd]'));
+expectType<commander.Command>(program.helpCommand('assist [file]', 'display help'));
+
 // exitOverride
 expectType<commander.Command>(program.exitOverride());
 expectType<commander.Command>(program.exitOverride((err): never => {
