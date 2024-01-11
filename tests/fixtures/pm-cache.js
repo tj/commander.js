@@ -1,4 +1,4 @@
-const program = require('../../');
+const { program } = require('../../');
 
 program
   .command('clear', 'clear the cache')

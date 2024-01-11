@@ -4,13 +4,11 @@ const { CommanderError, InvalidArgumentError } = require('./lib/error.js');
 const { Help } = require('./lib/help.js');
 const { Option } = require('./lib/option.js');
 
-/**
- * Expose the root command.
- */
+exports.program = new Command();
 
-exports = module.exports = new Command();
-exports.program = exports; // More explicit access to global command.
-// createArgument, createCommand, and createOption are implicitly available as they are methods on program.
+exports.createCommand = (name) => new Command(name);
+exports.createOption = (flags, description) => new Option(flags, description);
+exports.createArgument = (name, description) => new Argument(name, description);
 
 /**
  * Expose classes
