@@ -15,6 +15,7 @@ They are currently still available for backwards compatibility, but should not b
     - [Short option flag longer than a single character](#short-option-flag-longer-than-a-single-character)
     - [Import from `commander/esm.mjs`](#import-from-commanderesmmjs)
     - [cmd.\_args](#cmd_args)
+    - [.addHelpCommand(string|boolean|undefined)](#addhelpcommandstringbooleanundefined)
   - [Removed](#removed)
     - [Default import of global Command object](#default-import-of-global-command-object)
 
@@ -205,6 +206,27 @@ const registeredArguments = program.registeredArguments;
 
 Deprecated from Commander v11.
 
+### .addHelpCommand(string|boolean|undefined)
+
+This was originally used with a variety of parameters, but not by passing a Command object despite the "add" name.
+
+```js
+program.addHelpCommand('assist  [command]');
+program.addHelpCommand('assist', 'show assistance');
+program.addHelpCommand(false);
+
+```
+
+In new code you configure the help command with `.helpCommand()`. Or use `.addHelpCommand()` which now takes a Command object, like `.addCommand()`.
+
+```js
+program.helpCommand('assist [command]');
+program.helpCommand('assist', 'show assistance');
+program.helpCommand(false);
+
+program.addHelpCommand(new Command('assist').argument('[command]').description('show assistance'));
+
+```
 ## Removed
 
 ### Default import of global Command object
