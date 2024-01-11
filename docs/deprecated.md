@@ -211,8 +211,8 @@ Deprecated from Commander v11.
 This was originally used with a variety of parameters, but not by passing a Command object despite the "add" name.
 
 ```js
-program.addHelpCommand('HELP');
-program.addHelpCommand('HELP', 'SHOW HELP');
+program.addHelpCommand('assist  [command]');
+program.addHelpCommand('assist', 'show assistance');
 program.addHelpCommand(false);
 
 ```
@@ -220,11 +220,11 @@ program.addHelpCommand(false);
 In new code you configure the help command with `.helpCommand()`. Or use `.addHelpCommand()` which now takes a Command object, like `.addCommand()`.
 
 ```js
-program.helpCommand('HELP [command]');
-program.helpCommand('HELP', 'show help');
+program.helpCommand('assist [command]');
+program.helpCommand('assist', 'show assistance');
 program.helpCommand(false);
 
-program.addHelpCommand(new Command('HELP').argument('[command]').description('show help'));
+program.addHelpCommand(new Command('assist').argument('[command]').description('show assistance'));
 
 ```
 ## Removed
