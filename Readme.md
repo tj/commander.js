@@ -904,6 +904,8 @@ program
   .helpOption('-e, --HELP', 'read more information');
 ```
 
+(Or use `.addHelpOption()` to add an option you construct yourself.)
+
 ### .helpCommand()
 
 A help command is added by default if your command has subcommands. You can explicitly turn on or off the implicit help command with `.helpCommand(true)` and `.helpCommand(false)`.

@@ -310,6 +310,9 @@ expectType<commander.Command>(program.helpOption('-h,--help', 'custom descriptio
 expectType<commander.Command>(program.helpOption(undefined, 'custom description'));
 expectType<commander.Command>(program.helpOption(false));
 
+// addHelpOption
+expectType<commander.Command>(program.addHelpOption(new commander.Option('-h,--help')));
+
 // addHelpText
 expectType<commander.Command>(program.addHelpText('after', 'text'));
 expectType<commander.Command>(program.addHelpText('afterAll', 'text'));

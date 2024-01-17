@@ -31,11 +31,10 @@ describe('copyInheritedSettings property tests', () => {
   test('when copyInheritedSettings then copies helpOption(false)', () => {
     const source = new commander.Command();
     const cmd = new commander.Command();
-    expect(cmd._hasHelpOption).toBeTruthy();
 
     source.helpOption(false);
     cmd.copyInheritedSettings(source);
-    expect(cmd._hasHelpOption).toBeFalsy();
+    expect(cmd._getHelpOption()).toBe(null);
   });
 
   test('when copyInheritedSettings then copies helpOption(flags, description)', () => {
@@ -44,10 +43,12 @@ describe('copyInheritedSettings property tests', () => {
 
     source.helpOption('-Z, --zz', 'ddd');
     cmd.copyInheritedSettings(source);
-    expect(cmd._helpFlags).toBe('-Z, --zz');
-    expect(cmd._helpDescription).toBe('ddd');
-    expect(cmd._helpShortFlag).toBe('-Z');
-    expect(cmd._helpLongFlag).toBe('--zz');
+    expect(cmd._getHelpOption()).toBe(source._getHelpOption());
+    // const helpOption = cmd._getHelpOption();
+    // expect(helpOption.flags).toBe('-Z, --zz');
+    // expect(helpOption.description).toBe('ddd');
+    // expect(helpOption.short).toBe('-Z');
+    // expect(helpOption.long).toBe('--zz');
   });
 
   test('when copyInheritedSettings then copies custom help command', () => {

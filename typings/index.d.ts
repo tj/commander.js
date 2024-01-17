@@ -848,6 +848,12 @@ export class Command {
   helpOption(flags?: string | boolean, description?: string): this;
 
   /**
+   * Supply your own option to use for the built-in help option.
+   * This is an alternative to using helpOption() to customise the flags and description etc.
+   */
+  addHelpOption(option: Option): this;
+
+  /**
    * Output help information and exit.
    *
    * Outputs built-in help, and custom text added using `.addHelpText()`.
