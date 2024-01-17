@@ -37,7 +37,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [.usage](#usage)
     - [.description and .summary](#description-and-summary)
     - [.helpOption(flags, description)](#helpoptionflags-description)
-    - [.addHelpCommand()](#addhelpcommand)
+    - [.helpCommand()](#helpcommand)
     - [More configuration](#more-configuration-2)
   - [Custom event listeners](#custom-event-listeners)
   - [Bits and pieces](#bits-and-pieces)
@@ -904,17 +904,19 @@ program
   .helpOption('-e, --HELP', 'read more information');
 ```
 
-You can also customise the help option using `.addHelpOption()` with an `Option` you create yourself.
+(Or use `.addHelpOption()` to add an option you construct yourself.)
 
-### .addHelpCommand()
+### .helpCommand()
 
-A help command is added by default if your command has subcommands. You can explicitly turn on or off the implicit help command with `.addHelpCommand()` and `.addHelpCommand(false)`.
+A help command is added by default if your command has subcommands. You can explicitly turn on or off the implicit help command with `.helpCommand(true)` and `.helpCommand(false)`.
 
 You can both turn on and customise the help command by supplying the name and description:
 
 ```js
-program.addHelpCommand('assist [command]', 'show assistance');
+program.helpCommand('assist [command]', 'show assistance');
 ```
+
+(Or use `.addHelpCommand()` to add a command you construct yourself.)
 
 ### More configuration
 
