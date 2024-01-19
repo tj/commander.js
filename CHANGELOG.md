@@ -12,18 +12,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- `.addHelpOption()` as another way of configuring built-in help option
-- `.helpCommand()` for configuring built-in help command
+- `.addHelpOption()` as another way of configuring built-in help option ([#2006])
+- `.helpCommand()` for configuring built-in help command ([#2087])
 
 ### Changed
 
-- `.addHelpCommand()` now takes a Command (passing string or boolean still works as before but deprecated)
-- refactor internal implementation of built-in help option
-- refactor internal implementation of built-in help command
+- `.addHelpCommand()` now takes a Command (passing string or boolean still works as before but deprecated) ([#2087])
+- refactor internal implementation of built-in help option ([#2006])
+- refactor internal implementation of built-in help command ([#2087])
 
 ### Deprecated
 
-- `.addHelpCommand()` passing string or boolean (use `.helpCommand()` or pass a Command)
+- `.addHelpCommand()` passing string or boolean (use `.helpCommand()` or pass a Command) ([#2087])
 
 
 ## [12.0.0-0] (2023-11-11)
@@ -1251,6 +1251,7 @@ program
 [#1969]: https://github.com/tj/commander.js/pull/1969
 [#1982]: https://github.com/tj/commander.js/pull/1982
 [#1983]: https://github.com/tj/commander.js/pull/1983
+[#2006]: https://github.com/tj/commander.js/pull/2006
 [#2010]: https://github.com/tj/commander.js/pull/2010
 [#2017]: https://github.com/tj/commander.js/pull/2017
 [#2019]: https://github.com/tj/commander.js/pull/2019
@@ -1258,6 +1259,7 @@ program
 [#2027]: https://github.com/tj/commander.js/pull/2027
 [#2055]: https://github.com/tj/commander.js/pull/2055
 [#2059]: https://github.com/tj/commander.js/pull/2059
+[#2087]: https://github.com/tj/commander.js/pull/2087
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
@@ -1337,6 +1339,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[12.0.0-1]: https://github.com/tj/commander.js/compare/v12.0.0-0...v12.0.0-1
 [12.0.0-0]: https://github.com/tj/commander.js/compare/v11.1.0...v12.0.0-0
 [11.1.0]: https://github.com/tj/commander.js/compare/v11.0.0...v11.1.0
 [11.0.0]: https://github.com/tj/commander.js/compare/v10.0.1...v11.0.0
