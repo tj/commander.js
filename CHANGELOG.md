@@ -8,6 +8,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [12.0.0-1] (2024-01-20)
+
+### Added
+
+- `.addHelpOption()` as another way of configuring built-in help option
+- `.helpCommand()` for configuring built-in help command
+
+### Changed
+
+- `.addHelpCommand()` now takes a Command (passing string or boolean still works as before but deprecated)
+- refactor internal implementation of built-in help option
+- refactor internal implementation of built-in help command
+
+### Deprecated
+
+- `.addHelpCommand()` passing string or boolean (use `.helpCommand()` or pass a Command)
+
+
 ## [12.0.0-0] (2023-11-11)
 
 ### Fixed
