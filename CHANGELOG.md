@@ -8,25 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
-## [12.0.0-1] (2024-01-20)
+## [12.0.0] (2024-02-03)
 
 ### Added
 
 - `.addHelpOption()` as another way of configuring built-in help option ([#2006])
 - `.helpCommand()` for configuring built-in help command ([#2087])
-
-### Changed
-
-- `.addHelpCommand()` now takes a Command (passing string or boolean still works as before but deprecated) ([#2087])
-- refactor internal implementation of built-in help option ([#2006])
-- refactor internal implementation of built-in help command ([#2087])
-
-### Deprecated
-
-- `.addHelpCommand()` passing string or boolean (use `.helpCommand()` or pass a Command) ([#2087])
-
-
-## [12.0.0-0] (2023-11-11)
 
 ### Fixed
 
@@ -40,6 +27,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - *Breaking:* throw an error if add a command with name or alias which is already in use ([#2059])
 - *Breaking:* throw error when calling `.storeOptionsAsProperties()` after setting an option value ([#1928])
 - replace non-standard JSDoc of `@api private` with documented `@private` ([#1949])
+- `.addHelpCommand()` now takes a Command (passing string or boolean still works as before but deprecated) ([#2087])
+- refactor internal implementation of built-in help option ([#2006])
+- refactor internal implementation of built-in help command ([#2087])
+
+### Deprecated
+
+- `.addHelpCommand()` passing string or boolean (use `.helpCommand()` or pass a Command) ([#2087])
 
 ### Removed
 
@@ -62,6 +56,14 @@ A couple of configuration problems now throw an error, which will pick up issues
 
 - adding an option which uses the same flag as a previous option
 - adding a command which uses the same name or alias as a previous command
+
+## [12.0.0-1] (2024-01-20)
+
+(Released in 12.0.0)
+
+## [12.0.0-0] (2023-11-11)
+
+(Released in 12.0.0)
 
 ## [11.1.0] (2023-10-13)
 
@@ -1339,6 +1341,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[12.0.0]: https://github.com/tj/commander.js/compare/v11.1.0...v12.0.0
 [12.0.0-1]: https://github.com/tj/commander.js/compare/v12.0.0-0...v12.0.0-1
 [12.0.0-0]: https://github.com/tj/commander.js/compare/v11.1.0...v12.0.0-0
 [11.1.0]: https://github.com/tj/commander.js/compare/v11.0.0...v11.1.0
