@@ -62,7 +62,7 @@
     "@typescript-eslint/parser": "^6.7.5",
     "eslint": "^8.30.0",
     "eslint-config-standard": "^17.0.0",
-    "eslint-config-standard-with-typescript": "^40.0.0",
+    "eslint-config-standard-with-typescript": "^43.0.1",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-jest": "^27.1.7",
     "eslint-plugin-n": "^16.2.0",
