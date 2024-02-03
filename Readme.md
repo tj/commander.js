@@ -37,7 +37,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [.usage](#usage)
     - [.description and .summary](#description-and-summary)
     - [.helpOption(flags, description)](#helpoptionflags-description)
-    - [.addHelpCommand()](#addhelpcommand)
+    - [.helpCommand()](#helpcommand)
     - [More configuration](#more-configuration-2)
   - [Custom event listeners](#custom-event-listeners)
   - [Bits and pieces](#bits-and-pieces)
@@ -904,15 +904,19 @@ program
   .helpOption('-e, --HELP', 'read more information');
 ```
 
-### .addHelpCommand()
+(Or use `.addHelpOption()` to add an option you construct yourself.)
 
-A help command is added by default if your command has subcommands. You can explicitly turn on or off the implicit help command with `.addHelpCommand()` and `.addHelpCommand(false)`.
+### .helpCommand()
+
+A help command is added by default if your command has subcommands. You can explicitly turn on or off the implicit help command with `.helpCommand(true)` and `.helpCommand(false)`.
 
 You can both turn on and customise the help command by supplying the name and description:
 
 ```js
-program.addHelpCommand('assist [command]', 'show assistance');
+program.helpCommand('assist [command]', 'show assistance');
 ```
+
+(Or use `.addHelpCommand()` to add a command you construct yourself.)
 
 ### More configuration
 
@@ -1139,7 +1143,7 @@ There is more information available about:
 
 ## Support
 
-The current version of Commander is fully supported on Long Term Support versions of Node.js, and requires at least v16.
+The current version of Commander is fully supported on Long Term Support versions of Node.js, and requires at least v18.
 (For older versions of Node.js, use an older version of Commander.)
 
 The main forum for free and community support is the project [Issues](https://github.com/tj/commander.js/issues) on GitHub.

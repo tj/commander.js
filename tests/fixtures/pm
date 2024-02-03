@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-process.env.FORCE_COLOR = 0; // work-around bug in Jest: https://github.com/jestjs/jest/issues/14391
+const path = require('node:path');
+const { program } = require('../../');
 
-var program = require('../../');
+process.env.FORCE_COLOR = 0; // work-around bug in Jest: https://github.com/jestjs/jest/issues/14391
 
 program
   .version('0.0.1')
@@ -17,4 +18,14 @@ program
   .command('specifyInstall', 'specify install subcommand', { executableFile: 'pm-install' })
   .command('specifyPublish', 'specify publish subcommand', { executableFile: 'pm-publish' })
   .command('silent', 'silently succeed')
+  .command('fail', 'exit with non-zero status code')
+  .command('terminate', 'terminate due to signal');
+
+program
+  .command('exit-override')
+  .exitOverride((err) => { process.exit(err.exitCode); })
+  .command('fail', 'exit with non-zero status code', { executableFile: path.join(__dirname, 'pm-fail.js') })
+  .command('terminate', 'terminate due to signal', { executableFile: path.join(__dirname, 'pm-terminate.js') });
+
+program
   .parse(process.argv);

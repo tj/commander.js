@@ -59,11 +59,19 @@ expectType<commander.Command>(program.argument('[value]', 'description', parseFl
 expectType<commander.Command>(program.arguments('<cmd> [env]'));
 
 // addHelpCommand
+expectType<commander.Command>(program.addHelpCommand(new commander.Command('assist')));
+// Deprecated uses
 expectType<commander.Command>(program.addHelpCommand());
 expectType<commander.Command>(program.addHelpCommand(false));
 expectType<commander.Command>(program.addHelpCommand(true));
-expectType<commander.Command>(program.addHelpCommand('compress <file>'));
-expectType<commander.Command>(program.addHelpCommand('compress <file>', 'compress target file'));
+expectType<commander.Command>(program.addHelpCommand('assist [cmd]'));
+expectType<commander.Command>(program.addHelpCommand('assist [file]', 'display help'));
+
+// helpCommand
+expectType<commander.Command>(program.helpCommand(false));
+expectType<commander.Command>(program.helpCommand(true));
+expectType<commander.Command>(program.helpCommand('assist [cmd]'));
+expectType<commander.Command>(program.helpCommand('assist [file]', 'display help'));
 
 // exitOverride
 expectType<commander.Command>(program.exitOverride());
@@ -301,6 +309,9 @@ expectType<commander.Command>(program.helpOption('-h,--help'));
 expectType<commander.Command>(program.helpOption('-h,--help', 'custom description'));
 expectType<commander.Command>(program.helpOption(undefined, 'custom description'));
 expectType<commander.Command>(program.helpOption(false));
+
+// addHelpOption
+expectType<commander.Command>(program.addHelpOption(new commander.Option('-h,--help')));
 
 // addHelpText
 expectType<commander.Command>(program.addHelpText('after', 'text'));

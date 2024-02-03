@@ -31,11 +31,10 @@ describe('copyInheritedSettings property tests', () => {
   test('when copyInheritedSettings then copies helpOption(false)', () => {
     const source = new commander.Command();
     const cmd = new commander.Command();
-    expect(cmd._hasHelpOption).toBeTruthy();
 
     source.helpOption(false);
     cmd.copyInheritedSettings(source);
-    expect(cmd._hasHelpOption).toBeFalsy();
+    expect(cmd._getHelpOption()).toBe(null);
   });
 
   test('when copyInheritedSettings then copies helpOption(flags, description)', () => {
@@ -44,21 +43,36 @@ describe('copyInheritedSettings property tests', () => {
 
     source.helpOption('-Z, --zz', 'ddd');
     cmd.copyInheritedSettings(source);
-    expect(cmd._helpFlags).toBe('-Z, --zz');
-    expect(cmd._helpDescription).toBe('ddd');
-    expect(cmd._helpShortFlag).toBe('-Z');
-    expect(cmd._helpLongFlag).toBe('--zz');
+    expect(cmd._getHelpOption()).toBe(source._getHelpOption());
+    // const helpOption = cmd._getHelpOption();
+    // expect(helpOption.flags).toBe('-Z, --zz');
+    // expect(helpOption.description).toBe('ddd');
+    // expect(helpOption.short).toBe('-Z');
+    // expect(helpOption.long).toBe('--zz');
   });
 
-  test('when copyInheritedSettings then copies addHelpCommand(name, description)', () => {
+  test('when copyInheritedSettings then copies custom help command', () => {
     const source = new commander.Command();
     const cmd = new commander.Command();
 
-    source.addHelpCommand('HELP [cmd]', 'ddd');
+    source.helpCommand('HELP [cmd]', 'ddd');
     cmd.copyInheritedSettings(source);
-    expect(cmd._helpCommandName).toBe('HELP');
-    expect(cmd._helpCommandnameAndArgs).toBe('HELP [cmd]');
-    expect(cmd._helpCommandDescription).toBe('ddd');
+    cmd.helpCommand(true); // force enable
+    const helpCommand = cmd._getHelpCommand();
+    expect(helpCommand).toBeTruthy();
+    expect(helpCommand.name()).toBe('HELP');
+    expect(helpCommand.description()).toBe('ddd');
+  });
+
+  test('when copyInheritedSettings then does not copy help enable override', () => {
+    const source = new commander.Command();
+    const cmd = new commander.Command();
+
+    // Existing behaviour, force enable/disable does not inherit,
+    // largely so (probably redundant) program.helpCommand(true) does not inherit to leaf subcommands.
+    source.helpCommand(true);
+    cmd.copyInheritedSettings(source);
+    expect(cmd._addHelpOption).toBeUndefined();
   });
 
   test('when copyInheritedSettings then copies configureHelp(config)', () => {
