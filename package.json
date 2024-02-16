@@ -59,12 +59,10 @@
     }
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^2.1.4",
+    "@eslint/eslintrc": "^3.0.1",
     "@eslint/js": "^8.56.0",
     "@types/jest": "^29.2.4",
     "@types/node": "^20.2.5",
-    "@typescript-eslint/eslint-plugin": "^6.14.0",
-    "@typescript-eslint/parser": "^6.14.0",
     "eslint": "^8.30.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jest": "^27.1.7",
@@ -75,7 +73,8 @@
     "prettier-plugin-jsdoc": "^1.1.1",
     "ts-jest": "^29.0.3",
     "tsd": "^0.29.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "typescript-eslint": "^7.0.1"
   },
   "types": "typings/index.d.ts",
   "engines": {
