@@ -12,6 +12,7 @@ module.exports = [
   // Restricting TypeScript configs to TypeScript files.
   ...tseslint.configs.recommended.map((config) => ({
     ...config,
+    languageOptions: {parser: tseslint.parser, parserOptions: { project: './tsconfig.ts.json' }},
     files: ['**/*.{ts,mts,cts}'],
   })),
   {
