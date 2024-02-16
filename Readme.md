@@ -37,7 +37,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [.usage](#usage)
     - [.description and .summary](#description-and-summary)
     - [.helpOption(flags, description)](#helpoptionflags-description)
-    - [.addHelpCommand()](#addhelpcommand)
+    - [.helpCommand()](#helpcommand)
     - [More configuration](#more-configuration-2)
   - [Custom event listeners](#custom-event-listeners)
   - [Bits and pieces](#bits-and-pieces)
@@ -904,15 +904,19 @@ program
   .helpOption('-e, --HELP', 'read more information');
 ```
 
-### .addHelpCommand()
+(Or use `.addHelpOption()` to add an option you construct yourself.)
 
-A help command is added by default if your command has subcommands. You can explicitly turn on or off the implicit help command with `.addHelpCommand()` and `.addHelpCommand(false)`.
+### .helpCommand()
+
+A help command is added by default if your command has subcommands. You can explicitly turn on or off the implicit help command with `.helpCommand(true)` and `.helpCommand(false)`.
 
 You can both turn on and customise the help command by supplying the name and description:
 
 ```js
-program.addHelpCommand('assist [command]', 'show assistance');
+program.helpCommand('assist [command]', 'show assistance');
 ```
+
+(Or use `.addHelpCommand()` to add a command you construct yourself.)
 
 ### More configuration
 
@@ -1094,8 +1098,9 @@ program.error('Custom processing has failed', { exitCode: 2, code: 'my.custom.er
 By default, Commander calls `process.exit` when it detects errors, or after displaying the help or version. You can override
 this behaviour and optionally supply a callback. The default override throws a `CommanderError`.
 
-The override callback is passed a `CommanderError` with properties `exitCode` number, `code` string, and `message`. The default override behaviour is to throw the error, except for async handling of executable subcommand completion which carries on. The normal display of error messages or version or help
-is not affected by the override which is called after the display.
+The override callback is passed a `CommanderError` with properties `exitCode` number, `code` string, and `message`.
+Commander expects the callback to terminate the normal program flow, and will call `process.exit` if the callback returns.
+The normal display of error messages or version or help is not affected by the override which is called after the display.
 
 ```js
 program.exitOverride();
