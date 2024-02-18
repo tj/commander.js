@@ -19,10 +19,14 @@
     "url": "git+https://github.com/tj/commander.js.git"
   },
   "scripts": {
+    "fix": "npm run fix:javascript && npm run fix:typescript",
+    "fix:format": "prettier --write .",
+    "fix:javascript": "npm run lint:javascript -- --fix",
+    "fix:typescript": "npm run lint:typescript -- --fix",
     "lint": "npm run lint:javascript && npm run lint:typescript",
+    "lint:format": "prettier --check .",
     "lint:javascript": "eslint index.js esm.mjs \"lib/*.js\" \"tests/**/*.js\"",
     "lint:typescript": "eslint typings/*.ts tests/*.ts",
-    "lint:format": "prettier --check .",
     "test": "jest && npm run typecheck:ts",
     "test-esm": "node ./tests/esm-imports-test.mjs",
     "typecheck": "npm run typecheck:ts && npm run typecheck:js",
