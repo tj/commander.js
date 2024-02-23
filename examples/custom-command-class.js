@@ -12,14 +12,14 @@ class CommandWithTrace extends commander.Command {
     cmd.option('-t, --trace', 'display extra information when run command');
     return cmd;
   }
-};
+}
 
 function inpectCommand(command) {
   // The option value is stored as property on command because we called .storeOptionsAsProperties()
   console.log(`Called '${command.name()}'`);
   console.log(`args: ${command.args}`);
   console.log('opts: %o', command.opts());
-};
+}
 
 const program = new CommandWithTrace('program')
   .option('-v, ---verbose')
