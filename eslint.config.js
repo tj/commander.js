@@ -1,8 +1,8 @@
 const globals = require('globals');
 const esLintjs = require('@eslint/js');
 const jest = require('eslint-plugin-jest');
-const prettier = require('eslint-config-prettier');
 const tseslint = require('typescript-eslint');
+// const prettier = require('eslint-config-prettier');
 // const jsdoc = require('eslint-plugin-jsdoc');
 
 // Using tseslint config helper to customise its setup the tseslint way.
@@ -37,7 +37,7 @@ module.exports = [
   // jsdoc.configs['flat/recommended'],
   jest.configs['flat/recommended'],
   ...tsConfigs,
-  prettier, // Do Prettier last so it can override previous configs.
+  // prettier, // Do Prettier last so it can override previous configs.
 
   // Customise rules.
   {
@@ -63,10 +63,10 @@ module.exports = [
     rules: {
       'no-else-return': ['error', { allowElseIf: false }],
 
-      'jsdoc/tag-lines': 'off',
-      'jsdoc/require-jsdoc': 'off',
-      'jsdoc/require-param-description': 'off',
-      'jsdoc/require-returns-description': 'off',
+      // 'jsdoc/tag-lines': 'off',
+      // 'jsdoc/require-jsdoc': 'off',
+      // 'jsdoc/require-param-description': 'off',
+      // 'jsdoc/require-returns-description': 'off',
     },
     languageOptions: {
       globals: {
