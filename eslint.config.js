@@ -18,7 +18,7 @@ const tseslintConfigs = tseslint.config(
       ...tseslint.configs.recommended,
     ],
     rules: {
-      '@typescript-eslint/no-var-requires': 'off', // otherwise complains about require (tseslint defaults to sourceType:'module' )
+      '@typescript-eslint/no-var-requires': 'off', // (tseslint does not autodetect commonjs context )
     },
   }, {
     files: tsconfigTsFiles,
