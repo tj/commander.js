@@ -966,8 +966,8 @@ If the arguments follow different conventions than node you can pass a `from` op
 For example:
 
 ```js
-program.parse(process.argv); // Explicit, node conventions
-program.parse(); // Implicit, and auto-detect electron
+program.parse(process.argv); // explicit, node conventions
+program.parse(); // implicit, and auto-detect  electron et al
 program.parse(['-f', 'filename'], { from: 'user' });
 ```
 
