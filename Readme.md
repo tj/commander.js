@@ -967,7 +967,7 @@ For example:
 
 ```js
 program.parse(process.argv); // explicit, node conventions
-program.parse(); // implicit, and auto-detect  electron et al
+program.parse(); // implicit, and auto-detect electron et al
 program.parse(['-f', 'filename'], { from: 'user' });
 ```
 
