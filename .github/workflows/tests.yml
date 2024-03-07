@@ -27,5 +27,6 @@ jobs:
       run: npm ci
     - name: npm test
       run: npm test
-    - name: npm run check
-      run: npm run check
+    - name: npm run check:lint
+      # switch to full check when have run prettier on all files
+      run: npm run check:lint
