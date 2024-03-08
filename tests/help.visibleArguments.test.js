@@ -23,19 +23,23 @@ describe('visibleArguments', () => {
     const helper = new commander.Help();
     const visibleArguments = helper.visibleArguments(program);
     expect(visibleArguments.length).toEqual(1);
-    expect(visibleArguments[0]).toEqual(new commander.Argument('<file>', 'file description'));
+    expect(visibleArguments[0]).toEqual(
+      new commander.Argument('<file>', 'file description'),
+    );
   });
 
   test('when argument and legacy argument description then returned', () => {
     const program = new commander.Command();
     program.argument('<file>');
     program.description('', {
-      file: 'file description'
+      file: 'file description',
     });
     const helper = new commander.Help();
     const visibleArguments = helper.visibleArguments(program);
     expect(visibleArguments.length).toEqual(1);
-    expect(visibleArguments[0]).toEqual(new commander.Argument('<file>', 'file description'));
+    expect(visibleArguments[0]).toEqual(
+      new commander.Argument('<file>', 'file description'),
+    );
   });
 
   test('when arguments and some described then all returned', () => {
@@ -45,7 +49,9 @@ describe('visibleArguments', () => {
     const helper = new commander.Help();
     const visibleArguments = helper.visibleArguments(program);
     expect(visibleArguments.length).toEqual(2);
-    expect(visibleArguments[0]).toEqual(new commander.Argument('<file1>', 'file1 description'));
+    expect(visibleArguments[0]).toEqual(
+      new commander.Argument('<file1>', 'file1 description'),
+    );
     expect(visibleArguments[1]).toEqual(new commander.Argument('<file2>'));
   });
 
@@ -54,12 +60,14 @@ describe('visibleArguments', () => {
     program.argument('<file1>');
     program.argument('<file2>');
     program.description('', {
-      file1: 'file1 description'
+      file1: 'file1 description',
     });
     const helper = new commander.Help();
     const visibleArguments = helper.visibleArguments(program);
     expect(visibleArguments.length).toEqual(2);
-    expect(visibleArguments[0]).toEqual(new commander.Argument('<file1>', 'file1 description'));
+    expect(visibleArguments[0]).toEqual(
+      new commander.Argument('<file1>', 'file1 description'),
+    );
     expect(visibleArguments[1]).toEqual(new commander.Argument('<file2>'));
   });
 });

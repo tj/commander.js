@@ -21,28 +21,22 @@ describe('commandUsage', () => {
 
   test('when program has alias then usage includes alias', () => {
     const program = new commander.Command();
-    program
-      .name('program')
-      .alias('alias');
+    program.name('program').alias('alias');
     const helper = new commander.Help();
     expect(helper.commandUsage(program)).toEqual('program|alias [options]');
   });
 
   test('when help for subcommand then usage includes hierarchy', () => {
     const program = new commander.Command();
-    program
-      .name('program');
-    const sub = program.command('sub')
-      .name('sub');
+    program.name('program');
+    const sub = program.command('sub').name('sub');
     const helper = new commander.Help();
     expect(helper.commandUsage(sub)).toEqual('program sub [options]');
   });
 
   test('when program has argument then usage includes argument', () => {
     const program = new commander.Command();
-    program
-      .name('program')
-      .argument('<file>');
+    program.name('program').argument('<file>');
     const helper = new commander.Help();
     expect(helper.commandUsage(program)).toEqual('program [options] <file>');
   });

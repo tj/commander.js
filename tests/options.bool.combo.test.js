@@ -122,7 +122,11 @@ describe('boolean option combo with non-boolean default and preset', () => {
   function createPepperProgramWithDefaultAndPreset() {
     const program = new commander.Command();
     program
-      .addOption(new commander.Option('-p, --pepper').default('default').preset('preset'))
+      .addOption(
+        new commander.Option('-p, --pepper')
+          .default('default')
+          .preset('preset'),
+      )
       .option('-P, --no-pepper', 'remove pepper');
     return program;
   }

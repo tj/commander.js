@@ -9,7 +9,7 @@ describe('Argument methods that should return this for chaining', () => {
 
   test('when call .argParser() then returns this', () => {
     const argument = new Argument('<value>');
-    const result = argument.argParser(() => { });
+    const result = argument.argParser(() => {});
     expect(result).toBe(argument);
   });
 

@@ -7,8 +7,11 @@
 const commander = require('../'); // include commander in git clone of commander repo
 const program = new commander.Command();
 
-program
-  .option('-c, --cheese <type>', 'Add the specified type of cheese', 'blue');
+program.option(
+  '-c, --cheese <type>',
+  'Add the specified type of cheese',
+  'blue',
+);
 
 program.parse();
 

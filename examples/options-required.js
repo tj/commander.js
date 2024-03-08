@@ -9,8 +9,7 @@
 const commander = require('../'); // include commander in git clone of commander repo
 const program = new commander.Command();
 
-program
-  .requiredOption('-c, --cheese <type>', 'pizza must have cheese');
+program.requiredOption('-c, --cheese <type>', 'pizza must have cheese');
 
 program.parse();
 

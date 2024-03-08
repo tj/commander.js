@@ -1,4 +1,5 @@
-{ /* 
+{
+  /* 
     Override to include just TypeScript files and use stricter settings than we do with JavaScript.
     Used by:
     - npm run-script typecheck:ts
@@ -7,13 +8,13 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     /* Full strict is fine for the TypeScript files, so turn back on the checks we turned off for mixed-use. */
-    "noImplicitAny": true, 
+    "noImplicitAny": true,
     "strictNullChecks": true,
     "useUnknownInCatchVariables": true,
   },
   "include": [
     /* All TypeScript targets from tsconfig.json include. */
     "**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
   ],
 }

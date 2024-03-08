@@ -1,4 +1,13 @@
-import { program, Command, Option, CommanderError, InvalidArgumentError, InvalidOptionArgumentError, Help, createCommand } from '../';
+import {
+  program,
+  Command,
+  Option,
+  CommanderError,
+  InvalidArgumentError,
+  InvalidOptionArgumentError,
+  Help,
+  createCommand,
+} from '../';
 
 // Do some simple checks that expected imports are available at runtime.
 // Similar tests to esm-imports-test.js
@@ -35,7 +44,8 @@ test('InvalidArgumentError', () => {
   checkClass(new InvalidArgumentError('failed'), 'InvalidArgumentError');
 });
 
-test('InvalidOptionArgumentError', () => { // Deprecated
+test('InvalidOptionArgumentError', () => {
+  // Deprecated
   checkClass(new InvalidOptionArgumentError('failed'), 'InvalidArgumentError');
 });
 

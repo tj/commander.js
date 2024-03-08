@@ -12,10 +12,11 @@ describe('visibleCommands', () => {
 
   test('when add command then visible (with help)', () => {
     const program = new commander.Command();
-    program
-      .command('sub');
+    program.command('sub');
     const helper = new commander.Help();
-    const visibleCommandNames = helper.visibleCommands(program).map(cmd => cmd.name());
+    const visibleCommandNames = helper
+      .visibleCommands(program)
+      .map((cmd) => cmd.name());
     expect(visibleCommandNames).toEqual(['sub', 'help']);
   });
 
@@ -24,10 +25,11 @@ describe('visibleCommands', () => {
     program
       .command('visible', 'desc')
       .command('invisible-executable', 'desc', { hidden: true });
-    program
-      .command('invisible-action', { hidden: true });
+    program.command('invisible-action', { hidden: true });
     const helper = new commander.Help();
-    const visibleCommandNames = helper.visibleCommands(program).map(cmd => cmd.name());
+    const visibleCommandNames = helper
+      .visibleCommands(program)
+      .map((cmd) => cmd.name());
     expect(visibleCommandNames).toEqual(['visible', 'help']);
   });
 });

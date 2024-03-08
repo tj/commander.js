@@ -20,10 +20,13 @@ program
 program
   .command('extra')
   .addHelpText('before', 'Note: the extra command does not do anything')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   awesome extra --help
-  awesome help extra`);
+  awesome help extra`,
+  );
 
 program.parse();
 

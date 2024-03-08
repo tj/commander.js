@@ -1,4 +1,5 @@
-{ /* 
+{
+  /* 
     Simple override including just JavaScript files.
     Used by npm run-script typecheck:js
   */
@@ -7,8 +8,8 @@
   "include": [
     /* All JavaScript targets from tsconfig.json include. */
     "*.js",
-    ".prettierrc.js", /* missed by above pattern */
+    ".prettierrc.js" /* missed by above pattern */,
     "*.mjs",
-    "lib/**/*.js"
+    "lib/**/*.js",
   ],
 }

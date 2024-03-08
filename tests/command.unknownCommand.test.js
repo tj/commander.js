@@ -5,7 +5,9 @@ describe('unknownCommand', () => {
   let writeErrorSpy;
 
   beforeAll(() => {
-    writeErrorSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
+    writeErrorSpy = jest
+      .spyOn(process.stderr, 'write')
+      .mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -26,12 +28,8 @@ describe('unknownCommand', () => {
 
   test('when unknown command but action handler taking arg then no error', () => {
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .command('sub');
-    program
-      .argument('[args...]')
-      .action(() => { });
+    program.exitOverride().command('sub');
+    program.argument('[args...]').action(() => {});
     expect(() => {
       program.parse('node test.js unknown'.split(' '));
     }).not.toThrow();
@@ -39,11 +37,8 @@ describe('unknownCommand', () => {
 
   test('when unknown command but listener then no error', () => {
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .command('sub');
-    program
-      .on('command:*', () => { });
+    program.exitOverride().command('sub');
+    program.on('command:*', () => {});
     expect(() => {
       program.parse('node test.js unknown'.split(' '));
     }).not.toThrow();
@@ -51,9 +46,7 @@ describe('unknownCommand', () => {
 
   test('when unknown command then error', () => {
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .command('sub');
+    program.exitOverride().command('sub');
     let caughtErr;
     try {
       program.parse('node test.js unknown'.split(' '));
@@ -67,9 +60,7 @@ describe('unknownCommand', () => {
     //  The unknown command is more useful since the option is for an unknown command (and might be
     // ok if the command had been correctly spelled, say).
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .command('sub');
+    program.exitOverride().command('sub');
     let caughtErr;
     try {
       program.parse('node test.js sbu --silly'.split(' '));

@@ -11,9 +11,7 @@ const { Command } = require('../'); // include commander in git clone of command
 
 const program = new Command();
 
-program
-  .configureHelp({ showGlobalOptions: true })
-  .option('-g, --global');
+program.configureHelp({ showGlobalOptions: true }).option('-g, --global');
 
 program
   .command('sub')
@@ -21,7 +19,7 @@ program
   .action((options, cmd) => {
     console.log({
       opts: cmd.opts(),
-      optsWithGlobals: cmd.optsWithGlobals()
+      optsWithGlobals: cmd.optsWithGlobals(),
     });
   });
 
