@@ -5,9 +5,22 @@ const program = new Command();
 
 program
   .addOption(new Option('--quiet').implies({ logLevel: 'off' }))
-  .addOption(new Option('--log-level <level>').choices(['info', 'warning', 'error', 'off']).default('info'))
-  .addOption(new Option('-c, --cheese <type>', 'Add the specified type of cheese').implies({ dairy: true }))
-  .addOption(new Option('--no-cheese', 'You do not want any cheese').implies({ dairy: false }))
+  .addOption(
+    new Option('--log-level <level>')
+      .choices(['info', 'warning', 'error', 'off'])
+      .default('info'),
+  )
+  .addOption(
+    new Option(
+      '-c, --cheese <type>',
+      'Add the specified type of cheese',
+    ).implies({ dairy: true }),
+  )
+  .addOption(
+    new Option('--no-cheese', 'You do not want any cheese').implies({
+      dairy: false,
+    }),
+  )
   .addOption(new Option('--dairy', 'May contain dairy'));
 
 program.parse();

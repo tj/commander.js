@@ -11,7 +11,9 @@ describe('sortOptions', () => {
       .option('--aaa', 'desc')
       .option('--bbb', 'desc');
     const helper = program.createHelp();
-    const visibleOptionNames = helper.visibleOptions(program).map(option => option.name());
+    const visibleOptionNames = helper
+      .visibleOptions(program)
+      .map((option) => option.name());
     expect(visibleOptionNames).toEqual(['zzz', 'aaa', 'bbb', 'help']);
   });
 
@@ -23,7 +25,9 @@ describe('sortOptions', () => {
       .option('--aaa', 'desc')
       .option('--bbb', 'desc');
     const helper = program.createHelp();
-    const visibleOptionNames = helper.visibleOptions(program).map(cmd => cmd.name());
+    const visibleOptionNames = helper
+      .visibleOptions(program)
+      .map((cmd) => cmd.name());
     expect(visibleOptionNames).toEqual(['aaa', 'bbb', 'help', 'zzz']);
   });
 
@@ -35,7 +39,9 @@ describe('sortOptions', () => {
       .option('-n,--aaa', 'desc')
       .option('-o,--bbb', 'desc');
     const helper = program.createHelp();
-    const visibleOptionNames = helper.visibleOptions(program).map(cmd => cmd.name());
+    const visibleOptionNames = helper
+      .visibleOptions(program)
+      .map((cmd) => cmd.name());
     expect(visibleOptionNames).toEqual(['help', 'zzz', 'aaa', 'bbb']);
   });
 
@@ -47,7 +53,9 @@ describe('sortOptions', () => {
       .option('--aaa', 'desc')
       .option('-b', 'desc');
     const helper = program.createHelp();
-    const visibleOptionNames = helper.visibleOptions(program).map(cmd => cmd.name());
+    const visibleOptionNames = helper
+      .visibleOptions(program)
+      .map((cmd) => cmd.name());
     expect(visibleOptionNames).toEqual(['aaa', 'b', 'help', 'zzz']);
   });
 
@@ -59,7 +67,9 @@ describe('sortOptions', () => {
       .option('-a', 'desc')
       .option('-c', 'desc');
     const helper = program.createHelp();
-    const visibleOptionNames = helper.visibleOptions(program).map(cmd => cmd.name());
+    const visibleOptionNames = helper
+      .visibleOptions(program)
+      .map((cmd) => cmd.name());
     expect(visibleOptionNames).toEqual(['a', 'B', 'c', 'help']);
   });
 
@@ -72,7 +82,9 @@ describe('sortOptions', () => {
       .option('--no-bbb', 'desc')
       .option('--aaa', 'desc');
     const helper = program.createHelp();
-    const visibleOptionNames = helper.visibleOptions(program).map(cmd => cmd.name());
+    const visibleOptionNames = helper
+      .visibleOptions(program)
+      .map((cmd) => cmd.name());
     expect(visibleOptionNames).toEqual(['aaa', 'bbb', 'ccc', 'help', 'no-bbb']);
   });
 });

@@ -10,9 +10,7 @@ exports.createCommand = (name) => new Command(name);
 exports.createOption = (flags, description) => new Option(flags, description);
 exports.createArgument = (name, description) => new Argument(name, description);
 
-/**
- * Expose classes
- */
+/** Expose classes */
 
 exports.Command = Command;
 exports.Option = Option;

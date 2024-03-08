@@ -22,18 +22,15 @@ describe('.option()', () => {
   test('when use help options separately then does not throw', () => {
     expect(() => {
       const program = new Command();
-      program
-        .option('-h, --help', 'display help');
+      program.option('-h, --help', 'display help');
     }).not.toThrow();
   });
 
   test('when reuse flags in subcommand then does not throw', () => {
     expect(() => {
       const program = new Command();
-      program
-        .option('e, --example');
-      program.command('sub')
-        .option('e, --example');
+      program.option('e, --example');
+      program.command('sub').option('e, --example');
     }).not.toThrow();
   });
 });

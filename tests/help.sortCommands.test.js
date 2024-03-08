@@ -11,7 +11,9 @@ describe('sortSubcommands', () => {
       .command('aaa', 'desc')
       .command('bbb', 'desc');
     const helper = program.createHelp();
-    const visibleCommandNames = helper.visibleCommands(program).map(cmd => cmd.name());
+    const visibleCommandNames = helper
+      .visibleCommands(program)
+      .map((cmd) => cmd.name());
     expect(visibleCommandNames).toEqual(['ccc', 'aaa', 'bbb', 'help']);
   });
 
@@ -23,7 +25,9 @@ describe('sortSubcommands', () => {
       .command('aaa', 'desc')
       .command('bbb', 'desc');
     const helper = program.createHelp();
-    const visibleCommandNames = helper.visibleCommands(program).map(cmd => cmd.name());
+    const visibleCommandNames = helper
+      .visibleCommands(program)
+      .map((cmd) => cmd.name());
     expect(visibleCommandNames).toEqual(['aaa', 'bbb', 'ccc', 'help']);
   });
 });

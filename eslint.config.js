@@ -14,20 +14,17 @@ const tseslintConfigs = tseslint.config(
     languageOptions: {
       parserOptions: { project: './tsconfig.js.json' },
     },
-    extends: [
-      ...tseslint.configs.recommended,
-    ],
+    extends: [...tseslint.configs.recommended],
     rules: {
       '@typescript-eslint/no-var-requires': 'off', // (tseslint does not autodetect commonjs context )
     },
-  }, {
+  },
+  {
     files: tsconfigTsFiles,
     languageOptions: {
       parserOptions: { project: './tsconfig.ts.json' },
     },
-    extends: [
-      ...tseslint.configs.recommended,
-    ],
+    extends: [...tseslint.configs.recommended],
   },
 );
 
@@ -59,17 +56,20 @@ module.exports = [
     files: ['**/*.test.{js,mjs,cjs}'],
     rules: {
       'no-unused-vars': 'off', // lots in tests, minimise churn for now
-    }
+    },
   },
   {
     files: [...tsconfigTsFiles, ...tsconfigJsFiles],
     rules: {
-      '@typescript-eslint/ban-ts-comment': ['error', {
-        'ts-expect-error': 'allow-with-description',
-        'ts-ignore': 'allow-with-description',
-        'ts-nocheck': true,
-        'ts-check': true,
-    }],
+      '@typescript-eslint/ban-ts-comment': [
+        'error',
+        {
+          'ts-expect-error': 'allow-with-description',
+          'ts-ignore': 'allow-with-description',
+          'ts-nocheck': true,
+          'ts-check': true,
+        },
+      ],
     },
   },
 ];
