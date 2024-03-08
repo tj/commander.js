@@ -1,5 +1,5 @@
 const config = {
-  plugins: ['prettier-plugin-jsdoc'],
+  // plugins: ['prettier-plugin-jsdoc'],
   singleQuote: true,
   overrides: [
     {
