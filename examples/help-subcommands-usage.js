@@ -1,5 +1,4 @@
-// const commander = require('commander'); // (normal include)
-const commander = require('../'); // include commander in git clone of commander repo
+const commander = require('commander');
 
 // By default the subcommand list includes a fairly simple usage. If you have added a custom usage
 // to the subcommands you may wish to configure the help to show these instead.

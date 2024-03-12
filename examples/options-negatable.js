@@ -4,8 +4,7 @@
 //    Other option types, negatable boolean
 //    You can specify a boolean option long name with a leading `no-` to make it true by default and able to be negated.
 
-// const commander = require('commander'); // (normal include)
-const commander = require('../'); // include commander in git clone of commander repo
+const commander = require('commander');
 const program = new commander.Command();
 
 program
