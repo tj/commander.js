@@ -3,8 +3,7 @@
 // This is used as an example in the README for:
 //    Default option value
 
-// const commander = require('commander'); // (normal include)
-const commander = require('../'); // include commander in git clone of commander repo
+const commander = require('commander');
 const program = new commander.Command();
 
 program

@@ -1,5 +1,4 @@
-// const { program } = require('commander'); // (normal include)
-const { program } = require('../'); // include commander in git clone of commander repo
+const { program } = require('commander');
 
 // This is used as an example in the README for the Quick Start.
 

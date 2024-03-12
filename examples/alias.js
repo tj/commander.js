@@ -2,8 +2,7 @@
 
 // This example shows giving alternative names for a command.
 
-// const { Command } = require('commander'); // (normal include)
-const { Command } = require('../'); // include commander in git clone of commander repo
+const { Command } = require('commander');
 const program = new Command();
 
 program

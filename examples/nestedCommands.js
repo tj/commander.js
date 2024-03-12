@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-// const commander = require('commander'); // (normal include)
-const commander = require('../'); // include commander in git clone of commander repo
+const commander = require('commander');
 const program = new commander.Command();
 
 // Commander supports nested subcommands.
