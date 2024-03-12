@@ -955,21 +955,23 @@ program.on('option:verbose', function () {
 
 ### .parse() and .parseAsync()
 
-The first argument to `.parse` is the array of strings to parse. You may omit the parameter to implicitly use `process.argv`.
+Call with no parameters to parse `process.argv`. Detects Electron and special node options like `node --eval`. Easy mode!
 
-If the arguments follow different conventions than node you can pass a `from` option in the second parameter:
+Or call with an array of strings to parse, and optionally where the user arguments start by specifying where the arguments are `from`:
 
-- 'node': default, `argv[0]` is the application and `argv[1]` is the script being run, with user parameters after that
-- 'electron': `argv[1]` varies depending on whether the electron application is packaged
-- 'user': all of the arguments from the user
+- `'node'`: default, `argv[0]` is the application and `argv[1]` is the script being run, with user arguments after that
+- `'electron'`: `argv[0]` is the application and `argv[1]` varies depending on whether the electron application is packaged
+- `'user'`: just user arguments
 
 For example:
 
 ```js
-program.parse(process.argv); // Explicit, node conventions
-program.parse(); // Implicit, and auto-detect electron
-program.parse(['-f', 'filename'], { from: 'user' });
+program.parse(); // parse process.argv and auto-detect electron and special node flags
+program.parse(process.argv); // assume argv[0] is app and argv[1] is script
+program.parse(['--port', '80'], { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
 ```
+
+Use parseAsync instead of parse if any of your action handlers are async.
 
 If you want to parse multiple times, create a new program each time. Calling parse does not clear out any previous state.
 
