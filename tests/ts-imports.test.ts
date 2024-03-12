@@ -3,6 +3,8 @@ import { program, Command, Option, CommanderError, InvalidArgumentError, Invalid
 // Do some simple checks that expected imports are available at runtime.
 // Similar tests to esm-imports-test.js
 
+/* eslint-disable jest/expect-expect */
+
 // eslint-disable-next-line @typescript-eslint/ban-types
 function checkClass(obj: object, name: string): void {
   expect(typeof obj).toEqual('object');
