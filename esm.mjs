@@ -12,5 +12,5 @@ export const {
   Command,
   Argument,
   Option,
-  Help
+  Help,
 } = commander;

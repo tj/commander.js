@@ -16,8 +16,7 @@ describe('regression tests', () => {
     program
       .command('doit [id]')
       .option('--better', 'do it better')
-      .action((id, cmd) => {
-      });
+      .action((id, cmd) => {});
     return program;
   }
 
@@ -36,9 +35,19 @@ describe('regression tests', () => {
   });
 
   // https://github.com/tj/commander.js/issues/508
-  test('when arguments to executable include option flags then argument order preserved', async() => {
+  test('when arguments to executable include option flags then argument order preserved', async () => {
     const pm = path.join(__dirname, 'fixtures/pm');
-    const { stdout } = await execFileAsync('node', [pm, 'echo', '1', '2', '--dry-run', '3', '4', '5', '6']);
+    const { stdout } = await execFileAsync('node', [
+      pm,
+      'echo',
+      '1',
+      '2',
+      '--dry-run',
+      '3',
+      '4',
+      '5',
+      '6',
+    ]);
     expect(stdout).toBe("[ '1', '2', '--dry-run', '3', '4', '5', '6' ]\n");
   });
 });
@@ -51,8 +60,7 @@ describe('parseOptions', () => {
       .option('--global-value <value>')
       .command('sub [args...]')
       .option('--sub-flag');
-    program
-      .action(() => { });
+    program.action(() => {});
     return program;
   }
 
@@ -151,7 +159,10 @@ describe('parseOptions', () => {
   test('when program has literal after unknown option then literal preserved too', () => {
     const program = createProgram();
     const result = program.parseOptions('--unknown1 -- --unknown2'.split(' '));
-    expect(result).toEqual({ operands: [], unknown: ['--unknown1', '--', '--unknown2'] });
+    expect(result).toEqual({
+      operands: [],
+      unknown: ['--unknown1', '--', '--unknown2'],
+    });
   });
 });
 
@@ -159,8 +170,7 @@ describe('parseOptions', () => {
 describe('parse and program.args', () => {
   test('when program has known flag and operand then option removed and operand returned', () => {
     const program = new commander.Command();
-    program
-      .option('--global-flag');
+    program.option('--global-flag');
     program.parse('node test.js --global-flag arg'.split(' '));
     expect(program.args).toEqual(['arg']);
   });
@@ -171,7 +181,11 @@ describe('parse and program.args', () => {
       .allowUnknownOption()
       .option('--global-flag')
       .option('--global-value <value>');
-    program.parse('node test.js aaa --global-flag bbb --unknown ccc --global-value value'.split(' '));
+    program.parse(
+      'node test.js aaa --global-flag bbb --unknown ccc --global-value value'.split(
+        ' ',
+      ),
+    );
     expect(program.args).toEqual(['aaa', 'bbb', '--unknown', 'ccc']);
   });
 
@@ -182,7 +196,11 @@ describe('parse and program.args', () => {
       .option('--global-value <value>')
       .command('sub [args...]')
       .option('--sub-flag');
-    program.parse('node test.js --global-flag sub --sub-flag arg --global-value value'.split(' '));
+    program.parse(
+      'node test.js --global-flag sub --sub-flag arg --global-value value'.split(
+        ' ',
+      ),
+    );
     expect(program.args).toEqual(['sub', '--sub-flag', 'arg']);
   });
 });
@@ -228,8 +246,7 @@ describe('Utility Conventions', () => {
       .option('-b,--bbb')
       .option('-c,--ccc <value>')
       .option('-d,--ddd [value]');
-    program
-      .action(() => { });
+    program.action(() => {});
     return program;
   }
 
@@ -244,7 +261,7 @@ describe('Utility Conventions', () => {
     const program = createProgram();
     const result = program.parseOptions(['-pq']);
     expect(result).toEqual({ operands: [], unknown: ['-pq'] });
-    expect(program.opts()).toEqual({ });
+    expect(program.opts()).toEqual({});
   });
 
   test('when program has combo known short option and required value then arg removed', () => {
@@ -286,7 +303,7 @@ describe('Utility Conventions', () => {
     const program = createProgram();
     const result = program.parseOptions(['--rrr=value']);
     expect(result).toEqual({ operands: [], unknown: ['--rrr=value'] });
-    expect(program.opts()).toEqual({ });
+    expect(program.opts()).toEqual({});
   });
 
   test('when program has combo optional and combineFlagAndOptionalValue() then treat as value', () => {

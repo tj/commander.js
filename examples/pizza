@@ -18,9 +18,9 @@ const cheese = !options.cheese ? 'no' : options.cheese;
 console.log('  - %s cheese', cheese);
 
 // Try the following on macOS or Linux:
-//    ./pizza --help    
+//    ./pizza --help
 //
 // Try the following:
-//    ./pizza --help    
+//    ./pizza --help
 //    node pizza --peppers --cheese=blue
 //    node pizza --no-cheese

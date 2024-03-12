@@ -67,8 +67,7 @@ describe('showHelpAfterError with message', () => {
 
   test('when too many command-arguments then shows help', () => {
     const { program, writeMock } = makeProgram();
-    program
-      .allowExcessArguments(false);
+    program.allowExcessArguments(false);
     let caughtErr;
     try {
       program.parse(['surprise'], { from: 'user' });
@@ -117,6 +116,7 @@ test('when showHelpAfterError() and error and then shows full help', () => {
   try {
     program.parse(['--unknown-option'], { from: 'user' });
   } catch (err) {
+    /* empty */
   }
   expect(writeMock).toHaveBeenLastCalledWith(program.helpInformation());
 });

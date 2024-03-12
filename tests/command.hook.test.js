@@ -10,9 +10,7 @@ test('when hook event wrong then throw', () => {
 test('when no action then action hooks not called', () => {
   const hook = jest.fn();
   const program = new commander.Command();
-  program
-    .hook('preAction', hook)
-    .hook('postAction', hook);
+  program.hook('preAction', hook).hook('postAction', hook);
   program.parse([], { from: 'user' });
   expect(hook).not.toHaveBeenCalled();
 });
@@ -63,9 +61,9 @@ describe('action hooks with synchronous hooks, order', () => {
   test('when hook preAction at program and sub then hooks called program then sub', () => {
     const calls = [];
     const program = new commander.Command();
+    program.hook('preAction', () => calls.push('program'));
     program
-      .hook('preAction', () => calls.push('program'));
-    program.command('sub')
+      .command('sub')
       .hook('preAction', () => calls.push('sub'))
       .action(() => calls.push('action'));
     program.parse(['sub'], { from: 'user' });
@@ -75,9 +73,9 @@ describe('action hooks with synchronous hooks, order', () => {
   test('when hook postAction at program and sub then hooks called sub then program', () => {
     const calls = [];
     const program = new commander.Command();
+    program.hook('postAction', () => calls.push('program'));
     program
-      .hook('postAction', () => calls.push('program'));
-    program.command('sub')
+      .command('sub')
       .hook('postAction', () => calls.push('sub'))
       .action(() => calls.push('action'));
     program.parse(['sub'], { from: 'user' });
@@ -93,7 +91,8 @@ describe('action hooks with synchronous hooks, order', () => {
     program
       .hook('preAction', () => calls.push('pb2'))
       .hook('postAction', () => calls.push('pa2'));
-    program.command('sub')
+    program
+      .command('sub')
       .hook('preAction', () => calls.push('sb'))
       .hook('postAction', () => calls.push('sa'))
       .action(() => calls.push('action'));
@@ -106,9 +105,7 @@ describe('action hooks context', () => {
   test('when hook on program then passed program/program', () => {
     const hook = jest.fn();
     const program = new commander.Command();
-    program
-      .hook('preAction', hook)
-      .action(() => {});
+    program.hook('preAction', hook).action(() => {});
     program.parse([], { from: 'user' });
     expect(hook).toHaveBeenCalledWith(program, program);
   });
@@ -116,10 +113,8 @@ describe('action hooks context', () => {
   test('when hook on program and call sub then passed program/sub', () => {
     const hook = jest.fn();
     const program = new commander.Command();
-    program
-      .hook('preAction', hook);
-    const sub = program.command('sub')
-      .action(() => {});
+    program.hook('preAction', hook);
+    const sub = program.command('sub').action(() => {});
     program.parse(['sub'], { from: 'user' });
     expect(hook).toHaveBeenCalledWith(program, sub);
   });
@@ -127,7 +122,8 @@ describe('action hooks context', () => {
   test('when hook on sub and call sub then passed sub/sub', () => {
     const hook = jest.fn();
     const program = new commander.Command();
-    const sub = program.command('sub')
+    const sub = program
+      .command('sub')
       .hook('preAction', hook)
       .action(() => {});
     program.parse(['sub'], { from: 'user' });
@@ -149,24 +145,21 @@ describe('action hooks context', () => {
   test('when hook program on preAction and call sub then thisCommand has program options set', () => {
     expect.assertions(1);
     const program = new commander.Command();
-    program
-      .option('--debug')
-      .hook('preAction', (thisCommand) => {
-        expect(thisCommand.opts().debug).toEqual(true);
-      });
-    program.command('sub')
-      .action(() => {});
+    program.option('--debug').hook('preAction', (thisCommand) => {
+      expect(thisCommand.opts().debug).toEqual(true);
+    });
+    program.command('sub').action(() => {});
     program.parse(['sub', '--debug'], { from: 'user' });
   });
 
   test('when hook program on preAction and call sub then actionCommand has sub options set', () => {
     expect.assertions(1);
     const program = new commander.Command();
+    program.hook('preAction', (thisCommand, actionCommand) => {
+      expect(actionCommand.opts().debug).toEqual(true);
+    });
     program
-      .hook('preAction', (thisCommand, actionCommand) => {
-        expect(actionCommand.opts().debug).toEqual(true);
-      });
-    program.command('sub')
+      .command('sub')
       .option('--debug')
       .action(() => {});
     program.parse(['sub', '--debug'], { from: 'user' });
@@ -200,35 +193,30 @@ describe('action hooks context', () => {
   test('when hook program on preAction and call sub then thisCommand has program args set', () => {
     expect.assertions(1);
     const program = new commander.Command();
-    program
-      .argument('[arg]')
-      .hook('preAction', (thisCommand) => {
-        expect(thisCommand.args).toEqual(['sub', 'value']);
-      });
-    program.command('sub')
-      .action(() => {});
+    program.argument('[arg]').hook('preAction', (thisCommand) => {
+      expect(thisCommand.args).toEqual(['sub', 'value']);
+    });
+    program.command('sub').action(() => {});
     program.parse(['sub', 'value'], { from: 'user' });
   });
 
   test('when hook program on preAction and call sub then actionCommand has sub args set', () => {
     expect.assertions(1);
     const program = new commander.Command();
-    program
-      .hook('preAction', (thisCommand, actionCommand) => {
-        expect(actionCommand.args).toEqual(['value']);
-      });
-    program.command('sub')
-      .action(() => {});
+    program.hook('preAction', (thisCommand, actionCommand) => {
+      expect(actionCommand.args).toEqual(['value']);
+    });
+    program.command('sub').action(() => {});
     program.parse(['sub', 'value'], { from: 'user' });
   });
 });
 
 describe('action hooks async', () => {
-  test('when async preAction then async from preAction', async() => {
+  test('when async preAction then async from preAction', async () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .hook('preAction', async() => {
+      .hook('preAction', async () => {
         await 0;
         calls.push('before');
       })
@@ -239,11 +227,11 @@ describe('action hooks async', () => {
     expect(calls).toEqual(['before', 'action']);
   });
 
-  test('when async postAction then async from postAction', async() => {
+  test('when async postAction then async from postAction', async () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .hook('postAction', async() => {
+      .hook('postAction', async () => {
         await 0;
         calls.push('after');
       })
@@ -254,13 +242,13 @@ describe('action hooks async', () => {
     expect(calls).toEqual(['action', 'after']);
   });
 
-  test('when async action then async from action', async() => {
+  test('when async action then async from action', async () => {
     const calls = [];
     const program = new commander.Command();
     program
       .hook('preAction', () => calls.push('before'))
       .hook('postAction', () => calls.push('after'))
-      .action(async() => {
+      .action(async () => {
         await 0;
         calls.push('action');
       });
@@ -270,11 +258,11 @@ describe('action hooks async', () => {
     expect(calls).toEqual(['before', 'action', 'after']);
   });
 
-  test('when async first preAction then async from first preAction', async() => {
+  test('when async first preAction then async from first preAction', async () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .hook('preAction', async() => {
+      .hook('preAction', async () => {
         await 0;
         calls.push('1');
       })
@@ -286,12 +274,12 @@ describe('action hooks async', () => {
     expect(calls).toEqual(['1', '2', 'action']);
   });
 
-  test('when async second preAction then async from second preAction', async() => {
+  test('when async second preAction then async from second preAction', async () => {
     const calls = [];
     const program = new commander.Command();
     program
       .hook('preAction', () => calls.push('1'))
-      .hook('preAction', async() => {
+      .hook('preAction', async () => {
         await 0;
         calls.push('2');
       })
@@ -302,56 +290,98 @@ describe('action hooks async', () => {
     expect(calls).toEqual(['1', '2', 'action']);
   });
 
-  test('when async hook everything then hooks called nested', async() => {
+  test('when async hook everything then hooks called nested', async () => {
     const calls = [];
     const program = new commander.Command();
     program
-      .hook('preAction', async() => { await 0; calls.push('pb1'); })
-      .hook('postAction', async() => { await 0; calls.push('pa1'); });
+      .hook('preAction', async () => {
+        await 0;
+        calls.push('pb1');
+      })
+      .hook('postAction', async () => {
+        await 0;
+        calls.push('pa1');
+      });
     program
-      .hook('preAction', async() => { await 0; calls.push('pb2'); })
-      .hook('postAction', async() => { await 0; calls.push('pa2'); });
-    program.command('sub')
-      .hook('preAction', async() => { await 0; calls.push('sb'); })
-      .hook('postAction', async() => { await 0; calls.push('sa'); })
-      .action(async() => { await 0; calls.push('action'); });
+      .hook('preAction', async () => {
+        await 0;
+        calls.push('pb2');
+      })
+      .hook('postAction', async () => {
+        await 0;
+        calls.push('pa2');
+      });
+    program
+      .command('sub')
+      .hook('preAction', async () => {
+        await 0;
+        calls.push('sb');
+      })
+      .hook('postAction', async () => {
+        await 0;
+        calls.push('sa');
+      })
+      .action(async () => {
+        await 0;
+        calls.push('action');
+      });
     const result = program.parseAsync(['sub'], { from: 'user' });
     expect(calls).toEqual([]);
     await result;
     expect(calls).toEqual(['pb1', 'pb2', 'sb', 'action', 'sa', 'pa2', 'pa1']);
   });
 
-  test('preSubcommand hook should work', async() => {
+  test('preSubcommand hook should work', async () => {
     const calls = [];
     const program = new commander.Command();
-    program
-      .hook('preSubcommand', async() => { await 0; calls.push(0); });
-    program.command('sub')
-      .action(async() => { await 1; calls.push(1); });
-    program.action(async() => { await 2; calls.push(2); });
+    program.hook('preSubcommand', async () => {
+      await 0;
+      calls.push(0);
+    });
+    program.command('sub').action(async () => {
+      await 1;
+      calls.push(1);
+    });
+    program.action(async () => {
+      await 2;
+      calls.push(2);
+    });
     const result = program.parseAsync(['sub'], { from: 'user' });
     expect(calls).toEqual([]);
     await result;
     expect(calls).toEqual([0, 1]);
   });
-  test('preSubcommand hook should effective for direct subcommands', async() => {
+  test('preSubcommand hook should effective for direct subcommands', async () => {
     const calls = [];
     const program = new commander.Command();
-    program
-      .hook('preSubcommand', async(thisCommand, subCommand) => {
-        await 'preSubcommand';
-        calls.push('preSubcommand');
-        calls.push(subCommand.name());
-      });
+    program.hook('preSubcommand', async (thisCommand, subCommand) => {
+      await 'preSubcommand';
+      calls.push('preSubcommand');
+      calls.push(subCommand.name());
+    });
     program
       .command('first')
-      .action(async() => { await 'first'; calls.push('first'); })
+      .action(async () => {
+        await 'first';
+        calls.push('first');
+      })
       .command('second')
-      .action(async() => { await 'second'; calls.push('second'); })
+      .action(async () => {
+        await 'second';
+        calls.push('second');
+      })
       .command('third')
-      .action(async() => { await 'third'; calls.push('third'); });
-    program.action(async() => { await 2; calls.push(2); });
-    const result = program.parseAsync(['first', 'second', 'third'], { from: 'user' });
+      .action(async () => {
+        await 'third';
+        calls.push('third');
+      });
+    program.action(async () => {
+      await 2;
+      calls.push(2);
+    });
+    const result = program.parseAsync(['first', 'second', 'third'], {
+      from: 'user',
+    });
     expect(calls).toEqual([]);
     await result;
     expect(calls).toEqual(['preSubcommand', 'first', 'third']);

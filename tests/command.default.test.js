@@ -9,17 +9,17 @@ describe('default executable command', () => {
   // Calling node explicitly so pm works without file suffix cross-platform.
   const pm = path.join(__dirname, './fixtures/pm');
 
-  test('when default subcommand and no command then call default', async() => {
+  test('when default subcommand and no command then call default', async () => {
     const { stdout } = await execFileAsync('node', [pm]);
     expect(stdout).toBe('default\n');
   });
 
-  test('when default subcommand and unrecognised argument then call default with argument', async() => {
+  test('when default subcommand and unrecognised argument then call default with argument', async () => {
     const { stdout } = await execFileAsync('node', [pm, 'an-argument']);
     expect(stdout).toBe("default\n[ 'an-argument' ]\n");
   });
 
-  test('when default subcommand and unrecognised option then call default with option', async() => {
+  test('when default subcommand and unrecognised option then call default with option', async () => {
     const { stdout } = await execFileAsync('node', [pm, '--an-option']);
     expect(stdout).toBe("default\n[ '--an-option' ]\n");
   });
@@ -29,8 +29,7 @@ describe('default action command', () => {
   function makeProgram() {
     const program = new commander.Command();
     const actionMock = jest.fn();
-    program
-      .command('other');
+    program.command('other');
     program
       .command('default', { isDefault: true })
       .allowUnknownOption()
@@ -67,10 +66,8 @@ describe('default added command', () => {
       .action(actionMock);
 
     const program = new commander.Command();
-    program
-      .command('other');
-    program
-      .addCommand(defaultCmd, { isDefault: true });
+    program.command('other');
+    program.addCommand(defaultCmd, { isDefault: true });
     return { program, actionMock };
   }
 

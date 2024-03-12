@@ -6,8 +6,7 @@ const commander = require('../');
 
 test('when default then options not stored on command', () => {
   const program = new commander.Command();
-  program
-    .option('--foo <value>', 'description');
+  program.option('--foo <value>', 'description');
   program.parse(['node', 'test', '--foo', 'bar']);
   expect(program.foo).toBeUndefined();
   expect(program.opts().foo).toBe('bar');
@@ -16,9 +15,7 @@ test('when default then options not stored on command', () => {
 test('when default then options+command passed to action', () => {
   const program = new commander.Command();
   const callback = jest.fn();
-  program
-    .argument('<value>')
-    .action(callback);
+  program.argument('<value>').action(callback);
   program.parse(['node', 'test', 'value']);
   expect(callback).toHaveBeenCalledWith('value', program.opts(), program);
 });
@@ -27,9 +24,7 @@ test('when default then options+command passed to action', () => {
 
 test('when storeOptionsAsProperties() then options stored on command', () => {
   const program = new commander.Command();
-  program
-    .storeOptionsAsProperties()
-    .option('--foo <value>', 'description');
+  program.storeOptionsAsProperties().option('--foo <value>', 'description');
   program.parse(['node', 'test', '--foo', 'bar']);
   expect(program.foo).toBe('bar');
   expect(program.opts().foo).toBe('bar');
@@ -37,9 +32,7 @@ test('when storeOptionsAsProperties() then options stored on command', () => {
 
 test('when storeOptionsAsProperties(true) then options stored on command', () => {
   const program = new commander.Command();
-  program
-    .storeOptionsAsProperties(true)
-    .option('--foo <value>', 'description');
+  program.storeOptionsAsProperties(true).option('--foo <value>', 'description');
   program.parse(['node', 'test', '--foo', 'bar']);
   expect(program.foo).toBe('bar');
   expect(program.opts().foo).toBe('bar');
@@ -58,10 +51,7 @@ test('when storeOptionsAsProperties(false) then options not stored on command', 
 test('when storeOptionsAsProperties() then command+command passed to action', () => {
   const program = new commander.Command();
   const callback = jest.fn();
-  program
-    .storeOptionsAsProperties()
-    .argument('<value>')
-    .action(callback);
+  program.storeOptionsAsProperties().argument('<value>').action(callback);
   program.parse(['node', 'test', 'value']);
   expect(callback).toHaveBeenCalledWith('value', program, program);
 });
@@ -69,10 +59,7 @@ test('when storeOptionsAsProperties() then command+command passed to action', ()
 test('when storeOptionsAsProperties(false) then opts+command passed to action', () => {
   const program = new commander.Command();
   const callback = jest.fn();
-  program
-    .storeOptionsAsProperties(false)
-    .argument('<value>')
-    .action(callback);
+  program.storeOptionsAsProperties(false).argument('<value>').action(callback);
   program.parse(['node', 'test', 'value']);
   expect(callback).toHaveBeenCalledWith('value', program.opts(), program);
 });

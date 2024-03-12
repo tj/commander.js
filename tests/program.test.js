@@ -9,7 +9,7 @@ const {
   InvalidOptionArgumentError,
   createCommand,
   createOption,
-  createArgument
+  createArgument,
 } = require('../index.js');
 
 // Do some testing of the default export(s).
@@ -50,7 +50,8 @@ test('InvalidArgumentError', () => {
   checkClass(new InvalidArgumentError('failed'), 'InvalidArgumentError');
 });
 
-test('InvalidOptionArgumentError', () => { // Deprecated
+test('InvalidOptionArgumentError', () => {
+  // Deprecated
   checkClass(new InvalidOptionArgumentError('failed'), 'InvalidArgumentError');
 });
 

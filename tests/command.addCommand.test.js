@@ -5,11 +5,8 @@ test('when addCommand and specify subcommand then called', () => {
   const program = new commander.Command();
   const leafAction = jest.fn();
   const sub = new commander.Command();
-  sub
-    .name('sub')
-    .action(leafAction);
-  program
-    .addCommand(sub);
+  sub.name('sub').action(leafAction);
+  program.addCommand(sub);
 
   program.parse('node test.js sub'.split(' '));
   expect(leafAction).toHaveBeenCalled();

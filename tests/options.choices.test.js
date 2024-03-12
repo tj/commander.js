@@ -4,7 +4,9 @@ test('when option argument in choices then option set', () => {
   const program = new commander.Command();
   program
     .exitOverride()
-    .addOption(new commander.Option('--colour <shade>').choices(['red', 'blue']));
+    .addOption(
+      new commander.Option('--colour <shade>').choices(['red', 'blue']),
+    );
   program.parse(['--colour', 'red'], { from: 'user' });
   expect(program.opts().colour).toBe('red');
 });
@@ -15,9 +17,11 @@ test('when option argument is not in choices then error', () => {
   program
     .exitOverride()
     .configureOutput({
-      writeErr: () => {}
+      writeErr: () => {},
     })
-    .addOption(new commander.Option('--colour <shade>').choices(['red', 'blue']));
+    .addOption(
+      new commander.Option('--colour <shade>').choices(['red', 'blue']),
+    );
   expect(() => {
     program.parse(['--colour', 'orange'], { from: 'user' });
   }).toThrow();
@@ -46,7 +50,7 @@ describe('choices parameter is treated as readonly, per TypeScript declaration',
     program
       .exitOverride()
       .configureOutput({
-        writeErr: () => {}
+        writeErr: () => {},
       })
       .addOption(new commander.Option('--colour <shade>').choices(param));
     param.push('orange');

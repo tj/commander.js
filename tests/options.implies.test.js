@@ -13,7 +13,9 @@ describe('check priorities', () => {
   test('when source default and implied undefined then implied is undefined', () => {
     const program = new Command();
     program
-      .addOption(new Option('--foo').implies({ bar: 'implied' }).default('default'))
+      .addOption(
+        new Option('--foo').implies({ bar: 'implied' }).default('default'),
+      )
       .option('--bar');
     program.parse([], { from: 'user' });
     expect(program.opts()).toEqual({ foo: 'default' });
@@ -64,8 +66,7 @@ describe('check priorities', () => {
 
 test('when imply non-option then ok and stored', () => {
   const program = new Command();
-  program
-    .addOption(new Option('--foo').implies({ bar: 'implied' }));
+  program.addOption(new Option('--foo').implies({ bar: 'implied' }));
   program.parse(['--foo'], { from: 'user' });
   expect(program.opts()).toEqual({ foo: true, bar: 'implied' });
 });
@@ -83,7 +84,9 @@ test('when imply multiple values then store multiple values', () => {
 test('when imply multiple times then store multiple values', () => {
   const program = new Command();
   program
-    .addOption(new Option('--foo').implies({ one: 'ONE' }).implies({ two: 'TWO' }))
+    .addOption(
+      new Option('--foo').implies({ one: 'ONE' }).implies({ two: 'TWO' }),
+    )
     .option('--one')
     .option('--two');
   program.parse(['--foo'], { from: 'user' });
@@ -110,8 +113,7 @@ test('when imply from negative option then negative implied', () => {
 
 test('when imply from lone negative option then negative implied', () => {
   const program = new Command();
-  program
-    .addOption(new Option('--no-foo').implies({ implied: 'NEGATIVE' }));
+  program.addOption(new Option('--no-foo').implies({ implied: 'NEGATIVE' }));
   program.parse(['--no-foo'], { from: 'user' });
   expect(program.opts()).toEqual({ foo: false, implied: 'NEGATIVE' });
 });
@@ -120,7 +122,9 @@ test('when imply from negative option with preset then negative implied', () => 
   const program = new Command();
   program
     .addOption(new Option('--foo').implies({ implied: 'POSITIVE' }))
-    .addOption(new Option('--no-foo').implies({ implied: 'NEGATIVE' }).preset('FALSE'));
+    .addOption(
+      new Option('--no-foo').implies({ implied: 'NEGATIVE' }).preset('FALSE'),
+    );
   program.parse(['--no-foo'], { from: 'user' });
   expect(program.opts()).toEqual({ foo: 'FALSE', implied: 'NEGATIVE' });
 });
@@ -149,7 +153,7 @@ test('when conflict with implied value then throw', () => {
   program
     .exitOverride()
     .configureOutput({
-      writeErr: () => {}
+      writeErr: () => {},
     })
     .addOption(new Option('--unary'))
     .addOption(new Option('--binary').conflicts('unary'))
@@ -164,7 +168,9 @@ test('when requiredOption with implied value then not throw', () => {
   const program = new Command();
   program
     .requiredOption('--target <target-file>')
-    .addOption(new Option('--default-target').implies({ target: 'default-file' }));
+    .addOption(
+      new Option('--default-target').implies({ target: 'default-file' }),
+    );
 
   expect(() => {
     program.parse(['--default-target'], { from: 'user' });
@@ -173,11 +179,8 @@ test('when requiredOption with implied value then not throw', () => {
 
 test('when implies on program and use subcommand then program updated', () => {
   const program = new Command();
-  program
-    .addOption(new Option('--foo').implies({ bar: 'implied' }));
-  program
-    .command('sub')
-    .action(() => {});
+  program.addOption(new Option('--foo').implies({ bar: 'implied' }));
+  program.command('sub').action(() => {});
   program.parse(['--foo', 'sub'], { from: 'user' });
   expect(program.opts().bar).toEqual('implied');
 });
@@ -196,7 +199,9 @@ test('when implied option has custom processing then custom processing not calle
   const program = new Command();
   program
     .addOption(new Option('--foo').implies({ bar: true }))
-    .option('-b, --bar', 'description', () => { called = true; });
+    .option('-b, --bar', 'description', () => {
+      called = true;
+    });
   program.parse(['--foo'], { from: 'user' });
   expect(program.opts().bar).toEqual(true);
   expect(called).toEqual(false);

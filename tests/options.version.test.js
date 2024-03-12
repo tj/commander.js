@@ -7,7 +7,9 @@ describe('.version', () => {
     const errorMessage = 'unknownOption';
     const program = new commander.Command();
     // Override unknownOption as convenient way to check fails as expected.
-    jest.spyOn(program, 'unknownOption').mockImplementation(() => { throw new Error(errorMessage); });
+    jest.spyOn(program, 'unknownOption').mockImplementation(() => {
+      throw new Error(errorMessage);
+    });
 
     expect(() => {
       program.parse(['node', 'test', '--version']);
@@ -56,8 +58,7 @@ describe('.version', () => {
   test('when default .version then helpInformation includes default version help', () => {
     const myVersion = '1.2.3';
     const program = new commander.Command();
-    program
-      .version(myVersion);
+    program.version(myVersion);
 
     const helpInformation = program.helpInformation();
 
@@ -130,8 +131,7 @@ describe('.version', () => {
     const myVersionFlags = '-r, --revision';
     const myVersionDescription = 'custom description';
     const program = new commander.Command();
-    program
-      .version(myVersion, myVersionFlags, myVersionDescription);
+    program.version(myVersion, myVersionFlags, myVersionDescription);
 
     const helpInformation = program.helpInformation();
 
@@ -142,10 +142,7 @@ describe('.version', () => {
   test('when have .version+version and specify version then command called', () => {
     const actionMock = jest.fn();
     const program = new commander.Command();
-    program
-      .version('1.2.3')
-      .command('version')
-      .action(actionMock);
+    program.version('1.2.3').command('version').action(actionMock);
 
     program.parse(['node', 'test', 'version']);
 

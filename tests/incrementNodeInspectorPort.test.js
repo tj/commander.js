@@ -10,7 +10,7 @@ describe('incrementNodeInspectorPort', () => {
   beforeAll(() => {
     spawnSpy = jest.spyOn(childProcess, 'spawn').mockImplementation(() => {
       return {
-        on: () => {}
+        on: () => {},
       };
     });
     signalSpy = jest.spyOn(process, 'on').mockImplementation(() => {});
@@ -29,7 +29,9 @@ describe('incrementNodeInspectorPort', () => {
   function makeProgram() {
     const program = new commander.Command();
     const fileWhichExists = path.join(__dirname, './fixtures/pm-cache.js');
-    program.command('cache', 'stand-alone command', { executableFile: fileWhichExists });
+    program.command('cache', 'stand-alone command', {
+      executableFile: fileWhichExists,
+    });
     return program;
   }
 

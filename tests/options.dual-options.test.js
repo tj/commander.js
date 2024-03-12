@@ -23,27 +23,21 @@ test('when negative option then stored in negativeOptions', () => {
 
 test('when unrelated positive and negative options then no dual options', () => {
   const program = new Command();
-  program
-    .option('--one')
-    .option('--no-two');
+  program.option('--one').option('--no-two');
   const helper = new DualOptions(program.options);
   expect(helper.dualOptions.size).toEqual(0);
 });
 
 test('when related positive and negative options then stored as dual option', () => {
   const program = new Command();
-  program
-    .option('--one')
-    .option('--no-one');
+  program.option('--one').option('--no-one');
   const helper = new DualOptions(program.options);
   expect(helper.dualOptions.size).toEqual(1);
 });
 
 test('when related negative and positive options then stored as dual option', () => {
   const program = new Command();
-  program
-    .option('--no-one')
-    .option('--one');
+  program.option('--no-one').option('--one');
   const helper = new DualOptions(program.options);
   expect(helper.dualOptions.size).toEqual(1);
 });

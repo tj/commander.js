@@ -8,7 +8,8 @@ program
   .description('CLI to some JavaScript string utilities')
   .version('0.8.0');
 
-program.command('split')
+program
+  .command('split')
   .description('Split a string into substrings and display as an array.')
   .argument('<string>', 'string to split')
   .option('--first', 'display just the first substring')
@@ -18,7 +19,8 @@ program.command('split')
     console.log(str.split(options.separator, limit));
   });
 
-program.command('join')
+program
+  .command('join')
   .description('Join the command-arguments into a single string')
   .argument('<strings...>', 'one or more strings')
   .option('-s, --separator <char>', 'separator character', ',')

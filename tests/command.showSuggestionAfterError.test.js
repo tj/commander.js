@@ -2,15 +2,16 @@ const { Command } = require('../');
 
 function getSuggestion(program, arg) {
   let message = '';
-  program
-    .exitOverride()
-    .configureOutput({
-      writeErr: (str) => { message = str; }
-    });
+  program.exitOverride().configureOutput({
+    writeErr: (str) => {
+      message = str;
+    },
+  });
 
   try {
     program.parse([arg], { from: 'user' });
   } catch (err) {
+    /* empty */
   }
 
   const match = message.match(/Did you mean (one of )?(.*)\?/);

@@ -7,7 +7,7 @@
 const commander = require('commander');
 const program = new commander.Command();
 
-function myParseInt(value, dummyPrevious) {
+function myParseInt(value) {
   // parseInt takes a string and a radix
   const parsedValue = parseInt(value, 10);
   if (isNaN(parsedValue)) {
@@ -24,17 +24,21 @@ function collect(value, previous) {
   return previous.concat([value]);
 }
 
-function commaSeparatedList(value, dummyPrevious) {
+function commaSeparatedList(value) {
   return value.split(',');
 }
 
 program
   .option('-f, --float <number>', 'float argument', parseFloat)
   .option('-i, --integer <number>', 'integer argument', myParseInt)
-  .option('-v, --verbose', 'verbosity that can be increased', increaseVerbosity, 0)
+  .option(
+    '-v, --verbose',
+    'verbosity that can be increased',
+    increaseVerbosity,
+    0,
+  )
   .option('-c, --collect <value>', 'repeatable value', collect, [])
-  .option('-l, --list <items>', 'comma separated list', commaSeparatedList)
-;
+  .option('-l, --list <items>', 'comma separated list', commaSeparatedList);
 
 program.parse();
 

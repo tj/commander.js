@@ -6,7 +6,7 @@ describe('program calls to addHelpText', () => {
   let writeSpy;
 
   beforeAll(() => {
-    writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
+    writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -35,7 +35,7 @@ describe('program calls to addHelpText', () => {
 
   test('when "before" function returns nothing then no effect', () => {
     const program = new commander.Command();
-    program.addHelpText('before', () => { });
+    program.addHelpText('before', () => {});
     program.outputHelp();
     expect(writeSpy).toHaveBeenNthCalledWith(1, program.helpInformation());
   });
@@ -90,7 +90,7 @@ describe('program and subcommand calls to addHelpText', () => {
   let writeSpy;
 
   beforeAll(() => {
-    writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
+    writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -143,8 +143,12 @@ describe('context checks with full parse', () => {
   let stderrSpy;
 
   beforeAll(() => {
-    stdoutSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
-    stderrSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
+    stdoutSpy = jest
+      .spyOn(process.stdout, 'write')
+      .mockImplementation(() => {});
+    stderrSpy = jest
+      .spyOn(process.stderr, 'write')
+      .mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -159,9 +163,7 @@ describe('context checks with full parse', () => {
 
   test('when help requested then text is on stdout', () => {
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .addHelpText('before', 'text');
+    program.exitOverride().addHelpText('before', 'text');
     expect(() => {
       program.parse(['--help'], { from: 'user' });
     }).toThrow();
@@ -170,10 +172,7 @@ describe('context checks with full parse', () => {
 
   test('when help for error then text is on stderr', () => {
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .addHelpText('before', 'text')
-      .command('sub');
+    program.exitOverride().addHelpText('before', 'text').command('sub');
     expect(() => {
       program.parse([], { from: 'user' });
     }).toThrow();
@@ -183,9 +182,9 @@ describe('context checks with full parse', () => {
   test('when help requested then context.error is false', () => {
     let context;
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .addHelpText('before', (contextParam) => { context = contextParam; });
+    program.exitOverride().addHelpText('before', (contextParam) => {
+      context = contextParam;
+    });
     expect(() => {
       program.parse(['--help'], { from: 'user' });
     }).toThrow();
@@ -197,7 +196,9 @@ describe('context checks with full parse', () => {
     const program = new commander.Command();
     program
       .exitOverride()
-      .addHelpText('before', (contextParam) => { context = contextParam; })
+      .addHelpText('before', (contextParam) => {
+        context = contextParam;
+      })
       .command('sub');
     expect(() => {
       program.parse([], { from: 'user' });
@@ -208,9 +209,9 @@ describe('context checks with full parse', () => {
   test('when help on program then context.command is program', () => {
     let context;
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .addHelpText('before', (contextParam) => { context = contextParam; });
+    program.exitOverride().addHelpText('before', (contextParam) => {
+      context = contextParam;
+    });
     expect(() => {
       program.parse(['--help'], { from: 'user' });
     }).toThrow();
@@ -220,10 +221,10 @@ describe('context checks with full parse', () => {
   test('when help on subcommand and "before" subcommand then context.command is subcommand', () => {
     let context;
     const program = new commander.Command();
-    program
-      .exitOverride();
-    const sub = program.command('sub')
-      .addHelpText('before', (contextParam) => { context = contextParam; });
+    program.exitOverride();
+    const sub = program.command('sub').addHelpText('before', (contextParam) => {
+      context = contextParam;
+    });
     expect(() => {
       program.parse(['sub', '--help'], { from: 'user' });
     }).toThrow();
@@ -233,9 +234,9 @@ describe('context checks with full parse', () => {
   test('when help on subcommand and "beforeAll" on program then context.command is subcommand', () => {
     let context;
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .addHelpText('beforeAll', (contextParam) => { context = contextParam; });
+    program.exitOverride().addHelpText('beforeAll', (contextParam) => {
+      context = contextParam;
+    });
     const sub = program.command('sub');
     expect(() => {
       program.parse(['sub', '--help'], { from: 'user' });

@@ -84,13 +84,13 @@ describe('Command methods that should return this for chaining', () => {
 
   test('when call .exitOverride() then returns this', () => {
     const program = new Command();
-    const result = program.exitOverride(() => { });
+    const result = program.exitOverride(() => {});
     expect(result).toBe(program);
   });
 
   test('when call .action() then returns this', () => {
     const program = new Command();
-    const result = program.action(() => { });
+    const result = program.action(() => {});
     expect(result).toBe(program);
   });
 
@@ -193,13 +193,13 @@ describe('Command methods that should return this for chaining', () => {
 
   test('when call .configureHelp() then returns this', () => {
     const program = new Command();
-    const result = program.configureHelp({ });
+    const result = program.configureHelp({});
     expect(result).toBe(program);
   });
 
   test('when call .configureOutput() then returns this', () => {
     const program = new Command();
-    const result = program.configureOutput({ });
+    const result = program.configureOutput({});
     expect(result).toBe(program);
   });
 

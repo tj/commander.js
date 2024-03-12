@@ -21,7 +21,9 @@ describe('optionDescription', () => {
     const description = 'description';
     const option = new commander.Option('-a', description).default(true);
     const helper = new commander.Help();
-    expect(helper.optionDescription(option)).toEqual('description (default: true)');
+    expect(helper.optionDescription(option)).toEqual(
+      'description (default: true)',
+    );
   });
 
   test('when boolean option has default value string then return description without default', () => {
@@ -33,9 +35,13 @@ describe('optionDescription', () => {
 
   test('when optional option has preset value then return description and default value', () => {
     const description = 'description';
-    const option = new commander.Option('--aa [value]', description).preset('abc');
+    const option = new commander.Option('--aa [value]', description).preset(
+      'abc',
+    );
     const helper = new commander.Help();
-    expect(helper.optionDescription(option)).toEqual('description (preset: "abc")');
+    expect(helper.optionDescription(option)).toEqual(
+      'description (preset: "abc")',
+    );
   });
 
   test('when boolean option has preset value then return description without default', () => {
@@ -54,16 +60,25 @@ describe('optionDescription', () => {
   test('when option has default value description then return description and custom default description', () => {
     const description = 'description';
     const defaultValueDescription = 'custom';
-    const option = new commander.Option('-a <value>', description).default('default value', defaultValueDescription);
+    const option = new commander.Option('-a <value>', description).default(
+      'default value',
+      defaultValueDescription,
+    );
     const helper = new commander.Help();
-    expect(helper.optionDescription(option)).toEqual(`description (default: ${defaultValueDescription})`);
+    expect(helper.optionDescription(option)).toEqual(
+      `description (default: ${defaultValueDescription})`,
+    );
   });
 
   test('when option has choices then return description and choices', () => {
     const description = 'description';
     const choices = ['one', 'two'];
-    const option = new commander.Option('-a <value>', description).choices(choices);
+    const option = new commander.Option('-a <value>', description).choices(
+      choices,
+    );
     const helper = new commander.Help();
-    expect(helper.optionDescription(option)).toEqual('description (choices: "one", "two")');
+    expect(helper.optionDescription(option)).toEqual(
+      'description (choices: "one", "two")',
+    );
   });
 });

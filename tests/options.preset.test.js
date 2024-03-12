@@ -37,7 +37,9 @@ test('when optional with string preset used with option-argument then value is a
 
 test('when optional with preset and coerce used then preset is coerced', () => {
   const program = new Command();
-  program.addOption(new Option('-p, --port [port]').preset('4').argParser(parseFloat));
+  program.addOption(
+    new Option('-p, --port [port]').preset('4').argParser(parseFloat),
+  );
   program.parse(['-p'], { from: 'user' });
   expect(program.opts().port).toBe(4);
 });

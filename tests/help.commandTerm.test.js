@@ -12,22 +12,19 @@ describe('subcommandTerm', () => {
   });
 
   test('when command has alias then returns name|alias', () => {
-    const command = new commander.Command('program')
-      .alias('alias');
+    const command = new commander.Command('program').alias('alias');
     const helper = new commander.Help();
     expect(helper.subcommandTerm(command)).toEqual('program|alias');
   });
 
   test('when command has options then returns name [options]', () => {
-    const command = new commander.Command('program')
-      .option('-a,--all');
+    const command = new commander.Command('program').option('-a,--all');
     const helper = new commander.Help();
     expect(helper.subcommandTerm(command)).toEqual('program [options]');
   });
 
   test('when command has <argument> then returns name <argument>', () => {
-    const command = new commander.Command('program')
-      .argument('<argument>');
+    const command = new commander.Command('program').argument('<argument>');
     const helper = new commander.Help();
     expect(helper.subcommandTerm(command)).toEqual('program <argument>');
   });
@@ -38,6 +35,8 @@ describe('subcommandTerm', () => {
       .option('-a,--all')
       .argument('<argument>');
     const helper = new commander.Help();
-    expect(helper.subcommandTerm(command)).toEqual('program|alias [options] <argument>');
+    expect(helper.subcommandTerm(command)).toEqual(
+      'program|alias [options] <argument>',
+    );
   });
 });

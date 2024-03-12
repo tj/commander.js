@@ -7,7 +7,9 @@ describe('visibleOptions', () => {
   test('when no options then just help visible', () => {
     const program = new commander.Command();
     const helper = new commander.Help();
-    const visibleOptionNames = helper.visibleOptions(program).map(option => option.name());
+    const visibleOptionNames = helper
+      .visibleOptions(program)
+      .map((option) => option.name());
     expect(visibleOptionNames).toEqual(['help']);
   });
 
@@ -22,7 +24,9 @@ describe('visibleOptions', () => {
     const program = new commander.Command();
     program.option('-v,--visible');
     const helper = new commander.Help();
-    const visibleOptionNames = helper.visibleOptions(program).map(option => option.name());
+    const visibleOptionNames = helper
+      .visibleOptions(program)
+      .map((option) => option.name());
     expect(visibleOptionNames).toEqual(['visible', 'help']);
   });
 
@@ -32,7 +36,9 @@ describe('visibleOptions', () => {
       .option('-v,--visible')
       .addOption(new commander.Option('--invisible').hideHelp());
     const helper = new commander.Help();
-    const visibleOptionNames = helper.visibleOptions(program).map(option => option.name());
+    const visibleOptionNames = helper
+      .visibleOptions(program)
+      .map((option) => option.name());
     expect(visibleOptionNames).toEqual(['visible', 'help']);
   });
 });

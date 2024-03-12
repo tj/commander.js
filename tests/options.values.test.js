@@ -7,11 +7,11 @@ const commander = require('../');
 //
 // option with required value, using describe.each to test all matrix of values and tests
 describe.each([['str'], ['80'], ['-'], ['-5'], ['--flag']])(
-  'option with required value specified as %s', (value) => {
+  'option with required value specified as %s',
+  (value) => {
     function createPortProgram() {
       const program = new commander.Command();
-      program
-        .option('-p,--port <number>', 'specify port');
+      program.option('-p,--port <number>', 'specify port');
       return program;
     }
 
@@ -38,14 +38,14 @@ describe.each([['str'], ['80'], ['-'], ['-5'], ['--flag']])(
       program.parse(['node', 'test', `--port=${value}`]);
       expect(program.opts().port).toBe(value);
     });
-  });
+  },
+);
 
 // option with optional value
 describe('option with optional value', () => {
   function createPortProgram() {
     const program = new commander.Command();
-    program
-      .option('-p,--port [number]', 'specify port');
+    program.option('-p,--port [number]', 'specify port');
     return program;
   }
 
@@ -75,8 +75,10 @@ describe('option with optional value', () => {
 
   test('when long flag followed empty string then value is empty string', () => {
     const program = createPortProgram();
-    program
-      .option('-c, --cheese [type]', 'optionally specify the type of cheese');
+    program.option(
+      '-c, --cheese [type]',
+      'optionally specify the type of cheese',
+    );
     program.parse(['node', 'test', '--cheese', '']);
     expect(program.opts().cheese).toBe('');
   });

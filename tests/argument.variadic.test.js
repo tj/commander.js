@@ -6,10 +6,7 @@ describe('variadic argument', () => {
   test('when no extra arguments specified for program then variadic arg is empty array', () => {
     const actionMock = jest.fn();
     const program = new commander.Command();
-    program
-      .argument('<id>')
-      .argument('[variadicArg...]')
-      .action(actionMock);
+    program.argument('<id>').argument('[variadicArg...]').action(actionMock);
 
     program.parse(['node', 'test', 'id']);
 
@@ -27,15 +24,18 @@ describe('variadic argument', () => {
 
     program.parse(['node', 'test', 'id', ...extraArguments]);
 
-    expect(actionMock).toHaveBeenCalledWith('id', extraArguments, program.opts(), program);
+    expect(actionMock).toHaveBeenCalledWith(
+      'id',
+      extraArguments,
+      program.opts(),
+      program,
+    );
   });
 
   test('when no extra arguments specified for command then variadic arg is empty array', () => {
     const actionMock = jest.fn();
     const program = new commander.Command();
-    const cmd = program
-      .command('sub [variadicArg...]')
-      .action(actionMock);
+    const cmd = program.command('sub [variadicArg...]').action(actionMock);
 
     program.parse(['node', 'test', 'sub']);
 
@@ -45,9 +45,7 @@ describe('variadic argument', () => {
   test('when extra arguments specified for command then variadic arg is array of values', () => {
     const actionMock = jest.fn();
     const program = new commander.Command();
-    const cmd = program
-      .command('sub [variadicArg...]')
-      .action(actionMock);
+    const cmd = program.command('sub [variadicArg...]').action(actionMock);
     const extraArguments = ['a', 'b', 'c'];
 
     program.parse(['node', 'test', 'sub', ...extraArguments]);
@@ -59,9 +57,7 @@ describe('variadic argument', () => {
     const program = new commander.Command();
 
     expect(() => {
-      program
-        .argument('<variadicArg...>')
-        .argument('[optionalArg]');
+      program.argument('<variadicArg...>').argument('[optionalArg]');
     }).toThrow("only the last argument can be variadic 'variadicArg'");
   });
 
@@ -75,9 +71,7 @@ describe('variadic argument', () => {
 
   test('when variadic argument then usage shows variadic', () => {
     const program = new commander.Command();
-    program
-      .name('foo')
-      .argument('[args...]');
+    program.name('foo').argument('[args...]');
 
     expect(program.usage()).toBe('[options] [args...]');
   });
@@ -87,7 +81,9 @@ describe('variadic argument', () => {
     let passedArg;
     program
       .addArgument(new commander.Argument('<value...>').choices(['one', 'two']))
-      .action((value) => { passedArg = value; });
+      .action((value) => {
+        passedArg = value;
+      });
 
     program.parse(['one'], { from: 'user' });
     expect(passedArg).toEqual(['one']);
@@ -98,7 +94,9 @@ describe('variadic argument', () => {
     let passedArg;
     program
       .addArgument(new commander.Argument('<value...>').choices(['one', 'two']))
-      .action((value) => { passedArg = value; });
+      .action((value) => {
+        passedArg = value;
+      });
 
     program.parse(['one', 'two'], { from: 'user' });
     expect(passedArg).toEqual(['one', 'two']);

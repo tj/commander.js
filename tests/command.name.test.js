@@ -15,7 +15,9 @@ test('when set program name and parse then name is as assigned', () => {
 
 test('when program name not set and parse with script argument then plain name is found from script name', () => {
   const program = new commander.Command();
-  program.parse(['node', path.resolve(process.cwd(), 'script.js')], { from: 'node' });
+  program.parse(['node', path.resolve(process.cwd(), 'script.js')], {
+    from: 'node',
+  });
   expect(program.name()).toBe('script');
 });
 
@@ -27,8 +29,7 @@ test('when command name not set and no script argument in parse then name is pro
 
 test('when add command then command is named', () => {
   const program = new commander.Command();
-  const subcommand = program
-    .command('mycommand <file>');
+  const subcommand = program.command('mycommand <file>');
   expect(subcommand.name()).toBe('mycommand');
 });
 

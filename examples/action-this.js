@@ -9,7 +9,7 @@ program
   .command('serve')
   .argument('<script>')
   .option('-p, --port <number>', 'port number', 80)
-  .action(function() {
+  .action(function () {
     console.error('Run script %s on port %s', this.args[0], this.opts().port);
   });
 

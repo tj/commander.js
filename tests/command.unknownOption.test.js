@@ -7,7 +7,9 @@ describe('unknownOption', () => {
   let writeErrorSpy;
 
   beforeAll(() => {
-    writeErrorSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
+    writeErrorSpy = jest
+      .spyOn(process.stderr, 'write')
+      .mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -85,8 +87,7 @@ describe('unknownOption', () => {
 
   test('when specify unknown option with simple program then error', () => {
     const program = new commander.Command();
-    program
-      .exitOverride();
+    program.exitOverride();
     let caughtErr;
     try {
       program.parse(['node', 'test', '--NONSENSE']);
@@ -98,8 +99,7 @@ describe('unknownOption', () => {
 
   test('when specify unknown global option before subcommand then error', () => {
     const program = new commander.Command();
-    program
-      .exitOverride();
+    program.exitOverride();
     program.command('sub');
 
     let caughtErr;

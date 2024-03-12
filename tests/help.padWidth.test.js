@@ -7,11 +7,8 @@ describe('padWidth', () => {
   test('when argument term longest return argument length', () => {
     const longestThing = 'veryLongThingBiggerThanOthers';
     const program = new commander.Command();
-    program
-      .argument(`<${longestThing}>`, 'description')
-      .option('-o');
-    program
-      .command('sub');
+    program.argument(`<${longestThing}>`, 'description').option('-o');
+    program.command('sub');
     const helper = new commander.Help();
     expect(helper.padWidth(program, helper)).toEqual(longestThing.length);
   });
@@ -19,11 +16,8 @@ describe('padWidth', () => {
   test('when option term longest return option length', () => {
     const longestThing = '--very-long-thing-bigger-than-others';
     const program = new commander.Command();
-    program
-      .argument('<file>', 'desc')
-      .option(longestThing);
-    program
-      .command('sub');
+    program.argument('<file>', 'desc').option(longestThing);
+    program.command('sub');
     const helper = new commander.Help();
     expect(helper.padWidth(program, helper)).toEqual(longestThing.length);
   });
@@ -35,8 +29,7 @@ describe('padWidth', () => {
       .argument('<file>', 'desc')
       .option(longestThing)
       .configureHelp({ showGlobalOptions: true });
-    const sub = program
-      .command('sub');
+    const sub = program.command('sub');
     const helper = sub.createHelp();
     expect(helper.padWidth(sub, helper)).toEqual(longestThing.length);
   });
@@ -44,11 +37,8 @@ describe('padWidth', () => {
   test('when command term longest return command length', () => {
     const longestThing = 'very-long-thing-bigger-than-others';
     const program = new commander.Command();
-    program
-      .argument('<file>', 'desc')
-      .option('-o');
-    program
-      .command(longestThing);
+    program.argument('<file>', 'desc').option('-o');
+    program.command(longestThing);
     const helper = new commander.Help();
     expect(helper.padWidth(program, helper)).toEqual(longestThing.length);
   });

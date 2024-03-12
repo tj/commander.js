@@ -1,13 +1,15 @@
-{ /* 
+{
+  /* 
     Simple override including just JavaScript files.
-    Used by npm run-script typecheck-js
+    Used by npm run-script typecheck:js
   */
   /* Visit https://aka.ms/tsconfig to read more about tsconfig configuration. */
   "extends": "./tsconfig.json",
   "include": [
     /* All JavaScript targets from tsconfig.json include. */
     "*.js",
+    ".prettierrc.js" /* missed by above pattern */,
     "*.mjs",
-    "lib/**/*.js"
+    "lib/**/*.js",
   ],
 }

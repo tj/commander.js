@@ -19,8 +19,7 @@ describe('optsWithGlobals', () => {
   test('when options in sub and program then optsWithGlobals includes both', () => {
     const program = new commander.Command();
     let mergedOptions;
-    program
-      .option('-g, --global <value>');
+    program.option('-g, --global <value>');
     program
       .command('sub')
       .option('-l, --local <value)')
@@ -44,16 +43,16 @@ describe('optsWithGlobals', () => {
         mergedOptions = cmd.optsWithGlobals();
       });
 
-    program.parse(['sub', '-g', 'GGG', 'subsub', '-l', 'LLL'], { from: 'user' });
+    program.parse(['sub', '-g', 'GGG', 'subsub', '-l', 'LLL'], {
+      from: 'user',
+    });
     expect(mergedOptions).toEqual({ global: 'GGG', local: 'LLL' });
   });
 
   test('when same named option in sub and program then optsWithGlobals includes global', () => {
     const program = new commander.Command();
     let mergedOptions;
-    program
-      .option('-c, --common <value>')
-      .enablePositionalOptions();
+    program.option('-c, --common <value>').enablePositionalOptions();
     program
       .command('sub')
       .option('-c, --common <value)')
@@ -69,8 +68,7 @@ describe('optsWithGlobals', () => {
 describe('getOptionValueSourceWithGlobals', () => {
   test('when option used with simple command then source is defined', () => {
     const program = new commander.Command();
-    program
-      .option('-g, --global');
+    program.option('-g, --global');
 
     program.parse(['-g'], { from: 'user' });
     expect(program.getOptionValueSourceWithGlobals('global')).toEqual('cli');
@@ -78,9 +76,9 @@ describe('getOptionValueSourceWithGlobals', () => {
 
   test('when option used with program then source is defined', () => {
     const program = new commander.Command();
-    program
-      .option('-g, --global');
-    const sub = program.command('sub')
+    program.option('-g, --global');
+    const sub = program
+      .command('sub')
       .option('-l, --local')
       .action(() => {});
 
@@ -90,9 +88,9 @@ describe('getOptionValueSourceWithGlobals', () => {
 
   test('when option used with subcommand then source is defined', () => {
     const program = new commander.Command();
-    program
-      .option('-g, --global');
-    const sub = program.command('sub')
+    program.option('-g, --global');
+    const sub = program
+      .command('sub')
       .option('-l, --local')
       .action(() => {});
 
@@ -105,7 +103,8 @@ describe('getOptionValueSourceWithGlobals', () => {
     program
       .enablePositionalOptions()
       .option('-c, --common <value>', 'description', 'default value');
-    const sub = program.command('sub')
+    const sub = program
+      .command('sub')
       .option('-c, --common <value>')
       .action(() => {});
 

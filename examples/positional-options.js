@@ -3,9 +3,7 @@
 const { Command } = require('commander');
 const program = new Command();
 
-program
-  .enablePositionalOptions()
-  .option('-p, --progress');
+program.enablePositionalOptions().option('-p, --progress');
 
 program
   .command('upload <file>')
