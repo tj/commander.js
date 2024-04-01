@@ -59,7 +59,7 @@
     "@types/jest": "^29.2.4",
     "@types/node": "^20.2.5",
     "@typescript-eslint/eslint-plugin": "^6.7.5",
-    "@typescript-eslint/parser": "^6.7.5",
+    "@typescript-eslint/parser": "^7.4.0",
     "eslint": "^8.30.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-config-standard-with-typescript": "^40.0.0",
