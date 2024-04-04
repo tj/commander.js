@@ -10,8 +10,7 @@ function getSuggestion(program, arg) {
 
   try {
     program.parse([arg], { from: 'user' });
-  } catch (err) {
-  }
+  } catch (err) {  /* empty */ }
 
   const match = message.match(/Did you mean (one of )?(.*)\?/);
   return match ? match[2] : null;

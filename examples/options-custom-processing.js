@@ -7,7 +7,7 @@
 const commander = require('commander');
 const program = new commander.Command();
 
-function myParseInt(value, dummyPrevious) {
+function myParseInt(value) {
   // parseInt takes a string and a radix
   const parsedValue = parseInt(value, 10);
   if (isNaN(parsedValue)) {
@@ -24,7 +24,7 @@ function collect(value, previous) {
   return previous.concat([value]);
 }
 
-function commaSeparatedList(value, dummyPrevious) {
+function commaSeparatedList(value) {
   return value.split(',');
 }
 

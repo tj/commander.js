@@ -7,8 +7,7 @@ test('when default writeErr() then error on stderr', () => {
 
   try {
     program.parse(['--unknown'], { from: 'user' });
-  } catch (err) {
-  }
+  } catch (err) {  /* empty */ }
 
   expect(writeSpy).toHaveBeenCalledTimes(1);
   writeSpy.mockRestore();
@@ -24,8 +23,7 @@ test('when custom writeErr() then error on custom output', () => {
 
   try {
     program.parse(['--unknown'], { from: 'user' });
-  } catch (err) {
-  }
+  } catch (err) {  /* empty */ }
 
   expect(writeSpy).toHaveBeenCalledTimes(0);
   expect(customWrite).toHaveBeenCalledTimes(1);

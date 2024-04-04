@@ -21,9 +21,7 @@ describe(".command('*')", () => {
       .action(mockAction);
     try {
       program.parse(['node', 'test']);
-    } catch (err) {
-
-    }
+    } catch (err) {  /* empty */ }
     expect(mockAction).not.toHaveBeenCalled();
     writeMock.mockRestore();
   });
