@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-// const commander = require('commander'); // (normal include)
-const { Command, Option } = require('../'); // include commander in git clone of commander repo
+const { Command, Option } = require('commander');
 const program = new Command();
 
 // This example shows using some hooks for life cycle events.
@@ -25,7 +24,9 @@ program
   .hook('preAction', (thisCommand, actionCommand) => {
     if (thisCommand.opts().trace) {
       console.log('>>>>');
-      console.log(`About to call action handler for subcommand: ${actionCommand.name()}`);
+      console.log(
+        `About to call action handler for subcommand: ${actionCommand.name()}`,
+      );
       console.log('arguments: %O', actionCommand.args);
       console.log('options: %o', actionCommand.opts());
       console.log('<<<<');
@@ -44,13 +45,18 @@ program
     }
   });
 
-program.command('start')
+program
+  .command('start')
   .argument('[script]', 'script name', 'server.js')
   .option('-d, --delay <seconds>', 'how long to delay before starting')
-  .addOption(new Option('-p, --port <number>', 'port number').default(8080).env('PORT'))
-  .action(async(script, options) => {
+  .addOption(
+    new Option('-p, --port <number>', 'port number').default(8080).env('PORT'),
+  )
+  .action(async (script, options) => {
     if (options.delay) {
-      await new Promise(resolve => setTimeout(resolve, parseInt(options.delay) * 1000));
+      await new Promise((resolve) =>
+        setTimeout(resolve, parseInt(options.delay) * 1000),
+      );
     }
     console.log(`Starting ${script} on port ${options.port}`);
   });

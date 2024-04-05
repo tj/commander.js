@@ -16,32 +16,29 @@
 
     "allowJs": true,
     "checkJs": true,
-    
+
     /* Strict by default, but dial it down to reduce churn in our JavaScript code. */
     "strict": true,
-    "noImplicitAny": false, 
+    "noImplicitAny": false,
     "strictNullChecks": false,
     "useUnknownInCatchVariables": false,
 
-    "types": [
-      "node",
-      "jest"
-    ],
-    "noEmit": true, /* just type checking and not emitting transpiled files */
-    "skipLibCheck": false, /* we want to check our hand crafted definitions */
+    "types": ["node", "jest"],
+    "noEmit": true /* just type checking and not emitting transpiled files */,
+    "skipLibCheck": false /* we want to check our hand crafted definitions */,
     "forceConsistentCasingInFileNames": true,
-    "esModuleInterop": true /* common TypeScript config */
+    "esModuleInterop": true /* common TypeScript config */,
+    "resolveJsonModule": true /* needed for globals in node_modules?! */,
   },
   "include": [
     /* JavaScript. Should match includes in tsconfig.js.json. */
     "*.js",
+    ".prettierrc.js" /* missed by above pattern */,
     "*.mjs",
     "lib/**/*.js",
     /* TypeScript. Should match includes in tsconfig.ts.json. */
     "**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"],
 }

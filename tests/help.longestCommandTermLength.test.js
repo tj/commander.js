@@ -13,21 +13,21 @@ describe('longestSubcommandTermLength', () => {
   test('when command and no help then returns length of term', () => {
     const sub = new commander.Command('sub');
     const program = new commander.Command();
-    program
-      .addHelpCommand(false)
-      .addCommand(sub);
+    program.addHelpCommand(false).addCommand(sub);
     const helper = new commander.Help();
-    expect(helper.longestSubcommandTermLength(program, helper)).toEqual(helper.subcommandTerm(sub).length);
+    expect(helper.longestSubcommandTermLength(program, helper)).toEqual(
+      helper.subcommandTerm(sub).length,
+    );
   });
 
   test('when command with arg and no help then returns length of term', () => {
     const sub = new commander.Command('sub <file)');
     const program = new commander.Command();
-    program
-      .addHelpCommand(false)
-      .addCommand(sub);
+    program.addHelpCommand(false).addCommand(sub);
     const helper = new commander.Help();
-    expect(helper.longestSubcommandTermLength(program, helper)).toEqual(helper.subcommandTerm(sub).length);
+    expect(helper.longestSubcommandTermLength(program, helper)).toEqual(
+      helper.subcommandTerm(sub).length,
+    );
   });
 
   test('when multiple commands then returns longest length', () => {
@@ -39,14 +39,17 @@ describe('longestSubcommandTermLength', () => {
       .command(longestCommandName, 'desc')
       .command('after', 'desc');
     const helper = new commander.Help();
-    expect(helper.longestSubcommandTermLength(program, helper)).toEqual(longestCommandName.length);
+    expect(helper.longestSubcommandTermLength(program, helper)).toEqual(
+      longestCommandName.length,
+    );
   });
 
   test('when just help command then returns length of help term', () => {
     const program = new commander.Command();
-    program
-      .addHelpCommand(true);
+    program.addHelpCommand(true);
     const helper = new commander.Help();
-    expect(helper.longestSubcommandTermLength(program, helper)).toEqual('help [command]'.length);
+    expect(helper.longestSubcommandTermLength(program, helper)).toEqual(
+      'help [command]'.length,
+    );
   });
 });

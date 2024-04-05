@@ -6,7 +6,9 @@ test('when command argument in choices then argument set', () => {
   program
     .exitOverride()
     .addArgument(new commander.Argument('<shade>').choices(['red', 'blue']))
-    .action((shadeParam) => { shade = shadeParam; });
+    .action((shadeParam) => {
+      shade = shadeParam;
+    });
   program.parse(['red'], { from: 'user' });
   expect(shade).toBe('red');
 });
@@ -17,7 +19,7 @@ test('when command argument is not in choices then error', () => {
   program
     .exitOverride()
     .configureOutput({
-      writeErr: () => {}
+      writeErr: () => {},
     })
     .addArgument(new commander.Argument('<shade>').choices(['red', 'blue']));
   expect(() => {
@@ -48,7 +50,7 @@ describe('choices parameter is treated as readonly, per TypeScript declaration',
     program
       .exitOverride()
       .configureOutput({
-        writeErr: () => {}
+        writeErr: () => {},
       })
       .addArgument(new commander.Argument('<shade>').choices(param));
     param.push('orange');

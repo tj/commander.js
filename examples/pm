@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
-// const { Command } = require('commander'); // (normal include)
-const { Command } = require('../'); // include commander in git clone of commander repo
+const { Command } = require('commander');
 const program = new Command();
 
 // Example of subcommands which are implemented as stand-alone executable files.
@@ -15,9 +14,13 @@ program
   .name('pm')
   .version('0.0.1')
   .description('Fake package manager')
-  .command('install [name]', 'install one or more packages').alias('i')
-  .command('search [query]', 'search with optional query').alias('s')
-  .command('update', 'update installed packages', { executableFile: 'myUpdateSubCommand' })
+  .command('install [name]', 'install one or more packages')
+  .alias('i')
+  .command('search [query]', 'search with optional query')
+  .alias('s')
+  .command('update', 'update installed packages', {
+    executableFile: 'myUpdateSubCommand',
+  })
   .command('list', 'list packages installed', { isDefault: true });
 
 program.parse(process.argv);

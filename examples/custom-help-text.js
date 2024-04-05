@@ -2,8 +2,7 @@
 
 // This example shows using addHelpText.
 
-// const { Command } = require('commander'); // (normal include)
-const { Command } = require('../'); // include commander in git clone of commander repo
+const { Command } = require('commander');
 const program = new Command();
 
 program.name('awesome');
@@ -20,10 +19,13 @@ program
 program
   .command('extra')
   .addHelpText('before', 'Note: the extra command does not do anything')
-  .addHelpText('after', `
+  .addHelpText(
+    'after',
+    `
 Examples:
   awesome extra --help
-  awesome help extra`);
+  awesome help extra`,
+  );
 
 program.parse();
 

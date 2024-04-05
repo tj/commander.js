@@ -9,8 +9,7 @@
 // (A different pattern for a "global" option is to add it to the root command, rather
 // than to the subcommand. See global-options-nested.js.)
 
-// const { Command } = require('commander'); // (normal include)
-const { Command } = require('../'); // include commander in git clone of commander repo
+const { Command } = require('commander');
 
 // Common options can be added when subcommands are created by using a custom subclass.
 // If the options are unsorted in the help, these will appear first.
@@ -24,13 +23,15 @@ class MyRootCommand extends Command {
 
 const program = new MyRootCommand();
 
-program.command('print')
+program
+  .command('print')
   .option('--a4', 'Use A4 sized paper')
   .action((options) => {
     console.log('print options: %O', options);
   });
 
-program.command('serve')
+program
+  .command('serve')
   .option('-p, --port <number>', 'port number for server')
   .action((options) => {
     console.log('serve options: %O', options);

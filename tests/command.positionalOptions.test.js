@@ -7,9 +7,7 @@ describe('program with passThrough', () => {
   function makeProgram() {
     const program = new commander.Command();
     program.passThroughOptions();
-    program
-      .option('-d, --debug')
-      .argument('<args...>');
+    program.option('-d, --debug').argument('<args...>');
     return program;
   }
 
@@ -38,19 +36,22 @@ describe('program with passThrough', () => {
     const mockAction = jest.fn();
     program.action(mockAction);
     program.parse(['arg', '--pass'], { from: 'user' });
-    expect(mockAction).toHaveBeenCalledWith(['arg', '--pass'], program.opts(), program);
+    expect(mockAction).toHaveBeenCalledWith(
+      ['arg', '--pass'],
+      program.opts(),
+      program,
+    );
   });
 
   test('when help option (without command-argument) then help called', () => {
     const program = makeProgram();
     const mockHelp = jest.fn(() => '');
 
-    program
-      .exitOverride()
-      .configureHelp({ formatHelp: mockHelp });
+    program.exitOverride().configureHelp({ formatHelp: mockHelp });
     try {
       program.parse(['--help'], { from: 'user' });
     } catch (err) {
+      /* empty */
     }
     expect(mockHelp).toHaveBeenCalled();
   });
@@ -109,7 +110,9 @@ describe('program with positionalOptions and subcommand', () => {
 
   test('when shared option before and after subcommand then both parsed', () => {
     const { program, sub } = makeProgram();
-    program.parse(['--shared', 'program', 'sub', '--shared', 'local'], { from: 'user' });
+    program.parse(['--shared', 'program', 'sub', '--shared', 'local'], {
+      from: 'user',
+    });
     expect(program.opts().shared).toEqual('program');
     expect(sub.opts().shared).toEqual('local');
   });
@@ -121,25 +124,25 @@ describe('program with positionalOptions and subcommand', () => {
     [['sub', '--help'], 0, 1],
     [['sub', 'foo', '--help'], 0, 1],
     [['help'], 1, 0],
-    [['help', 'sub'], 0, 1]
-  ])('help: when user args %p then program/sub help called %p/%p', (userArgs, expectProgramHelpCount, expectSubHelpCount) => {
-    const { program, sub } = makeProgram();
-    const mockProgramHelp = jest.fn();
-    program
-      .exitOverride()
-      .configureHelp({ formatHelp: mockProgramHelp });
-    const mockSubHelp = jest.fn();
-    sub
-      .exitOverride()
-      .configureHelp({ formatHelp: mockSubHelp });
+    [['help', 'sub'], 0, 1],
+  ])(
+    'help: when user args %p then program/sub help called %p/%p',
+    (userArgs, expectProgramHelpCount, expectSubHelpCount) => {
+      const { program, sub } = makeProgram();
+      const mockProgramHelp = jest.fn();
+      program.exitOverride().configureHelp({ formatHelp: mockProgramHelp });
+      const mockSubHelp = jest.fn();
+      sub.exitOverride().configureHelp({ formatHelp: mockSubHelp });
 
-    try {
-      program.parse(userArgs, { from: 'user' });
-    } catch (err) {
-    }
-    expect(mockProgramHelp).toHaveBeenCalledTimes(expectProgramHelpCount);
-    expect(mockSubHelp).toHaveBeenCalledTimes(expectSubHelpCount);
-  });
+      try {
+        program.parse(userArgs, { from: 'user' });
+      } catch (err) {
+        /* empty */
+      }
+      expect(mockProgramHelp).toHaveBeenCalledTimes(expectProgramHelpCount);
+      expect(mockSubHelp).toHaveBeenCalledTimes(expectSubHelpCount);
+    },
+  );
 });
 
 // ---------------------------------------------------------------
@@ -189,25 +192,25 @@ describe('program with positionalOptions and default subcommand (called sub)', (
   test.each([
     [[], 0, 0],
     [['--help'], 1, 0],
-    [['help'], 1, 0]
-  ])('help: when user args %p then program/sub help called %p/%p', (userArgs, expectProgramHelpCount, expectSubHelpCount) => {
-    const { program, sub } = makeProgram();
-    const mockProgramHelp = jest.fn();
-    program
-      .exitOverride()
-      .configureHelp({ formatHelp: mockProgramHelp });
-    const mockSubHelp = jest.fn();
-    sub
-      .exitOverride()
-      .configureHelp({ formatHelp: mockSubHelp });
+    [['help'], 1, 0],
+  ])(
+    'help: when user args %p then program/sub help called %p/%p',
+    (userArgs, expectProgramHelpCount, expectSubHelpCount) => {
+      const { program, sub } = makeProgram();
+      const mockProgramHelp = jest.fn();
+      program.exitOverride().configureHelp({ formatHelp: mockProgramHelp });
+      const mockSubHelp = jest.fn();
+      sub.exitOverride().configureHelp({ formatHelp: mockSubHelp });
 
-    try {
-      program.parse(userArgs, { from: 'user' });
-    } catch (err) {
-    }
-    expect(mockProgramHelp).toHaveBeenCalledTimes(expectProgramHelpCount);
-    expect(mockSubHelp).toHaveBeenCalledTimes(expectSubHelpCount);
-  });
+      try {
+        program.parse(userArgs, { from: 'user' });
+      } catch (err) {
+        /* empty */
+      }
+      expect(mockProgramHelp).toHaveBeenCalledTimes(expectProgramHelpCount);
+      expect(mockSubHelp).toHaveBeenCalledTimes(expectSubHelpCount);
+    },
+  );
 });
 
 // ------------------------------------------------------------------------------
@@ -272,7 +275,10 @@ describe('subcommand with passThrough', () => {
 
   test('when shared option before sub and after sub and after sub parameter then all three parsed', () => {
     const { program, sub } = makeProgram();
-    program.parse(['--shared=global', 'sub', '--shared=local', 'arg', '--shared'], { from: 'user' });
+    program.parse(
+      ['--shared=global', 'sub', '--shared=local', 'arg', '--shared'],
+      { from: 'user' },
+    );
     expect(program.opts().shared).toEqual('global');
     expect(sub.opts().shared).toEqual('local');
     expect(sub.args).toEqual(['arg', '--shared']);
@@ -284,8 +290,7 @@ describe('subcommand with passThrough', () => {
 describe('default command with passThrough', () => {
   function makeProgram() {
     const program = new commander.Command();
-    program
-      .enablePositionalOptions();
+    program.enablePositionalOptions();
     const sub = program
       .command('sub', { isDefault: true })
       .passThroughOptions()
@@ -374,8 +379,7 @@ describe('broken passThrough', () => {
 
   test('when program not positional and add subcommand with passThroughOptions then error', () => {
     const program = new commander.Command();
-    const sub = new commander.Command('sub')
-      .passThroughOptions();
+    const sub = new commander.Command('sub').passThroughOptions();
 
     expect(() => {
       program.addCommand(sub);
@@ -434,10 +438,7 @@ describe('program with action handler and passThrough and subcommand', () => {
 describe('program with allowUnknownOption', () => {
   test('when passThroughOptions and unknown option then arguments from unknown passed through', () => {
     const program = new commander.Command();
-    program
-      .passThroughOptions()
-      .allowUnknownOption()
-      .option('--debug');
+    program.passThroughOptions().allowUnknownOption().option('--debug');
 
     program.parse(['--unknown', '--debug'], { from: 'user' });
     expect(program.args).toEqual(['--unknown', '--debug']);
@@ -445,10 +446,7 @@ describe('program with allowUnknownOption', () => {
 
   test('when positionalOptions and unknown option then known options then known option parsed', () => {
     const program = new commander.Command();
-    program
-      .enablePositionalOptions()
-      .allowUnknownOption()
-      .option('--debug');
+    program.enablePositionalOptions().allowUnknownOption().option('--debug');
 
     program.parse(['--unknown', '--debug'], { from: 'user' });
     expect(program.opts().debug).toBe(true);
@@ -461,9 +459,7 @@ describe('program with allowUnknownOption', () => {
 describe('passThroughOptions(xxx) and option after command-argument', () => {
   function makeProgram() {
     const program = new commander.Command();
-    program
-      .option('-d, --debug')
-      .argument('<args...>');
+    program.option('-d, --debug').argument('<args...>');
     return program;
   }
 
@@ -495,11 +491,8 @@ describe('passThroughOptions(xxx) and option after command-argument', () => {
 describe('enablePositionalOptions(xxx) and shared option after subcommand', () => {
   function makeProgram() {
     const program = new commander.Command();
-    program
-      .option('-d, --debug');
-    const sub = program
-      .command('sub')
-      .option('-d, --debug');
+    program.option('-d, --debug');
+    const sub = program.command('sub').option('-d, --debug');
     return { program, sub };
   }
 

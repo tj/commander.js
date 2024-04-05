@@ -1,21 +1,22 @@
 #!/usr/bin/env node
-// const { Command, Option } = require('commander'); // (normal include)
-const { Command, Option } = require('../'); // include commander in git clone of commander repo
+const { Command, Option } = require('commander');
 const program = new Command();
 
-program.addOption(new Option('-p, --port <number>', 'specify port number')
-  .default(80)
-  .env('PORT')
+program.addOption(
+  new Option('-p, --port <number>', 'specify port number')
+    .default(80)
+    .env('PORT'),
 );
-program.addOption(new Option('-c, --colour', 'turn on colour output')
-  .env('COLOUR')
+program.addOption(
+  new Option('-c, --colour', 'turn on colour output').env('COLOUR'),
 );
-program.addOption(new Option('-C, --no-colour', 'turn off colour output')
-  .env('NO_COLOUR')
+program.addOption(
+  new Option('-C, --no-colour', 'turn off colour output').env('NO_COLOUR'),
 );
-program.addOption(new Option('-s, --size <type>', 'specify size of drink')
-  .choices(['small', 'medium', 'large'])
-  .env('SIZE')
+program.addOption(
+  new Option('-s, --size <type>', 'specify size of drink')
+    .choices(['small', 'medium', 'large'])
+    .env('SIZE'),
 );
 
 program.parse();

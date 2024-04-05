@@ -9,14 +9,18 @@ describe('command with conflicting options', () => {
       .exitOverride()
       .configureOutput({
         writeErr: () => {},
-        writeOut: () => {}
+        writeOut: () => {},
       })
       .command('foo')
-      .addOption(new commander.Option('-s, --silent', "Don't print anything").env('SILENT'))
       .addOption(
-        new commander.Option('-j, --json', 'Format output as json').env('JSON').conflicts([
-          'silent'
-        ])
+        new commander.Option('-s, --silent', "Don't print anything").env(
+          'SILENT',
+        ),
+      )
+      .addOption(
+        new commander.Option('-j, --json', 'Format output as json')
+          .env('JSON')
+          .conflicts(['silent']),
       )
       .action(actionMock);
 
@@ -43,7 +47,7 @@ describe('command with conflicting options', () => {
     expect(actionMock).toHaveBeenCalledTimes(1);
     expect(actionMock).toHaveBeenCalledWith(
       { silent: true },
-      expect.any(Object)
+      expect.any(Object),
     );
   });
 
@@ -52,7 +56,9 @@ describe('command with conflicting options', () => {
 
     expect(() => {
       program.parse('node test.js foo --silent --json'.split(' '));
-    }).toThrow("error: option '-j, --json' cannot be used with option '-s, --silent'");
+    }).toThrow(
+      "error: option '-j, --json' cannot be used with option '-s, --silent'",
+    );
   });
 
   test('should report the env variable as the conflicting option source, when conflicting option is set', () => {
@@ -62,7 +68,9 @@ describe('command with conflicting options', () => {
 
     expect(() => {
       program.parse('node test.js foo --json'.split(' '));
-    }).toThrow("error: option '-j, --json' cannot be used with environment variable 'SILENT'");
+    }).toThrow(
+      "error: option '-j, --json' cannot be used with environment variable 'SILENT'",
+    );
   });
 
   test('should report the env variable as the configured option source, when configured option is set', () => {
@@ -72,7 +80,9 @@ describe('command with conflicting options', () => {
 
     expect(() => {
       program.parse('node test.js foo --silent'.split(' '));
-    }).toThrow("error: environment variable 'JSON' cannot be used with option '-s, --silent'");
+    }).toThrow(
+      "error: environment variable 'JSON' cannot be used with option '-s, --silent'",
+    );
   });
 
   test('should report both env variables as sources, when configured option and conflicting option are set', () => {
@@ -83,18 +93,27 @@ describe('command with conflicting options', () => {
 
     expect(() => {
       program.parse('node test.js foo'.split(' '));
-    }).toThrow("error: environment variable 'JSON' cannot be used with environment variable 'SILENT'");
+    }).toThrow(
+      "error: environment variable 'JSON' cannot be used with environment variable 'SILENT'",
+    );
   });
 
   test('should allow default value with a conflicting option', () => {
     const { program, actionMock } = makeProgram();
 
-    program.commands[0].addOption(new commander.Option('-d, --debug', 'print debug logs').default(true).conflicts(['silent']));
+    program.commands[0].addOption(
+      new commander.Option('-d, --debug', 'print debug logs')
+        .default(true)
+        .conflicts(['silent']),
+    );
 
     program.parse('node test.js foo --silent'.split(' '));
 
     expect(actionMock).toHaveBeenCalledTimes(1);
-    expect(actionMock).toHaveBeenCalledWith({ debug: true, silent: true }, expect.any(Object));
+    expect(actionMock).toHaveBeenCalledWith(
+      { debug: true, silent: true },
+      expect.any(Object),
+    );
   });
 
   test('should report conflict on negated option flag', () => {
@@ -108,7 +127,9 @@ describe('command with conflicting options', () => {
 
     expect(() => {
       program.parse('node test.js bar --red -N'.split(' '));
-    }).toThrow("error: option '--red' cannot be used with option '-N, --no-color'");
+    }).toThrow(
+      "error: option '--red' cannot be used with option '-N, --no-color'",
+    );
   });
 
   test('should report conflict on negated option env variable', () => {
@@ -124,7 +145,9 @@ describe('command with conflicting options', () => {
 
     expect(() => {
       program.parse('node test.js bar --red'.split(' '));
-    }).toThrow("error: option '--red' cannot be used with environment variable 'NO_COLOR'");
+    }).toThrow(
+      "error: option '--red' cannot be used with environment variable 'NO_COLOR'",
+    );
   });
 
   test('should report correct error for shorthand negated option', () => {
@@ -137,7 +160,9 @@ describe('command with conflicting options', () => {
 
     expect(() => {
       program.parse('node test.js bar --red -N'.split(' '));
-    }).toThrow("error: option '-N, --no-color' cannot be used with option '--red'");
+    }).toThrow(
+      "error: option '-N, --no-color' cannot be used with option '--red'",
+    );
   });
 
   test('should report correct error for positive option when negated is configured', () => {
@@ -180,7 +205,9 @@ describe('command with conflicting options', () => {
     process.env.DUAL = 'true';
     expect(() => {
       program.parse('node test.js bar --red'.split(' '));
-    }).toThrow("error: environment variable 'DUAL' cannot be used with option '--red'");
+    }).toThrow(
+      "error: environment variable 'DUAL' cannot be used with option '--red'",
+    );
   });
 
   test('should report correct error for negated env variable when positive is configured', () => {
@@ -195,7 +222,9 @@ describe('command with conflicting options', () => {
     process.env.NO_DUAL = 'true';
     expect(() => {
       program.parse('node test.js bar --red'.split(' '));
-    }).toThrow("error: environment variable 'NO_DUAL' cannot be used with option '--red'");
+    }).toThrow(
+      "error: environment variable 'NO_DUAL' cannot be used with option '--red'",
+    );
   });
 
   test('should report correct error for positive option with string value when negated is configured', () => {
@@ -209,7 +238,9 @@ describe('command with conflicting options', () => {
 
     expect(() => {
       program.parse('node test.js bar --red --dual2 foo'.split(' '));
-    }).toThrow("error: option '--dual2 <str>' cannot be used with option '--red'");
+    }).toThrow(
+      "error: option '--dual2 <str>' cannot be used with option '--red'",
+    );
   });
 
   test('should report correct error for negated option with preset when negated is configured', () => {
@@ -240,7 +271,10 @@ describe('command with conflicting options', () => {
     program.parse('node test.js bar --a --b'.split(' '));
 
     expect(actionMock).toHaveBeenCalledTimes(1);
-    expect(actionMock).toHaveBeenCalledWith({ a: true, b: true }, expect.any(Object));
+    expect(actionMock).toHaveBeenCalledWith(
+      { a: true, b: true },
+      expect.any(Object),
+    );
   });
 
   test('should throw error when conflicts is invoked with a single string that equals another option', () => {

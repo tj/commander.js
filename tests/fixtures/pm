@@ -7,25 +7,40 @@ process.env.FORCE_COLOR = 0; // work-around bug in Jest: https://github.com/jest
 
 program
   .version('0.0.1')
-  .command('install [name]', 'install one or more packages').alias('i')
-  .command('search [query]', 'search with optional query').alias('s')
-  .command('cache', 'actions dealing with the cache').alias('c')
+  .command('install [name]', 'install one or more packages')
+  .alias('i')
+  .command('search [query]', 'search with optional query')
+  .alias('s')
+  .command('cache', 'actions dealing with the cache')
+  .alias('c')
   .command('echo', 'echo arguments')
-  .command('list', 'list packages installed').alias('lst')
-  .command('listen', 'listen for supported signal events').alias('l')
-  .command('publish', 'publish or update package').alias('p')
+  .command('list', 'list packages installed')
+  .alias('lst')
+  .command('listen', 'listen for supported signal events')
+  .alias('l')
+  .command('publish', 'publish or update package')
+  .alias('p')
   .command('default', 'default command', { hidden: true, isDefault: true })
-  .command('specifyInstall', 'specify install subcommand', { executableFile: 'pm-install' })
-  .command('specifyPublish', 'specify publish subcommand', { executableFile: 'pm-publish' })
+  .command('specifyInstall', 'specify install subcommand', {
+    executableFile: 'pm-install',
+  })
+  .command('specifyPublish', 'specify publish subcommand', {
+    executableFile: 'pm-publish',
+  })
   .command('silent', 'silently succeed')
   .command('fail', 'exit with non-zero status code')
   .command('terminate', 'terminate due to signal');
 
 program
   .command('exit-override')
-  .exitOverride((err) => { process.exit(err.exitCode); })
-  .command('fail', 'exit with non-zero status code', { executableFile: path.join(__dirname, 'pm-fail.js') })
-  .command('terminate', 'terminate due to signal', { executableFile: path.join(__dirname, 'pm-terminate.js') });
+  .exitOverride((err) => {
+    process.exit(err.exitCode);
+  })
+  .command('fail', 'exit with non-zero status code', {
+    executableFile: path.join(__dirname, 'pm-fail.js'),
+  })
+  .command('terminate', 'terminate due to signal', {
+    executableFile: path.join(__dirname, 'pm-terminate.js'),
+  });
 
-program
-  .parse(process.argv);
+program.parse(process.argv);

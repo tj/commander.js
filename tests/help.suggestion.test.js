@@ -9,7 +9,9 @@ function getSuggestion(program, arg) {
     .showSuggestionAfterError() // make sure on
     .exitOverride()
     .configureOutput({
-      writeErr: (str) => { message = str; }
+      writeErr: (str) => {
+        message = str;
+      },
     });
   // Do the same setup for subcommand.
   const sub = program._findCommand('sub');
@@ -20,6 +22,7 @@ function getSuggestion(program, arg) {
     const args = Array.isArray(arg) ? arg : [arg];
     program.parse(args, { from: 'user' });
   } catch (err) {
+    /* empty */
   }
 
   const match = message.match(/Did you mean (one of )?(.*)\?/);
@@ -37,38 +40,49 @@ test.each([
   ['act', ['cat'], 'cat', '1 transposition'],
   ['cxx', ['cat'], null, '2 edits away and short string'],
   ['caxx', ['cart'], 'cart', '2 edits away and longer string'],
-  ['1234567', ['1234567890'], '1234567890', '3 edits away is similar for long string'],
+  [
+    '1234567',
+    ['1234567890'],
+    '1234567890',
+    '3 edits away is similar for long string',
+  ],
   ['123456', ['1234567890'], null, '4 edits is too far'],
   ['xat', ['rat', 'cat', 'bat'], 'bat, cat, rat', 'sorted possibles'],
-  ['cart', ['camb', 'cant', 'bard'], 'cant', 'only closest of different edit distances']
-])('when cli of %s and commands %j then suggest %s because %s', (arg, commandNames, expected) => {
-  const program = new Command();
-  commandNames.forEach(name => { program.command(name); });
-  const suggestion = getSuggestion(program, arg);
-  expect(suggestion).toBe(expected);
-});
+  [
+    'cart',
+    ['camb', 'cant', 'bard'],
+    'cant',
+    'only closest of different edit distances',
+  ],
+])(
+  'when cli of %s and commands %j then suggest %s because %s',
+  (arg, commandNames, expected) => {
+    const program = new Command();
+    commandNames.forEach((name) => {
+      program.command(name);
+    });
+    const suggestion = getSuggestion(program, arg);
+    expect(suggestion).toBe(expected);
+  },
+);
 
 test('when similar alias then suggest alias', () => {
   const program = new Command();
-  program.command('xyz')
-    .alias('car');
+  program.command('xyz').alias('car');
   const suggestion = getSuggestion(program, 'bar');
   expect(suggestion).toBe('car');
 });
 
 test('when similar hidden alias then not suggested', () => {
   const program = new Command();
-  program.command('xyz')
-    .alias('visible')
-    .alias('silent');
+  program.command('xyz').alias('visible').alias('silent');
   const suggestion = getSuggestion(program, 'slent');
   expect(suggestion).toBe(null);
 });
 
 test('when similar command and alias then suggest both', () => {
   const program = new Command();
-  program.command('aaaaa')
-    .alias('cat');
+  program.command('aaaaa').alias('cat');
   program.command('bat');
   program.command('ccccc');
   const suggestion = getSuggestion(program, 'mat');
@@ -133,30 +147,48 @@ test.each([
   ['--act', ['--cat'], '--cat', '1 transposition'],
   ['--cxx', ['--cat'], null, '2 edits away and short string'],
   ['--caxx', ['--cart'], '--cart', '2 edits away and longer string'],
-  ['--1234567', ['--1234567890'], '--1234567890', '3 edits away is similar for long string'],
+  [
+    '--1234567',
+    ['--1234567890'],
+    '--1234567890',
+    '3 edits away is similar for long string',
+  ],
   ['--123456', ['--1234567890'], null, '4 edits is too far'],
-  ['--xat', ['--rat', '--cat', '--bat'], '--bat, --cat, --rat', 'sorted possibles'],
-  ['--cart', ['--camb', '--cant', '--bard'], '--cant', 'only closest of different edit distances']
-])('when cli of %s and options %j then suggest %s because %s', (arg, commandNames, expected) => {
-  const program = new Command();
-  commandNames.forEach(name => { program.option(name); });
-  const suggestion = getSuggestion(program, arg);
-  expect(suggestion).toBe(expected);
-});
+  [
+    '--xat',
+    ['--rat', '--cat', '--bat'],
+    '--bat, --cat, --rat',
+    'sorted possibles',
+  ],
+  [
+    '--cart',
+    ['--camb', '--cant', '--bard'],
+    '--cant',
+    'only closest of different edit distances',
+  ],
+])(
+  'when cli of %s and options %j then suggest %s because %s',
+  (arg, commandNames, expected) => {
+    const program = new Command();
+    commandNames.forEach((name) => {
+      program.option(name);
+    });
+    const suggestion = getSuggestion(program, arg);
+    expect(suggestion).toBe(expected);
+  },
+);
 
 test('when no options then no suggestion', () => {
   // Checking nothing blows up as much as no suggestion!
   const program = new Command();
-  program
-    .helpOption(false);
+  program.helpOption(false);
   const suggestion = getSuggestion(program, '--option');
   expect(suggestion).toBe(null);
 });
 
 test('when subcommand option then candidate for subcommand option suggestion', () => {
   const program = new Command();
-  program.command('sub')
-    .option('-l,--local');
+  program.command('sub').option('-l,--local');
   const suggestion = getSuggestion(program, ['sub', '--loca']);
   expect(suggestion).toBe('--local');
 });
@@ -171,8 +203,7 @@ test('when global option then candidate for subcommand option suggestion', () =>
 
 test('when global option but positionalOptions then not candidate for subcommand suggestion', () => {
   const program = new Command();
-  program
-    .enablePositionalOptions();
+  program.enablePositionalOptions();
   program.option('-g, --global');
   program.command('sub');
   const suggestion = getSuggestion(program, ['sub', '--globla']);
@@ -182,8 +213,7 @@ test('when global option but positionalOptions then not candidate for subcommand
 test('when global and local options then both candidates', () => {
   const program = new Command();
   program.option('--cat');
-  program.command('sub')
-    .option('--rat');
+  program.command('sub').option('--rat');
   const suggestion = getSuggestion(program, ['sub', '--bat']);
   expect(suggestion).toBe('--cat, --rat');
 });

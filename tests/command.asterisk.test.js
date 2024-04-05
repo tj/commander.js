@@ -12,7 +12,9 @@ const commander = require('../');
 
 describe(".command('*')", () => {
   test('when no arguments then asterisk action not called', () => {
-    const writeMock = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
+    const writeMock = jest
+      .spyOn(process.stderr, 'write')
+      .mockImplementation(() => {});
     const mockAction = jest.fn();
     const program = new commander.Command();
     program
@@ -22,7 +24,7 @@ describe(".command('*')", () => {
     try {
       program.parse(['node', 'test']);
     } catch (err) {
-
+      /* empty */
     }
     expect(mockAction).not.toHaveBeenCalled();
     writeMock.mockRestore();
@@ -31,10 +33,7 @@ describe(".command('*')", () => {
   test('when unrecognised argument then asterisk action called', () => {
     const mockAction = jest.fn();
     const program = new commander.Command();
-    program
-      .command('*')
-      .argument('[args...]')
-      .action(mockAction);
+    program.command('*').argument('[args...]').action(mockAction);
     program.parse(['node', 'test', 'unrecognised-command']);
     expect(mockAction).toHaveBeenCalled();
   });
@@ -42,12 +41,8 @@ describe(".command('*')", () => {
   test('when recognised command then asterisk action not called', () => {
     const mockAction = jest.fn();
     const program = new commander.Command();
-    program
-      .command('install')
-      .action(() => { });
-    program
-      .command('*')
-      .action(mockAction);
+    program.command('install').action(() => {});
+    program.command('*').action(mockAction);
     program.parse(['node', 'test', 'install']);
     expect(mockAction).not.toHaveBeenCalled();
   });
@@ -55,12 +50,8 @@ describe(".command('*')", () => {
   test('when unrecognised command/argument then asterisk action called', () => {
     const mockAction = jest.fn();
     const program = new commander.Command();
-    program
-      .command('install');
-    program
-      .command('*')
-      .argument('[args...]')
-      .action(mockAction);
+    program.command('install');
+    program.command('*').argument('[args...]').action(mockAction);
     program.parse(['node', 'test', 'unrecognised-command']);
     expect(mockAction).toHaveBeenCalled();
   });
@@ -69,8 +60,7 @@ describe(".command('*')", () => {
     // This tests for a regression between v4 and v5. Known default option should not be rejected by program.
     const mockAction = jest.fn();
     const program = new commander.Command();
-    program
-      .command('install');
+    program.command('install');
     const star = program
       .command('*')
       .argument('[args...]')
@@ -88,13 +78,10 @@ describe(".command('*')", () => {
     program
       .exitOverride()
       .configureOutput({
-        writeErr: () => {}
+        writeErr: () => {},
       })
       .command('install');
-    program
-      .command('*')
-      .argument('[args...]')
-      .action(mockAction);
+    program.command('*').argument('[args...]').action(mockAction);
     let caughtErr;
     try {
       program.parse(['node', 'test', 'some-argument', '--unknown']);
@@ -110,8 +97,7 @@ describe(".on('command:*')", () => {
   test('when no arguments then listener not called', () => {
     const mockAction = jest.fn();
     const program = new commander.Command();
-    program
-      .on('command:*', mockAction);
+    program.on('command:*', mockAction);
     program.parse(['node', 'test']);
     expect(mockAction).not.toHaveBeenCalled();
   });
@@ -119,8 +105,7 @@ describe(".on('command:*')", () => {
   test('when unrecognised argument then listener called', () => {
     const mockAction = jest.fn();
     const program = new commander.Command();
-    program
-      .on('command:*', mockAction);
+    program.on('command:*', mockAction);
     program.parse(['node', 'test', 'unrecognised-command']);
     expect(mockAction).toHaveBeenCalled();
   });
@@ -128,11 +113,8 @@ describe(".on('command:*')", () => {
   test('when recognised command then listener not called', () => {
     const mockAction = jest.fn();
     const program = new commander.Command();
-    program
-      .command('install')
-      .action(() => { });
-    program
-      .on('command:*', mockAction);
+    program.command('install').action(() => {});
+    program.on('command:*', mockAction);
     program.parse(['node', 'test', 'install']);
     expect(mockAction).not.toHaveBeenCalled();
   });
@@ -140,10 +122,8 @@ describe(".on('command:*')", () => {
   test('when unrecognised command/argument then listener called', () => {
     const mockAction = jest.fn();
     const program = new commander.Command();
-    program
-      .command('install');
-    program
-      .on('command:*', mockAction);
+    program.command('install');
+    program.on('command:*', mockAction);
     program.parse(['node', 'test', 'unrecognised-command']);
     expect(mockAction).toHaveBeenCalled();
   });
@@ -154,10 +134,8 @@ describe(".on('command:*')", () => {
     // Regression identified in https://github.com/tj/commander.js/issues/1460#issuecomment-772313494
     const mockAction = jest.fn();
     const program = new commander.Command();
-    program
-      .command('install');
-    program
-      .on('command:*', mockAction);
+    program.command('install');
+    program.on('command:*', mockAction);
     program.parse(['node', 'test', 'intsall', '--unknown']);
     expect(mockAction).toHaveBeenCalled();
   });

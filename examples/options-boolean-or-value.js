@@ -4,12 +4,10 @@
 //    Other option types, flag|value
 //    You can specify an option which functions as a flag but may also take a value (declared using square brackets).
 
-// const commander = require('commander'); // (normal include)
-const commander = require('../'); // include commander in git clone of commander repo
+const commander = require('commander');
 const program = new commander.Command();
 
-program
-  .option('-c, --cheese [type]', 'Add cheese with optional type');
+program.option('-c, --cheese [type]', 'Add cheese with optional type');
 
 program.parse(process.argv);
 
