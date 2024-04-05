@@ -23,13 +23,15 @@ class MyRootCommand extends Command {
 
 const program = new MyRootCommand();
 
-program.command('print')
+program
+  .command('print')
   .option('--a4', 'Use A4 sized paper')
   .action((options) => {
     console.log('print options: %O', options);
   });
 
-program.command('serve')
+program
+  .command('serve')
   .option('-p, --port <number>', 'port number for server')
   .action((options) => {
     console.log('serve options: %O', options);

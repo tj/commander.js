@@ -9,7 +9,7 @@ describe('Option methods that should return this for chaining', () => {
 
   test('when call .argParser() then returns this', () => {
     const option = new Option('-e,--example <value>');
-    const result = option.argParser(() => { });
+    const result = option.argParser(() => {});
     expect(result).toBe(option);
   });
 

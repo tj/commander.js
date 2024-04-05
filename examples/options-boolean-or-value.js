@@ -7,8 +7,7 @@
 const commander = require('commander');
 const program = new commander.Command();
 
-program
-  .option('-c, --cheese [type]', 'Add cheese with optional type');
+program.option('-c, --cheese [type]', 'Add cheese with optional type');
 
 program.parse(process.argv);
 

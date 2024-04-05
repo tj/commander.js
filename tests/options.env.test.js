@@ -1,77 +1,86 @@
 const commander = require('../');
 
 // treating optional same as required, treat as option taking value rather than as boolean
-describe.each(['-f, --foo <required-arg>', '-f, --foo [optional-arg]'])('option declared as: %s', (fooFlags) => {
-  test('when env undefined and no cli then option undefined', () => {
-    const program = new commander.Command();
-    program.addOption(new commander.Option(fooFlags).env('BAR'));
-    program.parse([], { from: 'user' });
-    expect(program.opts().foo).toBeUndefined();
-  });
+describe.each(['-f, --foo <required-arg>', '-f, --foo [optional-arg]'])(
+  'option declared as: %s',
+  (fooFlags) => {
+    test('when env undefined and no cli then option undefined', () => {
+      const program = new commander.Command();
+      program.addOption(new commander.Option(fooFlags).env('BAR'));
+      program.parse([], { from: 'user' });
+      expect(program.opts().foo).toBeUndefined();
+    });
 
-  test('when env defined and no cli then option from env', () => {
-    const program = new commander.Command();
-    process.env.BAR = 'env';
-    program.addOption(new commander.Option(fooFlags).env('BAR'));
-    program.parse([], { from: 'user' });
-    expect(program.opts().foo).toBe('env');
-    delete process.env.BAR;
-  });
+    test('when env defined and no cli then option from env', () => {
+      const program = new commander.Command();
+      process.env.BAR = 'env';
+      program.addOption(new commander.Option(fooFlags).env('BAR'));
+      program.parse([], { from: 'user' });
+      expect(program.opts().foo).toBe('env');
+      delete process.env.BAR;
+    });
 
-  test('when env defined and cli then option from cli', () => {
-    const program = new commander.Command();
-    process.env.BAR = 'env';
-    program.addOption(new commander.Option(fooFlags).env('BAR'));
-    program.parse(['--foo', 'cli'], { from: 'user' });
-    expect(program.opts().foo).toBe('cli');
-    delete process.env.BAR;
-  });
+    test('when env defined and cli then option from cli', () => {
+      const program = new commander.Command();
+      process.env.BAR = 'env';
+      program.addOption(new commander.Option(fooFlags).env('BAR'));
+      program.parse(['--foo', 'cli'], { from: 'user' });
+      expect(program.opts().foo).toBe('cli');
+      delete process.env.BAR;
+    });
 
-  test('when env defined and value source is config then option from env', () => {
-    const program = new commander.Command();
-    process.env.BAR = 'env';
-    program.addOption(new commander.Option(fooFlags).env('BAR'));
-    program.setOptionValueWithSource('foo', 'config', 'config');
-    program.parse([], { from: 'user' });
-    expect(program.opts().foo).toBe('env');
-    delete process.env.BAR;
-  });
+    test('when env defined and value source is config then option from env', () => {
+      const program = new commander.Command();
+      process.env.BAR = 'env';
+      program.addOption(new commander.Option(fooFlags).env('BAR'));
+      program.setOptionValueWithSource('foo', 'config', 'config');
+      program.parse([], { from: 'user' });
+      expect(program.opts().foo).toBe('env');
+      delete process.env.BAR;
+    });
 
-  test('when env defined and value source is unspecified then option unchanged', () => {
-    const program = new commander.Command();
-    process.env.BAR = 'env';
-    program.addOption(new commander.Option(fooFlags).env('BAR'));
-    program.setOptionValue('foo', 'client');
-    program.parse([], { from: 'user' });
-    expect(program.opts().foo).toBe('client');
-    delete process.env.BAR;
-  });
+    test('when env defined and value source is unspecified then option unchanged', () => {
+      const program = new commander.Command();
+      process.env.BAR = 'env';
+      program.addOption(new commander.Option(fooFlags).env('BAR'));
+      program.setOptionValue('foo', 'client');
+      program.parse([], { from: 'user' });
+      expect(program.opts().foo).toBe('client');
+      delete process.env.BAR;
+    });
 
-  test('when default and env undefined and no cli then option from default', () => {
-    const program = new commander.Command();
-    program.addOption(new commander.Option(fooFlags).env('BAR').default('default'));
-    program.parse([], { from: 'user' });
-    expect(program.opts().foo).toBe('default');
-  });
+    test('when default and env undefined and no cli then option from default', () => {
+      const program = new commander.Command();
+      program.addOption(
+        new commander.Option(fooFlags).env('BAR').default('default'),
+      );
+      program.parse([], { from: 'user' });
+      expect(program.opts().foo).toBe('default');
+    });
 
-  test('when default and env defined and no cli then option from env', () => {
-    const program = new commander.Command();
-    process.env.BAR = 'env';
-    program.addOption(new commander.Option(fooFlags).env('BAR').default('default'));
-    program.parse([], { from: 'user' });
-    expect(program.opts().foo).toBe('env');
-    delete process.env.BAR;
-  });
+    test('when default and env defined and no cli then option from env', () => {
+      const program = new commander.Command();
+      process.env.BAR = 'env';
+      program.addOption(
+        new commander.Option(fooFlags).env('BAR').default('default'),
+      );
+      program.parse([], { from: 'user' });
+      expect(program.opts().foo).toBe('env');
+      delete process.env.BAR;
+    });
 
-  test('when default and env defined and cli then option from cli', () => {
-    const program = new commander.Command();
-    process.env.BAR = 'env';
-    program.addOption(new commander.Option(fooFlags).env('BAR').default('default'));
-    program.parse(['--foo', 'cli'], { from: 'user' });
-    expect(program.opts().foo).toBe('cli');
-    delete process.env.BAR;
-  });
-});
+    test('when default and env defined and cli then option from cli', () => {
+      const program = new commander.Command();
+      process.env.BAR = 'env';
+      program.addOption(
+        new commander.Option(fooFlags).env('BAR').default('default'),
+      );
+      program.parse(['--foo', 'cli'], { from: 'user' });
+      expect(program.opts().foo).toBe('cli');
+      delete process.env.BAR;
+    });
+  },
+);
 
 describe('boolean flag', () => {
   test('when env undefined and no cli then option undefined', () => {
@@ -198,7 +207,11 @@ describe('custom argParser', () => {
   test('when env defined and no cli then custom parse from env', () => {
     const program = new commander.Command();
     process.env.BAR = 'env';
-    program.addOption(new commander.Option('-f, --foo <required>').env('BAR').argParser(str => str.toUpperCase()));
+    program.addOption(
+      new commander.Option('-f, --foo <required>')
+        .env('BAR')
+        .argParser((str) => str.toUpperCase()),
+    );
     program.parse([], { from: 'user' });
     expect(program.opts().foo).toBe('ENV');
     delete process.env.BAR;
@@ -209,7 +222,9 @@ describe('variadic', () => {
   test('when env defined and no cli then array from env', () => {
     const program = new commander.Command();
     process.env.BAR = 'env';
-    program.addOption(new commander.Option('-f, --foo <required...>').env('BAR'));
+    program.addOption(
+      new commander.Option('-f, --foo <required...>').env('BAR'),
+    );
     program.parse([], { from: 'user' });
     expect(program.opts().foo).toEqual(['env']);
     delete process.env.BAR;
@@ -218,7 +233,9 @@ describe('variadic', () => {
   test('when env defined and cli then array from cli', () => {
     const program = new commander.Command();
     process.env.BAR = 'env';
-    program.addOption(new commander.Option('-f, --foo <required...>').env('BAR'));
+    program.addOption(
+      new commander.Option('-f, --foo <required...>').env('BAR'),
+    );
     program.parse(['--foo', 'cli'], { from: 'user' });
     expect(program.opts().foo).toEqual(['cli']);
     delete process.env.BAR;
@@ -230,10 +247,14 @@ describe('env only processed when applies', () => {
     // Doing selective processing. Not processing env at addOption time.
     const program = new commander.Command();
     process.env.BAR = 'env';
-    program.command('one')
-      .action(() => {});
-    const two = program.command('two')
-      .addOption(new commander.Option('-f, --foo <required...>').env('BAR').default('default'))
+    program.command('one').action(() => {});
+    const two = program
+      .command('two')
+      .addOption(
+        new commander.Option('-f, --foo <required...>')
+          .env('BAR')
+          .default('default'),
+      )
       .action(() => {});
     program.parse(['one'], { from: 'user' });
     expect(two.opts().foo).toBe('default');
@@ -247,7 +268,9 @@ describe('env only processed when applies', () => {
     program.on('option:foo', optionEventMock);
     program.on('optionEnv:foo', optionEnvEventMock);
     process.env.BAR = 'env';
-    program.addOption(new commander.Option('-f, --foo <required...>').env('BAR'));
+    program.addOption(
+      new commander.Option('-f, --foo <required...>').env('BAR'),
+    );
     program.parse(['--foo', 'cli'], { from: 'user' });
     expect(optionEventMock).toHaveBeenCalledWith('cli');
     expect(optionEventMock).toHaveBeenCalledTimes(1);
@@ -259,7 +282,11 @@ describe('env only processed when applies', () => {
     const program = new commander.Command();
     const parseMock = jest.fn();
     process.env.BAR = 'env';
-    program.addOption(new commander.Option('-f, --foo <required...>').env('BAR').argParser(parseMock));
+    program.addOption(
+      new commander.Option('-f, --foo <required...>')
+        .env('BAR')
+        .argParser(parseMock),
+    );
     program.parse(['--foo', 'cli'], { from: 'user' });
     expect(parseMock).toHaveBeenCalledWith('cli', undefined);
     expect(parseMock).toHaveBeenCalledTimes(1);

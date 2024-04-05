@@ -31,10 +31,14 @@ function commaSeparatedList(value) {
 program
   .option('-f, --float <number>', 'float argument', parseFloat)
   .option('-i, --integer <number>', 'integer argument', myParseInt)
-  .option('-v, --verbose', 'verbosity that can be increased', increaseVerbosity, 0)
+  .option(
+    '-v, --verbose',
+    'verbosity that can be increased',
+    increaseVerbosity,
+    0,
+  )
   .option('-c, --collect <value>', 'repeatable value', collect, [])
-  .option('-l, --list <items>', 'comma separated list', commaSeparatedList)
-;
+  .option('-l, --list <items>', 'comma separated list', commaSeparatedList);
 
 program.parse();
 

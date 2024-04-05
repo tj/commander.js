@@ -14,7 +14,9 @@ describe('longestOptionTermLength', () => {
   test('when just implicit help option returns length of help flags', () => {
     const program = new commander.Command();
     const helper = new commander.Help();
-    expect(helper.longestOptionTermLength(program, helper)).toEqual('-h, --help'.length);
+    expect(helper.longestOptionTermLength(program, helper)).toEqual(
+      '-h, --help'.length,
+    );
   });
 
   test('when multiple option then returns longest length', () => {
@@ -25,6 +27,8 @@ describe('longestOptionTermLength', () => {
       .option(longestOptionFlags)
       .option('--after');
     const helper = new commander.Help();
-    expect(helper.longestOptionTermLength(program, helper)).toEqual(longestOptionFlags.length);
+    expect(helper.longestOptionTermLength(program, helper)).toEqual(
+      longestOptionFlags.length,
+    );
   });
 });

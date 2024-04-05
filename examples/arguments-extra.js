@@ -6,8 +6,19 @@ const commander = require('commander');
 const program = new commander.Command();
 
 program
-  .addArgument(new commander.Argument('<drink-size>', 'drink cup size').choices(['small', 'medium', 'large']))
-  .addArgument(new commander.Argument('[timeout]', 'timeout in seconds').default(60, 'one minute'))
+  .addArgument(
+    new commander.Argument('<drink-size>', 'drink cup size').choices([
+      'small',
+      'medium',
+      'large',
+    ]),
+  )
+  .addArgument(
+    new commander.Argument('[timeout]', 'timeout in seconds').default(
+      60,
+      'one minute',
+    ),
+  )
   .action((drinkSize, timeout) => {
     console.log(`Drink size: ${drinkSize}`);
     console.log(`Timeout (s): ${timeout}`);
