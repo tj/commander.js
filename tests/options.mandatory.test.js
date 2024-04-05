@@ -6,9 +6,7 @@ const commander = require('../');
 describe('required program option with mandatory value specified', () => {
   test('when program has required value specified then value as specified', () => {
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .requiredOption('--cheese <type>', 'cheese type');
+    program.exitOverride().requiredOption('--cheese <type>', 'cheese type');
     program.parse(['node', 'test', '--cheese', 'blue']);
     expect(program.opts().cheese).toBe('blue');
   });
@@ -33,9 +31,7 @@ describe('required program option with mandatory value specified', () => {
 
   test('when program has optional value flag specified then true', () => {
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .requiredOption('--cheese [type]', 'cheese type');
+    program.exitOverride().requiredOption('--cheese [type]', 'cheese type');
     program.parse(['node', 'test', '--cheese']);
     expect(program.opts().cheese).toBe(true);
   });
@@ -106,7 +102,9 @@ describe('required program option with mandatory value not specified', () => {
   let writeErrorSpy;
 
   beforeAll(() => {
-    writeErrorSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
+    writeErrorSpy = jest
+      .spyOn(process.stderr, 'write')
+      .mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -119,9 +117,7 @@ describe('required program option with mandatory value not specified', () => {
 
   test('when program has required option not specified then error', () => {
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .requiredOption('--cheese <type>', 'cheese type');
+    program.exitOverride().requiredOption('--cheese <type>', 'cheese type');
 
     expect(() => {
       program.parse(['node', 'test']);
@@ -130,9 +126,7 @@ describe('required program option with mandatory value not specified', () => {
 
   test('when program has optional option not specified then error', () => {
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .requiredOption('--cheese [type]', 'cheese type');
+    program.exitOverride().requiredOption('--cheese [type]', 'cheese type');
 
     expect(() => {
       program.parse(['node', 'test']);
@@ -186,7 +180,11 @@ describe('required command option with mandatory value specified', () => {
     const program = new commander.Command();
     program
       .exitOverride()
-      .addOption(new commander.Option('-p, --port <number>', 'port number').makeOptionMandatory().env('FOO'));
+      .addOption(
+        new commander.Option('-p, --port <number>', 'port number')
+          .makeOptionMandatory()
+          .env('FOO'),
+      );
 
     process.env.FOO = 'bar';
     program.parse([], { from: 'user' });
@@ -201,7 +199,9 @@ describe('required command option with mandatory value not specified', () => {
   let writeErrorSpy;
 
   beforeAll(() => {
-    writeErrorSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
+    writeErrorSpy = jest
+      .spyOn(process.stderr, 'write')
+      .mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -232,8 +232,7 @@ describe('required command option with mandatory value not specified', () => {
       .command('sub')
       .requiredOption('--subby <type>', 'description')
       .action(() => {});
-    program
-      .command('sub2');
+    program.command('sub2');
 
     expect(() => {
       program.parse(['node', 'test', 'sub2']);
@@ -246,7 +245,7 @@ describe('missing mandatory option but help requested', () => {
   let writeSpy;
 
   beforeAll(() => {
-    writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
+    writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -259,9 +258,7 @@ describe('missing mandatory option but help requested', () => {
 
   test('when program has required option not specified and --help then help', () => {
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .requiredOption('--cheese <type>', 'cheese type');
+    program.exitOverride().requiredOption('--cheese <type>', 'cheese type');
 
     let caughtErr;
     try {

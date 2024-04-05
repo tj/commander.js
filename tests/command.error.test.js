@@ -1,8 +1,10 @@
 const commander = require('../');
 
 test('when error called with message then message displayed on stderr', () => {
-  const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => { });
-  const stderrSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
+  const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => {});
+  const stderrSpy = jest
+    .spyOn(process.stderr, 'write')
+    .mockImplementation(() => {});
 
   const program = new commander.Command();
   const message = 'Goodbye';
@@ -14,11 +16,11 @@ test('when error called with message then message displayed on stderr', () => {
 });
 
 test('when error called with no exitCode then process.exit(1)', () => {
-  const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => { });
+  const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => {});
 
   const program = new commander.Command();
   program.configureOutput({
-    writeErr: () => {}
+    writeErr: () => {},
   });
 
   program.error('Goodbye');
@@ -28,11 +30,11 @@ test('when error called with no exitCode then process.exit(1)', () => {
 });
 
 test('when error called with exitCode 2 then process.exit(2)', () => {
-  const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => { });
+  const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => {});
 
   const program = new commander.Command();
   program.configureOutput({
-    writeErr: () => {}
+    writeErr: () => {},
   });
   program.error('Goodbye', { exitCode: 2 });
 
@@ -44,9 +46,12 @@ test('when error called with code and exitOverride then throws with code', () =>
   const program = new commander.Command();
   let errorThrown;
   program
-    .exitOverride((err) => { errorThrown = err; throw err; })
+    .exitOverride((err) => {
+      errorThrown = err;
+      throw err;
+    })
     .configureOutput({
-      writeErr: () => {}
+      writeErr: () => {},
     });
 
   const code = 'commander.test';

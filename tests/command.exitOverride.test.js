@@ -20,7 +20,9 @@ describe('.exitOverride and error details', () => {
   let stderrSpy;
 
   beforeAll(() => {
-    stderrSpy = jest.spyOn(process.stderr, 'write').mockImplementation(() => { });
+    stderrSpy = jest
+      .spyOn(process.stderr, 'write')
+      .mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -33,8 +35,7 @@ describe('.exitOverride and error details', () => {
 
   test('when specify unknown program option then throw CommanderError', () => {
     const program = new commander.Command();
-    program
-      .exitOverride();
+    program.exitOverride();
 
     let caughtErr;
     try {
@@ -44,15 +45,17 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(stderrSpy).toHaveBeenCalled();
-    expectCommanderError(caughtErr, 1, 'commander.unknownOption', "error: unknown option '-m'");
+    expectCommanderError(
+      caughtErr,
+      1,
+      'commander.unknownOption',
+      "error: unknown option '-m'",
+    );
   });
 
   test('when specify unknown command then throw CommanderError', () => {
     const program = new commander.Command();
-    program
-      .name('prog')
-      .exitOverride()
-      .command('sub');
+    program.name('prog').exitOverride().command('sub');
 
     let caughtErr;
     try {
@@ -62,17 +65,25 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(stderrSpy).toHaveBeenCalled();
-    expectCommanderError(caughtErr, 1, 'commander.unknownCommand', "error: unknown command 'oops'");
+    expectCommanderError(
+      caughtErr,
+      1,
+      'commander.unknownCommand',
+      "error: unknown command 'oops'",
+    );
   });
 
   // Same error as above, but with custom handler.
   test('when supply custom handler then throw custom error', () => {
-    const customError = new commander.CommanderError(123, 'custom-code', 'custom-message');
+    const customError = new commander.CommanderError(
+      123,
+      'custom-code',
+      'custom-message',
+    );
     const program = new commander.Command();
-    program
-      .exitOverride((_err) => {
-        throw customError;
-      });
+    program.exitOverride((_err) => {
+      throw customError;
+    });
 
     let caughtErr;
     try {
@@ -81,15 +92,18 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expectCommanderError(caughtErr, customError.exitCode, customError.code, customError.message);
+    expectCommanderError(
+      caughtErr,
+      customError.exitCode,
+      customError.code,
+      customError.message,
+    );
   });
 
   test('when specify option without required value then throw CommanderError', () => {
     const optionFlags = '-p, --pepper <type>';
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .option(optionFlags, 'add pepper');
+    program.exitOverride().option(optionFlags, 'add pepper');
 
     let caughtErr;
     try {
@@ -99,7 +113,12 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(stderrSpy).toHaveBeenCalled();
-    expectCommanderError(caughtErr, 1, 'commander.optionMissingArgument', `error: option '${optionFlags}' argument missing`);
+    expectCommanderError(
+      caughtErr,
+      1,
+      'commander.optionMissingArgument',
+      `error: option '${optionFlags}' argument missing`,
+    );
   });
 
   test('when specify command without required argument then throw CommanderError', () => {
@@ -107,7 +126,7 @@ describe('.exitOverride and error details', () => {
     program
       .exitOverride()
       .command('compress <arg-name>')
-      .action(() => { });
+      .action(() => {});
 
     let caughtErr;
     try {
@@ -117,14 +136,17 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(stderrSpy).toHaveBeenCalled();
-    expectCommanderError(caughtErr, 1, 'commander.missingArgument', "error: missing required argument 'arg-name'");
+    expectCommanderError(
+      caughtErr,
+      1,
+      'commander.missingArgument',
+      "error: missing required argument 'arg-name'",
+    );
   });
 
   test('when specify program without required argument and no action handler then throw CommanderError', () => {
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .argument('<arg-name>');
+    program.exitOverride().argument('<arg-name>');
 
     let caughtErr;
     try {
@@ -134,7 +156,12 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(stderrSpy).toHaveBeenCalled();
-    expectCommanderError(caughtErr, 1, 'commander.missingArgument', "error: missing required argument 'arg-name'");
+    expectCommanderError(
+      caughtErr,
+      1,
+      'commander.missingArgument',
+      "error: missing required argument 'arg-name'",
+    );
   });
 
   test('when specify excess argument then throw CommanderError', () => {
@@ -142,7 +169,7 @@ describe('.exitOverride and error details', () => {
     program
       .exitOverride()
       .allowExcessArguments(false)
-      .action(() => { });
+      .action(() => {});
 
     let caughtErr;
     try {
@@ -152,7 +179,12 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(stderrSpy).toHaveBeenCalled();
-    expectCommanderError(caughtErr, 1, 'commander.excessArguments', 'error: too many arguments. Expected 0 arguments but got 1.');
+    expectCommanderError(
+      caughtErr,
+      1,
+      'commander.excessArguments',
+      'error: too many arguments. Expected 0 arguments but got 1.',
+    );
   });
 
   test('when specify command with excess argument then throw CommanderError', () => {
@@ -161,7 +193,7 @@ describe('.exitOverride and error details', () => {
       .exitOverride()
       .command('speak')
       .allowExcessArguments(false)
-      .action(() => { });
+      .action(() => {});
 
     let caughtErr;
     try {
@@ -171,14 +203,20 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(stderrSpy).toHaveBeenCalled();
-    expectCommanderError(caughtErr, 1, 'commander.excessArguments', "error: too many arguments for 'speak'. Expected 0 arguments but got 1.");
+    expectCommanderError(
+      caughtErr,
+      1,
+      'commander.excessArguments',
+      "error: too many arguments for 'speak'. Expected 0 arguments but got 1.",
+    );
   });
 
   test('when specify --help then throw CommanderError', () => {
-    const writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
+    const writeSpy = jest
+      .spyOn(process.stdout, 'write')
+      .mockImplementation(() => {});
     const program = new commander.Command();
-    program
-      .exitOverride();
+    program.exitOverride();
 
     let caughtErr;
     try {
@@ -187,15 +225,18 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expectCommanderError(caughtErr, 0, 'commander.helpDisplayed', '(outputHelp)');
+    expectCommanderError(
+      caughtErr,
+      0,
+      'commander.helpDisplayed',
+      '(outputHelp)',
+    );
     writeSpy.mockRestore();
   });
 
   test('when executable subcommand and no command specified then throw CommanderError', () => {
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .command('compress', 'compress description');
+    program.exitOverride().command('compress', 'compress description');
 
     let caughtErr;
     try {
@@ -208,12 +249,12 @@ describe('.exitOverride and error details', () => {
   });
 
   test('when specify --version then throw CommanderError', () => {
-    const stdoutSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => { });
+    const stdoutSpy = jest
+      .spyOn(process.stdout, 'write')
+      .mockImplementation(() => {});
     const myVersion = '1.2.3';
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .version(myVersion);
+    program.exitOverride().version(myVersion);
 
     let caughtErr;
     try {
@@ -226,14 +267,19 @@ describe('.exitOverride and error details', () => {
     stdoutSpy.mockRestore();
   });
 
-  test('when executableSubcommand succeeds then call exitOverride', async() => {
+  test('when executableSubcommand succeeds then call exitOverride', async () => {
     expect.hasAssertions();
     const pm = path.join(__dirname, 'fixtures/pm');
     const program = new commander.Command();
     await new Promise((resolve) => {
       program
         .exitOverride((err) => {
-          expectCommanderError(err, 0, 'commander.executeSubCommandAsync', '(close)');
+          expectCommanderError(
+            err,
+            0,
+            'commander.executeSubCommandAsync',
+            '(close)',
+          );
           resolve();
         })
         .command('silent', 'description');
@@ -244,9 +290,7 @@ describe('.exitOverride and error details', () => {
   test('when mandatory program option missing then throw CommanderError', () => {
     const optionFlags = '-p, --pepper <type>';
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .requiredOption(optionFlags, 'add pepper');
+    program.exitOverride().requiredOption(optionFlags, 'add pepper');
 
     let caughtErr;
     try {
@@ -255,7 +299,12 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expectCommanderError(caughtErr, 1, 'commander.missingMandatoryOptionValue', `error: required option '${optionFlags}' not specified`);
+    expectCommanderError(
+      caughtErr,
+      1,
+      'commander.missingMandatoryOptionValue',
+      `error: required option '${optionFlags}' not specified`,
+    );
   });
 
   test('when option argument not in choices then throw CommanderError', () => {
@@ -272,7 +321,12 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expectCommanderError(caughtErr, 1, 'commander.invalidArgument', "error: option '--colour <shade>' argument 'green' is invalid. Allowed choices are red, blue.");
+    expectCommanderError(
+      caughtErr,
+      1,
+      'commander.invalidArgument',
+      "error: option '--colour <shade>' argument 'green' is invalid. Allowed choices are red, blue.",
+    );
   });
 
   test('when command argument not in choices then throw CommanderError', () => {
@@ -289,7 +343,12 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expectCommanderError(caughtErr, 1, 'commander.invalidArgument', "error: command-argument value 'green' is invalid for argument 'shade'. Allowed choices are red, blue.");
+    expectCommanderError(
+      caughtErr,
+      1,
+      'commander.invalidArgument',
+      "error: command-argument value 'green' is invalid for argument 'shade'. Allowed choices are red, blue.",
+    );
   });
 
   test('when custom processing for option throws InvalidArgumentError then catch CommanderError', () => {
@@ -298,9 +357,7 @@ describe('.exitOverride and error details', () => {
     }
     const optionFlags = '--colour <shade>';
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .option(optionFlags, 'specify shade', justSayNo);
+    program.exitOverride().option(optionFlags, 'specify shade', justSayNo);
 
     let caughtErr;
     try {
@@ -309,7 +366,12 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expectCommanderError(caughtErr, 1, 'commander.invalidArgument', "error: option '--colour <shade>' argument 'green' is invalid. NO");
+    expectCommanderError(
+      caughtErr,
+      1,
+      'commander.invalidArgument',
+      "error: option '--colour <shade>' argument 'green' is invalid. NO",
+    );
   });
 
   test('when custom processing for argument throws InvalidArgumentError then catch CommanderError', () => {
@@ -329,7 +391,12 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expectCommanderError(caughtErr, 1, 'commander.invalidArgument', "error: command-argument value 'green' is invalid for argument 'n'. NO");
+    expectCommanderError(
+      caughtErr,
+      1,
+      'commander.invalidArgument',
+      "error: command-argument value 'green' is invalid for argument 'n'. NO",
+    );
   });
 
   test('when has conflicting option then throw CommanderError', () => {
@@ -346,13 +413,17 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expectCommanderError(caughtErr, 1, 'commander.conflictingOption', "error: option '--debug' cannot be used with option '--silent'");
+    expectCommanderError(
+      caughtErr,
+      1,
+      'commander.conflictingOption',
+      "error: option '--debug' cannot be used with option '--silent'",
+    );
   });
 
   test('when call error() then throw CommanderError', () => {
     const program = new commander.Command();
-    program
-      .exitOverride();
+    program.exitOverride();
 
     let caughtErr;
     try {
@@ -366,7 +437,7 @@ describe('.exitOverride and error details', () => {
 });
 
 test('when no override and error then exit(1)', () => {
-  const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => { });
+  const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => {});
   const program = new commander.Command();
   program.configureOutput({ outputError: () => {} });
   program.parse(['--unknownOption'], { from: 'user' });

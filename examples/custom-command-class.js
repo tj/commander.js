@@ -32,11 +32,9 @@ program
     inpectCommand(command);
   });
 
-program
-  .command('build <target>')
-  .action((buildTarget, options, command) => {
-    inpectCommand(command);
-  });
+program.command('build <target>').action((buildTarget, options, command) => {
+  inpectCommand(command);
+});
 
 program.parse();
 
