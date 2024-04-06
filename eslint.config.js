@@ -5,34 +5,34 @@ const tseslint = require('typescript-eslint');
 const prettier = require('eslint-config-prettier');
 //const jsdoc = require('eslint-plugin-jsdoc');
 
-// Using tseslint config helper to customise its setup the tseslint way.
+// Only run tseslint on the files that we have included for TypeScript.
 const tsconfigTsFiles = ['**/*.{ts,mts}']; // match "include" in tsconfig.ts.json;
 const tsconfigJsFiles = ['*.{js,mjs}', 'lib/**/*.{js,mjs}']; // match "include" in tsconfig.js.json
-const tseslintConfigs = tseslint.config(
+
+// Using tseslint.config adds some type safety and `extends` to simplify customising config array.
+module.exports = tseslint.config(
+  // Add recommended rules.
+  esLintjs.configs.recommended,
+  // jsdoc.configs['flat/recommended'],
+  jest.configs['flat/recommended'],
+  // tseslint with different setup for js/ts
   {
     files: tsconfigJsFiles,
+    extends: [...tseslint.configs.recommended],
     languageOptions: {
       parserOptions: { project: './tsconfig.js.json' },
     },
-    extends: [...tseslint.configs.recommended],
     rules: {
-      '@typescript-eslint/no-var-requires': 'off', // (tseslint does not autodetect commonjs context )
+      '@typescript-eslint/no-var-requires': 'off', // tseslint does not autodetect commonjs context
     },
   },
   {
     files: tsconfigTsFiles,
+    extends: [...tseslint.configs.recommended],
     languageOptions: {
       parserOptions: { project: './tsconfig.ts.json' },
     },
-    extends: [...tseslint.configs.recommended],
   },
-);
-
-module.exports = [
-  esLintjs.configs.recommended,
-  // jsdoc.configs['flat/recommended'],
-  jest.configs['flat/recommended'],
-  ...tseslintConfigs,
   prettier, // Do Prettier last so it can override previous configs.
 
   // Customise rules.
@@ -72,4 +72,4 @@ module.exports = [
       ],
     },
   },
-];
+);
