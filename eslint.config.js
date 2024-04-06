@@ -3,7 +3,7 @@ const esLintjs = require('@eslint/js');
 const jest = require('eslint-plugin-jest');
 const tseslint = require('typescript-eslint');
 const prettier = require('eslint-config-prettier');
-//const jsdoc = require('eslint-plugin-jsdoc');
+// const jsdoc = require('eslint-plugin-jsdoc');
 
 // Using tseslint config helper to customise its setup the tseslint way.
 const tsconfigTsFiles = ['**/*.{ts,mts}']; // match "include" in tsconfig.ts.json;
@@ -30,9 +30,18 @@ const tseslintConfigs = tseslint.config(
 
 module.exports = [
   esLintjs.configs.recommended,
-  // jsdoc.configs['flat/recommended'],
   jest.configs['flat/recommended'],
   ...tseslintConfigs,
+  // {
+  //   files: ['**/*.{js,mjs,cjs}'],
+  //   // @ts-ignore because jsdoc not typed
+  //   ...jsdoc.configs['flat/recommended'],
+  // },
+  // {
+  //   files: ['**/*.{ts,mts,cts}'],
+  //   // @ts-ignore because jsdoc not typed
+  //   ...jsdoc.configs['flat/recommended-typescript'],
+  // },
   prettier, // Do Prettier last so it can override previous configs.
 
   // Customise rules.
@@ -45,6 +54,10 @@ module.exports = [
       // 'jsdoc/require-jsdoc': 'off',
       // 'jsdoc/require-param-description': 'off',
       // 'jsdoc/require-returns-description': 'off',
+      // 'jsdoc/require-param': ['warn', { exemptedBy: ['private'] }],
+      // // Currently can not configure checking to allow return/returns (and don't want wide change mixed with more interesting fixes),
+      // // and can not set options.jsdoc.mode yet to allow @remarks in typescript.
+      // 'jsdoc/check-tag-names': 0,
     },
     languageOptions: {
       globals: {

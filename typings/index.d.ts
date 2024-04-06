@@ -26,7 +26,6 @@ export class CommanderError extends Error {
    * @param exitCode - suggested exit code which could be used with process.exit
    * @param code - an id string representing the error
    * @param message - human-readable description of the error
-   * @constructor
    */
   constructor(exitCode: number, code: string, message: string);
 }
@@ -35,7 +34,6 @@ export class InvalidArgumentError extends CommanderError {
   /**
    * Constructs the InvalidArgumentError class
    * @param message - explanation of why argument is invalid
-   * @constructor
    */
   constructor(message: string);
 }
