@@ -4,6 +4,9 @@ const commander = require('../');
 // https://github.com/electron/electron/issues/4690#issuecomment-217435222
 // https://www.electronjs.org/docs/api/process#processdefaultapp-readonly
 
+// (If mutating process.argv and process.execArgv causes problems, could add utility
+// functions to get them and then mock the functions for tests.)
+
 describe('.parse() args from', () => {
   test('when no args then use process.argv and app/script/args', () => {
     const program = new commander.Command();
@@ -67,6 +70,22 @@ describe('.parse() args from', () => {
       program.parse(['node', 'script.js'], { from: 'silly' });
     }).toThrow();
   });
+
+  test.each(['-e', '--eval', '-p', '--print'])(
+    'when node execArgv includes %s then app/args',
+    (flag) => {
+      const program = new commander.Command();
+      const holdExecArgv = process.execArgv;
+      const holdArgv = process.argv;
+      process.argv = ['node', 'user-arg'];
+      process.execArgv = [flag, 'console.log("hello, world")'];
+      program.parse();
+      process.argv = holdArgv;
+      process.execArgv = holdExecArgv;
+      expect(program.args).toEqual(['user-arg']);
+      process.execArgv = holdExecArgv;
+    },
+  );
 });
 
 describe('return type', () => {
