@@ -724,38 +724,49 @@ export class Command {
   /**
    * Parse `argv`, setting options and invoking commands when defined.
    *
-   * The default expectation is that the arguments are from node and have the application as argv[0]
-   * and the script being run in argv[1], with user parameters after that.
+   * Use parseAsync instead of parse if any of your action handlers are async.
+   *
+   * Call with no parameters to parse `process.argv`. Detects Electron and special node options like `node --eval`. Easy mode!
+   *
+   * Or call with an array of strings to parse, and optionally where the user arguments start by specifying where the arguments are `from`:
+   * - `'node'`: default, `argv[0]` is the application and `argv[1]` is the script being run, with user arguments after that
+   * - `'electron'`: `argv[0]` is the application and `argv[1]` varies depending on whether the electron application is packaged
+   * - `'user'`: just user arguments
    *
    * @example
    * ```
-   * program.parse(process.argv);
-   * program.parse(); // implicitly use process.argv and auto-detect node vs electron conventions
+   * program.parse(); // parse process.argv and auto-detect electron and special node flags
+   * program.parse(process.argv); // assume argv[0] is app and argv[1] is script
    * program.parse(my-args, { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
    * ```
    *
    * @returns `this` command for chaining
    */
-  parse(argv?: readonly string[], options?: ParseOptions): this;
+  parse(argv?: readonly string[], parseOptions?: ParseOptions): this;
 
   /**
    * Parse `argv`, setting options and invoking commands when defined.
    *
-   * Use parseAsync instead of parse if any of your action handlers are async. Returns a Promise.
+   * Call with no parameters to parse `process.argv`. Detects Electron and special node options like `node --eval`. Easy mode!
    *
-   * The default expectation is that the arguments are from node and have the application as argv[0]
-   * and the script being run in argv[1], with user parameters after that.
+   * Or call with an array of strings to parse, and optionally where the user arguments start by specifying where the arguments are `from`:
+   * - `'node'`: default, `argv[0]` is the application and `argv[1]` is the script being run, with user arguments after that
+   * - `'electron'`: `argv[0]` is the application and `argv[1]` varies depending on whether the electron application is packaged
+   * - `'user'`: just user arguments
    *
    * @example
    * ```
-   * program.parseAsync(process.argv);
-   * program.parseAsync(); // implicitly use process.argv and auto-detect node vs electron conventions
-   * program.parseAsync(my-args, { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
+   * await program.parseAsync(); // parse process.argv and auto-detect electron and special node flags
+   * await program.parseAsync(process.argv); // assume argv[0] is app and argv[1] is script
+   * await program.parseAsync(my-args, { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
    * ```
    *
    * @returns Promise
    */
-  parseAsync(argv?: readonly string[], options?: ParseOptions): Promise<this>;
+  parseAsync(
+    argv?: readonly string[],
+    parseOptions?: ParseOptions,
+  ): Promise<this>;
 
   /**
    * Parse options from `argv` removing known options,
