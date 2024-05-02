@@ -617,9 +617,6 @@ expectType<commander.Option>(baseOption.preset('abc'));
 // env
 expectType<commander.Option>(baseOption.env('PORT'));
 
-// fullDescription
-expectType<string>(baseOption.fullDescription());
-
 // argParser
 expectType<commander.Option>(
   baseOption.argParser((value: string) => parseInt(value)),
