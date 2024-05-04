@@ -164,11 +164,6 @@ export class Option {
   env(name: string): this;
 
   /**
-   * Calculate the full description, including defaultValue etc.
-   */
-  fullDescription(): string;
-
-  /**
    * Set the custom handler for processing CLI option arguments into option values.
    */
   argParser<T>(fn: (value: string, previous: T) => T): this;
