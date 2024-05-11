@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [12.1.0] (2024-05-18)
+
+### Added
+
+- auto-detect special node flags `node --eval` and `node --print` when call `.parse()` with no arguments ([#2164])
+- 
+### Changed
+
+- prefix require of Node.js core modules with `node:` ([#2170])
+- format source files with Prettier ([#2180])
+- switch from StandardJS to directly calling ESLint for linting ([#2153])
+- extend security support for previous major version of Commander ([#2150])
+
+### Removed
+
+- removed unimplemented Option.fullDescription from TypeScript definition ([#2191])
+
 ## [12.0.0] (2024-02-03)
 
 ### Added
@@ -1262,6 +1279,12 @@ program
 [#2055]: https://github.com/tj/commander.js/pull/2055
 [#2059]: https://github.com/tj/commander.js/pull/2059
 [#2087]: https://github.com/tj/commander.js/pull/2087
+[#2150]: https://github.com/tj/commander.js/pull/2150
+[#2153]: https://github.com/tj/commander.js/pull/2153
+[#2164]: https://github.com/tj/commander.js/pull/2164
+[#2170]: https://github.com/tj/commander.js/pull/2170
+[#2180]: https://github.com/tj/commander.js/pull/2180
+[#2191]: https://github.com/tj/commander.js/pull/2191
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
@@ -1341,6 +1364,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[12.0.0]: https://github.com/tj/commander.js/compare/v12.0.0...v12.1.0
 [12.0.0]: https://github.com/tj/commander.js/compare/v11.1.0...v12.0.0
 [12.0.0-1]: https://github.com/tj/commander.js/compare/v12.0.0-0...v12.0.0-1
 [12.0.0-0]: https://github.com/tj/commander.js/compare/v11.1.0...v12.0.0-0
