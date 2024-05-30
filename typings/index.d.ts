@@ -544,7 +544,7 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
-  action(fn: (...args: any[]) => void | Promise<void>): this;
+  action(fn: (this: this, ...args: any[]) => void | Promise<void>): this;
 
   /**
    * Define option with `flags`, `description`, and optional argument parsing function or `defaultValue` or both.
