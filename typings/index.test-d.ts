@@ -148,10 +148,9 @@ expectType<commander.Command>(
 // action
 expectType<commander.Command>(program.action(() => {}));
 expectType<commander.Command>(program.action(async () => {}));
-program
-  .action(function () {
-    expectType<typeof program>(this)
-  })
+program.action(function () {
+  expectType<typeof program>(this);
+});
 
 // option
 expectType<commander.Command>(program.option('-a,--alpha'));

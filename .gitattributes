@@ -1,0 +1,2 @@
+# disable line-ending changes (otherwise Windows developers with default settings from git install see Prettier wanting to fix every file)
+* -text
