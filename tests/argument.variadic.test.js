@@ -38,15 +38,35 @@ describe('variadic argument', () => {
     program.argument('[variadicArg...]').action(actionMock);
     const extraArguments = ['a', 'b', 'c'];
 
+    program.parse(['node', 'test', ...extraArguments, '--', 'NOT AN ARGUMENT']);
+
+    expect(actionMock).toHaveBeenCalledWith(
+      extraArguments,
+      program.opts(),
+      program,
+    );
+  });
+
+  test('when arguments includes -- then stop processing variadic arguments, should also work with multiple arguments', () => {
+    const actionMock = jest.fn();
+    const program = new commander.Command();
+    program
+      .addArgument(new commander.Argument('<id>'))
+      .argument('[variadicArg...]')
+      .action(actionMock);
+    const extraArguments = ['a', 'b', 'c'];
+
     program.parse([
       'node',
       'test',
+      'id',
       ...extraArguments,
       '--',
       'NOT AN ARGUMENT',
     ]);
 
     expect(actionMock).toHaveBeenCalledWith(
+      'id',
       extraArguments,
       program.opts(),
       program,
