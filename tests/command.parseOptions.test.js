@@ -147,13 +147,21 @@ describe('parseOptions', () => {
   test('when program has literal before known flag then option returned as operand', () => {
     const program = createProgram();
     const result = program.parseOptions('-- --global-flag'.split(' '));
-    expect(result).toEqual({ operands: ['--global-flag'], unknown: [] });
+    expect(result).toEqual({
+      operands: ['--global-flag'],
+      unknown: [],
+      lastArgIndex: 0,
+    });
   });
 
   test('when program has literal before unknown option then option returned as operand', () => {
     const program = createProgram();
     const result = program.parseOptions('-- --unknown uuu'.split(' '));
-    expect(result).toEqual({ operands: ['--unknown', 'uuu'], unknown: [] });
+    expect(result).toEqual({
+      operands: ['--unknown', 'uuu'],
+      unknown: [],
+      lastArgIndex: 0,
+    });
   });
 
   test('when program has literal after unknown option then literal preserved too', () => {
@@ -162,6 +170,7 @@ describe('parseOptions', () => {
     expect(result).toEqual({
       operands: [],
       unknown: ['--unknown1', '--', '--unknown2'],
+      lastArgIndex: 2,
     });
   });
 });
