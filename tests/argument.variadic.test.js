@@ -32,6 +32,27 @@ describe('variadic argument', () => {
     );
   });
 
+  test('when arguments includes -- then stop processing variadic arguments', () => {
+    const actionMock = jest.fn();
+    const program = new commander.Command();
+    program.argument('[variadicArg...]').action(actionMock);
+    const extraArguments = ['a', 'b', 'c'];
+
+    program.parse([
+      'node',
+      'test',
+      ...extraArguments,
+      '--',
+      'NOT AN ARGUMENT',
+    ]);
+
+    expect(actionMock).toHaveBeenCalledWith(
+      extraArguments,
+      program.opts(),
+      program,
+    );
+  });
+
   test('when no extra arguments specified for command then variadic arg is empty array', () => {
     const actionMock = jest.fn();
     const program = new commander.Command();
