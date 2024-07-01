@@ -225,8 +225,11 @@ program.helpCommand('assist', 'show assistance');
 program.helpCommand(false);
 
 program.addHelpCommand(new Command('assist').argument('[command]').description('show assistance'));
-
 ```
+
+- Removed from README in Commander v12.
+- Deprecated from Commander v12.
+
 ## Removed
 
 ### Default import of global Command object
