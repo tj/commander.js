@@ -196,7 +196,10 @@ describe('action hooks context', () => {
     program.argument('[arg]').hook('preAction', (thisCommand) => {
       expect(thisCommand.args).toEqual(['sub', 'value']);
     });
-    program.command('sub').action(() => {});
+    program
+      .command('sub')
+      .argument('<arg>')
+      .action(() => {});
     program.parse(['sub', 'value'], { from: 'user' });
   });
 
@@ -206,7 +209,10 @@ describe('action hooks context', () => {
     program.hook('preAction', (thisCommand, actionCommand) => {
       expect(actionCommand.args).toEqual(['value']);
     });
-    program.command('sub').action(() => {});
+    program
+      .command('sub')
+      .argument('<arg>')
+      .action(() => {});
     program.parse(['sub', 'value'], { from: 'user' });
   });
 });

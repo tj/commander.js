@@ -18,12 +18,12 @@ describe('unknownCommand', () => {
     writeErrorSpy.mockRestore();
   });
 
-  test('when unknown argument in simple program then no error', () => {
+  test('when unknown argument in simple program then error', () => {
     const program = new commander.Command();
     program.exitOverride();
     expect(() => {
       program.parse('node test.js unknown'.split(' '));
-    }).not.toThrow();
+    }).toThrow();
   });
 
   test('when unknown command but action handler taking arg then no error', () => {

@@ -439,6 +439,7 @@ describe('program with allowUnknownOption', () => {
   test('when passThroughOptions and unknown option then arguments from unknown passed through', () => {
     const program = new commander.Command();
     program.passThroughOptions().allowUnknownOption().option('--debug');
+    program.argument('[args...]');
 
     program.parse(['--unknown', '--debug'], { from: 'user' });
     expect(program.args).toEqual(['--unknown', '--debug']);
@@ -447,6 +448,7 @@ describe('program with allowUnknownOption', () => {
   test('when positionalOptions and unknown option then known options then known option parsed', () => {
     const program = new commander.Command();
     program.enablePositionalOptions().allowUnknownOption().option('--debug');
+    program.argument('[args...]');
 
     program.parse(['--unknown', '--debug'], { from: 'user' });
     expect(program.opts().debug).toBe(true);

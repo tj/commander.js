@@ -9,7 +9,8 @@ test('when arguments includes -- then stop processing options', () => {
   const program = new commander.Command();
   program
     .option('-f, --foo', 'add some foo')
-    .option('-b, --bar', 'add some bar');
+    .option('-b, --bar', 'add some bar')
+    .argument('[args...]');
   program.parse(['node', 'test', '--foo', '--', '--bar', 'baz']);
   // More than one assert, ported from legacy test
   const opts = program.opts();
@@ -22,7 +23,8 @@ test('when arguments include -- then more literals are passed-through as args', 
   const program = new commander.Command();
   program
     .option('-f, --foo', 'add some foo')
-    .option('-b, --bar', 'add some bar');
+    .option('-b, --bar', 'add some bar')
+    .argument('[args...]');
   program.parse(['node', 'test', '--', 'cmd', '--', '--arg']);
   expect(program.args).toEqual(['cmd', '--', '--arg']);
 });

@@ -46,6 +46,7 @@ describe('allowUnknownOption', () => {
     program
       .exitOverride()
       .allowUnknownOption()
+      .argument('[args...]') // unknown option will be passed as an argument
       .option('-p, --pepper', 'add pepper');
 
     expect(() => {
@@ -58,6 +59,7 @@ describe('allowUnknownOption', () => {
     program
       .exitOverride()
       .allowUnknownOption(true)
+      .argument('[args...]') // unknown option will be passed as an argument
       .option('-p, --pepper', 'add pepper');
 
     expect(() => {

@@ -170,7 +170,7 @@ describe('parseOptions', () => {
 describe('parse and program.args', () => {
   test('when program has known flag and operand then option removed and operand returned', () => {
     const program = new commander.Command();
-    program.option('--global-flag');
+    program.option('--global-flag').argument('[arg...]');
     program.parse('node test.js --global-flag arg'.split(' '));
     expect(program.args).toEqual(['arg']);
   });
@@ -180,7 +180,8 @@ describe('parse and program.args', () => {
     program
       .allowUnknownOption()
       .option('--global-flag')
-      .option('--global-value <value>');
+      .option('--global-value <value>')
+      .argument('[arg...]');
     program.parse(
       'node test.js aaa --global-flag bbb --unknown ccc --global-value value'.split(
         ' ',
