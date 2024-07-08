@@ -10,6 +10,7 @@ const commander = require('../');
 describe('.parse() args from', () => {
   test('when no args then use process.argv and app/script/args', () => {
     const program = new commander.Command();
+    program.argument('[args...]');
     const hold = process.argv;
     process.argv = 'node script.js user'.split(' ');
     program.parse();
@@ -19,6 +20,7 @@ describe('.parse() args from', () => {
 
   test('when no args and electron properties and not default app then use process.argv and app/args', () => {
     const program = new commander.Command();
+    program.argument('[args...]');
     const holdArgv = process.argv;
     process.versions.electron = '1.2.3';
     process.argv = 'node user'.split(' ');
@@ -30,18 +32,21 @@ describe('.parse() args from', () => {
 
   test('when args then app/script/args', () => {
     const program = new commander.Command();
+    program.argument('[args...]');
     program.parse('node script.js user'.split(' '));
     expect(program.args).toEqual(['user']);
   });
 
   test('when args from "node" then app/script/args', () => {
     const program = new commander.Command();
+    program.argument('[args...]');
     program.parse('node script.js user'.split(' '), { from: 'node' });
     expect(program.args).toEqual(['user']);
   });
 
   test('when args from "electron" and not default app then app/args', () => {
     const program = new commander.Command();
+    program.argument('[args...]');
     const hold = process.defaultApp;
     process.defaultApp = undefined;
     program.parse('customApp user'.split(' '), { from: 'electron' });
@@ -51,6 +56,7 @@ describe('.parse() args from', () => {
 
   test('when args from "electron" and default app then app/script/args', () => {
     const program = new commander.Command();
+    program.argument('[args...]');
     const hold = process.defaultApp;
     process.defaultApp = true;
     program.parse('electron script user'.split(' '), { from: 'electron' });
@@ -60,12 +66,14 @@ describe('.parse() args from', () => {
 
   test('when args from "user" then args', () => {
     const program = new commander.Command();
+    program.argument('[args...]');
     program.parse('user'.split(' '), { from: 'user' });
     expect(program.args).toEqual(['user']);
   });
 
   test('when args from "silly" then throw', () => {
     const program = new commander.Command();
+    program.argument('[args...]');
     expect(() => {
       program.parse(['node', 'script.js'], { from: 'silly' });
     }).toThrow();
@@ -75,6 +83,7 @@ describe('.parse() args from', () => {
     'when node execArgv includes %s then app/args',
     (flag) => {
       const program = new commander.Command();
+      program.argument('[args...]');
       const holdExecArgv = process.execArgv;
       const holdArgv = process.argv;
       process.argv = ['node', 'user-arg'];
@@ -91,6 +100,7 @@ describe('.parse() args from', () => {
 describe('return type', () => {
   test('when call .parse then returns program', () => {
     const program = new commander.Command();
+    program.argument('[args...]');
     program.action(() => {});
 
     const result = program.parse(['node', 'test']);
@@ -99,6 +109,7 @@ describe('return type', () => {
 
   test('when await .parseAsync then returns program', async () => {
     const program = new commander.Command();
+    program.argument('[args...]');
     program.action(() => {});
 
     const result = await program.parseAsync(['node', 'test']);
@@ -109,6 +120,7 @@ describe('return type', () => {
 // Easy mistake to make when writing unit tests
 test('when parse strings instead of array then throw', () => {
   const program = new commander.Command();
+  program.argument('[args...]');
   expect(() => {
     program.parse('node', 'test');
   }).toThrow();
@@ -117,6 +129,7 @@ test('when parse strings instead of array then throw', () => {
 describe('parse parameter is treated as readonly, per TypeScript declaration', () => {
   test('when parse called then parameter does not change', () => {
     const program = new commander.Command();
+    program.argument('[args...]');
     program.option('--debug');
     const original = ['node', '--debug', 'arg'];
     const param = original.slice();
@@ -126,6 +139,7 @@ describe('parse parameter is treated as readonly, per TypeScript declaration', (
 
   test('when parse called and parsed args later changed then parameter does not change', () => {
     const program = new commander.Command();
+    program.argument('[args...]');
     program.option('--debug');
     const original = ['node', '--debug', 'arg'];
     const param = original.slice();
@@ -137,6 +151,7 @@ describe('parse parameter is treated as readonly, per TypeScript declaration', (
 
   test('when parse called and param later changed then parsed args do not change', () => {
     const program = new commander.Command();
+    program.argument('[args...]');
     program.option('--debug');
     const param = ['node', '--debug', 'arg'];
     program.parse(param);
@@ -151,6 +166,7 @@ describe('parse parameter is treated as readonly, per TypeScript declaration', (
 describe('parseAsync parameter is treated as readonly, per TypeScript declaration', () => {
   test('when parse called then parameter does not change', async () => {
     const program = new commander.Command();
+    program.argument('[args...]');
     program.option('--debug');
     const original = ['node', '--debug', 'arg'];
     const param = original.slice();
@@ -160,6 +176,7 @@ describe('parseAsync parameter is treated as readonly, per TypeScript declaratio
 
   test('when parseAsync called and parsed args later changed then parameter does not change', async () => {
     const program = new commander.Command();
+    program.argument('[args...]');
     program.option('--debug');
     const original = ['node', '--debug', 'arg'];
     const param = original.slice();
@@ -171,6 +188,7 @@ describe('parseAsync parameter is treated as readonly, per TypeScript declaratio
 
   test('when parseAsync called and param later changed then parsed args do not change', async () => {
     const program = new commander.Command();
+    program.argument('[args...]');
     program.option('--debug');
     const param = ['node', '--debug', 'arg'];
     await program.parseAsync(param);

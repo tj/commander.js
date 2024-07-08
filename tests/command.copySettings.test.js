@@ -119,10 +119,10 @@ describe('copyInheritedSettings property tests', () => {
     const source = new commander.Command();
     const cmd = new commander.Command();
 
-    expect(cmd._allowExcessArguments).toBeTruthy();
-    source.allowExcessArguments(false);
-    cmd.copyInheritedSettings(source);
     expect(cmd._allowExcessArguments).toBeFalsy();
+    source.allowExcessArguments();
+    cmd.copyInheritedSettings(source);
+    expect(cmd._allowExcessArguments).toBeTruthy();
   });
 
   test('when copyInheritedSettings then copies enablePositionalOptions()', () => {

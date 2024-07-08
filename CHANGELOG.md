@@ -8,6 +8,54 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [13.x] (date goes here)
+
+### Changed
+
+- *Breaking*: excess command-arguments cause an error by default
+
+### Migration Tips
+
+**Excess command-arguments**
+
+It is now an error to pass more command-arguments than are expected.
+
+Old code:
+
+```js
+program.option('-p, --port <number>', 'port number');
+program.action((options) => {
+  console.log(program.args);
+});
+```
+
+```console
+$ node example.js a b c
+error: too many arguments. Expected 0 arguments but got 3.
+```
+
+You can declare the expected arguments. The help will then be more accurate too. Note that declaring
+new arguments will change what is passed to the action handler.
+
+```js
+program.option('-p, --port <number>', 'port number');
+program.argument('[args...]', 'remote command and arguments'); // expecting zero or more arguments
+program.action((args, options) => {
+  console.log(args);
+});
+```
+
+Or you could suppress the error without changing the rest of the code:
+
+```js
+program.option('-p, --port', 'port number');
+program.allowExcessArguments();
+program.action((options) => {
+  console.log(program.args);
+});
+```
+
+
 ## [12.1.0] (2024-05-18)
 
 ### Added
