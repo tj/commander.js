@@ -312,7 +312,7 @@ A couple of configuration problems now throw an error, which will pick up issues
 - *Breaking:* `CommanderError` code `commander.invalidOptionArgument` renamed `commander.invalidArgument` ([#1508])
 - *Breaking:* TypeScript declaration for `.addTextHelp()` callback no longer allows result of `undefined`, now just `string` ([#1516])
 - refactor `index.tab` into a file per class ([#1522])
-- remove help suggestion from "unknown command" error message (see `.showHelpAfteError()`) ([#1534])
+- remove help suggestion from "unknown command" error message (see `.showHelpAfterError()`) ([#1534])
 - `Command` property `.arg` initialised to empty array (was previously undefined) ([#1529])
 - update dependencies
 
