@@ -411,7 +411,7 @@ export class Command {
     fn: (value: string, previous: T) => T,
     defaultValue?: T,
   ): this;
-  argument(name: string, description?: string, defaultValue?: unknown): this;
+  argument(name: string, description?: string, defaultValue?: any): this;
 
   /**
    * Define argument syntax for command, adding a prepared argument.
@@ -569,7 +569,7 @@ export class Command {
   option(
     flags: string,
     description?: string,
-    defaultValue?: string | boolean | string[],
+    defaultValue?: any,
   ): this;
   option<T>(
     flags: string,
@@ -582,7 +582,7 @@ export class Command {
     flags: string,
     description: string,
     regexp: RegExp,
-    defaultValue?: string | boolean | string[],
+    defaultValue?: any,
   ): this;
 
   /**
@@ -594,7 +594,7 @@ export class Command {
   requiredOption(
     flags: string,
     description?: string,
-    defaultValue?: string | boolean | string[],
+    defaultValue?: any,
   ): this;
   requiredOption<T>(
     flags: string,
@@ -607,7 +607,7 @@ export class Command {
     flags: string,
     description: string,
     regexp: RegExp,
-    defaultValue?: string | boolean | string[],
+    defaultValue?: any,
   ): this;
 
   /**
