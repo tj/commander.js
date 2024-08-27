@@ -31,6 +31,15 @@ describe('boolean flag on program', () => {
     program.parse(['node', 'test', '--no-cheese']);
     expect(program.opts().cheese).toBe(false);
   });
+
+  test('when bypassing negatable then value is true', () => {
+    const program = new commander.Command();
+    var option = program.createOption('--no-cheese', 'remove cheese');
+    option.negate = false;
+    program.addOption(option);
+    program.parse(['node', 'test', '--no-cheese']);
+    expect(program.opts().noCheese).toBe(true);
+  });
 });
 
 // boolean flag on command
