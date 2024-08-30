@@ -18,6 +18,13 @@ describe('boolean flag on program', () => {
     expect(program.opts().pepper).toBe(true);
   });
 
+  test('when boolean flag specified then option should be camelcase', () => {
+    const program = new commander.Command();
+    program.option('--pepper-and-salt', 'add pepper and salt');
+    program.parse(['node', 'test', '--pepper-and-salt']);
+    expect(program.opts().pepperAndSalt).toBe(true);
+  });
+
   test('when negatable boolean flag not specified then value is true', () => {
     const program = new commander.Command();
     program.option('--no-cheese', 'remove cheese');
@@ -37,6 +44,13 @@ describe('boolean flag on program', () => {
     program.option('--no-cheese', 'remove cheese');
     program.parse(['node', 'test', '--no-cheese']);
     expect(program.opts().noCheese).toBeUndefined();
+  });
+
+  test('when negatable boolean flag specified then positive option is camelcase', () => {
+    const program = new commander.Command();
+    program.option('--no-cheese-or-wine', 'remove cheese or wine');
+    program.parse(['node', 'test']);
+    expect(program.opts().cheeseOrWine).toBe(true);
   });
 });
 
@@ -96,7 +110,7 @@ describe('boolean flag on command', () => {
 });
 
 describe('overridden negatable boolean flag', () => {
-  test('when negatable boolean flag is specified and negatable is overridden then negative value is true', () => {
+  test('when negatable boolean flag is specified and negate is overridden then negative value is true', () => {
     const program = new commander.Command();
     var option = program.createOption('--no-cheese', 'remove cheese');
     option.negate = false;
@@ -112,6 +126,15 @@ describe('overridden negatable boolean flag', () => {
     program.addOption(option);
     program.parse(['node', 'test', '--no-cheese']);
     expect(program.opts().cheese).toBeUndefined();
+  });
+
+  test('when negatable boolean flag is specified negate is overridden negative option should be camelcase', () => {
+    const program = new commander.Command();
+    var option = program.createOption('--no-cheese-or-wine', 'remove cheese');
+    option.negate = false;
+    program.addOption(option);
+    program.parse(['node', 'test', '--no-cheese-or-wine']);
+    expect(program.opts().noCheeseOrWine).toBe(true);
   });
 });
 
