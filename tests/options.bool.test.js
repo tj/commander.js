@@ -32,13 +32,11 @@ describe('boolean flag on program', () => {
     expect(program.opts().cheese).toBe(false);
   });
 
-  test('when bypassing negatable then value is true', () => {
+  test('when negatable boolean flag specified then negative value is undefined', () => {
     const program = new commander.Command();
-    var option = program.createOption('--no-cheese', 'remove cheese');
-    option.negate = false;
-    program.addOption(option);
+    program.option('--no-cheese', 'remove cheese');
     program.parse(['node', 'test', '--no-cheese']);
-    expect(program.opts().noCheese).toBe(true);
+    expect(program.opts().noCheese).toBeUndefined();
   });
 });
 
@@ -94,6 +92,26 @@ describe('boolean flag on command', () => {
       });
     program.parse(['node', 'test', 'sub', '--no-cheese']);
     expect(subCommandOptions.cheese).toBe(false);
+  });
+});
+
+describe('overridden negatable boolean flag', () => {
+  test('when negatable boolean flag is specified and negatable is overridden then negative value is true', () => {
+    const program = new commander.Command();
+    var option = program.createOption('--no-cheese', 'remove cheese');
+    option.negate = false;
+    program.addOption(option);
+    program.parse(['node', 'test', '--no-cheese']);
+    expect(program.opts().noCheese).toBe(true);
+  });
+
+  test('when negatable boolean flag is specified and negatable is overridden then positive value is undefined', () => {
+    const program = new commander.Command();
+    var option = program.createOption('--no-cheese', 'remove cheese');
+    option.negate = false;
+    program.addOption(option);
+    program.parse(['node', 'test', '--no-cheese']);
+    expect(program.opts().cheese).toBeUndefined();
   });
 });
 
