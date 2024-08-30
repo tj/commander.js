@@ -119,7 +119,7 @@ describe('overridden negatable boolean flag', () => {
     expect(program.opts().noCheese).toBe(true);
   });
 
-  test('when negatable boolean flag is specified and negatable is overridden then positive value is undefined', () => {
+  test('when negatable boolean flag is specified and negate is overridden then positive value is undefined', () => {
     const program = new commander.Command();
     var option = program.createOption('--no-cheese', 'remove cheese');
     option.negate = false;
@@ -128,7 +128,7 @@ describe('overridden negatable boolean flag', () => {
     expect(program.opts().cheese).toBeUndefined();
   });
 
-  test('when negatable boolean flag is specified negate is overridden negative option should be camelcase', () => {
+  test('when negatable boolean flag is specified and negate is overridden then negative option should be camelcase', () => {
     const program = new commander.Command();
     var option = program.createOption('--no-cheese-or-wine', 'remove cheese');
     option.negate = false;
