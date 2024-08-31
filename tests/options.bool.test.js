@@ -110,6 +110,15 @@ describe('boolean flag on command', () => {
 });
 
 describe('overridden negatable boolean flag', () => {
+  test('when negatable boolean flag is unspecified and negate is overridden then positive value is undefined', () => {
+    const program = new commander.Command();
+    var option = program.createOption('--no-cheese', 'remove cheese');
+    option.negate = false;
+    program.addOption(option);
+    program.parse(['node', 'test']);
+    expect(program.opts().cheese).toBeUndefined();
+  });
+
   test('when negatable boolean flag is specified and negate is overridden then negative value is true', () => {
     const program = new commander.Command();
     var option = program.createOption('--no-cheese', 'remove cheese');
