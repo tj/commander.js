@@ -246,6 +246,13 @@ export class Help {
   longestGlobalOptionTermLength(cmd: Command, helper: Help): number;
   /** Get the longest argument term length. */
   longestArgumentTermLength(cmd: Command, helper: Help): number;
+
+  /** TBS */
+  displayWidth(str: string): number;
+
+  /** TBS */
+  styleTitle(title: string): string;
+
   /** Calculate the pad width from the maximum term length. */
   padWidth(cmd: Command, helper: Help): number;
 
