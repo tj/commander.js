@@ -30,12 +30,19 @@ test('when string contains only whitespace then returns empty string (trim right
 
 test('when string contains leading whitespace then returns string with leading whitespace', () => {
   const helper = new commander.Help();
-  const text = '  abc   ';
+  const text = '  abc';
   const wrapped = helper.boxWrap(text, 50);
   expect(wrapped).toEqual('  abc');
 });
 
 test('when string contains intermediate whitespace then returns string with intermediate whitespace', () => {
+  const helper = new commander.Help();
+  const text = '123   456';
+  const wrapped = helper.boxWrap(text, 50);
+  expect(wrapped).toEqual('123   456');
+});
+
+test('when string contains trailing whitespace then returns string without trailing whitespace (trim right)', () => {
   const helper = new commander.Help();
   const text = '123   456   ';
   const wrapped = helper.boxWrap(text, 50);
@@ -58,15 +65,7 @@ test('when string has enough words to wrap then returns two wrapped lines', () =
   );
 });
 
-test('when string has enough words to wrap twice times then returns three wrapped lines', () => {
-  const helper = new commander.Help();
-  const text = 'abc '.repeat(20);
-  const wrapped = helper.boxWrap(text, 46);
-  expect(wrapped).toEqual(`${'abc '.repeat(10)}abc
-${'abc '.repeat(8)}abc`);
-});
-
-test('when string has enough words and escape sequences to wrap then returns wrapped line ignoring escape sequences', () => {
+test('when string has enough words and escape sequences to wrap then returns wrapped line with break ignoring escape sequences', () => {
   const helper = new commander.Help();
   const CSI = '\u001b[';
   const underlinedText = `${CSI}4mXYZ${CSI}24m`;
@@ -74,4 +73,42 @@ test('when string has enough words and escape sequences to wrap then returns wra
   const wrapped = helper.boxWrap(text, 44);
   expect(wrapped).toEqual(`${underlinedText} ${'ABC '.repeat(9)}ABC
 ${'ABC '.repeat(8)}ABC`);
+});
+
+test('when first word longer than width then soft wrap', () => {
+  const helper = new commander.Help();
+  const text = 'abc'.repeat(20);
+  const wrapped = helper.boxWrap(text, 40);
+  expect(wrapped).toEqual(text);
+});
+
+test('when second word longer than width then wrap and soft wrap', () => {
+  const helper = new commander.Help();
+  const text = 'xyz ' + 'abc'.repeat(20);
+  const wrapped = helper.boxWrap(text, 40);
+  expect(wrapped).toEqual(`xyz\n${'abc'.repeat(20)}`);
+});
+
+test('when set width 41 then wrap at 41', () => {
+  const helper = new commander.Help();
+  const text = 'X'.repeat(39) + ' 1 2 3';
+  let wrapped = helper.boxWrap(text, 40);
+  expect(wrapped).toEqual('X'.repeat(39) + '\n1 2 3');
+  wrapped = helper.boxWrap(text, 41);
+  expect(wrapped).toEqual('X'.repeat(39) + ' 1\n2 3');
+});
+
+test('when width too small (default) then no wrapping', () => {
+  const helper = new commander.Help();
+  const text = 'abc '.repeat(20);
+  const wrapped = helper.boxWrap(text, 20);
+  expect(wrapped).toEqual(text);
+});
+
+test('when width too small (custom) then no wrapping', () => {
+  const helper = new commander.Help();
+  helper.minWidthToWrap = 60;
+  const text = 'abc '.repeat(20);
+  const wrapped = helper.boxWrap(text, 45);
+  expect(wrapped).toEqual(text);
 });
