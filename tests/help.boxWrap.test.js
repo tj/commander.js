@@ -107,7 +107,7 @@ test('when width too small (default) then no wrapping', () => {
 
 test('when width too small (custom) then no wrapping', () => {
   const helper = new commander.Help();
-  helper.minWidthToWrap = 60;
+  helper.tooSmallToWrap = 60;
   const text = 'abc '.repeat(20);
   const wrapped = helper.boxWrap(text, 45);
   expect(wrapped).toEqual(text);
