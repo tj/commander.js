@@ -65,4 +65,6 @@ Options:
   
   -h, --help          display help for command
 `;
+
+  expect(program.helpInformation()).toBe(expectedOutput);
 });
