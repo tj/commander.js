@@ -98,17 +98,9 @@ test('when set width 41 then wrap at 41', () => {
   expect(wrapped).toEqual('X'.repeat(39) + ' 1\n2 3');
 });
 
-test('when width too small (default) then no wrapping', () => {
+test('when set width 12 (small) then wrap at 12', () => {
   const helper = new commander.Help();
-  const text = 'abc '.repeat(20);
-  const wrapped = helper.boxWrap(text, 20);
-  expect(wrapped).toEqual(text);
-});
-
-test('when width too small (custom) then no wrapping', () => {
-  const helper = new commander.Help();
-  helper.tooSmallToWrap = 60;
-  const text = 'abc '.repeat(20);
-  const wrapped = helper.boxWrap(text, 45);
-  expect(wrapped).toEqual(text);
+  const text = ' x'.repeat(8) + ' yy'.repeat(6);
+  let wrapped = helper.boxWrap(text, 14);
+  expect(wrapped).toEqual(' x x x x x x x\nx yy yy yy yy\nyy yy');
 });
