@@ -1,4 +1,4 @@
-const { stripAnsi } = require('../Lib/help');
+const { stripAnsi } = require('../lib/help');
 
 // https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters
 
