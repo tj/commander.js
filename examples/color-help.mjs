@@ -9,14 +9,7 @@ class MyHelp extends Help {
     return styleText('magenta', super.commandDescription(command));
   }
   optionTerm(option) {
-    const flags = [];
-    if (option.short) {
-      flags.push('-' + styleText('green', option.short.slice(1)));
-    }
-    if (option.long) {
-      flags.push('--' + styleText('green', option.long.slice(2)));
-    }
-    return flags.join(', ');
+    return styleText('green', option.flags);
   }
   optionDescription(option) {
     return styleText('italic', super.optionDescription(option));
@@ -44,7 +37,7 @@ program.description('d '.repeat(100));
 program
   .option('-s', 'short flag')
   .option('-f, --flag', 'short and long flag')
-  .option('--long', 'l '.repeat(100));
+  .option('--long <number>', 'l '.repeat(100));
 
 program
   .command('sub1', 'sssss '.repeat(33))
@@ -52,3 +45,6 @@ program
   .command('sub3', 'subcommand 3 description');
 
 program.parse();
+
+// Try the following:
+//    node examples/color-help.mjs --help
