@@ -47,4 +47,4 @@ program
 program.parse();
 
 // Try the following:
-//    node examples/color-help.mjs --help
+//    node color-help.mjs --help
