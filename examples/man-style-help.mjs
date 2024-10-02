@@ -38,4 +38,4 @@ program
 program.parse();
 
 // Try the following:
-//    node man-help.mjs --help
+//    node man-style-help.mjs --help
