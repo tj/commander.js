@@ -62,7 +62,7 @@
   "devDependencies": {
     "@eslint/js": "^9.4.0",
     "@types/jest": "^29.2.4",
-    "@types/node": "^20.2.5",
+    "@types/node": "^22.7.4",
     "eslint": "^8.30.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jest": "^28.3.0",
