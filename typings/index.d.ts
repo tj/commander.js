@@ -247,14 +247,32 @@ export class Help {
   /** Get the longest argument term length. */
   longestArgumentTermLength(cmd: Command, helper: Help): number;
 
-  /** TBS */
+  /*
+   * prepareContext is called by Commander after applying overrides from `Command.configureHelp()`
+   * and just before calling `formatHelp()`.
+   *
+   * Commander just uses the helpWidth and the rest is provided for optional use by more complex subclasses.
+   */
+  prepareContext(contextOptions: {
+    error?: boolean;
+    helpWidth?: number;
+    outputHasColors?: boolean;
+  }): void;
+
+  /** Return display width of string, ignoring ANSI escape sequences. Used in padding and wrapping calculations. */
   displayWidth(str: string): number;
 
-  /** TBS */
+  /** Style the title for displaying in the help. Called with 'Usage:', 'Options:', etc. */
   styleTitle(title: string): string;
 
   /** Calculate the pad width from the maximum term length. */
   padWidth(cmd: Command, helper: Help): number;
+
+  /**
+   * Wrap a string at whitespace, preserving existing line breaks.
+   * Wrapping is skipped if the width is less than `minWidthToWrap`.
+   */
+  boxWrap(str: string, width: number): string;
 
   /**
    * Wrap the given string to width characters per line, with lines after the first indented.
@@ -265,6 +283,20 @@ export class Help {
     width: number,
     indent: number,
     minColumnWidth?: number,
+  ): string;
+
+  /**
+   * Format the "item", which consists of a term and description. Pad the term and wrap the description, indenting the following lines.
+   *
+   * So "TTT", 5, "DDD DDDD DD DDD" might be formatted for this.helpWidth=17 like so:
+   *   TTT    DDD DDDD
+   *          DD DDD
+   */
+  formatItem(
+    term: string,
+    termWidth: number,
+    description: string,
+    helper: Help,
   ): string;
 
   /** Generate the built-in help text. */
@@ -287,9 +319,14 @@ export interface AddHelpTextContext {
 export interface OutputConfiguration {
   writeOut?(str: string): void;
   writeErr?(str: string): void;
+  outputError?(str: string, write: (str: string) => void): void;
+
   getOutHelpWidth?(): number;
   getErrHelpWidth?(): number;
-  outputError?(str: string, write: (str: string) => void): void;
+
+  getOutHasColors?(): boolean;
+  getErrHasColors?(): boolean;
+  stripAnsi?(str: string): string;
 }
 
 export type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';

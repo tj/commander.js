@@ -545,11 +545,16 @@ expectType<commander.Command>(
     writeErr: (str: string) => {
       console.error(str);
     },
-    getOutHelpWidth: () => 80,
-    getErrHelpWidth: () => 80,
     outputError: (str: string, write: (str: string) => void) => {
       write(str);
     },
+
+    getOutHelpWidth: () => 80,
+    getErrHelpWidth: () => 80,
+
+    getOutHasColors: () => true,
+    getErrHasColors: () => true,
+    stripAnsi: (str) => str,
   }),
 );
 
@@ -558,6 +563,9 @@ const helper = new commander.Help();
 const helperCommand = new commander.Command();
 const helperOption = new commander.Option('-a, --all');
 const helperArgument = new commander.Argument('<file>');
+
+helper.prepareContext({});
+helper.prepareContext({ helpWidth: 120, error: true, outputHasColors: false });
 
 expectType<number | undefined>(helper.helpWidth);
 expectType<boolean>(helper.sortSubcommands);
@@ -584,7 +592,14 @@ expectType<number>(helper.longestGlobalOptionTermLength(helperCommand, helper));
 expectType<number>(helper.longestArgumentTermLength(helperCommand, helper));
 expectType<number>(helper.padWidth(helperCommand, helper));
 
+expectType<number>(helper.displayWidth('some string'));
 expectType<string>(helper.wrap('a b c', 50, 3));
+expectType<string>(helper.boxWrap('a b c', 50));
+expectType<string>(
+  helper.formatItem('--example', 12, 'example description', helper),
+);
+
+helper.styleTitle('Usage:');
 
 expectType<string>(helper.formatHelp(helperCommand, helper));
 
