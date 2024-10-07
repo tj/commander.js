@@ -9,7 +9,7 @@ import { Command } from 'commander';
 const program = new Command();
 
 program.usage(
-  `${program.name()} ${styleText('green', '[options]')} ${styleText('yellow', '[command]')}`,
+  `example-color ${styleText('green', '[options]')} ${styleText('yellow', '[command]')}`,
 );
 program.configureHelp({
   styleTitle: (str) => styleText('bold', str),
