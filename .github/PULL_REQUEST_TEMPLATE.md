@@ -11,7 +11,7 @@ Follow the existing code style. Check the tests succeed, including format and li
 Don't update the CHANGELOG or package version number. That gets done by maintainers when preparing the release.
 
 Commander currently has zero production dependencies. That isn't a hard requirement, but is a simple story. Requests which 
-add a dependency are much less likely to be accepted, and we are likely to ask if there alternative approaches to avoid the dependency.
+add a dependency are much less likely to be accepted, and we are likely to ask for alternative approaches to avoid the dependency.
 -->
 
 ## Problem
