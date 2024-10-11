@@ -6,7 +6,6 @@ import { Command } from 'commander';
 const program = new Command();
 
 program.configureHelp({
-  subcommandTerm: (cmd) => cmd.name(), // keep it simple, just show the subcommand name
   styleTitle: (str) => styleText('bold', str),
   styleCommandText: (str) => styleText('cyan', str),
   styleCommandDescription: (str) => styleText('magenta', str),
@@ -31,8 +30,8 @@ program.command('esses').description('sssss '.repeat(33));
 program
   .command('print')
   .description('print files')
-  .argument('<printer>', 'target printer')
-  .argument('<files...>', 'files to queue for printing');
+  .argument('<files...>', 'files to queue for printing')
+  .option('--double-sided', 'print on both sides');
 
 program.parse();
 

@@ -2,7 +2,7 @@ import stripAnsi from 'strip-ansi';
 import wrapAnsi from 'wrap-ansi';
 import {
   default as chalkStdOut,
-  chalkStdErr,
+  chalkStderr as chalkStdErr,
   supportsColor as supportsColorStdout,
   supportsColorStderr,
 } from 'chalk';
@@ -38,23 +38,26 @@ class MyHelp extends Help {
     return wrapAnsi(str, width, { hard: true }); // use imported package
   }
 
-  commandUsage(command) {
-    return `${command.name()} ${this.chalk.green('[options]')} ${this.chalk.yellow('[command]')}`;
+  styleTitle(str) {
+    return this.chalk.bold(str);
   }
-  commandDescription(command) {
-    return this.chalk.magenta(super.commandDescription(command));
+  styleCommandText(str) {
+    return this.chalk.cyan(str);
   }
-  optionTerm(option) {
-    return this.chalk.green(option.flags);
+  styleCommandDescription(str) {
+    return this.chalk.magenta(str);
   }
-  optionDescription(option) {
-    return this.chalk.italic(super.optionDescription(option));
+  styleItemDescription(str) {
+    return this.chalk.italic(str);
   }
-  subcommandTerm(command) {
-    return this.chalk.yellow(super.subcommandTerm(command));
+  styleOptionText(str) {
+    return this.chalk.green(str);
   }
-  styleTitle(title) {
-    return this.chalk.bold(title);
+  styleArgumentText(str) {
+    return this.chalk.yellow(str);
+  }
+  styleSubcommandText(str) {
+    return this.chalk.blue(str);
   }
 }
 
@@ -81,21 +84,30 @@ program.configureOutput({
   stripAnsi: (str) => stripAnsi(str),
 });
 
-program.description('d '.repeat(100));
+program.description('program description '.repeat(10));
 program
-  .option('-s', 'short flag')
-  .option('-f, --flag', 'short and long flag')
-  .option('--long <number>', 'l '.repeat(100));
+  .option('-s', 'short description')
+  .option('--long <number>', 'long description '.repeat(10))
+  .option('--color', 'force color output') // implemented by chalk
+  .option('--no-color', 'disable color output'); // implemented by chalk
+
+program.addHelpText('after', (context) => {
+  const chalk = context.error ? chalkStdErr : chalkStdOut;
+  return chalk.italic('\nThis is additional help text.');
+});
+
+program.command('esses').description('sssss '.repeat(33));
 
 program
-  .command('sub1', 'sssss '.repeat(33))
-  .command('sub2', 'subcommand 2 description')
-  .command('sub3', 'subcommand 3 description');
+  .command('print')
+  .description('print files')
+  .argument('<files...>', 'files to queue for printing')
+  .option('--double-sided', 'print on both sides');
 
 program.parse();
 
 // Try the following (after installing the required packages):
-//    node color-help-using-chalk.mjs --help
-//    node color-help-using-chalk.mjs --color --help
-//    node color-help-using-chalk.mjs --no-color --help
-//    FORCE_COLOR=0 node color-help-using-chalk.mjs --help
+//    node color-help-replacement.mjs --help
+//    node color-help-replacement.mjs --no-color help
+//    FORCE_COLOR=0 node color-help-replacement.mjs help
+//    node color-help-replacement.mjs help print
