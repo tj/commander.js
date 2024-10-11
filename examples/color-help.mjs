@@ -1,61 +1,42 @@
 import { styleText } from 'node:util'; // from node v20.12.0
-import { Command, Help } from 'commander';
+import { Command } from 'commander';
 
 // Customise colours and styles for help output.
-//
-// Commander looks after removing color if NO_COLOR is set
-// or output stream (stdout/stderr) does not support color.
 
-class MyHelp extends Help {
-  commandUsage(command) {
-    return `${command.name()} ${styleText('green', '[options]')} ${styleText('yellow', '[command]')}`;
-  }
-  commandDescription(command) {
-    return styleText('magenta', super.commandDescription(command));
-  }
-  optionTerm(option) {
-    return styleText('green', option.flags);
-  }
-  optionDescription(option) {
-    return styleText('italic', super.optionDescription(option));
-  }
-  subcommandTerm(command) {
-    return styleText('yellow', super.subcommandTerm(command));
-  }
-  styleTitle(title) {
-    return styleText('bold', title);
-  }
-}
+const program = new Command();
 
-class MyCommand extends Command {
-  createCommand(name) {
-    return new MyCommand(name);
-  }
-  createHelp() {
-    return Object.assign(new MyHelp(), this.configureHelp());
-  }
-}
+program.configureHelp({
+  subcommandTerm: (cmd) => cmd.name(), // keep it simple, just show the subcommand name
+  styleTitle: (str) => styleText('bold', str),
+  styleCommandText: (str) => styleText('cyan', str),
+  styleCommandDescription: (str) => styleText('magenta', str),
+  styleItemDescription: (str) => styleText('italic', str),
+  styleOptionText: (str) => styleText('green', str),
+  styleArgumentText: (str) => styleText('yellow', str),
+  styleSubcommandText: (str) => styleText('blue', str),
+});
 
-const program = new MyCommand();
-
-program.description('d '.repeat(100));
+program.description('program description '.repeat(10));
 program
-  .option('-s', 'short flag')
-  .option('-f, --flag', 'short and long flag')
-  .option('--long <number>', 'l '.repeat(100));
-
-program
-  .command('sub1', 'sssss '.repeat(33))
-  .command('sub2', 'subcommand 2 description')
-  .command('sub3', 'subcommand 3 description');
+  .option('-s', 'short description')
+  .option('--long <number>', 'long description '.repeat(10));
 
 program.addHelpText(
-  'afterAll',
+  'after',
   styleText('italic', '\nThis is additional help text.'),
 );
+
+program.command('esses').description('sssss '.repeat(33));
+
+program
+  .command('print')
+  .description('print files')
+  .argument('<printer>', 'target printer')
+  .argument('<files...>', 'files to queue for printing');
 
 program.parse();
 
 // Try the following:
 //    node color-help.mjs --help
 //    NO_COLOR=1 node color-help.mjs --help
+//    node color-help.mjs help print
