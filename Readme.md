@@ -79,7 +79,8 @@ const { program } = require('commander');
 
 program
   .option('--first')
-  .option('-s, --separator <char>');
+  .option('-s, --separator <char>')
+  .argument('<string>');
 
 program.parse();
 
@@ -678,8 +679,7 @@ async function main() {
 }
 ```
 
-A command's options and arguments on the command line are validated when the command is used. Any unknown options or missing arguments will be reported as an error. You can suppress the unknown option checks with `.allowUnknownOption()`. By default, it is not an error to
-pass more arguments than declared, but you can make this an error with `.allowExcessArguments(false)`.
+A command's options and arguments on the command line are validated when the command is used. Any unknown options or missing arguments or excess arguments will be reported as an error. You can suppress the unknown option check with `.allowUnknownOption()`. You can suppress the excess arguments check with `.allowExcessArguments()`.
 
 ### Stand-alone executable (sub)commands
 
