@@ -254,7 +254,10 @@ test('when set configureOutput then get configureOutput', () => {
     writeErr: jest.fn(),
     getOutHelpWidth: jest.fn(),
     getErrHelpWidth: jest.fn(),
+    getOutHasColors: jest.fn(),
+    getErrHasColors: jest.fn(),
     outputError: jest.fn(),
+    stripAnsi: jest.fn(),
   };
   const program = new commander.Command();
   program.configureOutput(outputOptions);
