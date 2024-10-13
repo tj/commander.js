@@ -4,6 +4,7 @@ const { Command } = require('commander');
 const program = new Command();
 
 program.option('-f, --force', 'force installation');
+program.argument('[package-names...]');
 
 program.parse(process.argv);
 

@@ -2,7 +2,7 @@ const { program } = require('commander');
 
 // This is used as an example in the README for the Quick Start.
 
-program.option('--first').option('-s, --separator <char>');
+program.option('--first').option('-s, --separator <char>').argument('<string>');
 
 program.parse();
 

@@ -79,7 +79,8 @@ const { program } = require('commander');
 
 program
   .option('--first')
-  .option('-s, --separator <char>');
+  .option('-s, --separator <char>')
+  .argument('<string>');
 
 program.parse();
 
@@ -678,8 +679,7 @@ async function main() {
 }
 ```
 
-A command's options and arguments on the command line are validated when the command is used. Any unknown options or missing arguments will be reported as an error. You can suppress the unknown option checks with `.allowUnknownOption()`. By default, it is not an error to
-pass more arguments than declared, but you can make this an error with `.allowExcessArguments(false)`.
+A command's options and arguments on the command line are validated when the command is used. Any unknown options or missing arguments or excess arguments will be reported as an error. You can suppress the unknown option check with `.allowUnknownOption()`. You can suppress the excess arguments check with `.allowExcessArguments()`.
 
 ### Stand-alone executable (sub)commands
 
@@ -696,7 +696,7 @@ Example file: [pm](./examples/pm)
 program
   .name('pm')
   .version('0.1.0')
-  .command('install [name]', 'install one or more packages')
+  .command('install [package-names...]', 'install one or more packages')
   .command('search [query]', 'search with optional query')
   .command('update', 'update installed packages', { executableFile: 'myUpdateSubCommand' })
   .command('list', 'list packages installed', { isDefault: true });
