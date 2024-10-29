@@ -29,8 +29,8 @@ describe('.option()', () => {
   test('when reuse flags in subcommand then does not throw', () => {
     expect(() => {
       const program = new Command();
-      program.option('e, --example');
-      program.command('sub').option('e, --example');
+      program.option('-e, --example');
+      program.command('sub').option('-e, --example');
     }).not.toThrow();
   });
 });
