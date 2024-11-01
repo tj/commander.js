@@ -72,7 +72,7 @@
     "ts-jest": "^29.0.3",
     "tsd": "^0.31.0",
     "typescript": "^5.0.4",
-    "typescript-eslint": "^7.0.1"
+    "typescript-eslint": "^8.12.2"
   },
   "types": "typings/index.d.ts",
   "engines": {
