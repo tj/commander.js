@@ -63,7 +63,7 @@
     "@eslint/js": "^9.4.0",
     "@types/jest": "^29.2.4",
     "@types/node": "^22.7.4",
-    "eslint": "^8.30.0",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-jest": "^28.3.0",
     "globals": "^15.7.0",
@@ -72,7 +72,7 @@
     "ts-jest": "^29.0.3",
     "tsd": "^0.31.0",
     "typescript": "^5.0.4",
-    "typescript-eslint": "^7.0.1"
+    "typescript-eslint": "^8.12.2"
   },
   "types": "typings/index.d.ts",
   "engines": {
