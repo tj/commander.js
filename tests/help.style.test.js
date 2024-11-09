@@ -16,7 +16,11 @@ describe('Help.styleFoo', () => {
       .configureOutput({
         getOutHasColors: () => true, // avoid interactions with testing environment
       });
-    program.command('subcommand', 'sub description');
+    program
+      .command('subcommand')
+      .description('sub description')
+      .option('--suboption')
+      .argument('[subarg]');
 
     return program;
   }
@@ -111,7 +115,10 @@ describe('Help.styleFoo', () => {
     expect(helpText).toEqual(
       plainHelpInformation
         .replace('help [command]', red('help [command]'))
-        .replace('subcommand', red('subcommand')),
+        .replace(
+          'subcommand [options] [subarg]',
+          red('subcommand [options] [subarg]'),
+        ),
     );
   });
 
@@ -136,7 +143,7 @@ describe('Help.styleFoo', () => {
     const helpText = program.helpInformation();
     expect(helpText).toEqual(
       plainHelpInformation
-        .replace('[options]', red('[options]'))
+        .replace(/\[options\]/g, red('[options]'))
         .replace('-h, --help', red('-h, --help')),
     );
   });
@@ -152,6 +159,7 @@ describe('Help.styleFoo', () => {
       plainHelpInformation
         .replace('<file>', red('<file>'))
         .replace(' file ', ` ${red('file')} `)
+        .replace('[subarg]', red('[subarg]'))
         .replace('help [command]', `help ${red('[command]')}`),
     );
   });
