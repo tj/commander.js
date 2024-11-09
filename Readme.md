@@ -926,6 +926,7 @@ You can configure the Help behaviour by modifying data properties and methods us
 The data properties are:
 
 - `helpWidth`: specify the wrap width, useful for unit tests
+- `minWidthToWrap`: specify required width to allow wrapping (default 40)
 - `sortSubcommands`: sort the subcommands alphabetically
 - `sortOptions`: sort the options alphabetically
 - `showGlobalOptions`: show a section with the global options from the parent command(s)
@@ -940,6 +941,16 @@ program.configureHelp({
   subcommandTerm: (cmd) => cmd.name() // Just show the name, instead of short usage.
 });
 ```
+
+There are _style_ methods to add color to the help, like `styleTitle` and `styleOptionText`.
+
+Example file: [color-help.mjs](./examples/color-help.mjs)
+
+Other help configuration examples:
+- [color-help-replacement.mjs](./examples/color-help-replacement.mjs)
+- [help-centered.mjs](./examples/help-centered.mjs)
+- [help-subcommands-usage.js](./examples/help-subcommands-usage.js)
+- [man-style-help.mjs](./examples/man-style-help.mjs)
 
 ## Custom event listeners
 
