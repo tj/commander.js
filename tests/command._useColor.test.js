@@ -1,8 +1,8 @@
-const { _useColor: useColor } = require('../lib/command.js');
+const { useColor } = require('../lib/command.js');
 
-// _useColor is an internal method, and hard to test indirectly because it is
+// useColor is an internal method, and hard to test indirectly because it is
 // combined with standard stream methods like:
-//    _useColor() ?? (process.stdout.isTTY && process.stdout.hasColors?.())
+//    useColor() ?? (process.stdout.isTTY && process.stdout.hasColors?.())
 //
 // Testing environment variables is a bit fragile because Jest uses some of them too!
 
