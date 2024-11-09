@@ -327,3 +327,58 @@ test('when custom outputErr and writeErr and error then outputErr passed writeEr
     writeErr,
   );
 });
+
+describe.each([
+  ['getOutHasColors', process.stdout],
+  ['getErrHasColors', process.stderr],
+])('%s', (configProperty, stream) => {
+  // Just varying isTTY and not testing stream.hasColors() as such.
+  const holdIsTTY = stream.isTTY;
+  let hasColorsSpy;
+  const getHasColors = new commander.Command().configureOutput()[
+    configProperty
+  ];
+
+  beforeAll(() => {
+    // When running tests, hasColors is usually undefined.
+    if (stream.hasColors) {
+      hasColorsSpy = jest.spyOn(stream, 'hasColors').mockImplementation(() => {
+        return true;
+      });
+    } else {
+      stream.hasColors = () => true;
+    }
+  });
+
+  beforeEach(() => {
+    stream.isTTY = true;
+  });
+
+  afterAll(() => {
+    if (hasColorsSpy) hasColorsSpy.mockRestore();
+    stream.isTTY = holdIsTTY;
+  });
+
+  test('when isTTY=true then returns true', () => {
+    stream.isTTY = true;
+    expect(getHasColors()).toBe(true);
+  });
+
+  test('when isTTY=false then returns false', () => {
+    stream.isTTY = false;
+    expect(getHasColors()).toBe(true);
+  });
+
+  test.each([
+    [true, 'NO_COLOR', false],
+    [false, 'FORCE_COLOR', true],
+    [false, 'CLICOLOR_FORCE', true],
+  ])('when isTTY=%o but %s then returns %o', (isTTY, envvar, result) => {
+    const holdEnv = process.env[envvar];
+    process.env[envvar] = '1';
+    stream.isTTY = isTTY;
+    expect(getHasColors()).toBe(result);
+    if (holdEnv === undefined) delete process.env[envvar];
+    else process.env[envvar] = holdEnv;
+  });
+});
