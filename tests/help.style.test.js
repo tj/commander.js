@@ -8,7 +8,7 @@ function displayWidth(str) {
   return str.replace(/RED /g, '').replace(/ DER/g, '').length;
 }
 
-describe('Help.styleFoo', () => {
+describe('override each style method and check help information', () => {
   function makeProgram() {
     const program = new Command('program')
       .description('program description')

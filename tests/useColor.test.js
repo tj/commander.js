@@ -1,12 +1,6 @@
 const { useColor } = require('../lib/command.js');
 
-// useColor is an internal method, and hard to test indirectly because it is
-// combined with standard stream methods like:
-//    useColor() ?? (process.stdout.isTTY && process.stdout.hasColors?.())
-//
-// Testing environment variables is a bit fragile because Jest uses some of them too!
-
-describe('useColor', () => {
+describe('internal useColor environment variable support', () => {
   let holdNoColor = process.env.NO_COLOR;
   let holdForceColor = process.env.FORCE_COLOR;
   let holdCliColorForce = process.env.CLICOLOR_FORCE;
@@ -28,8 +22,9 @@ describe('useColor', () => {
   });
 
   // https://no-color.org
-  // Command-line software which adds ANSI color to its output by default should check for a NO_COLOR environment variable that,
-  // when present and not an empty string (regardless of its value), prevents the addition of ANSI color.
+  //
+  //    Command-line software which adds ANSI color to its output by default should check for a NO_COLOR environment variable that,
+  //    when present and not an empty string (regardless of its value), prevents the addition of ANSI color.
 
   test('when NO_COLOR defined then returns false', () => {
     process.env.NO_COLOR = 'non-empty';
@@ -42,6 +37,8 @@ describe('useColor', () => {
   });
 
   // https://bixense.com/clicolors/
+  //
+  // Some implementations, especially Apple, just test for existence so empty string still counts.
 
   test('when CLICOLOR_FORCE defined then returns true', () => {
     process.env.CLICOLOR_FORCE = '1';
@@ -55,23 +52,24 @@ describe('useColor', () => {
     expect(useColor()).toBe(false);
   });
 
-  // https://force-color.org
-  // Command-line software which outputs colored text should check for a FORCE_COLOR environment variable.
-  // When this variable is present and not an empty string (regardless of its value), it should force the addition of ANSI color.
+  // https://force-color.org (not canonical, recent web page from 2023)
+  // chalk: https://github.com/chalk/supports-color/blob/c214314a14bcb174b12b3014b2b0a8de375029ae/index.js#L33
+  // node: https://github.com/nodejs/node/blob/0a00217a5f67ef4a22384cfc80eb6dd9a917fdc1/lib/internal/tty.js#L109
+  //
+  // Implementations vary in treatment of value.
+  // Chalk ignores anything except for 0,1,2,3,4,true,false values.
+  // Node somewhat follows Chalk with 0,1,2,3,true, but treats empty as true and unexpected values as false.
+  // Test for the expected Chalk values, which Node handles same way.
 
-  test('when FORCE_COLOR defined then returns true', () => {
-    process.env.FORCE_COLOR = 'non-empty';
-    expect(useColor()).toBe(true);
-  });
-
-  test('when FORCE_COLOR empty then returns undefined', () => {
-    process.env.FORCE_COLOR = '';
-    expect(useColor()).toBe(undefined);
-  });
-
-  // Chalk and node
-  test('when FORCE_COLOR=0 then returns false', () => {
-    process.env.FORCE_COLOR = '0';
-    expect(useColor()).toBe(false);
+  test.each([
+    ['true', true],
+    ['false', false],
+    ['0', false],
+    ['1', true],
+    ['2', true],
+    ['3', true],
+  ])('when FORCE_COLOR=%s then returns %s', (value, result) => {
+    process.env.FORCE_COLOR = value;
+    expect(useColor()).toBe(result);
   });
 });
