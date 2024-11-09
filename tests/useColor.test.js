@@ -12,9 +12,14 @@ describe('internal useColor environment variable support', () => {
   });
 
   afterAll(() => {
-    process.env.NO_COLOR = holdNoColor;
-    process.env.FORCE_COLOR = holdForceColor;
-    process.env.CLICOLOR_FORCE = holdCliColorForce;
+    if (holdNoColor === undefined) delete process.env.NO_COLOR;
+    else process.env.NO_COLOR = holdNoColor;
+
+    if (holdForceColor === undefined) delete process.env.FORCE_COLOR;
+    else process.env.FORCE_COLOR = holdForceColor;
+
+    if (holdCliColorForce === undefined) delete process.env.CLICOLOR_FORCE;
+    else process.env.CLICOLOR_FORCE = holdCliColorForce;
   });
 
   test('when no ENV defined then returns undefined', () => {
@@ -37,11 +42,15 @@ describe('internal useColor environment variable support', () => {
   });
 
   // https://bixense.com/clicolors/
-  //
-  // Some implementations, especially Apple, just test for existence so empty string still counts.
 
   test('when CLICOLOR_FORCE defined then returns true', () => {
     process.env.CLICOLOR_FORCE = '1';
+    expect(useColor()).toBe(true);
+  });
+
+  test('when CLICOLOR_FORCE empty then returns true', () => {
+    // Follow original Apple usage and test for existence, don't ignore empty value.
+    process.env.CLICOLOR_FORCE = '';
     expect(useColor()).toBe(true);
   });
 
@@ -59,7 +68,7 @@ describe('internal useColor environment variable support', () => {
   // Implementations vary in treatment of value.
   // Chalk ignores anything except for 0,1,2,3,4,true,false values.
   // Node somewhat follows Chalk with 0,1,2,3,true, but treats empty as true and unexpected values as false.
-  // Test for the expected Chalk values, which Node handles same way.
+  // Test for the expected Chalk values (which do produce same result in node).
 
   test.each([
     ['true', true],
