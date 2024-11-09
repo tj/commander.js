@@ -248,6 +248,39 @@ test('when custom getErrHelpWidth and configureHelp:helpWidth then help error he
   expect(helpWidth).toBe(expectedColumns);
 });
 
+test('when no custom setup and call formatHelp direct then effective helpWidth is fallback 80', () => {
+  // Not an important case, but filling out testing coverage.
+  const helper = new commander.Help();
+  let wrapWidth;
+  helper.boxWrap = (str, width) => {
+    wrapWidth = wrapWidth ?? width;
+    return '';
+  };
+  const program = new commander.Command()
+    .description('description')
+    .helpOption(false);
+  helper.formatHelp(program, helper);
+  expect(wrapWidth).toBe(80);
+});
+
+test('when no custom setup and call formatItem direct then effective helpWidth is fallback 80', () => {
+  // Not an important case, but filling out testing coverage.
+  const helper = new commander.Help();
+  let wrapWidth;
+  helper.boxWrap = (str, width) => {
+    wrapWidth = wrapWidth ?? width;
+    return '';
+  };
+
+  const termWidth = 8;
+  helper.formatItem('term', termWidth, 'description', helper);
+  const itemIndent = 2;
+  const spacerWidth = 2; // between term and description
+  const remainingWidth = 80 - termWidth - spacerWidth - itemIndent;
+
+  expect(wrapWidth).toBe(remainingWidth);
+});
+
 test('when set configureOutput then get configureOutput', () => {
   const outputOptions = {
     writeOut: jest.fn(),
