@@ -942,7 +942,8 @@ program.configureHelp({
 });
 ```
 
-There are _style_ methods to add color to the help, like `styleTitle` and `styleOptionText`.
+There are _style_ methods to add color to the help, like `styleTitle` and `styleOptionText`. There is built-in support for respecting
+environment variables for `NO_COLOR`, `FORCE_COLOR`, and `CLIFORCE_COLOR`.
 
 Example file: [color-help.mjs](./examples/color-help.mjs)
 
