@@ -61,14 +61,13 @@ describe('internal useColor environment variable support', () => {
     expect(useColor()).toBe(false);
   });
 
-  // https://force-color.org (not canonical, recent web page from 2023)
   // chalk: https://github.com/chalk/supports-color/blob/c214314a14bcb174b12b3014b2b0a8de375029ae/index.js#L33
   // node: https://github.com/nodejs/node/blob/0a00217a5f67ef4a22384cfc80eb6dd9a917fdc1/lib/internal/tty.js#L109
+  // (https://force-color.org recent web page from 2023, does not match major javascript implementations)
   //
-  // Implementations vary in treatment of value.
   // Chalk ignores anything except for 0,1,2,3,4,true,false values.
   // Node somewhat follows Chalk with 0,1,2,3,true, but treats empty as true and unexpected values as false.
-  // Test for the expected Chalk values (which do produce same result in node).
+  // Test the expected Chalk values (which do produce same result in node).
 
   test.each([
     ['true', true],
