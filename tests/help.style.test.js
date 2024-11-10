@@ -197,52 +197,52 @@ describe('override style methods and check help information', () => {
 });
 
 describe('check styles with configureOutput overrides for color', () => {
-  test('when getOutHasColors returns true then helpInformation has color', () => {
-    const program = new Command('program')
+  function makeProgram(hasColors) {
+    const program = new Command('program');
+    program.myHelpText = [];
+    program
       .description('program description')
+      .argument('<file>', 'arg description')
       .configureOutput({
-        getOutHasColors: () => true,
-        stripAnsi: stripRed,
+        getOutHasColors: () => hasColors,
+        stripAnsi: (str) => stripRed(str),
+        writeOut: (str) => {
+          program.myHelpText.push(str);
+        },
       });
     program.configureHelp({
       styleCommandText: (str) => red(str),
       displayWidth,
     });
-    const helpText = program.helpInformation();
+
+    return program;
+  }
+
+  test('when getOutHasColors returns true then help has color', () => {
+    const program = makeProgram(true);
+    program.outputHelp();
+    const helpText = program.myHelpText.join('');
     expect(helpText).toMatch(red('program'));
   });
 
-  test('when getOutHasColors returns false then helpInformation does not have color', () => {
-    const program = new Command('program')
-      .description('program description')
-      .configureOutput({
-        getOutHasColors: () => false,
-        stripAnsi: stripRed,
-      });
-    program.configureHelp({
-      styleCommandText: (str) => red(str),
-      displayWidth,
-    });
-    const helpText = program.helpInformation();
+  test('when getOutHasColors returns false then help does not have color', () => {
+    const program = makeProgram(false);
+    program.outputHelp();
+    const helpText = program.myHelpText.join('');
     expect(helpText).not.toMatch(red('program'));
   });
 
   test('when getOutHasColors returns false then style still called', () => {
-    const program = new Command('program')
-      .description('program description')
-      .configureOutput({
-        getOutHasColors: () => false,
-        stripAnsi: stripRed,
-      });
+    const program = makeProgram(true);
+    // Overwrite styleCommandText so we can track whether called.
     let styleCalled = false;
-    program.configureHelp({
-      styleCommandText: (str) => {
-        styleCalled = true;
-        red(str);
-      },
-      displayWidth,
-    });
-    const helpText = program.helpInformation();
+    const config = program.configureHelp();
+    config.styleCommandText = (str) => {
+      styleCalled = true;
+      return red(str);
+    };
+    program.configureHelp(config);
+    program.outputHelp();
     expect(styleCalled).toBe(true);
   });
 });
