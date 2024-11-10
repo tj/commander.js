@@ -1,14 +1,18 @@
 const { Command } = require('../');
 
 function red(str) {
-  // Dummy colouring to keep test outputs plain text for easier visual compares.
+  // Use plain characters so not stripped in Jest failure messages. (Means displayWidth is bogus though.)
   return `RED ${str} DER`;
 }
+function stripRed(str) {
+  return str.replace(/RED /g, '').replace(/ DER/g, '');
+}
 function displayWidth(str) {
-  return str.replace(/RED /g, '').replace(/ DER/g, '').length;
+  // Not really zero width for the "color", but pretend so spacing matches no-color output.
+  return stripRed(str).length;
 }
 
-describe('override each style method and check help information', () => {
+describe('override style methods and check help information', () => {
   function makeProgram() {
     const program = new Command('program')
       .description('program description')
@@ -29,7 +33,7 @@ describe('override each style method and check help information', () => {
 
   test('styleTitle', () => {
     const program = makeProgram();
-    program.configureHelp({ styleTitle: (str) => red(str), displayWidth });
+    program.configureHelp({ styleTitle: (str) => red(str) }, displayWidth);
     const helpText = program.helpInformation();
     expect(helpText).toEqual(
       plainHelpInformation
@@ -192,4 +196,53 @@ describe('override each style method and check help information', () => {
   });
 });
 
-describe('ENV overrides for Help styles', () => {});
+describe('check styles with configureOutput overrides for color', () => {
+  test('when getOutHasColors returns true then helpInformation has color', () => {
+    const program = new Command('program')
+      .description('program description')
+      .configureOutput({
+        getOutHasColors: () => true,
+        stripAnsi: stripRed,
+      });
+    program.configureHelp({
+      styleCommandText: (str) => red(str),
+      displayWidth,
+    });
+    const helpText = program.helpInformation();
+    expect(helpText).toMatch(red('program'));
+  });
+
+  test('when getOutHasColors returns false then helpInformation does not have color', () => {
+    const program = new Command('program')
+      .description('program description')
+      .configureOutput({
+        getOutHasColors: () => false,
+        stripAnsi: stripRed,
+      });
+    program.configureHelp({
+      styleCommandText: (str) => red(str),
+      displayWidth,
+    });
+    const helpText = program.helpInformation();
+    expect(helpText).not.toMatch(red('program'));
+  });
+
+  test('when getOutHasColors returns false then style still called', () => {
+    const program = new Command('program')
+      .description('program description')
+      .configureOutput({
+        getOutHasColors: () => false,
+        stripAnsi: stripRed,
+      });
+    let styleCalled = false;
+    program.configureHelp({
+      styleCommandText: (str) => {
+        styleCalled = true;
+        red(str);
+      },
+      displayWidth,
+    });
+    const helpText = program.helpInformation();
+    expect(styleCalled).toBe(true);
+  });
+});
