@@ -190,7 +190,7 @@ export class Option {
 
   /**
    * Return option name, in a camelcase format that can be used
-   * as a object attribute key.
+   * as an object attribute key.
    */
   attributeName(): string;
 

@@ -22,6 +22,7 @@ module.exports = tseslint.config(
     },
     rules: {
       '@typescript-eslint/no-var-requires': 'off', // tseslint does not autodetect commonjs context
+      '@typescript-eslint/no-require-imports': 'off', // tseslint does not autodetect commonjs context
     },
   },
   {

@@ -424,7 +424,7 @@ describe('program with action handler and passThrough and subcommand', () => {
     expect(sub.opts().debug).toBe(true);
   });
 
-  // This is somewhat of a side-affect of supporting previous test.
+  // This is somewhat of a side-effect of supporting previous test.
   test('when shared option after subcommand then parsed by subcommand', () => {
     const { program, sub } = makeProgram();
     program.parse(['sub', '-g'], { from: 'user' });
