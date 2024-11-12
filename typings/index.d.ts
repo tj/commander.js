@@ -340,7 +340,7 @@ export interface OutputConfiguration {
 
   getOutHasColors?(): boolean;
   getErrHasColors?(): boolean;
-  stripAnsi?(str: string): string;
+  stripColor?(str: string): string;
 }
 
 export type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';

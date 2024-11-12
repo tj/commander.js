@@ -554,7 +554,7 @@ expectType<commander.Command>(
 
     getOutHasColors: () => true,
     getErrHasColors: () => true,
-    stripAnsi: (str) => str,
+    stripColor: (str) => str,
   }),
 );
 

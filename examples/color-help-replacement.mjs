@@ -77,11 +77,11 @@ const program = new MyCommand();
 // and looks for --color and --no-color command-line options.
 // See https://github.com/chalk/chalk?tab=readme-ov-file#supportscolor
 //
-// In general we want stripAnsi() to be consistent with displayWidth().
+// In general we want stripColor() to be consistent with displayWidth().
 program.configureOutput({
   getOutHasColors: () => supportsColorStdout,
   getErrHasColors: () => supportsColorStderr,
-  stripAnsi: (str) => stripAnsi(str),
+  stripColor: (str) => stripAnsi(str),
 });
 
 program.description('program description '.repeat(10));

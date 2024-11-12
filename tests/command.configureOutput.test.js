@@ -291,7 +291,7 @@ test('when set configureOutput then get configureOutput', () => {
     getOutHasColors: jest.fn(),
     getErrHasColors: jest.fn(),
     outputError: jest.fn(),
-    stripAnsi: jest.fn(),
+    stripColor: jest.fn(),
   };
   const program = new commander.Command();
   program.configureOutput(outputOptions);

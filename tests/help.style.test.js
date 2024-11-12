@@ -205,7 +205,7 @@ describe('check styles with configureOutput overrides for color', () => {
       .argument('<file>', 'arg description')
       .configureOutput({
         getOutHasColors: () => hasColors,
-        stripAnsi: (str) => stripRed(str),
+        stripColor: (str) => stripRed(str),
         writeOut: (str) => {
           program.myHelpText.push(str);
         },
