@@ -1,4 +1,5 @@
 const commander = require('../');
+const process = require('node:process');
 
 test('when default writeErr() then error on stderr', () => {
   const writeSpy = jest
@@ -248,13 +249,49 @@ test('when custom getErrHelpWidth and configureHelp:helpWidth then help error he
   expect(helpWidth).toBe(expectedColumns);
 });
 
+test('when no custom setup and call formatHelp direct then effective helpWidth is fallback 80', () => {
+  // Not an important case, but filling out testing coverage.
+  const helper = new commander.Help();
+  let wrapWidth;
+  helper.boxWrap = (str, width) => {
+    wrapWidth = wrapWidth ?? width;
+    return '';
+  };
+  const program = new commander.Command()
+    .description('description')
+    .helpOption(false);
+  helper.formatHelp(program, helper);
+  expect(wrapWidth).toBe(80);
+});
+
+test('when no custom setup and call formatItem direct then effective helpWidth is fallback 80', () => {
+  // Not an important case, but filling out testing coverage.
+  const helper = new commander.Help();
+  let wrapWidth;
+  helper.boxWrap = (str, width) => {
+    wrapWidth = wrapWidth ?? width;
+    return '';
+  };
+
+  const termWidth = 8;
+  helper.formatItem('term', termWidth, 'description', helper);
+  const itemIndent = 2;
+  const spacerWidth = 2; // between term and description
+  const remainingWidth = 80 - termWidth - spacerWidth - itemIndent;
+
+  expect(wrapWidth).toBe(remainingWidth);
+});
+
 test('when set configureOutput then get configureOutput', () => {
   const outputOptions = {
     writeOut: jest.fn(),
     writeErr: jest.fn(),
     getOutHelpWidth: jest.fn(),
     getErrHelpWidth: jest.fn(),
+    getOutHasColors: jest.fn(),
+    getErrHasColors: jest.fn(),
     outputError: jest.fn(),
+    stripColor: jest.fn(),
   };
   const program = new commander.Command();
   program.configureOutput(outputOptions);
@@ -291,3 +328,27 @@ test('when custom outputErr and writeErr and error then outputErr passed writeEr
     writeErr,
   );
 });
+
+describe.each([['getOutHasColors'], ['getErrHasColors']])(
+  '%s',
+  (configProperty) => {
+    // Tried and failed to mock/modify process.stdout.isTTY to test that part of implementation.
+    // Just test overrides work as expected!
+
+    const getHasColors = new commander.Command().configureOutput()[
+      configProperty
+    ];
+
+    test.each([
+      [true, 'NO_COLOR', false],
+      [false, 'FORCE_COLOR', true],
+      [false, 'CLICOLOR_FORCE', true],
+    ])('when isTTY=%o but %s then returns %o', (isTTY, envvar, result) => {
+      const holdEnv = process.env[envvar];
+      process.env[envvar] = '1';
+      expect(getHasColors()).toBe(result);
+      if (holdEnv === undefined) delete process.env[envvar];
+      else process.env[envvar] = holdEnv;
+    });
+  },
+);

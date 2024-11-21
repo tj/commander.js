@@ -205,11 +205,24 @@ export class Option {
 export class Help {
   /** output helpWidth, long lines are wrapped to fit */
   helpWidth?: number;
+  minWidthToWrap: number;
   sortSubcommands: boolean;
   sortOptions: boolean;
   showGlobalOptions: boolean;
 
   constructor();
+
+  /*
+   * prepareContext is called by Commander after applying overrides from `Command.configureHelp()`
+   * and just before calling `formatHelp()`.
+   *
+   * Commander just uses the helpWidth and the others are provided for subclasses.
+   */
+  prepareContext(contextOptions: {
+    error?: boolean;
+    helpWidth?: number;
+    outputHasColors?: boolean;
+  }): void;
 
   /** Get the command term to show in the list of subcommands. */
   subcommandTerm(cmd: Command): string;
@@ -246,18 +259,58 @@ export class Help {
   longestGlobalOptionTermLength(cmd: Command, helper: Help): number;
   /** Get the longest argument term length. */
   longestArgumentTermLength(cmd: Command, helper: Help): number;
+
+  /** Return display width of string, ignoring ANSI escape sequences. Used in padding and wrapping calculations. */
+  displayWidth(str: string): number;
+
+  /** Style the titles. Called with 'Usage:', 'Options:', etc. */
+  styleTitle(title: string): string;
+
+  /** Usage: <str> */
+  styleUsage(str: string): string;
+  /** Style for command name in usage string.  */
+  styleCommandText(str: string): string;
+
+  styleItemDescription(str: string): string;
+  styleCommandDescription(str: string): string;
+  /** Base style used by descriptions. */
+  styleDescriptionText(str: string): string;
+
+  styleOptionTerm(str: string): string;
+  styleSubcommandTerm(str: string): string;
+  styleArgumentTerm(str: string): string;
+
+  /** Base style used in terms and usage for options. */
+  styleOptionText(str: string): string;
+  /** Base style used in terms and usage for subcommands. */
+  styleSubcommandText(str: string): string;
+  /** Base style used in terms and usage for arguments. */
+  styleArgumentText(str: string): string;
+
   /** Calculate the pad width from the maximum term length. */
   padWidth(cmd: Command, helper: Help): number;
 
   /**
-   * Wrap the given string to width characters per line, with lines after the first indented.
-   * Do not wrap if insufficient room for wrapping (minColumnWidth), or string is manually formatted.
+   * Wrap a string at whitespace, preserving existing line breaks.
+   * Wrapping is skipped if the width is less than `minWidthToWrap`.
    */
-  wrap(
-    str: string,
-    width: number,
-    indent: number,
-    minColumnWidth?: number,
+  boxWrap(str: string, width: number): string;
+
+  /** Detect manually wrapped and indented strings by checking for line break followed by whitespace. */
+  preformatted(str: string): boolean;
+
+  /**
+   * Format the "item", which consists of a term and description. Pad the term and wrap the description, indenting the following lines.
+   *
+   * So "TTT", 5, "DDD DDDD DD DDD" might be formatted for this.helpWidth=17 like so:
+   *   TTT    DDD DDDD
+   *          DD DDD
+   */
+  formatItem(
+    term: string,
+    termWidth: number,
+    description: string,
+    helper: Help,
   ): string;
 
   /** Generate the built-in help text. */
@@ -280,9 +333,14 @@ export interface AddHelpTextContext {
 export interface OutputConfiguration {
   writeOut?(str: string): void;
   writeErr?(str: string): void;
+  outputError?(str: string, write: (str: string) => void): void;
+
   getOutHelpWidth?(): number;
   getErrHelpWidth?(): number;
-  outputError?(str: string, write: (str: string) => void): void;
+
+  getOutHasColors?(): boolean;
+  getErrHasColors?(): boolean;
+  stripColor?(str: string): string;
 }
 
 export type AddHelpTextPosition = 'beforeAll' | 'before' | 'after' | 'afterAll';
