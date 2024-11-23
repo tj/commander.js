@@ -9,7 +9,7 @@ import {
 import { Command, Help } from 'commander';
 
 // Replace default color and wrapping support with Chalk packages as an example of
-// a deep replacement of format and style support.
+// a deep replacement of layout and style support.
 
 // This example requires chalk and wrap-ansi and strip-ansi, and won't run
 // from a clone of Commander repo without installing them first.
