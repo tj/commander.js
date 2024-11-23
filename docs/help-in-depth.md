@@ -23,9 +23,9 @@ The data properties are:
 
 - `helpWidth`: specify the wrap width, useful for unit tests
 - `minWidthToWrap`: specify required width to allow wrapping (default 40)
+- `showGlobalOptions`: show a section with the global options from the parent command(s)
 - `sortSubcommands`: sort the subcommands alphabetically
 - `sortOptions`: sort the options alphabetically
-- `showGlobalOptions`: show a section with the global options from the parent command(s)
 
 Example files:
 - [configure-help.js](../examples/configure-help.js)
