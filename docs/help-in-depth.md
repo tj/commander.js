@@ -79,8 +79,8 @@ Commands:
 
 |  | stringify(object) | style(string) | default style |
 | - | - | - | - |
-| 1 | | styleTitle | a, b, c, d |
-| 2 | commandUsage | styleUsage | |
+| 1 | | styleTitle | |
+| 2 | commandUsage | styleUsage | a, b, c, d |
 | 3 | commandDescription | styleCommandDescription | styleDescriptionText |
 | 4 | optionTerm | styleOptionTerm | styleOptionText |
 | 5 | optionDescription | styleOptionDescription | styleDescriptionText |
