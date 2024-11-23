@@ -12,6 +12,11 @@ program.configureHelp({
 });
 ```
 
+- [Help in Depth](#help-in-depth)
+  - [Data Properties](#data-properties)
+  - [Stringify and Style](#stringify-and-style)
+  - [Layout](#layout)
+
 ## Data Properties
 
 The data properties are:
