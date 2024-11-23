@@ -605,8 +605,10 @@ expectType<string>(helper.styleTitle('Usage:'));
 expectType<string>(helper.styleUsage('foo [options] <file>'));
 expectType<string>(helper.styleCommandText('foo'));
 
-expectType<string>(helper.styleItemDescription('description'));
 expectType<string>(helper.styleCommandDescription('description'));
+expectType<string>(helper.styleOptionDescription('description'));
+expectType<string>(helper.styleSubcommandDescription('description'));
+expectType<string>(helper.styleArgumentDescription('description'));
 expectType<string>(helper.styleDescriptionText('description'));
 
 expectType<string>(helper.styleOptionTerm('-a, --all'));

@@ -9,7 +9,7 @@ program.configureHelp({
   styleTitle: (str) => styleText('bold', str),
   styleCommandText: (str) => styleText('cyan', str),
   styleCommandDescription: (str) => styleText('magenta', str),
-  styleItemDescription: (str) => styleText('italic', str),
+  styleDescriptionText: (str) => styleText('italic', str),
   styleOptionText: (str) => styleText('green', str),
   styleArgumentText: (str) => styleText('yellow', str),
   styleSubcommandText: (str) => styleText('blue', str),

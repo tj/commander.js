@@ -271,8 +271,10 @@ export class Help {
   /** Style for command name in usage string.  */
   styleCommandText(str: string): string;
 
-  styleItemDescription(str: string): string;
   styleCommandDescription(str: string): string;
+  styleOptionDescription(str: string): string;
+  styleSubcommandDescription(str: string): string;
+  styleArgumentDescription(str: string): string;
   /** Base style used by descriptions. */
   styleDescriptionText(str: string): string;
 
