@@ -47,7 +47,7 @@ class MyHelp extends Help {
   styleCommandDescription(str) {
     return this.chalk.magenta(str);
   }
-  styleItemDescription(str) {
+  styleDescriptionText(str) {
     return this.chalk.italic(str);
   }
   styleOptionText(str) {

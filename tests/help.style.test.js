@@ -54,21 +54,6 @@ describe('override style methods and check help information', () => {
     );
   });
 
-  test('styleItemDescription', () => {
-    const program = makeProgram();
-    program.configureHelp({
-      styleItemDescription: (str) => red(str),
-      displayWidth,
-    });
-    const helpText = program.helpInformation();
-    expect(helpText).toEqual(
-      plainHelpInformation
-        .replace('arg description', red('arg description'))
-        .replace('sub description', red('sub description'))
-        .replace(/display help for command/g, red('display help for command')),
-    );
-  });
-
   test('styleCommandDescription', () => {
     const program = makeProgram();
     program.configureHelp({
@@ -81,6 +66,53 @@ describe('override style methods and check help information', () => {
         'program description',
         red('program description'),
       ),
+    );
+  });
+
+  test('styleOptionDescription', () => {
+    const program = makeProgram();
+    program.configureHelp({
+      styleOptionDescription: (str) => red(str),
+      displayWidth,
+    });
+    const helpText = program.helpInformation();
+    expect(helpText).toEqual(
+      plainHelpInformation.replace(
+        /(-h, --help *)(display help for command)/,
+        (match, p1, p2) => p1 + red(p2),
+      ),
+    );
+  });
+
+  test('styleSubcommandDescription', () => {
+    const program = makeProgram();
+    program.configureHelp({
+      styleSubcommandDescription: (str) => red(str),
+      displayWidth,
+    });
+    const helpText = program.helpInformation();
+    expect(helpText).toEqual(
+      plainHelpInformation
+        .replace(
+          /(\[subarg\] *)(sub description)/,
+          (match, p1, p2) => p1 + red(p2),
+        )
+        .replace(
+          /(help \[command\] *)(display help for command)/,
+          (match, p1, p2) => p1 + red(p2),
+        ),
+    );
+  });
+
+  test('styleArgumentDescription', () => {
+    const program = makeProgram();
+    program.configureHelp({
+      styleArgumentDescription: (str) => red(str),
+      displayWidth,
+    });
+    const helpText = program.helpInformation();
+    expect(helpText).toEqual(
+      plainHelpInformation.replace('arg description', red('arg description')),
     );
   });
 
