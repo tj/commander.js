@@ -51,13 +51,14 @@ describe('search for subcommand', () => {
   });
 
   // fs.existsSync gets called on Windows outside the search, so skip the tests (or come up with a different way of checking).
-  describeOrSkipOnWindows('whether perform search for local files', () => {
+  describe('whether perform search for local files', () => {
     beforeEach(() => {
       existsSpy.mockImplementation(() => false);
     });
 
     test('when no script arg or executableDir then no search for local file', () => {
       const program = new commander.Command();
+      program._throwForMissingExecutable = () => {}; // suppress error, call mocked spawn
       program.name('pm');
       program.command('sub', 'executable description');
       program.parse(['sub'], { from: 'user' });
@@ -67,6 +68,7 @@ describe('search for subcommand', () => {
 
     test('when script arg then search for local files', () => {
       const program = new commander.Command();
+      program._throwForMissingExecutable = () => {}; // suppress error, call mocked spawn
       program.name('pm');
       program.command('sub', 'executable description');
       program.parse(['node', 'script-name', 'sub']);
@@ -76,6 +78,7 @@ describe('search for subcommand', () => {
 
     test('when executableDir then search for local files)', () => {
       const program = new commander.Command();
+      program._throwForMissingExecutable = () => {}; // suppress error, call mocked spawn
       program.name('pm');
       program.executableDir(__dirname);
       program.command('sub', 'executable description');

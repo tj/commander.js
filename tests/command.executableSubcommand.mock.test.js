@@ -12,12 +12,14 @@ function makeSystemError(code) {
   return err;
 }
 
-// These tests are either not relevant to Windows, or don't failure in same way because fail early for missing executable.
-const describeOrSkipOnWindows =
-  process.platform === 'win32' ? describe.skip : describe;
+// Suppress false positive warnings due to use of testOrSkipOnWindows
+/* eslint-disable jest/no-standalone-expect */
 
-describeOrSkipOnWindows('executable Subcommand failure modes', () => {
-  test('when subcommand executable missing (ENOENT) then throw custom message', () => {
+const testOrSkipOnWindows = process.platform === 'win32' ? test.skip : test;
+
+testOrSkipOnWindows(
+  'when subcommand executable missing (ENOENT) then throw custom message',
+  () => {
     // If the command is not found, we show a custom error with an explanation and offer
     // some advice for possible fixes.
     const mockProcess = new EventEmitter();
@@ -34,9 +36,12 @@ describeOrSkipOnWindows('executable Subcommand failure modes', () => {
       mockProcess.emit('error', makeSystemError('ENOENT'));
     }).toThrow('use the executableFile option to supply a custom name'); // part of custom message
     spawnSpy.mockRestore();
-  });
+  },
+);
 
-  test('when subcommand executable not executable (EACCES) then throw custom message', () => {
+testOrSkipOnWindows(
+  'when subcommand executable not executable (EACCES) then throw custom message',
+  () => {
     // Side note: this error does not actually happen on Windows! But we can still simulate the behaviour on other platforms.
     const mockProcess = new EventEmitter();
     const spawnSpy = jest
@@ -52,50 +57,48 @@ describeOrSkipOnWindows('executable Subcommand failure modes', () => {
       mockProcess.emit('error', makeSystemError('EACCES'));
     }).toThrow('not executable'); // part of custom message
     spawnSpy.mockRestore();
-  });
+  },
+);
 
-  test('when subcommand executable fails with other error and exitOverride then return in custom wrapper', () => {
-    // The existing behaviour is to just silently fail for unexpected errors, as it is happening
-    // asynchronously in spawned process and client can not catch errors.
-    const mockProcess = new EventEmitter();
-    const spawnSpy = jest
-      .spyOn(childProcess, 'spawn')
-      .mockImplementation(() => {
-        return mockProcess;
-      });
-    const program = new commander.Command();
-    program.exitOverride((err) => {
-      throw err;
-    });
-    program.command('executable', 'executable description');
-    program.parse(['executable'], { from: 'user' });
-    let caughtErr;
-    try {
-      mockProcess.emit('error', makeSystemError('OTHER'));
-    } catch (err) {
-      caughtErr = err;
-    }
-    expect(caughtErr.code).toEqual('commander.executeSubCommandAsync');
-    expect(caughtErr.nestedError.code).toEqual('OTHER');
-    spawnSpy.mockRestore();
+test('when subcommand executable fails with other error and exitOverride then return in custom wrapper', () => {
+  // The existing behaviour is to just silently fail for unexpected errors, as it is happening
+  // asynchronously in spawned process and client can not catch errors.
+  const mockProcess = new EventEmitter();
+  const spawnSpy = jest.spyOn(childProcess, 'spawn').mockImplementation(() => {
+    return mockProcess;
   });
-
-  test('when subcommand executable fails with other error then exit', () => {
-    // The existing behaviour is to just silently fail for unexpected errors, as it is happening
-    // asynchronously in spawned process and client can not catch errors.
-    const mockProcess = new EventEmitter();
-    const spawnSpy = jest
-      .spyOn(childProcess, 'spawn')
-      .mockImplementation(() => {
-        return mockProcess;
-      });
-    const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => {});
-    const program = new commander.Command();
-    program.command('executable', 'executable description');
-    program.parse(['executable'], { from: 'user' });
+  const program = new commander.Command();
+  program._throwForMissingExecutable = () => {}; // suppress error, call mocked spawn
+  program.exitOverride((err) => {
+    throw err;
+  });
+  program.command('executable', 'executable description');
+  program.parse(['executable'], { from: 'user' });
+  let caughtErr;
+  try {
     mockProcess.emit('error', makeSystemError('OTHER'));
-    expect(exitSpy).toHaveBeenCalledWith(1);
-    exitSpy.mockRestore();
-    spawnSpy.mockRestore();
+  } catch (err) {
+    caughtErr = err;
+  }
+  expect(caughtErr.code).toEqual('commander.executeSubCommandAsync');
+  expect(caughtErr.nestedError.code).toEqual('OTHER');
+  spawnSpy.mockRestore();
+});
+
+test('when subcommand executable fails with other error then exit', () => {
+  // The existing behaviour is to just silently fail for unexpected errors, as it is happening
+  // asynchronously in spawned process and client can not catch errors.
+  const mockProcess = new EventEmitter();
+  const spawnSpy = jest.spyOn(childProcess, 'spawn').mockImplementation(() => {
+    return mockProcess;
   });
+  const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => {});
+  const program = new commander.Command();
+  program._throwForMissingExecutable = () => {}; // suppress error, call mocked spawn
+  program.command('executable', 'executable description');
+  program.parse(['executable'], { from: 'user' });
+  mockProcess.emit('error', makeSystemError('OTHER'));
+  expect(exitSpy).toHaveBeenCalledWith(1);
+  exitSpy.mockRestore();
+  spawnSpy.mockRestore();
 });
