@@ -67,7 +67,7 @@ test('when subcommand executable fails with other error and exitOverride then re
     return mockProcess;
   });
   const program = new commander.Command();
-  program._throwForMissingExecutable = () => {}; // suppress error, call mocked spawn
+  program._checkForMissingExecutable = () => {}; // suppress error, call mocked spawn
   program.exitOverride((err) => {
     throw err;
   });
@@ -93,7 +93,7 @@ test('when subcommand executable fails with other error then exit', () => {
   });
   const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => {});
   const program = new commander.Command();
-  program._throwForMissingExecutable = () => {}; // suppress error, call mocked spawn
+  program._checkForMissingExecutable = () => {}; // suppress error, call mocked spawn
   program.command('executable', 'executable description');
   program.parse(['executable'], { from: 'user' });
   mockProcess.emit('error', makeSystemError('OTHER'));
