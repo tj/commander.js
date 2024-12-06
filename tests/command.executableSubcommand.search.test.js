@@ -50,7 +50,8 @@ describe('search for subcommand', () => {
     spawnSpy.mockRestore();
   });
 
-  describe('whether perform search for local files', () => {
+  // fs.existsSync gets called on Windows outside the search, so skip the tests (or come up with a different way of checking).
+  describeOrSkipOnWindows('whether perform search for local files', () => {
     beforeEach(() => {
       existsSpy.mockImplementation(() => false);
     });
