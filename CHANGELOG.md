@@ -2,23 +2,37 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
-## [13.x] (date goes here)
+## [13.0.0-1] (2024-12-08)
+
+### Added
+
+- style routines like `styleTitle()` to add color to help using `.configureHelp()` or Help subclass ([#2251])
+- color related support in `.configureOutput()` for `getOutHasColors()`, `getErrHasColors()`, and `stripColor()` ([#2251])
+- Help property for `minWidthToWrap` ([#2251])
+- Help methods for `displayWidth()`, `boxWrap()`, `preformatted()` et al ([#2251])
 
 ### Changed
 
-- *Breaking*: excess command-arguments cause an error by default
+- *Breaking*: excess command-arguments cause an error by default, see migration tips ([#2223])
+- *Breaking*: throw during Option construction for unsupported option flags, like multiple characters after single `-` ([#2270])
+- TypeScript: include implicit `this` in parameters for action handler callback ([#2197])
+
+### Deleted
+
+- *Breaking*: `Help.wrap()` refactored into `formatItem()` and `boxWrap()` ([#2251])
+
 
 ### Migration Tips
 
 **Excess command-arguments**
 
-It is now an error to pass more command-arguments than are expected.
+It is now an error for the user to specify more command-arguments than are expected. (`allowExcessArguments` is now false by default.)
 
 Old code:
 
@@ -28,6 +42,8 @@ program.action((options) => {
   console.log(program.args);
 });
 ```
+
+Now shows an error:
 
 ```console
 $ node example.js a b c
@@ -45,7 +61,7 @@ program.action((args, options) => {
 });
 ```
 
-Or you could suppress the error without changing the rest of the code:
+Or you could suppress the error, useful for minimising changes in legacy code.
 
 ```js
 program.option('-p, --port', 'port number');
