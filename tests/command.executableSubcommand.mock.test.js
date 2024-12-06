@@ -42,7 +42,6 @@ testOrSkipOnWindows(
 testOrSkipOnWindows(
   'when subcommand executable not executable (EACCES) then throw custom message',
   () => {
-    // Side note: this error does not actually happen on Windows! But we can still simulate the behaviour on other platforms.
     const mockProcess = new EventEmitter();
     const spawnSpy = jest
       .spyOn(childProcess, 'spawn')
