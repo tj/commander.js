@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
-## [13.0.0-1] (2024-12-08)
+## [13.0.0-1] (2024-12-07)
 
 ### Added
 
@@ -1349,6 +1349,11 @@ program
 [#2170]: https://github.com/tj/commander.js/pull/2170
 [#2180]: https://github.com/tj/commander.js/pull/2180
 [#2191]: https://github.com/tj/commander.js/pull/2191
+[#2197]: https://github.com/tj/commander.js/pull/2197
+[#2223]: https://github.com/tj/commander.js/pull/2223
+[#2251]: https://github.com/tj/commander.js/pull/2251
+[#2270]: https://github.com/tj/commander.js/pull/2270
+
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
@@ -1428,7 +1433,8 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
-[12.0.0]: https://github.com/tj/commander.js/compare/v12.0.0...v12.1.0
+[13.0.0-0]: https://github.com/tj/commander.js/compare/v12.1.0...v13.0.0-0
+[12.1.0]: https://github.com/tj/commander.js/compare/v12.0.0...v12.1.0
 [12.0.0]: https://github.com/tj/commander.js/compare/v11.1.0...v12.0.0
 [12.0.0-1]: https://github.com/tj/commander.js/compare/v12.0.0-0...v12.0.0-1
 [12.0.0-0]: https://github.com/tj/commander.js/compare/v11.1.0...v12.0.0-0
