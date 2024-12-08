@@ -921,9 +921,11 @@ program.helpCommand('assist [command]', 'show assistance');
 ### More configuration
 
 The built-in help is formatted using the Help class.
-You can configure the Help behaviour by modifying data properties and methods using `.configureHelp()`, or by subclassing using `.createHelp()` if you prefer.
+You can configure the help by modifying data properties and methods using `.configureHelp()`, or by subclassing Help using `.createHelp()` .
 
-For more detail see (./docs/help-in-depth.md)
+Simple properties include `sortSubcommands`, `sortOptions`, and `showGlobalOptions`. You can add color using the style methods like `styleTitle()`.
+
+For more detail and examples of changing the displayed text, color, and layout see (./docs/help-in-depth.md)
 
 ## Custom event listeners
 
