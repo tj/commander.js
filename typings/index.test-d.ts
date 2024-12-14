@@ -3,8 +3,6 @@ import { expectType } from 'tsd';
 
 // We are not just checking return types here, we are also implicitly checking that the expected syntax is allowed.
 
-/* eslint-disable @typescript-eslint/no-empty-function */
-
 const program: commander.Command = new commander.Command();
 // @ts-expect-error Check that Command is strongly typed and does not allow arbitrary properties
 // eslint-disable-next-line @typescript-eslint/no-unused-expressions
@@ -439,15 +437,12 @@ expectType<commander.Command>(program.executableDir(__dirname));
 expectType<string | null>(program.executableDir());
 
 // outputHelp
-// eslint-disable-next-line @typescript-eslint/no-invalid-void-type, @typescript-eslint/no-confusing-void-expression
 expectType<void>(program.outputHelp());
-// eslint-disable-next-line @typescript-eslint/no-invalid-void-type, @typescript-eslint/no-confusing-void-expression
 expectType<void>(
   program.outputHelp((str: string) => {
     return str;
   }),
 );
-// eslint-disable-next-line @typescript-eslint/no-invalid-void-type, @typescript-eslint/no-confusing-void-expression
 expectType<void>(program.outputHelp({ error: true }));
 
 // help
