@@ -37,7 +37,7 @@ you should say so in your comments so we focus on the concept first before talki
 - README
 - examples/
 
-Commander currently has zero production dependencies. That isn't a hard requirement, but is a simple story. Requests which add a dependency are much less likely to be accepted, and we are likely to ask if there alternative approaches to avoid the dependency.
+Commander currently has zero production dependencies. That isn't a hard requirement, but is a simple story. Requests which add a dependency are much less likely to be accepted, and we are likely to ask for alternative approaches to avoid the dependency.
 
 - <https://devrant.com/rants/1854993/package-tsunami>
 - <https://dev.to/leoat12/the-nodemodules-problem-29dc>

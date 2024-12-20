@@ -190,7 +190,7 @@ export class Option {
 
   /**
    * Return option name, in a camelcase format that can be used
-   * as a object attribute key.
+   * as an object attribute key.
    */
   attributeName(): string;
 
@@ -544,7 +544,7 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
-  action(fn: (...args: any[]) => void | Promise<void>): this;
+  action(fn: (this: this, ...args: any[]) => void | Promise<void>): this;
 
   /**
    * Define option with `flags`, `description`, and optional argument parsing function or `defaultValue` or both.

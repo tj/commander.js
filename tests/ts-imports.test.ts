@@ -14,7 +14,6 @@ import {
 
 /* eslint-disable jest/expect-expect */
 
-// eslint-disable-next-line @typescript-eslint/ban-types
 function checkClass(obj: object, name: string): void {
   expect(typeof obj).toEqual('object');
   expect(obj.constructor.name).toEqual(name);

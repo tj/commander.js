@@ -1,7 +1,7 @@
 import * as commander from './index';
 import { expectType } from 'tsd';
 
-// We are are not just checking return types here, we are also implicitly checking that the expected syntax is allowed.
+// We are not just checking return types here, we are also implicitly checking that the expected syntax is allowed.
 
 /* eslint-disable @typescript-eslint/no-empty-function */
 
@@ -148,6 +148,9 @@ expectType<commander.Command>(
 // action
 expectType<commander.Command>(program.action(() => {}));
 expectType<commander.Command>(program.action(async () => {}));
+program.action(function () {
+  expectType<typeof program>(this);
+});
 
 // option
 expectType<commander.Command>(program.option('-a,--alpha'));

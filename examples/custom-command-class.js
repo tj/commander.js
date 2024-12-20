@@ -12,7 +12,7 @@ class CommandWithTrace extends commander.Command {
   }
 }
 
-function inpectCommand(command) {
+function inspectCommand(command) {
   // The option value is stored as property on command because we called .storeOptionsAsProperties()
   console.log(`Called '${command.name()}'`);
   console.log(`args: ${command.args}`);
@@ -22,18 +22,18 @@ function inpectCommand(command) {
 const program = new CommandWithTrace('program')
   .option('-v, ---verbose')
   .action((options, command) => {
-    inpectCommand(command);
+    inspectCommand(command);
   });
 
 program
   .command('serve [params...]')
   .option('-p, --port <number>', 'port number')
   .action((params, options, command) => {
-    inpectCommand(command);
+    inspectCommand(command);
   });
 
 program.command('build <target>').action((buildTarget, options, command) => {
-  inpectCommand(command);
+  inspectCommand(command);
 });
 
 program.parse();
