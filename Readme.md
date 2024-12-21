@@ -959,8 +959,6 @@ program.parse(['--port', '80'], { from: 'user' }); // just user supplied argumen
 
 Use parseAsync instead of parse if any of your action handlers are async.
 
-If you want to parse multiple times, create a new program each time. Calling parse does not clear out any previous state.
-
 ### Parsing Configuration
 
 If the default parsing does not suit your needs, there are some behaviours to support other usage patterns.
