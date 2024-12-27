@@ -370,6 +370,10 @@ expectType<{ operands: string[]; unknown: string[] }>(
   program.parseOptions(['node', 'script.js', 'hello']),
 );
 
+// save/restore state
+expectType<void>(program.saveStateBeforeParse());
+expectType<void>(program.restoreStateBeforeParse());
+
 // opts
 const opts = program.opts();
 expectType<commander.OptionValues>(opts);
