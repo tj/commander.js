@@ -8,10 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
-## [13.0.0-1] (2024-12-07)
+## [13.0.0] (2024-12-27)
 
 ### Added
 
+- support multiple calls to `.parse()` with default settings ([#2299])
+- add `.saveStateBeforeParse()` and `.restoreStateBeforeParse()` for use by subclasses ([#2299])
 - style routines like `styleTitle()` to add color to help using `.configureHelp()` or Help subclass ([#2251])
 - color related support in `.configureOutput()` for `getOutHasColors()`, `getErrHasColors()`, and `stripColor()` ([#2251])
 - Help property for `minWidthToWrap` ([#2251])
@@ -21,12 +23,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - *Breaking*: excess command-arguments cause an error by default, see migration tips ([#2223])
 - *Breaking*: throw during Option construction for unsupported option flags, like multiple characters after single `-` ([#2270])
+- *Breaking*: throw on multiple calls to `.parse()` if `storeOptionsAsProperties: true` ([#2299])
 - TypeScript: include implicit `this` in parameters for action handler callback ([#2197])
 
 ### Deleted
 
 - *Breaking*: `Help.wrap()` refactored into `formatItem()` and `boxWrap()` ([#2251])
-
 
 ### Migration Tips
 
@@ -71,13 +73,16 @@ program.action((options) => {
 });
 ```
 
+## [13.0.0-0] (2024-12-07)
+
+(Released in 13.0.0)
 
 ## [12.1.0] (2024-05-18)
 
 ### Added
 
 - auto-detect special node flags `node --eval` and `node --print` when call `.parse()` with no arguments ([#2164])
-- 
+
 ### Changed
 
 - prefix require of Node.js core modules with `node:` ([#2170])
@@ -1353,6 +1358,7 @@ program
 [#2223]: https://github.com/tj/commander.js/pull/2223
 [#2251]: https://github.com/tj/commander.js/pull/2251
 [#2270]: https://github.com/tj/commander.js/pull/2270
+[#2299]: https://github.com/tj/commander.js/pull/2299
 
 
 <!-- Referenced in 5.x -->
@@ -1433,6 +1439,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[13.0.0]: https://github.com/tj/commander.js/compare/v12.1.0...v13.0.0
 [13.0.0-0]: https://github.com/tj/commander.js/compare/v12.1.0...v13.0.0-0
 [12.1.0]: https://github.com/tj/commander.js/compare/v12.0.0...v12.1.0
 [12.0.0]: https://github.com/tj/commander.js/compare/v11.1.0...v12.0.0
