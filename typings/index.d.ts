@@ -617,7 +617,7 @@ export class Command {
    * ```js
    * program
    *     .option('-p, --pepper', 'add pepper')
-   *     .option('-p, --pizza-type <TYPE>', 'type of pizza') // required option-argument
+   *     .option('--pt, --pizza-type <TYPE>', 'type of pizza') // required option-argument
    *     .option('-c, --cheese [CHEESE]', 'add extra cheese', 'mozzarella') // optional option-argument with default
    *     .option('-t, --tip <VALUE>', 'add tip to purchase cost', parseFloat) // custom parse function
    * ```

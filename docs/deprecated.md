@@ -12,11 +12,11 @@ They are currently still available for backwards compatibility, but should not b
     - [.command('\*')](#command)
     - [cmd.description(cmdDescription, argDescriptions)](#cmddescriptioncmddescription-argdescriptions)
     - [InvalidOptionArgumentError](#invalidoptionargumenterror)
-    - [Short option flag longer than a single character](#short-option-flag-longer-than-a-single-character)
     - [Import from `commander/esm.mjs`](#import-from-commanderesmmjs)
     - [cmd.\_args](#cmd_args)
     - [.addHelpCommand(string|boolean|undefined)](#addhelpcommandstringbooleanundefined)
   - [Removed](#removed)
+    - [Short option flag longer than a single character](#short-option-flag-longer-than-a-single-character)
     - [Default import of global Command object](#default-import-of-global-command-object)
 
 ### RegExp .option() parameter
@@ -168,12 +168,6 @@ function myParseInt(value, dummyPrevious) {
 
 Deprecated from Commander v8.
 
-### Short option flag longer than a single character
-
-Short option flags like `-ws` were never supported, but the old README did not make this clear. The README now states that short options are a single character.
-
-README updated in Commander v3. Deprecated from Commander v9.
-
 ### Import from `commander/esm.mjs`
 
 The first support for named imports required an explicit entry file.
@@ -231,6 +225,15 @@ program.addHelpCommand(new Command('assist').argument('[command]').description('
 - Deprecated from Commander v12.
 
 ## Removed
+
+### Short option flag longer than a single character
+
+Short option flags like `-ws` were never supported, but the old README did not make this clear. The README now states that short options are a single character.
+
+- README updated in Commander v3.
+- Deprecated from Commander v9.
+- Throws an exception in Commander v13. Deprecated and gone!
+- Replacement added in Commander v13.1 with support for dual long options, like `--ws, --workspace`.
 
 ### Default import of global Command object
 
