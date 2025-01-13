@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - *Breaking*: excess command-arguments cause an error by default, see migration tips ([#2223])
 - *Breaking*: throw during Option construction for unsupported option flags, like multiple characters after single `-` ([#2270])
+  - note: support for dual long option flags added in Commander 13.1
 - *Breaking*: throw on multiple calls to `.parse()` if `storeOptionsAsProperties: true` ([#2299])
 - TypeScript: include implicit `this` in parameters for action handler callback ([#2197])
 
