@@ -77,7 +77,8 @@ const { program } = require('commander');
 
 program
   .option('--first')
-  .option('-s, --separator <char>');
+  .option('-s, --separator <char>')
+  .argument('<string>');
 
 program.parse();
 
