@@ -933,7 +933,7 @@ You can configure the help by modifying data properties and methods using `.conf
 
 Simple properties include `sortSubcommands`, `sortOptions`, and `showGlobalOptions`. You can add color using the style methods like `styleTitle()`.
 
-For more detail and examples of changing the displayed text, color, and layout see (./docs/help-in-depth.md)
+For more detail and examples of changing the displayed text, color, and layout see (./docs/help-in-depth.md).
 
 ## Custom event listeners
 
