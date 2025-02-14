@@ -999,8 +999,8 @@ program arg --port=80
 
 By default, the option processing shows an error for an unknown option. To have an unknown option treated as an ordinary command-argument and continue looking for options, use `.allowUnknownOption()`. This lets you mix known and unknown options.
 
-By default, the argument processing does not display an error for more command-arguments than expected.
-To display an error for excess arguments, use`.allowExcessArguments(false)`.
+By default, the argument processing displays an error for more command-arguments than expected.
+To suppress the error for excess arguments, use`.allowExcessArguments()`.
 
 ### Legacy options as properties
 
