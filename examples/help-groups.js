@@ -1,37 +1,47 @@
 const { Command, Option } = require('commander');
 
+// The help group can be set explicitly on an Option or Command using `.helpGroup()`,
+// or by setting the default group before adding the option or command.
+
 const program = new Command();
 
-// Default option group (Options:)
-program.option('-u, --user', 'username to use, instead of current user');
-program.groupOptions('Built-in Options:', ['help']);
-
-const devHelpGroup = 'Development Options:';
-program
-  .addOption(
-    new Option('--profile', 'show how long command takes').helpGroup(
-      devHelpGroup,
-    ),
-  )
+const directGroups = program
+  .command('direct-groups')
+  .description('example with help groups set by using .helpGroup()')
   .addOption(
     new Option('-d, --debug', 'add extra trace information').helpGroup(
-      devHelpGroup,
+      'Development Options:',
     ),
   );
+directGroups
+  .command('watch')
+  .description('run project in watch mode')
+  .helpGroup('Development Commands:');
 
-// Default help group (Commands:)
-program.command('deploy').description('deploy project');
-program.command('restart').description('restart project');
-program.groupCommands('Built-in Commands:', ['help']);
+const defaultGroups = program
+  .command('default-groups')
+  .description(
+    'example with help groups set by using optionsGroup/commandsGroup ',
+  )
+  .optionsGroup('Development Options:')
+  .option('-d, --debug', 'add extra trace information', 'Development Options:');
+defaultGroups.commandsGroup('Development Commands:');
+defaultGroups.command('watch').description('run project in watch mode');
 
-const userManagementGroup = 'User Management:';
 program
-  .command('sign-in')
-  .description('sign in user')
-  .helpGroup(userManagementGroup);
-program
-  .command('sign-out')
-  .description('sign out')
-  .helpGroup(userManagementGroup);
+  .command('built-in')
+  .description(
+    'changing the help for built-ins by explicitly customising built-in',
+  )
+  .optionsGroup('Built-in Options:')
+  .version('v2.3.4')
+  .helpOption('-h, --help') // get default group by customising help option
+  .commandsGroup('Built-in Commands:')
+  .helpCommand('help'); // get default group by customising help option
 
 program.parse();
+
+// Try the following:
+//    node help-groups.js help direct-groups
+//    node help-groups.js help default-groups
+//    node help-groups.js help built-in
