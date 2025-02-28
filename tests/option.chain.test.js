@@ -43,7 +43,7 @@ describe('Option methods that should return this for chaining', () => {
     expect(result).toBe(option);
   });
 
-  test('when call .helpGroup(title) then returns this', () => {
+  test('when call .helpGroup(heading) then returns this', () => {
     const option = new Option('-e,--example <value>');
     const result = option.helpGroup('Options:');
     expect(result).toBe(option);
