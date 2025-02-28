@@ -57,17 +57,15 @@ docker2
   .description('manage volumes')
   .helpGroup(managementCommandsTitle);
 
-// Customise group for built-ins by explicitly adding them with default group set.
+// Customise group for built-ins by configuring them with default group set.
 program
   .command('built-in')
   .description('help groups for help and version')
   .optionsGroup('Built-in Options:')
   .version('v2.3.4')
-  // .helpOption('-h, --help')
-  .helpOption(true)
+  .helpOption('-h, --help') // or .helpOption(true) to use default flags
   .commandsGroup('Built-in Commands:')
-  // .helpCommand('help');
-  .helpCommand(true);
+  .helpCommand('help [command]'); // or .helpCommand(true) to use default name
 
 program.parse();
 
