@@ -38,6 +38,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [.description and .summary](#description-and-summary)
     - [.helpOption(flags, description)](#helpoptionflags-description)
     - [.helpCommand()](#helpcommand)
+    - [Help Groups](#help-groups)
     - [More configuration](#more-configuration-2)
   - [Custom event listeners](#custom-event-listeners)
   - [Bits and pieces](#bits-and-pieces)
@@ -925,6 +926,14 @@ program.helpCommand('assist [command]', 'show assistance');
 ```
 
 (Or use `.addHelpCommand()` to add a command you construct yourself.)
+
+### Help Groups
+
+The help by default lists options under the the heading `Options:` and commands under `Commands:`. You can create your own groups
+with different headings. The high-level way is to set the desired group heading while adding the options and commands,
+using `.optionsGroup()` and `.commandsGroup()`. The low-level way is using `.helpGroup()` on an individual `Option` or `Command`
+
+Example file: [help-groups.js](./examples/help-groups.js)
 
 ### More configuration
 

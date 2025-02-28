@@ -257,4 +257,22 @@ describe('Command methods that should return this for chaining', () => {
     const result = program.nameFromFilename('name');
     expect(result).toBe(program);
   });
+
+  test('when set .helpGroup(heading) then returns this', () => {
+    const program = new Command();
+    const result = program.helpGroup('Commands:');
+    expect(result).toBe(program);
+  });
+
+  test('when set .commandsGroup(heading) then returns this', () => {
+    const program = new Command();
+    const result = program.commandsGroup('Commands:');
+    expect(result).toBe(program);
+  });
+
+  test('when set .optionsGroup(heading) then returns this', () => {
+    const program = new Command();
+    const result = program.optionsGroup('Options:');
+    expect(result).toBe(program);
+  });
 });

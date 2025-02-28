@@ -115,4 +115,20 @@ describe('helpOption', () => {
       program.parse(['UNKNOWN'], { from: 'user' });
     }).toThrow("error: unknown command 'UNKNOWN'");
   });
+
+  test('when helpOption(true) after false then helpInformation does include --help', () => {
+    const program = new commander.Command();
+    program.helpOption(false);
+    program.helpOption(true);
+    const helpInformation = program.helpInformation();
+    expect(helpInformation).toMatch('--help');
+  });
+
+  test('when helpOption(true) after customise then helpInformation still customised', () => {
+    const program = new commander.Command();
+    program.helpOption('--ASSIST');
+    program.helpOption(true);
+    const helpInformation = program.helpInformation();
+    expect(helpInformation).toMatch('--ASSIST');
+  });
 });
