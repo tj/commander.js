@@ -63,9 +63,11 @@ program
   .description('help groups for help and version')
   .optionsGroup('Built-in Options:')
   .version('v2.3.4')
-  .helpOption('-h, --help')
+  // .helpOption('-h, --help')
+  .helpOption(true)
   .commandsGroup('Built-in Commands:')
-  .helpCommand('help');
+  // .helpCommand('help');
+  .helpCommand(true);
 
 program.parse();
 
