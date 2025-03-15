@@ -3,8 +3,8 @@ const { Command, Option } = require('commander');
 // Show the two approaches for adding help groups, and how to customise the built-in help and version.
 
 const program = new Command();
-const devOptionsTitle = 'Development Options:';
-const managementCommandsTitle = 'Management Commands:';
+const devOptionsHeading = 'Development Options:';
+const managementCommandsHeading = 'Management Commands:';
 
 // The high-level approach is use .optionsGroup() and .commandsGroup() before adding the options/commands.
 const docker1 = program
@@ -12,7 +12,7 @@ const docker1 = program
   .description('help groups created using .optionsGroup() and .commandsGroup()')
   .addOption(new Option('-h, --hostname <name>', 'container host name'))
   .addOption(new Option('-p, --port <number>', 'container port number'))
-  .optionsGroup(devOptionsTitle)
+  .optionsGroup(devOptionsHeading)
   .option('-d, --debug', 'add extra trace information')
   .option('-w, --watch', 'run and relaunch service on file changes');
 
@@ -21,7 +21,7 @@ docker1
   .description('create and run a new container from an image');
 docker1.command('exec').description('execute a command in a running container');
 
-docker1.commandsGroup(managementCommandsTitle);
+docker1.commandsGroup(managementCommandsHeading);
 docker1.command('images').description('manage images');
 docker1.command('volumes').description('manage volumes');
 
@@ -33,14 +33,14 @@ const docker2 = program
   .addOption(new Option('-p, --port <number>', 'container port number'))
   .addOption(
     new Option('-d, --debug', 'add extra trace information').helpGroup(
-      devOptionsTitle,
+      devOptionsHeading,
     ),
   )
   .addOption(
     new Option(
       '-w, --watch',
       'run and relaunch service on file changes',
-    ).helpGroup(devOptionsTitle),
+    ).helpGroup(devOptionsHeading),
   );
 
 docker2
@@ -51,11 +51,11 @@ docker2.command('exec').description('execute a command in a running container');
 docker2
   .command('images')
   .description('manage images')
-  .helpGroup(managementCommandsTitle);
+  .helpGroup(managementCommandsHeading);
 docker2
   .command('volumes')
   .description('manage volumes')
-  .helpGroup(managementCommandsTitle);
+  .helpGroup(managementCommandsHeading);
 
 // Customise group for built-ins by configuring them with default group set.
 program
