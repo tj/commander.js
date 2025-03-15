@@ -22,7 +22,7 @@ const negativeNumbers = [
 ];
 
 test.each(negativeNumbers)(
-  `when option argument for short optional is %s then consumed=%s`,
+  `when option-argument for short optional is %s then consumed=%s`,
   (value, consume) => {
     const program = new Command();
     program.exitOverride();
@@ -42,7 +42,7 @@ test.each(negativeNumbers)(
 );
 
 test.each(negativeNumbers)(
-  `when option argument for long optional is %s then consumed=%s`,
+  `when option-argument for long optional is %s then consumed=%s`,
   (value, consume) => {
     const program = new Command();
     program.exitOverride();
@@ -62,7 +62,7 @@ test.each(negativeNumbers)(
 );
 
 test.each(negativeNumbers)(
-  `when option argument for short optional... is %s then consumed=%s`,
+  `when option-argument for short optional... is %s then consumed=%s`,
   (value, consume) => {
     const program = new Command();
     program.exitOverride();
@@ -84,7 +84,7 @@ test.each(negativeNumbers)(
 );
 
 test.each(negativeNumbers)(
-  `when option argument for long optional... is %s then consumed=%s`,
+  `when option-argument for long optional... is %s then consumed=%s`,
   (value, consume) => {
     const program = new Command();
     program.exitOverride();
@@ -106,7 +106,7 @@ test.each(negativeNumbers)(
 );
 
 test.each(negativeNumbers)(
-  `when command argument is %s then consumed=%s`,
+  `when command-argument is %s then consumed=%s`,
   (value, consume) => {
     const program = new Command();
     program.exitOverride();
@@ -127,7 +127,7 @@ test.each(negativeNumbers)(
 );
 
 test.each(negativeNumbers)(
-  `when digit option defined and option argument is %s then negative not consumed`,
+  `when digit option defined and option-argument is %s then negative not consumed`,
   (value, _ignore) => {
     const program = new Command();
     program.exitOverride();
@@ -149,7 +149,7 @@ test.each(negativeNumbers)(
 );
 
 test.each(negativeNumbers)(
-  `when digit option defined and command argument is %s then negative not consumed`,
+  `when digit option defined and command-argument is %s then negative not consumed`,
   (value, _ignore) => {
     const program = new Command();
     program.exitOverride();
