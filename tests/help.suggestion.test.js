@@ -238,3 +238,11 @@ test('when may be duplicate identical candidates then only return one', () => {
   const suggestion = getSuggestion(program, ['sub', '--hepl']);
   expect(suggestion).toBe('--help');
 });
+
+test('when option looks like a negative number suggest workarounds', () => {
+  const program = new Command();
+  const suggestion = getSuggestion(program, '-1');
+  expect(suggestion).toBe(
+    '"-- -1" to process as an argument, or "--other-option=-1" to process as an option value',
+  );
+});
