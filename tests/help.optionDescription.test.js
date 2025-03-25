@@ -70,6 +70,18 @@ describe('optionDescription', () => {
     );
   });
 
+  test('when option has default value but not description then return custom default', () => {
+    const defaultValueDescription = 'custom';
+    const option = new commander.Option('-a <value>').default(
+      'default value',
+      defaultValueDescription,
+    );
+    const helper = new commander.Help();
+    expect(helper.optionDescription(option)).toEqual(
+      `(default: ${defaultValueDescription})`,
+    );
+  });
+
   test('when option has choices then return description and choices', () => {
     const description = 'description';
     const choices = ['one', 'two'];
