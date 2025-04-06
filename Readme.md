@@ -333,9 +333,9 @@ $ pizza-options --cheese mozzarella
 add cheese type mozzarella
 ```
 
-Options with an optional option-argument are not greedy and will ignore arguments starting with a dash,
-except negative numbers which are accepted.
+Options with an optional option-argument are not greedy and will ignore arguments starting with a dash.
 So `id` behaves as a boolean option for `--id -ABCD`, but you can use a combined form if needed like `--id=-ABCD`.
+Negative numbers are special and are accepted as an option-argument.
 
 For information about possible ambiguous cases, see [options taking varying arguments](./docs/options-in-depth.md).
 
