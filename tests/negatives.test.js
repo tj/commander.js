@@ -254,7 +254,8 @@ test('when default command with digit option then negative throws', () => {
 });
 
 test('when program has subcommand and action handler then negative command-argument unsupported', () => {
-  // Known limitation in parsing. Only allowing negative command-arguments in leaf commands.
+  // Known limitation in parsing. Only allowed negative command-arguments in leaf commands
+  // to minimise changes to parsing when added support for negative numbers.
   const program = new Command();
   program
     .exitOverride()
