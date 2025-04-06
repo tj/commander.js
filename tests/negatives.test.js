@@ -25,8 +25,7 @@ test.each(negativeNumbers)(
   `when option-argument for short optional is %s then consumed=%s`,
   (value, consume) => {
     const program = new Command();
-    program.exitOverride();
-    program.configureOutput({ writeErr: () => {} });
+    program.exitOverride().configureOutput({ writeErr: () => {} });
     program.option('-o, --optional [value]', 'optional option');
     const args = ['-o', value];
     let thrown = '';
@@ -46,8 +45,7 @@ test.each(negativeNumbers)(
   `when option-argument for long optional is %s then consumed=%s`,
   (value, consume) => {
     const program = new Command();
-    program.exitOverride();
-    program.configureOutput({ writeErr: () => {} });
+    program.exitOverride().configureOutput({ writeErr: () => {} });
     program.option('-o, --optional [value]', 'optional option');
     const args = ['--optional', value];
     let thrown = '';
@@ -67,9 +65,10 @@ test.each(negativeNumbers)(
   `when option-argument for short optional... is %s then consumed=%s`,
   (value, consume) => {
     const program = new Command();
-    program.exitOverride();
-    program.configureOutput({ writeErr: () => {} });
-    program.option('-o, --optional [value...]', 'optional option');
+    program
+      .exitOverride()
+      .configureOutput({ writeErr: () => {} })
+      .option('-o, --optional [value...]', 'optional option');
     const args = ['-o', 'first', value];
     let thrown = '';
     try {
@@ -90,9 +89,10 @@ test.each(negativeNumbers)(
   `when option-argument for long optional... is %s then consumed=%s`,
   (value, consume) => {
     const program = new Command();
-    program.exitOverride();
-    program.configureOutput({ writeErr: () => {} });
-    program.option('-o, --optional [value...]', 'optional option');
+    program
+      .exitOverride()
+      .configureOutput({ writeErr: () => {} })
+      .option('-o, --optional [value...]', 'optional option');
     const args = ['--optional', 'first', value];
     let thrown = '';
     try {
@@ -113,9 +113,10 @@ test.each(negativeNumbers)(
   `when command-argument is %s then consumed=%s`,
   (value, consume) => {
     const program = new Command();
-    program.exitOverride();
-    program.configureOutput({ writeErr: () => {} });
-    program.argument('<value>', 'argument');
+    program
+      .exitOverride()
+      .configureOutput({ writeErr: () => {} })
+      .argument('<value>', 'argument');
     const args = [value];
     let thrown = '';
     try {
@@ -135,9 +136,9 @@ test.each(negativeNumbers)(
   `when digit option defined and option-argument is %s then negative not consumed`,
   (value, _ignore) => {
     const program = new Command();
-    program.exitOverride();
-    program.configureOutput({ writeErr: () => {} });
     program
+      .exitOverride()
+      .configureOutput({ writeErr: () => {} })
       .option('-o, --optional [value]', 'optional option')
       .option('-9', 'register option using digit');
     const args = ['-o', value];
@@ -158,9 +159,11 @@ test.each(negativeNumbers)(
   `when digit option defined and command-argument is %s then negative not consumed`,
   (value, _ignore) => {
     const program = new Command();
-    program.exitOverride();
-    program.configureOutput({ writeErr: () => {} });
-    program.argument('[value]').option('-9', 'register option using digit');
+    program
+      .exitOverride()
+      .configureOutput({ writeErr: () => {} })
+      .argument('[value]')
+      .option('-9', 'register option using digit');
     const args = [value];
     let thrown = '';
     try {
@@ -211,9 +214,10 @@ test('when complex example with negative numbers then all consumed', () => {
 
 test('when program has digit option then negatives not allowed in leaf command', () => {
   const program = new Command();
-  program.exitOverride();
-  program.configureOutput({ writeErr: () => {} });
-  program.option('-2', 'double option');
+  program
+    .exitOverride()
+    .configureOutput({ writeErr: () => {} })
+    .option('-2', 'double option');
   let leafArgs;
   program
     .command('leaf')
@@ -240,12 +244,23 @@ test('when default command without digit option then negatives accepted', () => 
 
 test('when default command with digit option then negative throws', () => {
   const program = new Command();
-  program.exitOverride();
-  program.configureOutput({ writeErr: () => {} });
+  program.exitOverride().configureOutput({ writeErr: () => {} });
   program
     .command('leaf', { isDefault: true })
     .option('-2')
     .argument('[value...]')
     .action(() => {});
+  expect(() => program.parse(['-1'], { from: 'user' })).toThrow();
+});
+
+test('when program has subcommand and action handler then negative command-argument unsupported', () => {
+  // Known limitation in parsing. Only allowing negative command-arguments in leaf commands.
+  const program = new Command();
+  program
+    .exitOverride()
+    .configureOutput({ writeErr: () => {} })
+    .argument('[value...]')
+    .action(() => {});
+  program.command('leaf').action(() => {});
   expect(() => program.parse(['-1'], { from: 'user' })).toThrow();
 });
