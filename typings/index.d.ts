@@ -51,6 +51,7 @@ export class Argument {
   variadic: boolean;
   defaultValue?: any;
   defaultValueDescription?: string;
+  parseArg?: <T>(value: string, previous: T) => T;
   argChoices?: string[];
 
   /**
