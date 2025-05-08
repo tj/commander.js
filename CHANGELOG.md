@@ -12,13 +12,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ### Added
 
-- TypeScript: add `parseArg` property to `Argument` class ([#2359])
+- support for groups of options and commands in the help using low-level `.helpGroup()` on `Option` and `Command`, and higher-level `.optionsGroup()` and `.commandsGroup()` which can be used in chaining way to specify group title for following options/commands ([#2328])
 - support for unescaped negative numbers as option-arguments and command-arguments ([#2339])
+- TypeScript: add `parseArg` property to `Argument` class ([#2359])
 
 ### Fixed
 
-- `.configureOutput()` now makes copy of settings instead of modifying in-place, fixing side-effects ([#2350])
 - remove bogus leading space in help when option has default value but not a description ([#2348])
+- `.configureOutput()` now makes copy of settings instead of modifying in-place, fixing side-effects ([#2350])
 
 ### Changed
 
@@ -1404,6 +1405,7 @@ program
 [#2270]: https://github.com/tj/commander.js/pull/2270
 [#2299]: https://github.com/tj/commander.js/pull/2299
 [#2312]: https://github.com/tj/commander.js/pull/2312
+[#2328]: https://github.com/tj/commander.js/pull/2328
 [#2339]: https://github.com/tj/commander.js/pull/2339
 [#2348]: https://github.com/tj/commander.js/pull/2348
 [#2350]: https://github.com/tj/commander.js/pull/2350
