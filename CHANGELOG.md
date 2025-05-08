@@ -1487,6 +1487,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[14.0.0]: https://github.com/tj/commander.js/compare/v13.1.0...v14.0.0
 [13.1.0]: https://github.com/tj/commander.js/compare/v13.0.0...v13.1.0
 [13.0.0]: https://github.com/tj/commander.js/compare/v12.1.0...v13.0.0
 [13.0.0-0]: https://github.com/tj/commander.js/compare/v12.1.0...v13.0.0-0
