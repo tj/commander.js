@@ -51,6 +51,7 @@ export class Argument {
   variadic: boolean;
   defaultValue?: any;
   defaultValueDescription?: string;
+  parseArg?: <T>(value: string, previous: T) => T;
   argChoices?: string[];
 
   /**
@@ -466,7 +467,7 @@ export class Command {
   argument<T>(
     flags: string,
     description: string,
-    fn: (value: string, previous: T) => T,
+    parseArg: (value: string, previous: T) => T,
     defaultValue?: T,
   ): this;
   argument(name: string, description?: string, defaultValue?: unknown): this;
