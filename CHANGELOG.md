@@ -8,6 +8,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [14.0.0] (2025-05-16)
+
+### Added
+
+- TypeScript: add `parseArg` property to `Argument` class ([#2359])
+- support for unescaped negative numbers as option-arguments and command-arguments ([#2339])
+
+### Fixed
+
+- `.configureOutput()` now makes copy of settings instead of modifying in-place, fixing side-effects ([#2350])
+- remove bogus leading space in help when option has default value but not a description ([#2348])
+
+### Changed
+
+- *Breaking:* Commander 14 requires Node.js v20 or higher
+
 ## [13.1.0] (2025-01-21)
 
 ### Added
@@ -1388,7 +1404,10 @@ program
 [#2270]: https://github.com/tj/commander.js/pull/2270
 [#2299]: https://github.com/tj/commander.js/pull/2299
 [#2312]: https://github.com/tj/commander.js/pull/2312
-
+[#2339]: https://github.com/tj/commander.js/pull/2339
+[#2348]: https://github.com/tj/commander.js/pull/2348
+[#2350]: https://github.com/tj/commander.js/pull/2350
+[#2359]: https://github.com/tj/commander.js/pull/2359
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1

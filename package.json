@@ -1,6 +1,6 @@
 {
   "name": "commander",
-  "version": "13.1.0",
+  "version": "14.0.0",
   "description": "the complete solution for node.js command-line programs",
   "keywords": [
     "commander",
@@ -76,7 +76,7 @@
   },
   "types": "typings/index.d.ts",
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "support": true
 }
