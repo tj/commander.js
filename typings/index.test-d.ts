@@ -433,6 +433,16 @@ expectType<string>(program.usage());
 expectType<commander.Command>(program.name('my-name'));
 expectType<string>(program.name());
 
+// helpGroup related
+expectType<commander.Command>(program.helpGroup('My Group'));
+expectType<string>(program.helpGroup());
+
+expectType<commander.Command>(program.commandsGroup('My Group'));
+expectType<string>(program.commandsGroup());
+
+expectType<commander.Command>(program.optionsGroup('My Group'));
+expectType<string>(program.optionsGroup());
+
 // nameFromFilename
 expectType<commander.Command>(program.nameFromFilename(__filename));
 
@@ -599,6 +609,40 @@ expectType<string>(
 );
 expectType<boolean>(helper.preformatted('a\nb c'));
 
+{
+  const formattedItems = [
+    '--example  example description',
+    '--example2 example2 description',
+  ];
+  expectType<string[]>(
+    helper.formatItemList('Options', formattedItems, helper),
+  );
+}
+
+{
+  const unsortedOptions = [new commander.Option('-a, --all')];
+  const sortedOptions = unsortedOptions;
+  const groupsItemsOptionHeading = (option: commander.Option) =>
+    option.helpGroupHeading ?? 'Options:';
+  expectType<Map<string, commander.Option[]>>(
+    helper.groupItems(unsortedOptions, sortedOptions, groupsItemsOptionHeading),
+  );
+}
+
+{
+  const unsortedCommands = [new commander.Command('foo')];
+  const sortedCommands = unsortedCommands;
+  const groupsItemsCommandHeading = (cmd: commander.Command) =>
+    cmd.helpGroup() ?? 'Commands:';
+  expectType<Map<string, commander.Command[]>>(
+    helper.groupItems(
+      unsortedCommands,
+      sortedCommands,
+      groupsItemsCommandHeading,
+    ),
+  );
+}
+
 expectType<string>(helper.styleTitle('Usage:'));
 
 expectType<string>(helper.styleUsage('foo [options] <file>'));
@@ -638,6 +682,7 @@ expectType<unknown>(baseOption.presetArg);
 expectType<string | undefined>(baseOption.envVar);
 expectType<boolean>(baseOption.hidden);
 expectType<string[] | undefined>(baseOption.argChoices);
+expectType<string | undefined>(baseOption.helpGroupHeading);
 
 // Option methods
 
@@ -689,6 +734,11 @@ expectType<string>(baseOption.name());
 
 // attributeName
 expectType<string>(baseOption.attributeName());
+
+// helpGroup
+expectType<commander.Option>(baseOption.helpGroup('My Group'));
+// @ts-expect-error: Option helpGroup() can not be used as a getter.
+baseOption.helpGroup();
 
 // isBoolean
 expectType<boolean>(baseOption.isBoolean());
