@@ -24,6 +24,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Changed
 
 - *Breaking:* Commander 14 requires Node.js v20 or higher
+- internal refactor of `Help` class adding `.formatItemList()` and `.groupItems()` methods ([#2328])
 
 ## [13.1.0] (2025-01-21)
 
