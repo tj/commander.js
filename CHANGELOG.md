@@ -8,6 +8,24 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [14.0.0] (2025-05-18)
+
+### Added
+
+- support for groups of options and commands in the help using low-level `.helpGroup()` on `Option` and `Command`, and higher-level `.optionsGroup()` and `.commandsGroup()` which can be used in chaining way to specify group title for following options/commands ([#2328])
+- support for unescaped negative numbers as option-arguments and command-arguments ([#2339])
+- TypeScript: add `parseArg` property to `Argument` class ([#2359])
+
+### Fixed
+
+- remove bogus leading space in help when option has default value but not a description ([#2348])
+- `.configureOutput()` now makes copy of settings instead of modifying in-place, fixing side-effects ([#2350])
+
+### Changed
+
+- *Breaking:* Commander 14 requires Node.js v20 or higher
+- internal refactor of `Help` class adding `.formatItemList()` and `.groupItems()` methods ([#2328])
+
 ## [13.1.0] (2025-01-21)
 
 ### Added
@@ -1388,7 +1406,11 @@ program
 [#2270]: https://github.com/tj/commander.js/pull/2270
 [#2299]: https://github.com/tj/commander.js/pull/2299
 [#2312]: https://github.com/tj/commander.js/pull/2312
-
+[#2328]: https://github.com/tj/commander.js/pull/2328
+[#2339]: https://github.com/tj/commander.js/pull/2339
+[#2348]: https://github.com/tj/commander.js/pull/2348
+[#2350]: https://github.com/tj/commander.js/pull/2350
+[#2359]: https://github.com/tj/commander.js/pull/2359
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
@@ -1468,6 +1490,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[14.0.0]: https://github.com/tj/commander.js/compare/v13.1.0...v14.0.0
 [13.1.0]: https://github.com/tj/commander.js/compare/v13.0.0...v13.1.0
 [13.0.0]: https://github.com/tj/commander.js/compare/v12.1.0...v13.0.0
 [13.0.0-0]: https://github.com/tj/commander.js/compare/v12.1.0...v13.0.0-0
