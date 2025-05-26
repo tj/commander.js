@@ -943,7 +943,7 @@ You can configure the help by modifying data properties and methods using `.conf
 
 Simple properties include `sortSubcommands`, `sortOptions`, and `showGlobalOptions`. You can add color using the style methods like `styleTitle()`.
 
-For more detail and examples of changing the displayed text, color, and layout see (./docs/help-in-depth.md).
+For more detail and examples of changing the displayed text, color, and layout see [help in depth](./docs/help-in-depth.md).
 
 ## Custom event listeners
 
@@ -1063,7 +1063,7 @@ customise the new subcommand (example file [custom-command-class.js](./examples/
 You can enable `--harmony` option in two ways:
 
 - Use `#! /usr/bin/env node --harmony` in the subcommands scripts. (Note Windows does not support this pattern.)
-- Use the `--harmony` option when call the command, like `node --harmony examples/pm publish`. The `--harmony` option will be preserved when spawning subcommand process.
+- Use the `--harmony` option when calling the command, like `node --harmony examples/pm publish`. The `--harmony` option will be preserved when spawning subcommand processes.
 
 ### Debugging stand-alone executable subcommands
 
