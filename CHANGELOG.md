@@ -74,7 +74,7 @@ Now shows an error:
 
 ```console
 $ node example.js a b c
-error: too many arguments. Expected 0 arguments but got 3.
+error: too many arguments. Expected 0 arguments but got 3: a, b, c.
 ```
 
 You can declare the expected arguments. The help will then be more accurate too. Note that declaring
@@ -455,7 +455,7 @@ program.parse();
 ```
 
 ```sh
-$ node trivial.js 
+$ node trivial.js
 error: missing required argument 'file'
 ```
 
@@ -557,7 +557,7 @@ program.showHelpAfterError();
   - pad width calculation was not including help option and help command
   - pad width calculation was including hidden options and commands
 - improve backwards compatibility for custom command event listeners ([#1403])
-  
+
 ### Deleted
 
 - *Breaking:* `.passCommandToAction()` ([#1409])
@@ -658,7 +658,7 @@ program
 - documented second parameter to `.description()` to describe command arguments ([#1353])
 - documentation of special cases with options taking varying numbers of option-arguments ([#1332])
 - documentation for terminology ([#1361])
-  
+
 ### Fixed
 
 - add missing TypeScript definition for `.addHelpCommand()' ([#1375])

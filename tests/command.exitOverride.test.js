@@ -183,7 +183,7 @@ describe('.exitOverride and error details', () => {
       caughtErr,
       1,
       'commander.excessArguments',
-      'error: too many arguments. Expected 0 arguments but got 1.',
+      'error: too many arguments. Expected 0 arguments but got 1: excess.',
     );
   });
 
@@ -207,7 +207,7 @@ describe('.exitOverride and error details', () => {
       caughtErr,
       1,
       'commander.excessArguments',
-      "error: too many arguments for 'speak'. Expected 0 arguments but got 1.",
+      "error: too many arguments for 'speak'. Expected 0 arguments but got 1: excess.",
     );
   });
 
