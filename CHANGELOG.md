@@ -74,7 +74,7 @@ Now shows an error:
 
 ```console
 $ node example.js a b c
-error: too many arguments. Expected 0 arguments but got 3: a, b, c.
+error: too many arguments. Expected 0 arguments but got 3.
 ```
 
 You can declare the expected arguments. The help will then be more accurate too. Note that declaring
