@@ -144,6 +144,55 @@ describe('.exitOverride and error details', () => {
     );
   });
 
+  test('when specify command without required argument then throw MissingArgumentError', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .command('compress <arg-name>')
+      .action(() => {});
+
+    let caughtErr;
+    try {
+      program.parse(['node', 'test', 'compress']);
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expect(stderrSpy).toHaveBeenCalled();
+    expect(caughtErr).toBeInstanceOf(commander.MissingArgumentError);
+    expectCommanderError(
+      caughtErr,
+      1,
+      'commander.missingArgument',
+      "error: missing required argument 'arg-name'",
+    );
+  });
+
+  test('when specify command without required argument then throw MissingArgumentError with argument name', () => {
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .command('compress <arg-name>')
+      .action(() => {});
+
+    let caughtErr;
+    try {
+      program.parse(['node', 'test', 'compress']);
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expect(stderrSpy).toHaveBeenCalled();
+    expect(caughtErr).toBeInstanceOf(commander.MissingArgumentError);
+    expect(caughtErr.argumentName).toEqual('arg-name');
+    expectCommanderError(
+      caughtErr,
+      1,
+      'commander.missingArgument',
+      "error: missing required argument 'arg-name'",
+    );
+  });
+
   test('when specify program without required argument and no action handler then throw CommanderError', () => {
     const program = new commander.Command();
     program.exitOverride().argument('<arg-name>');
@@ -156,6 +205,49 @@ describe('.exitOverride and error details', () => {
     }
 
     expect(stderrSpy).toHaveBeenCalled();
+    expectCommanderError(
+      caughtErr,
+      1,
+      'commander.missingArgument',
+      "error: missing required argument 'arg-name'",
+    );
+  });
+
+  test('when specify program without required argument and no action handler then throw MissingArgumentError', () => {
+    const program = new commander.Command();
+    program.exitOverride().argument('<arg-name>');
+
+    let caughtErr;
+    try {
+      program.parse(['node', 'test']);
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expect(stderrSpy).toHaveBeenCalled();
+    expect(caughtErr).toBeInstanceOf(commander.MissingArgumentError);
+    expectCommanderError(
+      caughtErr,
+      1,
+      'commander.missingArgument',
+      "error: missing required argument 'arg-name'",
+    );
+  });
+
+  test('when specify program without required argument and no action handler then throw MissingArgumentError with argument name', () => {
+    const program = new commander.Command();
+    program.exitOverride().argument('<arg-name>');
+
+    let caughtErr;
+    try {
+      program.parse(['node', 'test']);
+    } catch (err) {
+      caughtErr = err;
+    }
+
+    expect(stderrSpy).toHaveBeenCalled();
+    expect(caughtErr).toBeInstanceOf(commander.MissingArgumentError);
+    expect(caughtErr.argumentName).toEqual('arg-name');
     expectCommanderError(
       caughtErr,
       1,
