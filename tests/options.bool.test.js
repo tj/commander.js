@@ -86,6 +86,38 @@ describe('boolean flag on command', () => {
     program.parse(['node', 'test', 'sub', '--no-cheese']);
     expect(subCommandOptions.cheese).toBe(false);
   });
+
+  test('when neither boolean flag or its negated counterpart is specified, then value is undefined', () => {
+    let subCommandOptions;
+    const program = new commander.Command();
+    program
+      .command('sub')
+      .option('--cheese', 'cheese only')
+      .option('--no-cheese', 'remove cheese')
+      .action((options) => {
+        subCommandOptions = options;
+      });
+    program.parse(['node', 'test', 'sub']);
+
+    expect(subCommandOptions.cheese).toBeUndefined();
+    expect(subCommandOptions.noCheese).toBeUndefined();
+  });
+
+  test('when neither boolean flag or its negated counterpart is specified, then value is undefined (order declaration does not matter)', () => {
+    let subCommandOptions;
+    const program = new commander.Command();
+    program
+      .command('sub')
+      .option('--no-cheese', 'remove cheese')
+      .option('--cheese', 'cheese only')
+      .action((options) => {
+        subCommandOptions = options;
+      });
+    program.parse(['node', 'test', 'sub']);
+
+    expect(subCommandOptions.cheese).toBeUndefined();
+    expect(subCommandOptions.noCheese).toBeUndefined();
+  });
 });
 
 // boolean flag with non-boolean default
