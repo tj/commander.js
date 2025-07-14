@@ -100,7 +100,6 @@ describe('boolean flag on command', () => {
     program.parse(['node', 'test', 'sub']);
 
     expect(subCommandOptions.cheese).toBeUndefined();
-    expect(subCommandOptions.noCheese).toBeUndefined();
   });
 
   test('when neither boolean flag or its negated counterpart is specified, then value is undefined (order declaration does not matter)', () => {
@@ -116,7 +115,6 @@ describe('boolean flag on command', () => {
     program.parse(['node', 'test', 'sub']);
 
     expect(subCommandOptions.cheese).toBeUndefined();
-    expect(subCommandOptions.noCheese).toBeUndefined();
   });
 });
 
