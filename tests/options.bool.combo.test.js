@@ -19,6 +19,15 @@ describe('boolean option combo with no default', () => {
     expect(program.opts().pepper).toBeUndefined();
   });
 
+  test('when boolean combo not specified then value is undefined (order declaration does not matter)', () => {
+    const program = new commander.Command();
+    program
+      .option('--no-pepper', 'remove pepper')
+      .option('--pepper', 'pepper only');
+    program.parse(['node', 'test']);
+    expect(program.opts().pepper).toBeUndefined();
+  });
+
   test('when boolean combo positive then value is true', () => {
     const program = createPepperProgram();
     program.parse(['node', 'test', '--pepper']);
@@ -42,6 +51,7 @@ describe('boolean option combo with no default', () => {
     program.parse(['node', 'test', '--pepper', '--no-pepper']);
     expect(program.opts().pepper).toBe(false);
   });
+
 });
 
 // Flag with default, say from an environment variable.
