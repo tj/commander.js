@@ -51,7 +51,6 @@ describe('boolean option combo with no default', () => {
     program.parse(['node', 'test', '--pepper', '--no-pepper']);
     expect(program.opts().pepper).toBe(false);
   });
-
 });
 
 // Flag with default, say from an environment variable.
