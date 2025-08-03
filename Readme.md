@@ -277,10 +277,7 @@ cheese: stilton
 ### Other option types, negatable boolean and boolean|value
 
 You can define a boolean option long name with a leading `no-` to set the option value to false when used.
-Defined alone this also makes the option true by default.
-
-If you define `--foo` first, adding `--no-foo` does not change the default value from what it would
-otherwise be.
+Defined alone without a matching positive option, this also makes the option true by default.
 
 Example file: [options-negatable.js](./examples/options-negatable.js)
 
