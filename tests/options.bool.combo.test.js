@@ -149,3 +149,43 @@ describe('boolean option combo with non-boolean default and preset', () => {
     expect(program.opts().pepper).toBe(false);
   });
 });
+
+describe('only lone negative causes implicit default of true', () => {
+  test('when lone negative then default value is true', () => {
+    const program = new commander.Command();
+    program.option('--no-pepper', 'remove pepper');
+    program.parse([], { from: 'user' });
+    expect(program.opts().pepper).toBe(true);
+  });
+
+  test('when boolean combo and negative first then no implicit default', () => {
+    // New behaviour in Commander 15, now only lone negative gets implicit default of true.
+    const program = new commander.Command();
+    program
+      .option('--no-pepper', 'remove pepper')
+      .option('--pepper', 'pepper only');
+    program.parse([], { from: 'user' });
+    expect(program.opts().pepper).toBeUndefined();
+  });
+
+  test('when boolean combo and negative second then no implicit default', () => {
+    const program = new commander.Command();
+    program
+      .option('--pepper', 'pepper only')
+      .option('--no-pepper', 'remove pepper');
+    program.parse([], { from: 'user' });
+    expect(program.opts().pepper).toBeUndefined();
+  });
+
+  test('when boolean combo and negative second with explicit default then get explicit default', () => {
+    // Prior to Commander 15, negative second would ignore implicit and explicit default value.
+    // Simpler rule now and the special default behaviour is for lone negative only. Add test since
+    // intentional change of behaviour for unlikely edge case.
+    const program = new commander.Command();
+    program
+      .option('--pepper', 'pepper only')
+      .option('--no-pepper', 'remove pepper', 'plain');
+    program.parse([], { from: 'user' });
+    expect(program.opts().pepper).toBe('plain');
+  });
+});

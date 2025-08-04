@@ -22,6 +22,6 @@ console.log(`You ordered a pizza with ${sauceStr} and ${cheeseStr}`);
 
 // Try the following:
 //    node options-negatable.js
-//    node options-negatable.js --sauce
+//    node options-negatable.js --no-sauce
 //    node options-negatable.js --cheese=blue
 //    node options-negatable.js --no-sauce --no-cheese
