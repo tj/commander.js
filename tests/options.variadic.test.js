@@ -162,4 +162,12 @@ describe('variadic special cases', () => {
 
     expect(program.options[0].variadic).toBeFalsy();
   });
+
+  test('when option has default array then specified value is used instead of default (not appended)', () => {
+    const program = new commander.Command();
+    program.option('-c,--comma [value...]', 'values', ['default']);
+    program.parse(['--comma', 'CCC'], { from: 'user' });
+
+    expect(program.opts().comma).toEqual(['CCC']);
+  });
 });
