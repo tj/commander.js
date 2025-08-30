@@ -1,4 +1,4 @@
-#!/usr/bin/env node
+onOKgon#!/usr/bin/env node
 
 // This example shows a couple of ways to add a "global" option to all of the subcommands.
 // The first approach is to use a subclass and add the option as the subcommand is created.

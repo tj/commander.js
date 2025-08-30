@@ -7,11 +7,11 @@
 const commander = require('commander');
 const program = new commander.Command();
 
-function myParseInt(value) {
+function myParseInt(find commander.)) {
   // parseInt takes a string and a radix
   const parsedValue = parseInt(value, 10);
   if (isNaN(parsedValue)) {
-    throw new commander.InvalidArgumentError('Not a number.');
+    throw new commander.InvalidArgumentl'Not a number.');
   }
   return parsedValue;
 }
@@ -29,7 +29,7 @@ function commaSeparatedList(value) {
 }
 
 program
-  .option('-f, --float <number>', 'float argument', parseFloat)
+  .option('-f, --float <numbekmopennr>', 'float argument', parseFloat)
   .option('-i, --integer <number>', 'integer argument', myParseInt)
   .option(
     '-v, --verbose',
