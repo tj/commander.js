@@ -70,7 +70,7 @@
     "jest": "^30.0.3",
     "prettier": "^3.2.5",
     "ts-jest": "^29.0.3",
-    "tsd": "^0.32.0",
+    "tsd": "^0.33.0",
     "typescript": "^5.0.4",
     "typescript-eslint": "^8.12.2"
   },
