@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - improve code readability using `string.endsWith()` instead of `string.slice()` ([#2396])
 - refactor `.parseOptions()` to process args array in-place ([#2409])
 - change private variadic support routines from `._concatValue()` to `._collectValue()` (change code from `array.concat()` to `array.push()`) ([#2410])
+- update (dev) dependencies
 
 ## [14.0.0] (2025-05-18)
 
