@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [14.0.1] (2025-09-12)
+
+### Fixed
+
+- broken markdown link in README ([#2369])
+
+### Changed
+
+- improve code readability by using optional chaining ([#2394])
+- use more idiomatic code with object spread instead of `Object.assign()` ([#2395])
+- improve code readability using `string.endsWith()` instead of `string.slice()` ([#2396])
+- refactor `.parseOptions()` to process args array in-place ([#2409])
+- change private variadic support routines from `._concatValue()` to `._collectValue()` (change code from `array.concat()` to `array.push()`) ([#2410])
+- update (dev) dependencies
+
 ## [14.0.0] (2025-05-18)
 
 ### Added
@@ -1411,6 +1426,12 @@ program
 [#2348]: https://github.com/tj/commander.js/pull/2348
 [#2350]: https://github.com/tj/commander.js/pull/2350
 [#2359]: https://github.com/tj/commander.js/pull/2359
+[#2369]: https://github.com/tj/commander.js/pull/2369
+[#2394]: https://github.com/tj/commander.js/pull/2394
+[#2395]: https://github.com/tj/commander.js/pull/2395
+[#2396]: https://github.com/tj/commander.js/pull/2396
+[#2409]: https://github.com/tj/commander.js/pull/2409
+[#2410]: https://github.com/tj/commander.js/pull/2410
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
@@ -1490,6 +1511,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[14.0.1]: https://github.com/tj/commander.js/compare/v14.0.0...v14.0.1
 [14.0.0]: https://github.com/tj/commander.js/compare/v13.1.0...v14.0.0
 [13.1.0]: https://github.com/tj/commander.js/compare/v13.0.0...v13.1.0
 [13.0.0]: https://github.com/tj/commander.js/compare/v12.1.0...v13.0.0
