@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [14.0.2] (2025-10-25)
+
+### Changed
+
+- improve negative number auto-detection test ([#2428])
+- update (dev) dependencies
+
 ## [14.0.1] (2025-09-12)
 
 ### Fixed
@@ -1432,6 +1439,7 @@ program
 [#2396]: https://github.com/tj/commander.js/pull/2396
 [#2409]: https://github.com/tj/commander.js/pull/2409
 [#2410]: https://github.com/tj/commander.js/pull/2410
+[#2428]: https://github.com/tj/commander.js/pull/2428
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
@@ -1511,6 +1519,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[14.0.2]: https://github.com/tj/commander.js/compare/v14.0.1...v14.0.2
 [14.0.1]: https://github.com/tj/commander.js/compare/v14.0.0...v14.0.1
 [14.0.0]: https://github.com/tj/commander.js/compare/v13.1.0...v14.0.0
 [13.1.0]: https://github.com/tj/commander.js/compare/v13.0.0...v13.1.0
