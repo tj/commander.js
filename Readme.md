@@ -1149,7 +1149,7 @@ There is more information available about:
 
 The current version of Commander is fully supported on Long Term Support versions of Node.js, and requires at least v20.
 
-Older version lines of Commander receive security updates for 12 months. For more see: [Release Policy](./docs/release-policy.md).
+Older major versions of Commander receive security updates for 12 months. For more see: [Release Policy](./docs/release-policy.md).
 
 The main forum for free and community support is the project [Issues](https://github.com/tj/commander.js/issues) on GitHub.
 
