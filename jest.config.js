@@ -1,4 +1,4 @@
-export default {
+const config = {
   testEnvironment: 'node',
   collectCoverage: true,
   transform: {
@@ -6,3 +6,5 @@ export default {
   },
   testPathIgnorePatterns: ['/node_modules/'],
 };
+
+module.exports = config;
