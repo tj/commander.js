@@ -176,10 +176,7 @@ const program = new Command();
 
 ## Options
 
-Options are defined with the `.option()` method, also serving as documentation for the options. Each option can have a short flag (single character) and a long name, separated by a comma, a space, or a vertical bar (`|`). 
-
-To allow a wider range of short-ish flags than just
-single characters, you may also have two long options.
+Options are defined with the `.option()` method, also serving as documentation for the options. Each option can have a short flag (single character) and a long name, separated by a comma, a space, or a vertical bar (`|`). To allow a wider range of short-ish flags than just single characters, you may also have two long options.
 
 ```js
 program
@@ -190,7 +187,7 @@ program
 
 The parsed options can be accessed by calling `.opts()` on a `Command` object, and are passed to the action handler.
 
-Multi-word options, such as `"--template-engine"`, are camel-cased, becoming `program.opts().templateEngine`, for example.
+Multi-word options like `--template-engine` are normalized to camelCase option names, resulting in properties such as `program.opts().templateEngine`.
 
 An option and its option-argument can be separated by a space, or combined into the same argument. The option-argument can follow the short option directly, or follow an `=` for a long option.
 
@@ -525,10 +522,7 @@ $ custom --list x,y,z
 
 ## Commands
 
-You can specify (sub)commands using `.command()` or `.addCommand()`. There are two ways these can be implemented:
-
-1. Using an action handler attached to the command; or,
-2. as a stand-alone executable file. (More detail about this later.)
+You can specify (sub)commands using `.command()` or `.addCommand()`. There are two ways these can be implemented: using an `.action()` handler attached to the command; or as a stand-alone executable file. (More detail about this later.)
 
 Subcommands may be nested. Example file: [nestedCommands.js](./examples/nestedCommands.js).
 
@@ -674,7 +668,7 @@ program
   });
 ```
 
-If you prefer, you can work with the command directly and skip declaring the parameters for the action handler. The `this` keyword is set to the running command, and can be used from a function expression (but not from an arrow function).
+If you prefer, you can work with the command directly and skip declaring the parameters for the action handler. If you use a function expression (but not an arrow function), the `this` keyword is set to the running command.
 
 Example file: [action-this.js](./examples/action-this.js)
 
