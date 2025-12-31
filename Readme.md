@@ -569,9 +569,7 @@ For safety, `.addCommand()` does not automatically copy the inherited settings f
 For subcommands, you can specify the argument syntax in the call to `.command()` (as shown above). This
 is the only method usable for subcommands implemented using a stand-alone executable.
 
-For other subcommands, you can instead use the following method.
-
-To configure a command, you can use `.argument()` to specify each expected command-argument.
+Alternatively, you can instead use the following method. To configure a command, you can use `.argument()` to specify each expected command-argument.
 You supply the argument name and an optional description. The argument may be `<required>` or `[optional]`.
 You can specify a default value for an optional command-argument.
 
