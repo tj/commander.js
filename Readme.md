@@ -597,7 +597,7 @@ program
 The last argument of a command can be variadic, and _only_ the last argument.  To make an argument variadic, simply
 append `...` to the argument name.
 
-A variadic argument is passed to the action handler as an array. For example:
+A variadic argument is passed to the action handler as an array.
 
 ```js
 program
