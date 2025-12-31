@@ -1112,10 +1112,10 @@ program.error('Custom processing has failed', { exitCode: 2, code: 'my.custom.er
 By default, Commander calls `process.exit()` when it detects errors, or after displaying the help or version. You can override
 this behaviour and optionally supply a callback. The default override throws a `CommanderError`.
 
-The override callback is passed a `CommanderError` with the properties 
-- `exitCode` (number), 
-- `code` (string), and 
-- `message` (string).
+The override callback is passed a `CommanderError` with the properties:
+- `exitCode`: number
+- `code`: string 
+- `message`: string
 
 Commander expects the callback to terminate the normal program flow, and will call `process.exit()` if the callback returns.
 The normal display of error messages or version or help is not affected by the override, which is called after the display.
