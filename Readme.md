@@ -530,7 +530,7 @@ You can specify (sub)commands using `.command()` or `.addCommand()`. There are t
 1. Using an action handler attached to the command; or,
 2. as a stand-alone executable file. (More detail about this later.)
 
-Subcommands may be nested. (See example: [nestedCommands.js](./examples/nestedCommands.js).)
+Subcommands may be nested. Example file: [nestedCommands.js](./examples/nestedCommands.js).
 
 In the first parameter to `.command()` you specify the command name. You may append the command-arguments after the command name, or specify them separately using `.argument()`. The arguments may be `<required>` or `[optional]`, and the last argument may also be `variadic...`.
 
