@@ -1072,7 +1072,7 @@ customise the new subcommand. Example file: [custom-command-class.js](./examples
 
 You can enable `--harmony` option in two ways:
 
-- Use `#! /usr/bin/env node --harmony` in the subcommands scripts. (**Note:** Windows does not support this pattern.)
+- Use `#! /usr/bin/env node --harmony` in the subcommands scripts. (Note: Windows does not support this pattern.)
 - Use the `--harmony` option when calling the command, like `node --harmony examples/pm publish`. The `--harmony` option will be preserved when spawning subcommand processes.
 
 ### Debugging stand-alone executable subcommands
