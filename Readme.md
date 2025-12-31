@@ -179,7 +179,7 @@ const program = new Command();
 Options are defined with the `.option()` method, also serving as documentation for the options. Each option can have a short flag (single character) and a long name, separated by a comma, a space, or a vertical bar (`|`). 
 
 To allow a wider range of short-ish flags than just
-single characters, you may also have two long options. Examples:
+single characters, you may also have two long options.
 
 ```js
 program
