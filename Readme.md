@@ -564,7 +564,7 @@ Configuration options can be passed with the call to `.command()` and `.addComma
 remove the command from the generated help output. Specifying `isDefault: true` will run the subcommand if no other
 subcommand is specified. (Example file: [defaultCommand.js](./examples/defaultCommand.js).)
 
-You can add alternative names for a command with `.alias()`. (See example: [alias.js](./examples/alias.js).)
+You can add alternative names for a command with `.alias()`. (Example file: [alias.js](./examples/alias.js).)
 
 `.command()` automatically copies the inherited settings from the parent command to the newly created subcommand. This is only done during creation; any later setting changes to the parent are not inherited.
 
