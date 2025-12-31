@@ -562,7 +562,7 @@ program
 
 Configuration options can be passed with the call to `.command()` and `.addCommand()`. Specifying `hidden: true` will
 remove the command from the generated help output. Specifying `isDefault: true` will run the subcommand if no other
-subcommand is specified. (See example: [defaultCommand.js](./examples/defaultCommand.js).)
+subcommand is specified. (Example file: [defaultCommand.js](./examples/defaultCommand.js).)
 
 You can add alternative names for a command with `.alias()`. (See example: [alias.js](./examples/alias.js).)
 
