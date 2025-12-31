@@ -1066,7 +1066,7 @@ const program = createCommand();
 
 `createCommand()` is also a method of the `Command` object, and creates a new command rather than a subcommand. This gets used internally
 when creating subcommands using `.command()`, and you may override it to
-customise the new subcommand. See example file: [custom-command-class.js](./examples/custom-command-class.js).
+customise the new subcommand. Example file: [custom-command-class.js](./examples/custom-command-class.js).
 
 ### Node options such as `--harmony`
 
