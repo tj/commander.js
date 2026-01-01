@@ -8,7 +8,6 @@ const execFileAsync = util.promisify(childProcess.execFile);
 // See also command.executableSubcommand.search.test.js
 
 // Suppress false positive warnings due to use of testOrSkipOnWindows
-/* eslint-disable jest/no-standalone-expect */
 
 const testOrSkipOnWindows = process.platform === 'win32' ? test.skip : test;
 const pm = path.join(__dirname, './fixtures/pm');
@@ -18,10 +17,8 @@ test('when subcommand file missing then error', () => {
   return execFileAsync('node', [pm, 'list']).catch((err) => {
     if (process.platform === 'win32') {
       // Get uncaught thrown error on Windows
-      // eslint-disable-next-line jest/no-conditional-expect
       expect(err.stderr).toBeDefined();
     } else {
-      // eslint-disable-next-line jest/no-conditional-expect
       expect(err.stderr).toMatch(/Error: 'pm-list' does not exist/);
     }
   });
@@ -32,10 +29,8 @@ test('when alias subcommand file missing then error', () => {
   return execFileAsync('node', [pm, 'lst']).catch((err) => {
     if (process.platform === 'win32') {
       // Get uncaught thrown error on Windows
-      // eslint-disable-next-line jest/no-conditional-expect
       expect(err.stderr).toBeDefined();
     } else {
-      // eslint-disable-next-line jest/no-conditional-expect
       expect(err.stderr).toMatch(/Error: 'pm-list' does not exist/);
     }
   });

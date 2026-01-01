@@ -6,8 +6,6 @@ const path = require('path');
 // semver minor versions. For now, also testing the error.message and that output occurred
 // to detect accidental changes in behaviour.
 
-/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["expect", "expectCommanderError"] }] */
-
 function expectCommanderError(err, exitCode, code, message) {
   expect(err).toBeInstanceOf(commander.CommanderError);
   expect(err.exitCode).toBe(exitCode);

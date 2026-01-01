@@ -13,7 +13,6 @@ function makeSystemError(code) {
 }
 
 // Suppress false positive warnings due to use of testOrSkipOnWindows
-/* eslint-disable jest/no-standalone-expect */
 
 const testOrSkipOnWindows = process.platform === 'win32' ? test.skip : test;
 
