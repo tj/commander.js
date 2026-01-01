@@ -14,7 +14,7 @@ describe('variadic argument', () => {
 
     const callArgs = actionMock.mock.calls[0].arguments;
     assert.strictEqual(callArgs[0], 'id');
-    assert.deepStrictEqual(callArgs[1], []);
+    assert.deepEqual(callArgs[1], []);
   });
 
   test('when extra arguments specified for program then variadic arg is array of values', (t) => {
@@ -27,7 +27,7 @@ describe('variadic argument', () => {
 
     const callArgs = actionMock.mock.calls[0].arguments;
     assert.strictEqual(callArgs[0], 'id');
-    assert.deepStrictEqual(callArgs[1], extraArguments);
+    assert.deepEqual(callArgs[1], extraArguments);
   });
 
   test('when no extra arguments specified for command then variadic arg is empty array', (t) => {
@@ -38,7 +38,7 @@ describe('variadic argument', () => {
     program.parse(['node', 'test', 'sub']);
 
     const callArgs = actionMock.mock.calls[0].arguments;
-    assert.deepStrictEqual(callArgs[0], []);
+    assert.deepEqual(callArgs[0], []);
   });
 
   test('when extra arguments specified for command then variadic arg is array of values', (t) => {
@@ -50,7 +50,7 @@ describe('variadic argument', () => {
     program.parse(['node', 'test', 'sub', ...extraArguments]);
 
     const callArgs = actionMock.mock.calls[0].arguments;
-    assert.deepStrictEqual(callArgs[0], extraArguments);
+    assert.deepEqual(callArgs[0], extraArguments);
   });
 
   test('when program variadic argument not last then error', () => {

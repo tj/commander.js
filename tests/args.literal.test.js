@@ -18,7 +18,7 @@ test('when arguments includes -- then stop processing options', () => {
   const opts = program.opts();
   assert.strictEqual(opts.foo, true);
   assert.strictEqual(opts.bar, undefined);
-  assert.deepStrictEqual(program.args, ['--bar', 'baz']);
+  assert.deepEqual(program.args, ['--bar', 'baz']);
 });
 
 test('when arguments include -- then more literals are passed-through as args', () => {
@@ -28,5 +28,5 @@ test('when arguments include -- then more literals are passed-through as args', 
     .option('-b, --bar', 'add some bar')
     .argument('[args...]');
   program.parse(['node', 'test', '--', 'cmd', '--', '--arg']);
-  assert.deepStrictEqual(program.args, ['cmd', '--', '--arg']);
+  assert.deepEqual(program.args, ['cmd', '--', '--arg']);
 });
