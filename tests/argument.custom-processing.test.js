@@ -185,8 +185,8 @@ test('when custom processing for argument throws plain error then not CommanderE
       program.parse(['green'], { from: 'user' });
     },
     (err) => {
-      assert(err instanceof Error);
-      assert(!(err instanceof commander.CommanderError));
+      assert.equal(err instanceof Error, true);
+      assert.equal(err instanceof commander.CommanderError, false);
       return true;
     },
   );
