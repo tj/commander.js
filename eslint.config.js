@@ -48,6 +48,7 @@ module.exports = tseslint.config(
     files: ['**/*.test.{js,mjs,cjs}'],
     rules: {
       'no-unused-vars': 'off', // lots in tests, minimise churn for now
+      'no-undef': 'off', // TEMPORARY while converting tests from jest to node:test
     },
   },
   {
