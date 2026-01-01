@@ -1,4 +1,6 @@
 const commander = require('../');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
 test('when command argument in choices then argument set', () => {
   const program = new commander.Command();
@@ -10,7 +12,7 @@ test('when command argument in choices then argument set', () => {
       shade = shadeParam;
     });
   program.parse(['red'], { from: 'user' });
-  expect(shade).toBe('red');
+  assert.strictEqual(shade, 'red');
 });
 
 test('when command argument is not in choices then error', () => {
@@ -22,9 +24,9 @@ test('when command argument is not in choices then error', () => {
       writeErr: () => {},
     })
     .addArgument(new commander.Argument('<shade>').choices(['red', 'blue']));
-  expect(() => {
+  assert.throws(() => {
     program.parse(['orange'], { from: 'user' });
-  }).toThrow();
+  });
 });
 
 describe('choices parameter is treated as readonly, per TypeScript declaration', () => {
@@ -33,7 +35,7 @@ describe('choices parameter is treated as readonly, per TypeScript declaration',
     const original = ['red', 'blue', 'green'];
     const param = original.slice();
     new commander.Argument('<shade>').choices(param);
-    expect(param).toEqual(original);
+    assert.deepEqual(param, original);
   });
 
   test('when choices called and argChoices later changed then parameter does not change', () => {
@@ -41,7 +43,7 @@ describe('choices parameter is treated as readonly, per TypeScript declaration',
     const param = original.slice();
     const argument = new commander.Argument('<shade>').choices(param);
     argument.argChoices.push('purple');
-    expect(param).toEqual(original);
+    assert.deepEqual(param, original);
   });
 
   test('when choices called and parameter changed the choices does not change', () => {
@@ -54,8 +56,8 @@ describe('choices parameter is treated as readonly, per TypeScript declaration',
       })
       .addArgument(new commander.Argument('<shade>').choices(param));
     param.push('orange');
-    expect(() => {
+    assert.throws(() => {
       program.parse(['orange'], { from: 'user' });
-    }).toThrow();
+    });
   });
 });
