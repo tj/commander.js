@@ -56,33 +56,17 @@ describe('variadic argument', () => {
   test('when program variadic argument not last then error', () => {
     const program = new commander.Command();
 
-    let error = {};
-    try {
+    assert.throws(() => {
       program.arguments('<variadicArg...> [optionalArg]');
-    } catch (err) {
-      error = err;
-    }
-
-    assert.match(
-      error.message,
-      /only the last argument can be variadic 'variadicArg'/,
-    );
+    }, /only the last argument can be variadic 'variadicArg'/);
   });
 
   test('when command variadic argument not last then error', () => {
     const program = new commander.Command();
 
-    let error = {};
-    try {
+    assert.throws(() => {
       program.command('sub <variadicArg...> [optionalArg]');
-    } catch (err) {
-      error = err;
-    }
-
-    assert.match(
-      error.message,
-      /only the last argument can be variadic 'variadicArg'/,
-    );
+    }, /only the last argument can be variadic 'variadicArg'/);
   });
 
   test('when variadic argument then usage shows variadic', () => {
