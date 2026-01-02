@@ -16,8 +16,8 @@ test('when arguments includes -- then stop processing options', () => {
   program.parse(['node', 'test', '--foo', '--', '--bar', 'baz']);
   // More than one assert, ported from legacy test
   const opts = program.opts();
-  assert.strictEqual(opts.foo, true);
-  assert.strictEqual(opts.bar, undefined);
+  assert.equal(opts.foo, true);
+  assert.equal(opts.bar, undefined);
   assert.deepEqual(program.args, ['--bar', 'baz']);
 });
 

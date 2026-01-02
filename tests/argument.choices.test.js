@@ -12,7 +12,7 @@ test('when command argument in choices then argument set', () => {
       shade = shadeParam;
     });
   program.parse(['red'], { from: 'user' });
-  assert.strictEqual(shade, 'red');
+  assert.equal(shade, 'red');
 });
 
 test('when command argument is not in choices then error', () => {

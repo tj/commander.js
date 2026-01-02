@@ -13,7 +13,7 @@ describe('variadic argument', (t) => {
     program.parse(['node', 'test', 'id']);
 
     const callArgs = actionMock.mock.calls[0].arguments;
-    assert.strictEqual(callArgs[0], 'id');
+    assert.equal(callArgs[0], 'id');
     assert.deepEqual(callArgs[1], []);
   });
 
@@ -29,7 +29,7 @@ describe('variadic argument', (t) => {
     program.parse(['node', 'test', 'id', ...extraArguments]);
 
     const callArgs = actionMock.mock.calls[0].arguments;
-    assert.strictEqual(callArgs[0], 'id');
+    assert.equal(callArgs[0], 'id');
     assert.deepEqual(callArgs[1], extraArguments);
   });
 
