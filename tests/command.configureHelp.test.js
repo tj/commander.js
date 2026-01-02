@@ -1,4 +1,6 @@
 const commander = require('../');
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
 
 test('when configure program then affects program helpInformation', () => {
   const program = new commander.Command();
@@ -7,7 +9,7 @@ test('when configure program then affects program helpInformation', () => {
       return 'custom';
     },
   });
-  expect(program.helpInformation()).toEqual('custom');
+  assert.equal(program.helpInformation(), 'custom');
 });
 
 test('when configure program then affects subcommand helpInformation', () => {
@@ -18,13 +20,13 @@ test('when configure program then affects subcommand helpInformation', () => {
     },
   });
   const sub = program.command('sub');
-  expect(sub.helpInformation()).toEqual('custom');
+  assert.equal(sub.helpInformation(), 'custom');
 });
 
 test('when configure with unknown property then createHelp has unknown property', () => {
   const program = new commander.Command();
   program.configureHelp({ mySecretValue: 'secret' });
-  expect(program.createHelp().mySecretValue).toEqual('secret');
+  assert.equal(program.createHelp().mySecretValue, 'secret');
 });
 
 test('when configure with unknown property then helper passed to formatHelp has unknown property', () => {
@@ -35,5 +37,5 @@ test('when configure with unknown property then helper passed to formatHelp has 
       return helper.mySecretValue;
     },
   });
-  expect(program.helpInformation()).toEqual('secret');
+  assert.equal(program.helpInformation(), 'secret');
 });
