@@ -1,6 +1,8 @@
 const childProcess = require('child_process');
 const path = require('path');
 const util = require('util');
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
 
 const execFileAsync = util.promisify(childProcess.execFile);
 
@@ -11,7 +13,7 @@ const inspectCommand = path.join(__dirname, './fixtures', 'inspect.js');
 
 test('when execArgv empty then spawn execArgs empty', async () => {
   const { stdout } = await execFileAsync('node', [inspectCommand, 'sub']);
-  expect(stdout).toBe('[]\n');
+  assert.equal(stdout, '[]\n');
 });
 
 test('when execArgv --harmony then spawn execArgs --harmony', async () => {
@@ -20,7 +22,7 @@ test('when execArgv --harmony then spawn execArgs --harmony', async () => {
     inspectCommand,
     'sub',
   ]);
-  expect(stdout).toBe("[ '--harmony' ]\n");
+  assert.equal(stdout, "[ '--harmony' ]\n");
 });
 
 // --inspect defaults to 127.0.0.1:9229, port should be incremented
@@ -30,7 +32,7 @@ test('when execArgv --inspect then spawn execArgs using port 9230', async () => 
     inspectCommand,
     'sub',
   ]);
-  expect(stdout).toBe("[ '--inspect=127.0.0.1:9230' ]\n");
+  assert.equal(stdout, "[ '--inspect=127.0.0.1:9230' ]\n");
 });
 
 // custom port
@@ -40,7 +42,7 @@ test('when execArgv --inspect=9240 then spawn execArgs using port 9241', async (
     inspectCommand,
     'sub',
   ]);
-  expect(stdout).toBe("[ '--inspect=127.0.0.1:9241' ]\n");
+  assert.equal(stdout, "[ '--inspect=127.0.0.1:9241' ]\n");
 });
 
 // zero is special, random port
@@ -50,7 +52,7 @@ test('when execArgv --inspect=0 then spawn execArgs --inspect=0', async () => {
     inspectCommand,
     'sub',
   ]);
-  expect(stdout).toBe("[ '--inspect=0' ]\n");
+  assert.equal(stdout, "[ '--inspect=0' ]\n");
 });
 
 // ip address
@@ -60,7 +62,7 @@ test('when execArgv --inspect=127.0.0.1:9250 then spawn execArgs --inspect=127.0
     inspectCommand,
     'sub',
   ]);
-  expect(stdout).toBe("[ '--inspect=127.0.0.1:9251' ]\n");
+  assert.equal(stdout, "[ '--inspect=127.0.0.1:9251' ]\n");
 });
 
 // localhost
@@ -70,7 +72,7 @@ test('when execArgv --inspect=localhost:9260 then spawn execArgs --inspect=local
     inspectCommand,
     'sub',
   ]);
-  expect(stdout).toBe("[ '--inspect=localhost:9261' ]\n");
+  assert.equal(stdout, "[ '--inspect=localhost:9261' ]\n");
 });
 
 // --inspect-port, just test most likely format
@@ -80,5 +82,5 @@ test('when execArgv --inspect-port=9270 then spawn execArgs --inspect-port=127.0
     inspectCommand,
     'sub',
   ]);
-  expect(stdout).toBe("[ '--inspect-port=127.0.0.1:9271' ]\n");
+  assert.equal(stdout, "[ '--inspect-port=127.0.0.1:9271' ]\n");
 });
