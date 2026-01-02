@@ -37,7 +37,7 @@ describe('variadic argument', () => {
 
     program.parse(['node', 'test', 'id']);
 
-    // Jest was expect(actionMock).toHaveBeenCalledWith('id', [], program.opts(), program);
+    // Jest was: expect(actionMock).toHaveBeenCalledWith('id', [], program.opts(), program);
     const callArgs = actionMock.mock.calls[0].arguments;
     assert.equal(callArgs[0], 'id');
     assert.deepEqual(callArgs[1], []);
@@ -53,4 +53,46 @@ test('when use alias then action handler called', (t) => {
   program.parse(['ls'], { from: 'user' });
   // Jest was: expect(actionMock).toHaveBeenCalled();
   assert.equal(actionMock.mock.callCount(), 1);
+});
+
+// Jest was:
+// test.each([
+//   { flags: '-s' }, // single short
+//   { flags: '--long' }, // single long
+// ])('when construct Option with flags %p then do not throw', ({ flags }) => {
+//   expect(() => {
+//     new Option(flags);
+//   }).not.toThrow();
+// });
+//
+// Wrap loop in a describe block to group related tests.
+describe('when construct Option with various flags then do not throw', () => {
+  const flagsList = [
+    { flags: '-s' }, // single short
+    { flags: '--long' }, // single long
+  ];
+  for (const { flags } of flagsList) {
+    test(`when construct Option with flags ${flags} then do not throw`, () => {
+      assert.doesNotThrow(() => {
+        new commander.Option(flags);
+      });
+    });
+  }
+});
+
+test('when command name conflicts with existing alias then throw', () => {
+  // Jest was:
+  // expect(() => {
+  //   const program = new commander.Command();
+  //   program.command('one').alias('1');
+  //   program.command('1');
+  // }).toThrow('cannot add command');
+  assert.throws(
+    () => {
+      const program = new commander.Command();
+      program.command('one').alias('1');
+      program.command('1');
+    },
+    { message: /cannot add command/ },
+  );
 });
