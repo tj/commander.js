@@ -11,7 +11,7 @@ test('when addCommand and specify subcommand then called', (t) => {
   program.addCommand(sub);
 
   program.parse('node test.js sub'.split(' '));
-  assert.equal(leafAction.mock.calls.length, 1);
+  assert.equal(leafAction.mock.callCount(), 1);
 });
 
 test('when commands added using .addCommand and .command then internals similar', () => {
