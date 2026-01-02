@@ -5,8 +5,11 @@ const assert = require('node:assert/strict'); // strict assertion mode
 // Key patterns for conversion from Jest to node:test
 // - Jest comments are for example file only and original code does not need to be retained in comments
 // - use assert.equal for primitives, and assert.deepEqual for objects
-// - use node:test describe to replace Jest describe
-// - use node:test t.mock.fn() to replace jest.fn()
+// - use assert.equal rather than assert.strictEqual (already in strict assertion mode)
+// - use assert.deepEqual rather than assert.strictDeepEqual (already in strict assertion mode)
+// - convert Jest describe to node:test describe
+// - convert jest.fn() to use node:test t.mock.fn()
+// - convert expect().toHaveBeenCalled() to assert.equal(callCount, 1)
 
 test('when arguments includes -- then stop processing options', () => {
   const program = new commander.Command();
@@ -35,10 +38,11 @@ describe('variadic argument', () => {
     program.parse(['node', 'test', 'id']);
 
     // Jest was expect(actionMock).toHaveBeenCalledWith('id', [], program.opts(), program);
-    // but do not normally need to check program.opts() and program
     const callArgs = actionMock.mock.calls[0].arguments;
     assert.equal(callArgs[0], 'id');
     assert.deepEqual(callArgs[1], []);
+    assert.equal(callArgs[2], program.opts()); // check same object
+    assert.equal(callArgs[3], program); // check same object
   });
 });
 
