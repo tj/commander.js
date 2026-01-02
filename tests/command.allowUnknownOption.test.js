@@ -1,4 +1,6 @@
 const commander = require('../');
+const { test, describe, beforeEach } = require('node:test');
+const assert = require('node:assert/strict');
 
 // Not testing output, just testing whether an error is detected.
 
@@ -6,27 +8,17 @@ describe('allowUnknownOption', () => {
   // Optional. Use internal knowledge to suppress output to keep test output clean.
   let writeErrorSpy;
 
-  beforeAll(() => {
-    writeErrorSpy = jest
-      .spyOn(process.stderr, 'write')
-      .mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    writeErrorSpy.mockClear();
-  });
-
-  afterAll(() => {
-    writeErrorSpy.mockRestore();
+  beforeEach((t) => {
+    writeErrorSpy = t.mock.method(process.stderr, 'write', () => {});
   });
 
   test('when specify unknown program option then error', () => {
     const program = new commander.Command();
     program.exitOverride().option('-p, --pepper', 'add pepper');
 
-    expect(() => {
+    assert.throws(() => {
       program.parse(['node', 'test', '-m']);
-    }).toThrow();
+    });
   });
 
   test('when specify unknown program option and allowUnknownOption(false) then error', () => {
@@ -36,9 +28,9 @@ describe('allowUnknownOption', () => {
       .allowUnknownOption(false)
       .option('-p, --pepper', 'add pepper');
 
-    expect(() => {
+    assert.throws(() => {
       program.parse(['node', 'test', '-m']);
-    }).toThrow();
+    });
   });
 
   test('when specify unknown program option and allowUnknownOption() then no error', () => {
@@ -49,9 +41,9 @@ describe('allowUnknownOption', () => {
       .argument('[args...]') // unknown option will be passed as an argument
       .option('-p, --pepper', 'add pepper');
 
-    expect(() => {
+    assert.doesNotThrow(() => {
       program.parse(['node', 'test', '-m']);
-    }).not.toThrow();
+    });
   });
 
   test('when specify unknown program option and allowUnknownOption(true) then no error', () => {
@@ -62,9 +54,9 @@ describe('allowUnknownOption', () => {
       .argument('[args...]') // unknown option will be passed as an argument
       .option('-p, --pepper', 'add pepper');
 
-    expect(() => {
+    assert.doesNotThrow(() => {
       program.parse(['node', 'test', '-m']);
-    }).not.toThrow();
+    });
   });
 
   test('when specify unknown command option then error', () => {
@@ -75,9 +67,9 @@ describe('allowUnknownOption', () => {
       .option('-p, --pepper', 'add pepper')
       .action(() => {});
 
-    expect(() => {
+    assert.throws(() => {
       program.parse(['node', 'test', 'sub', '-m']);
-    }).toThrow();
+    });
   });
 
   test('when specify unknown command option and allowUnknownOption then no error', () => {
@@ -90,8 +82,8 @@ describe('allowUnknownOption', () => {
       .option('-p, --pepper', 'add pepper')
       .action(() => {});
 
-    expect(() => {
+    assert.doesNotThrow(() => {
       program.parse(['node', 'test', 'sub', '-m']);
-    }).not.toThrow();
+    });
   });
 });
