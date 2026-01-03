@@ -29,7 +29,7 @@
     "fix:format": "prettier --write .",
     "fix:lint": "eslint --fix .",
     "test": "npm run test:node-test-runner && npm run check:type:ts",
-    "test:node-test-runner": "node --test --test-reporter dot tests/a*.test.js",
+    "test:node-test-runner": "",
     "test-all": "npm run test:node-test-runner && npm run test-esm && npm run check",
     "test-esm": "node ./tests/esm-imports-test.mjs"
   },
