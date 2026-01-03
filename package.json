@@ -28,9 +28,8 @@
     "fix": "npm run fix:lint && npm run fix:format",
     "fix:format": "prettier --write .",
     "fix:lint": "eslint --fix .",
-    "test": "npm run test:node-test-runner && npm run check:type:ts",
-    "test:node-test-runner": "",
-    "test-all": "npm run test:node-test-runner && npm run test-esm && npm run check",
+    "test": "node --test && npm run check:type:ts",
+    "test-all": "node --test && npm run test-esm && npm run check",
     "test-esm": "node ./tests/esm-imports-test.mjs"
   },
   "files": [

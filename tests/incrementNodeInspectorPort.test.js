@@ -11,7 +11,7 @@ describe('incrementNodeInspectorPort', () => {
         on: () => {},
       };
     });
-    signalSpy = test.mock.method(process, 'on', () => {});
+    const signalSpy = test.mock.method(process, 'on', () => {});
     return { spawnSpy, signalSpy };
   }
 
