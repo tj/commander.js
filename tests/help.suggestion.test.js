@@ -31,42 +31,43 @@ function getSuggestion(program, arg) {
   return match ? match[2] : null;
 }
 
-const commandSuggestionTable = [
-  ['yyy', ['zzz'], null, 'none similar'],
-  ['a', ['b'], null, 'one edit away but not similar'],
-  ['a', ['ab'], 'ab', 'one edit away'],
-  ['ab', ['a'], null, 'one edit away'],
-  ['at', ['cat'], 'cat', '1 insertion'],
-  ['cat', ['at'], 'at', '1 deletion'],
-  ['bat', ['cat'], 'cat', '1 substitution'],
-  ['act', ['cat'], 'cat', '1 transposition'],
-  ['cxx', ['cat'], null, '2 edits away and short string'],
-  ['caxx', ['cart'], 'cart', '2 edits away and longer string'],
-  [
-    '1234567',
-    ['1234567890'],
-    '1234567890',
-    '3 edits away is similar for long string',
-  ],
-  ['123456', ['1234567890'], null, '4 edits is too far'],
-  ['xat', ['rat', 'cat', 'bat'], 'bat, cat, rat', 'sorted possibles'],
-  [
-    'cart',
-    ['camb', 'cant', 'bard'],
-    'cant',
-    'only closest of different edit distances',
-  ],
-];
-
-test('command suggestions', () => {
+describe('command suggestions', () => {
+  const commandSuggestionTable = [
+    ['yyy', ['zzz'], null, 'none similar'],
+    ['a', ['b'], null, 'one edit away but not similar'],
+    ['a', ['ab'], 'ab', 'one edit away'],
+    ['ab', ['a'], null, 'one edit away'],
+    ['at', ['cat'], 'cat', '1 insertion'],
+    ['cat', ['at'], 'at', '1 deletion'],
+    ['bat', ['cat'], 'cat', '1 substitution'],
+    ['act', ['cat'], 'cat', '1 transposition'],
+    ['cxx', ['cat'], null, '2 edits away and short string'],
+    ['caxx', ['cart'], 'cart', '2 edits away and longer string'],
+    [
+      '1234567',
+      ['1234567890'],
+      '1234567890',
+      '3 edits away is similar for long string',
+    ],
+    ['123456', ['1234567890'], null, '4 edits is too far'],
+    ['xat', ['rat', 'cat', 'bat'], 'bat, cat, rat', 'sorted possibles'],
+    [
+      'cart',
+      ['camb', 'cant', 'bard'],
+      'cant',
+      'only closest of different edit distances',
+    ],
+  ];
   commandSuggestionTable.forEach(
     ([arg, commandNames, expected, description]) => {
-      const program = new Command();
-      commandNames.forEach((name) => {
-        program.command(name);
+      test(`when cli of ${arg} and commands ${JSON.stringify(commandNames)} then suggest ${expected} because ${description}`, () => {
+        const program = new Command();
+        commandNames.forEach((name) => {
+          program.command(name);
+        });
+        const suggestion = getSuggestion(program, arg);
+        assert.equal(suggestion, expected);
       });
-      const suggestion = getSuggestion(program, arg);
-      assert.equal(suggestion, expected);
     },
   );
 });
@@ -139,47 +140,49 @@ test('when command:* listener and unknown command then no suggestion', () => {
   assert.equal(suggestion, null);
 });
 
-const optionSuggestionTable = [
-  ['--yyy', ['--zzz'], null, 'none similar'],
-  ['--a', ['--b'], null, 'one edit away but not similar'],
-  ['--a', ['--ab'], '--ab', 'one edit away'],
-  ['--ab', ['--a'], null, 'one edit away'],
-  ['--at', ['--cat'], '--cat', '1 insertion'],
-  ['--cat', ['--at'], '--at', '1 deletion'],
-  ['--bat', ['--cat'], '--cat', '1 substitution'],
-  ['--act', ['--cat'], '--cat', '1 transposition'],
-  ['--cxx', ['--cat'], null, '2 edits away and short string'],
-  ['--caxx', ['--cart'], '--cart', '2 edits away and longer string'],
-  [
-    '--1234567',
-    ['--1234567890'],
-    '--1234567890',
-    '3 edits away is similar for long string',
-  ],
-  ['--123456', ['--1234567890'], null, '4 edits is too far'],
-  [
-    '--xat',
-    ['--rat', '--cat', '--bat'],
-    '--bat, --cat, --rat',
-    'sorted possibles',
-  ],
-  [
-    '--cart',
-    ['--camb', '--cant', '--bard'],
-    '--cant',
-    'only closest of different edit distances',
-  ],
-];
+describe('option suggestions', () => {
+  const optionSuggestionTable = [
+    ['--yyy', ['--zzz'], null, 'none similar'],
+    ['--a', ['--b'], null, 'one edit away but not similar'],
+    ['--a', ['--ab'], '--ab', 'one edit away'],
+    ['--ab', ['--a'], null, 'one edit away'],
+    ['--at', ['--cat'], '--cat', '1 insertion'],
+    ['--cat', ['--at'], '--at', '1 deletion'],
+    ['--bat', ['--cat'], '--cat', '1 substitution'],
+    ['--act', ['--cat'], '--cat', '1 transposition'],
+    ['--cxx', ['--cat'], null, '2 edits away and short string'],
+    ['--caxx', ['--cart'], '--cart', '2 edits away and longer string'],
+    [
+      '--1234567',
+      ['--1234567890'],
+      '--1234567890',
+      '3 edits away is similar for long string',
+    ],
+    ['--123456', ['--1234567890'], null, '4 edits is too far'],
+    [
+      '--xat',
+      ['--rat', '--cat', '--bat'],
+      '--bat, --cat, --rat',
+      'sorted possibles',
+    ],
+    [
+      '--cart',
+      ['--camb', '--cant', '--bard'],
+      '--cant',
+      'only closest of different edit distances',
+    ],
+  ];
 
-test('option suggestions', () => {
   optionSuggestionTable.forEach(
     ([arg, commandNames, expected, description]) => {
-      const program = new Command();
-      commandNames.forEach((name) => {
-        program.option(name);
+      test(`when cli of ${arg} and options ${JSON.stringify(commandNames)} then suggest ${expected} because ${description}`, () => {
+        const program = new Command();
+        commandNames.forEach((name) => {
+          program.option(name);
+        });
+        const suggestion = getSuggestion(program, arg);
+        assert.equal(suggestion, expected);
       });
-      const suggestion = getSuggestion(program, arg);
-      assert.equal(suggestion, expected);
     },
   );
 });
