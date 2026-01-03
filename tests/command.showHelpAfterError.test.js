@@ -62,7 +62,7 @@ describe('showHelpAfterError with message', () => {
   });
 
   test('when unknown option then shows help', (t) => {
-    const { program, writeMock } = makeProgram();
+    const { program, writeMock } = makeProgram(t);
     assert.throws(
       () => {
         program.parse(['--unknown-option'], { from: 'user' });

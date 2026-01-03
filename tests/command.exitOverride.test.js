@@ -417,7 +417,7 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expectCommanderError(caughtErr, 1, 'commander.errorc', 'message');
+    expectCommanderError(caughtErr, 1, 'commander.error', 'message');
   });
 });
 
