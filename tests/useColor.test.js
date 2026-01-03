@@ -1,4 +1,6 @@
 const { useColor } = require('../lib/command.js');
+const { test, describe, beforeEach, after } = require('node:test');
+const assert = require('node:assert/strict');
 
 describe('internal useColor environment variable support', () => {
   let holdNoColor = process.env.NO_COLOR;
@@ -11,7 +13,7 @@ describe('internal useColor environment variable support', () => {
     delete process.env.CLICOLOR_FORCE;
   });
 
-  afterAll(() => {
+  after(() => {
     if (holdNoColor === undefined) delete process.env.NO_COLOR;
     else process.env.NO_COLOR = holdNoColor;
 
@@ -23,7 +25,7 @@ describe('internal useColor environment variable support', () => {
   });
 
   test('when no ENV defined then returns undefined', () => {
-    expect(useColor()).toBeUndefined();
+    assert.equal(useColor(), undefined);
   });
 
   // https://no-color.org
@@ -33,32 +35,32 @@ describe('internal useColor environment variable support', () => {
 
   test('when NO_COLOR defined then returns false', () => {
     process.env.NO_COLOR = 'non-empty';
-    expect(useColor()).toBe(false);
+    assert.equal(useColor(), false);
   });
 
   test('when NO_COLOR empty then returns undefined', () => {
     process.env.NO_COLOR = '';
-    expect(useColor()).toBe(undefined);
+    assert.equal(useColor(), undefined);
   });
 
   // https://bixense.com/clicolors/
 
   test('when CLICOLOR_FORCE defined then returns true', () => {
     process.env.CLICOLOR_FORCE = '1';
-    expect(useColor()).toBe(true);
+    assert.equal(useColor(), true);
   });
 
   test('when CLICOLOR_FORCE empty then returns true', () => {
     // Follow original Apple usage and test for existence, don't ignore empty value.
     process.env.CLICOLOR_FORCE = '';
-    expect(useColor()).toBe(true);
+    assert.equal(useColor(), true);
   });
 
   test('when CLICOLOR_FORCE and NO_COLOR defined then returns false', () => {
     // NO_COLOR trumps CLICOLOR_FORCE
     process.env.NO_COLOR = '1';
     process.env.CLICOLOR_FORCE = '1';
-    expect(useColor()).toBe(false);
+    assert.equal(useColor(), false);
   });
 
   // chalk: https://github.com/chalk/supports-color/blob/c214314a14bcb174b12b3014b2b0a8de375029ae/index.js#L33
@@ -69,15 +71,20 @@ describe('internal useColor environment variable support', () => {
   // Node somewhat follows Chalk with 0,1,2,3,true, but treats empty as true and unexpected values as false.
   // Test the expected Chalk values (which do produce same result in node).
 
-  test.each([
-    ['true', true],
-    ['false', false],
-    ['0', false],
-    ['1', true],
-    ['2', true],
-    ['3', true],
-  ])('when FORCE_COLOR=%s then returns %s', (value, result) => {
-    process.env.FORCE_COLOR = value;
-    expect(useColor()).toBe(result);
+  describe('FORCE_COLOR environment variable tests', () => {
+    const testCases = [
+      ['true', true],
+      ['false', false],
+      ['0', false],
+      ['1', true],
+      ['2', true],
+      ['3', true],
+    ];
+    for (const [value, result] of testCases) {
+      test(`when FORCE_COLOR=${value} then returns ${result}`, () => {
+        process.env.FORCE_COLOR = value;
+        assert.equal(useColor(), result);
+      });
+    }
   });
 });

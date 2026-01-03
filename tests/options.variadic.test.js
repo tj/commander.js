@@ -1,16 +1,18 @@
 const commander = require('../');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
 describe('variadic option with required value', () => {
   test('when variadic with value missing then error', () => {
     const program = new commander.Command();
     program
       .exitOverride()
-      .configureOutput({ writeErr: jest.fn() })
+      .configureOutput({ writeErr: () => {} })
       .option('-r,--required <value...>');
 
-    expect(() => {
+    assert.throws(() => {
       program.parse(['--required'], { from: 'user' });
-    }).toThrow();
+    });
   });
 
   test('when variadic with one value then set in array', () => {
@@ -18,7 +20,7 @@ describe('variadic option with required value', () => {
     program.option('-r,--required <value...>');
 
     program.parse(['--required', 'one'], { from: 'user' });
-    expect(program.opts().required).toEqual(['one']);
+    assert.deepEqual(program.opts().required, ['one']);
   });
 
   test('when variadic with two values then set in array', () => {
@@ -26,7 +28,7 @@ describe('variadic option with required value', () => {
     program.option('-r,--required <value...>');
 
     program.parse(['--required', 'one', 'two'], { from: 'user' });
-    expect(program.opts().required).toEqual(['one', 'two']);
+    assert.deepEqual(program.opts().required, ['one', 'two']);
   });
 
   test('when variadic with repeated values then set in array', () => {
@@ -34,7 +36,7 @@ describe('variadic option with required value', () => {
     program.option('-r,--required <value...>');
 
     program.parse(['--required', 'one', '--required', 'two'], { from: 'user' });
-    expect(program.opts().required).toEqual(['one', 'two']);
+    assert.deepEqual(program.opts().required, ['one', 'two']);
   });
 
   test('when variadic used with choices and one value then set in array', () => {
@@ -44,7 +46,7 @@ describe('variadic option with required value', () => {
     );
 
     program.parse(['--required', 'one'], { from: 'user' });
-    expect(program.opts().required).toEqual(['one']);
+    assert.deepEqual(program.opts().required, ['one']);
   });
 
   test('when variadic used with choices and two values then set in array', () => {
@@ -54,7 +56,7 @@ describe('variadic option with required value', () => {
     );
 
     program.parse(['--required', 'one', 'two'], { from: 'user' });
-    expect(program.opts().required).toEqual(['one', 'two']);
+    assert.deepEqual(program.opts().required, ['one', 'two']);
   });
 
   test('when variadic with short combined argument then not variadic', () => {
@@ -62,7 +64,7 @@ describe('variadic option with required value', () => {
     program.option('-r,--required <value...>').argument('[arg]');
 
     program.parse(['-rone', 'operand'], { from: 'user' });
-    expect(program.opts().required).toEqual(['one']);
+    assert.deepEqual(program.opts().required, ['one']);
   });
 
   test('when variadic with long combined argument then not variadic', () => {
@@ -70,7 +72,7 @@ describe('variadic option with required value', () => {
     program.option('-r,--required <value...>').argument('[arg]');
 
     program.parse(['--required=one', 'operand'], { from: 'user' });
-    expect(program.opts().required).toEqual(['one']);
+    assert.deepEqual(program.opts().required, ['one']);
   });
 
   test('when variadic with value followed by option then option not eaten', () => {
@@ -82,8 +84,8 @@ describe('variadic option with required value', () => {
 
     program.parse(['-r', 'one', '-f'], { from: 'user' });
     const opts = program.opts();
-    expect(opts.required).toEqual(['one']);
-    expect(opts.flag).toBe(true);
+    assert.deepEqual(opts.required, ['one']);
+    assert.equal(opts.flag, true);
   });
 
   test('when variadic with no value and default then set to default', () => {
@@ -95,7 +97,7 @@ describe('variadic option with required value', () => {
     );
 
     program.parse([], { from: 'user' });
-    expect(program.opts().required).toEqual('default');
+    assert.equal(program.opts().required, 'default');
   });
 
   test('when variadic with coercion then coercion sets value', () => {
@@ -108,7 +110,7 @@ describe('variadic option with required value', () => {
 
     // variadic processing reads the multiple values, but up to custom coercion what it does.
     program.parse(['--required', '1e2', '1e3'], { from: 'user' });
-    expect(program.opts().required).toEqual(1000);
+    assert.equal(program.opts().required, 1000);
   });
 });
 
@@ -119,7 +121,7 @@ describe('variadic option with optional value', () => {
     program.option('-o,--optional [value...]');
 
     program.parse([], { from: 'user' });
-    expect(program.opts().optional).toBeUndefined();
+    assert.equal(program.opts().optional, undefined);
   });
 
   test('when variadic used as boolean flag then value true', () => {
@@ -127,7 +129,7 @@ describe('variadic option with optional value', () => {
     program.option('-o,--optional [value...]');
 
     program.parse(['--optional'], { from: 'user' });
-    expect(program.opts().optional).toBe(true);
+    assert.equal(program.opts().optional, true);
   });
 
   test('when variadic with one value then set in array', () => {
@@ -135,7 +137,7 @@ describe('variadic option with optional value', () => {
     program.option('-o,--optional [value...]');
 
     program.parse(['--optional', 'one'], { from: 'user' });
-    expect(program.opts().optional).toEqual(['one']);
+    assert.deepEqual(program.opts().optional, ['one']);
   });
 
   test('when variadic with two values then set in array', () => {
@@ -143,7 +145,7 @@ describe('variadic option with optional value', () => {
     program.option('-o,--optional [value...]');
 
     program.parse(['--optional', 'one', 'two'], { from: 'user' });
-    expect(program.opts().optional).toEqual(['one', 'two']);
+    assert.deepEqual(program.opts().optional, ['one', 'two']);
   });
 });
 
@@ -152,7 +154,7 @@ describe('variadic special cases', () => {
     const program = new commander.Command();
     program.option('-c,--comma [value...]');
 
-    expect(program.options[0].variadic).toBeTruthy();
+    assert.equal(program.options[0].variadic, true);
   });
 
   test('when option flags has special characters before dots then not variadic', () => {
@@ -160,6 +162,6 @@ describe('variadic special cases', () => {
     const program = new commander.Command();
     program.option('-c,--comma [value,...]');
 
-    expect(program.options[0].variadic).toBeFalsy();
+    assert.equal(program.options[0].variadic, false);
   });
 });

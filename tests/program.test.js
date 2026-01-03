@@ -12,12 +12,15 @@ const {
   createArgument,
 } = require('../index.js');
 
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
+
 // Do some testing of the default export(s).
 // Similar tests to ts-imports.test.ts and esm-imports-test.js.
 
 function checkClass(obj, name) {
-  expect(typeof obj).toEqual('object');
-  expect(obj.constructor.name).toEqual(name);
+  assert.equal(typeof obj, 'object');
+  assert.equal(obj.constructor.name, name);
 }
 
 test('program', () => {
