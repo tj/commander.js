@@ -1,4 +1,6 @@
 const commander = require('../');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
 describe('Help.minWidthToWrap', () => {
   test('when enough width then wrap', () => {
@@ -14,7 +16,7 @@ describe('Help.minWidthToWrap', () => {
       'x '.repeat(50).trim() +
       '\n' +
       'x '.repeat(10).trim();
-    expect(helpText).toMatch(wrappedescription);
+    assert.match(helpText, new RegExp(wrappedescription));
   });
 
   test('when not enough width then no wrap', () => {
@@ -25,7 +27,7 @@ describe('Help.minWidthToWrap', () => {
     });
     const helpText = program.helpInformation();
     const wrappedescription = 'x '.repeat(50);
-    expect(helpText).toMatch(wrappedescription);
+    assert.match(helpText, new RegExp(wrappedescription));
   });
 
   test('when make minWidthToWrap small then wrap', () => {
@@ -42,6 +44,6 @@ describe('Help.minWidthToWrap', () => {
       'x '.repeat(15).trimEnd() +
       '\n' +
       'x '.repeat(10).trimEnd();
-    expect(helpText).toMatch(wrappedescription);
+    assert.match(helpText, new RegExp(wrappedescription));
   });
 });

@@ -1,10 +1,12 @@
 const commander = require('../');
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
 
 test('when createCommand then unattached', () => {
   const program = new commander.Command();
   const cmd = program.createCommand();
-  expect(program.commands.length).toBe(0);
-  expect(cmd.parent).toBeFalsy(); // (actually null, but use weaker test for unattached)
+  assert.equal(program.commands.length, 0);
+  assert.equal(cmd.parent, null);
 });
 
 test('when subclass overrides createCommand then subcommand is subclass', () => {
@@ -20,7 +22,7 @@ test('when subclass overrides createCommand then subcommand is subclass', () => 
   }
   const program = new MyClass();
   const sub = program.command('sub');
-  expect(sub.myProperty).toEqual('myClass');
+  assert.equal(sub.myProperty, 'myClass');
 });
 
 test('when override createCommand then subcommand is custom', () => {
@@ -32,5 +34,5 @@ test('when override createCommand then subcommand is custom', () => {
   const program = createCustom();
   program.createCommand = createCustom;
   const sub = program.command('sub');
-  expect(sub.myProperty).toEqual('custom');
+  assert.equal(sub.myProperty, 'custom');
 });

@@ -1,4 +1,6 @@
 const commander = require('../');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
 // These are tests of the Help class, not of the Command help.
 // There is some overlap with the higher level Command tests (which predate Help).
@@ -14,7 +16,7 @@ describe('sortOptions', () => {
     const visibleOptionNames = helper
       .visibleOptions(program)
       .map((option) => option.name());
-    expect(visibleOptionNames).toEqual(['zzz', 'aaa', 'bbb', 'help']);
+    assert.deepEqual(visibleOptionNames, ['zzz', 'aaa', 'bbb', 'help']);
   });
 
   test('when sortOptions:true then options sorted alphabetically', () => {
@@ -28,7 +30,7 @@ describe('sortOptions', () => {
     const visibleOptionNames = helper
       .visibleOptions(program)
       .map((cmd) => cmd.name());
-    expect(visibleOptionNames).toEqual(['aaa', 'bbb', 'help', 'zzz']);
+    assert.deepEqual(visibleOptionNames, ['aaa', 'bbb', 'help', 'zzz']);
   });
 
   test('when both short and long flags then sort on short flag', () => {
@@ -42,7 +44,7 @@ describe('sortOptions', () => {
     const visibleOptionNames = helper
       .visibleOptions(program)
       .map((cmd) => cmd.name());
-    expect(visibleOptionNames).toEqual(['help', 'zzz', 'aaa', 'bbb']);
+    assert.deepEqual(visibleOptionNames, ['help', 'zzz', 'aaa', 'bbb']);
   });
 
   test('when lone short and long flags then sort on lone flag', () => {
@@ -56,7 +58,7 @@ describe('sortOptions', () => {
     const visibleOptionNames = helper
       .visibleOptions(program)
       .map((cmd) => cmd.name());
-    expect(visibleOptionNames).toEqual(['aaa', 'b', 'help', 'zzz']);
+    assert.deepEqual(visibleOptionNames, ['aaa', 'b', 'help', 'zzz']);
   });
 
   test('when mixed case flags then sort is case insensitive', () => {
@@ -70,7 +72,7 @@ describe('sortOptions', () => {
     const visibleOptionNames = helper
       .visibleOptions(program)
       .map((cmd) => cmd.name());
-    expect(visibleOptionNames).toEqual(['a', 'B', 'c', 'help']);
+    assert.deepEqual(visibleOptionNames, ['a', 'B', 'c', 'help']);
   });
 
   test('when negated option then sort negated option separately', () => {
@@ -85,6 +87,12 @@ describe('sortOptions', () => {
     const visibleOptionNames = helper
       .visibleOptions(program)
       .map((cmd) => cmd.name());
-    expect(visibleOptionNames).toEqual(['aaa', 'bbb', 'ccc', 'help', 'no-bbb']);
+    assert.deepEqual(visibleOptionNames, [
+      'aaa',
+      'bbb',
+      'ccc',
+      'help',
+      'no-bbb',
+    ]);
   });
 });

@@ -1,3 +1,5 @@
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
 const commander = require('../');
 
 test('when default configuration then return empty array', () => {
@@ -5,7 +7,7 @@ test('when default configuration then return empty array', () => {
   program.option('--global');
   const sub = program.command('sub');
   const helper = sub.createHelp();
-  expect(helper.visibleGlobalOptions(program)).toEqual([]);
+  assert.deepEqual(helper.visibleGlobalOptions(program), []);
 });
 
 test('when showGlobalOptions:true then return program options', () => {
@@ -16,7 +18,7 @@ test('when showGlobalOptions:true then return program options', () => {
   const visibleOptionNames = helper
     .visibleGlobalOptions(sub)
     .map((option) => option.name());
-  expect(visibleOptionNames).toEqual(['global']);
+  assert.deepEqual(visibleOptionNames, ['global']);
 });
 
 test('when showGlobalOptions:true and program has version then return version', () => {
@@ -27,7 +29,7 @@ test('when showGlobalOptions:true and program has version then return version', 
   const visibleOptionNames = helper
     .visibleGlobalOptions(sub)
     .map((option) => option.name());
-  expect(visibleOptionNames).toEqual(['version']);
+  assert.deepEqual(visibleOptionNames, ['version']);
 });
 
 test('when showGlobalOptions:true and nested commands then return combined global options', () => {
@@ -39,5 +41,5 @@ test('when showGlobalOptions:true and nested commands then return combined globa
   const visibleOptionNames = helper
     .visibleGlobalOptions(sub2)
     .map((option) => option.name());
-  expect(visibleOptionNames).toEqual(['sub1', 'global']);
+  assert.deepEqual(visibleOptionNames, ['sub1', 'global']);
 });
