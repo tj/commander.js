@@ -1,4 +1,6 @@
 const commander = require('../');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
 // Test simple flag and negatable flag
 
@@ -8,28 +10,28 @@ describe('boolean flag on program', () => {
     const program = new commander.Command();
     program.option('--pepper', 'add pepper');
     program.parse(['node', 'test']);
-    expect(program.opts().pepper).toBeUndefined();
+    assert.equal(program.opts().pepper, undefined);
   });
 
   test('when boolean flag specified then value is true', () => {
     const program = new commander.Command();
     program.option('--pepper', 'add pepper');
     program.parse(['node', 'test', '--pepper']);
-    expect(program.opts().pepper).toBe(true);
+    assert.equal(program.opts().pepper, true);
   });
 
   test('when negatable boolean flag not specified then value is true', () => {
     const program = new commander.Command();
     program.option('--no-cheese', 'remove cheese');
     program.parse(['node', 'test']);
-    expect(program.opts().cheese).toBe(true);
+    assert.equal(program.opts().cheese, true);
   });
 
   test('when negatable boolean flag specified then value is false', () => {
     const program = new commander.Command();
     program.option('--no-cheese', 'remove cheese');
     program.parse(['node', 'test', '--no-cheese']);
-    expect(program.opts().cheese).toBe(false);
+    assert.equal(program.opts().cheese, false);
   });
 });
 
@@ -45,7 +47,7 @@ describe('boolean flag on command', () => {
         subCommandOptions = options;
       });
     program.parse(['node', 'test', 'sub']);
-    expect(subCommandOptions.pepper).toBeUndefined();
+    assert.equal(subCommandOptions.pepper, undefined);
   });
 
   test('when boolean flag specified then value is true', () => {
@@ -58,7 +60,7 @@ describe('boolean flag on command', () => {
         subCommandOptions = options;
       });
     program.parse(['node', 'test', 'sub', '--pepper']);
-    expect(subCommandOptions.pepper).toBe(true);
+    assert.equal(subCommandOptions.pepper, true);
   });
 
   test('when negatable boolean flag not specified then value is true', () => {
@@ -71,7 +73,7 @@ describe('boolean flag on command', () => {
         subCommandOptions = options;
       });
     program.parse(['node', 'test', 'sub']);
-    expect(subCommandOptions.cheese).toBe(true);
+    assert.equal(subCommandOptions.cheese, true);
   });
 
   test('when negatable boolean flag specified then value is false', () => {
@@ -84,7 +86,7 @@ describe('boolean flag on command', () => {
         subCommandOptions = options;
       });
     program.parse(['node', 'test', 'sub', '--no-cheese']);
-    expect(subCommandOptions.cheese).toBe(false);
+    assert.equal(subCommandOptions.cheese, false);
   });
 });
 
@@ -97,7 +99,7 @@ describe('boolean flag with non-boolean default', () => {
     const program = new commander.Command();
     program.option('--olives', 'Add green olives?', flagValue);
     program.parse(['node', 'test']);
-    expect(program.opts().olives).toBe(flagValue);
+    assert.equal(program.opts().olives, flagValue);
   });
 
   test('when flag specified then value is true', () => {
@@ -105,7 +107,7 @@ describe('boolean flag with non-boolean default', () => {
     const program = new commander.Command();
     program.option('-v, --olives', 'Add green olives?', flagValue);
     program.parse(['node', 'test', '--olives']);
-    expect(program.opts().olives).toBe(true);
+    assert.equal(program.opts().olives, true);
   });
 
   test('when combo flag and negated then value is false', () => {
@@ -115,7 +117,7 @@ describe('boolean flag with non-boolean default', () => {
       .option('-v, --olives', 'Add green olives?', flagValue)
       .option('--no-olives');
     program.parse(['node', 'test', '--olives', '--no-olives']);
-    expect(program.opts().olives).toBe(false);
+    assert.equal(program.opts().olives, false);
   });
 });
 
@@ -125,13 +127,13 @@ describe('regression test for -no- in middle of option flag', () => {
     const program = new commander.Command();
     program.option('--module-no-parse');
     program.parse(['node', 'test']);
-    expect(program.opts().moduleNoParse).toBeUndefined();
+    assert.equal(program.opts().moduleNoParse, undefined);
   });
 
   test('when flag specified then value is true', () => {
     const program = new commander.Command();
     program.option('--module-no-parse');
     program.parse(['node', 'test', '--module-no-parse']);
-    expect(program.opts().moduleNoParse).toEqual(true);
+    assert.equal(program.opts().moduleNoParse, true);
   });
 });

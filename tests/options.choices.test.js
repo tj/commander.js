@@ -1,4 +1,6 @@
 const commander = require('../');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
 test('when option argument in choices then option set', () => {
   const program = new commander.Command();
@@ -8,7 +10,7 @@ test('when option argument in choices then option set', () => {
       new commander.Option('--colour <shade>').choices(['red', 'blue']),
     );
   program.parse(['--colour', 'red'], { from: 'user' });
-  expect(program.opts().colour).toBe('red');
+  assert.equal(program.opts().colour, 'red');
 });
 
 test('when option argument is not in choices then error', () => {
@@ -22,9 +24,9 @@ test('when option argument is not in choices then error', () => {
     .addOption(
       new commander.Option('--colour <shade>').choices(['red', 'blue']),
     );
-  expect(() => {
+  assert.throws(() => {
     program.parse(['--colour', 'orange'], { from: 'user' });
-  }).toThrow();
+  });
 });
 
 describe('choices parameter is treated as readonly, per TypeScript declaration', () => {
@@ -33,7 +35,7 @@ describe('choices parameter is treated as readonly, per TypeScript declaration',
     const original = ['red', 'blue', 'green'];
     const param = original.slice();
     new commander.Option('--colour <shade>').choices(param);
-    expect(param).toEqual(original);
+    assert.deepEqual(param, original);
   });
 
   test('when choices called and argChoices later changed then parameter does not change', () => {
@@ -41,7 +43,7 @@ describe('choices parameter is treated as readonly, per TypeScript declaration',
     const param = original.slice();
     const option = new commander.Option('--colour <shade>').choices(param);
     option.argChoices.push('purple');
-    expect(param).toEqual(original);
+    assert.deepEqual(param, original);
   });
 
   test('when choices called and parameter changed the choices does not change', () => {
@@ -54,8 +56,8 @@ describe('choices parameter is treated as readonly, per TypeScript declaration',
       })
       .addOption(new commander.Option('--colour <shade>').choices(param));
     param.push('orange');
-    expect(() => {
+    assert.throws(() => {
       program.parse(['--colour', 'orange'], { from: 'user' });
-    }).toThrow();
+    });
   });
 });
