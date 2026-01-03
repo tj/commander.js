@@ -1,21 +1,24 @@
 const commander = require('../');
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
 
 // Executable subcommand tests that didn't fit in elsewhere.
 
 // This is the default behaviour when no default command and no action handlers
-test('when no command specified and executable then display help', () => {
-  // Optional. Suppress normal output to keep test output clean.
-  const writeSpy = jest
-    .spyOn(process.stderr, 'write')
-    .mockImplementation(() => {});
+test('when no command specified and executable then display help', (t) => {
   const program = new commander.Command();
   program
-    .exitOverride((err) => {
-      throw err;
+    .exitOverride()
+    .configureOutput({
+      writeErr: () => {},
     })
     .command('install', 'install description');
-  expect(() => {
-    program.parse(['node', 'test']);
-  }).toThrow('(outputHelp)');
-  writeSpy.mockClear();
+  assert.throws(
+    () => {
+      program.parse(['node', 'test']);
+    },
+    {
+      code: 'commander.help',
+    },
+  );
 });
