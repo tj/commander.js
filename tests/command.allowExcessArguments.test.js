@@ -7,7 +7,7 @@ const assert = require('node:assert/strict');
 describe('allowExcessArguments', () => {
   const cases = [true, false];
   cases.forEach((hasActionHandler) => {
-    describe(`when ${hasActionHandler ? 'with' : 'without'} action handler: ${hasActionHandler}`, () => {
+    describe(`when ${hasActionHandler ? 'has' : 'no'} action handler`, () => {
       function configureCommand(cmd) {
         cmd.exitOverride().configureOutput({
           writeErr: () => {}, // suppress error output
