@@ -105,6 +105,7 @@ function makeProgram() {
   program.exitOverride();
   program.configureOutput({
     writeErr: () => {},
+    writeOut: () => {},
   });
   return program;
 }

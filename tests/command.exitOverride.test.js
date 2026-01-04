@@ -61,7 +61,8 @@ describe('.exitOverride and error details', () => {
   });
 
   // Same error as above, but with custom handler.
-  test('when supply custom handler then throw custom error', () => {
+  test('when supply custom handler then throw custom error', (t) => {
+    const writeSpy = t.mock.method(process.stderr, 'write', () => {});
     const customError = new commander.CommanderError(
       123,
       'custom-code',
@@ -204,7 +205,7 @@ describe('.exitOverride and error details', () => {
   });
 
   test('when specify --help then throw CommanderError', (t) => {
-    const writeSpy = t.mock.method(process.stdout, 'write', () => {});
+    const writeSpy = t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program.exitOverride();
 
@@ -223,7 +224,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when executable subcommand and no command specified then throw CommanderError', () => {
+  test('when executable subcommand and no command specified then throw CommanderError', (t) => {
+    const stderrSpy = t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program.exitOverride().command('compress', 'compress description');
 
@@ -238,7 +240,7 @@ describe('.exitOverride and error details', () => {
   });
 
   test('when specify --version then throw CommanderError', (t) => {
-    const stdoutSpy = t.mock.method(process.stdout, 'write', () => {});
+    const writeSpy = t.mock.method(process.stderr, 'write', () => {});
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program.exitOverride().version(myVersion);
@@ -272,7 +274,8 @@ describe('.exitOverride and error details', () => {
     });
   });
 
-  test('when mandatory program option missing then throw CommanderError', () => {
+  test('when mandatory program option missing then throw CommanderError', (t) => {
+    const writeSpy = t.mock.method(process.stderr, 'write', () => {});
     const optionFlags = '-p, --pepper <type>';
     const program = new commander.Command();
     program.exitOverride().requiredOption(optionFlags, 'add pepper');
@@ -292,7 +295,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when option argument not in choices then throw CommanderError', () => {
+  test('when option argument not in choices then throw CommanderError', (t) => {
+    const writeSpy = t.mock.method(process.stderr, 'write', () => {});
     const optionFlags = '--colour <shade>';
     const program = new commander.Command();
     program
@@ -314,7 +318,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when command argument not in choices then throw CommanderError', () => {
+  test('when command argument not in choices then throw CommanderError', (t) => {
+    const writeSpy = t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program
       .exitOverride()
@@ -336,7 +341,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when custom processing for option throws InvalidArgumentError then catch CommanderError', () => {
+  test('when custom processing for option throws InvalidArgumentError then catch CommanderError', (t) => {
+    const writeSpy = t.mock.method(process.stderr, 'write', () => {});
     function justSayNo(value) {
       throw new commander.InvalidArgumentError('NO');
     }
@@ -359,7 +365,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when custom processing for argument throws InvalidArgumentError then catch CommanderError', () => {
+  test('when custom processing for argument throws InvalidArgumentError then catch CommanderError', (t) => {
+    const writeSpy = t.mock.method(process.stderr, 'write', () => {});
     function justSayNo(value) {
       throw new commander.InvalidArgumentError('NO');
     }
@@ -384,7 +391,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when has conflicting option then throw CommanderError', () => {
+  test('when has conflicting option then throw CommanderError', (t) => {
+    const writeSpy = t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program
       .exitOverride()
@@ -406,7 +414,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when call error() then throw CommanderError', () => {
+  test('when call error() then throw CommanderError', (t) => {
+    const writeSpy = t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program.exitOverride();
 

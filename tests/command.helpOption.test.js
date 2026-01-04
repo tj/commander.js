@@ -79,7 +79,8 @@ describe('helpOption', () => {
     assert(!helpInformation.includes('--help'));
   });
 
-  test('when helpOption(false) then --help is an unknown option', () => {
+  test('when helpOption(false) then --help is an unknown option', (t) => {
+    const writeSpy = t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program.exitOverride().helpOption(false);
     let caughtErr;
@@ -91,7 +92,8 @@ describe('helpOption', () => {
     assert.equal(caughtErr.code, 'commander.unknownOption');
   });
 
-  test('when helpOption(false) then -h is an unknown option', () => {
+  test('when helpOption(false) then -h is an unknown option', (t) => {
+    const writeSpy = t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program.exitOverride().helpOption(false);
     let caughtErr;
@@ -103,7 +105,8 @@ describe('helpOption', () => {
     assert.equal(caughtErr.code, 'commander.unknownOption');
   });
 
-  test('when helpOption(false) then unknown command error does not suggest --help', () => {
+  test('when helpOption(false) then unknown command error does not suggest --help', (t) => {
+    const writeSpy = t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program.exitOverride().helpOption(false).command('foo');
     assert.throws(
