@@ -43,13 +43,9 @@ test('when error called with exitCode 2 then process.exit(2)', (t) => {
 
 test('when error called with code and exitOverride then throws with code', () => {
   const program = new commander.Command();
-  program
-    .exitOverride((err) => {
-      throw err;
-    })
-    .configureOutput({
-      writeErr: () => {},
-    });
+  program.exitOverride().configureOutput({
+    writeErr: () => {},
+  });
 
   const code = 'commander.mytest';
   assert.throws(

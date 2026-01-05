@@ -1,4 +1,5 @@
 const commander = require('../');
+const { createTestCommand } = require('./testHelpers');
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 
@@ -35,10 +36,7 @@ test('when use .description for command then help includes description', () => {
 });
 
 test('when call .help then exit', (t) => {
-  // Optional. Suppress normal output to keep test output clean.
-  const writeSpy = t.mock.method(process.stdout, 'write', () => {});
-  const program = new commander.Command();
-  program.exitOverride();
+  const program = createTestCommand();
   assert.throws(
     () => {
       program.help();
@@ -48,10 +46,7 @@ test('when call .help then exit', (t) => {
 });
 
 test('when specify --help then exit', (t) => {
-  // Optional. Suppress normal output to keep test output clean.
-  const writeSpy = t.mock.method(process.stdout, 'write', () => {});
-  const program = new commander.Command();
-  program.exitOverride();
+  const program = createTestCommand();
   assert.throws(
     () => {
       program.parse(['node', 'test', '--help']);

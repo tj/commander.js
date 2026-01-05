@@ -1,4 +1,5 @@
 const commander = require('../');
+const { createTestCommand } = require('./testHelpers');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
@@ -14,13 +15,9 @@ const assert = require('node:assert/strict');
 
 describe(".command('*')", () => {
   test('when no arguments then asterisk action not called', (t) => {
-    const writeMock = t.mock.method(process.stderr, 'write', () => {});
     const mockAction = t.mock.fn();
-    const program = new commander.Command();
-    program
-      .exitOverride() // to catch help
-      .command('*')
-      .action(mockAction);
+    const program = createTestCommand();
+    program.command('*').action(mockAction);
     try {
       program.parse(['node', 'test']);
     } catch (err) {
@@ -73,13 +70,8 @@ describe(".command('*')", () => {
   test('when non-command argument and unknown option then error for unknown option', (t) => {
     // This is a change in behaviour from v2 which did not error, but is consistent with modern better detection of invalid options
     const mockAction = t.mock.fn();
-    const program = new commander.Command();
-    program
-      .exitOverride()
-      .configureOutput({
-        writeErr: () => {},
-      })
-      .command('install');
+    const program = createTestCommand();
+    program.command('install');
     program.command('*').argument('[args...]').action(mockAction);
     assert.throws(
       () => {

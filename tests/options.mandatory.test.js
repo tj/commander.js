@@ -1,4 +1,5 @@
 const commander = require('../');
+const { createTestCommand } = require('./testHelpers');
 const { test, describe, beforeAll, afterEach, afterAll } = require('node:test');
 const assert = require('node:assert/strict');
 
@@ -8,41 +9,35 @@ const assert = require('node:assert/strict');
 describe('required program option with mandatory value specified', () => {
   test('when program has required value specified then value as specified', () => {
     const program = new commander.Command();
-    program.exitOverride().requiredOption('--cheese <type>', 'cheese type');
+    program.requiredOption('--cheese <type>', 'cheese type');
     program.parse(['node', 'test', '--cheese', 'blue']);
     assert.equal(program.opts().cheese, 'blue');
   });
 
   test('when program has option with name different than property then still recognised', () => {
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .requiredOption('--cheese-type <type>', 'cheese type');
+    program.requiredOption('--cheese-type <type>', 'cheese type');
     program.parse(['node', 'test', '--cheese-type', 'blue']);
     assert.equal(program.opts().cheeseType, 'blue');
   });
 
   test('when program has required value default then default value', () => {
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .requiredOption('--cheese <type>', 'cheese type', 'default');
+    program.requiredOption('--cheese <type>', 'cheese type', 'default');
     program.parse(['node', 'test']);
     assert.equal(program.opts().cheese, 'default');
   });
 
   test('when program has optional value flag specified then true', () => {
     const program = new commander.Command();
-    program.exitOverride().requiredOption('--cheese [type]', 'cheese type');
+    program.requiredOption('--cheese [type]', 'cheese type');
     program.parse(['node', 'test', '--cheese']);
     assert.equal(program.opts().cheese, true);
   });
 
   test('when program has optional value default then default value', () => {
     const program = new commander.Command();
-    program
-      .exitOverride()
-      .requiredOption('--cheese [type]', 'cheese type', 'default');
+    program.requiredOption('--cheese [type]', 'cheese type', 'default');
     program.parse(['node', 'test']);
     assert.equal(program.opts().cheese, 'default');
   });
@@ -50,7 +45,6 @@ describe('required program option with mandatory value specified', () => {
   test('when program has value/no flag specified with value then specified value', () => {
     const program = new commander.Command();
     program
-      .exitOverride()
       .requiredOption('--cheese <type>', 'cheese type')
       .requiredOption('--no-cheese', 'no cheese thanks');
     program.parse(['node', 'test', '--cheese', 'blue']);
@@ -60,7 +54,6 @@ describe('required program option with mandatory value specified', () => {
   test('when program has mandatory-yes/no flag specified with flag then true', () => {
     const program = new commander.Command();
     program
-      .exitOverride()
       .requiredOption('--cheese', 'cheese type')
       .option('--no-cheese', 'no cheese thanks');
     program.parse(['node', 'test', '--cheese']);
@@ -70,7 +63,6 @@ describe('required program option with mandatory value specified', () => {
   test('when program has mandatory-yes/mandatory-no flag specified with flag then true', () => {
     const program = new commander.Command();
     program
-      .exitOverride()
       .requiredOption('--cheese', 'cheese type')
       .requiredOption('--no-cheese', 'no cheese thanks');
     program.parse(['node', 'test', '--cheese']);
@@ -80,7 +72,6 @@ describe('required program option with mandatory value specified', () => {
   test('when program has yes/no flag specified negated then false', () => {
     const program = new commander.Command();
     program
-      .exitOverride()
       .requiredOption('--cheese <type>', 'cheese type')
       .option('--no-cheese', 'no cheese thanks');
     program.parse(['node', 'test', '--no-cheese']);
@@ -90,7 +81,6 @@ describe('required program option with mandatory value specified', () => {
   test('when program has required value specified and subcommand then specified value', () => {
     const program = new commander.Command();
     program
-      .exitOverride()
       .requiredOption('--cheese <type>', 'cheese type')
       .command('sub')
       .action(() => {});
@@ -99,20 +89,9 @@ describe('required program option with mandatory value specified', () => {
   });
 });
 
-// Throw for errors and suppress error output to keep test output clean.
-function makeProgram() {
-  const program = new commander.Command();
-  program.exitOverride();
-  program.configureOutput({
-    writeErr: () => {},
-    writeOut: () => {},
-  });
-  return program;
-}
-
 describe('required program option with mandatory value not specified', () => {
   test('when program has required option not specified then error', () => {
-    const program = makeProgram();
+    const program = createTestCommand();
     program.requiredOption('--cheese <type>', 'cheese type');
 
     assert.throws(() => {
@@ -121,7 +100,7 @@ describe('required program option with mandatory value not specified', () => {
   });
 
   test('when program has optional option not specified then error', () => {
-    const program = makeProgram();
+    const program = createTestCommand();
     program.requiredOption('--cheese [type]', 'cheese type');
 
     assert.throws(() => {
@@ -130,7 +109,7 @@ describe('required program option with mandatory value not specified', () => {
   });
 
   test('when program has yes/no not specified then error', () => {
-    const program = makeProgram();
+    const program = createTestCommand();
     program
       .requiredOption('--cheese', 'cheese type')
       .option('--no-cheese', 'no cheese thanks');
@@ -141,7 +120,7 @@ describe('required program option with mandatory value not specified', () => {
   });
 
   test('when program has required value not specified and subcommand then error', () => {
-    const program = makeProgram();
+    const program = createTestCommand();
     program
       .requiredOption('--cheese <type>', 'cheese type')
       .command('sub')
@@ -155,7 +134,7 @@ describe('required program option with mandatory value not specified', () => {
 
 describe('required command option with mandatory value specified', () => {
   test('when command has required value specified then no error and option has specified value', () => {
-    const program = makeProgram();
+    const program = createTestCommand();
     let cmdOptions;
     program
       .command('sub')
@@ -170,7 +149,7 @@ describe('required command option with mandatory value specified', () => {
   });
 
   test('when command has required value specified using env then no error and option has specified value', () => {
-    const program = makeProgram();
+    const program = createTestCommand();
     program.addOption(
       new commander.Option('-p, --port <number>', 'port number')
         .makeOptionMandatory()
@@ -187,7 +166,7 @@ describe('required command option with mandatory value specified', () => {
 
 describe('required command option with mandatory value not specified', () => {
   test('when command has required value not specified then error', () => {
-    const program = makeProgram();
+    const program = createTestCommand();
     program
       .command('sub')
       .requiredOption('--subby <type>', 'description')
@@ -199,7 +178,7 @@ describe('required command option with mandatory value not specified', () => {
   });
 
   test('when command has required value but not called then no error', () => {
-    const program = makeProgram();
+    const program = createTestCommand();
     program
       .command('sub')
       .requiredOption('--subby <type>', 'description')
@@ -214,7 +193,7 @@ describe('required command option with mandatory value not specified', () => {
 
 describe('missing mandatory option but help requested', () => {
   test('when program has required option not specified and --help then help', () => {
-    const program = makeProgram();
+    const program = createTestCommand();
     program.requiredOption('--cheese <type>', 'cheese type');
 
     assert.throws(
@@ -226,7 +205,7 @@ describe('missing mandatory option but help requested', () => {
   });
 
   test('when program has required option not specified and subcommand --help then help', () => {
-    const program = makeProgram();
+    const program = createTestCommand();
     program
       .requiredOption('--cheese <type>', 'cheese type')
       .command('sub')

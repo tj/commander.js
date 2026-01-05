@@ -1,22 +1,14 @@
-const { Command, Option } = require('../');
+const { Option } = require('../');
+const { createTestCommand } = require('./testHelpers');
 const { test, describe, beforeEach, afterEach } = require('node:test');
 const assert = require('node:assert/strict');
 
 // More complete tests are in command.helpOption.test.js.
 
 describe('addHelpOption', () => {
-  let writeSpy;
-  let writeErrorSpy;
-
-  beforeEach((t) => {
-    // Optional. Suppress expected output to keep test output clean.
-    writeSpy = t.mock.method(process.stdout, 'write', () => {});
-    writeErrorSpy = t.mock.method(process.stderr, 'write', () => {});
-  });
-
   test('when addHelpOption has custom flags then custom short flag invokes help', () => {
-    const program = new Command();
-    program.exitOverride().addHelpOption(new Option('-c,--custom-help'));
+    const program = createTestCommand();
+    program.addHelpOption(new Option('-c,--custom-help'));
 
     assert.throws(
       () => {
@@ -27,8 +19,8 @@ describe('addHelpOption', () => {
   });
 
   test('when addHelpOption has custom flags then custom long flag invokes help', () => {
-    const program = new Command();
-    program.exitOverride().addHelpOption(new Option('-c,--custom-help'));
+    const program = createTestCommand();
+    program.addHelpOption(new Option('-c,--custom-help'));
 
     assert.throws(
       () => {
@@ -39,7 +31,7 @@ describe('addHelpOption', () => {
   });
 
   test('when addHelpOption with hidden help option then help does not include help option', () => {
-    const program = new Command();
+    const program = createTestCommand();
     program.addHelpOption(
       new Option('-c,--custom-help', 'help help help').hideHelp(),
     );

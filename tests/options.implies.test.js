@@ -1,4 +1,5 @@
 const { Command, Option } = require('../');
+const { createTestCommand } = require('./testHelpers');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
@@ -151,12 +152,8 @@ test('when looped implies then no infinite loop', () => {
 });
 
 test('when conflict with implied value then throw', () => {
-  const program = new Command();
+  const program = createTestCommand();
   program
-    .exitOverride()
-    .configureOutput({
-      writeErr: () => {},
-    })
     .addOption(new Option('--unary'))
     .addOption(new Option('--binary').conflicts('unary'))
     .addOption(new Option('--one').implies({ unary: true }));

@@ -1,15 +1,7 @@
 const commander = require('../');
+const { createTestCommand } = require('./testHelpers');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
-
-function makeQuietProgram() {
-  const program = new commander.Command();
-  program.exitOverride();
-  program.configureOutput({
-    writeErr: () => {},
-  });
-  return program;
-}
 
 // option with required value, no default
 describe('option with required value, no default', () => {
@@ -29,7 +21,7 @@ describe('option with required value, no default', () => {
   });
 
   test('when option value not specified then error', () => {
-    const program = makeQuietProgram();
+    const program = createTestCommand();
     program.option('--cheese <type>', 'cheese type');
 
     // Act. The throw is due to the above mock, and not default behaviour.
@@ -65,7 +57,7 @@ describe('option with required value, with default', () => {
 
   test('when option value not specified then error', (t) => {
     const defaultValue = 'default';
-    const program = makeQuietProgram();
+    const program = createTestCommand();
     program.option('--cheese <type>', 'cheese type', defaultValue);
 
     assert.throws(

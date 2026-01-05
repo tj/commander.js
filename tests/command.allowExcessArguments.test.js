@@ -1,4 +1,4 @@
-const commander = require('../');
+const { createTestCommand } = require('./testHelpers');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
@@ -9,14 +9,11 @@ describe('allowExcessArguments', () => {
   cases.forEach((hasActionHandler) => {
     describe(`when ${hasActionHandler ? 'has' : 'no'} action handler`, () => {
       function configureCommand(cmd) {
-        cmd.exitOverride().configureOutput({
-          writeErr: () => {}, // suppress error output
-        });
         if (hasActionHandler) cmd.action(() => {});
       }
 
       test('when specify excess program argument then error by default', () => {
-        const program = new commander.Command();
+        const program = createTestCommand();
         configureCommand(program);
 
         assert.throws(() => {
@@ -25,7 +22,7 @@ describe('allowExcessArguments', () => {
       });
 
       test('when specify excess program argument and allowExcessArguments(false) then error', () => {
-        const program = new commander.Command();
+        const program = createTestCommand();
         configureCommand(program);
         program.allowExcessArguments(false);
 
@@ -35,7 +32,7 @@ describe('allowExcessArguments', () => {
       });
 
       test('when specify excess program argument and allowExcessArguments() then no error', () => {
-        const program = new commander.Command();
+        const program = createTestCommand();
         configureCommand(program);
         program.allowExcessArguments();
 
@@ -45,7 +42,7 @@ describe('allowExcessArguments', () => {
       });
 
       test('when specify excess program argument and allowExcessArguments(true) then no error', () => {
-        const program = new commander.Command();
+        const program = createTestCommand();
         configureCommand(program);
         program.allowExcessArguments(true);
 
@@ -55,7 +52,7 @@ describe('allowExcessArguments', () => {
       });
 
       test('when specify excess command argument then error (by default)', () => {
-        const program = new commander.Command();
+        const program = createTestCommand();
         const sub = program.command('sub');
         configureCommand(sub);
 
@@ -65,7 +62,7 @@ describe('allowExcessArguments', () => {
       });
 
       test('when specify excess command argument and allowExcessArguments(false) then error', () => {
-        const program = new commander.Command();
+        const program = createTestCommand();
         const sub = program.command('sub').allowExcessArguments(false);
         configureCommand(sub);
 
@@ -75,7 +72,7 @@ describe('allowExcessArguments', () => {
       });
 
       test('when specify expected arg and allowExcessArguments(false) then no error', () => {
-        const program = new commander.Command();
+        const program = createTestCommand();
         configureCommand(program);
         program.argument('<file>').allowExcessArguments(false);
 
@@ -85,7 +82,7 @@ describe('allowExcessArguments', () => {
       });
 
       test('when specify excess after <arg> and allowExcessArguments(false) then error', () => {
-        const program = new commander.Command();
+        const program = createTestCommand();
         configureCommand(program);
         program.argument('<file>').allowExcessArguments(false);
 
@@ -95,7 +92,7 @@ describe('allowExcessArguments', () => {
       });
 
       test('when specify excess after [arg] and allowExcessArguments(false) then error', () => {
-        const program = new commander.Command();
+        const program = createTestCommand();
         configureCommand(program);
         program.argument('[file]').allowExcessArguments(false);
 
@@ -105,7 +102,7 @@ describe('allowExcessArguments', () => {
       });
 
       test('when specify args for [args...] and allowExcessArguments(false) then no error', () => {
-        const program = new commander.Command();
+        const program = createTestCommand();
         configureCommand(program);
         program.argument('[files...]').allowExcessArguments(false);
 

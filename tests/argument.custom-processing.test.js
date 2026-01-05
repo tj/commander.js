@@ -1,4 +1,5 @@
 const commander = require('../');
+const { createTestCommand } = require('./testHelpers');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
@@ -174,11 +175,8 @@ test('when custom processing for argument throws plain error then not CommanderE
   function justSayNo(value) {
     throw new Error('plain error');
   }
-  const program = new commander.Command();
-  program
-    .exitOverride()
-    .argument('[n]', 'number', justSayNo)
-    .action(() => {});
+  const program = createTestCommand();
+  program.argument('[n]', 'number', justSayNo).action(() => {});
 
   assert.throws(
     () => {

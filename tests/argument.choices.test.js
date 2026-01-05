@@ -1,12 +1,12 @@
 const commander = require('../');
+const { createTestCommand } = require('./testHelpers');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
 test('when command argument in choices then argument set', () => {
-  const program = new commander.Command();
+  const program = createTestCommand();
   let shade;
   program
-    .exitOverride()
     .addArgument(new commander.Argument('<shade>').choices(['red', 'blue']))
     .action((shadeParam) => {
       shade = shadeParam;
@@ -17,13 +17,10 @@ test('when command argument in choices then argument set', () => {
 
 test('when command argument is not in choices then error', () => {
   // Lightweight check, more detailed testing of behaviour in command.exitOverride.test.js
-  const program = new commander.Command();
-  program
-    .exitOverride()
-    .configureOutput({
-      writeErr: () => {},
-    })
-    .addArgument(new commander.Argument('<shade>').choices(['red', 'blue']));
+  const program = createTestCommand();
+  program.addArgument(
+    new commander.Argument('<shade>').choices(['red', 'blue']),
+  );
   assert.throws(() => {
     program.parse(['orange'], { from: 'user' });
   });
@@ -47,14 +44,9 @@ describe('choices parameter is treated as readonly, per TypeScript declaration',
   });
 
   test('when choices called and parameter changed the choices does not change', () => {
-    const program = new commander.Command();
+    const program = createTestCommand();
     const param = ['red', 'blue'];
-    program
-      .exitOverride()
-      .configureOutput({
-        writeErr: () => {},
-      })
-      .addArgument(new commander.Argument('<shade>').choices(param));
+    program.addArgument(new commander.Argument('<shade>').choices(param));
     param.push('orange');
     assert.throws(() => {
       program.parse(['orange'], { from: 'user' });

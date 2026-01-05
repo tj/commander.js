@@ -1,4 +1,4 @@
-const commander = require('../');
+const { createTestCommand } = require('./testHelpers');
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 
@@ -6,13 +6,8 @@ const assert = require('node:assert/strict');
 
 // This is the default behaviour when no default command and no action handlers
 test('when no command specified and executable then display help', (t) => {
-  const program = new commander.Command();
-  program
-    .exitOverride()
-    .configureOutput({
-      writeErr: () => {},
-    })
-    .command('install', 'install description');
+  const program = createTestCommand();
+  program.command('install', 'install description');
   assert.throws(
     () => {
       program.parse(['node', 'test']);

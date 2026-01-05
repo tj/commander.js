@@ -1,14 +1,12 @@
 const commander = require('../');
+const { createTestCommand } = require('./testHelpers');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
 describe('variadic option with required value', () => {
   test('when variadic with value missing then error', () => {
-    const program = new commander.Command();
-    program
-      .exitOverride()
-      .configureOutput({ writeErr: () => {} })
-      .option('-r,--required <value...>');
+    const program = createTestCommand();
+    program.option('-r,--required <value...>');
 
     assert.throws(() => {
       program.parse(['--required'], { from: 'user' });

@@ -1,18 +1,14 @@
 const path = require('path');
 const commander = require('../');
+const { createTestCommand } = require('./testHelpers');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
 describe('command with conflicting options', () => {
   function makeProgram(t) {
     const actionMock = t.mock.fn();
-    const program = new commander.Command();
+    const program = createTestCommand();
     program
-      .exitOverride()
-      .configureOutput({
-        writeErr: () => {},
-        writeOut: () => {},
-      })
       .command('foo')
       .addOption(
         new commander.Option('-s, --silent', "Don't print anything").env(

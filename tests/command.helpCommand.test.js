@@ -1,4 +1,5 @@
 const commander = require('../');
+const { createTestCommand } = require('./testHelpers');
 const { test, describe, beforeAll, afterEach, afterAll } = require('node:test');
 const assert = require('node:assert/strict');
 
@@ -24,12 +25,8 @@ describe('help command listed in helpInformation', () => {
   });
 
   test('when program has subcommands and specify only unknown option then display help', () => {
-    const program = new commander.Command();
-    program
-      .configureOutput({ writeOut: () => {}, writeErr: () => {} })
-      .exitOverride()
-      .allowUnknownOption()
-      .command('foo');
+    const program = createTestCommand();
+    program.allowUnknownOption().command('foo');
     assert.throws(
       () => {
         program.parse(['--unknown'], { from: 'user' });

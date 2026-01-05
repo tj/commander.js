@@ -1,4 +1,5 @@
 const commander = require('../');
+const { createTestCommand } = require('./testHelpers');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
@@ -51,10 +52,7 @@ describe('when .action on program with required argument and argument not suppli
   getTestCases('<file>').forEach(([methodName, program]) => {
     test(`via ${methodName}`, (t) => {
       const actionMock = t.mock.fn();
-      program
-        .exitOverride()
-        .configureOutput({ writeErr: () => {} })
-        .action(actionMock);
+      program.action(actionMock);
       assert.throws(() => {
         program.parse(['node', 'test']);
       });
@@ -153,9 +151,9 @@ test('when action is async then can await parseAsync', async () => {
 });
 
 function getTestCases(arg) {
-  const withArguments = new commander.Command().arguments(arg);
-  const withArgument = new commander.Command().argument(arg);
-  const withAddArgument = new commander.Command().addArgument(
+  const withArguments = createTestCommand().arguments(arg);
+  const withArgument = createTestCommand().argument(arg);
+  const withAddArgument = createTestCommand().addArgument(
     new commander.Argument(arg),
   );
   return [
