@@ -1,6 +1,6 @@
 const { Option } = require('../');
 const { createTestCommand } = require('./testHelpers');
-const { test, describe, beforeEach, afterEach } = require('node:test');
+const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
 // More complete tests are in command.helpOption.test.js.

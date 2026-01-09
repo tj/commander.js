@@ -1,6 +1,5 @@
-const commander = require('../');
 const { createTestCommand } = require('./testHelpers');
-const { test, describe, beforeEach } = require('node:test');
+const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
 // Not testing output, just testing whether an error is detected.

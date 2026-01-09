@@ -1,6 +1,6 @@
 const commander = require('../');
 const { createTestCommand } = require('./testHelpers');
-const { test, describe, beforeAll, afterEach, afterAll } = require('node:test');
+const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
 describe('help command listed in helpInformation', () => {

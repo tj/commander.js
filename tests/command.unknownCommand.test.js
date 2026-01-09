@@ -1,5 +1,5 @@
 const { createTestCommand } = require('./testHelpers');
-const { test, describe, before } = require('node:test');
+const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
 describe('unknownCommand', () => {

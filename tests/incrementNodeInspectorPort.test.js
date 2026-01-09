@@ -1,4 +1,4 @@
-const { test, describe, before, afterEach, after } = require('node:test');
+const { test, describe, after } = require('node:test');
 const assert = require('node:assert/strict');
 const childProcess = require('child_process');
 const path = require('path');

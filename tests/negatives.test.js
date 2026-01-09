@@ -1,6 +1,6 @@
 const { Command } = require('../');
 const { createTestCommand } = require('./testHelpers');
-const { test, describe, before, afterEach, after } = require('node:test');
+const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
 describe('negative numbers in args', () => {

@@ -3,7 +3,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 
 test('when error called with message then message displayed on stderr', (t) => {
-  const exitSpy = t.mock.method(process, 'exit', () => {});
+  t.mock.method(process, 'exit', () => {});
   const stderrSpy = t.mock.method(process.stderr, 'write', () => {});
 
   const program = new commander.Command();

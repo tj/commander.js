@@ -1,6 +1,6 @@
 const commander = require('../');
 const { createTestCommand } = require('./testHelpers');
-const { test, describe } = require('node:test');
+const { test } = require('node:test');
 const assert = require('node:assert/strict');
 
 // Testing default value and custom processing behaviours.
