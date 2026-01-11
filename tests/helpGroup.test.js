@@ -1,3 +1,5 @@
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 const { Command, Option } = require('../');
 
 // Similar tests for Option.helpGroup() and Command.helpGroup(),
@@ -8,7 +10,7 @@ describe('Option.helpGroup', () => {
     const program = new Command();
     program.addOption(new Option('--alpha').helpGroup('Greek:'));
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Greek:\n *--alpha/);
+    assert.match(helpInfo, /Greek:\n *--alpha/);
   });
 
   test('when add two options with helpGroup then help contains group', () => {
@@ -16,7 +18,7 @@ describe('Option.helpGroup', () => {
     program.addOption(new Option('--alpha').helpGroup('Greek:'));
     program.addOption(new Option('--beta').helpGroup('Greek:'));
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Greek:\n *--alpha\n *--beta/);
+    assert.match(helpInfo, /Greek:\n *--alpha\n *--beta/);
   });
 });
 
@@ -25,7 +27,7 @@ describe('Command.helpGroup', () => {
     const program = new Command();
     program.command('alpha').helpGroup('Greek:');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Greek:\n *alpha/);
+    assert.match(helpInfo, /Greek:\n *alpha/);
   });
 
   test('when add two commands with helpGroup then help contains group', () => {
@@ -33,7 +35,7 @@ describe('Command.helpGroup', () => {
     program.command('alpha').helpGroup('Greek:');
     program.command('beta').helpGroup('Greek:');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Greek:\n *alpha\n *beta/);
+    assert.match(helpInfo, /Greek:\n *alpha\n *beta/);
   });
 });
 
@@ -43,7 +45,7 @@ describe('.optionsGroup', () => {
     program.optionsGroup('Greek:');
     program.option('--alpha');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Greek:\n *--alpha/);
+    assert.match(helpInfo, /Greek:\n *--alpha/);
   });
 
   test('when add two options then help contains group with two options', () => {
@@ -52,7 +54,7 @@ describe('.optionsGroup', () => {
     program.option('--alpha');
     program.option('--beta');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Greek:\n *--alpha\n *--beta/);
+    assert.match(helpInfo, /Greek:\n *--alpha\n *--beta/);
   });
 
   test('when add options with different groups then help contains two groups', () => {
@@ -62,8 +64,8 @@ describe('.optionsGroup', () => {
     program.optionsGroup('Latin:');
     program.option('--unus');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Greek:\n *--alpha/);
-    expect(helpInfo).toMatch(/Latin:\n *--unus/);
+    assert.match(helpInfo, /Greek:\n *--alpha/);
+    assert.match(helpInfo, /Latin:\n *--unus/);
   });
 
   test('when implicit help option then help option not affected', () => {
@@ -71,7 +73,7 @@ describe('.optionsGroup', () => {
     program.optionsGroup('Greek:');
     program.option('--alpha');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Options:\n *-h, --help/);
+    assert.match(helpInfo, /Options:\n *-h, --help/);
   });
 
   test('when option with helpGroup then helpGroup wins', () => {
@@ -79,14 +81,14 @@ describe('.optionsGroup', () => {
     program.optionsGroup('Greek:');
     program.addOption(new Option('--unus').helpGroup('Latin:'));
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Latin:\n *--unus/);
+    assert.match(helpInfo, /Latin:\n *--unus/);
   });
 
   test('when add no options with heading then heading does not appear', () => {
     const program = new Command();
     program.optionsGroup('Greek:');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).not.toMatch(/Greek/);
+    assert.doesNotMatch(helpInfo, /Greek/);
   });
 
   test('when add no visible options with heading then heading does not appear', () => {
@@ -94,7 +96,7 @@ describe('.optionsGroup', () => {
     program.optionsGroup('Greek:');
     program.addOption(new Option('--alpha').hideHelp());
     const helpInfo = program.helpInformation();
-    expect(helpInfo).not.toMatch(/Greek/);
+    assert.doesNotMatch(helpInfo, /Greek/);
   });
 
   test('when .helpOption(flags) then help option in group', () => {
@@ -102,7 +104,7 @@ describe('.optionsGroup', () => {
     program.optionsGroup('Greek:');
     program.helpOption('--assist');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Greek:\n *--assist/);
+    assert.match(helpInfo, /Greek:\n *--assist/);
   });
 
   test('when .helpOption(true) then help option in group', () => {
@@ -110,7 +112,7 @@ describe('.optionsGroup', () => {
     program.optionsGroup('Greek:');
     program.helpOption(true);
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Greek:\n *-h, --help/);
+    assert.match(helpInfo, /Greek:\n *-h, --help/);
   });
 
   test('when .version(str) then version option in group', () => {
@@ -118,7 +120,7 @@ describe('.optionsGroup', () => {
     program.optionsGroup('Greek:');
     program.version('1.2.3');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Greek:\n *-V, --version/);
+    assert.match(helpInfo, /Greek:\n *-V, --version/);
   });
 
   test('when set sortOptions then options are sorted within groups', () => {
@@ -131,8 +133,8 @@ describe('.optionsGroup', () => {
     program.option('--beta');
     program.option('--alpha');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Latin:\n *--duo\n *--unus/);
-    expect(helpInfo).toMatch(/Greek:\n *--alpha\n *--beta/);
+    assert.match(helpInfo, /Latin:\n *--duo\n *--unus/);
+    assert.match(helpInfo, /Greek:\n *--alpha\n *--beta/);
   });
 
   test('when set sortOptions then groups are in order added not sorted', () => {
@@ -142,7 +144,8 @@ describe('.optionsGroup', () => {
     program.addOption(new Option('--ccc').helpGroup('CCC:'));
     program.addOption(new Option('--aaa').helpGroup('AAA:'));
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(
+    assert.match(
+      helpInfo,
       /BBB:\n *--bbb.*\n\nCCC:\n *--ccc.*\n\nAAA:\n *--aaa/,
     );
   });
@@ -154,7 +157,7 @@ describe('.commandsGroup', () => {
     program.commandsGroup('Greek:');
     program.command('alpha');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Greek:\n *alpha/);
+    assert.match(helpInfo, /Greek:\n *alpha/);
   });
 
   test('when add two commands then help contains group with two commands', () => {
@@ -163,7 +166,7 @@ describe('.commandsGroup', () => {
     program.command('alpha');
     program.command('beta');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Greek:\n *alpha\n *beta/);
+    assert.match(helpInfo, /Greek:\n *alpha\n *beta/);
   });
 
   test('when add commands with different groups then help contains two groups', () => {
@@ -173,8 +176,8 @@ describe('.commandsGroup', () => {
     program.commandsGroup('Latin:');
     program.command('unus');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Greek:\n *alpha/);
-    expect(helpInfo).toMatch(/Latin:\n *unus/);
+    assert.match(helpInfo, /Greek:\n *alpha/);
+    assert.match(helpInfo, /Latin:\n *unus/);
   });
 
   test('when implicit help command then help command not affected', () => {
@@ -182,7 +185,7 @@ describe('.commandsGroup', () => {
     program.commandsGroup('Greek:');
     program.command('alpha');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Commands:\n *help/);
+    assert.match(helpInfo, /Commands:\n *help/);
   });
 
   test('when command with custom helpGroup then helpGroup wins', () => {
@@ -190,14 +193,14 @@ describe('.commandsGroup', () => {
     program.commandsGroup('Greek:');
     program.command('unus').helpGroup('Latin:');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Latin:\n *unus/);
+    assert.match(helpInfo, /Latin:\n *unus/);
   });
 
   test('when add no commands with heading then heading does not appear', () => {
     const program = new Command();
     program.commandsGroup('Greek:');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).not.toMatch(/Greek/);
+    assert.doesNotMatch(helpInfo, /Greek/);
   });
 
   test('when add no visible command with heading then heading does not appear', () => {
@@ -205,7 +208,7 @@ describe('.commandsGroup', () => {
     program.commandsGroup('Greek:');
     program.command('alpha', { hidden: true });
     const helpInfo = program.helpInformation();
-    expect(helpInfo).not.toMatch(/Greek/);
+    assert.doesNotMatch(helpInfo, /Greek/);
   });
 
   test('when .helpCommand(name) then help command in group', () => {
@@ -214,7 +217,7 @@ describe('.commandsGroup', () => {
     program.commandsGroup('Greek:');
     program.helpCommand('assist');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Greek:\n *assist/);
+    assert.match(helpInfo, /Greek:\n *assist/);
   });
 
   test('when .helpCommand(true) then help command in group', () => {
@@ -223,7 +226,7 @@ describe('.commandsGroup', () => {
     program.commandsGroup('Greek:');
     program.helpCommand(true);
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Greek:\n *help/);
+    assert.match(helpInfo, /Greek:\n *help/);
   });
 
   test('when set sortCommands then commands are sorted within groups', () => {
@@ -236,8 +239,8 @@ describe('.commandsGroup', () => {
     program.command('beta');
     program.command('alpha');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/Latin:\n *duo\n *unus/);
-    expect(helpInfo).toMatch(/Greek:\n *alpha\n *beta/);
+    assert.match(helpInfo, /Latin:\n *duo\n *unus/);
+    assert.match(helpInfo, /Greek:\n *alpha\n *beta/);
   });
 
   test('when set sortOptions then groups are in order added not sorted', () => {
@@ -247,6 +250,6 @@ describe('.commandsGroup', () => {
     program.command('ccc').helpGroup('CCC:');
     program.command('aaa').helpGroup('AAA:');
     const helpInfo = program.helpInformation();
-    expect(helpInfo).toMatch(/BBB:\n *bbb.*\n\nCCC:\n *ccc.*\n\nAAA:\n *aaa/);
+    assert.match(helpInfo, /BBB:\n *bbb.*\n\nCCC:\n *ccc.*\n\nAAA:\n *aaa/);
   });
 });

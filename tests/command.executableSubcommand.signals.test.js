@@ -1,5 +1,7 @@
 const childProcess = require('child_process');
 const path = require('path');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
 const pmPath = path.join(__dirname, 'fixtures', 'pm');
 
@@ -10,31 +12,33 @@ const describeOrSkipOnWindows =
   process.platform === 'win32' ? describe.skip : describe;
 
 describeOrSkipOnWindows('signals', () => {
-  test.each(['SIGINT', 'SIGHUP', 'SIGTERM', 'SIGUSR1', 'SIGUSR2'])(
-    'when program sent %s then executableSubcommand sent signal too',
-    (signal, done) => {
-      // Spawn program. The listen subcommand waits for a signal and writes the name of the signal to stdout.
-      const proc = childProcess.spawn(pmPath, ['listen'], {});
+  describe('signal forwarding tests', () => {
+    const signals = ['SIGINT', 'SIGHUP', 'SIGTERM', 'SIGUSR1', 'SIGUSR2'];
+    for (const signal of signals) {
+      test(`when program sent ${signal} then executableSubcommand sent signal too`, (t, done) => {
+        // Spawn program. The listen subcommand waits for a signal and writes the name of the signal to stdout.
+        const proc = childProcess.spawn(pmPath, ['listen'], {});
 
-      let processOutput = '';
-      proc.stdout.on('data', (data) => {
-        if (processOutput.length === 0) {
-          // Send signal to program.
-          proc.kill(`${signal}`);
-        }
-        processOutput += data.toString();
+        let processOutput = '';
+        proc.stdout.on('data', (data) => {
+          if (processOutput.length === 0) {
+            // Send signal to program.
+            proc.kill(`${signal}`);
+          }
+          processOutput += data.toString();
+        });
+        proc.on('close', (code) => {
+          // Check the child subcommand received the signal too.
+          assert.equal(processOutput, `Listening for signal...${signal}`);
+          done();
+        });
       });
-      proc.on('close', (code) => {
-        // Check the child subcommand received the signal too.
-        expect(processOutput).toBe(`Listening for signal...${signal}`);
-        done();
-      });
-    },
-  );
+    }
+  });
 
   test('when executable subcommand sent signal then program exit code is non-zero', () => {
     const { status } = childProcess.spawnSync(pmPath, ['terminate'], {});
-    expect(status).toBeGreaterThan(0);
+    assert.equal(status > 0, true);
   });
 
   test('when command has exitOverride and executable subcommand sent signal then exit code is non-zero', () => {
@@ -43,7 +47,7 @@ describeOrSkipOnWindows('signals', () => {
       ['exit-override', 'terminate'],
       {},
     );
-    expect(status).toBeGreaterThan(0);
+    assert.equal(status > 0, true);
   });
 
   // Not a signal test, but closely related code so adding here.
@@ -53,6 +57,6 @@ describeOrSkipOnWindows('signals', () => {
       ['exit-override', 'fail'],
       {},
     );
-    expect(status).toEqual(42);
+    assert.equal(status, 42);
   });
 });

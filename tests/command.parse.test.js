@@ -1,4 +1,6 @@
 const commander = require('../');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
 // Testing some Electron conventions but not directly using Electron to avoid overheads.
 // https://github.com/electron/electron/issues/4690#issuecomment-217435222
@@ -15,7 +17,7 @@ describe('.parse() args from', () => {
     process.argv = 'node script.js user'.split(' ');
     program.parse();
     process.argv = hold;
-    expect(program.args).toEqual(['user']);
+    assert.deepEqual(program.args, ['user']);
   });
 
   test('when no args and electron properties and not default app then use process.argv and app/args', () => {
@@ -27,21 +29,21 @@ describe('.parse() args from', () => {
     program.parse();
     delete process.versions.electron;
     process.argv = holdArgv;
-    expect(program.args).toEqual(['user']);
+    assert.deepEqual(program.args, ['user']);
   });
 
   test('when args then app/script/args', () => {
     const program = new commander.Command();
     program.argument('[args...]');
     program.parse('node script.js user'.split(' '));
-    expect(program.args).toEqual(['user']);
+    assert.deepEqual(program.args, ['user']);
   });
 
   test('when args from "node" then app/script/args', () => {
     const program = new commander.Command();
     program.argument('[args...]');
     program.parse('node script.js user'.split(' '), { from: 'node' });
-    expect(program.args).toEqual(['user']);
+    assert.deepEqual(program.args, ['user']);
   });
 
   test('when args from "electron" and not default app then app/args', () => {
@@ -51,7 +53,7 @@ describe('.parse() args from', () => {
     process.defaultApp = undefined;
     program.parse('customApp user'.split(' '), { from: 'electron' });
     process.defaultApp = hold;
-    expect(program.args).toEqual(['user']);
+    assert.deepEqual(program.args, ['user']);
   });
 
   test('when args from "electron" and default app then app/script/args', () => {
@@ -61,40 +63,41 @@ describe('.parse() args from', () => {
     process.defaultApp = true;
     program.parse('electron script user'.split(' '), { from: 'electron' });
     process.defaultApp = hold;
-    expect(program.args).toEqual(['user']);
+    assert.deepEqual(program.args, ['user']);
   });
 
   test('when args from "user" then args', () => {
     const program = new commander.Command();
     program.argument('[args...]');
     program.parse('user'.split(' '), { from: 'user' });
-    expect(program.args).toEqual(['user']);
+    assert.deepEqual(program.args, ['user']);
   });
 
   test('when args from "silly" then throw', () => {
     const program = new commander.Command();
     program.argument('[args...]');
-    expect(() => {
+    assert.throws(() => {
       program.parse(['node', 'script.js'], { from: 'silly' });
-    }).toThrow();
+    });
   });
 
-  test.each(['-e', '--eval', '-p', '--print'])(
-    'when node execArgv includes %s then app/args',
-    (flag) => {
-      const program = new commander.Command();
-      program.argument('[args...]');
-      const holdExecArgv = process.execArgv;
-      const holdArgv = process.argv;
-      process.argv = ['node', 'user-arg'];
-      process.execArgv = [flag, 'console.log("hello, world")'];
-      program.parse();
-      process.argv = holdArgv;
-      process.execArgv = holdExecArgv;
-      expect(program.args).toEqual(['user-arg']);
-      process.execArgv = holdExecArgv;
-    },
-  );
+  describe('when node execArgv includes node flags', () => {
+    ['-e', '--eval', '-p', '--print'].forEach((flag) => {
+      test(`when node execArgv includes ${flag} then app/args`, () => {
+        const program = new commander.Command();
+        program.argument('[args...]');
+        const holdExecArgv = process.execArgv;
+        const holdArgv = process.argv;
+        process.argv = ['node', 'user-arg'];
+        process.execArgv = [flag, 'console.log("hello, world")'];
+        program.parse();
+        process.argv = holdArgv;
+        process.execArgv = holdExecArgv;
+        assert.deepEqual(program.args, ['user-arg']);
+        process.execArgv = holdExecArgv;
+      });
+    });
+  });
 });
 
 describe('return type', () => {
@@ -104,7 +107,7 @@ describe('return type', () => {
     program.action(() => {});
 
     const result = program.parse(['node', 'test']);
-    expect(result).toBe(program);
+    assert.equal(result, program);
   });
 
   test('when await .parseAsync then returns program', async () => {
@@ -113,7 +116,7 @@ describe('return type', () => {
     program.action(() => {});
 
     const result = await program.parseAsync(['node', 'test']);
-    expect(result).toBe(program);
+    assert.equal(result, program);
   });
 });
 
@@ -121,9 +124,9 @@ describe('return type', () => {
 test('when parse strings instead of array then throw', () => {
   const program = new commander.Command();
   program.argument('[args...]');
-  expect(() => {
+  assert.throws(() => {
     program.parse('node', 'test');
-  }).toThrow();
+  });
 });
 
 describe('parse parameter is treated as readonly, per TypeScript declaration', () => {
@@ -134,7 +137,7 @@ describe('parse parameter is treated as readonly, per TypeScript declaration', (
     const original = ['node', '--debug', 'arg'];
     const param = original.slice();
     program.parse(param);
-    expect(param).toEqual(original);
+    assert.deepEqual(param, original);
   });
 
   test('when parse called and parsed args later changed then parameter does not change', () => {
@@ -146,7 +149,7 @@ describe('parse parameter is treated as readonly, per TypeScript declaration', (
     program.parse(param);
     program.args.length = 0;
     program.rawArgs.length = 0;
-    expect(param).toEqual(original);
+    assert.deepEqual(param, original);
   });
 
   test('when parse called and param later changed then parsed args do not change', () => {
@@ -158,8 +161,8 @@ describe('parse parameter is treated as readonly, per TypeScript declaration', (
     const oldArgs = program.args.slice();
     const oldRawArgs = program.rawArgs.slice();
     param.length = 0;
-    expect(program.args).toEqual(oldArgs);
-    expect(program.rawArgs).toEqual(oldRawArgs);
+    assert.deepEqual(program.args, oldArgs);
+    assert.deepEqual(program.rawArgs, oldRawArgs);
   });
 });
 
@@ -171,7 +174,7 @@ describe('parseAsync parameter is treated as readonly, per TypeScript declaratio
     const original = ['node', '--debug', 'arg'];
     const param = original.slice();
     await program.parseAsync(param);
-    expect(param).toEqual(original);
+    assert.deepEqual(param, original);
   });
 
   test('when parseAsync called and parsed args later changed then parameter does not change', async () => {
@@ -183,7 +186,7 @@ describe('parseAsync parameter is treated as readonly, per TypeScript declaratio
     await program.parseAsync(param);
     program.args.length = 0;
     program.rawArgs.length = 0;
-    expect(param).toEqual(original);
+    assert.deepEqual(param, original);
   });
 
   test('when parseAsync called and param later changed then parsed args do not change', async () => {
@@ -195,8 +198,8 @@ describe('parseAsync parameter is treated as readonly, per TypeScript declaratio
     const oldArgs = program.args.slice();
     const oldRawArgs = program.rawArgs.slice();
     param.length = 0;
-    expect(program.args).toEqual(oldArgs);
-    expect(program.rawArgs).toEqual(oldRawArgs);
+    assert.deepEqual(program.args, oldArgs);
+    assert.deepEqual(program.rawArgs, oldRawArgs);
   });
 });
 
@@ -205,10 +208,10 @@ describe('.parse() called multiple times', () => {
     const program = new commander.Command().option('--black').option('--white');
 
     program.parse(['--black'], { from: 'user' });
-    expect(program.opts()).toEqual({ black: true });
+    assert.deepEqual(program.opts(), { black: true });
 
     program.parse(['--white'], { from: 'user' });
-    expect(program.opts()).toEqual({ white: true });
+    assert.deepEqual(program.opts(), { white: true });
   });
 
   test('when use options with option-argument then option values and sources reset', () => {
@@ -217,14 +220,14 @@ describe('.parse() called multiple times', () => {
       .option('-b, --bar <value>');
 
     program.parse(['--foo', 'FOO'], { from: 'user' });
-    expect(program.opts()).toEqual({ foo: 'FOO' });
-    expect(program.getOptionValueSource('foo')).toEqual('cli');
-    expect(program.getOptionValueSource('bar')).toBeUndefined();
+    assert.deepEqual(program.opts(), { foo: 'FOO' });
+    assert.equal(program.getOptionValueSource('foo'), 'cli');
+    assert.equal(program.getOptionValueSource('bar'), undefined);
 
     program.parse(['--bar', 'BAR'], { from: 'user' });
-    expect(program.opts()).toEqual({ bar: 'BAR' });
-    expect(program.getOptionValueSource('foo')).toBeUndefined();
-    expect(program.getOptionValueSource('bar')).toEqual('cli');
+    assert.deepEqual(program.opts(), { bar: 'BAR' });
+    assert.equal(program.getOptionValueSource('foo'), undefined);
+    assert.equal(program.getOptionValueSource('bar'), 'cli');
   });
 
   test('when use options with option-argument and default then option values and sources reset', () => {
@@ -233,14 +236,14 @@ describe('.parse() called multiple times', () => {
       .option('-b, --bar <value>', 'description', 'default-BAR');
 
     program.parse(['--foo', 'FOO'], { from: 'user' });
-    expect(program.opts()).toEqual({ foo: 'FOO', bar: 'default-BAR' });
-    expect(program.getOptionValueSource('foo')).toEqual('cli');
-    expect(program.getOptionValueSource('bar')).toEqual('default');
+    assert.deepEqual(program.opts(), { foo: 'FOO', bar: 'default-BAR' });
+    assert.equal(program.getOptionValueSource('foo'), 'cli');
+    assert.equal(program.getOptionValueSource('bar'), 'default');
 
     program.parse(['--bar', 'BAR'], { from: 'user' });
-    expect(program.opts()).toEqual({ foo: 'default-FOO', bar: 'BAR' });
-    expect(program.getOptionValueSource('foo')).toEqual('default');
-    expect(program.getOptionValueSource('bar')).toEqual('cli');
+    assert.deepEqual(program.opts(), { foo: 'default-FOO', bar: 'BAR' });
+    assert.equal(program.getOptionValueSource('foo'), 'default');
+    assert.equal(program.getOptionValueSource('bar'), 'cli');
   });
 
   test('when use negated options then option values reset', () => {
@@ -249,20 +252,20 @@ describe('.parse() called multiple times', () => {
       .option('--no-bar');
 
     program.parse(['--no-foo'], { from: 'user' });
-    expect(program.opts()).toEqual({ foo: false, bar: true });
+    assert.deepEqual(program.opts(), { foo: false, bar: true });
 
     program.parse(['--no-bar'], { from: 'user' });
-    expect(program.opts()).toEqual({ foo: true, bar: false });
+    assert.deepEqual(program.opts(), { foo: true, bar: false });
   });
 
   test('when use variadic option then option values reset', () => {
     const program = new commander.Command().option('--var <items...>');
 
     program.parse(['--var', 'a', 'b'], { from: 'user' });
-    expect(program.opts()).toEqual({ var: ['a', 'b'] });
+    assert.deepEqual(program.opts(), { var: ['a', 'b'] });
 
     program.parse(['--var', 'c'], { from: 'user' });
-    expect(program.opts()).toEqual({ var: ['c'] });
+    assert.deepEqual(program.opts(), { var: ['c'] });
   });
 
   test('when use collect example then option value resets', () => {
@@ -273,10 +276,10 @@ describe('.parse() called multiple times', () => {
     program.option('-c, --collect <value>', 'repeatable value', collect, []);
 
     program.parse(['-c', 'a', '-c', 'b'], { from: 'user' });
-    expect(program.opts()).toEqual({ collect: ['a', 'b'] });
+    assert.deepEqual(program.opts(), { collect: ['a', 'b'] });
 
     program.parse(['-c', 'c'], { from: 'user' });
-    expect(program.opts()).toEqual({ collect: ['c'] });
+    assert.deepEqual(program.opts(), { collect: ['c'] });
   });
 
   test('when use increaseVerbosity example then option value resets', () => {
@@ -292,21 +295,21 @@ describe('.parse() called multiple times', () => {
     );
 
     program.parse(['-vvv'], { from: 'user' });
-    expect(program.opts()).toEqual({ verbose: 3 });
+    assert.deepEqual(program.opts(), { verbose: 3 });
     program.parse(['-vv'], { from: 'user' });
 
-    expect(program.opts()).toEqual({ verbose: 2 });
+    assert.deepEqual(program.opts(), { verbose: 2 });
     program.parse([], { from: 'user' });
-    expect(program.opts()).toEqual({ verbose: 0 });
+    assert.deepEqual(program.opts(), { verbose: 0 });
   });
 
   test('when use parse and parseAsync then option values reset', async () => {
     const program = new commander.Command().option('--black').option('--white');
 
     program.parse(['--black'], { from: 'user' });
-    expect(program.opts()).toEqual({ black: true });
+    assert.deepEqual(program.opts(), { black: true });
     await program.parseAsync(['--white'], { from: 'user' });
-    expect(program.opts()).toEqual({ white: true });
+    assert.deepEqual(program.opts(), { white: true });
   });
 
   test('when call subcommand then option values reset (program and subcommand)', () => {
@@ -314,10 +317,13 @@ describe('.parse() called multiple times', () => {
     const subcommand = program.command('sub').option('--red').option('--green');
 
     program.parse(['--black', 'sub', '--red'], { from: 'user' });
-    expect(subcommand.optsWithGlobals()).toEqual({ black: true, red: true });
+    assert.deepEqual(subcommand.optsWithGlobals(), { black: true, red: true });
 
     program.parse(['--white', 'sub', '--green'], { from: 'user' });
-    expect(subcommand.optsWithGlobals()).toEqual({ white: true, green: true });
+    assert.deepEqual(subcommand.optsWithGlobals(), {
+      white: true,
+      green: true,
+    });
   });
 
   test('when call different subcommand then no reset because lazy', () => {
@@ -327,22 +333,22 @@ describe('.parse() called multiple times', () => {
     const sub2 = program.command('sub2').option('--green');
 
     program.parse(['sub1', '--red'], { from: 'user' });
-    expect(sub1.opts()).toEqual({ red: true });
-    expect(sub2.opts()).toEqual({});
+    assert.deepEqual(sub1.opts(), { red: true });
+    assert.deepEqual(sub2.opts(), {});
 
     program.parse(['sub2', '--green'], { from: 'user' });
-    expect(sub1.opts()).toEqual({ red: true });
-    expect(sub2.opts()).toEqual({ green: true });
+    assert.deepEqual(sub1.opts(), { red: true });
+    assert.deepEqual(sub2.opts(), { green: true });
   });
 
   test('when parse with different implied program name then name changes', () => {
     const program = new commander.Command();
 
     program.parse(['node', 'script1.js']);
-    expect(program.name()).toEqual('script1');
+    assert.equal(program.name(), 'script1');
 
     program.parse(['electron', 'script2.js']);
-    expect(program.name()).toEqual('script2');
+    assert.equal(program.name(), 'script2');
   });
 
   test('when parse with different arguments then args change', () => {
@@ -352,10 +358,10 @@ describe('.parse() called multiple times', () => {
       .argument('[second]');
 
     program.parse(['one', 'two'], { from: 'user' });
-    expect(program.args).toEqual(['one', 'two']);
+    assert.deepEqual(program.args, ['one', 'two']);
 
     program.parse(['alpha'], { from: 'user' });
-    expect(program.args).toEqual(['alpha']);
+    assert.deepEqual(program.args, ['alpha']);
   });
 
   test('when parse with different arguments then rawArgs change', () => {
@@ -366,10 +372,10 @@ describe('.parse() called multiple times', () => {
       .option('--black');
 
     program.parse(['--white', 'one'], { from: 'user' });
-    expect(program.rawArgs).toEqual(['--white', 'one']);
+    assert.deepEqual(program.rawArgs, ['--white', 'one']);
 
     program.parse(['--black', 'two'], { from: 'user' });
-    expect(program.rawArgs).toEqual(['--black', 'two']);
+    assert.deepEqual(program.rawArgs, ['--black', 'two']);
   });
 
   test('when parse with different arguments then processedArgs change', () => {
@@ -381,10 +387,10 @@ describe('.parse() called multiple times', () => {
     );
 
     program.parse([123], { from: 'user' });
-    expect(program.processedArgs).toEqual([123]);
+    assert.deepEqual(program.processedArgs, [123]);
 
     program.parse([456], { from: 'user' });
-    expect(program.processedArgs).toEqual([456]);
+    assert.deepEqual(program.processedArgs, [456]);
   });
 
   test('when parse subcommand then reset state before preSubcommand hook called', () => {
@@ -393,27 +399,27 @@ describe('.parse() called multiple times', () => {
       'preSubcommand',
       (thisCommand, subcommand) => {
         hookCalled = true;
-        expect(subcommand.opts()).toEqual({});
+        assert.deepEqual(subcommand.opts(), {});
       },
     );
     const subcommand = program.command('sub').option('--red').option('--green');
 
     hookCalled = false;
     program.parse(['sub', '--red'], { from: 'user' });
-    expect(hookCalled).toBe(true);
-    expect(subcommand.opts()).toEqual({ red: true });
+    assert.equal(hookCalled, true);
+    assert.deepEqual(subcommand.opts(), { red: true });
 
     hookCalled = false;
     program.parse(['sub', '--green'], { from: 'user' });
-    expect(hookCalled).toBe(true);
-    expect(subcommand.opts()).toEqual({ green: true });
+    assert.equal(hookCalled, true);
+    assert.deepEqual(subcommand.opts(), { green: true });
   });
 
   test('when using storeOptionsAsProperties then throw on second parse', () => {
     const program = new commander.Command().storeOptionsAsProperties();
     program.parse();
-    expect(() => {
+    assert.throws(() => {
       program.parse();
-    }).toThrow();
+    });
   });
 });

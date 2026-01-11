@@ -1,4 +1,6 @@
 const commander = require('../');
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
 
 test('when override createCommand then affects help', () => {
   class MyHelp extends commander.Help {
@@ -14,5 +16,5 @@ test('when override createCommand then affects help', () => {
   }
 
   const program = new MyCommand();
-  expect(program.helpInformation()).toEqual('custom');
+  assert.equal(program.helpInformation(), 'custom');
 });

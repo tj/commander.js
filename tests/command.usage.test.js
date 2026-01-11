@@ -1,4 +1,6 @@
 const commander = require('../');
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
 
 test('when default usage and check program help then starts with default usage', () => {
   const program = new commander.Command();
@@ -6,7 +8,7 @@ test('when default usage and check program help then starts with default usage',
   program.name('test');
   const helpInformation = program.helpInformation();
 
-  expect(helpInformation).toMatch(/^Usage: test \[options\]/);
+  assert.match(helpInformation, /^Usage: test \[options\]/);
 });
 
 test('when custom usage and check program help then starts with custom usage', () => {
@@ -17,7 +19,7 @@ test('when custom usage and check program help then starts with custom usage', (
   program.name('test');
   const helpInformation = program.helpInformation();
 
-  expect(helpInformation).toMatch(new RegExp(`^Usage: test ${myUsage}`));
+  assert.match(helpInformation, new RegExp(`^Usage: test ${myUsage}`));
 });
 
 test('when default usage and check subcommand help then starts with default usage including program name', () => {
@@ -27,7 +29,7 @@ test('when default usage and check subcommand help then starts with default usag
   program.name('test');
   const helpInformation = subCommand.helpInformation();
 
-  expect(helpInformation).toMatch(/^Usage: test info \[options\]/);
+  assert.match(helpInformation, /^Usage: test info \[options\]/);
 });
 
 test('when custom usage and check subcommand help then starts with custom usage including program name', () => {
@@ -38,7 +40,7 @@ test('when custom usage and check subcommand help then starts with custom usage 
   program.name('test');
   const helpInformation = subCommand.helpInformation();
 
-  expect(helpInformation).toMatch(new RegExp(`^Usage: test info ${myUsage}`));
+  assert.match(helpInformation, new RegExp(`^Usage: test info ${myUsage}`));
 });
 
 test('when has option then [options] included in usage', () => {
@@ -46,7 +48,7 @@ test('when has option then [options] included in usage', () => {
 
   program.option('--foo');
 
-  expect(program.usage()).toMatch('[options]');
+  assert.match(program.usage(), /\[options\]/);
 });
 
 test('when no options then [options] not included in usage', () => {
@@ -54,7 +56,7 @@ test('when no options then [options] not included in usage', () => {
 
   program.helpOption(false);
 
-  expect(program.usage()).not.toMatch('[options]');
+  assert.doesNotMatch(program.usage(), /\[options\]/);
 });
 
 test('when has command then [command] included in usage', () => {
@@ -62,13 +64,13 @@ test('when has command then [command] included in usage', () => {
 
   program.command('foo');
 
-  expect(program.usage()).toMatch('[command]');
+  assert.match(program.usage(), /\[command\]/);
 });
 
 test('when no commands then [command] not included in usage', () => {
   const program = new commander.Command();
 
-  expect(program.usage()).not.toMatch('[command]');
+  assert.doesNotMatch(program.usage(), /\[command\]/);
 });
 
 test('when argument then argument included in usage', () => {
@@ -76,7 +78,7 @@ test('when argument then argument included in usage', () => {
 
   program.argument('<file>');
 
-  expect(program.usage()).toMatch('<file>');
+  assert.match(program.usage(), /<file>/);
 });
 
 test('when options and command and argument then all three included in usage', () => {
@@ -84,5 +86,5 @@ test('when options and command and argument then all three included in usage', (
 
   program.argument('<file>').option('--alpha').command('beta');
 
-  expect(program.usage()).toEqual('[options] [command] <file>');
+  assert.equal(program.usage(), '[options] [command] <file>');
 });

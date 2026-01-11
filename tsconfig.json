@@ -23,7 +23,7 @@
     "strictNullChecks": false,
     "useUnknownInCatchVariables": false,
 
-    "types": ["node", "jest"],
+    "types": ["node"],
     "noEmit": true /* just type checking and not emitting transpiled files */,
     "skipLibCheck": false /* we want to check our hand crafted definitions */,
     "forceConsistentCasingInFileNames": true,

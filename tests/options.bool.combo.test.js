@@ -1,4 +1,6 @@
 const commander = require('../');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
 // Test combination of flag and --no-flag
 // (single flags tested in options.bool.test.js)
@@ -16,31 +18,31 @@ describe('boolean option combo with no default', () => {
   test('when boolean combo not specified then value is undefined', () => {
     const program = createPepperProgram();
     program.parse(['node', 'test']);
-    expect(program.opts().pepper).toBeUndefined();
+    assert.equal(program.opts().pepper, undefined);
   });
 
   test('when boolean combo positive then value is true', () => {
     const program = createPepperProgram();
     program.parse(['node', 'test', '--pepper']);
-    expect(program.opts().pepper).toBe(true);
+    assert.equal(program.opts().pepper, true);
   });
 
   test('when boolean combo negative then value is false', () => {
     const program = createPepperProgram();
     program.parse(['node', 'test', '--no-pepper']);
-    expect(program.opts().pepper).toBe(false);
+    assert.equal(program.opts().pepper, false);
   });
 
   test('when boolean combo last is positive then value is true', () => {
     const program = createPepperProgram();
     program.parse(['node', 'test', '--no-pepper', '--pepper']);
-    expect(program.opts().pepper).toBe(true);
+    assert.equal(program.opts().pepper, true);
   });
 
   test('when boolean combo last is negative then value is false', () => {
     const program = createPepperProgram();
     program.parse(['node', 'test', '--pepper', '--no-pepper']);
-    expect(program.opts().pepper).toBe(false);
+    assert.equal(program.opts().pepper, false);
   });
 });
 
@@ -59,19 +61,19 @@ describe('boolean option combo, default true, long flags', () => {
   test('when boolean combo not specified then value is true', () => {
     const program = createPepperProgramWithDefault(true);
     program.parse(['node', 'test']);
-    expect(program.opts().pepper).toBe(true);
+    assert.equal(program.opts().pepper, true);
   });
 
   test('when boolean combo positive then value is true', () => {
     const program = createPepperProgramWithDefault(true);
     program.parse(['node', 'test', '--pepper']);
-    expect(program.opts().pepper).toBe(true);
+    assert.equal(program.opts().pepper, true);
   });
 
   test('when boolean combo negative then value is false', () => {
     const program = createPepperProgramWithDefault(true);
     program.parse(['node', 'test', '--no-pepper']);
-    expect(program.opts().pepper).toBe(false);
+    assert.equal(program.opts().pepper, false);
   });
 });
 
@@ -80,19 +82,19 @@ describe('boolean option combo, default false, short flags', () => {
   test('when boolean combo not specified then value is false', () => {
     const program = createPepperProgramWithDefault(false);
     program.parse(['node', 'test']);
-    expect(program.opts().pepper).toBe(false);
+    assert.equal(program.opts().pepper, false);
   });
 
   test('when boolean combo positive then value is true', () => {
     const program = createPepperProgramWithDefault(false);
     program.parse(['node', 'test', '-p']);
-    expect(program.opts().pepper).toBe(true);
+    assert.equal(program.opts().pepper, true);
   });
 
   test('when boolean combo negative then value is false', () => {
     const program = createPepperProgramWithDefault(false);
     program.parse(['node', 'test', '-P']);
-    expect(program.opts().pepper).toBe(false);
+    assert.equal(program.opts().pepper, false);
   });
 });
 
@@ -102,19 +104,19 @@ describe('boolean option combo with non-boolean default', () => {
   test('when boolean combo not specified then value is default', () => {
     const program = createPepperProgramWithDefault('default');
     program.parse(['node', 'test']);
-    expect(program.opts().pepper).toBe('default');
+    assert.equal(program.opts().pepper, 'default');
   });
 
   test('when boolean combo positive then value is true', () => {
     const program = createPepperProgramWithDefault('default');
     program.parse(['node', 'test', '--pepper']);
-    expect(program.opts().pepper).toBe(true);
+    assert.equal(program.opts().pepper, true);
   });
 
   test('when boolean combo negative then value is false', () => {
     const program = createPepperProgramWithDefault('default');
     program.parse(['node', 'test', '--no-pepper']);
-    expect(program.opts().pepper).toBe(false);
+    assert.equal(program.opts().pepper, false);
   });
 });
 
@@ -134,19 +136,19 @@ describe('boolean option combo with non-boolean default and preset', () => {
   test('when boolean combo not specified then value is default', () => {
     const program = createPepperProgramWithDefaultAndPreset();
     program.parse(['node', 'test']);
-    expect(program.opts().pepper).toBe('default');
+    assert.equal(program.opts().pepper, 'default');
   });
 
   test('when boolean combo positive then value is preset', () => {
     const program = createPepperProgramWithDefaultAndPreset();
     program.parse(['node', 'test', '--pepper']);
-    expect(program.opts().pepper).toBe('preset');
+    assert.equal(program.opts().pepper, 'preset');
   });
 
   test('when boolean combo negative then value is false', () => {
     const program = createPepperProgramWithDefaultAndPreset();
     program.parse(['node', 'test', '--no-pepper']);
-    expect(program.opts().pepper).toBe(false);
+    assert.equal(program.opts().pepper, false);
   });
 });
 
@@ -155,7 +157,7 @@ describe('only lone negative causes implicit default of true', () => {
     const program = new commander.Command();
     program.option('--no-pepper', 'remove pepper');
     program.parse([], { from: 'user' });
-    expect(program.opts().pepper).toBe(true);
+    assert.equal(program.opts().pepper, true);
   });
 
   test('when boolean combo and negative first then no implicit default', () => {
@@ -165,7 +167,7 @@ describe('only lone negative causes implicit default of true', () => {
       .option('--no-pepper', 'remove pepper')
       .option('--pepper', 'pepper only');
     program.parse([], { from: 'user' });
-    expect(program.opts().pepper).toBeUndefined();
+    assert.equal(program.opts().pepper, undefined);
   });
 
   test('when boolean combo and negative second then no implicit default', () => {
@@ -174,7 +176,7 @@ describe('only lone negative causes implicit default of true', () => {
       .option('--pepper', 'pepper only')
       .option('--no-pepper', 'remove pepper');
     program.parse([], { from: 'user' });
-    expect(program.opts().pepper).toBeUndefined();
+    assert.equal(program.opts().pepper, undefined);
   });
 
   test('when boolean combo and negative second with explicit default then get explicit default', () => {
@@ -186,6 +188,6 @@ describe('only lone negative causes implicit default of true', () => {
       .option('--pepper', 'pepper only')
       .option('--no-pepper', 'remove pepper', 'plain');
     program.parse([], { from: 'user' });
-    expect(program.opts().pepper).toBe('plain');
+    assert.equal(program.opts().pepper, 'plain');
   });
 });

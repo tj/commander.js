@@ -1,4 +1,6 @@
 const commander = require('../');
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
 
 test('when when multiple short flags specified then all values are true', () => {
   const program = new commander.Command();
@@ -8,6 +10,6 @@ test('when when multiple short flags specified then all values are true', () => 
 
   program.parse(['node', 'test', '-pc']);
 
-  expect(program.opts().pepper).toBe(true);
-  expect(program.opts().cheese).toBe(true);
+  assert.equal(program.opts().pepper, true);
+  assert.equal(program.opts().cheese, true);
 });

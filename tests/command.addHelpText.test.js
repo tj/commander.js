@@ -1,67 +1,79 @@
 const commander = require('../');
+const { test, describe, beforeEach } = require('node:test');
+const assert = require('node:assert/strict');
 
 // Using outputHelp to simplify testing.
 
 describe('program calls to addHelpText', () => {
   let writeSpy;
 
-  beforeAll(() => {
-    writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    writeSpy.mockClear();
-  });
-
-  afterAll(() => {
-    writeSpy.mockRestore();
+  beforeEach((t) => {
+    writeSpy = t.mock.method(process.stdout, 'write', () => {});
   });
 
   test('when "before" string then string before built-in help', () => {
     const program = new commander.Command();
     program.addHelpText('before', 'text');
     program.outputHelp();
-    expect(writeSpy).toHaveBeenNthCalledWith(1, 'text\n');
-    expect(writeSpy).toHaveBeenNthCalledWith(2, program.helpInformation());
+    assert.equal(writeSpy.mock.calls[0].arguments[0], 'text\n');
+    assert.equal(
+      writeSpy.mock.calls[1].arguments[0],
+      program.helpInformation(),
+    );
   });
 
   test('when "before" function then function result before built-in help', () => {
     const program = new commander.Command();
     program.addHelpText('before', () => 'text');
     program.outputHelp();
-    expect(writeSpy).toHaveBeenNthCalledWith(1, 'text\n');
-    expect(writeSpy).toHaveBeenNthCalledWith(2, program.helpInformation());
+    assert.equal(writeSpy.mock.calls[0].arguments[0], 'text\n');
+    assert.equal(
+      writeSpy.mock.calls[1].arguments[0],
+      program.helpInformation(),
+    );
   });
 
   test('when "before" function returns nothing then no effect', () => {
     const program = new commander.Command();
     program.addHelpText('before', () => {});
     program.outputHelp();
-    expect(writeSpy).toHaveBeenNthCalledWith(1, program.helpInformation());
+    assert.equal(
+      writeSpy.mock.calls[0].arguments[0],
+      program.helpInformation(),
+    );
   });
 
   test('when "beforeAll" string then string before built-in help', () => {
     const program = new commander.Command();
     program.addHelpText('beforeAll', 'text');
     program.outputHelp();
-    expect(writeSpy).toHaveBeenNthCalledWith(1, 'text\n');
-    expect(writeSpy).toHaveBeenNthCalledWith(2, program.helpInformation());
+    assert.equal(writeSpy.mock.calls[0].arguments[0], 'text\n');
+    assert.equal(
+      writeSpy.mock.calls[1].arguments[0],
+      program.helpInformation(),
+    );
   });
 
   test('when "after" string then string after built-in help', () => {
     const program = new commander.Command();
     program.addHelpText('after', 'text');
     program.outputHelp();
-    expect(writeSpy).toHaveBeenNthCalledWith(1, program.helpInformation());
-    expect(writeSpy).toHaveBeenNthCalledWith(2, 'text\n');
+    assert.equal(
+      writeSpy.mock.calls[0].arguments[0],
+      program.helpInformation(),
+    );
+    assert.equal(writeSpy.mock.calls[1].arguments[0], 'text\n');
   });
 
   test('when "afterAll" string then string after built-in help', () => {
     const program = new commander.Command();
     program.addHelpText('afterAll', 'text');
     program.outputHelp();
-    expect(writeSpy).toHaveBeenNthCalledWith(1, program.helpInformation());
-    expect(writeSpy).toHaveBeenNthCalledWith(2, 'text\n');
+    assert.equal(
+      writeSpy.mock.calls[0].arguments[0],
+      program.helpInformation(),
+    );
+    assert.equal(writeSpy.mock.calls[1].arguments[0], 'text\n');
   });
 
   test('when all the simple positions then strings in order', () => {
@@ -71,70 +83,65 @@ describe('program calls to addHelpText', () => {
     program.addHelpText('beforeAll', 'beforeAll');
     program.addHelpText('afterAll', 'afterAll');
     program.outputHelp();
-    expect(writeSpy).toHaveBeenNthCalledWith(1, 'beforeAll\n');
-    expect(writeSpy).toHaveBeenNthCalledWith(2, 'before\n');
-    expect(writeSpy).toHaveBeenNthCalledWith(3, program.helpInformation());
-    expect(writeSpy).toHaveBeenNthCalledWith(4, 'after\n');
-    expect(writeSpy).toHaveBeenNthCalledWith(5, 'afterAll\n');
+    assert.equal(writeSpy.mock.calls[0].arguments[0], 'beforeAll\n');
+    assert.equal(writeSpy.mock.calls[1].arguments[0], 'before\n');
+    assert.equal(
+      writeSpy.mock.calls[2].arguments[0],
+      program.helpInformation(),
+    );
+    assert.equal(writeSpy.mock.calls[3].arguments[0], 'after\n');
+    assert.equal(writeSpy.mock.calls[4].arguments[0], 'afterAll\n');
   });
 
   test('when "silly" position then throw', () => {
     const program = new commander.Command();
-    expect(() => {
+    assert.throws(() => {
       program.addHelpText('silly', 'text');
-    }).toThrow();
+    });
   });
 });
 
 describe('program and subcommand calls to addHelpText', () => {
   let writeSpy;
 
-  beforeAll(() => {
-    writeSpy = jest.spyOn(process.stdout, 'write').mockImplementation(() => {});
+  beforeEach((t) => {
+    writeSpy = t.mock.method(process.stdout, 'write', () => {});
   });
 
-  afterEach(() => {
-    writeSpy.mockClear();
-  });
-
-  afterAll(() => {
-    writeSpy.mockRestore();
-  });
-
-  test('when "before" on program then not called on subcommand', () => {
+  test('when "before" on program then not called on subcommand', (t) => {
     const program = new commander.Command();
     const sub = program.command('sub');
-    const testMock = jest.fn();
+    const testMock = t.mock.fn();
     program.addHelpText('before', testMock);
     sub.outputHelp();
-    expect(testMock).not.toHaveBeenCalled();
+    assert.equal(testMock.mock.callCount(), 0);
   });
 
-  test('when "beforeAll" on program then is called on subcommand', () => {
+  test('when "beforeAll" on program then is called on subcommand', (t) => {
     const program = new commander.Command();
     const sub = program.command('sub');
-    const testMock = jest.fn();
+    const testMock = t.mock.fn();
     program.addHelpText('beforeAll', testMock);
     sub.outputHelp();
-    expect(testMock).toHaveBeenCalled();
+    assert.equal(testMock.mock.callCount(), 1);
   });
 
-  test('when "after" on program then not called on subcommand', () => {
+  test('when "after" on program then not called on subcommand', (t) => {
     const program = new commander.Command();
     const sub = program.command('sub');
-    const testMock = jest.fn();
+    const testMock = t.mock.fn();
     program.addHelpText('after', testMock);
     sub.outputHelp();
-    expect(testMock).not.toHaveBeenCalled();
+    assert.equal(testMock.mock.callCount(), 0);
   });
 
-  test('when "afterAll" on program then is called on subcommand', () => {
+  test('when "afterAll" on program then is called on subcommand', (t) => {
     const program = new commander.Command();
     const sub = program.command('sub');
-    const testMock = jest.fn();
+    const testMock = t.mock.fn();
     program.addHelpText('afterAll', testMock);
     sub.outputHelp();
-    expect(testMock).toHaveBeenCalled();
+    assert.equal(testMock.mock.callCount(), 1);
   });
 });
 
@@ -142,41 +149,27 @@ describe('context checks with full parse', () => {
   let stdoutSpy;
   let stderrSpy;
 
-  beforeAll(() => {
-    stdoutSpy = jest
-      .spyOn(process.stdout, 'write')
-      .mockImplementation(() => {});
-    stderrSpy = jest
-      .spyOn(process.stderr, 'write')
-      .mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    stdoutSpy.mockClear();
-    stderrSpy.mockClear();
-  });
-
-  afterAll(() => {
-    stdoutSpy.mockRestore();
-    stderrSpy.mockRestore();
+  beforeEach((t) => {
+    stdoutSpy = t.mock.method(process.stdout, 'write', () => {});
+    stderrSpy = t.mock.method(process.stderr, 'write', () => {});
   });
 
   test('when help requested then text is on stdout', () => {
     const program = new commander.Command();
     program.exitOverride().addHelpText('before', 'text');
-    expect(() => {
+    assert.throws(() => {
       program.parse(['--help'], { from: 'user' });
-    }).toThrow();
-    expect(stdoutSpy).toHaveBeenCalledWith('text\n');
+    });
+    assert.equal(stdoutSpy.mock.calls[0].arguments[0], 'text\n');
   });
 
   test('when help for error then text is on stderr', () => {
     const program = new commander.Command();
     program.exitOverride().addHelpText('before', 'text').command('sub');
-    expect(() => {
+    assert.throws(() => {
       program.parse([], { from: 'user' });
-    }).toThrow();
-    expect(stderrSpy).toHaveBeenCalledWith('text\n');
+    });
+    assert.equal(stderrSpy.mock.calls[0].arguments[0], 'text\n');
   });
 
   test('when help requested then context.error is false', () => {
@@ -185,10 +178,10 @@ describe('context checks with full parse', () => {
     program.exitOverride().addHelpText('before', (contextParam) => {
       context = contextParam;
     });
-    expect(() => {
+    assert.throws(() => {
       program.parse(['--help'], { from: 'user' });
-    }).toThrow();
-    expect(context.error).toBe(false);
+    });
+    assert.equal(context.error, false);
   });
 
   test('when help for error then context.error is true', () => {
@@ -200,10 +193,10 @@ describe('context checks with full parse', () => {
         context = contextParam;
       })
       .command('sub');
-    expect(() => {
+    assert.throws(() => {
       program.parse([], { from: 'user' });
-    }).toThrow();
-    expect(context.error).toBe(true);
+    });
+    assert.equal(context.error, true);
   });
 
   test('when help on program then context.command is program', () => {
@@ -212,10 +205,10 @@ describe('context checks with full parse', () => {
     program.exitOverride().addHelpText('before', (contextParam) => {
       context = contextParam;
     });
-    expect(() => {
+    assert.throws(() => {
       program.parse(['--help'], { from: 'user' });
-    }).toThrow();
-    expect(context.command).toBe(program);
+    });
+    assert.equal(context.command, program);
   });
 
   test('when help on subcommand and "before" subcommand then context.command is subcommand', () => {
@@ -225,10 +218,10 @@ describe('context checks with full parse', () => {
     const sub = program.command('sub').addHelpText('before', (contextParam) => {
       context = contextParam;
     });
-    expect(() => {
+    assert.throws(() => {
       program.parse(['sub', '--help'], { from: 'user' });
-    }).toThrow();
-    expect(context.command).toBe(sub);
+    });
+    assert.equal(context.command, sub);
   });
 
   test('when help on subcommand and "beforeAll" on program then context.command is subcommand', () => {
@@ -238,9 +231,9 @@ describe('context checks with full parse', () => {
       context = contextParam;
     });
     const sub = program.command('sub');
-    expect(() => {
+    assert.throws(() => {
       program.parse(['sub', '--help'], { from: 'user' });
-    }).toThrow();
-    expect(context.command).toBe(sub);
+    });
+    assert.equal(context.command, sub);
   });
 });

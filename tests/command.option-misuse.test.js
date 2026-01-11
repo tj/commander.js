@@ -1,4 +1,6 @@
 const { Command, Option } = require('../');
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
 
 // It is a reasonable and easy mistake to pass Option to .option(). Detect this
 // and offer advice.
@@ -9,15 +11,21 @@ const expectedMessage =
 test('when pass Option to .option() then throw', () => {
   const program = new Command();
 
-  expect(() => {
-    program.option(new Option('-d, debug'));
-  }).toThrow(expectedMessage);
+  assert.throws(
+    () => {
+      program.option(new Option('-d, debug'));
+    },
+    { message: expectedMessage },
+  );
 });
 
 test('when pass Option to .requiredOption() then throw', () => {
   const program = new Command();
 
-  expect(() => {
-    program.requiredOption(new Option('-d, debug'));
-  }).toThrow(expectedMessage);
+  assert.throws(
+    () => {
+      program.requiredOption(new Option('-d, debug'));
+    },
+    { message: expectedMessage },
+  );
 });

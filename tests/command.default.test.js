@@ -2,6 +2,8 @@ const childProcess = require('child_process');
 const commander = require('../');
 const path = require('path');
 const util = require('util');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
 const execFileAsync = util.promisify(childProcess.execFile);
 
@@ -11,24 +13,24 @@ describe('default executable command', () => {
 
   test('when default subcommand and no command then call default', async () => {
     const { stdout } = await execFileAsync('node', [pm]);
-    expect(stdout).toBe('default\n');
+    assert.equal(stdout, 'default\n');
   });
 
   test('when default subcommand and unrecognised argument then call default with argument', async () => {
     const { stdout } = await execFileAsync('node', [pm, 'an-argument']);
-    expect(stdout).toBe("default\n[ 'an-argument' ]\n");
+    assert.equal(stdout, "default\n[ 'an-argument' ]\n");
   });
 
   test('when default subcommand and unrecognised option then call default with option', async () => {
     const { stdout } = await execFileAsync('node', [pm, '--an-option']);
-    expect(stdout).toBe("default\n[ '--an-option' ]\n");
+    assert.equal(stdout, "default\n[ '--an-option' ]\n");
   });
 });
 
 describe('default action command', () => {
-  function makeProgram() {
+  function makeProgram(t) {
     const program = new commander.Command();
-    const actionMock = jest.fn();
+    const actionMock = t.mock.fn();
     program.command('other');
     program
       .command('default', { isDefault: true })
@@ -38,28 +40,28 @@ describe('default action command', () => {
     return { program, actionMock };
   }
 
-  test('when default subcommand and no command then call default', () => {
-    const { program, actionMock } = makeProgram();
+  test('when default subcommand and no command then call default', (t) => {
+    const { program, actionMock } = makeProgram(t);
     program.parse('node test.js'.split(' '));
-    expect(actionMock).toHaveBeenCalled();
+    assert.equal(actionMock.mock.callCount(), 1);
   });
 
-  test('when default subcommand and unrecognised argument then call default', () => {
-    const { program, actionMock } = makeProgram();
+  test('when default subcommand and unrecognised argument then call default', (t) => {
+    const { program, actionMock } = makeProgram(t);
     program.parse('node test.js an-argument'.split(' '));
-    expect(actionMock).toHaveBeenCalled();
+    assert.equal(actionMock.mock.callCount(), 1);
   });
 
-  test('when default subcommand and unrecognised option then call default', () => {
-    const { program, actionMock } = makeProgram();
+  test('when default subcommand and unrecognised option then call default', (t) => {
+    const { program, actionMock } = makeProgram(t);
     program.parse('node test.js --an-option'.split(' '));
-    expect(actionMock).toHaveBeenCalled();
+    assert.equal(actionMock.mock.callCount(), 1);
   });
 });
 
 describe('default added command', () => {
-  function makeProgram() {
-    const actionMock = jest.fn();
+  function makeProgram(t) {
+    const actionMock = t.mock.fn();
     const defaultCmd = new commander.Command('default')
       .allowUnknownOption()
       .allowExcessArguments()
@@ -71,21 +73,21 @@ describe('default added command', () => {
     return { program, actionMock };
   }
 
-  test('when default subcommand and no command then call default', () => {
-    const { program, actionMock } = makeProgram();
+  test('when default subcommand and no command then call default', (t) => {
+    const { program, actionMock } = makeProgram(t);
     program.parse('node test.js'.split(' '));
-    expect(actionMock).toHaveBeenCalled();
+    assert.equal(actionMock.mock.callCount(), 1);
   });
 
-  test('when default subcommand and unrecognised argument then call default', () => {
-    const { program, actionMock } = makeProgram();
+  test('when default subcommand and unrecognised argument then call default', (t) => {
+    const { program, actionMock } = makeProgram(t);
     program.parse('node test.js an-argument'.split(' '));
-    expect(actionMock).toHaveBeenCalled();
+    assert.equal(actionMock.mock.callCount(), 1);
   });
 
-  test('when default subcommand and unrecognised option then call default', () => {
-    const { program, actionMock } = makeProgram();
+  test('when default subcommand and unrecognised option then call default', (t) => {
+    const { program, actionMock } = makeProgram(t);
     program.parse('node test.js --an-option'.split(' '));
-    expect(actionMock).toHaveBeenCalled();
+    assert.equal(actionMock.mock.callCount(), 1);
   });
 });

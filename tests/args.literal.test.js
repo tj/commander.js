@@ -1,4 +1,6 @@
 const commander = require('../');
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
 
 // Utility Conventions: http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html#tag_12_02
 //
@@ -14,9 +16,9 @@ test('when arguments includes -- then stop processing options', () => {
   program.parse(['node', 'test', '--foo', '--', '--bar', 'baz']);
   // More than one assert, ported from legacy test
   const opts = program.opts();
-  expect(opts.foo).toBe(true);
-  expect(opts.bar).toBeUndefined();
-  expect(program.args).toEqual(['--bar', 'baz']);
+  assert.equal(opts.foo, true);
+  assert.equal(opts.bar, undefined);
+  assert.deepEqual(program.args, ['--bar', 'baz']);
 });
 
 test('when arguments include -- then more literals are passed-through as args', () => {
@@ -26,5 +28,5 @@ test('when arguments include -- then more literals are passed-through as args', 
     .option('-b, --bar', 'add some bar')
     .argument('[args...]');
   program.parse(['node', 'test', '--', 'cmd', '--', '--arg']);
-  expect(program.args).toEqual(['cmd', '--', '--arg']);
+  assert.deepEqual(program.args, ['cmd', '--', '--arg']);
 });

@@ -1,4 +1,6 @@
 const commander = require('../');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
 // Testing optsWithGlobals and getOptionValueSourceWithGlobals with focus on globals.
 
@@ -13,7 +15,7 @@ describe('optsWithGlobals', () => {
       .option('-n, --no-something');
 
     program.parse(['-b', '-r', 'req', '-f', '1e2'], { from: 'user' });
-    expect(program.opts()).toEqual(program.optsWithGlobals());
+    assert.deepEqual(program.opts(), program.optsWithGlobals());
   });
 
   test('when options in sub and program then optsWithGlobals includes both', () => {
@@ -28,7 +30,7 @@ describe('optsWithGlobals', () => {
       });
 
     program.parse(['-g', 'GGG', 'sub', '-l', 'LLL'], { from: 'user' });
-    expect(mergedOptions).toEqual({ global: 'GGG', local: 'LLL' });
+    assert.deepEqual(mergedOptions, { global: 'GGG', local: 'LLL' });
   });
 
   test('when options in sub and subsub then optsWithGlobals includes both', () => {
@@ -46,7 +48,7 @@ describe('optsWithGlobals', () => {
     program.parse(['sub', '-g', 'GGG', 'subsub', '-l', 'LLL'], {
       from: 'user',
     });
-    expect(mergedOptions).toEqual({ global: 'GGG', local: 'LLL' });
+    assert.deepEqual(mergedOptions, { global: 'GGG', local: 'LLL' });
   });
 
   test('when same named option in sub and program then optsWithGlobals includes global', () => {
@@ -61,7 +63,7 @@ describe('optsWithGlobals', () => {
       });
 
     program.parse(['-c', 'GGG', 'sub', '-c', 'LLL'], { from: 'user' });
-    expect(mergedOptions).toEqual({ common: 'GGG' });
+    assert.deepEqual(mergedOptions, { common: 'GGG' });
   });
 });
 
@@ -71,7 +73,7 @@ describe('getOptionValueSourceWithGlobals', () => {
     program.option('-g, --global');
 
     program.parse(['-g'], { from: 'user' });
-    expect(program.getOptionValueSourceWithGlobals('global')).toEqual('cli');
+    assert.equal(program.getOptionValueSourceWithGlobals('global'), 'cli');
   });
 
   test('when option used with program then source is defined', () => {
@@ -83,7 +85,7 @@ describe('getOptionValueSourceWithGlobals', () => {
       .action(() => {});
 
     program.parse(['sub', '-g'], { from: 'user' });
-    expect(sub.getOptionValueSourceWithGlobals('global')).toEqual('cli');
+    assert.equal(sub.getOptionValueSourceWithGlobals('global'), 'cli');
   });
 
   test('when option used with subcommand then source is defined', () => {
@@ -95,7 +97,7 @@ describe('getOptionValueSourceWithGlobals', () => {
       .action(() => {});
 
     program.parse(['sub', '-l'], { from: 'user' });
-    expect(sub.getOptionValueSourceWithGlobals('local')).toEqual('cli');
+    assert.equal(sub.getOptionValueSourceWithGlobals('local'), 'cli');
   });
 
   test('when same named option in sub and program then source is defined by global', () => {
@@ -109,6 +111,6 @@ describe('getOptionValueSourceWithGlobals', () => {
       .action(() => {});
 
     program.parse(['sub', '--common', 'value'], { from: 'user' });
-    expect(sub.getOptionValueSourceWithGlobals('common')).toEqual('default');
+    assert.equal(sub.getOptionValueSourceWithGlobals('common'), 'default');
   });
 });
