@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 
 // Testing variadic arguments. Testing all the action arguments, but could test just variadicArg.
 
-describe('variadic argument', (t) => {
+describe('Command variadic argument using .argument()', (t) => {
   test('when no extra arguments specified for program then variadic arg is empty array', (t) => {
     const actionMock = t.mock.fn();
     const program = new commander.Command();

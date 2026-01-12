@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 // These are tests of the Help class, not of the Command help.
 // There is some overlap with the higher level Command tests (which predate Help).
 
-describe('padWidth', () => {
+describe('Help.padWidth()', () => {
   test('when argument term longest return argument length', () => {
     const longestThing = 'veryLongThingBiggerThanOthers';
     const program = new commander.Command();

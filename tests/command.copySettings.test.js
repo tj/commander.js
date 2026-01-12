@@ -5,23 +5,23 @@ const assert = require('node:assert/strict');
 // Tests some private properties as simpler than pure tests of observable behaviours.
 // Testing before and after values in some cases, to ensure value actually changes (when copied).
 
-test('when add subcommand with .command() then calls copyInheritedSettings from parent', (t) => {
-  const program = new commander.Command();
+describe('Command.copyInheritedSettings()', () => {
+  test('when add subcommand with .command() then calls copyInheritedSettings from parent', (t) => {
+    const program = new commander.Command();
 
-  // This is a bit intrusive, but check expectation that copyInheritedSettings is called internally.
-  const copySettingMock = t.mock.fn();
-  program.createCommand = (name) => {
-    const cmd = new commander.Command(name);
-    cmd.copyInheritedSettings = copySettingMock;
-    return cmd;
-  };
-  program.command('sub');
+    // This is a bit intrusive, but check expectation that copyInheritedSettings is called internally.
+    const copySettingMock = t.mock.fn();
+    program.createCommand = (name) => {
+      const cmd = new commander.Command(name);
+      cmd.copyInheritedSettings = copySettingMock;
+      return cmd;
+    };
+    program.command('sub');
 
-  const callArgs = copySettingMock.mock.calls[0].arguments;
-  assert.equal(callArgs[0], program);
-});
+    const callArgs = copySettingMock.mock.calls[0].arguments;
+    assert.equal(callArgs[0], program);
+  });
 
-describe('copyInheritedSettings property tests', () => {
   test('when copyInheritedSettings then copies outputConfiguration(config)', () => {
     const source = new commander.Command();
     const cmd = new commander.Command();

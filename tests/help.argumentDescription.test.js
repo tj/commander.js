@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 
 // These are tests of the Help class, not of the Command help.
 
-describe('argumentDescription', () => {
+describe('Help.argumentDescription()', () => {
   test('when argument has no description then empty string', () => {
     const argument = new commander.Argument('[n]');
     const helper = new commander.Help();

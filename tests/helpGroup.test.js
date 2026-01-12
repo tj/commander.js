@@ -39,7 +39,7 @@ describe('Command.helpGroup', () => {
   });
 });
 
-describe('.optionsGroup', () => {
+describe('Command.optionsGroup', () => {
   test('when add one option then help contains group', () => {
     const program = new Command();
     program.optionsGroup('Greek:');
@@ -151,7 +151,7 @@ describe('.optionsGroup', () => {
   });
 });
 
-describe('.commandsGroup', () => {
+describe('Command.commandsGroup', () => {
   test('when add one command then help contains group', () => {
     const program = new Command();
     program.commandsGroup('Greek:');

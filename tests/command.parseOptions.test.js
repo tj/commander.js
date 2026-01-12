@@ -11,7 +11,7 @@ const execFileAsync = util.promisify(childProcess.execFile);
 // than high level behaviours which are tested elsewhere.
 
 // Tests created from reported bugs
-describe('regression tests', () => {
+describe('parsing regression tests', () => {
   // https://github.com/tj/commander.js/issues/1032
   function createProgram1032() {
     const program = new commander.Command();
@@ -54,7 +54,7 @@ describe('regression tests', () => {
   });
 });
 
-describe('parseOptions', () => {
+describe('Command.parseOptions()', () => {
   function createProgram() {
     const program = new commander.Command();
     program
@@ -172,7 +172,7 @@ describe('parseOptions', () => {
 });
 
 // parse now sets program.args to the result of parseOptions (operands + unknown). Some limited testing.
-describe('parse and program.args', () => {
+describe('Command.args after parsing', () => {
   test('when program has known flag and operand then option removed and operand returned', () => {
     const program = new commander.Command();
     program.option('--global-flag').argument('[arg...]');
@@ -244,7 +244,7 @@ describe('parse and program.args', () => {
 // The focus in this file is testing the behaviours with known vs unknown options.
 // See options.values.test.js for more general testing of known options.
 
-describe('Utility Conventions', () => {
+describe('Posix Utility Conventions', () => {
   function createProgram() {
     const program = new commander.Command();
     program

@@ -6,7 +6,7 @@ const assert = require('node:assert/strict');
 // There is some overlap with the higher level Command tests (which predate Help).
 
 // subcommandTerm does not currently respect helpOption or ignore hidden options, so not testing those.
-describe('subcommandTerm', () => {
+describe('Help.subcommandTerm()', () => {
   test('when plain command then returns name', () => {
     const command = new commander.Command('program');
     const helper = new commander.Help();

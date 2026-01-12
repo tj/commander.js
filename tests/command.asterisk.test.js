@@ -13,7 +13,7 @@ const assert = require('node:assert/strict');
 //
 // Historical: the event 'command:*' used to also be shared by the action handler on the program.
 
-describe(".command('*')", () => {
+describe("Command.command('*')", () => {
   test('when no arguments then asterisk action not called', (t) => {
     const mockAction = t.mock.fn();
     const program = createTestCommand();
@@ -85,7 +85,7 @@ describe(".command('*')", () => {
 });
 
 // Test .on explicitly rather than assuming covered by .command
-describe(".on('command:*')", () => {
+describe("Command.on('command:*')", () => {
   test('when no arguments then listener not called', (t) => {
     const mockAction = t.mock.fn();
     const program = new commander.Command();

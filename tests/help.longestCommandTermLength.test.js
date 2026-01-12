@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 // These are tests of the Help class, not of the Command help.
 // There is some overlap with the higher level Command tests (which predate Help).
 
-describe('longestSubcommandTermLength', () => {
+describe('Help.longestSubcommandTermLength()', () => {
   test('when no commands then returns zero', () => {
     const program = new commander.Command();
     const helper = new commander.Help();

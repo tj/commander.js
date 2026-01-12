@@ -15,7 +15,7 @@ function expectCommanderError(err, exitCode, code, message) {
   assert.equal(err.message, message);
 }
 
-describe('.exitOverride and error details', () => {
+describe('Command.exitOverride', () => {
   // Use internal knowledge to suppress output to keep test output clean.
 
   test('when specify unknown program option then throw CommanderError', (t) => {

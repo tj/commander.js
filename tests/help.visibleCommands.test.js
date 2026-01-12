@@ -5,7 +5,7 @@ const commander = require('../');
 // These are tests of the Help class, not of the Command help.
 // There is some overlap with the higher level Command tests (which predate Help).
 
-describe('visibleCommands', () => {
+describe('Help.visibleCommands()', () => {
   test('when no subcommands then empty array', () => {
     const program = new commander.Command();
     const helper = new commander.Help();

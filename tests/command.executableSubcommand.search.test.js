@@ -31,7 +31,7 @@ function extractMockSpawnCommand(spawnSpy) {
 const describeOrSkipOnWindows =
   process.platform === 'win32' ? describe.skip : describe;
 
-describe('search for subcommand', () => {
+describe('executable subcommand search behaviour', () => {
   function makeSpies(t, existsFn) {
     const spawnSpy = t.mock.method(childProcess, 'spawn', () => {
       return {

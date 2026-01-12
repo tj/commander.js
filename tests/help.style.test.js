@@ -14,7 +14,7 @@ function displayWidth(str) {
   return stripRed(str).length;
 }
 
-describe('override style methods and check help information', () => {
+describe('Help.configureHelp() overrides of style methods', () => {
   function makeProgram() {
     const program = new Command('program')
       .description('program description')
@@ -244,7 +244,7 @@ describe('override style methods and check help information', () => {
   });
 });
 
-describe('check styles with configureOutput overrides for color', () => {
+describe('Help.configureHelp() overrides of color methods', () => {
   function makeProgram(hasColors) {
     const program = new Command('program');
     program.myHelpText = [];

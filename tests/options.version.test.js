@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 
 // Test .version. Using exitOverride to check behaviour (instead of mocking process.exit).
 
-describe('.version', () => {
+describe('Command.version()', () => {
   test('when no .version and specify --version then unknown option error', () => {
     const program = new commander.Command();
     program.exitOverride().configureOutput({ writeErr: () => {} });

@@ -2,7 +2,7 @@ const commander = require('../');
 const { test, describe, mock } = require('node:test');
 const assert = require('node:assert/strict');
 
-describe('showHelpAfterError with message', () => {
+describe('Command.showHelpAfterError(message)', () => {
   const customHelpMessage = 'See --help';
 
   function makeProgram(t) {
@@ -121,7 +121,7 @@ describe('showHelpAfterError with message', () => {
   });
 });
 
-test('when showHelpAfterError() and error and then shows full help', () => {
+test('when Command.showHelpAfterError() and error and then shows full help', () => {
   const writeMock = mock.fn();
   const program = new commander.Command();
   program

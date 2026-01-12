@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 
 // Using outputHelp to simplify testing.
 
-describe('program calls to addHelpText', () => {
+describe('Command.addHelpText(): program calls to addHelpText', () => {
   let writeSpy;
 
   beforeEach((t) => {
@@ -101,7 +101,7 @@ describe('program calls to addHelpText', () => {
   });
 });
 
-describe('program and subcommand calls to addHelpText', () => {
+describe('Command.addHelpText(): program and subcommand calls to addHelpText', () => {
   let writeSpy;
 
   beforeEach((t) => {
@@ -145,7 +145,7 @@ describe('program and subcommand calls to addHelpText', () => {
   });
 });
 
-describe('context checks with full parse', () => {
+describe('Command.addHelpText(): context checks with full parse', () => {
   let stdoutSpy;
   let stderrSpy;
 

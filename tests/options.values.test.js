@@ -8,7 +8,7 @@ const assert = require('node:assert/strict');
 // options with required values can eat values starting with a dash, including just dash sometimes used as alias for stdin
 //
 // option with required value, using loop to test all matrix of values and tests
-describe('option with required value', () => {
+describe('option with required option-argument', () => {
   const valuesList = [['str'], ['80'], ['-'], ['-5'], ['--flag']];
 
   for (const [value] of valuesList) {
@@ -45,7 +45,7 @@ describe('option with required value', () => {
 });
 
 // option with optional value
-describe('option with optional value', () => {
+describe('option with optional option-argument', () => {
   function createPortProgram() {
     const program = new commander.Command();
     program.option('-p,--port [number]', 'specify port');

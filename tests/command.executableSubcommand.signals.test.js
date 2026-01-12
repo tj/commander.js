@@ -11,7 +11,7 @@ const pmPath = path.join(__dirname, 'fixtures', 'pm');
 const describeOrSkipOnWindows =
   process.platform === 'win32' ? describe.skip : describe;
 
-describeOrSkipOnWindows('signals', () => {
+describeOrSkipOnWindows('executable subcommand signals', () => {
   describe('signal forwarding tests', () => {
     const signals = ['SIGINT', 'SIGHUP', 'SIGTERM', 'SIGUSR1', 'SIGUSR2'];
     for (const signal of signals) {

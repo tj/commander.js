@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 // These are tests of the Help class, not of the Command help.
 // There is some overlap with the higher level Command tests (which predate Help).
 
-describe('sortOptions', () => {
+describe('Help.configureHelp({ sortOptions: true })', () => {
   test('when unsorted then options in order added', () => {
     const program = new commander.Command();
     program

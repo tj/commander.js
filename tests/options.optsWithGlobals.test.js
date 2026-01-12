@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 
 // Testing optsWithGlobals and getOptionValueSourceWithGlobals with focus on globals.
 
-describe('optsWithGlobals', () => {
+describe('Command.optsWithGlobals()', () => {
   test('when variety of options used with program then opts is same as optsWithGlobals', () => {
     const program = new commander.Command();
     program

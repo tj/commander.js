@@ -2,7 +2,7 @@ const { Command, Option } = require('../');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
-describe('.option() with default and option not specified in parse', () => {
+describe('Command.option() with default value and option not specified in parse', () => {
   test('when boolean option with boolean default then value is default', () => {
     const program = new Command();
     program.option('-d, --debug', 'description', false);
@@ -61,7 +61,7 @@ describe('.option() with default and option not specified in parse', () => {
   });
 });
 
-describe('Option with default and option not specified in parse', () => {
+describe('Option with default value and option not specified in parse', () => {
   test('when boolean option with boolean default then value is default', () => {
     const program = new Command();
     program.addOption(new Option('-d, --debug').default(false));
@@ -121,7 +121,7 @@ describe('Option with default and option not specified in parse', () => {
 });
 
 // Fairly obvious this needs to happen, but was broken for optional in past!
-describe('default overwritten by specified option', () => {
+describe('option default value overwritten by option specified in parse', () => {
   test('when boolean option with boolean default then value is true', () => {
     const program = new Command();
     program.option('-d, --debug', 'description', false);

@@ -2,7 +2,7 @@ const commander = require('../');
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 
-test('when when multiple short flags specified then all values are true', () => {
+test('when when multiple short flags specified then parsed as short option group', () => {
   const program = new commander.Command();
   program
     .option('-p, --pepper', 'add pepper')

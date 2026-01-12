@@ -3,30 +3,32 @@ const { createTestCommand } = require('./testHelpers');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
-test('when command argument in choices then argument set', () => {
-  const program = createTestCommand();
-  let shade;
-  program
-    .addArgument(new commander.Argument('<shade>').choices(['red', 'blue']))
-    .action((shadeParam) => {
-      shade = shadeParam;
-    });
-  program.parse(['red'], { from: 'user' });
-  assert.equal(shade, 'red');
-});
+describe('Argument.choices()', () => {
+  test('when command argument in choices then argument set', () => {
+    const program = createTestCommand();
+    let shade;
+    program
+      .addArgument(new commander.Argument('<shade>').choices(['red', 'blue']))
+      .action((shadeParam) => {
+        shade = shadeParam;
+      });
+    program.parse(['red'], { from: 'user' });
+    assert.equal(shade, 'red');
+  });
 
-test('when command argument is not in choices then error', () => {
-  // Lightweight check, more detailed testing of behaviour in command.exitOverride.test.js
-  const program = createTestCommand();
-  program.addArgument(
-    new commander.Argument('<shade>').choices(['red', 'blue']),
-  );
-  assert.throws(() => {
-    program.parse(['orange'], { from: 'user' });
+  test('when command argument is not in choices then error', () => {
+    // Lightweight check, more detailed testing of behaviour in command.exitOverride.test.js
+    const program = createTestCommand();
+    program.addArgument(
+      new commander.Argument('<shade>').choices(['red', 'blue']),
+    );
+    assert.throws(() => {
+      program.parse(['orange'], { from: 'user' });
+    });
   });
 });
 
-describe('choices parameter is treated as readonly, per TypeScript declaration', () => {
+describe('Argument.choices() parameter is treated as readonly, per TypeScript declaration', () => {
   test('when choices called then parameter does not change', () => {
     // Unlikely this could break, but check the API we are declaring in TypeScript.
     const original = ['red', 'blue', 'green'];

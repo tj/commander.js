@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 // These are tests of the Help class, not of the Command help.
 // There is some overlap with the higher level Command tests (which predate Help).
 
-describe('commandUsage', () => {
+describe('Help.commandUsage()', () => {
   test('when single program then "program [options]"', () => {
     const program = new commander.Command();
     program.name('program');
