@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 
 // Not testing output, just testing whether an error is detected.
 
-describe('allowExcessArguments', () => {
+describe('Command.allowExcessArguments()', () => {
   const cases = [true, false];
   cases.forEach((hasActionHandler) => {
     describe(`when ${hasActionHandler ? 'has' : 'no'} action handler`, () => {

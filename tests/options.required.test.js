@@ -4,7 +4,7 @@ const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
 // option with required value, no default
-describe('option with required value, no default', () => {
+describe('option with required option-argument, no default', () => {
   test('when option not specified then value is undefined', () => {
     const program = new commander.Command();
     program.option('--cheese <type>', 'cheese type');
@@ -37,7 +37,7 @@ describe('option with required value, no default', () => {
 });
 
 // option with required value, with default
-describe('option with required value, with default', () => {
+describe('option with required option-argument, with default', () => {
   test('when option not specified then value is default', () => {
     const defaultValue = 'default';
     const program = new commander.Command();

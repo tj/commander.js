@@ -6,7 +6,7 @@ const assert = require('node:assert/strict');
 // We keep deprecated features working (when not too difficult) to avoid breaking existing code
 // and reduce barriers to updating to latest version of Commander.
 
-describe('option with regular expression instead of custom processing function', () => {
+describe('deprecated support for option custom processing using regular expression', () => {
   test('when option not given then value is default', () => {
     const program = new commander.Command();
     program.option('--cheese <type>', 'cheese type', /mild|tasty/, 'mild');

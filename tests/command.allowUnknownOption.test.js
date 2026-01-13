@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 
 // Not testing output, just testing whether an error is detected.
 
-describe('allowUnknownOption', () => {
+describe('Command.allowUnknownOption()', () => {
   test('when specify unknown program option then error', () => {
     const program = createTestCommand();
     program.option('-p, --pepper', 'add pepper');

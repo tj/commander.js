@@ -2,7 +2,7 @@ const { Command, Option } = require('../');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
-describe('.option()', () => {
+describe('registering clashing options', () => {
   test('when short option flag conflicts then throws', () => {
     assert.throws(
       () => {

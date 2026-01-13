@@ -3,7 +3,7 @@ const { createTestCommand } = require('./testHelpers');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
-describe('helpOption', () => {
+describe('Command.helpOption()', () => {
   test('when helpOption has custom flags then custom short flag invokes help', (t) => {
     const program = createTestCommand();
     program.helpOption('-c,--custom-help', 'custom help output');

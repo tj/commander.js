@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 // The action handler used to be implemented using command events and listeners.
 // Now, this is mostly just for backwards compatibility.
 
-describe(".command('*')", () => {
+describe("Command.command('*')", () => {
   test('when action handler for subcommand then emit command:subcommand', (t) => {
     const mockListener = t.mock.fn();
     const program = new commander.Command();

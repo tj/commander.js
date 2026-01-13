@@ -4,7 +4,7 @@ const { createTestCommand } = require('./testHelpers');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
-describe('command with conflicting options', () => {
+describe('Option.conflicts()', () => {
   function makeProgram(t) {
     const actionMock = t.mock.fn();
     const program = createTestCommand();

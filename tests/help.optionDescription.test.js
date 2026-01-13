@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 // These are tests of the Help class, not of the Command help.
 // There is some overlap with the higher level Command tests (which predate Help).
 
-describe('optionDescription', () => {
+describe('Help.optionDescription()', () => {
   test('when option has no description then empty string', () => {
     const option = new commander.Option('-a');
     const helper = new commander.Help();

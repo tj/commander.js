@@ -4,7 +4,7 @@ const childProcess = require('child_process');
 const path = require('path');
 const commander = require('../');
 
-describe('incrementNodeInspectorPort', () => {
+describe('increment node inspector port in executable subcommands', () => {
   function makeSpies(t) {
     const spawnSpy = t.mock.method(childProcess, 'spawn', () => {
       return {

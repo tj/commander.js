@@ -2,7 +2,7 @@ const { createTestCommand } = require('./testHelpers');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
-describe('unknownCommand', () => {
+describe('parsing unknown command', () => {
   test('when unknown argument in simple program then error', () => {
     const program = createTestCommand();
     assert.throws(() => {

@@ -2,7 +2,7 @@ const commander = require('../');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
-describe('Help.minWidthToWrap', () => {
+describe('Help.minWidthToWrap()', () => {
   test('when enough width then wrap', () => {
     const program = new commander.Command('program');
     program.description('x '.repeat(110));

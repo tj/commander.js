@@ -2,7 +2,7 @@ const { Help, Command } = require('../');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
-describe('preformatted', () => {
+describe('Help.preformatted()', () => {
   test('when single line then false', () => {
     const helper = new Help();
     assert.equal(helper.preformatted('a b c'), false);

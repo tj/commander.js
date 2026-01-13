@@ -5,7 +5,7 @@ const assert = require('node:assert/strict');
 
 // More complete tests are in command.helpOption.test.js.
 
-describe('addHelpOption', () => {
+describe('Command.addHelpOption()', () => {
   test('when addHelpOption has custom flags then custom short flag invokes help', () => {
     const program = createTestCommand();
     program.addHelpOption(new Option('-c,--custom-help'));

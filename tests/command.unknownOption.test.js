@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 
 // Checking for detection of unknown options, including regression tests for some past issues.
 
-describe('unknownOption', () => {
+describe('parsing unknown option', () => {
   test('when specify unknown option with subcommand and action handler then error', () => {
     const program = createTestCommand();
     program.command('info').action(() => {});
