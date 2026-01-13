@@ -1,28 +1,23 @@
+const { test, describe, after } = require('node:test');
+const assert = require('node:assert/strict');
 const childProcess = require('child_process');
 const path = require('path');
 const commander = require('../');
 
-describe('incrementNodeInspectorPort', () => {
-  let spawnSpy;
-  let signalSpy;
-  const oldExecArgv = process.execArgv;
-
-  beforeAll(() => {
-    spawnSpy = jest.spyOn(childProcess, 'spawn').mockImplementation(() => {
+describe('increment node inspector port in executable subcommands', () => {
+  function makeSpies(t) {
+    const spawnSpy = t.mock.method(childProcess, 'spawn', () => {
       return {
         on: () => {},
       };
     });
-    signalSpy = jest.spyOn(process, 'on').mockImplementation(() => {});
-  });
+    const signalSpy = test.mock.method(process, 'on', () => {});
+    return { spawnSpy, signalSpy };
+  }
 
-  afterEach(() => {
-    spawnSpy.mockClear();
-  });
+  const oldExecArgv = process.execArgv;
 
-  afterAll(() => {
-    spawnSpy.mockRestore();
-    signalSpy.mockRestore();
+  after(() => {
     process.execArgv = oldExecArgv;
   });
 
@@ -35,103 +30,115 @@ describe('incrementNodeInspectorPort', () => {
     return program;
   }
 
-  function extractMockExecArgs(mock) {
-    return mock.mock.calls[0][1].slice(0, -1);
+  function extractMockExecArgs(spawnSpy) {
+    return spawnSpy.mock.calls[0].arguments[1].slice(0, -1);
   }
 
-  test('when --inspect then bump port', () => {
+  test('when --inspect then bump port', (t) => {
+    const { spawnSpy } = makeSpies(t);
     const program = makeProgram();
     process.execArgv = ['--inspect'];
     program.parse(['node', 'test', 'cache']);
     const execArgs = extractMockExecArgs(spawnSpy);
-    expect(execArgs).toEqual(['--inspect=127.0.0.1:9230']);
+    assert.deepEqual(execArgs, ['--inspect=127.0.0.1:9230']);
   });
 
-  test('when --inspect=100 then bump port', () => {
+  test('when --inspect=100 then bump port', (t) => {
+    const { spawnSpy } = makeSpies(t);
     const program = makeProgram();
     process.execArgv = ['--inspect=100'];
     program.parse(['node', 'test', 'cache']);
     const execArgs = extractMockExecArgs(spawnSpy);
-    expect(execArgs).toEqual(['--inspect=127.0.0.1:101']);
+    assert.deepEqual(execArgs, ['--inspect=127.0.0.1:101']);
   });
 
-  test('when --inspect=1.2.3.4:100 then bump port', () => {
+  test('when --inspect=1.2.3.4:100 then bump port', (t) => {
+    const { spawnSpy } = makeSpies(t);
     const program = makeProgram();
     process.execArgv = ['--inspect=1.2.3.4:100'];
     program.parse(['node', 'test', 'cache']);
     const execArgs = extractMockExecArgs(spawnSpy);
-    expect(execArgs).toEqual(['--inspect=1.2.3.4:101']);
+    assert.deepEqual(execArgs, ['--inspect=1.2.3.4:101']);
   });
 
-  test('when --inspect=1.2.3.4 then bump port', () => {
+  test('when --inspect=1.2.3.4 then bump port', (t) => {
+    const { spawnSpy } = makeSpies(t);
     const program = makeProgram();
     process.execArgv = ['--inspect=1.2.3.4'];
     program.parse(['node', 'test', 'cache']);
     const execArgs = extractMockExecArgs(spawnSpy);
-    expect(execArgs).toEqual(['--inspect=1.2.3.4:9230']);
+    assert.deepEqual(execArgs, ['--inspect=1.2.3.4:9230']);
   });
 
-  test('when --inspect-brk then bump port', () => {
+  test('when --inspect-brk then bump port', (t) => {
+    const { spawnSpy } = makeSpies(t);
     const program = makeProgram();
     process.execArgv = ['--inspect-brk'];
     program.parse(['node', 'test', 'cache']);
     const execArgs = extractMockExecArgs(spawnSpy);
-    expect(execArgs).toEqual(['--inspect-brk=127.0.0.1:9230']);
+    assert.deepEqual(execArgs, ['--inspect-brk=127.0.0.1:9230']);
   });
 
-  test('when --inspect-brk=100 then bump port', () => {
+  test('when --inspect-brk=100 then bump port', (t) => {
+    const { spawnSpy } = makeSpies(t);
     const program = makeProgram();
     process.execArgv = ['--inspect-brk=100'];
     program.parse(['node', 'test', 'cache']);
     const execArgs = extractMockExecArgs(spawnSpy);
-    expect(execArgs).toEqual(['--inspect-brk=127.0.0.1:101']);
+    assert.deepEqual(execArgs, ['--inspect-brk=127.0.0.1:101']);
   });
 
-  test('when --inspect-brk=1.2.3.4 then bump port', () => {
+  test('when --inspect-brk=1.2.3.4 then bump port', (t) => {
+    const { spawnSpy } = makeSpies(t);
     const program = makeProgram();
     process.execArgv = ['--inspect-brk=1.2.3.4'];
     program.parse(['node', 'test', 'cache']);
     const execArgs = extractMockExecArgs(spawnSpy);
-    expect(execArgs).toEqual(['--inspect-brk=1.2.3.4:9230']);
+    assert.deepEqual(execArgs, ['--inspect-brk=1.2.3.4:9230']);
   });
 
-  test('when --inspect-brk=1.2.3.4:100 then bump port', () => {
+  test('when --inspect-brk=1.2.3.4:100 then bump port', (t) => {
+    const { spawnSpy } = makeSpies(t);
     const program = makeProgram();
     process.execArgv = ['--inspect-brk=1.2.3.4:100'];
     program.parse(['node', 'test', 'cache']);
     const execArgs = extractMockExecArgs(spawnSpy);
-    expect(execArgs).toEqual(['--inspect-brk=1.2.3.4:101']);
+    assert.deepEqual(execArgs, ['--inspect-brk=1.2.3.4:101']);
   });
 
-  test('when --inspect-port=100 then bump port', () => {
+  test('when --inspect-port=100 then bump port', (t) => {
+    const { spawnSpy } = makeSpies(t);
     const program = makeProgram();
     process.execArgv = ['--inspect-port=100'];
     program.parse(['node', 'test', 'cache']);
     const execArgs = extractMockExecArgs(spawnSpy);
-    expect(execArgs).toEqual(['--inspect-port=127.0.0.1:101']);
+    assert.deepEqual(execArgs, ['--inspect-port=127.0.0.1:101']);
   });
 
-  test('when --inspect-port=1.2.3.4:100 then bump port', () => {
+  test('when --inspect-port=1.2.3.4:100 then bump port', (t) => {
+    const { spawnSpy } = makeSpies(t);
     const program = makeProgram();
     process.execArgv = ['--inspect-port=1.2.3.4:100'];
     program.parse(['node', 'test', 'cache']);
     const execArgs = extractMockExecArgs(spawnSpy);
-    expect(execArgs).toEqual(['--inspect-port=1.2.3.4:101']);
+    assert.deepEqual(execArgs, ['--inspect-port=1.2.3.4:101']);
   });
 
-  test('when --inspect-unexpected then unchanged', () => {
+  test('when --inspect-unexpected then unchanged', (t) => {
+    const { spawnSpy } = makeSpies(t);
     const program = makeProgram();
     process.execArgv = ['--inspect-unexpected'];
     program.parse(['node', 'test', 'cache']);
     const execArgs = extractMockExecArgs(spawnSpy);
-    expect(execArgs).toEqual(['--inspect-unexpected']);
+    assert.deepEqual(execArgs, ['--inspect-unexpected']);
   });
 
-  test('when --frozen-intrinsics  then unchanged', () => {
+  test('when --frozen-intrinsics  then unchanged', (t) => {
+    const { spawnSpy } = makeSpies(t);
     const program = makeProgram();
     process.execArgv = ['--frozen-intrinsics '];
     program.parse(['node', 'test', 'cache']);
     const execArgs = extractMockExecArgs(spawnSpy);
-    expect(execArgs).toEqual(['--frozen-intrinsics ']);
+    assert.deepEqual(execArgs, ['--frozen-intrinsics ']);
   });
 });

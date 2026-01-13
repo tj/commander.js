@@ -2,6 +2,8 @@ const childProcess = require('child_process');
 const commander = require('../');
 const path = require('path');
 const util = require('util');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
 const execFileAsync = util.promisify(childProcess.execFile);
 
@@ -9,7 +11,7 @@ const execFileAsync = util.promisify(childProcess.execFile);
 // than high level behaviours which are tested elsewhere.
 
 // Tests created from reported bugs
-describe('regression tests', () => {
+describe('parsing regression tests', () => {
   // https://github.com/tj/commander.js/issues/1032
   function createProgram1032() {
     const program = new commander.Command();
@@ -24,14 +26,14 @@ describe('regression tests', () => {
   test('when specify subcommand and argument then program.args not empty', () => {
     const program = createProgram1032();
     program.parse(['node', 'test.js', 'doit', 'myid']);
-    expect(program.args.length).toBeGreaterThan(0);
+    assert(program.args.length > 0);
   });
 
   // https://github.com/tj/commander.js/issues/1032
   test('when specify subcommand and option and argument then program.args not empty', () => {
     const program = createProgram1032();
     program.parse(['node', 'test.js', 'doit', '--better', 'myid']);
-    expect(program.args.length).toBeGreaterThan(0);
+    assert(program.args.length > 0);
   });
 
   // https://github.com/tj/commander.js/issues/508
@@ -48,11 +50,11 @@ describe('regression tests', () => {
       '5',
       '6',
     ]);
-    expect(stdout).toBe("[ '1', '2', '--dry-run', '3', '4', '5', '6' ]\n");
+    assert.equal(stdout, "[ '1', '2', '--dry-run', '3', '4', '5', '6' ]\n");
   });
 });
 
-describe('parseOptions', () => {
+describe('Command.parseOptions()', () => {
   function createProgram() {
     const program = new commander.Command();
     program
@@ -69,97 +71,100 @@ describe('parseOptions', () => {
   test('when empty args then empty results', () => {
     const program = createProgram();
     const result = program.parseOptions([]);
-    expect(result).toEqual({ operands: [], unknown: [] });
+    assert.deepEqual(result, { operands: [], unknown: [] });
   });
 
   test('when only operands then results has all operands', () => {
     const program = createProgram();
     const result = program.parseOptions('one two three'.split(' '));
-    expect(result).toEqual({ operands: ['one', 'two', 'three'], unknown: [] });
+    assert.deepEqual(result, {
+      operands: ['one', 'two', 'three'],
+      unknown: [],
+    });
   });
 
   test('when subcommand and operand then results has subcommand and operand', () => {
     const program = createProgram();
     const result = program.parseOptions('sub one'.split(' '));
-    expect(result).toEqual({ operands: ['sub', 'one'], unknown: [] });
+    assert.deepEqual(result, { operands: ['sub', 'one'], unknown: [] });
   });
 
   test('when program has flag then option removed', () => {
     const program = createProgram();
     const result = program.parseOptions('--global-flag'.split(' '));
-    expect(result).toEqual({ operands: [], unknown: [] });
+    assert.deepEqual(result, { operands: [], unknown: [] });
   });
 
   test('when program has option with value then option removed', () => {
     const program = createProgram();
     const result = program.parseOptions('--global-value foo'.split(' '));
-    expect(result).toEqual({ operands: [], unknown: [] });
+    assert.deepEqual(result, { operands: [], unknown: [] });
   });
 
   test('when program has flag before operand then option removed', () => {
     const program = createProgram();
     const result = program.parseOptions('--global-flag arg'.split(' '));
-    expect(result).toEqual({ operands: ['arg'], unknown: [] });
+    assert.deepEqual(result, { operands: ['arg'], unknown: [] });
   });
 
   test('when program has flag after operand then option removed', () => {
     const program = createProgram();
     const result = program.parseOptions('arg --global-flag'.split(' '));
-    expect(result).toEqual({ operands: ['arg'], unknown: [] });
+    assert.deepEqual(result, { operands: ['arg'], unknown: [] });
   });
 
   test('when program has flag after subcommand then option removed', () => {
     const program = createProgram();
     const result = program.parseOptions('sub --global-flag'.split(' '));
-    expect(result).toEqual({ operands: ['sub'], unknown: [] });
+    assert.deepEqual(result, { operands: ['sub'], unknown: [] });
   });
 
   test('when program has unknown option then option returned in unknown', () => {
     const program = createProgram();
     const result = program.parseOptions('--unknown'.split(' '));
-    expect(result).toEqual({ operands: [], unknown: ['--unknown'] });
+    assert.deepEqual(result, { operands: [], unknown: ['--unknown'] });
   });
 
   test('when program has unknown option before operands then all unknown in same order', () => {
     const program = createProgram();
     const result = program.parseOptions('--unknown arg'.split(' '));
-    expect(result).toEqual({ operands: [], unknown: ['--unknown', 'arg'] });
+    assert.deepEqual(result, { operands: [], unknown: ['--unknown', 'arg'] });
   });
 
   test('when program has unknown option after operand then option returned in unknown', () => {
     const program = createProgram();
     const result = program.parseOptions('arg --unknown'.split(' '));
-    expect(result).toEqual({ operands: ['arg'], unknown: ['--unknown'] });
+    assert.deepEqual(result, { operands: ['arg'], unknown: ['--unknown'] });
   });
 
   test('when program has flag after unknown option then flag removed', () => {
     const program = createProgram();
     const result = program.parseOptions('--unknown --global-flag'.split(' '));
-    expect(result).toEqual({ operands: [], unknown: ['--unknown'] });
+    assert.deepEqual(result, { operands: [], unknown: ['--unknown'] });
   });
 
   test('when subcommand has flag then flag returned as unknown', () => {
     const program = createProgram();
     const result = program.parseOptions('sub --sub-flag'.split(' '));
-    expect(result).toEqual({ operands: ['sub'], unknown: ['--sub-flag'] });
+    assert.deepEqual(result, { operands: ['sub'], unknown: ['--sub-flag'] });
   });
 
   test('when program has literal before known flag then option returned as operand', () => {
     const program = createProgram();
     const result = program.parseOptions('-- --global-flag'.split(' '));
-    expect(result).toEqual({ operands: ['--global-flag'], unknown: [] });
+    assert.deepEqual(result, { operands: ['--global-flag'], unknown: [] });
   });
 
   test('when program has literal before unknown option then option returned as operand', () => {
     const program = createProgram();
     const result = program.parseOptions('-- --unknown uuu'.split(' '));
-    expect(result).toEqual({ operands: ['--unknown', 'uuu'], unknown: [] });
+    assert.deepEqual(result, { operands: ['--unknown', 'uuu'], unknown: [] });
   });
 
   test('when program has literal after unknown option then literal preserved too', () => {
     const program = createProgram();
     const result = program.parseOptions('--unknown1 -- --unknown2'.split(' '));
-    expect(result).toEqual({
+    assert.deepEqual(result, {
       operands: [],
       unknown: ['--unknown1', '--', '--unknown2'],
     });
@@ -167,12 +172,12 @@ describe('parseOptions', () => {
 });
 
 // parse now sets program.args to the result of parseOptions (operands + unknown). Some limited testing.
-describe('parse and program.args', () => {
+describe('Command.args after parsing', () => {
   test('when program has known flag and operand then option removed and operand returned', () => {
     const program = new commander.Command();
     program.option('--global-flag').argument('[arg...]');
     program.parse('node test.js --global-flag arg'.split(' '));
-    expect(program.args).toEqual(['arg']);
+    assert.deepEqual(program.args, ['arg']);
   });
 
   test('when program has mixed arguments then known options removed and rest returned in same order', () => {
@@ -187,7 +192,7 @@ describe('parse and program.args', () => {
         ' ',
       ),
     );
-    expect(program.args).toEqual(['aaa', 'bbb', '--unknown', 'ccc']);
+    assert.deepEqual(program.args, ['aaa', 'bbb', '--unknown', 'ccc']);
   });
 
   test('when subcommand has mixed arguments then program flags removed and rest returned in same order', () => {
@@ -202,7 +207,7 @@ describe('parse and program.args', () => {
         ' ',
       ),
     );
-    expect(program.args).toEqual(['sub', '--sub-flag', 'arg']);
+    assert.deepEqual(program.args, ['sub', '--sub-flag', 'arg']);
   });
 });
 
@@ -239,7 +244,7 @@ describe('parse and program.args', () => {
 // The focus in this file is testing the behaviours with known vs unknown options.
 // See options.values.test.js for more general testing of known options.
 
-describe('Utility Conventions', () => {
+describe('Posix Utility Conventions', () => {
   function createProgram() {
     const program = new commander.Command();
     program
@@ -254,77 +259,77 @@ describe('Utility Conventions', () => {
   test('when program has combo known boolean short flags then arg removed', () => {
     const program = createProgram();
     const result = program.parseOptions(['-ab']);
-    expect(result).toEqual({ operands: [], unknown: [] });
-    expect(program.opts()).toEqual({ aaa: true, bbb: true });
+    assert.deepEqual(result, { operands: [], unknown: [] });
+    assert.deepEqual(program.opts(), { aaa: true, bbb: true });
   });
 
   test('when program has combo unknown short flags then arg preserved', () => {
     const program = createProgram();
     const result = program.parseOptions(['-pq']);
-    expect(result).toEqual({ operands: [], unknown: ['-pq'] });
-    expect(program.opts()).toEqual({});
+    assert.deepEqual(result, { operands: [], unknown: ['-pq'] });
+    assert.deepEqual(program.opts(), {});
   });
 
   test('when program has combo known short option and required value then arg removed', () => {
     const program = createProgram();
     const result = program.parseOptions(['-cvalue']);
-    expect(result).toEqual({ operands: [], unknown: [] });
-    expect(program.opts()).toEqual({ ccc: 'value' });
+    assert.deepEqual(result, { operands: [], unknown: [] });
+    assert.deepEqual(program.opts(), { ccc: 'value' });
   });
 
   test('when program has combo known short option and optional value then arg removed', () => {
     const program = createProgram();
     const result = program.parseOptions(['-dvalue']);
-    expect(result).toEqual({ operands: [], unknown: [] });
-    expect(program.opts()).toEqual({ ddd: 'value' });
+    assert.deepEqual(result, { operands: [], unknown: [] });
+    assert.deepEqual(program.opts(), { ddd: 'value' });
   });
 
   test('when program has known combo short boolean flags and required value then arg removed', () => {
     const program = createProgram();
     const result = program.parseOptions(['-abcvalue']);
-    expect(result).toEqual({ operands: [], unknown: [] });
-    expect(program.opts()).toEqual({ aaa: true, bbb: true, ccc: 'value' });
+    assert.deepEqual(result, { operands: [], unknown: [] });
+    assert.deepEqual(program.opts(), { aaa: true, bbb: true, ccc: 'value' });
   });
 
   test('when program has known combo short boolean flags and optional value then arg removed', () => {
     const program = createProgram();
     const result = program.parseOptions(['-abdvalue']);
-    expect(result).toEqual({ operands: [], unknown: [] });
-    expect(program.opts()).toEqual({ aaa: true, bbb: true, ddd: 'value' });
+    assert.deepEqual(result, { operands: [], unknown: [] });
+    assert.deepEqual(program.opts(), { aaa: true, bbb: true, ddd: 'value' });
   });
 
   test('when program has known long flag=value then arg removed', () => {
     const program = createProgram();
     const result = program.parseOptions(['--ccc=value']);
-    expect(result).toEqual({ operands: [], unknown: [] });
-    expect(program.opts()).toEqual({ ccc: 'value' });
+    assert.deepEqual(result, { operands: [], unknown: [] });
+    assert.deepEqual(program.opts(), { ccc: 'value' });
   });
 
   test('when program has unknown long flag=value then arg preserved', () => {
     const program = createProgram();
     const result = program.parseOptions(['--rrr=value']);
-    expect(result).toEqual({ operands: [], unknown: ['--rrr=value'] });
-    expect(program.opts()).toEqual({});
+    assert.deepEqual(result, { operands: [], unknown: ['--rrr=value'] });
+    assert.deepEqual(program.opts(), {});
   });
 
   test('when program has combo optional and combineFlagAndOptionalValue() then treat as value', () => {
     const program = createProgram();
     program.combineFlagAndOptionalValue();
     program.parseOptions(['-db']);
-    expect(program.opts()).toEqual({ ddd: 'b' });
+    assert.deepEqual(program.opts(), { ddd: 'b' });
   });
 
   test('when program has combo optional and combineFlagAndOptionalValue(true) then treat as value', () => {
     const program = createProgram();
     program.combineFlagAndOptionalValue(true);
     program.parseOptions(['-db']);
-    expect(program.opts()).toEqual({ ddd: 'b' });
+    assert.deepEqual(program.opts(), { ddd: 'b' });
   });
 
   test('when program has combo optional and combineFlagAndOptionalValue(false) then treat as boolean', () => {
     const program = createProgram();
     program.combineFlagAndOptionalValue(false);
     program.parseOptions(['-db']);
-    expect(program.opts()).toEqual({ ddd: true, bbb: true });
+    assert.deepEqual(program.opts(), { ddd: true, bbb: true });
   });
 });

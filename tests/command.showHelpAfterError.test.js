@@ -1,10 +1,12 @@
 const commander = require('../');
+const { test, describe, mock } = require('node:test');
+const assert = require('node:assert/strict');
 
-describe('showHelpAfterError with message', () => {
+describe('Command.showHelpAfterError(message)', () => {
   const customHelpMessage = 'See --help';
 
-  function makeProgram() {
-    const writeMock = jest.fn();
+  function makeProgram(t) {
+    const writeMock = t.mock.fn();
     const program = new commander.Command();
     program
       .exitOverride()
@@ -14,99 +16,113 @@ describe('showHelpAfterError with message', () => {
     return { program, writeMock };
   }
 
-  test('when missing command-argument then shows help', () => {
-    const { program, writeMock } = makeProgram();
+  test('when missing command-argument then shows help', (t) => {
+    const { program, writeMock } = makeProgram(t);
     program.argument('<file>');
-    let caughtErr;
-    try {
-      program.parse([], { from: 'user' });
-    } catch (err) {
-      caughtErr = err;
-    }
-    expect(caughtErr.code).toBe('commander.missingArgument');
-    expect(writeMock).toHaveBeenLastCalledWith(`${customHelpMessage}\n`);
+    assert.throws(
+      () => {
+        program.parse([], { from: 'user' });
+      },
+      {
+        code: 'commander.missingArgument',
+      },
+    );
+    const lastCall = writeMock.mock.calls[writeMock.mock.calls.length - 1];
+    assert.equal(lastCall.arguments[0], `${customHelpMessage}\n`);
   });
 
-  test('when missing option-argument then shows help', () => {
-    const { program, writeMock } = makeProgram();
+  test('when missing option-argument then shows help', (t) => {
+    const { program, writeMock } = makeProgram(t);
     program.option('--output <file>');
-    let caughtErr;
-    try {
-      program.parse(['--output'], { from: 'user' });
-    } catch (err) {
-      caughtErr = err;
-    }
-    expect(caughtErr.code).toBe('commander.optionMissingArgument');
-    expect(writeMock).toHaveBeenLastCalledWith(`${customHelpMessage}\n`);
+    assert.throws(
+      () => {
+        program.parse(['--output'], { from: 'user' });
+      },
+      {
+        code: 'commander.optionMissingArgument',
+      },
+    );
+    const lastCall = writeMock.mock.calls[writeMock.mock.calls.length - 1];
+    assert.equal(lastCall.arguments[0], `${customHelpMessage}\n`);
   });
 
-  test('when missing mandatory option then shows help', () => {
-    const { program, writeMock } = makeProgram();
+  test('when missing mandatory option then shows help', (t) => {
+    const { program, writeMock } = makeProgram(t);
     program.requiredOption('--password <cipher>');
-    let caughtErr;
-    try {
-      program.parse([], { from: 'user' });
-    } catch (err) {
-      caughtErr = err;
-    }
-    expect(caughtErr.code).toBe('commander.missingMandatoryOptionValue');
-    expect(writeMock).toHaveBeenLastCalledWith(`${customHelpMessage}\n`);
+    assert.throws(
+      () => {
+        program.parse([], { from: 'user' });
+      },
+      {
+        code: 'commander.missingMandatoryOptionValue',
+      },
+    );
+    const lastCall = writeMock.mock.calls[writeMock.mock.calls.length - 1];
+    assert.equal(lastCall.arguments[0], `${customHelpMessage}\n`);
   });
 
-  test('when unknown option then shows help', () => {
-    const { program, writeMock } = makeProgram();
-    let caughtErr;
-    try {
-      program.parse(['--unknown-option'], { from: 'user' });
-    } catch (err) {
-      caughtErr = err;
-    }
-    expect(caughtErr.code).toBe('commander.unknownOption');
-    expect(writeMock).toHaveBeenLastCalledWith(`${customHelpMessage}\n`);
+  test('when unknown option then shows help', (t) => {
+    const { program, writeMock } = makeProgram(t);
+    assert.throws(
+      () => {
+        program.parse(['--unknown-option'], { from: 'user' });
+      },
+      {
+        code: 'commander.unknownOption',
+      },
+    );
+    const lastCall = writeMock.mock.calls[writeMock.mock.calls.length - 1];
+    assert.equal(lastCall.arguments[0], `${customHelpMessage}\n`);
   });
 
-  test('when too many command-arguments then shows help', () => {
-    const { program, writeMock } = makeProgram();
+  test('when too many command-arguments then shows help', (t) => {
+    const { program, writeMock } = makeProgram(t);
     program.allowExcessArguments(false);
-    let caughtErr;
-    try {
-      program.parse(['surprise'], { from: 'user' });
-    } catch (err) {
-      caughtErr = err;
-    }
-    expect(caughtErr.code).toBe('commander.excessArguments');
-    expect(writeMock).toHaveBeenLastCalledWith(`${customHelpMessage}\n`);
+    assert.throws(
+      () => {
+        program.parse(['surprise'], { from: 'user' });
+      },
+      {
+        code: 'commander.excessArguments',
+      },
+    );
+    const lastCall = writeMock.mock.calls[writeMock.mock.calls.length - 1];
+    assert.equal(lastCall.arguments[0], `${customHelpMessage}\n`);
   });
 
-  test('when unknown command then shows help', () => {
-    const { program, writeMock } = makeProgram();
+  test('when unknown command then shows help', (t) => {
+    const { program, writeMock } = makeProgram(t);
     program.command('sub1');
-    let caughtErr;
-    try {
-      program.parse(['sub2'], { from: 'user' });
-    } catch (err) {
-      caughtErr = err;
-    }
-    expect(caughtErr.code).toBe('commander.unknownCommand');
-    expect(writeMock).toHaveBeenLastCalledWith(`${customHelpMessage}\n`);
+    assert.throws(
+      () => {
+        program.parse(['sub2'], { from: 'user' });
+      },
+      {
+        code: 'commander.unknownCommand',
+      },
+    );
+    const lastCall = writeMock.mock.calls[writeMock.mock.calls.length - 1];
+    assert.equal(lastCall.arguments[0], `${customHelpMessage}\n`);
   });
 
-  test('when invalid option choice then shows help', () => {
-    const { program, writeMock } = makeProgram();
+  test('when invalid option choice then shows help', (t) => {
+    const { program, writeMock } = makeProgram(t);
     program.addOption(new commander.Option('--color').choices(['red', 'blue']));
-    let caughtErr;
-    try {
-      program.parse(['--color', 'pink'], { from: 'user' });
-    } catch (err) {
-      caughtErr = err;
-    }
-    expect(caughtErr.code).toBe('commander.invalidArgument');
-    expect(writeMock).toHaveBeenLastCalledWith(`${customHelpMessage}\n`);
+    assert.throws(
+      () => {
+        program.parse(['--color', 'pink'], { from: 'user' });
+      },
+      {
+        code: 'commander.invalidArgument',
+      },
+    );
+    const lastCall = writeMock.mock.calls[writeMock.mock.calls.length - 1];
+    assert.equal(lastCall.arguments[0], `${customHelpMessage}\n`);
   });
 });
 
-test('when showHelpAfterError() and error and then shows full help', () => {
-  const writeMock = jest.fn();
+test('when Command.showHelpAfterError() and error and then shows full help', () => {
+  const writeMock = mock.fn();
   const program = new commander.Command();
   program
     .exitOverride()
@@ -118,5 +134,6 @@ test('when showHelpAfterError() and error and then shows full help', () => {
   } catch (err) {
     /* empty */
   }
-  expect(writeMock).toHaveBeenLastCalledWith(program.helpInformation());
+  const lastCall = writeMock.mock.calls[writeMock.mock.calls.length - 1];
+  assert.equal(lastCall.arguments[0], program.helpInformation());
 });

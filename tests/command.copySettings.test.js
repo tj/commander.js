@@ -1,31 +1,34 @@
 const commander = require('../');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
 // Tests some private properties as simpler than pure tests of observable behaviours.
 // Testing before and after values in some cases, to ensure value actually changes (when copied).
 
-test('when add subcommand with .command() then calls copyInheritedSettings from parent', () => {
-  const program = new commander.Command();
+describe('Command.copyInheritedSettings()', () => {
+  test('when add subcommand with .command() then calls copyInheritedSettings from parent', (t) => {
+    const program = new commander.Command();
 
-  // This is a bit intrusive, but check expectation that copyInheritedSettings is called internally.
-  const copySettingMock = jest.fn();
-  program.createCommand = (name) => {
-    const cmd = new commander.Command(name);
-    cmd.copyInheritedSettings = copySettingMock;
-    return cmd;
-  };
-  program.command('sub');
+    // This is a bit intrusive, but check expectation that copyInheritedSettings is called internally.
+    const copySettingMock = t.mock.fn();
+    program.createCommand = (name) => {
+      const cmd = new commander.Command(name);
+      cmd.copyInheritedSettings = copySettingMock;
+      return cmd;
+    };
+    program.command('sub');
 
-  expect(copySettingMock).toHaveBeenCalledWith(program);
-});
+    const callArgs = copySettingMock.mock.calls[0].arguments;
+    assert.equal(callArgs[0], program);
+  });
 
-describe('copyInheritedSettings property tests', () => {
   test('when copyInheritedSettings then copies outputConfiguration(config)', () => {
     const source = new commander.Command();
     const cmd = new commander.Command();
 
     source.configureOutput({ foo: 'bar' });
     cmd.copyInheritedSettings(source);
-    expect(cmd.configureOutput().foo).toEqual('bar');
+    assert.equal(cmd.configureOutput().foo, 'bar');
   });
 
   test('when copyInheritedSettings then copies helpOption(false)', () => {
@@ -34,7 +37,7 @@ describe('copyInheritedSettings property tests', () => {
 
     source.helpOption(false);
     cmd.copyInheritedSettings(source);
-    expect(cmd._getHelpOption()).toBe(null);
+    assert.equal(cmd._getHelpOption(), null);
   });
 
   test('when copyInheritedSettings then copies helpOption(flags, description)', () => {
@@ -43,7 +46,7 @@ describe('copyInheritedSettings property tests', () => {
 
     source.helpOption('-Z, --zz', 'ddd');
     cmd.copyInheritedSettings(source);
-    expect(cmd._getHelpOption()).toBe(source._getHelpOption());
+    assert.equal(cmd._getHelpOption(), source._getHelpOption());
     // const helpOption = cmd._getHelpOption();
     // expect(helpOption.flags).toBe('-Z, --zz');
     // expect(helpOption.description).toBe('ddd');
@@ -59,9 +62,9 @@ describe('copyInheritedSettings property tests', () => {
     cmd.copyInheritedSettings(source);
     cmd.helpCommand(true); // force enable
     const helpCommand = cmd._getHelpCommand();
-    expect(helpCommand).toBeTruthy();
-    expect(helpCommand.name()).toBe('HELP');
-    expect(helpCommand.description()).toBe('ddd');
+    assert.ok(helpCommand);
+    assert.equal(helpCommand.name(), 'HELP');
+    assert.equal(helpCommand.description(), 'ddd');
   });
 
   test('when copyInheritedSettings then does not copy help enable override', () => {
@@ -72,7 +75,7 @@ describe('copyInheritedSettings property tests', () => {
     // largely so (probably redundant) program.helpCommand(true) does not inherit to leaf subcommands.
     source.helpCommand(true);
     cmd.copyInheritedSettings(source);
-    expect(cmd._addHelpOption).toBeUndefined();
+    assert.equal(cmd._addHelpOption, undefined);
   });
 
   test('when copyInheritedSettings then copies configureHelp(config)', () => {
@@ -82,66 +85,66 @@ describe('copyInheritedSettings property tests', () => {
     const configuration = { foo: 'bar', helpWidth: 123, sortSubcommands: true };
     source.configureHelp(configuration);
     cmd.copyInheritedSettings(source);
-    expect(cmd.configureHelp()).toEqual(configuration);
+    assert.deepEqual(cmd.configureHelp(), configuration);
   });
 
   test('when copyInheritedSettings then copies exitOverride()', () => {
     const source = new commander.Command();
     const cmd = new commander.Command();
 
-    expect(cmd._exitCallback).toBeFalsy();
+    assert.ok(!cmd._exitCallback);
     source.exitOverride();
     cmd.copyInheritedSettings(source);
-    expect(cmd._exitCallback).toBeTruthy(); // actually a function
+    assert.ok(cmd._exitCallback); // actually a function
   });
 
   test('when copyInheritedSettings then copies storeOptionsAsProperties()', () => {
     const source = new commander.Command();
     const cmd = new commander.Command();
 
-    expect(cmd._storeOptionsAsProperties).toBeFalsy();
+    assert.ok(!cmd._storeOptionsAsProperties);
     source.storeOptionsAsProperties();
     cmd.copyInheritedSettings(source);
-    expect(cmd._storeOptionsAsProperties).toBeTruthy();
+    assert.ok(cmd._storeOptionsAsProperties);
   });
 
   test('when copyInheritedSettings then copies combineFlagAndOptionalValue()', () => {
     const source = new commander.Command();
     const cmd = new commander.Command();
 
-    expect(cmd._combineFlagAndOptionalValue).toBeTruthy();
+    assert.ok(cmd._combineFlagAndOptionalValue);
     source.combineFlagAndOptionalValue(false);
     cmd.copyInheritedSettings(source);
-    expect(cmd._combineFlagAndOptionalValue).toBeFalsy();
+    assert.ok(!cmd._combineFlagAndOptionalValue);
   });
 
   test('when copyInheritedSettings then copies allowExcessArguments()', () => {
     const source = new commander.Command();
     const cmd = new commander.Command();
 
-    expect(cmd._allowExcessArguments).toBeFalsy();
+    assert.ok(!cmd._allowExcessArguments);
     source.allowExcessArguments();
     cmd.copyInheritedSettings(source);
-    expect(cmd._allowExcessArguments).toBeTruthy();
+    assert.ok(cmd._allowExcessArguments);
   });
 
   test('when copyInheritedSettings then copies enablePositionalOptions()', () => {
     const source = new commander.Command();
     const cmd = new commander.Command();
 
-    expect(cmd._enablePositionalOptions).toBeFalsy();
+    assert.ok(!cmd._enablePositionalOptions);
     source.enablePositionalOptions();
     cmd.copyInheritedSettings(source);
-    expect(cmd._enablePositionalOptions).toBeTruthy();
+    assert.ok(cmd._enablePositionalOptions);
   });
 
   test('when copyInheritedSettings then copies showHelpAfterError()', () => {
     const source = new commander.Command();
     const cmd = new commander.Command();
 
-    expect(cmd._showHelpAfterError).toBeFalsy();
+    assert.ok(!cmd._showHelpAfterError);
     source.showHelpAfterError();
     cmd.copyInheritedSettings(source);
-    expect(cmd._showHelpAfterError).toBeTruthy();
+    assert.ok(cmd._showHelpAfterError);
   });
 });

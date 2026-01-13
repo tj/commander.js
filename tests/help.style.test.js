@@ -1,7 +1,9 @@
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 const { Command } = require('../');
 
 function red(str) {
-  // Use plain characters so not stripped in Jest failure messages. (Means displayWidth is bogus though.)
+  // Use plain characters so not stripped in failure messages. (Means displayWidth is bogus though.)
   return `RED ${str} DER`;
 }
 function stripRed(str) {
@@ -12,7 +14,7 @@ function displayWidth(str) {
   return stripRed(str).length;
 }
 
-describe('override style methods and check help information', () => {
+describe('Help.configureHelp() overrides of style methods', () => {
   function makeProgram() {
     const program = new Command('program')
       .description('program description')
@@ -35,7 +37,8 @@ describe('override style methods and check help information', () => {
     const program = makeProgram();
     program.configureHelp({ styleTitle: (str) => red(str) }, displayWidth);
     const helpText = program.helpInformation();
-    expect(helpText).toEqual(
+    assert.equal(
+      helpText,
       plainHelpInformation
         .replace('Usage:', red('Usage:'))
         .replace('Arguments:', red('Arguments:'))
@@ -49,7 +52,8 @@ describe('override style methods and check help information', () => {
     program.configureHelp({ styleUsage: (str) => red(str), displayWidth });
     const helpText = program.helpInformation();
     const usageString = program.createHelp().commandUsage(program);
-    expect(helpText).toEqual(
+    assert.equal(
+      helpText,
       plainHelpInformation.replace(usageString, red(usageString)),
     );
   });
@@ -61,7 +65,8 @@ describe('override style methods and check help information', () => {
       displayWidth,
     });
     const helpText = program.helpInformation();
-    expect(helpText).toEqual(
+    assert.equal(
+      helpText,
       plainHelpInformation.replace(
         'program description',
         red('program description'),
@@ -76,7 +81,8 @@ describe('override style methods and check help information', () => {
       displayWidth,
     });
     const helpText = program.helpInformation();
-    expect(helpText).toEqual(
+    assert.equal(
+      helpText,
       plainHelpInformation.replace(
         /(-h, --help *)(display help for command)/,
         (match, p1, p2) => p1 + red(p2),
@@ -91,7 +97,8 @@ describe('override style methods and check help information', () => {
       displayWidth,
     });
     const helpText = program.helpInformation();
-    expect(helpText).toEqual(
+    assert.equal(
+      helpText,
       plainHelpInformation
         .replace(
           /(\[subarg\] *)(sub description)/,
@@ -111,7 +118,8 @@ describe('override style methods and check help information', () => {
       displayWidth,
     });
     const helpText = program.helpInformation();
-    expect(helpText).toEqual(
+    assert.equal(
+      helpText,
       plainHelpInformation.replace('arg description', red('arg description')),
     );
   });
@@ -123,7 +131,8 @@ describe('override style methods and check help information', () => {
       displayWidth,
     });
     const helpText = program.helpInformation();
-    expect(helpText).toEqual(
+    assert.equal(
+      helpText,
       plainHelpInformation
         .replace('program description', red('program description'))
         .replace('arg description', red('arg description'))
@@ -136,7 +145,8 @@ describe('override style methods and check help information', () => {
     const program = makeProgram();
     program.configureHelp({ styleOptionTerm: (str) => red(str), displayWidth });
     const helpText = program.helpInformation();
-    expect(helpText).toEqual(
+    assert.equal(
+      helpText,
       plainHelpInformation.replace('-h, --help', red('-h, --help')),
     );
   });
@@ -148,7 +158,8 @@ describe('override style methods and check help information', () => {
       displayWidth,
     });
     const helpText = program.helpInformation();
-    expect(helpText).toEqual(
+    assert.equal(
+      helpText,
       plainHelpInformation
         .replace('help [command]', red('help [command]'))
         .replace(
@@ -165,7 +176,8 @@ describe('override style methods and check help information', () => {
       displayWidth,
     });
     const helpText = program.helpInformation();
-    expect(helpText).toEqual(
+    assert.equal(
+      helpText,
       plainHelpInformation.replace(' file ', ` ${red('file')} `),
     );
   });
@@ -177,7 +189,8 @@ describe('override style methods and check help information', () => {
       displayWidth,
     });
     const helpText = program.helpInformation();
-    expect(helpText).toEqual(
+    assert.equal(
+      helpText,
       plainHelpInformation
         .replace(/\[options\]/g, red('[options]'))
         .replace('-h, --help', red('-h, --help')),
@@ -191,7 +204,8 @@ describe('override style methods and check help information', () => {
       displayWidth,
     });
     const helpText = program.helpInformation();
-    expect(helpText).toEqual(
+    assert.equal(
+      helpText,
       plainHelpInformation
         .replace('<file>', red('<file>'))
         .replace(' file ', ` ${red('file')} `)
@@ -207,7 +221,8 @@ describe('override style methods and check help information', () => {
       displayWidth,
     });
     const helpText = program.helpInformation();
-    expect(helpText).toEqual(
+    assert.equal(
+      helpText,
       plainHelpInformation
         .replace('[command] <file>', `${red('[command]')} <file>`)
         .replace('help [command]', `${red('help')} [command]`)
@@ -222,13 +237,14 @@ describe('override style methods and check help information', () => {
       displayWidth,
     });
     const helpText = program.helpInformation();
-    expect(helpText).toEqual(
+    assert.equal(
+      helpText,
       plainHelpInformation.replace('program', red('program')),
     );
   });
 });
 
-describe('check styles with configureOutput overrides for color', () => {
+describe('Help.configureHelp() overrides of color methods', () => {
   function makeProgram(hasColors) {
     const program = new Command('program');
     program.myHelpText = [];
@@ -254,14 +270,14 @@ describe('check styles with configureOutput overrides for color', () => {
     const program = makeProgram(true);
     program.outputHelp();
     const helpText = program.myHelpText.join('');
-    expect(helpText).toMatch(red('program'));
+    assert.match(helpText, new RegExp(red('program')));
   });
 
   test('when getOutHasColors returns false then help does not have color', () => {
     const program = makeProgram(false);
     program.outputHelp();
     const helpText = program.myHelpText.join('');
-    expect(helpText).not.toMatch(red('program'));
+    assert.doesNotMatch(helpText, new RegExp(red('program')));
   });
 
   test('when getOutHasColors returns false then style still called', () => {
@@ -275,6 +291,6 @@ describe('check styles with configureOutput overrides for color', () => {
     };
     program.configureHelp(config);
     program.outputHelp();
-    expect(styleCalled).toBe(true);
+    assert.equal(styleCalled, true);
   });
 });

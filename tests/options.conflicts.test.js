@@ -1,16 +1,14 @@
 const path = require('path');
 const commander = require('../');
+const { createTestCommand } = require('./testHelpers');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
-describe('command with conflicting options', () => {
-  function makeProgram() {
-    const actionMock = jest.fn();
-    const program = new commander.Command();
+describe('Option.conflicts()', () => {
+  function makeProgram(t) {
+    const actionMock = t.mock.fn();
+    const program = createTestCommand();
     program
-      .exitOverride()
-      .configureOutput({
-        writeErr: () => {},
-        writeOut: () => {},
-      })
       .command('foo')
       .addOption(
         new commander.Option('-s, --silent', "Don't print anything").env(
@@ -27,79 +25,94 @@ describe('command with conflicting options', () => {
     return { program, actionMock };
   }
 
-  beforeEach(() => {
+  test.beforeEach(() => {
     delete process.env.SILENT;
     delete process.env.JSON;
     delete process.env.DUAL;
     delete process.env.NO_DUAL;
   });
 
-  test('should call action if there are no explicit conflicting options set', () => {
-    const { program, actionMock } = makeProgram();
+  test('should call action if there are no explicit conflicting options set', (t) => {
+    const { program, actionMock } = makeProgram(t);
     program.parse('node test.js foo --json'.split(' '));
-    expect(actionMock).toHaveBeenCalledTimes(1);
-    expect(actionMock).toHaveBeenCalledWith({ json: true }, expect.any(Object));
+    assert.equal(actionMock.mock.callCount(), 1);
+    const callArgs = actionMock.mock.calls[0].arguments;
+    assert.deepEqual(callArgs[0], { json: true });
   });
 
-  test('should call action when there are no implicit conflicting options set', () => {
-    const { program, actionMock } = makeProgram();
+  test('should call action when there are no implicit conflicting options set', (t) => {
+    const { program, actionMock } = makeProgram(t);
     program.parse('node test.js foo --silent'.split(' '));
-    expect(actionMock).toHaveBeenCalledTimes(1);
-    expect(actionMock).toHaveBeenCalledWith(
-      { silent: true },
-      expect.any(Object),
+    assert.equal(actionMock.mock.callCount(), 1);
+    const callArgs = actionMock.mock.calls[0].arguments;
+    assert.deepEqual(callArgs[0], { silent: true });
+  });
+
+  test('should exit with error if conflicting options were set', (t) => {
+    const { program } = makeProgram(t);
+
+    assert.throws(
+      () => {
+        program.parse('node test.js foo --silent --json'.split(' '));
+      },
+      {
+        message:
+          "error: option '-j, --json' cannot be used with option '-s, --silent'",
+      },
     );
   });
 
-  test('should exit with error if conflicting options were set', () => {
-    const { program } = makeProgram();
-
-    expect(() => {
-      program.parse('node test.js foo --silent --json'.split(' '));
-    }).toThrow(
-      "error: option '-j, --json' cannot be used with option '-s, --silent'",
-    );
-  });
-
-  test('should report the env variable as the conflicting option source, when conflicting option is set', () => {
-    const { program } = makeProgram();
+  test('should report the env variable as the conflicting option source, when conflicting option is set', (t) => {
+    const { program } = makeProgram(t);
 
     process.env.SILENT = true;
 
-    expect(() => {
-      program.parse('node test.js foo --json'.split(' '));
-    }).toThrow(
-      "error: option '-j, --json' cannot be used with environment variable 'SILENT'",
+    assert.throws(
+      () => {
+        program.parse('node test.js foo --json'.split(' '));
+      },
+      {
+        message:
+          "error: option '-j, --json' cannot be used with environment variable 'SILENT'",
+      },
     );
   });
 
-  test('should report the env variable as the configured option source, when configured option is set', () => {
-    const { program } = makeProgram();
+  test('should report the env variable as the configured option source, when configured option is set', (t) => {
+    const { program } = makeProgram(t);
 
     process.env.JSON = true;
 
-    expect(() => {
-      program.parse('node test.js foo --silent'.split(' '));
-    }).toThrow(
-      "error: environment variable 'JSON' cannot be used with option '-s, --silent'",
+    assert.throws(
+      () => {
+        program.parse('node test.js foo --silent'.split(' '));
+      },
+      {
+        message:
+          "error: environment variable 'JSON' cannot be used with option '-s, --silent'",
+      },
     );
   });
 
-  test('should report both env variables as sources, when configured option and conflicting option are set', () => {
-    const { program } = makeProgram();
+  test('should report both env variables as sources, when configured option and conflicting option are set', (t) => {
+    const { program } = makeProgram(t);
 
     process.env.SILENT = true;
     process.env.JSON = true;
 
-    expect(() => {
-      program.parse('node test.js foo'.split(' '));
-    }).toThrow(
-      "error: environment variable 'JSON' cannot be used with environment variable 'SILENT'",
+    assert.throws(
+      () => {
+        program.parse('node test.js foo'.split(' '));
+      },
+      {
+        message:
+          "error: environment variable 'JSON' cannot be used with environment variable 'SILENT'",
+      },
     );
   });
 
-  test('should allow default value with a conflicting option', () => {
-    const { program, actionMock } = makeProgram();
+  test('should allow default value with a conflicting option', (t) => {
+    const { program, actionMock } = makeProgram(t);
 
     program.commands[0].addOption(
       new commander.Option('-d, --debug', 'print debug logs')
@@ -109,15 +122,13 @@ describe('command with conflicting options', () => {
 
     program.parse('node test.js foo --silent'.split(' '));
 
-    expect(actionMock).toHaveBeenCalledTimes(1);
-    expect(actionMock).toHaveBeenCalledWith(
-      { debug: true, silent: true },
-      expect.any(Object),
-    );
+    assert.equal(actionMock.mock.callCount(), 1);
+    const callArgs = actionMock.mock.calls[0].arguments;
+    assert.deepEqual(callArgs[0], { debug: true, silent: true });
   });
 
-  test('should report conflict on negated option flag', () => {
-    const { program } = makeProgram();
+  test('should report conflict on negated option flag', (t) => {
+    const { program } = makeProgram(t);
 
     program
       .command('bar')
@@ -125,15 +136,19 @@ describe('command with conflicting options', () => {
       .addOption(new commander.Option('--color'))
       .addOption(new commander.Option('-N, --no-color'));
 
-    expect(() => {
-      program.parse('node test.js bar --red -N'.split(' '));
-    }).toThrow(
-      "error: option '--red' cannot be used with option '-N, --no-color'",
+    assert.throws(
+      () => {
+        program.parse('node test.js bar --red -N'.split(' '));
+      },
+      {
+        message:
+          "error: option '--red' cannot be used with option '-N, --no-color'",
+      },
     );
   });
 
-  test('should report conflict on negated option env variable', () => {
-    const { program } = makeProgram();
+  test('should report conflict on negated option env variable', (t) => {
+    const { program } = makeProgram(t);
 
     process.env.NO_COLOR = true;
 
@@ -143,30 +158,38 @@ describe('command with conflicting options', () => {
       .addOption(new commander.Option('--color'))
       .addOption(new commander.Option('-N, --no-color').env('NO_COLOR'));
 
-    expect(() => {
-      program.parse('node test.js bar --red'.split(' '));
-    }).toThrow(
-      "error: option '--red' cannot be used with environment variable 'NO_COLOR'",
+    assert.throws(
+      () => {
+        program.parse('node test.js bar --red'.split(' '));
+      },
+      {
+        message:
+          "error: option '--red' cannot be used with environment variable 'NO_COLOR'",
+      },
     );
   });
 
-  test('should report correct error for shorthand negated option', () => {
-    const { program } = makeProgram();
+  test('should report correct error for shorthand negated option', (t) => {
+    const { program } = makeProgram(t);
 
     program
       .command('bar')
       .addOption(new commander.Option('--red'))
       .addOption(new commander.Option('-N, --no-color').conflicts(['red']));
 
-    expect(() => {
-      program.parse('node test.js bar --red -N'.split(' '));
-    }).toThrow(
-      "error: option '-N, --no-color' cannot be used with option '--red'",
+    assert.throws(
+      () => {
+        program.parse('node test.js bar --red -N'.split(' '));
+      },
+      {
+        message:
+          "error: option '-N, --no-color' cannot be used with option '--red'",
+      },
     );
   });
 
-  test('should report correct error for positive option when negated is configured', () => {
-    const { program } = makeProgram();
+  test('should report correct error for positive option when negated is configured', (t) => {
+    const { program } = makeProgram(t);
 
     program
       .command('bar')
@@ -174,13 +197,16 @@ describe('command with conflicting options', () => {
       .addOption(new commander.Option('--dual').env('DUAL').conflicts(['red']))
       .addOption(new commander.Option('--no-dual').env('NO_DUAL'));
 
-    expect(() => {
-      program.parse('node test.js bar --red --dual'.split(' '));
-    }).toThrow("error: option '--dual' cannot be used with option '--red'");
+    assert.throws(
+      () => {
+        program.parse('node test.js bar --red --dual'.split(' '));
+      },
+      { message: "error: option '--dual' cannot be used with option '--red'" },
+    );
   });
 
-  test('should report correct error for negated option when positive is configured', () => {
-    const { program } = makeProgram();
+  test('should report correct error for negated option when positive is configured', (t) => {
+    const { program } = makeProgram(t);
 
     program
       .command('bar')
@@ -188,13 +214,18 @@ describe('command with conflicting options', () => {
       .addOption(new commander.Option('--dual').env('DUAL').conflicts(['red']))
       .addOption(new commander.Option('--no-dual').env('NO_DUAL'));
 
-    expect(() => {
-      program.parse('node test.js bar --red --no-dual'.split(' '));
-    }).toThrow("error: option '--no-dual' cannot be used with option '--red'");
+    assert.throws(
+      () => {
+        program.parse('node test.js bar --red --no-dual'.split(' '));
+      },
+      {
+        message: "error: option '--no-dual' cannot be used with option '--red'",
+      },
+    );
   });
 
-  test('should report correct error for positive env variable when negated is configured', () => {
-    const { program } = makeProgram();
+  test('should report correct error for positive env variable when negated is configured', (t) => {
+    const { program } = makeProgram(t);
 
     program
       .command('bar')
@@ -203,15 +234,19 @@ describe('command with conflicting options', () => {
       .addOption(new commander.Option('--no-dual').env('NO_DUAL'));
 
     process.env.DUAL = 'true';
-    expect(() => {
-      program.parse('node test.js bar --red'.split(' '));
-    }).toThrow(
-      "error: environment variable 'DUAL' cannot be used with option '--red'",
+    assert.throws(
+      () => {
+        program.parse('node test.js bar --red'.split(' '));
+      },
+      {
+        message:
+          "error: environment variable 'DUAL' cannot be used with option '--red'",
+      },
     );
   });
 
-  test('should report correct error for negated env variable when positive is configured', () => {
-    const { program } = makeProgram();
+  test('should report correct error for negated env variable when positive is configured', (t) => {
+    const { program } = makeProgram(t);
 
     program
       .command('bar')
@@ -220,15 +255,19 @@ describe('command with conflicting options', () => {
       .addOption(new commander.Option('--no-dual').env('NO_DUAL'));
 
     process.env.NO_DUAL = 'true';
-    expect(() => {
-      program.parse('node test.js bar --red'.split(' '));
-    }).toThrow(
-      "error: environment variable 'NO_DUAL' cannot be used with option '--red'",
+    assert.throws(
+      () => {
+        program.parse('node test.js bar --red'.split(' '));
+      },
+      {
+        message:
+          "error: environment variable 'NO_DUAL' cannot be used with option '--red'",
+      },
     );
   });
 
-  test('should report correct error for positive option with string value when negated is configured', () => {
-    const { program } = makeProgram();
+  test('should report correct error for positive option with string value when negated is configured', (t) => {
+    const { program } = makeProgram(t);
 
     program
       .command('bar')
@@ -236,15 +275,19 @@ describe('command with conflicting options', () => {
       .addOption(new commander.Option('--dual2 <str>').conflicts(['red']))
       .addOption(new commander.Option('--no-dual2').preset('BAD'));
 
-    expect(() => {
-      program.parse('node test.js bar --red --dual2 foo'.split(' '));
-    }).toThrow(
-      "error: option '--dual2 <str>' cannot be used with option '--red'",
+    assert.throws(
+      () => {
+        program.parse('node test.js bar --red --dual2 foo'.split(' '));
+      },
+      {
+        message:
+          "error: option '--dual2 <str>' cannot be used with option '--red'",
+      },
     );
   });
 
-  test('should report correct error for negated option with preset when negated is configured', () => {
-    const { program } = makeProgram();
+  test('should report correct error for negated option with preset when negated is configured', (t) => {
+    const { program } = makeProgram(t);
 
     program
       .command('bar')
@@ -252,15 +295,21 @@ describe('command with conflicting options', () => {
       .addOption(new commander.Option('--dual2 <str>').conflicts(['red']))
       .addOption(new commander.Option('--no-dual2').preset('BAD'));
 
-    expect(() => {
-      program.parse('node test.js bar --red --no-dual2'.split(' '));
-    }).toThrow("error: option '--no-dual2' cannot be used with option '--red'");
+    assert.throws(
+      () => {
+        program.parse('node test.js bar --red --no-dual2'.split(' '));
+      },
+      {
+        message:
+          "error: option '--no-dual2' cannot be used with option '--red'",
+      },
+    );
   });
 
-  test('should not throw error when conflicts is invoked with a single string that includes another option', () => {
-    const { program } = makeProgram();
+  test('should not throw error when conflicts is invoked with a single string that includes another option', (t) => {
+    const { program } = makeProgram(t);
 
-    const actionMock = jest.fn();
+    const actionMock = t.mock.fn();
 
     program
       .command('bar')
@@ -270,28 +319,29 @@ describe('command with conflicting options', () => {
 
     program.parse('node test.js bar --a --b'.split(' '));
 
-    expect(actionMock).toHaveBeenCalledTimes(1);
-    expect(actionMock).toHaveBeenCalledWith(
-      { a: true, b: true },
-      expect.any(Object),
-    );
+    assert.equal(actionMock.mock.callCount(), 1);
+    const callArgs = actionMock.mock.calls[0].arguments;
+    assert.deepEqual(callArgs[0], { a: true, b: true });
   });
 
-  test('should throw error when conflicts is invoked with a single string that equals another option', () => {
-    const { program } = makeProgram();
+  test('should throw error when conflicts is invoked with a single string that equals another option', (t) => {
+    const { program } = makeProgram(t);
 
     program
       .command('bar')
       .addOption(new commander.Option('--a'))
       .addOption(new commander.Option('--b').conflicts('a'));
 
-    expect(() => {
-      program.parse('node test.js bar --a --b'.split(' '));
-    }).toThrow("error: option '--b' cannot be used with option '--a'");
+    assert.throws(
+      () => {
+        program.parse('node test.js bar --a --b'.split(' '));
+      },
+      { message: "error: option '--b' cannot be used with option '--a'" },
+    );
   });
 
-  test('when conflict on program calling action subcommand then throw conflict', () => {
-    const { program } = makeProgram();
+  test('when conflict on program calling action subcommand then throw conflict', (t) => {
+    const { program } = makeProgram(t);
     let exception;
 
     program
@@ -303,12 +353,12 @@ describe('command with conflicting options', () => {
     } catch (err) {
       exception = err;
     }
-    expect(exception).not.toBeUndefined();
-    expect(exception.code).toBe('commander.conflictingOption');
+    assert.notEqual(exception, undefined);
+    assert.equal(exception.code, 'commander.conflictingOption');
   });
 
-  test('when conflict on program calling action subcommand with help then show help', () => {
-    const { program } = makeProgram();
+  test('when conflict on program calling action subcommand with help then show help', (t) => {
+    const { program } = makeProgram(t);
     let exception;
 
     program
@@ -320,12 +370,12 @@ describe('command with conflicting options', () => {
     } catch (err) {
       exception = err;
     }
-    expect(exception).not.toBeUndefined();
-    expect(exception.code).toBe('commander.helpDisplayed');
+    assert.notEqual(exception, undefined);
+    assert.equal(exception.code, 'commander.helpDisplayed');
   });
 
-  test('when conflict on program calling external subcommand then throw conflict', () => {
-    const { program } = makeProgram();
+  test('when conflict on program calling external subcommand then throw conflict', (t) => {
+    const { program } = makeProgram(t);
     let exception;
 
     program
@@ -339,7 +389,7 @@ describe('command with conflicting options', () => {
     } catch (err) {
       exception = err;
     }
-    expect(exception).not.toBeUndefined();
-    expect(exception.code).toBe('commander.conflictingOption');
+    assert.notEqual(exception, undefined);
+    assert.equal(exception.code, 'commander.conflictingOption');
   });
 });

@@ -1,44 +1,46 @@
 const { Help, Command } = require('../');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
-describe('preformatted', () => {
+describe('Help.preformatted()', () => {
   test('when single line then false', () => {
     const helper = new Help();
-    expect(helper.preformatted('a b c')).toBe(false);
+    assert.equal(helper.preformatted('a b c'), false);
   });
 
   test('when single line with leading whitespace then false', () => {
     const helper = new Help();
-    expect(helper.preformatted(' a b c')).toBe(false);
+    assert.equal(helper.preformatted(' a b c'), false);
   });
 
   test('when unix line break not followed by whitespace then false', () => {
     const helper = new Help();
-    expect(helper.preformatted('a\nb\nc')).toBe(false);
+    assert.equal(helper.preformatted('a\nb\nc'), false);
   });
 
   test('when Windows line break not followed by whitespace then false', () => {
     const helper = new Help();
-    expect(helper.preformatted('a\r\nb\r\nc')).toBe(false);
+    assert.equal(helper.preformatted('a\r\nb\r\nc'), false);
   });
 
   test('when unix line followed by whitespace then true', () => {
     const helper = new Help();
-    expect(helper.preformatted('a\n  b')).toBe(true);
+    assert.equal(helper.preformatted('a\n  b'), true);
   });
 
   test('when Windows line break followed by whitespace then true', () => {
     const helper = new Help();
-    expect(helper.preformatted('a\r\n  b')).toBe(true);
+    assert.equal(helper.preformatted('a\r\n  b'), true);
   });
 
   test('when empty unix lines then false', () => {
     const helper = new Help();
-    expect(helper.preformatted('a\n\n')).toBe(false);
+    assert.equal(helper.preformatted('a\n\n'), false);
   });
 
   test('when empty Windows lines then false', () => {
     const helper = new Help();
-    expect(helper.preformatted('a\r\n\r\n')).toBe(false);
+    assert.equal(helper.preformatted('a\r\n\r\n'), false);
   });
 });
 
@@ -66,5 +68,5 @@ Options:
   -h, --help          display help for command
 `;
 
-  expect(program.helpInformation()).toBe(expectedOutput);
+  assert.equal(program.helpInformation(), expectedOutput);
 });

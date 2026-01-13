@@ -1,39 +1,25 @@
 const commander = require('../');
 const path = require('path');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
 // Test details of the exitOverride errors.
 // The important checks are the exitCode and code which are intended to be stable for
 // semver minor versions. For now, also testing the error.message and that output occurred
 // to detect accidental changes in behaviour.
 
-/* eslint jest/expect-expect: ["error", { "assertFunctionNames": ["expect", "expectCommanderError"] }] */
-
 function expectCommanderError(err, exitCode, code, message) {
-  expect(err).toBeInstanceOf(commander.CommanderError);
-  expect(err.exitCode).toBe(exitCode);
-  expect(err.code).toBe(code);
-  expect(err.message).toBe(message);
+  assert(err instanceof commander.CommanderError);
+  assert.equal(err.exitCode, exitCode);
+  assert.equal(err.code, code);
+  assert.equal(err.message, message);
 }
 
-describe('.exitOverride and error details', () => {
+describe('Command.exitOverride', () => {
   // Use internal knowledge to suppress output to keep test output clean.
-  let stderrSpy;
 
-  beforeAll(() => {
-    stderrSpy = jest
-      .spyOn(process.stderr, 'write')
-      .mockImplementation(() => {});
-  });
-
-  afterEach(() => {
-    stderrSpy.mockClear();
-  });
-
-  afterAll(() => {
-    stderrSpy.mockRestore();
-  });
-
-  test('when specify unknown program option then throw CommanderError', () => {
+  test('when specify unknown program option then throw CommanderError', (t) => {
+    const stderrSpy = t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program.exitOverride();
 
@@ -44,7 +30,7 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expect(stderrSpy).toHaveBeenCalled();
+    assert(stderrSpy.mock.callCount() > 0);
     expectCommanderError(
       caughtErr,
       1,
@@ -53,7 +39,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when specify unknown command then throw CommanderError', () => {
+  test('when specify unknown command then throw CommanderError', (t) => {
+    const stderrSpy = t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program.name('prog').exitOverride().command('sub');
 
@@ -64,7 +51,7 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expect(stderrSpy).toHaveBeenCalled();
+    assert(stderrSpy.mock.callCount() > 0);
     expectCommanderError(
       caughtErr,
       1,
@@ -74,7 +61,8 @@ describe('.exitOverride and error details', () => {
   });
 
   // Same error as above, but with custom handler.
-  test('when supply custom handler then throw custom error', () => {
+  test('when supply custom handler then throw custom error', (t) => {
+    t.mock.method(process.stderr, 'write', () => {});
     const customError = new commander.CommanderError(
       123,
       'custom-code',
@@ -100,7 +88,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when specify option without required value then throw CommanderError', () => {
+  test('when specify option without required value then throw CommanderError', (t) => {
+    const stderrSpy = t.mock.method(process.stderr, 'write', () => {});
     const optionFlags = '-p, --pepper <type>';
     const program = new commander.Command();
     program.exitOverride().option(optionFlags, 'add pepper');
@@ -112,7 +101,7 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expect(stderrSpy).toHaveBeenCalled();
+    assert(stderrSpy.mock.callCount() > 0);
     expectCommanderError(
       caughtErr,
       1,
@@ -121,7 +110,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when specify command without required argument then throw CommanderError', () => {
+  test('when specify command without required argument then throw CommanderError', (t) => {
+    const stderrSpy = t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program
       .exitOverride()
@@ -135,7 +125,7 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expect(stderrSpy).toHaveBeenCalled();
+    assert(stderrSpy.mock.callCount() > 0);
     expectCommanderError(
       caughtErr,
       1,
@@ -144,7 +134,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when specify program without required argument and no action handler then throw CommanderError', () => {
+  test('when specify program without required argument and no action handler then throw CommanderError', (t) => {
+    const stderrSpy = t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program.exitOverride().argument('<arg-name>');
 
@@ -155,7 +146,7 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expect(stderrSpy).toHaveBeenCalled();
+    assert(stderrSpy.mock.callCount() > 0);
     expectCommanderError(
       caughtErr,
       1,
@@ -164,7 +155,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when specify excess argument then throw CommanderError', () => {
+  test('when specify excess argument then throw CommanderError', (t) => {
+    const stderrSpy = t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program
       .exitOverride()
@@ -178,7 +170,7 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expect(stderrSpy).toHaveBeenCalled();
+    assert(stderrSpy.mock.callCount() > 0);
     expectCommanderError(
       caughtErr,
       1,
@@ -187,7 +179,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when specify command with excess argument then throw CommanderError', () => {
+  test('when specify command with excess argument then throw CommanderError', (t) => {
+    const stderrSpy = t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program
       .exitOverride()
@@ -202,7 +195,7 @@ describe('.exitOverride and error details', () => {
       caughtErr = err;
     }
 
-    expect(stderrSpy).toHaveBeenCalled();
+    assert(stderrSpy.mock.callCount() > 0);
     expectCommanderError(
       caughtErr,
       1,
@@ -211,10 +204,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when specify --help then throw CommanderError', () => {
-    const writeSpy = jest
-      .spyOn(process.stdout, 'write')
-      .mockImplementation(() => {});
+  test('when specify --help then throw CommanderError', (t) => {
+    t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program.exitOverride();
 
@@ -231,10 +222,10 @@ describe('.exitOverride and error details', () => {
       'commander.helpDisplayed',
       '(outputHelp)',
     );
-    writeSpy.mockRestore();
   });
 
-  test('when executable subcommand and no command specified then throw CommanderError', () => {
+  test('when executable subcommand and no command specified then throw CommanderError', (t) => {
+    const stderrSpy = t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program.exitOverride().command('compress', 'compress description');
 
@@ -248,10 +239,8 @@ describe('.exitOverride and error details', () => {
     expectCommanderError(caughtErr, 1, 'commander.help', '(outputHelp)');
   });
 
-  test('when specify --version then throw CommanderError', () => {
-    const stdoutSpy = jest
-      .spyOn(process.stdout, 'write')
-      .mockImplementation(() => {});
+  test('when specify --version then throw CommanderError', (t) => {
+    t.mock.method(process.stderr, 'write', () => {});
     const myVersion = '1.2.3';
     const program = new commander.Command();
     program.exitOverride().version(myVersion);
@@ -264,11 +253,9 @@ describe('.exitOverride and error details', () => {
     }
 
     expectCommanderError(caughtErr, 0, 'commander.version', myVersion);
-    stdoutSpy.mockRestore();
   });
 
   test('when executableSubcommand succeeds then call exitOverride', async () => {
-    expect.hasAssertions();
     const pm = path.join(__dirname, 'fixtures/pm');
     const program = new commander.Command();
     await new Promise((resolve) => {
@@ -287,7 +274,8 @@ describe('.exitOverride and error details', () => {
     });
   });
 
-  test('when mandatory program option missing then throw CommanderError', () => {
+  test('when mandatory program option missing then throw CommanderError', (t) => {
+    t.mock.method(process.stderr, 'write', () => {});
     const optionFlags = '-p, --pepper <type>';
     const program = new commander.Command();
     program.exitOverride().requiredOption(optionFlags, 'add pepper');
@@ -307,7 +295,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when option argument not in choices then throw CommanderError', () => {
+  test('when option argument not in choices then throw CommanderError', (t) => {
+    t.mock.method(process.stderr, 'write', () => {});
     const optionFlags = '--colour <shade>';
     const program = new commander.Command();
     program
@@ -329,7 +318,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when command argument not in choices then throw CommanderError', () => {
+  test('when command argument not in choices then throw CommanderError', (t) => {
+    t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program
       .exitOverride()
@@ -351,7 +341,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when custom processing for option throws InvalidArgumentError then catch CommanderError', () => {
+  test('when custom processing for option throws InvalidArgumentError then catch CommanderError', (t) => {
+    t.mock.method(process.stderr, 'write', () => {});
     function justSayNo(value) {
       throw new commander.InvalidArgumentError('NO');
     }
@@ -374,7 +365,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when custom processing for argument throws InvalidArgumentError then catch CommanderError', () => {
+  test('when custom processing for argument throws InvalidArgumentError then catch CommanderError', (t) => {
+    t.mock.method(process.stderr, 'write', () => {});
     function justSayNo(value) {
       throw new commander.InvalidArgumentError('NO');
     }
@@ -399,7 +391,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when has conflicting option then throw CommanderError', () => {
+  test('when has conflicting option then throw CommanderError', (t) => {
+    t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program
       .exitOverride()
@@ -421,7 +414,8 @@ describe('.exitOverride and error details', () => {
     );
   });
 
-  test('when call error() then throw CommanderError', () => {
+  test('when call error() then throw CommanderError', (t) => {
+    t.mock.method(process.stderr, 'write', () => {});
     const program = new commander.Command();
     program.exitOverride();
 
@@ -436,13 +430,13 @@ describe('.exitOverride and error details', () => {
   });
 });
 
-test('when no override and error then exit(1)', () => {
-  const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => {});
+test('when no override and error then exit(1)', (t) => {
+  const exitSpy = t.mock.method(process, 'exit', () => {});
   const program = new commander.Command();
   program.configureOutput({ outputError: () => {} });
   program.parse(['--unknownOption'], { from: 'user' });
-  expect(exitSpy).toHaveBeenCalledWith(1);
-  exitSpy.mockRestore();
+  assert(exitSpy.mock.callCount() >= 1);
+  assert.deepEqual(exitSpy.mock.calls[0].arguments, [1]);
 });
 
 test('when custom processing throws custom error then throw custom error', () => {
@@ -454,7 +448,10 @@ test('when custom processing throws custom error then throw custom error', () =>
     .exitOverride()
     .option('-s, --shade <value>', 'specify shade', justSayNo);
 
-  expect(() => {
-    program.parse(['--shade', 'green'], { from: 'user' });
-  }).toThrow('custom');
+  assert.throws(
+    () => {
+      program.parse(['--shade', 'green'], { from: 'user' });
+    },
+    { message: 'custom' },
+  );
 });

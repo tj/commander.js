@@ -1,19 +1,21 @@
 const commander = require('../');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
 // These are tests of the Help class, not of the Command help.
 
-describe('argumentDescription', () => {
+describe('Help.argumentDescription()', () => {
   test('when argument has no description then empty string', () => {
     const argument = new commander.Argument('[n]');
     const helper = new commander.Help();
-    expect(helper.argumentDescription(argument)).toEqual('');
+    assert.equal(helper.argumentDescription(argument), '');
   });
 
   test('when argument has description then return description', () => {
     const description = 'description';
     const argument = new commander.Argument('[n]', description);
     const helper = new commander.Help();
-    expect(helper.argumentDescription(argument)).toEqual(description);
+    assert.equal(helper.argumentDescription(argument), description);
   });
 
   test('when argument has default value then return description and default value', () => {
@@ -21,7 +23,8 @@ describe('argumentDescription', () => {
       'default',
     );
     const helper = new commander.Help();
-    expect(helper.argumentDescription(argument)).toEqual(
+    assert.equal(
+      helper.argumentDescription(argument),
       'description (default: "default")',
     );
   });
@@ -32,7 +35,8 @@ describe('argumentDescription', () => {
       'custom',
     );
     const helper = new commander.Help();
-    expect(helper.argumentDescription(argument)).toEqual(
+    assert.equal(
+      helper.argumentDescription(argument),
       'description (default: custom)',
     );
   });
@@ -40,8 +44,6 @@ describe('argumentDescription', () => {
   test('when an argument has default value and no description then still return default value', () => {
     const argument = new commander.Argument('[n]').default('default');
     const helper = new commander.Help();
-    expect(helper.argumentDescription(argument)).toEqual(
-      '(default: "default")',
-    );
+    assert.equal(helper.argumentDescription(argument), '(default: "default")');
   });
 });

@@ -1,13 +1,15 @@
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 const commander = require('../');
 
 // These are tests of the Help class, not of the Command help.
 // There is some overlap with the higher level Command tests (which predate Help).
 
-describe('visibleCommands', () => {
+describe('Help.visibleCommands()', () => {
   test('when no subcommands then empty array', () => {
     const program = new commander.Command();
     const helper = new commander.Help();
-    expect(helper.visibleCommands(program)).toEqual([]);
+    assert.deepEqual(helper.visibleCommands(program), []);
   });
 
   test('when add command then visible (with help)', () => {
@@ -17,7 +19,7 @@ describe('visibleCommands', () => {
     const visibleCommandNames = helper
       .visibleCommands(program)
       .map((cmd) => cmd.name());
-    expect(visibleCommandNames).toEqual(['sub', 'help']);
+    assert.deepEqual(visibleCommandNames, ['sub', 'help']);
   });
 
   test('when commands hidden then not visible', () => {
@@ -30,6 +32,6 @@ describe('visibleCommands', () => {
     const visibleCommandNames = helper
       .visibleCommands(program)
       .map((cmd) => cmd.name());
-    expect(visibleCommandNames).toEqual(['visible', 'help']);
+    assert.deepEqual(visibleCommandNames, ['visible', 'help']);
   });
 });

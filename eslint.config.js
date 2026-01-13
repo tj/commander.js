@@ -1,6 +1,5 @@
 const globals = require('globals');
 const esLintjs = require('@eslint/js');
-const jest = require('eslint-plugin-jest');
 const tseslint = require('typescript-eslint');
 const prettier = require('eslint-config-prettier');
 
@@ -12,7 +11,6 @@ const tsconfigJsFiles = ['*.{js,mjs}', 'lib/**/*.{js,mjs}']; // match "include" 
 module.exports = tseslint.config(
   // Add recommended rules.
   esLintjs.configs.recommended,
-  jest.configs['flat/recommended'],
   // tseslint with different setup for js/ts
   {
     files: tsconfigJsFiles,

@@ -1,4 +1,6 @@
 const { Command } = require('../');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
 function getSuggestion(program, arg) {
   let message = '';
@@ -17,35 +19,36 @@ function getSuggestion(program, arg) {
   const match = message.match(/Did you mean (one of )?(.*)\?/);
   return match ? match[2] : null;
 }
+describe('Command.showSuggestionAfterError()', () => {
+  test('when unknown command and showSuggestionAfterError() then show suggestion', () => {
+    const program = new Command();
+    program.showSuggestionAfterError();
+    program.command('example');
+    const suggestion = getSuggestion(program, 'exampel');
+    assert.equal(suggestion, 'example');
+  });
 
-test('when unknown command and showSuggestionAfterError() then show suggestion', () => {
-  const program = new Command();
-  program.showSuggestionAfterError();
-  program.command('example');
-  const suggestion = getSuggestion(program, 'exampel');
-  expect(suggestion).toBe('example');
-});
+  test('when unknown command and showSuggestionAfterError(false) then do not show suggestion', () => {
+    const program = new Command();
+    program.showSuggestionAfterError(false);
+    program.command('example');
+    const suggestion = getSuggestion(program, 'exampel');
+    assert.equal(suggestion, null);
+  });
 
-test('when unknown command and showSuggestionAfterError(false) then do not show suggestion', () => {
-  const program = new Command();
-  program.showSuggestionAfterError(false);
-  program.command('example');
-  const suggestion = getSuggestion(program, 'exampel');
-  expect(suggestion).toBe(null);
-});
+  test('when unknown option and showSuggestionAfterError() then show suggestion', () => {
+    const program = new Command();
+    program.showSuggestionAfterError();
+    program.option('--example');
+    const suggestion = getSuggestion(program, '--exampel');
+    assert.equal(suggestion, '--example');
+  });
 
-test('when unknown option and showSuggestionAfterError() then show suggestion', () => {
-  const program = new Command();
-  program.showSuggestionAfterError();
-  program.option('--example');
-  const suggestion = getSuggestion(program, '--exampel');
-  expect(suggestion).toBe('--example');
-});
-
-test('when unknown option and showSuggestionAfterError(false) then do not show suggestion', () => {
-  const program = new Command();
-  program.showSuggestionAfterError(false);
-  program.option('--example');
-  const suggestion = getSuggestion(program, '--exampel');
-  expect(suggestion).toBe(null);
+  test('when unknown option and showSuggestionAfterError(false) then do not show suggestion', () => {
+    const program = new Command();
+    program.showSuggestionAfterError(false);
+    program.option('--example');
+    const suggestion = getSuggestion(program, '--exampel');
+    assert.equal(suggestion, null);
+  });
 });

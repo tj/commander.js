@@ -1,16 +1,18 @@
 const commander = require('../');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
 // These are tests of the Help class, not of the Command help.
 // There is some overlap with the higher level Command tests (which predate Help).
 
-describe('padWidth', () => {
+describe('Help.padWidth()', () => {
   test('when argument term longest return argument length', () => {
     const longestThing = 'veryLongThingBiggerThanOthers';
     const program = new commander.Command();
     program.argument(`<${longestThing}>`, 'description').option('-o');
     program.command('sub');
     const helper = new commander.Help();
-    expect(helper.padWidth(program, helper)).toEqual(longestThing.length);
+    assert.equal(helper.padWidth(program, helper), longestThing.length);
   });
 
   test('when option term longest return option length', () => {
@@ -19,7 +21,7 @@ describe('padWidth', () => {
     program.argument('<file>', 'desc').option(longestThing);
     program.command('sub');
     const helper = new commander.Help();
-    expect(helper.padWidth(program, helper)).toEqual(longestThing.length);
+    assert.equal(helper.padWidth(program, helper), longestThing.length);
   });
 
   test('when global option term longest return global option length', () => {
@@ -31,7 +33,7 @@ describe('padWidth', () => {
       .configureHelp({ showGlobalOptions: true });
     const sub = program.command('sub');
     const helper = sub.createHelp();
-    expect(helper.padWidth(sub, helper)).toEqual(longestThing.length);
+    assert.equal(helper.padWidth(sub, helper), longestThing.length);
   });
 
   test('when command term longest return command length', () => {
@@ -40,6 +42,6 @@ describe('padWidth', () => {
     program.argument('<file>', 'desc').option('-o');
     program.command(longestThing);
     const helper = new commander.Help();
-    expect(helper.padWidth(program, helper)).toEqual(longestThing.length);
+    assert.equal(helper.padWidth(program, helper), longestThing.length);
   });
 });
