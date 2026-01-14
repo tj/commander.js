@@ -1,4 +1,4 @@
-const { Option, DualOptions } = require('../lib/option.js');
+const { Option, DualOptions } = require('../lib/option.mjs');
 const { Command } = require('../');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');

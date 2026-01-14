@@ -10,7 +10,7 @@ import {
   createCommand,
   createArgument,
   createOption,
-} from '../index.js';
+} from '../index.mjs';
 import { describe, test } from 'node:test';
 import assert from 'node:assert/strict';
 

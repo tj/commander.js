@@ -10,7 +10,7 @@ const {
   createCommand,
   createOption,
   createArgument,
-} = require('../index.js');
+} = require('../index.mjs');
 const { describe, test } = require('node:test');
 const assert = require('node:assert/strict');
 

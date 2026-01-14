@@ -1,4 +1,4 @@
-const { useColor } = require('../lib/command.js');
+const { useColor } = require('../lib/command.mjs');
 const { test, describe, beforeEach, after } = require('node:test');
 const assert = require('node:assert/strict');
 

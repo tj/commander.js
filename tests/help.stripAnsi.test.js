@@ -1,4 +1,4 @@
-const { stripColor } = require('../lib/help');
+const { stripColor } = require('../lib/help.mjs');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
