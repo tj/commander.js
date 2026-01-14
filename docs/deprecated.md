@@ -12,12 +12,12 @@ They are currently still available for backwards compatibility, but should not b
     - [.command('\*')](#command)
     - [cmd.description(cmdDescription, argDescriptions)](#cmddescriptioncmddescription-argdescriptions)
     - [InvalidOptionArgumentError](#invalidoptionargumenterror)
-    - [Import from `commander/esm.mjs`](#import-from-commanderesmmjs)
     - [cmd.\_args](#cmd_args)
     - [.addHelpCommand(string|boolean|undefined)](#addhelpcommandstringbooleanundefined)
   - [Removed](#removed)
     - [Short option flag longer than a single character](#short-option-flag-longer-than-a-single-character)
     - [Default import of global Command object](#default-import-of-global-command-object)
+    - [Import from `commander/esm.mjs`](#import-from-commanderesmmjs)
 
 ### RegExp .option() parameter
 
@@ -168,22 +168,6 @@ function myParseInt(value, dummyPrevious) {
 
 Deprecated from Commander v8.
 
-### Import from `commander/esm.mjs`
-
-The first support for named imports required an explicit entry file.
-
-```js
-import { Command } from 'commander/esm.mjs';
-```
-
-This is no longer required, just import directly from the module.
-
-```js
-import { Command } from 'commander';
-```
-
-README updated in Commander v9. Deprecated from Commander v9.
-
 ### cmd._args
 
 This was always private, but was previously the only way to access the command `Argument` array.
@@ -256,3 +240,21 @@ const program = new Command()
 - Deprecated from Commander v7.
 - Removed from TypeScript declarations in Commander v8.
 - Removed from CommonJS in Commander v12. Deprecated and gone!
+
+### Import from `commander/esm.mjs`
+
+The first support for named imports required an explicit entry file.
+
+```js
+import { Command } from 'commander/esm.mjs';
+```
+
+This is no longer required, just import directly from the module.
+
+```js
+import { Command } from 'commander';
+```
+
+- README updated in Commander v9. Deprecated from Commander v9.
+- Deleted in Command v14.  Deprecated and gone!
+
