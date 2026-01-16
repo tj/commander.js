@@ -27,7 +27,7 @@ describe('executable subcommand support for --inspect ', () => {
       inspectCommand,
       'sub',
     ]);
-    assert.equal(stdout, "[ '--harmony' ]\n");
+    assert.equal(stdout, '["--harmony"]\n');
   });
 
   // --inspect defaults to 127.0.0.1:9229, port should be incremented
@@ -37,7 +37,7 @@ describe('executable subcommand support for --inspect ', () => {
       inspectCommand,
       'sub',
     ]);
-    assert.equal(stdout, "[ '--inspect=127.0.0.1:9230' ]\n");
+    assert.equal(stdout, '["--inspect=127.0.0.1:9230"]\n');
   });
 
   // custom port
@@ -47,7 +47,7 @@ describe('executable subcommand support for --inspect ', () => {
       inspectCommand,
       'sub',
     ]);
-    assert.equal(stdout, "[ '--inspect=127.0.0.1:9241' ]\n");
+    assert.equal(stdout, '["--inspect=127.0.0.1:9241"]\n');
   });
 
   // zero is special, random port
@@ -57,7 +57,7 @@ describe('executable subcommand support for --inspect ', () => {
       inspectCommand,
       'sub',
     ]);
-    assert.equal(stdout, "[ '--inspect=0' ]\n");
+    assert.equal(stdout, '["--inspect=0"]\n');
   });
 
   // ip address
@@ -67,7 +67,7 @@ describe('executable subcommand support for --inspect ', () => {
       inspectCommand,
       'sub',
     ]);
-    assert.equal(stdout, "[ '--inspect=127.0.0.1:9251' ]\n");
+    assert.equal(stdout, '["--inspect=127.0.0.1:9251"]\n');
   });
 
   // localhost
@@ -77,7 +77,7 @@ describe('executable subcommand support for --inspect ', () => {
       inspectCommand,
       'sub',
     ]);
-    assert.equal(stdout, "[ '--inspect=localhost:9261' ]\n");
+    assert.equal(stdout, '["--inspect=localhost:9261"]\n');
   });
 
   // --inspect-port, just test most likely format
@@ -87,6 +87,6 @@ describe('executable subcommand support for --inspect ', () => {
       inspectCommand,
       'sub',
     ]);
-    assert.equal(stdout, "[ '--inspect-port=127.0.0.1:9271' ]\n");
+    assert.equal(stdout, '["--inspect-port=127.0.0.1:9271"]\n');
   });
 });

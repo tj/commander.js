@@ -1,1 +1,1 @@
-console.log(process.execArgv);
+console.log(JSON.stringify(process.execArgv));

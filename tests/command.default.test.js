@@ -18,12 +18,12 @@ describe('default executable command', () => {
 
   test('when default subcommand and unrecognised argument then call default with argument', async () => {
     const { stdout } = await execFileAsync('node', [pm, 'an-argument']);
-    assert.equal(stdout, "default\n[ 'an-argument' ]\n");
+    assert.equal(stdout, 'default\n["an-argument"]\n');
   });
 
   test('when default subcommand and unrecognised option then call default with option', async () => {
     const { stdout } = await execFileAsync('node', [pm, '--an-option']);
-    assert.equal(stdout, "default\n[ '--an-option' ]\n");
+    assert.equal(stdout, 'default\n["--an-option"]\n');
   });
 });
 

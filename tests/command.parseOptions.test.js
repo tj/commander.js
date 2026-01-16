@@ -50,7 +50,7 @@ describe('parsing regression tests', () => {
       '5',
       '6',
     ]);
-    assert.equal(stdout, "[ '1', '2', '--dry-run', '3', '4', '5', '6' ]\n");
+    assert.equal(stdout, '["1","2","--dry-run","3","4","5","6"]\n');
   });
 });
 

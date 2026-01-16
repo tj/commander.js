@@ -1,1 +1,1 @@
-console.log(process.argv.slice(2));
+console.log(JSON.stringify(process.argv.slice(2)));
