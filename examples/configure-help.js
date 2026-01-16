@@ -4,7 +4,7 @@ const program = new Command();
 // This example shows a simple use of configureHelp.
 // This is used as an example in the README.
 // Any method on the Help class can be overridden
-// See: https://github.com/tj/js/blob/master/lib/help.js
+// See: https://github.com/tj/commander.js/blob/master/lib/help.js
 
 program.configureHelp({
   sortSubcommands: true,
