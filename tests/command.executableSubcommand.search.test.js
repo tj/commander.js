@@ -13,8 +13,7 @@ const fs = require('node:fs');
 // This file does in-process mocking. Bit clumsy but faster and less external clutter than using fixtures.
 // See also command.executableSubcommand.lookup.test.js for tests using fixtures.
 
-const __dirname = import.meta.dirname;
-const gLocalDirectory = path.resolve(__dirname, 'fixtures'); // Real directory, although not actually searching for files in it.
+const gLocalDirectory = path.resolve(import.meta.dirname, 'fixtures'); // Real directory, although not actually searching for files in it.
 
 function extractMockSpawnArgs(spawnSpy) {
   assert.equal(spawnSpy.mock.callCount() > 0, true);
@@ -78,7 +77,7 @@ describe('executable subcommand search behaviour', () => {
       const program = new commander.Command();
       program._checkForMissingExecutable = () => {}; // suppress error, call mocked spawn
       program.name('pm');
-      program.executableDir(__dirname);
+      program.executableDir(import.meta.dirname);
       program.command('sub', 'executable description');
       program.parse(['sub'], { from: 'user' });
 

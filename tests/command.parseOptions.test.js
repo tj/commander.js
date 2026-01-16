@@ -5,7 +5,6 @@ import * as util from 'util';
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-const __dirname = import.meta.dirname;
 const execFileAsync = util.promisify(childProcess.execFile);
 
 // Combination of parse and parseOptions tests which are more about details
@@ -39,7 +38,7 @@ describe('parsing regression tests', () => {
 
   // https://github.com/tj/commander.js/issues/508
   test('when arguments to executable include option flags then argument order preserved', async () => {
-    const pm = path.join(__dirname, 'fixtures/pm');
+    const pm = path.join(import.meta.dirname, 'fixtures/pm');
     const { stdout } = await execFileAsync('node', [
       pm,
       'echo',

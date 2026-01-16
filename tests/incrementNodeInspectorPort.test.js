@@ -10,8 +10,6 @@ import { createRequire } from 'node:module';
 const require = createRequire(import.meta.url);
 const childProcess = require('node:child_process'); // CJS object, properties configurable
 
-const __dirname = import.meta.dirname;
-
 describe('increment node inspector port in executable subcommands', () => {
   function makeSpies(t) {
     const spawnSpy = t.mock.method(childProcess, 'spawn', () => {
@@ -31,7 +29,10 @@ describe('increment node inspector port in executable subcommands', () => {
 
   function makeProgram() {
     const program = new commander.Command();
-    const fileWhichExists = path.join(__dirname, './fixtures/pm-cache.js');
+    const fileWhichExists = path.join(
+      import.meta.dirname,
+      './fixtures/pm-cache.js',
+    );
     program.command('cache', 'stand-alone command', {
       executableFile: fileWhichExists,
     });

@@ -5,12 +5,11 @@ import * as util from 'util';
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-const __dirname = import.meta.dirname;
 const execFileAsync = util.promisify(childProcess.execFile);
 
 describe('default executable command', () => {
   // Calling node explicitly so pm works without file suffix cross-platform.
-  const pm = path.join(__dirname, './fixtures/pm');
+  const pm = path.join(import.meta.dirname, './fixtures/pm');
 
   test('when default subcommand and no command then call default', async () => {
     const { stdout } = await execFileAsync('node', [pm]);

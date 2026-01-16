@@ -447,7 +447,7 @@ expectType<string>(program.optionsGroup());
 expectType<commander.Command>(program.nameFromFilename(import.meta.filename));
 
 // executableDir
-expectType<commander.Command>(program.executableDir(__dirname));
+expectType<commander.Command>(program.executableDir(import.meta.dirname));
 expectType<string | null>(program.executableDir());
 
 // outputHelp

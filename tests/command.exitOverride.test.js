@@ -3,8 +3,6 @@ import * as path from 'path';
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-const __dirname = import.meta.dirname;
-
 // Test details of the exitOverride errors.
 // The important checks are the exitCode and code which are intended to be stable for
 // semver minor versions. For now, also testing the error.message and that output occurred
@@ -258,7 +256,7 @@ describe('Command.exitOverride', () => {
   });
 
   test('when executableSubcommand succeeds then call exitOverride', async () => {
-    const pm = path.join(__dirname, 'fixtures/pm');
+    const pm = path.join(import.meta.dirname, 'fixtures/pm');
     const program = new commander.Command();
     await new Promise((resolve) => {
       program

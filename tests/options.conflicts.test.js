@@ -4,8 +4,6 @@ import { createTestCommand } from './testHelpers.js';
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-const __dirname = import.meta.dirname;
-
 describe('Option.conflicts()', () => {
   function makeProgram(t) {
     const actionMock = t.mock.fn();
@@ -383,7 +381,7 @@ describe('Option.conflicts()', () => {
     program
       .addOption(new commander.Option('--black'))
       .addOption(new commander.Option('--white').conflicts('black'));
-    const pm = path.join(__dirname, './fixtures/pm');
+    const pm = path.join(import.meta.dirname, './fixtures/pm');
     program.command('ext', 'external command', { executableFile: pm });
 
     try {

@@ -3,8 +3,7 @@ import * as path from 'path';
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-const __dirname = import.meta.dirname;
-const pmPath = path.join(__dirname, 'fixtures', 'pm');
+const pmPath = path.join(import.meta.dirname, 'fixtures', 'pm');
 
 // Disabling some tests on Windows as:
 // "Windows does not support sending signals"

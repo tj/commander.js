@@ -3,8 +3,6 @@
 import * as path from 'node:path';
 import { program } from '../../index.js';
 
-const __dirname = import.meta.dirname;
-
 process.env.FORCE_COLOR = 0; // work-around bug in Jest: https://github.com/jestjs/jest/issues/14391
 
 program
@@ -39,10 +37,10 @@ program
     process.exit(err.exitCode);
   })
   .command('fail', 'exit with non-zero status code', {
-    executableFile: path.join(__dirname, 'pm-fail.js'),
+    executableFile: path.join(import.meta.dirname, 'pm-fail.js'),
   })
   .command('terminate', 'terminate due to signal', {
-    executableFile: path.join(__dirname, 'pm-terminate.js'),
+    executableFile: path.join(import.meta.dirname, 'pm-terminate.js'),
   });
 
 program.parse(process.argv);

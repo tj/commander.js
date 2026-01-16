@@ -4,13 +4,16 @@ import * as util from 'util';
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-const __dirname = import.meta.dirname;
 const execFileAsync = util.promisify(childProcess.execFile);
 
 // Test the special handling for --inspect to increment fixed debug port numbers.
 // If we reuse port we can get conflicts because port not released fast enough.
 
-const inspectCommand = path.join(__dirname, './fixtures', 'inspect.js');
+const inspectCommand = path.join(
+  import.meta.dirname,
+  './fixtures',
+  'inspect.js',
+);
 
 describe('executable subcommand support for --inspect ', () => {
   test('when execArgv empty then spawn execArgs empty', async () => {
