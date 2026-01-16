@@ -76,7 +76,7 @@ The two most used option types are a boolean option, and an option which takes i
 Example file: [split.js](./examples/split.js)
 
 ```js
-const { program } = require('commander');
+import { program } from 'commander';
 
 program
   .option('--first')
@@ -103,7 +103,7 @@ Here is a more complete program using a subcommand and with descriptions for the
 Example file: [string-util.js](./examples/string-util.js)
 
 ```js
-const { Command } = require('commander');
+import { Command } from 'commander';
 const program = new Command();
 
 program
@@ -147,11 +147,10 @@ More samples can be found in the [examples](https://github.com/tj/commander.js/t
 ## Declaring _program_ variable
 
 Commander exports a global object which is convenient for quick programs.
-This is used in the examples in this README for brevity.
+This is used in some examples in this README for brevity.
 
 ```js
-// CommonJS (.cjs)
-const { program } = require('commander');
+import { program } from 'commander';
 ```
 
 For larger programs which may use commander in multiple ways, including unit testing, it is better to create a local Command object to use.
@@ -552,7 +551,7 @@ Configuration options can be passed with the call to `.command()` and `.addComma
 remove the command from the generated help output. Specifying `isDefault: true` will run the subcommand if no other
 subcommand is specified ([example](./examples/defaultCommand.js)).
 
-You can add alternative names for a command with `.alias()`. ([example](./examples/alias.js))
+You can add alternative names for a command with `.alias()`. ([example](./examples/alias.cjs))
 
 `.command()` automatically copies the inherited settings from the parent command to the newly created subcommand. This is only done during creation, any later setting changes to the parent are not inherited.
 
@@ -1047,7 +1046,7 @@ node -r ts-node/register pm.ts
 This factory function creates a new command. It is exported and may be used instead of using `new`, like:
 
 ```js
-const { createCommand } = require('commander');
+import { createCommand } from 'commander';
 const program = createCommand();
 ```
 
