@@ -2,7 +2,7 @@
 
 // This example is used as an example in the README for the action handler.
 
-const { Command } = require('commander');
+import { Command } from 'commander';
 const program = new Command();
 
 program

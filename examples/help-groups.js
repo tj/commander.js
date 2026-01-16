@@ -1,4 +1,4 @@
-const { Command, Option } = require('commander');
+import { Command, Option } from 'commander';
 
 // Show the two approaches for adding help groups, and how to customise the built-in help and version.
 

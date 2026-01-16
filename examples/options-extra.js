@@ -4,7 +4,7 @@
 // See also options-env.js for more extensive env examples,
 // and options-conflicts.js for more details about .conflicts().
 
-const { Command, Option } = require('commander');
+import { Command, Option } from 'commander';
 const program = new Command();
 
 program

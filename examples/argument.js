@@ -2,7 +2,7 @@
 
 // This example shows specifying the command arguments using argument() function.
 
-const { Command } = require('commander');
+import { Command } from 'commander';
 const program = new Command();
 
 program

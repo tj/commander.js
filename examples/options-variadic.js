@@ -2,8 +2,8 @@
 
 // This is used as an example in the README for variadic options.
 
-const commander = require('commander');
-const program = new commander.Command();
+import { Command } from 'commander';
+const program = new Command();
 
 program
   .option('-n, --number <value...>', 'specify numbers')

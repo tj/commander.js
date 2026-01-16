@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const commander = require('commander');
-const program = new commander.Command();
+import { Command } from 'commander';
+const program = new Command();
 
 // Commander supports nested subcommands.
 // .command() can add a subcommand with an action handler or an executable.
@@ -19,7 +19,7 @@ brew.command('coffee').action(() => {
 // Add nested commands using `.addCommand().
 // The command could be created separately in another module.
 function makeHeatCommand() {
-  const heat = new commander.Command('heat');
+  const heat = new Command('heat');
   heat.command('jug').action(() => {
     console.log('heat jug');
   });

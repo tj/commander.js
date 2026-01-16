@@ -4,14 +4,14 @@
 //    Custom option processing
 //    You may specify a function to do custom processing of option values.
 
-const commander = require('commander');
-const program = new commander.Command();
+import { Command, InvalidArgumentError } from 'commander';
+const program = new Command();
 
 function myParseInt(value) {
   // parseInt takes a string and a radix
   const parsedValue = parseInt(value, 10);
   if (isNaN(parsedValue)) {
-    throw new commander.InvalidArgumentError('Not a number.');
+    throw new InvalidArgumentError('Not a number.');
   }
   return parsedValue;
 }

@@ -3,8 +3,8 @@
 // This is used as an example in the README for:
 //    Common option types, boolean and value
 
-const commander = require('commander');
-const program = new commander.Command();
+import { Command } from 'commander';
+const program = new Command();
 
 program
   .option('-d, --debug', 'output extra debugging')

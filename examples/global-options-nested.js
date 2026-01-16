@@ -6,7 +6,7 @@
 // (A different pattern for a "global" option is to add it to the subcommands, rather
 // than to the program. See global-options-added.js.)
 
-const { Command } = require('commander');
+import { Command } from 'commander';
 const program = new Command();
 
 program.configureHelp({ showGlobalOptions: true }).option('-g, --global');
