@@ -1,4 +1,4 @@
-import * as commander from './index';
+import * as commander from './index.js';
 import { expectType } from 'tsd';
 
 // We are not just checking return types here, we are also implicitly checking that the expected syntax is allowed.
@@ -444,7 +444,7 @@ expectType<commander.Command>(program.optionsGroup('My Group'));
 expectType<string>(program.optionsGroup());
 
 // nameFromFilename
-expectType<commander.Command>(program.nameFromFilename(__filename));
+expectType<commander.Command>(program.nameFromFilename(import.meta.filename));
 
 // executableDir
 expectType<commander.Command>(program.executableDir(__dirname));

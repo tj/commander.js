@@ -1,6 +1,6 @@
-const { useColor } = require('../lib/command.mjs');
-const { test, describe, beforeEach, after } = require('node:test');
-const assert = require('node:assert/strict');
+import { useColor } from '../lib/command.js';
+import { test, describe, beforeEach, after } from 'node:test';
+import assert from 'node:assert/strict';
 
 describe('internal useColor environment variable support', () => {
   let holdNoColor = process.env.NO_COLOR;

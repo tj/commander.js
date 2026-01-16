@@ -10,7 +10,8 @@ const {
   createCommand,
   createOption,
   createArgument,
-} = require('../index.mjs');
+} = require('../index.js');
+const commander = require('../index.js');
 const { describe, test } = require('node:test');
 const assert = require('node:assert/strict');
 
@@ -22,7 +23,7 @@ function checkClass(obj, name) {
   assert.equal(obj.constructor.name, name);
 }
 
-describe('imports from .cjs', () => {
+describe('named imports from .cjs', () => {
   test('program', () => {
     checkClass(program, 'Command');
   });
@@ -69,5 +70,64 @@ describe('imports from .cjs', () => {
 
   test('createArgument', () => {
     checkClass(createArgument('<foo>', 'description'), 'Argument');
+  });
+});
+
+describe('unnamed imports from .cjs', () => {
+  test('program', () => {
+    checkClass(commander.program, 'Command');
+  });
+
+  test('Command', () => {
+    checkClass(new commander.Command('name'), 'Command');
+  });
+
+  test('Option', () => {
+    checkClass(new commander.Option('-e, --example', 'description'), 'Option');
+  });
+
+  test('Argument', () => {
+    checkClass(new commander.Argument('<foo>', 'description'), 'Argument');
+  });
+
+  test('Help', () => {
+    checkClass(new commander.Help(), 'Help');
+  });
+
+  test('CommanderError', () => {
+    checkClass(
+      new commander.CommanderError(1, 'code', 'failed'),
+      'CommanderError',
+    );
+  });
+
+  test('InvalidArgumentError', () => {
+    checkClass(
+      new commander.InvalidArgumentError('failed'),
+      'InvalidArgumentError',
+    );
+  });
+
+  test('InvalidOptionArgumentError', () => {
+    // Deprecated
+    checkClass(
+      new commander.InvalidOptionArgumentError('failed'),
+      'InvalidArgumentError',
+    );
+  });
+
+  test('createCommand', () => {
+    checkClass(commander.createCommand('foo'), 'Command');
+  });
+
+  test('createOption', () => {
+    checkClass(
+      commander.createOption('-e, --example', 'description'),
+      'Option',
+    );
+  });
+
+  test('createArgument', () => {
+    checkClass(commander.createArgument('<foo>', 'description'), 'Argument');
   });
 });

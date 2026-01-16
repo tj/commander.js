@@ -1,8 +1,8 @@
-import { Argument } from './lib/argument.mjs';
-import { Command } from './lib/command.mjs';
-import { CommanderError, InvalidArgumentError } from './lib/error.mjs';
-import { Help } from './lib/help.mjs';
-import { Option } from './lib/option.mjs';
+import { Argument } from './lib/argument.js';
+import { Command } from './lib/command.js';
+import { CommanderError, InvalidArgumentError } from './lib/error.js';
+import { Help } from './lib/help.js';
+import { Option } from './lib/option.js';
 
 export const program = new Command();
 

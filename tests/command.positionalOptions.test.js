@@ -1,6 +1,6 @@
-const commander = require('../');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as commander from '../index.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 // The changes to parsing for positional options are subtle, and took extra care to work with
 // implicit help and default commands. Lots of tests.

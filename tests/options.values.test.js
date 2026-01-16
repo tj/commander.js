@@ -1,6 +1,6 @@
-const commander = require('../');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as commander from '../index.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 // Test the ways values can be specified for options.
 // See also references on "Utility Conventions" in command.parseOptions.test.js

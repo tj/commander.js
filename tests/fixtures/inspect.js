@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { program } = require('../../');
+import { program } from '../../index.js';
 
 process.env.FORCE_COLOR = 0; // work-around bug in Jest: https://github.com/jestjs/jest/issues/14391
 

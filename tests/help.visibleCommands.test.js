@@ -1,6 +1,6 @@
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
-const commander = require('../');
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
+import * as commander from '../index.js';
 
 // These are tests of the Help class, not of the Command help.
 // There is some overlap with the higher level Command tests (which predate Help).

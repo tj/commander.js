@@ -1,7 +1,7 @@
-const path = require('path');
-const commander = require('../');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as path from 'path';
+import * as commander from '../index.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 describe('Command.name()', () => {
   test('when construct with name then name is set', () => {
@@ -49,9 +49,9 @@ describe('Command.name()', () => {
     assert.equal(program.name(), 'foo');
   });
 
-  test('when pass __filename to nameFromFilename then name is plain name of this file', () => {
+  test('when pass import.meta.filename to nameFromFilename then name is plain name of this file', () => {
     const program = new commander.Command();
-    program.nameFromFilename(__filename);
+    program.nameFromFilename(import.meta.filename);
     assert.equal(program.name(), 'command.name.test');
   });
 });

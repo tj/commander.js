@@ -32,17 +32,17 @@
     "test-all": "node --test && npm run check"
   },
   "files": [
-    "index.mjs",
-    "lib/*.mjs",
+    "index.js",
+    "lib/*.js",
     "typings/index.d.ts",
     "package-support.json"
   ],
-  "type": "commonjs",
-  "main": "./index.mjs",
+  "type": "module",
+  "main": "./index.js",
   "exports": {
     ".": {
       "types": "./typings/index.d.ts",
-      "default": "./index.mjs"
+      "default": "./index.js"
     }
   },
   "devDependencies": {

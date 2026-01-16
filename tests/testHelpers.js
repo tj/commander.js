@@ -1,4 +1,4 @@
-const { Command } = require('../');
+import { Command } from '../index.js';
 
 /**
  * Create a Command configured for using in tests.
@@ -9,7 +9,7 @@ const { Command } = require('../');
  * @returns Command
  */
 
-function createTestCommand() {
+export function createTestCommand() {
   const cmd = new Command();
   cmd
     .exitOverride() // So we get exceptions instead of process.exit
@@ -19,5 +19,3 @@ function createTestCommand() {
     });
   return cmd;
 }
-
-exports.createTestCommand = createTestCommand;

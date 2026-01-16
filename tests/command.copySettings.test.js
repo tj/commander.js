@@ -1,6 +1,6 @@
-const commander = require('../');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as commander from '../index.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 // Tests some private properties as simpler than pure tests of observable behaviours.
 // Testing before and after values in some cases, to ensure value actually changes (when copied).

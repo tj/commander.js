@@ -1,9 +1,10 @@
-const childProcess = require('child_process');
-const path = require('path');
-const util = require('util');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as childProcess from 'child_process';
+import * as path from 'path';
+import * as util from 'util';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
+const __dirname = import.meta.dirname;
 const execFileAsync = util.promisify(childProcess.execFile);
 
 // Test the special handling for --inspect to increment fixed debug port numbers.

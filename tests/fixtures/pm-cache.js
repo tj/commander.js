@@ -1,4 +1,4 @@
-const { program } = require('../../');
+import { program } from '../../index.js';
 
 program
   .command('clear', 'clear the cache')

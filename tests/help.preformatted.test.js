@@ -1,6 +1,6 @@
-const { Help, Command } = require('../');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import { Help, Command } from '../index.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 describe('Help.preformatted()', () => {
   test('when single line then false', () => {

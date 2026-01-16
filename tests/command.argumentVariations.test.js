@@ -1,6 +1,6 @@
-const commander = require('../');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as commander from '../index.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 // Do some low-level checks that the multiple ways of specifying command arguments produce same internal result,
 // and not exhaustively testing all methods elsewhere.

@@ -1,8 +1,14 @@
-const commander = require('../');
-const childProcess = require('child_process');
-const EventEmitter = require('events');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as commander from '../index.js';
+import { EventEmitter } from 'events';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
+
+// Use CommonJS require so child_process.spawn can be mocked via t.mock.method without relying
+// on Node.js experimental mocking/test features or additional runtime flags. The CJS export
+// for child_process exposes configurable properties, allowing spawn to be replaced in tests.
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const childProcess = require('node:child_process'); // CJS object, properties configurable
 
 // Using mock to allow try/catch around what is otherwise out-of-stack error handling.
 // Injecting errors, these are not end-to-end tests.

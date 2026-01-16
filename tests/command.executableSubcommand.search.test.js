@@ -1,13 +1,19 @@
-const childProcess = require('child_process');
-const fs = require('fs');
-const path = require('path');
-const commander = require('../');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as path from 'path';
+import * as commander from '../index.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
+
+// Use CommonJS require() for child_process and fs so t.mock.method can mock spawn and existsSync
+// without enabling Node's experimental ESM/module-mocking features (e.g. --experimental-test-module-mocks).
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const childProcess = require('node:child_process');
+const fs = require('node:fs');
 
 // This file does in-process mocking. Bit clumsy but faster and less external clutter than using fixtures.
 // See also command.executableSubcommand.lookup.test.js for tests using fixtures.
 
+const __dirname = import.meta.dirname;
 const gLocalDirectory = path.resolve(__dirname, 'fixtures'); // Real directory, although not actually searching for files in it.
 
 function extractMockSpawnArgs(spawnSpy) {

@@ -1,6 +1,6 @@
-const { Command, Option } = require('../');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import { Command, Option } from '../index.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 // Test that when option specified twice, second use wins.
 // Seems pretty obvious for boolean options, but there was a bug before Commander v9.

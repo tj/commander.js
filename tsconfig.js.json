@@ -8,7 +8,7 @@
   "include": [
     /* All JavaScript targets from tsconfig.json include. */
     "*.js",
-    ".prettierrc.mjs" /* missed by above pattern */,
+    ".prettierrc.js" /* missed by above pattern */,
     "*.mjs",
     "lib/**/*.js",
   ],

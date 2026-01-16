@@ -1,8 +1,9 @@
-const childProcess = require('child_process');
-const path = require('path');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as childProcess from 'child_process';
+import * as path from 'path';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
+const __dirname = import.meta.dirname;
 const pmPath = path.join(__dirname, 'fixtures', 'pm');
 
 // Disabling some tests on Windows as:

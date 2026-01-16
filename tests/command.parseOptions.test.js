@@ -1,10 +1,11 @@
-const childProcess = require('child_process');
-const commander = require('../');
-const path = require('path');
-const util = require('util');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as childProcess from 'child_process';
+import * as commander from '../index.js';
+import * as path from 'path';
+import * as util from 'util';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
+const __dirname = import.meta.dirname;
 const execFileAsync = util.promisify(childProcess.execFile);
 
 // Combination of parse and parseOptions tests which are more about details

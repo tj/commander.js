@@ -1,6 +1,6 @@
-const { Command, Option, Argument } = require('../');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import { Command, Option, Argument } from '../index.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 // Testing the functions which should chain.
 // parse and parseAsync are tested in command.parse.test.js

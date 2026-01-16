@@ -1,7 +1,7 @@
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
-const commander = require('../');
-const process = require('node:process');
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
+import * as commander from '../index.js';
+import process from 'node:process';
 
 describe('Command.configureOutput()', () => {
   test('when default writeErr() then error on stderr', (t) => {
