@@ -256,5 +256,5 @@ import { Command } from 'commander';
 ```
 
 - README updated in Commander v9. Deprecated from Commander v9.
-- Deleted in Command v14.  Deprecated and gone!
+- Deleted in Command v15.  Deprecated and gone!
 
