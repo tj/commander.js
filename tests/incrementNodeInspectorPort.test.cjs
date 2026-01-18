@@ -1,14 +1,10 @@
-import { test, describe, after } from 'node:test';
-import assert from 'node:assert/strict';
-import * as path from 'path';
-import * as commander from '../index.js';
+const { test, describe, after } = require('node:test');
+const assert = require('node:assert/strict');
+const childProcess = require('child_process');
+const path = require('path');
+const commander = require('../');
 
-// Import child_process via CommonJS so node:test can mock childProcess.spawn without relying
-// on Node.js experimental ESM mocking/loader features that would otherwise be needed to mock
-// a direct ESM import.
-import { createRequire } from 'node:module';
-const require = createRequire(import.meta.url);
-const childProcess = require('node:child_process'); // CJS object, properties configurable
+// Using mocking of child_process.spawn. Not fully supported yet in esm by node:test so run as cjs.
 
 describe('increment node inspector port in executable subcommands', () => {
   function makeSpies(t) {
@@ -29,10 +25,7 @@ describe('increment node inspector port in executable subcommands', () => {
 
   function makeProgram() {
     const program = new commander.Command();
-    const fileWhichExists = path.join(
-      import.meta.dirname,
-      './fixtures/pm-cache.js',
-    );
+    const fileWhichExists = path.join(__dirname, './fixtures/pm-cache.js');
     program.command('cache', 'stand-alone command', {
       executableFile: fileWhichExists,
     });

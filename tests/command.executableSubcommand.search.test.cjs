@@ -1,19 +1,16 @@
-import * as path from 'path';
-import * as commander from '../index.js';
-import { test, describe } from 'node:test';
-import assert from 'node:assert/strict';
+const childProcess = require('child_process');
+const fs = require('fs');
+const path = require('path');
+const commander = require('../');
+const { test, describe } = require('node:test');
+const assert = require('node:assert/strict');
 
-// Use CommonJS require() for child_process and fs so t.mock.method can mock spawn and existsSync
-// without enabling Node's experimental ESM/module-mocking features (e.g. --experimental-test-module-mocks).
-import { createRequire } from 'node:module';
-const require = createRequire(import.meta.url);
-const childProcess = require('node:child_process');
-const fs = require('node:fs');
+// Using mocking of child_process.spawn. Not fully supported yet in esm by node:test so run as cjs.
 
 // This file does in-process mocking. Bit clumsy but faster and less external clutter than using fixtures.
 // See also command.executableSubcommand.lookup.test.js for tests using fixtures.
 
-const gLocalDirectory = path.resolve(import.meta.dirname, 'fixtures'); // Real directory, although not actually searching for files in it.
+const gLocalDirectory = path.resolve(__dirname, 'fixtures'); // Real directory, although not actually searching for files in it.
 
 function extractMockSpawnArgs(spawnSpy) {
   assert.equal(spawnSpy.mock.callCount() > 0, true);
@@ -77,7 +74,7 @@ describe('executable subcommand search behaviour', () => {
       const program = new commander.Command();
       program._checkForMissingExecutable = () => {}; // suppress error, call mocked spawn
       program.name('pm');
-      program.executableDir(import.meta.dirname);
+      program.executableDir(__dirname);
       program.command('sub', 'executable description');
       program.parse(['sub'], { from: 'user' });
 
