@@ -1,0 +1,25 @@
+#!/usr/bin/env node
+
+// This is used as an example in the README for:
+//    Common option types, boolean and value
+
+import { Command } from 'commander';
+const program = new Command();
+
+program
+  .option('-d, --debug', 'output extra debugging')
+  .option('-s, --small', 'small pizza size')
+  .option('-p, --pizza-type <type>', 'flavour of pizza');
+
+program.parse(process.argv);
+
+const options = program.opts();
+if (options.debug) console.log(options);
+console.log('pizza details:');
+if (options.small) console.log('- small pizza size');
+if (options.pizzaType) console.log(`- ${options.pizzaType}`);
+
+// Try the following:
+//    node options-common.mjs -p
+//    node options-common.mjs -d -s -p vegetarian
+//    node options-common.mjs --pizza-type=cheese

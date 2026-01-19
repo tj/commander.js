@@ -73,7 +73,7 @@ displays usage errors for problems, and implements a help system.
 Commander is strict and displays an error for unrecognised options.
 The two most used option types are a boolean option, and an option which takes its value from the following argument.
 
-Example file: [split.js](./examples/split.js)
+Example file: [split.mjs](./examples/split.mjs)
 
 ```js
 import { program } from 'commander';
@@ -100,7 +100,7 @@ $ node split.js -s / --first a/b/c
 
 Here is a more complete program using a subcommand and with descriptions for the help. In a multi-command program, you have an action handler for each command (or stand-alone executables for the commands).
 
-Example file: [string-util.js](./examples/string-util.js)
+Example file: [string-util.mjs](./examples/string-util.mjs)
 
 ```js
 import { Command } from 'commander';
@@ -213,7 +213,7 @@ There are additional related routines for when `.opts()` is not enough:
 The two most used option types are a boolean option, and an option which takes its value
 from the following argument (declared with angle brackets like `--expect <value>`). Both are `undefined` unless specified on command line.
 
-Example file: [options-common.js](./examples/options-common.js)
+Example file: [options-common.mjs](./examples/options-common.mjs)
 
 ```js
 program
@@ -255,7 +255,7 @@ So `--id -xyz` reads `-xyz` as the option-argument.
 
 You can specify a default value for an option.
 
-Example file: [options-defaults.js](./examples/options-defaults.js)
+Example file: [options-defaults.mjs](./examples/options-defaults.mjs)
 
 ```js
 program
@@ -278,7 +278,7 @@ cheese: stilton
 You can define a boolean option long name with a leading `no-` to set the option value to false when used.
 Defined alone without a matching positive option, this also makes the option true by default.
 
-Example file: [options-negatable.js](./examples/options-negatable.js)
+Example file: [options-negatable.mjs](./examples/options-negatable.mjs)
 
 ```js
 program
@@ -307,7 +307,7 @@ You ordered a pizza with no sauce and no cheese
 You can specify an option which may be used as a boolean option but may optionally take an option-argument
 (declared with square brackets like `--optional [value]`).
 
-Example file: [options-boolean-or-value.js](./examples/options-boolean-or-value.js)
+Example file: [options-boolean-or-value.mjs](./examples/options-boolean-or-value.mjs)
 
 ```js
 program
@@ -340,7 +340,7 @@ For information about possible ambiguous cases, see [options taking varying argu
 
 You may specify a required (mandatory) option using `.requiredOption()`. The option must have a value after parsing, usually specified on the command line, or perhaps from a default value (say from environment). The method is otherwise the same as `.option()` in format, taking flags and description, and optional default value or custom processing.
 
-Example file: [options-required.js](./examples/options-required.js)
+Example file: [options-required.mjs](./examples/options-required.mjs)
 
 ```js
 program
@@ -361,7 +361,7 @@ can then specify multiple option-arguments, and the parsed option value will be 
 are read until the first argument starting with a dash. The special argument `--` stops option processing entirely. If a value
 is specified in the same argument as the option then no further values are read.
 
-Example file: [options-variadic.js](./examples/options-variadic.js)
+Example file: [options-variadic.mjs](./examples/options-variadic.mjs)
 
 ```js
 program
@@ -413,7 +413,7 @@ program.version('0.0.1', '-v, --vers', 'output the current version');
 You can add most options using the `.option()` method, but there are some additional features available
 by constructing an `Option` explicitly for less common cases.
 
-Example files: [options-extra.js](./examples/options-extra.js), [options-env.js](./examples/options-env.js), [options-conflicts.js](./examples/options-conflicts.js), [options-implies.js](./examples/options-implies.js)
+Example files: [options-extra.mjs](./examples/options-extra.mjs), [options-env.mjs](./examples/options-env.mjs), [options-conflicts.mjs](./examples/options-conflicts.mjs), [options-implies.mjs](./examples/options-implies.mjs)
 
 ```js
 program
@@ -460,7 +460,7 @@ This allows you to coerce the option-argument to the desired type, or accumulate
 
 You can optionally specify the default/starting value for the option after the function parameter.
 
-Example file: [options-custom-processing.js](./examples/options-custom-processing.js)
+Example file: [options-custom-processing.mjs](./examples/options-custom-processing.mjs)
 
 ```js
 function myParseInt(value, dummyPrevious) {
@@ -517,7 +517,7 @@ $ custom --list x,y,z
 
 ## Commands
 
-You can specify (sub)commands using `.command()` or `.addCommand()`. There are two ways these can be implemented: using an action handler attached to the command, or as a stand-alone executable file (described in more detail later). The subcommands may be nested ([example](./examples/nestedCommands.js)).
+You can specify (sub)commands using `.command()` or `.addCommand()`. There are two ways these can be implemented: using an action handler attached to the command, or as a stand-alone executable file (described in more detail later). The subcommands may be nested ([example](./examples/nestedCommands.mjs)).
 
 In the first parameter to `.command()` you specify the command name. You may append the command-arguments after the command name, or specify them separately using `.argument()`. The arguments may be `<required>` or `[optional]`, and the last argument may also be `variadic...`.
 
@@ -549,7 +549,7 @@ program
 
 Configuration options can be passed with the call to `.command()` and `.addCommand()`. Specifying `hidden: true` will
 remove the command from the generated help output. Specifying `isDefault: true` will run the subcommand if no other
-subcommand is specified ([example](./examples/defaultCommand.js)).
+subcommand is specified ([example](./examples/defaultCommand.mjs)).
 
 You can add alternative names for a command with `.alias()`. ([example](./examples/alias.cjs))
 
@@ -567,7 +567,7 @@ To configure a command, you can use `.argument()` to specify each expected comma
 You supply the argument name and an optional description. The argument may be `<required>` or `[optional]`.
 You can specify a default value for an optional command-argument.
 
-Example file: [argument.js](./examples/argument.js)
+Example file: [argument.mjs](./examples/argument.mjs)
 
 ```js
 program
@@ -606,7 +606,7 @@ program
 
 There are some additional features available by constructing an `Argument` explicitly for less common cases.
 
-Example file: [arguments-extra.js](./examples/arguments-extra.js)
+Example file: [arguments-extra.mjs](./examples/arguments-extra.mjs)
 
 ```js
 program
@@ -624,7 +624,7 @@ The processed argument values are passed to the action handler, and saved as `.p
 
 You can optionally specify the default/starting value for the argument after the function parameter.
 
-Example file: [arguments-custom-processing.js](./examples/arguments-custom-processing.js)
+Example file: [arguments-custom-processing.mjs](./examples/arguments-custom-processing.mjs)
 
 ```js
 program
@@ -642,7 +642,7 @@ program
 The action handler gets passed a parameter for each command-argument you declared, and two additional parameters
 which are the parsed options and the command object itself.
 
-Example file: [thank.js](./examples/thank.js)
+Example file: [thank.mjs](./examples/thank.mjs)
 
 ```js
 program
@@ -660,7 +660,7 @@ program
 
 If you prefer, you can work with the command directly and skip declaring the parameters for the action handler. The `this` keyword is set to the running command and can be used from a function expression (but not from an arrow function).
 
-Example file: [action-this.js](./examples/action-this.js)
+Example file: [action-this.mjs](./examples/action-this.mjs)
 
 ```js
 program
@@ -716,7 +716,7 @@ If the program is designed to be installed globally, make sure the executables h
 
 You can add callback hooks to a command for life cycle events.
 
-Example file: [hook.js](./examples/hook.js)
+Example file: [hook.mjs](./examples/hook.mjs)
 
 ```js
 program
@@ -930,7 +930,7 @@ The help by default lists options under the the heading `Options:` and commands 
 with different headings. The high-level way is to set the desired group heading while adding the options and commands,
 using `.optionsGroup()` and `.commandsGroup()`. The low-level way is using `.helpGroup()` on an individual `Option` or `Command`
 
-Example file: [help-groups.js](./examples/help-groups.js)
+Example file: [help-groups.mjs](./examples/help-groups.mjs)
 
 ### More configuration
 
@@ -980,7 +980,7 @@ If the default parsing does not suit your needs, there are some behaviours to su
 By default, program options are recognised before and after subcommands. To only look for program options before subcommands, use `.enablePositionalOptions()`. This lets you use
 an option for a different purpose in subcommands.
 
-Example file: [positional-options.js](./examples/positional-options.js)
+Example file: [positional-options.mjs](./examples/positional-options.mjs)
 
 With positional options, the `-b` is a program option in the first line and a subcommand option in the second line:
 
@@ -994,7 +994,7 @@ before the command-arguments, use `.passThroughOptions()`. This lets you pass th
 without needing to use `--` to end the option processing.
 To use pass through options in a subcommand, the program needs to enable positional options.
 
-Example file: [pass-through-options.js](./examples/pass-through-options.js)
+Example file: [pass-through-options.mjs](./examples/pass-through-options.mjs)
 
 With pass through options, the `--port=80` is a program option in the first line and passed through as a command-argument in the second line:
 
@@ -1052,7 +1052,7 @@ const program = createCommand();
 
 `createCommand` is also a method of the Command object, and creates a new command rather than a subcommand. This gets used internally
 when creating subcommands using `.command()`, and you may override it to
-customise the new subcommand (example file [custom-command-class.js](./examples/custom-command-class.js)).
+customise the new subcommand (example file [custom-command-class.mjs](./examples/custom-command-class.mjs)).
 
 ### Node options such as `--harmony`
 
@@ -1115,7 +1115,7 @@ try {
 By default, Commander is configured for a command-line application and writes to stdout and stderr.
 You can modify this behaviour for custom applications. In addition, you can modify the display of error messages.
 
-Example file: [configure-output.js](./examples/configure-output.js)
+Example file: [configure-output.mjs](./examples/configure-output.mjs)
 
 ```js
 function errorColor(str) {

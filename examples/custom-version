@@ -2,7 +2,7 @@
 
 // This example shows changing the flags and description for the version option.
 
-import { Command } from 'commander';
+const { Command } = require('commander');
 const program = new Command();
 
 program

@@ -34,15 +34,28 @@
   "files": [
     "index.js",
     "lib/*.js",
+    "esm.mjs",
     "typings/index.d.ts",
+    "typings/esm.d.mts",
     "package-support.json"
   ],
-  "type": "module",
+  "type": "commonjs",
   "main": "./index.js",
   "exports": {
     ".": {
-      "types": "./typings/index.d.ts",
+      "require": {
+        "types": "./typings/index.d.ts",
+        "default": "./index.js"
+      },
+      "import": {
+        "types": "./typings/esm.d.mts",
+        "default": "./esm.mjs"
+      },
       "default": "./index.js"
+    },
+    "./esm.mjs": {
+      "types": "./typings/esm.d.mts",
+      "import": "./esm.mjs"
     }
   },
   "devDependencies": {
@@ -58,7 +71,7 @@
   },
   "types": "typings/index.d.ts",
   "engines": {
-    "node": "^20.19.0 || >=22.12.0"
+    "node": ">=20"
   },
   "support": true
 }

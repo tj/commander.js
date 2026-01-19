@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { Command } from 'commander';
+const { Command } = require('commander');
 const program = new Command();
 
 program.option('-f, --force', 'force installation');

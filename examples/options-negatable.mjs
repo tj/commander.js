@@ -1,0 +1,27 @@
+#!/usr/bin/env node
+
+// This is used as an example in the README for:
+//    Other option types, negatable boolean
+//    You can specify a boolean option long name with a leading `no-` to make it true by default and able to be negated.
+
+import { Command } from 'commander';
+const program = new Command();
+
+program
+  .option('--no-sauce', 'Remove sauce')
+  .option('--cheese <flavour>', 'cheese flavour', 'mozzarella')
+  .option('--no-cheese', 'plain with no cheese');
+
+program.parse();
+
+const options = program.opts();
+const sauceStr = options.sauce ? 'sauce' : 'no sauce';
+const cheeseStr =
+  options.cheese === false ? 'no cheese' : `${options.cheese} cheese`;
+console.log(`You ordered a pizza with ${sauceStr} and ${cheeseStr}`);
+
+// Try the following:
+//    node options-negatable.mjs
+//    node options-negatable.mjs --no-sauce
+//    node options-negatable.mjs --cheese=blue
+//    node options-negatable.mjs --no-sauce --no-cheese

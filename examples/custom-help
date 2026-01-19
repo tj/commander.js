@@ -3,7 +3,7 @@
 // This example shows a simple use of addHelpText.
 // This is used as an example in the README.
 
-import { Command } from 'commander';
+const { Command } = require('commander');
 const program = new Command();
 
 program.option('-f, --foo', 'enable some foo');

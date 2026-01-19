@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { Command } from 'commander';
+const { Command } = require('commander');
 const program = new Command();
 
 program
@@ -21,6 +21,6 @@ console.log('  - %s cheese', cheese);
 //    ./pizza --help
 //
 // Try the following:
-//    node pizza --help
+//    ./pizza --help
 //    node pizza --peppers --cheese=blue
 //    node pizza --no-cheese
