@@ -52,10 +52,6 @@
         "default": "./esm.mjs"
       },
       "default": "./index.js"
-    },
-    "./esm.mjs": {
-      "types": "./typings/esm.d.mts",
-      "import": "./esm.mjs"
     }
   },
   "devDependencies": {
