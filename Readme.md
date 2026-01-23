@@ -951,7 +951,7 @@ You can configure the help by modifying data properties and methods using `.conf
 
 Simple properties include `sortSubcommands`, `sortOptions`, and `showGlobalOptions`. You can add color using the style methods like `.styleTitle()`.
 
-For more detail and examples of changing the displayed text, color, and layout, see: [help in depth](./docs/help-in-depth.md).
+For more detail and examples of changing the displayed text, color, and layout, see: [Help in Depth](./docs/help-in-depth.md).
 
 ## Custom event listeners
 
@@ -1156,8 +1156,10 @@ program
 There is more information available about:
 
 - [deprecated](./docs/deprecated.md) features still supported for backwards compatibility
+- [Help in Depth](./docs/help-in-depth.md) configuring help output
 - [options taking varying arguments](./docs/options-in-depth.md)
 - [parsing life cycle and hooks](./docs/parsing-and-hooks.md)
+- [Release Policy](./docs/release-policy.md)
 
 ## Support
 

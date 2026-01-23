@@ -8,6 +8,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [14.0.3] (2026-31-01)
+
+### Added
+
+- Release Policy document ([#2462])
+  
+### Changes
+
+- old major versions now supported for 12 months instead of just previous major version, to give predictable end-of-life date ([#2462])
+- clarify typing for deprecated callback parameter to `.outputHelp()` ([#2427])
+- simple readability improvements to README ([#2465])
+  
 ## [14.0.2] (2025-10-25)
 
 ### Changed
@@ -1439,7 +1451,10 @@ program
 [#2396]: https://github.com/tj/commander.js/pull/2396
 [#2409]: https://github.com/tj/commander.js/pull/2409
 [#2410]: https://github.com/tj/commander.js/pull/2410
+[#2427]: https://github.com/tj/commander.js/pull/2427
 [#2428]: https://github.com/tj/commander.js/pull/2428
+[#2462]: https://github.com/tj/commander.js/pull/2462
+[#2465]: https://github.com/tj/commander.js/pull/2465
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
@@ -1519,6 +1534,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[14.0.3]: https://github.com/tj/commander.js/compare/v14.0.2...v14.0.3
 [14.0.2]: https://github.com/tj/commander.js/compare/v14.0.1...v14.0.2
 [14.0.1]: https://github.com/tj/commander.js/compare/v14.0.0...v14.0.1
 [14.0.0]: https://github.com/tj/commander.js/compare/v13.1.0...v14.0.0
