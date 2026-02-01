@@ -10,9 +10,9 @@
   */
   /* Visit https://aka.ms/tsconfig to read more about tsconfig configuration. */
   "compilerOptions": {
-    "lib": ["es2024"],
+    "lib": ["ESNext"],
     "module": "nodenext",
-    "target": "es2024",
+    "target": "esnext",
 
     "allowJs": true,
     "checkJs": true,
