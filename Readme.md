@@ -91,10 +91,10 @@ console.log(program.args[0].split(options.separator, limit));
 ```
 
 ```console
-$ node split.js -s / --fits a/b/c
+$ node split.js -s - --fits a-b-c
 error: unknown option '--fits'
 (Did you mean --first?)
-$ node split.js -s / --first a/b/c
+$ node split.js -s - --first a-b-c
 [ 'a' ]
 ```
 
@@ -138,7 +138,7 @@ Options:
   -s, --separator <char>  separator character (default: ",")
   -h, --help              display help for command
 
-$ node string-util.js split --separator=/ a/b/c
+$ node string-util.js split --separator=- a-b-c
 [ 'a', 'b', 'c' ]
 ```
 
