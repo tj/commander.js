@@ -9,7 +9,10 @@
         "type": "time-permitting"
       },
       "backing": {
-        "npm-funding": true
+        "donations": [
+          "https://github.com/sponsors/abetomo",
+          "https://github.com/sponsors/shadowspawn"
+        ]
       }
     }
   ]
