@@ -50,4 +50,10 @@ describe('Option methods that should return this for chaining', () => {
     const result = option.helpGroup('Options:');
     assert.equal(result, option);
   });
+
+  test('when call .setAttributeName(name) then returns this for chaining', () => {
+    const option = new Option('-e,--example <value>');
+    const result = option.setAttributeName('customName');
+    assert.equal(result, option);
+  });
 });
