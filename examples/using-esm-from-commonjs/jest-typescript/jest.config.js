@@ -4,7 +4,7 @@ const esmModules = ['commander'].join('|'); // redundant join in case you have o
 module.exports = {
   // 1. tell ts-jest to (also) handle .js and .mjs files
   transform: {
-    '^.+\\.m?[tj]sx?$': [
+    '^.+\\.[cm]?[tj]sx?$': [
       'ts-jest',
       {
         useESM: false, // want CJS for Jest
