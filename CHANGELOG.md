@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 _date is placeholder, Node.js 20 EOL on 2026-04-30_
 
-Commander 15 is ESM only. If you hit problems from CommonJS with your setup, see Migration Tips below.
+Commander 15 is ESM only. This is expected to be seamless for ESM consumers, but CommonJS consumers may hit issues with tooling requiring configuration for ESM-only dependencies. See Migration Tips below.
 
 The release of Commander 15 moves Commander 14 into maintenance. Commander 14 will get security updates for 12 months.
 For more info see [Release Policy](./docs/release-policy.md).
@@ -22,6 +22,13 @@ For more info see [Release Policy](./docs/release-policy.md).
 ### Fixed
 
 ### Changed
+
+- *Breaking:* migrated Commander implementation from CommonJS to ESM
+- *Breaking:* Commander 15 requires Node.js v20 or higher. To be more precise, `^20.19.0 || >=22.12.0` for `require(esm)`.
+
+### Deleted
+
+- *Breaking:* removed deprecated export of `commander/esm.mjs`
 
 ### Migration Tips
 
