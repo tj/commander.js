@@ -1044,7 +1044,7 @@ export class Command {
    */
   outputHelp(context?: HelpContext): void;
   /** @deprecated since v7 */
-  outputHelp(cb?: (str: string) => string): void;
+  outputHelp(cb: (str: string) => string): void;
 
   /**
    * Return command help documentation.
@@ -1071,7 +1071,7 @@ export class Command {
    */
   help(context?: HelpContext): never;
   /** @deprecated since v7 */
-  help(cb?: (str: string) => string): never;
+  help(cb: (str: string) => string): never;
 
   /**
    * Add additional text to be displayed with the built-in help.
