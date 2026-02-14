@@ -23,13 +23,13 @@ For more info see [Release Policy](./docs/release-policy.md).
 
 ### Changed
 
-- *Breaking:* migrated Commander implementation from CommonJS to ESM
+- *Breaking:* migrated Commander implementation from CommonJS to ESM ([#2464])
 - *Breaking:* Commander 15 requires Node.js v20 or higher. To be more precise, `^20.19.0 || >=22.12.0` for `require(esm)`.
-- dev: switch tests from Jest to `node:test` test runner
+- dev: switch tests from Jest to `node:test` test runner ([#2463])
 
 ### Deleted
 
-- *Breaking:* removed deprecated export of `commander/esm.mjs`
+- *Breaking:* removed deprecated export of `commander/esm.mjs` ([#2464])
 
 ### Migration Tips
 
@@ -1448,6 +1448,8 @@ program
 [#2348]: https://github.com/tj/commander.js/pull/2348
 [#2350]: https://github.com/tj/commander.js/pull/2350
 [#2359]: https://github.com/tj/commander.js/pull/2359
+[#2463]: https://github.com/tj/commander.js/pull/2463
+[#2464]: https://github.com/tj/commander.js/pull/2464
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
