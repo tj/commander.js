@@ -33,6 +33,6 @@ program.parse();
 // Try the following:
 //    node string-util
 //    node string-util help split
-//    node string-util split --separator=/ a/b/c
+//    node string-util split --separator=- a-b-c
 //    node string-util split --first a,b,c
 //    node string-util join a b c d

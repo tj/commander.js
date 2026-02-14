@@ -9,6 +9,7 @@
     /* All JavaScript targets from tsconfig.json include. */
     "*.js",
     ".prettierrc.js" /* missed by above pattern */,
+    "*.cjs",
     "*.mjs",
     "lib/**/*.js",
   ],
