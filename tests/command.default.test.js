@@ -1,15 +1,15 @@
-const childProcess = require('child_process');
-const commander = require('../');
-const path = require('path');
-const util = require('util');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as childProcess from 'child_process';
+import * as commander from '../index.js';
+import * as path from 'path';
+import * as util from 'util';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 const execFileAsync = util.promisify(childProcess.execFile);
 
 describe('default executable command', () => {
   // Calling node explicitly so pm works without file suffix cross-platform.
-  const pm = path.join(__dirname, './fixtures/pm');
+  const pm = path.join(import.meta.dirname, './fixtures/pm');
 
   test('when default subcommand and no command then call default', async () => {
     const { stdout } = await execFileAsync('node', [pm]);
@@ -18,12 +18,12 @@ describe('default executable command', () => {
 
   test('when default subcommand and unrecognised argument then call default with argument', async () => {
     const { stdout } = await execFileAsync('node', [pm, 'an-argument']);
-    assert.equal(stdout, "default\n[ 'an-argument' ]\n");
+    assert.equal(stdout, 'default\n["an-argument"]\n');
   });
 
   test('when default subcommand and unrecognised option then call default with option', async () => {
     const { stdout } = await execFileAsync('node', [pm, '--an-option']);
-    assert.equal(stdout, "default\n[ '--an-option' ]\n");
+    assert.equal(stdout, 'default\n["--an-option"]\n');
   });
 });
 

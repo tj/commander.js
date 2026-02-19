@@ -1,6 +1,6 @@
-const commander = require('../');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as commander from '../index.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 // Testing some Electron conventions but not directly using Electron to avoid overheads.
 // https://github.com/electron/electron/issues/4690#issuecomment-217435222

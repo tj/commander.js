@@ -2,7 +2,7 @@
 
 // This example shows using addHelpText.
 
-const { Command } = require('commander');
+import { Command } from 'commander';
 const program = new Command();
 
 program.name('awesome');

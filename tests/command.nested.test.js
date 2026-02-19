@@ -1,6 +1,6 @@
-const commander = require('../');
-const { test } = require('node:test');
-const assert = require('node:assert/strict');
+import * as commander from '../index.js';
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
 
 test('when call nested subcommand then runs', (t) => {
   const program = new commander.Command();

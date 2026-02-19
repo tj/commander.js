@@ -1,6 +1,6 @@
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
-const commander = require('../');
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
+import * as commander from '../index.js';
 
 describe('Help.visibleGlobalOptions()', () => {
   test('when default configuration then return empty array', () => {

@@ -2,7 +2,7 @@
 
 // This example shows adding a description which is displayed in the help.
 
-const { Command } = require('commander');
+import { Command } from 'commander';
 const program = new Command();
 
 program

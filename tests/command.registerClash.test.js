@@ -1,6 +1,6 @@
-const { Command } = require('../');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import { Command } from '../index.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 describe('registering clashing subcommands', () => {
   test('when command name conflicts with existing name then throw', () => {

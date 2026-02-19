@@ -1,6 +1,6 @@
-const { Command, Option } = require('../');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import { Command, Option } from '../index.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 describe('Option.preset()', () => {
   test('when boolean option with string preset used then value is preset', () => {

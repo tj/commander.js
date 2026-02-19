@@ -1,4 +1,4 @@
-const config = {
+export default {
   singleQuote: true,
   overrides: [
     {
@@ -7,5 +7,3 @@ const config = {
     },
   ],
 };
-
-module.exports = config;

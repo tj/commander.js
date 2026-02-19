@@ -1,0 +1,17 @@
+{
+  "name": "jest-javascript",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "test": "jest"
+  },
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "commander": "^15.0.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.28.6",
+    "jest": "^30.2.0"
+  }
+}

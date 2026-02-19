@@ -4,6 +4,8 @@ const EventEmitter = require('events');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
+// Using mocking of child_process.spawn. Not fully supported yet in esm by node:test so run as cjs.
+
 // Using mock to allow try/catch around what is otherwise out-of-stack error handling.
 // Injecting errors, these are not end-to-end tests.
 

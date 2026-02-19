@@ -1,4 +1,4 @@
-const { Command } = require('commander');
+import { Command } from 'commander';
 const program = new Command();
 
 // This is used as an example in the README for the Quick Start.

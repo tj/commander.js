@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { Command, Option } = require('commander');
+import { Command, Option } from 'commander';
 const program = new Command();
 
 // This example shows using some hooks for life cycle events.

@@ -1,6 +1,6 @@
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
-const { Command, Option } = require('../');
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
+import { Command, Option } from '../index.js';
 
 // Note: setting up shared command configuration in getSuggestion,
 // and looking for possible subcommand 'sub'.

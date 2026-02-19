@@ -1,7 +1,7 @@
-const { Option, DualOptions } = require('../lib/option.js');
-const { Command } = require('../');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import { Option, DualOptions } from '../lib/option.js';
+import { Command } from '../index.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 // This tests an internal helper class which is not currently exposed on the package.
 

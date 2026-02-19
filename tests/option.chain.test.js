@@ -1,6 +1,6 @@
-const { Option } = require('../');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import { Option } from '../index.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 describe('Option methods that should return this for chaining', () => {
   test('when call .default() then returns this', () => {

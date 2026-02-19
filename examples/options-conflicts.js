@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-const { Command, Option } = require('commander');
+import { Command, Option } from 'commander';
 const program = new Command();
 
 // You can use .conflicts() with a single string, which is the camel-case name of the conflicting option.

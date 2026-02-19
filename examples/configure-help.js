@@ -1,5 +1,5 @@
-const commander = require('commander');
-const program = new commander.Command();
+import { Command } from 'commander';
+const program = new Command();
 
 // This example shows a simple use of configureHelp.
 // This is used as an example in the README.

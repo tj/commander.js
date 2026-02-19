@@ -1,6 +1,6 @@
-const { createTestCommand } = require('./testHelpers');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import { createTestCommand } from './testHelpers.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 // Checking for detection of unknown options, including regression tests for some past issues.
 

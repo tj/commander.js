@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-const commander = require('commander');
-const program = new commander.Command();
+import { Command } from 'commander';
+const program = new Command();
 
 // Example program using the command configuration option isDefault to specify the default command.
 

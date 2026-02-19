@@ -1,5 +1,5 @@
-const commander = require('commander');
-const program = new commander.Command();
+import { Command } from 'commander';
+const program = new Command();
 
 function errorColor(str) {
   // Add ANSI escape codes to display text in red.

@@ -958,13 +958,13 @@ export class Command {
 
   /**
    * Set the name of the command from script filename, such as process.argv[1],
-   * or require.main.filename, or __filename.
+   * or import.meta.filename.
    *
    * (Used internally and public although not documented in README.)
    *
    * @example
    * ```ts
-   * program.nameFromFilename(require.main.filename);
+   * program.nameFromFilename(import.meta.filename);
    * ```
    *
    * @returns `this` command for chaining
@@ -976,7 +976,7 @@ export class Command {
    *
    * @example
    * ```ts
-   * program.executableDir(__dirname);
+   * program.executableDir(import.meta.dirname);
    * // or
    * program.executableDir('subcommands');
    * ```

@@ -1,4 +1,4 @@
-const commander = require('commander');
+import { Command } from 'commander';
 
 // By default the subcommand list includes a fairly simple usage. If you have added a custom usage
 // to the subcommands you may wish to configure the help to show these instead.
@@ -6,7 +6,7 @@ const commander = require('commander');
 // See also ./configure-help.js which shows configuring the subcommand list to have no usage at all
 // and just the subcommand name.
 
-const program = new commander.Command().configureHelp({
+const program = new Command().configureHelp({
   subcommandTerm: (cmd) => cmd.name() + ' ' + cmd.usage(),
 });
 

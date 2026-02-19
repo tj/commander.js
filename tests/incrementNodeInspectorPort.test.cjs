@@ -4,6 +4,8 @@ const childProcess = require('child_process');
 const path = require('path');
 const commander = require('../');
 
+// Using mocking of child_process.spawn. Not fully supported yet in esm by node:test so run as cjs.
+
 describe('increment node inspector port in executable subcommands', () => {
   function makeSpies(t) {
     const spawnSpy = t.mock.method(childProcess, 'spawn', () => {

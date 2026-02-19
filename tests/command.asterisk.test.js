@@ -1,7 +1,7 @@
-const commander = require('../');
-const { createTestCommand } = require('./testHelpers');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as commander from '../index.js';
+import { createTestCommand } from './testHelpers.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 // .command('*') is the old main/default command handler. It adds a listener
 // for 'command:*'. It has been somewhat replaced by the program action handler,

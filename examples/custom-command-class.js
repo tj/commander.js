@@ -1,9 +1,9 @@
 #!/usr/bin/env node
-const commander = require('commander');
+import { Command } from 'commander';
 
 // Use a class override to customise the command and its subcommands.
 
-class CommandWithTrace extends commander.Command {
+class CommandWithTrace extends Command {
   createCommand(name) {
     const cmd = new CommandWithTrace(name);
     // Add an option to subcommands created using `.command()`
@@ -20,7 +20,7 @@ function inspectCommand(command) {
 }
 
 const program = new CommandWithTrace('program')
-  .option('-v, ---verbose')
+  .option('-v, --verbose')
   .action((options, command) => {
     inspectCommand(command);
   });

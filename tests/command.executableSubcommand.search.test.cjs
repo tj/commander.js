@@ -5,6 +5,8 @@ const commander = require('../');
 const { test, describe } = require('node:test');
 const assert = require('node:assert/strict');
 
+// Using mocking of child_process.spawn. Not fully supported yet in esm by node:test so run as cjs.
+
 // This file does in-process mocking. Bit clumsy but faster and less external clutter than using fixtures.
 // See also command.executableSubcommand.lookup.test.js for tests using fixtures.
 

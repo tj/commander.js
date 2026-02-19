@@ -1,7 +1,7 @@
-const commander = require('../');
-const { createTestCommand } = require('./testHelpers');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as commander from '../index.js';
+import { createTestCommand } from './testHelpers.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 // Testing default value and custom processing behaviours.
 // Some double assertions in tests to check action argument and .processedArg

@@ -1,15 +1,19 @@
-const childProcess = require('child_process');
-const path = require('path');
-const util = require('util');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as childProcess from 'child_process';
+import * as path from 'path';
+import * as util from 'util';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 const execFileAsync = util.promisify(childProcess.execFile);
 
 // Test the special handling for --inspect to increment fixed debug port numbers.
 // If we reuse port we can get conflicts because port not released fast enough.
 
-const inspectCommand = path.join(__dirname, './fixtures', 'inspect.js');
+const inspectCommand = path.join(
+  import.meta.dirname,
+  './fixtures',
+  'inspect.js',
+);
 
 describe('executable subcommand support for --inspect ', () => {
   test('when execArgv empty then spawn execArgs empty', async () => {
@@ -23,7 +27,7 @@ describe('executable subcommand support for --inspect ', () => {
       inspectCommand,
       'sub',
     ]);
-    assert.equal(stdout, "[ '--harmony' ]\n");
+    assert.equal(stdout, '["--harmony"]\n');
   });
 
   // --inspect defaults to 127.0.0.1:9229, port should be incremented
@@ -33,7 +37,7 @@ describe('executable subcommand support for --inspect ', () => {
       inspectCommand,
       'sub',
     ]);
-    assert.equal(stdout, "[ '--inspect=127.0.0.1:9230' ]\n");
+    assert.equal(stdout, '["--inspect=127.0.0.1:9230"]\n');
   });
 
   // custom port
@@ -43,7 +47,7 @@ describe('executable subcommand support for --inspect ', () => {
       inspectCommand,
       'sub',
     ]);
-    assert.equal(stdout, "[ '--inspect=127.0.0.1:9241' ]\n");
+    assert.equal(stdout, '["--inspect=127.0.0.1:9241"]\n');
   });
 
   // zero is special, random port
@@ -53,7 +57,7 @@ describe('executable subcommand support for --inspect ', () => {
       inspectCommand,
       'sub',
     ]);
-    assert.equal(stdout, "[ '--inspect=0' ]\n");
+    assert.equal(stdout, '["--inspect=0"]\n');
   });
 
   // ip address
@@ -63,7 +67,7 @@ describe('executable subcommand support for --inspect ', () => {
       inspectCommand,
       'sub',
     ]);
-    assert.equal(stdout, "[ '--inspect=127.0.0.1:9251' ]\n");
+    assert.equal(stdout, '["--inspect=127.0.0.1:9251"]\n');
   });
 
   // localhost
@@ -73,7 +77,7 @@ describe('executable subcommand support for --inspect ', () => {
       inspectCommand,
       'sub',
     ]);
-    assert.equal(stdout, "[ '--inspect=localhost:9261' ]\n");
+    assert.equal(stdout, '["--inspect=localhost:9261"]\n');
   });
 
   // --inspect-port, just test most likely format
@@ -83,6 +87,6 @@ describe('executable subcommand support for --inspect ', () => {
       inspectCommand,
       'sub',
     ]);
-    assert.equal(stdout, "[ '--inspect-port=127.0.0.1:9271' ]\n");
+    assert.equal(stdout, '["--inspect-port=127.0.0.1:9271"]\n');
   });
 });

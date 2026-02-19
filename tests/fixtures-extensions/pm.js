@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const { program } = require('../../');
+import { program } from '../../index.js';
 
 program
   .command('try-ts', 'test file extension lookup')

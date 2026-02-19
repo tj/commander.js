@@ -1,7 +1,7 @@
-const commander = require('../');
-const { createTestCommand } = require('./testHelpers');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as commander from '../index.js';
+import { createTestCommand } from './testHelpers.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 // Assuming mandatory options behave as normal options apart from the mandatory aspect, not retesting all behaviour.
 // Likewise, not redoing all tests on subcommand after testing on program.

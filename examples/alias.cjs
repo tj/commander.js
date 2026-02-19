@@ -28,9 +28,9 @@ program
 program.parse();
 
 // Try the following:
-//    node alias.js --help
-//    node alias.js exec script
-//    node alias.js ex script
-//    node alias.js print file
-//    node alias.js pr file
-//    node alias.js show file
+//    node alias.cjs --help
+//    node alias.cjs exec script
+//    node alias.cjs ex script
+//    node alias.cjs print file
+//    node alias.cjs pr file
+//    node alias.cjs show file

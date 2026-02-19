@@ -1,6 +1,6 @@
-const { Argument } = require('../');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import { Argument } from '../index.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 describe('Argument methods that should return this for chaining', () => {
   test('when call .default() then returns this', () => {

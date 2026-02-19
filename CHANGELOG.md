@@ -8,6 +8,43 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [15.0.0] (2026-05-15)
+
+_date is placeholder, Node.js 20 EOL on 2026-04-30_
+
+Commander 15 is ESM only. This is expected to be seamless for ESM consumers, but some CommonJS consumers may hit issues with tooling requiring configuration for ESM-only dependencies. See Migration Tips below.
+
+The release of Commander 15 moves Commander 14 into maintenance. Commander 14 will get security updates for 12 months.
+For more info see [Release Policy](./docs/release-policy.md).
+
+### Added
+
+### Fixed
+
+### Changed
+
+- *Breaking:* migrated Commander implementation from CommonJS to ESM ([#2464])
+- *Breaking:* Commander 15 requires Node.js v20 or higher. To be more precise, `^20.19.0 || >=22.12.0` for `require(esm)`.
+- dev: switch tests from Jest to `node:test` test runner ([#2463])
+
+### Deleted
+
+- *Breaking:* removed deprecated export of `commander/esm.mjs` ([#2464])
+
+### Migration Tips
+
+Commander 15 is ESM only, but this does not mean you need to migrate to ESM to use it. Importing ESM from CommonJS is
+supported by Node.js, and Bun, and Deno. Hopefully it Just Works for you! However, you may be using a different runtime or
+some other part of your setup that may not yet natively support importing ESM from CommonJS, such as your testing framework
+or bundler.
+
+If you have problems using Commander 15 in your environment, one option is stay on Commander 14 for now. Commander 14 will
+get security updates until May 2027 and things will hopefully improve for your setup in the meantime.
+
+To allow `require(esm)` from CommonJS you may be able to make small changes to your current setup. Some
+examples for Jest are included in [examples/using-esm-from-commonjs](./examples/using-esm-from-commonjs).
+(Commander was using Jest, so we have a special interest.)
+
 ## [14.0.3] (2026-01-31)
 
 ### Added
@@ -1454,6 +1491,8 @@ program
 [#2427]: https://github.com/tj/commander.js/pull/2427
 [#2428]: https://github.com/tj/commander.js/pull/2428
 [#2462]: https://github.com/tj/commander.js/pull/2462
+[#2463]: https://github.com/tj/commander.js/pull/2463
+[#2464]: https://github.com/tj/commander.js/pull/2464
 [#2465]: https://github.com/tj/commander.js/pull/2465
 
 <!-- Referenced in 5.x -->

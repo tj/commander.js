@@ -1,6 +1,6 @@
-const { stripColor } = require('../lib/help');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import { stripColor } from '../lib/help.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 // https://en.wikipedia.org/wiki/ANSI_escape_code#SGR_(Select_Graphic_Rendition)_parameters
 

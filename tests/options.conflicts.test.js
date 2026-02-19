@@ -1,8 +1,8 @@
-const path = require('path');
-const commander = require('../');
-const { createTestCommand } = require('./testHelpers');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as path from 'path';
+import * as commander from '../index.js';
+import { createTestCommand } from './testHelpers.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 describe('Option.conflicts()', () => {
   function makeProgram(t) {
@@ -381,7 +381,7 @@ describe('Option.conflicts()', () => {
     program
       .addOption(new commander.Option('--black'))
       .addOption(new commander.Option('--white').conflicts('black'));
-    const pm = path.join(__dirname, './fixtures/pm');
+    const pm = path.join(import.meta.dirname, './fixtures/pm');
     program.command('ext', 'external command', { executableFile: pm });
 
     try {

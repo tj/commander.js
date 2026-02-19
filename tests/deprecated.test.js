@@ -1,6 +1,6 @@
-const commander = require('../');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as commander from '../index.js';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 // Test for backwards compatible behaviour of deprecated features that don't fit in elsewhere.
 // We keep deprecated features working (when not too difficult) to avoid breaking existing code

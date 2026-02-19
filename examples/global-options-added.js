@@ -9,7 +9,7 @@
 // (A different pattern for a "global" option is to add it to the root command, rather
 // than to the subcommand. See global-options-nested.js.)
 
-const { Command } = require('commander');
+import { Command } from 'commander';
 
 // Common options can be added when subcommands are created by using a custom subclass.
 // If the options are unsorted in the help, these will appear first.

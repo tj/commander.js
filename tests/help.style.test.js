@@ -1,6 +1,6 @@
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
-const { Command } = require('../');
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
+import { Command } from '../index.js';
 
 function red(str) {
   // Use plain characters so not stripped in failure messages. (Means displayWidth is bogus though.)

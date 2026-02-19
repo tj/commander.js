@@ -1,9 +1,9 @@
-const childProcess = require('child_process');
-const commander = require('../');
-const path = require('path');
-const util = require('util');
-const { test, describe } = require('node:test');
-const assert = require('node:assert/strict');
+import * as childProcess from 'child_process';
+import * as commander from '../index.js';
+import * as path from 'path';
+import * as util from 'util';
+import { test, describe } from 'node:test';
+import assert from 'node:assert/strict';
 
 const execFileAsync = util.promisify(childProcess.execFile);
 
@@ -38,7 +38,7 @@ describe('parsing regression tests', () => {
 
   // https://github.com/tj/commander.js/issues/508
   test('when arguments to executable include option flags then argument order preserved', async () => {
-    const pm = path.join(__dirname, 'fixtures/pm');
+    const pm = path.join(import.meta.dirname, 'fixtures/pm');
     const { stdout } = await execFileAsync('node', [
       pm,
       'echo',
@@ -50,7 +50,7 @@ describe('parsing regression tests', () => {
       '5',
       '6',
     ]);
-    assert.equal(stdout, "[ '1', '2', '--dry-run', '3', '4', '5', '6' ]\n");
+    assert.equal(stdout, '["1","2","--dry-run","3","4","5","6"]\n');
   });
 });
 
