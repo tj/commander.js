@@ -8,23 +8,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
-## [15.0.0] (2026-05-15)
-
-_date is placeholder, Node.js 20 EOL on 2026-04-30_
+## [15.0.0-0] (2025-02-22)
 
 Commander 15 is ESM only. This is expected to be seamless for ESM consumers, but some CommonJS consumers may hit issues with tooling requiring configuration for ESM-only dependencies. See Migration Tips below.
 
-The release of Commander 15 moves Commander 14 into maintenance. Commander 14 will get security updates for 12 months.
-For more info see [Release Policy](./docs/release-policy.md).
+The release of Commander 15 in May 2026 will move Commander 14 into maintenance. Commander 14 will get security updates for 
+12 months (to May 2027). For more info see [Release Policy](./docs/release-policy.md).
 
 ### Added
 
+- show excess command-arguments in error message ([#2384])
+
 ### Fixed
+
+- *Breaking:* only lone `--no-*` option sets default option value to `true`, default not implicitly set when define both positive and negative option in either order ([#2405])
+- update example to use compatible character for MINGW64 ([#2475])
 
 ### Changed
 
 - *Breaking:* migrated Commander implementation from CommonJS to ESM ([#2464])
-- *Breaking:* Commander 15 requires Node.js v20 or higher. To be more precise, `^20.19.0 || >=22.12.0` for `require(esm)`.
+- *Breaking:* Commander 15 requires Node.js v22.12.0 or higher (for `require(esm)`).
 - dev: switch tests from Jest to `node:test` test runner ([#2463])
 
 ### Deleted
@@ -1483,9 +1486,11 @@ program
 [#2350]: https://github.com/tj/commander.js/pull/2350
 [#2359]: https://github.com/tj/commander.js/pull/2359
 [#2369]: https://github.com/tj/commander.js/pull/2369
+[#2384]: https://github.com/tj/commander.js/pull/2384
 [#2394]: https://github.com/tj/commander.js/pull/2394
 [#2395]: https://github.com/tj/commander.js/pull/2395
 [#2396]: https://github.com/tj/commander.js/pull/2396
+[#2405]: https://github.com/tj/commander.js/pull/2405
 [#2409]: https://github.com/tj/commander.js/pull/2409
 [#2410]: https://github.com/tj/commander.js/pull/2410
 [#2427]: https://github.com/tj/commander.js/pull/2427
@@ -1494,6 +1499,7 @@ program
 [#2463]: https://github.com/tj/commander.js/pull/2463
 [#2464]: https://github.com/tj/commander.js/pull/2464
 [#2465]: https://github.com/tj/commander.js/pull/2465
+[#2475]: https://github.com/tj/commander.js/pull/2475
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
@@ -1573,6 +1579,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[15.0.0-0]: https://github.com/tj/commander.js/compare/v14.0.3...v15.0.0-0
 [14.0.3]: https://github.com/tj/commander.js/compare/v14.0.2...v14.0.3
 [14.0.2]: https://github.com/tj/commander.js/compare/v14.0.1...v14.0.2
 [14.0.1]: https://github.com/tj/commander.js/compare/v14.0.0...v14.0.1
