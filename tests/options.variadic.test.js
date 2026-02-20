@@ -180,4 +180,12 @@ describe('variadic options', () => {
 
     assert.deepEqual(program.opts().comma, ['CCC']);
   });
+
+  test('when option has default array then specified value is used instead of default (not appended)', () => {
+    const program = new commander.Command();
+    program.option('-c,--comma [value...]', 'values', ['default']);
+    program.parse(['--comma', 'CCC'], { from: 'user' });
+
+    assert.deepEqual(program.opts().comma, ['CCC']);
+  });
 });

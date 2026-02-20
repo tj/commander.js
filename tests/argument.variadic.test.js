@@ -117,4 +117,17 @@ describe('Command variadic argument using .argument()', (t) => {
     program.parse(['one', 'two'], { from: 'user' });
     assert.deepEqual(passedArg, ['one', 'two']);
   });
+
+  test('when variadic has default array then specified value is used instead of default (not appended)', () => {
+    const program = new commander.Command();
+    let passedArg;
+    program
+      .addArgument(new commander.Argument('[value...]').default(['DEFAULT']))
+      .action((value) => {
+        passedArg = value;
+      });
+
+    program.parse(['one', 'two'], { from: 'user' });
+    assert.deepEqual(passedArg, ['one', 'two']);
+  });
 });
