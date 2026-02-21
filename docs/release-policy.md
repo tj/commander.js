@@ -5,7 +5,7 @@ We follow [Semantic Versioning](http://semver.org/spec/v2.0.0.html), and limit b
 There are major releases about every six months. We do a major release and bump the minimum required node version when LTS Node.js versions reach end-of-life.
 
 The release notes for major versions highlight breaking changes, and include a section of migration tips for common changes required.
-The [Changelog](../CHANGELOG.md) lists release notes for all versions.
+The [changelog](../CHANGELOG.md) lists release notes for all versions.
 
 The current release line gets all updates: features, bug fixes, and security updates. Older maintenance versions get just security updates for 12 months.
 
