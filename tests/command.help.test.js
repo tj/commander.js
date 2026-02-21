@@ -118,17 +118,11 @@ Commands:
 
   test('when help short flag masked then not displayed in helpInformation', () => {
     const program = new commander.Command();
-    program.option(
-      '-o, --ordinary',
-      'example option for checking expected help format',
-    );
     program.option('-h, --host', 'select host');
     const helpInformation = program.helpInformation();
-    // sanity check how option is normally displayed
-    assert(helpInformation.includes('-o, --ordinary'));
-    // check help listed as --help not -h, --help
-    assert(helpInformation.includes('--help'));
-    assert(!helpInformation.includes('-h, --help'));
+    assert(helpInformation.includes(' -h, --host'));
+    assert(!helpInformation.includes(' -h, --help'));
+    assert(helpInformation.includes(' --help'));
   });
 
   test('when both help flags masked then not displayed in helpInformation', () => {
