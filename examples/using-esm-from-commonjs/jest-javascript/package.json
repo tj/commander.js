@@ -8,7 +8,7 @@
   "license": "MIT",
   "type": "commonjs",
   "dependencies": {
-    "commander": "^15.0.0"
+    "commander": "^15.0.0-0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.28.6",
