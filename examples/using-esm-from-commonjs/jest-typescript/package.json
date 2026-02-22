@@ -8,7 +8,7 @@
   "license": "MIT",
   "type": "commonjs",
   "dependencies": {
-    "commander": "^15.0.0"
+    "commander": "^15.0.0-0"
   },
   "devDependencies": {
     "jest": "^30.2.0",
