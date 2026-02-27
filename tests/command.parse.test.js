@@ -407,7 +407,7 @@ describe('Command.parse()', () => {
     });
 
     test('when parse subcommand then reset state before preSubcommand hook called', () => {
-      let hookCalled = false;
+      let hookCalled;
       const program = new commander.Command().hook(
         'preSubcommand',
         (thisCommand, subcommand) => {
