@@ -46,13 +46,13 @@
     }
   },
   "devDependencies": {
-    "@eslint/js": "^9.4.0",
+    "@eslint/js": "^10.0.1",
     "@types/node": "^22.7.4",
-    "eslint": "^9.17.0",
+    "eslint": "^10.0.2",
     "eslint-config-prettier": "^10.0.1",
-    "globals": "^16.0.0",
+    "globals": "^17.3.0",
     "prettier": "^3.2.5",
-    "tsd": "^0.31.0",
+    "tsd": "^0.33.0",
     "typescript": "^5.0.4",
     "typescript-eslint": "^8.12.2"
   },

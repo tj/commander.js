@@ -1,5 +1,6 @@
 import globals from 'globals';
 import esLintjs from '@eslint/js';
+import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 import prettier from 'eslint-config-prettier';
 
@@ -8,13 +9,13 @@ const tsconfigTsFiles = ['**/*.{ts,mts}']; // match "include" in tsconfig.ts.jso
 const tsconfigJsFiles = ['*.{js,mjs}', 'lib/**/*.{js,mjs}']; // match "include" in tsconfig.js.json
 
 // Using tseslint.config adds some type safety and `extends` to simplify customising config array.
-export default tseslint.config(
+export default defineConfig(
   // Add recommended rules.
   esLintjs.configs.recommended,
   // tseslint with different setup for js/ts
   {
     files: tsconfigJsFiles,
-    extends: [...tseslint.configs.recommended],
+    extends: [tseslint.configs.recommended],
     languageOptions: {
       parserOptions: { project: './tsconfig.js.json' },
     },
@@ -25,7 +26,7 @@ export default tseslint.config(
   },
   {
     files: tsconfigTsFiles,
-    extends: [...tseslint.configs.recommended],
+    extends: [tseslint.configs.recommended],
     languageOptions: {
       parserOptions: { project: './tsconfig.ts.json' },
     },
