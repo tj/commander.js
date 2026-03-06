@@ -177,4 +177,21 @@ describe('help command processed on correct command', () => {
       program.parse(['help', 'sub'], { from: 'user' });
     }).toThrow('sub help');
   });
+
+  test('when "program help" with non-throwing exitOverride then should not fall through to dispatch', () => {
+    const program = new commander.Command();
+    program.command('sub1');
+    program.exitOverride(() => {
+      // Intentionally not throwing
+    });
+    const exitSpy = jest.spyOn(process, 'exit').mockImplementation(() => {});
+    try {
+      const dispatchSpy = jest.spyOn(program, '_dispatchSubcommand');
+      program.parse(['help'], { from: 'user' });
+      expect(dispatchSpy).not.toHaveBeenCalled();
+      dispatchSpy.mockRestore();
+    } finally {
+      exitSpy.mockRestore();
+    }
+  });
 });
