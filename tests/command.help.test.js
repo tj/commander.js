@@ -120,7 +120,9 @@ Commands:
     const program = new commander.Command();
     program.option('-h, --host', 'select host');
     const helpInformation = program.helpInformation();
-    assert(!/\W-h\W.*display help/.test(helpInformation));
+    assert(helpInformation.includes(' -h, --host'));
+    assert(!helpInformation.includes(' -h, --help'));
+    assert(helpInformation.includes(' --help'));
   });
 
   test('when both help flags masked then not displayed in helpInformation', () => {
