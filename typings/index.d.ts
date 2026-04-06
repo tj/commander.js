@@ -1089,6 +1089,11 @@ export class Command {
    * Add a listener (callback) for when events occur. (Implemented using EventEmitter.)
    */
   on(event: string | symbol, listener: (...args: any[]) => void): this;
+
+  /** Register a plugin. */
+  register<T>(
+    plugin: (command: this) => T,
+  ): NonNullable<T> extends void ? this : NonNullable<T>;
 }
 
 export interface CommandOptions {

@@ -1151,6 +1151,22 @@ program
   });
 ```
 
+### Composable Plugins using `register`
+
+Use `program.register(plugin)` (from `Command` class) to make it easier to change the behavior. `plugin` is a function that receives the `Command` object.
+
+Example:
+
+```js
+program
+  .register(prettyErrors)
+  .parse();
+
+function prettyErrors(command) {
+  command.configureOutput({/* snip */});
+}
+```
+
 ### Additional documentation
 
 There is more information available about:
