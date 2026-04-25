@@ -1,0 +1,3 @@
+- [x] Update §.addHelpCommand() → §.helpCommand() with current API usage
+- [x] Add missing §npm run-script section (translated from English README)
+- [x] Update TOC entries to match

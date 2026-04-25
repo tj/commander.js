@@ -37,7 +37,7 @@
     - [.usage](#usage)
     - [.description 和 .summary](#description-%E5%92%8C-summary)
     - [.helpOption(flags, description)](#helpoptionflags-description)
-    - [.addHelpCommand()](#addhelpcommand)
+    - [.helpCommand()](#helpcommand)
     - [其他帮助配置](#%E5%85%B6%E4%BB%96%E5%B8%AE%E5%8A%A9%E9%85%8D%E7%BD%AE)
   - [自定义事件监听](#%e8%87%aa%e5%ae%9a%e4%b9%89%e4%ba%8b%e4%bb%b6%e7%9b%91%e5%90%ac)
   - [零碎知识](#%e9%9b%b6%e7%a2%8e%e7%9f%a5%e8%af%86)
@@ -48,6 +48,7 @@
     - [createCommand()](#createCommand)
     - [Node 选项，如 --harmony](#node-%E9%80%89%E9%A1%B9%EF%BC%8C%E5%A6%82---harmony)
     - [调试子命令](#%e8%b0%83%e8%af%95%e5%ad%90%e5%91%bd%e4%bb%a4)
+    - [npm run-script](#npm-run-script)
     - [显示错误](#%E6%98%BE%E7%A4%BA%E9%94%99%E8%AF%AF)
     - [重写退出和输出](#%E9%87%8D%E5%86%99%E9%80%80%E5%87%BA%E5%92%8C%E8%BE%93%E5%87%BA)
     - [其他文档](#%E5%85%B6%E4%BB%96%E6%96%87%E6%A1%A3)
@@ -861,15 +862,17 @@ program
   .helpOption('-e, --HELP', 'read more information');
 ```
 
-### .addHelpCommand()
+### .helpCommand()
 
-如果一个命令拥有子命令，它也将有一个默认的帮助子命令。使用`.addHelpCommand()`和`.addHelpCommand(false)`可以打开或关闭默认的帮助子命令。
+如果一个命令拥有子命令，它也将有一个默认的帮助子命令。使用`.helpCommand(true)`和`.helpCommand(false)`可以显式打开或关闭默认的帮助子命令。
 
 也可以自定义名字和描述：
 
 ```js
-program.addHelpCommand('assist [command]', 'show assistance');
+program.helpCommand('assist [command]', '显示帮助信息');
 ```
+
+如需添加自定义命令对象，可使用`.addHelpCommand()`。
 
 ### 其他帮助配置
 
@@ -1002,6 +1005,16 @@ const program = createCommand();
 如果使用 node inspector 的`node -inspect`等命令来[调试](https://nodejs.org/en/docs/guides/debugging-getting-started/)可执行命令，对于生成的子命令，inspector 端口会递增 1。
 
 如果想使用 VSCode 调试，则需要在`launch.json`配置文件里设置`"autoAttachChildProcesses": true`。
+
+### npm run-script
+
+通过 `npm run-script` 调用程序时，`npm` 默认会解析命令行上的选项，导致选项无法传递到你的程序。请使用 `--` 来终止 npm 的选项解析，将后续所有参数直接传入程序。
+
+[`npm run-script`](https://docs.npmjs.com/cli/v9/commands/npm-run-script) 的命令格式明确说明了这一点：
+
+```console
+npm run-script <command> [-- <args>]
+```
 
 ### 显示错误
 
