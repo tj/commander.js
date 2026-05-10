@@ -145,6 +145,57 @@ test('when default getOutHelpWidth then help helpWidth from stdout', () => {
   process.stdout.isTTY = holdIsTTY;
 });
 
+test('when stdout is not a TTY then default helpWidth is unlimited', () => {
+  const holdIsTTY = process.stdout.isTTY;
+  const holdColumns = process.stdout.columns;
+  let helpWidth;
+
+  try {
+    process.stdout.isTTY = false;
+    process.stdout.columns = undefined;
+    const program = new commander.Command();
+    program.configureHelp({
+      formatHelp: (cmd, helper) => {
+        helpWidth = helper.helpWidth;
+        return '';
+      },
+    });
+    program.outputHelp();
+
+    expect(helpWidth).toBe(Infinity);
+  } finally {
+    process.stdout.columns = holdColumns;
+    process.stdout.isTTY = holdIsTTY;
+  }
+});
+
+test('when stdout is not a TTY then option descriptions are not wrapped', () => {
+  const holdIsTTY = process.stdout.isTTY;
+  const holdColumns = process.stdout.columns;
+  const customWrite = jest.fn();
+  const description =
+    'copy this long generated help text into documentation without inserting terminal-width line breaks';
+
+  try {
+    process.stdout.isTTY = false;
+    process.stdout.columns = undefined;
+    const program = new commander.Command('program');
+    program.configureOutput({ writeOut: customWrite });
+    program.option('--template <path>', description);
+    program.outputHelp();
+
+    const helpText = customWrite.mock.calls[0][0];
+    const optionLine = helpText
+      .split('\n')
+      .find((line) => line.includes('--template <path>'));
+
+    expect(optionLine).toContain(description);
+  } finally {
+    process.stdout.columns = holdColumns;
+    process.stdout.isTTY = holdIsTTY;
+  }
+});
+
 test('when custom getOutHelpWidth then help helpWidth custom', () => {
   const expectedColumns = 123;
   let helpWidth;
@@ -185,6 +236,30 @@ test('when default getErrHelpWidth then help error helpWidth from stderr', () =>
   expect(helpWidth).toBe(expectedColumns);
   process.stderr.isTTY = holdIsTTY;
   process.stderr.columns = holdColumns;
+});
+
+test('when stderr is not a TTY then default error helpWidth is unlimited', () => {
+  const holdIsTTY = process.stderr.isTTY;
+  const holdColumns = process.stderr.columns;
+  let helpWidth;
+
+  try {
+    process.stderr.isTTY = false;
+    process.stderr.columns = undefined;
+    const program = new commander.Command();
+    program.configureHelp({
+      formatHelp: (cmd, helper) => {
+        helpWidth = helper.helpWidth;
+        return '';
+      },
+    });
+    program.outputHelp({ error: true });
+
+    expect(helpWidth).toBe(Infinity);
+  } finally {
+    process.stderr.columns = holdColumns;
+    process.stderr.isTTY = holdIsTTY;
+  }
 });
 
 test('when custom getErrHelpWidth then help error helpWidth custom', () => {
