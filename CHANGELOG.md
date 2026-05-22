@@ -8,11 +8,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
-## [15.0.0-0] (2025-02-22)
+## [15.0.0] (2025-05-29)
 
 Commander 15 is ESM only. This is expected to be seamless for ESM consumers, but some CommonJS consumers may hit issues with tooling requiring configuration for ESM-only dependencies. See Migration Tips below.
 
-The release of Commander 15 in May 2026 will move Commander 14 into maintenance. Commander 14 will get security updates for 
+The release of Commander 15 moves Commander 14 into maintenance. Commander 14 will get security updates for
 12 months (to May 2027). For more info see [Release Policy](./docs/release-policy.md).
 
 ### Added
@@ -43,6 +43,10 @@ or bundler.
 
 If you have problems using Commander 15 in your environment, one option is stay on Commander 14 for now. Commander 14 will
 get security updates until May 2027 and things will hopefully improve for your setup in the meantime.
+
+## [15.0.0-0] (2025-02-22)
+
+(Released as 15.0.0)
 
 ## [14.0.3] (2026-01-31)
 
@@ -1575,6 +1579,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[15.0.0]: https://github.com/tj/commander.js/compare/v15.0.0...v14.0.3
 [15.0.0-0]: https://github.com/tj/commander.js/compare/v14.0.3...v15.0.0-0
 [14.0.3]: https://github.com/tj/commander.js/compare/v14.0.2...v14.0.3
 [14.0.2]: https://github.com/tj/commander.js/compare/v14.0.1...v14.0.2
