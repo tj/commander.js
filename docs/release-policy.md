@@ -11,6 +11,6 @@ The current release line gets all updates: features, bug fixes, and security upd
 
 | Version | First Release | Release Note |  Status | End of Life |
 | ------- | ------------- | - | ------- | ----------- |
-| 14.x | 2025-05-18 | [14.0.0](https://github.com/tj/commander.js/releases/tag/v14.0.0) | current | - |
-| 13.x | 2024-12-30 | [13.0.0](https://github.com/tj/commander.js/releases/tag/v13.0.0) | maintenance | 2026-05-18 |
-| <13 | | | end of life | |
+| 15.x | 2026-05-29 | [15.0.0](https://github.com/tj/commander.js/releases/tag/v15.0.0) | current | - |
+| 14.x | 2025-05-18 | [14.0.0](https://github.com/tj/commander.js/releases/tag/v14.0.0) | maintenance | 2027-05-29 |
+| <14 | | | end of life | |
