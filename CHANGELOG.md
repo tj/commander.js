@@ -44,10 +44,6 @@ or bundler.
 If you have problems using Commander 15 in your environment, one option is stay on Commander 14 for now. Commander 14 will
 get security updates until May 2027 and things will hopefully improve for your setup in the meantime.
 
-To allow `require(esm)` from CommonJS you may be able to make small changes to your current setup. Some
-examples for Jest are included in [examples/using-esm-from-commonjs](./examples/using-esm-from-commonjs).
-(Commander was using Jest, so we have a special interest.)
-
 ## [14.0.3] (2026-01-31)
 
 ### Added

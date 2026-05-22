@@ -1,4 +1,0 @@
-node_modules/
-
-# Save space, do not commit package-lock.json with all the Jest dependencies!
-package-lock.json
