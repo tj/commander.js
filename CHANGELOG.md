@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
-## [15.0.0] (2025-05-29)
+## [15.0.0] (2026-05-29)
 
 Commander 15 is ESM only. This is expected to be seamless for ESM consumers, but some CommonJS consumers may hit issues with tooling requiring configuration for ESM-only dependencies. See Migration Tips below.
 
@@ -44,7 +44,7 @@ or bundler.
 If you have problems using Commander 15 in your environment, one option is stay on Commander 14 for now. Commander 14 will
 get security updates until May 2027 and things will hopefully improve for your setup in the meantime.
 
-## [15.0.0-0] (2025-02-22)
+## [15.0.0-0] (2026-02-22)
 
 (Released as 15.0.0)
 
