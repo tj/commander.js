@@ -15,6 +15,8 @@ describe('when construct Option with unsupported flags then throw', () => {
     { flags: '-a,-b' }, // try all the separators
     { flags: '-a|-b' },
     { flags: '-a -b' },
+    { flags: '--trailing-dash-' }, // long option name with trailing dash
+    { flags: '--consecutive--dashes' }, // long option name with consecutive dashes
   ];
   for (const { flags } of flagsList) {
     test(`when construct Option with flags ${flags} then throw`, () => {
