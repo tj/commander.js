@@ -46,4 +46,18 @@ describe('option property is camelCase of option name', () => {
     program.parse(['node', 'test', '--Myoption']);
     assert.equal(program.opts().Myoption, true);
   });
+
+  test('when option name ends with a dash then trailing dash is ignored', () => {
+    const program = new commander.Command();
+    program.option('--my-option-', 'description');
+    program.parse(['node', 'test', '--my-option-']);
+    assert.equal(program.opts().myOption, true);
+  });
+
+  test('when option name has consecutive dashes then empty word is ignored', () => {
+    const program = new commander.Command();
+    program.option('--my--option', 'description');
+    program.parse(['node', 'test', '--my--option']);
+    assert.equal(program.opts().myOption, true);
+  });
 });
