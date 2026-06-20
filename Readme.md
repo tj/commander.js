@@ -62,6 +62,11 @@ For information about terms used in this document see: [terminology](./docs/term
 
 ```sh
 npm install commander
+```
+
+Or using [Deno](https://deno.land):
+
+```sh
 deno install commander
 ```
 
