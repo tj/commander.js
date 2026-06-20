@@ -62,6 +62,7 @@ For information about terms used in this document see: [terminology](./docs/term
 
 ```sh
 npm install commander
+deno install commander
 ```
 
 ## Quick Start
