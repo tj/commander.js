@@ -16,6 +16,10 @@ describe('negative numbers', () => {
       ['-1.2e3', true],
       ['-1.2e+3', true],
       ['-1.2e-3', true],
+      ['-1E3', true],
+      ['-1E+3', true],
+      ['-1E-3', true],
+      ['-1.2E3', true],
       ['-1e-3.0', false], // invalid number format
       ['--1 ', false], // invalid number format
       ['-0', true],
