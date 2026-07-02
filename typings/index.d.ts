@@ -10,8 +10,7 @@
 // - https://github.com/sindresorhus/type-fest/blob/main/source/literal-union.d.ts
 // - https://github.com/sindresorhus/type-fest/blob/main/source/primitive.d.ts
 type LiteralUnion<LiteralType, BaseType extends string | number> =
-  | LiteralType
-  | (BaseType & Record<never, never>);
+  LiteralType | (BaseType & Record<never, never>);
 
 export class CommanderError extends Error {
   code: string;
