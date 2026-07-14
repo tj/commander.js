@@ -90,8 +90,7 @@ describe('executable subcommand lookup ', () => {
     },
   );
 
-  // This test currently fails on Node 20 when run as ESM because Node does not execute .ts files as JavaScript by default.
-  test.skip('when subcommand suffix is .ts then lookup succeeds', async () => {
+  test('when subcommand suffix is .ts then lookup succeeds', async () => {
     // We support looking for ts files for ts-node in particular, but don't need to test ts-node itself.
     // The subcommand is both plain JavaScript code for this test.
     const binLinkTs = path.join(
