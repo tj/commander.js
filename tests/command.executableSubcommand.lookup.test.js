@@ -57,6 +57,38 @@ describe('executable subcommand lookup ', () => {
     assert.equal(stdout, 'publish\n');
   });
 
+  test('when subcommand has literal delimiter then preserve in arguments', async () => {
+    const { stdout } = await execFileAsync('node', [
+      pm,
+      'echo',
+      '--',
+      '--not-an-option',
+    ]);
+    assert.equal(stdout, '["--","--not-an-option"]\n');
+  });
+
+  test('when subcommand has operands around literal delimiter then preserve order', async () => {
+    const { stdout } = await execFileAsync('node', [
+      pm,
+      'echo',
+      'before',
+      '--',
+      '--after',
+    ]);
+    assert.equal(stdout, '["before","--","--after"]\n');
+  });
+
+  test('when subcommand has repeated literal delimiter then preserve second as operand', async () => {
+    const { stdout } = await execFileAsync('node', [
+      pm,
+      'echo',
+      '--',
+      '--',
+      '--not-an-option',
+    ]);
+    assert.equal(stdout, '["--","--","--not-an-option"]\n');
+  });
+
   test('when alias subcommand file suffix .js then lookup succeeds', async () => {
     const { stdout } = await execFileAsync('node', [pm, 'p']);
     assert.equal(stdout, 'publish\n');
