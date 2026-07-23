@@ -120,6 +120,29 @@ describe('boolean option with non-boolean default', () => {
   });
 });
 
+describe('negated option paired with a differently-spelled positive', () => {
+  test('when short-only positive and negated then no implicit default', () => {
+    const program = new commander.Command();
+    program.option('-c', 'add cheese').option('--no-c', 'remove cheese');
+    program.parse([], { from: 'user' });
+    assert.equal(program.opts().c, undefined);
+  });
+
+  test('when camelCase positive and kebab-case negated then no implicit default', () => {
+    const program = new commander.Command();
+    program.option('--fooBar').option('--no-foo-bar');
+    program.parse([], { from: 'user' });
+    assert.equal(program.opts().fooBar, undefined);
+  });
+
+  test('when only negated (lone) then implicit default is still true', () => {
+    const program = new commander.Command();
+    program.option('--no-sauce');
+    program.parse([], { from: 'user' });
+    assert.equal(program.opts().sauce, true);
+  });
+});
+
 // Regression test for #1301 with `-no-` in middle of option
 describe('regression test for -no- in middle of option name', () => {
   test('when option not specified then value is undefined', () => {
