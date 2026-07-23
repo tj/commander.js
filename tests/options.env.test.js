@@ -369,3 +369,37 @@ describe('Option.env()', () => {
     });
   });
 });
+
+describe('ParseOptions.env', () => {
+  test('when parse options include env then uses custom env instead of process.env', () => {
+    const program = new commander.Command();
+    program.addOption(
+      new commander.Option('-p, --port <number>', 'port number').env('PORT'),
+    );
+
+    const hold = process.env.PORT;
+    delete process.env.PORT;
+
+    program.parse([], { from: 'user', env: { PORT: '4000' } });
+    assert.equal(program.opts().port, '4000');
+
+    if (hold === undefined) delete process.env.PORT;
+    else process.env.PORT = hold;
+  });
+
+  test('when parse options omit env then still uses process.env', () => {
+    const program = new commander.Command();
+    program.addOption(
+      new commander.Option('-p, --port <number>', 'port number').env('PORT'),
+    );
+
+    const hold = process.env.PORT;
+    process.env.PORT = '5000';
+
+    program.parse([], { from: 'user' });
+    assert.equal(program.opts().port, '5000');
+
+    if (hold === undefined) delete process.env.PORT;
+    else process.env.PORT = hold;
+  });
+});

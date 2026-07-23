@@ -340,7 +340,12 @@ export class Help {
 export type HelpConfiguration = Partial<Help>;
 
 export interface ParseOptions {
-  from: 'node' | 'electron' | 'user';
+  from?: 'node' | 'electron' | 'user';
+  /**
+   * Optional environment bag used for `.env()` option values instead of `process.env`.
+   * Useful for tests without mutating the real process environment.
+   */
+  env?: NodeJS.ProcessEnv | Record<string, string | undefined>;
 }
 export interface HelpContext {
   // optional parameter for .help() and .outputHelp()
