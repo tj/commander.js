@@ -3,6 +3,7 @@ import esLintjs from '@eslint/js';
 import { defineConfig } from 'eslint/config';
 import tseslint from 'typescript-eslint';
 import prettier from 'eslint-config-prettier';
+import nodeTest from 'eslint-node-test';
 
 // Only run tseslint on the files that we have included for TypeScript.
 const tsconfigTsFiles = ['**/*.{ts,mts}']; // match "include" in tsconfig.ts.json;
@@ -64,5 +65,12 @@ export default defineConfig(
         },
       ],
     },
+  },
+  {
+    files: ['**/*.js'],
+    plugins: {
+      'node-test': nodeTest,
+    },
+    extends: ['node-test/unopinionated'], // switch to recommended if like how unopinionated goes
   },
 );

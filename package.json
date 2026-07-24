@@ -50,6 +50,7 @@
     "@types/node": "^22.7.4",
     "eslint": "^10.0.2",
     "eslint-config-prettier": "^10.0.1",
+    "eslint-node-test": "^0.3.0",
     "globals": "^17.3.0",
     "prettier": "^3.2.5",
     "tsd": "^0.33.0",
