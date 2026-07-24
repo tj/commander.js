@@ -25,8 +25,6 @@ class MyCommand extends Command {
 
 const program = new MyCommand();
 
-program.configureHelp({ MyCommand });
-
 program
   .option('-s', 'short flag')
   .option('-f, --flag', 'short and long flag')
