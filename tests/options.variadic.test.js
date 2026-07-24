@@ -9,9 +9,14 @@ describe('variadic options', () => {
       const program = createTestCommand();
       program.option('-r,--required <value...>');
 
-      assert.throws(() => {
-        program.parse(['--required'], { from: 'user' });
-      });
+      assert.throws(
+        () => {
+          program.parse(['--required'], { from: 'user' });
+        },
+        {
+          code: 'commander.optionMissingArgument',
+        },
+      );
     });
 
     test('when variadic with one value then set in array', () => {

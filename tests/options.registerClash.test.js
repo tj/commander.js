@@ -52,7 +52,7 @@ describe('.addOption()', () => {
       program
         .option('-c, --cheese <type>', 'cheese type')
         .addOption(new Option('-c, --conflict'));
-    });
+    }, /conflicting flag/);
   });
 
   test('when long option flags conflicts then throws', () => {
@@ -61,6 +61,6 @@ describe('.addOption()', () => {
       program
         .option('-c, --cheese <type>', 'cheese type')
         .addOption(new Option('-H, --cheese'));
-    });
+    }, /conflicting flag/);
   });
 });
