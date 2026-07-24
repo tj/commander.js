@@ -47,7 +47,7 @@ describe('Command.addCommand()', () => {
     const cmd = new commander.Command();
     assert.throws(() => {
       program.addCommand(cmd);
-    });
+    }, /Command passed to \.addCommand\(\) must have a name/);
   });
 
   test('when executable command with custom executableFile passed to .addCommand then ok', () => {

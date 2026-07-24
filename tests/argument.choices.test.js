@@ -22,9 +22,12 @@ describe('Argument.choices()', () => {
     program.addArgument(
       new commander.Argument('<shade>').choices(['red', 'blue']),
     );
-    assert.throws(() => {
-      program.parse(['orange'], { from: 'user' });
-    });
+    assert.throws(
+      () => {
+        program.parse(['orange'], { from: 'user' });
+      },
+      { code: 'commander.invalidArgument' },
+    );
   });
 });
 
@@ -50,8 +53,11 @@ describe('Argument.choices() parameter is treated as readonly, per TypeScript de
     const param = ['red', 'blue'];
     program.addArgument(new commander.Argument('<shade>').choices(param));
     param.push('orange');
-    assert.throws(() => {
-      program.parse(['orange'], { from: 'user' });
-    });
+    assert.throws(
+      () => {
+        program.parse(['orange'], { from: 'user' });
+      },
+      { code: 'commander.invalidArgument' },
+    );
   });
 });

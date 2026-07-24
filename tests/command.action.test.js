@@ -54,9 +54,12 @@ describe('Command.action()', () => {
       test(`via ${methodName}`, (t) => {
         const actionMock = t.mock.fn();
         program.action(actionMock);
-        assert.throws(() => {
-          program.parse(['node', 'test']);
-        });
+        assert.throws(
+          () => {
+            program.parse(['node', 'test']);
+          },
+          { code: 'commander.missingArgument' },
+        );
         assert.equal(actionMock.mock.callCount(), 0);
       });
     });

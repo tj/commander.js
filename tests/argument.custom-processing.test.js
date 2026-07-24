@@ -171,7 +171,7 @@ describe('custom processing function for command-argument', () => {
     const program = new commander.Command();
     assert.throws(() => {
       program.argument('<number>', 'float argument', 4);
-    });
+    }, /a default value for a required argument is never used/);
   });
 
   test('when custom processing for argument throws plain error then not CommanderError caught', () => {

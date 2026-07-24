@@ -95,18 +95,24 @@ describe('Command.requiredOption()', () => {
       const program = createTestCommand();
       program.requiredOption('--cheese <type>', 'cheese type');
 
-      assert.throws(() => {
-        program.parse(['node', 'test']);
-      });
+      assert.throws(
+        () => {
+          program.parse(['node', 'test']);
+        },
+        { code: 'commander.missingMandatoryOptionValue' },
+      );
     });
 
     test('when program has optional option not specified then error', () => {
       const program = createTestCommand();
       program.requiredOption('--cheese [type]', 'cheese type');
 
-      assert.throws(() => {
-        program.parse(['node', 'test']);
-      });
+      assert.throws(
+        () => {
+          program.parse(['node', 'test']);
+        },
+        { code: 'commander.missingMandatoryOptionValue' },
+      );
     });
 
     test('when program has yes/no not specified then error', () => {
@@ -115,9 +121,12 @@ describe('Command.requiredOption()', () => {
         .requiredOption('--cheese', 'cheese type')
         .option('--no-cheese', 'no cheese thanks');
 
-      assert.throws(() => {
-        program.parse(['node', 'test']);
-      });
+      assert.throws(
+        () => {
+          program.parse(['node', 'test']);
+        },
+        { code: 'commander.missingMandatoryOptionValue' },
+      );
     });
 
     test('when program has required value not specified and subcommand then error', () => {
@@ -127,9 +136,12 @@ describe('Command.requiredOption()', () => {
         .command('sub')
         .action(() => {});
 
-      assert.throws(() => {
-        program.parse(['node', 'test', 'sub']);
-      });
+      assert.throws(
+        () => {
+          program.parse(['node', 'test', 'sub']);
+        },
+        { code: 'commander.missingMandatoryOptionValue' },
+      );
     });
   });
 
@@ -173,9 +185,12 @@ describe('Command.requiredOption()', () => {
         .requiredOption('--subby <type>', 'description')
         .action(() => {});
 
-      assert.throws(() => {
-        program.parse(['node', 'test', 'sub']);
-      });
+      assert.throws(
+        () => {
+          program.parse(['node', 'test', 'sub']);
+        },
+        { code: 'commander.missingMandatoryOptionValue' },
+      );
     });
 
     test('when command has required value but not called then no error', () => {

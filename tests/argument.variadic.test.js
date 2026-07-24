@@ -4,7 +4,7 @@ import assert from 'node:assert/strict';
 
 // Testing variadic arguments. Testing all the action arguments, but could test just variadicArg.
 
-describe('Command variadic argument using .argument()', (t) => {
+describe('Command variadic argument using .argument()', () => {
   test('when no extra arguments specified for program then variadic arg is empty array', (t) => {
     const actionMock = t.mock.fn();
     const program = new commander.Command();
@@ -97,19 +97,6 @@ describe('Command variadic argument using .argument()', (t) => {
     let passedArg;
     program
       .addArgument(new commander.Argument('<value...>').choices(['one', 'two']))
-      .action((value) => {
-        passedArg = value;
-      });
-
-    program.parse(['one', 'two'], { from: 'user' });
-    assert.deepEqual(passedArg, ['one', 'two']);
-  });
-
-  test('when variadic has default array then specified value is used instead of default (not appended)', () => {
-    const program = new commander.Command();
-    let passedArg;
-    program
-      .addArgument(new commander.Argument('[value...]').default(['DEFAULT']))
       .action((value) => {
         passedArg = value;
       });

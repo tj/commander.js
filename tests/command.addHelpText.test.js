@@ -97,7 +97,7 @@ describe('Command.addHelpText(): program calls to addHelpText', () => {
     const program = new commander.Command();
     assert.throws(() => {
       program.addHelpText('silly', 'text');
-    });
+    }, /Unexpected value for position to addHelpText/);
   });
 });
 
@@ -157,18 +157,24 @@ describe('Command.addHelpText(): context checks with full parse', () => {
   test('when help requested then text is on stdout', () => {
     const program = new commander.Command();
     program.exitOverride().addHelpText('before', 'text');
-    assert.throws(() => {
-      program.parse(['--help'], { from: 'user' });
-    });
+    assert.throws(
+      () => {
+        program.parse(['--help'], { from: 'user' });
+      },
+      { code: 'commander.helpDisplayed' },
+    );
     assert.equal(stdoutSpy.mock.calls[0].arguments[0], 'text\n');
   });
 
   test('when help for error then text is on stderr', () => {
     const program = new commander.Command();
     program.exitOverride().addHelpText('before', 'text').command('sub');
-    assert.throws(() => {
-      program.parse([], { from: 'user' });
-    });
+    assert.throws(
+      () => {
+        program.parse([], { from: 'user' });
+      },
+      { code: 'commander.help' },
+    );
     assert.equal(stderrSpy.mock.calls[0].arguments[0], 'text\n');
   });
 
@@ -178,9 +184,12 @@ describe('Command.addHelpText(): context checks with full parse', () => {
     program.exitOverride().addHelpText('before', (contextParam) => {
       context = contextParam;
     });
-    assert.throws(() => {
-      program.parse(['--help'], { from: 'user' });
-    });
+    assert.throws(
+      () => {
+        program.parse(['--help'], { from: 'user' });
+      },
+      { code: 'commander.helpDisplayed' },
+    );
     assert.equal(context.error, false);
   });
 
@@ -193,9 +202,12 @@ describe('Command.addHelpText(): context checks with full parse', () => {
         context = contextParam;
       })
       .command('sub');
-    assert.throws(() => {
-      program.parse([], { from: 'user' });
-    });
+    assert.throws(
+      () => {
+        program.parse([], { from: 'user' });
+      },
+      { code: 'commander.help' },
+    );
     assert.equal(context.error, true);
   });
 
@@ -205,9 +217,12 @@ describe('Command.addHelpText(): context checks with full parse', () => {
     program.exitOverride().addHelpText('before', (contextParam) => {
       context = contextParam;
     });
-    assert.throws(() => {
-      program.parse(['--help'], { from: 'user' });
-    });
+    assert.throws(
+      () => {
+        program.parse(['--help'], { from: 'user' });
+      },
+      { code: 'commander.helpDisplayed' },
+    );
     assert.equal(context.command, program);
   });
 
@@ -218,9 +233,12 @@ describe('Command.addHelpText(): context checks with full parse', () => {
     const sub = program.command('sub').addHelpText('before', (contextParam) => {
       context = contextParam;
     });
-    assert.throws(() => {
-      program.parse(['sub', '--help'], { from: 'user' });
-    });
+    assert.throws(
+      () => {
+        program.parse(['sub', '--help'], { from: 'user' });
+      },
+      { code: 'commander.helpDisplayed' },
+    );
     assert.equal(context.command, sub);
   });
 
@@ -231,9 +249,12 @@ describe('Command.addHelpText(): context checks with full parse', () => {
       context = contextParam;
     });
     const sub = program.command('sub');
-    assert.throws(() => {
-      program.parse(['sub', '--help'], { from: 'user' });
-    });
+    assert.throws(
+      () => {
+        program.parse(['sub', '--help'], { from: 'user' });
+      },
+      { code: 'commander.helpDisplayed' },
+    );
     assert.equal(context.command, sub);
   });
 });
