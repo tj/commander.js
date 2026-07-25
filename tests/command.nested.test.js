@@ -2,6 +2,7 @@ import * as commander from '../index.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
+// eslint-disable-next-line node-test/require-top-level-describe
 test('when call nested subcommand then runs', (t) => {
   const program = new commander.Command();
   const leafAction = t.mock.fn();

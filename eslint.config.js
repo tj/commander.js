@@ -76,7 +76,7 @@ export default defineConfig(
       'node-test/prefer-test-context-assert': 'off', // we use callback parameter t to generate mocks, but do not want to use t.assertX (as t.assertX not automatically strict)
       'node-test/no-useless-assertion': 'off', // we use `assert.doesNotThrow()` as only assert in multiple tests (so removing that assert triggers a different lint error)
       'node-test/no-process-env-mutation': 'off', // we manage env in ways node-test does not recognise
-      // 'node-test/require-top-level-describe': 'on',
+      'node-test/require-top-level-describe': 'error', // Enforce top-level describe for providing context in test output. Disable by hand on single test files.
     },
   },
 );

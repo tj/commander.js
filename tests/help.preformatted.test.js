@@ -42,22 +42,21 @@ describe('Help.preformatted()', () => {
     const helper = new Help();
     assert.equal(helper.preformatted('a\r\n\r\n'), false);
   });
-});
 
-test('end-to-end: when option description is preformatted then manual format is preserved', () => {
-  // #396: leave custom format alone, apart from space-space indent
-  const optionSpec = '-t, --time <HH:MM>';
-  const program = new Command();
-  program.configureHelp({ helpWidth: 80 }).option(
-    optionSpec,
-    `select time
+  test('end-to-end: when option description is preformatted then manual format is preserved', () => {
+    // #396: leave custom format alone, apart from space-space indent
+    const optionSpec = '-t, --time <HH:MM>';
+    const program = new Command();
+    program.configureHelp({ helpWidth: 80 }).option(
+      optionSpec,
+      `select time
 
 Time can also be specified using special values:
   "dawn" - From night to sunrise.
 `,
-  );
+    );
 
-  const expectedOutput = `Usage:  [options]
+    const expectedOutput = `Usage:  [options]
 
 Options:
   ${optionSpec}  select time
@@ -68,5 +67,6 @@ Options:
   -h, --help          display help for command
 `;
 
-  assert.equal(program.helpInformation(), expectedOutput);
+    assert.equal(program.helpInformation(), expectedOutput);
+  });
 });

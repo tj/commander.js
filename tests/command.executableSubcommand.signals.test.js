@@ -36,27 +36,29 @@ describeOrSkipOnWindows('executable subcommand signals', () => {
     }
   });
 
-  test('when executable subcommand sent signal then program exit code is non-zero', () => {
-    const { status } = childProcess.spawnSync(pmPath, ['terminate'], {});
-    assert.equal(status > 0, true);
-  });
+  describe('signal exit codes', () => {
+    test('when executable subcommand sent signal then program exit code is non-zero', () => {
+      const { status } = childProcess.spawnSync(pmPath, ['terminate'], {});
+      assert.equal(status > 0, true);
+    });
 
-  test('when command has exitOverride and executable subcommand sent signal then exit code is non-zero', () => {
-    const { status } = childProcess.spawnSync(
-      pmPath,
-      ['exit-override', 'terminate'],
-      {},
-    );
-    assert.equal(status > 0, true);
-  });
+    test('when command has exitOverride and executable subcommand sent signal then exit code is non-zero', () => {
+      const { status } = childProcess.spawnSync(
+        pmPath,
+        ['exit-override', 'terminate'],
+        {},
+      );
+      assert.equal(status > 0, true);
+    });
 
-  // Not a signal test, but closely related code so adding here.
-  test('when command has exitOverride and executable subcommand fails then program exit code is subcommand exit code', () => {
-    const { status } = childProcess.spawnSync(
-      pmPath,
-      ['exit-override', 'fail'],
-      {},
-    );
-    assert.equal(status, 42);
+    // Not a signal test, but closely related code so adding here.
+    test('when command has exitOverride and executable subcommand fails then program exit code is subcommand exit code', () => {
+      const { status } = childProcess.spawnSync(
+        pmPath,
+        ['exit-override', 'fail'],
+        {},
+      );
+      assert.equal(status, 42);
+    });
   });
 });

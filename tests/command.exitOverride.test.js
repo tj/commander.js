@@ -404,32 +404,32 @@ describe('Command.exitOverride', () => {
       },
     );
   });
-});
 
-test('when no override and error then exit(1)', (t) => {
-  const exitSpy = t.mock.method(process, 'exit', () => {});
-  const program = new commander.Command();
-  program.configureOutput({ outputError: () => {} });
-  program.parse(['--unknownOption'], { from: 'user' });
-  assert.ok(exitSpy.mock.callCount() >= 1);
-  assert.deepEqual(exitSpy.mock.calls[0].arguments, [1]);
-});
+  test('when no override and error then exit(1)', (t) => {
+    const exitSpy = t.mock.method(process, 'exit', () => {});
+    const program = new commander.Command();
+    program.configureOutput({ outputError: () => {} });
+    program.parse(['--unknownOption'], { from: 'user' });
+    assert.ok(exitSpy.mock.callCount() >= 1);
+    assert.deepEqual(exitSpy.mock.calls[0].arguments, [1]);
+  });
 
-test('when custom processing throws custom error then throw custom error', () => {
-  function justSayNo(value) {
-    throw new Error('custom');
-  }
-  const program = createTestCommand();
-  program.option('-s, --shade <value>', 'specify shade', justSayNo);
+  test('when custom processing throws custom error then throw custom error', () => {
+    function justSayNo(value) {
+      throw new Error('custom');
+    }
+    const program = createTestCommand();
+    program.option('-s, --shade <value>', 'specify shade', justSayNo);
 
-  assert.throws(
-    () => {
-      program.parse(['--shade', 'green'], { from: 'user' });
-    },
-    (err) => {
-      assert.ok(err instanceof Error);
-      assert.equal(err.message, 'custom');
-      return true;
-    },
-  );
+    assert.throws(
+      () => {
+        program.parse(['--shade', 'green'], { from: 'user' });
+      },
+      (err) => {
+        assert.ok(err instanceof Error);
+        assert.equal(err.message, 'custom');
+        return true;
+      },
+    );
+  });
 });

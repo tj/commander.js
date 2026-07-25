@@ -119,21 +119,21 @@ describe('Command.showHelpAfterError(message)', () => {
     const lastCall = writeMock.mock.calls[writeMock.mock.callCount() - 1];
     assert.equal(lastCall.arguments[0], `${customHelpMessage}\n`);
   });
-});
 
-test('when Command.showHelpAfterError() and error and then shows full help', (t) => {
-  const writeMock = t.mock.fn();
-  const program = new commander.Command();
-  program
-    .exitOverride()
-    .showHelpAfterError()
-    .configureOutput({ writeErr: writeMock });
+  test('when Command.showHelpAfterError() and error and then shows full help', (t) => {
+    const writeMock = t.mock.fn();
+    const program = new commander.Command();
+    program
+      .exitOverride()
+      .showHelpAfterError()
+      .configureOutput({ writeErr: writeMock });
 
-  try {
-    program.parse(['--unknown-option'], { from: 'user' });
-  } catch (err) {
-    /* empty */
-  }
-  const lastCall = writeMock.mock.calls[writeMock.mock.callCount() - 1];
-  assert.equal(lastCall.arguments[0], program.helpInformation());
+    try {
+      program.parse(['--unknown-option'], { from: 'user' });
+    } catch (err) {
+      /* empty */
+    }
+    const lastCall = writeMock.mock.calls[writeMock.mock.callCount() - 1];
+    assert.equal(lastCall.arguments[0], program.helpInformation());
+  });
 });
