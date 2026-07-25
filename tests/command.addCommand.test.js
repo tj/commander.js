@@ -36,6 +36,7 @@ describe('Command.addCommand()', () => {
         case 'number':
         case 'undefined':
           // Compare values in a way that will be readable in test failure message.
+          // eslint-disable-next-line node-test/no-conditional-assertion
           assert.equal(`${key}:${cmd1[key]}`, `${key}:${cmd2[key]}`);
           break;
       }

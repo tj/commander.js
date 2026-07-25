@@ -7,7 +7,7 @@ describe('Command.hook()', () => {
     const program = new commander.Command();
     assert.throws(() => {
       program.hook('silly', () => {});
-    });
+    }, /Unexpected value for event passed to hook/);
   });
 
   test('when no action then action hooks not called', (t) => {

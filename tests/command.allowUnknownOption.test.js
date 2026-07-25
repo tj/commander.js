@@ -9,18 +9,24 @@ describe('Command.allowUnknownOption()', () => {
     const program = createTestCommand();
     program.option('-p, --pepper', 'add pepper');
 
-    assert.throws(() => {
-      program.parse(['node', 'test', '-m']);
-    });
+    assert.throws(
+      () => {
+        program.parse(['node', 'test', '-m']);
+      },
+      { code: 'commander.unknownOption' },
+    );
   });
 
   test('when specify unknown program option and allowUnknownOption(false) then error', () => {
     const program = createTestCommand();
     program.allowUnknownOption(false).option('-p, --pepper', 'add pepper');
 
-    assert.throws(() => {
-      program.parse(['node', 'test', '-m']);
-    });
+    assert.throws(
+      () => {
+        program.parse(['node', 'test', '-m']);
+      },
+      { code: 'commander.unknownOption' },
+    );
   });
 
   test('when specify unknown program option and allowUnknownOption() then no error', () => {
@@ -57,9 +63,12 @@ describe('Command.allowUnknownOption()', () => {
       .option('-p, --pepper', 'add pepper')
       .action(() => {});
 
-    assert.throws(() => {
-      program.parse(['node', 'test', 'sub', '-m']);
-    });
+    assert.throws(
+      () => {
+        program.parse(['node', 'test', 'sub', '-m']);
+      },
+      { code: 'commander.unknownOption' },
+    );
   });
 
   test('when specify unknown command option and allowUnknownOption then no error', () => {

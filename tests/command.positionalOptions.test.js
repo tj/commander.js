@@ -385,7 +385,7 @@ describe('positional options using Command.passThroughOptions() and Command.enab
 
       assert.throws(() => {
         sub.passThroughOptions();
-      });
+      }, /passThroughOptions cannot be used for 'sub' without turning on enablePositionalOptions/);
     });
 
     test('when program not positional and add subcommand with passThroughOptions then error', () => {
@@ -394,7 +394,7 @@ describe('positional options using Command.passThroughOptions() and Command.enab
 
       assert.throws(() => {
         program.addCommand(sub);
-      });
+      }, /passThroughOptions cannot be used for 'sub' without turning on enablePositionalOptions/);
     });
   });
 

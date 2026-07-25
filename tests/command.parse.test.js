@@ -79,7 +79,7 @@ describe('Command.parse()', () => {
       program.argument('[args...]');
       assert.throws(() => {
         program.parse(['node', 'script.js'], { from: 'silly' });
-      });
+      }, /unexpected parse option/);
     });
 
     describe('when node execArgv includes node flags', () => {
@@ -127,7 +127,7 @@ describe('Command.parse()', () => {
     program.argument('[args...]');
     assert.throws(() => {
       program.parse('node', 'test');
-    });
+    }, /first parameter to parse must be array or undefined/);
   });
 
   describe('parse parameter is treated as readonly, per TypeScript declaration', () => {
@@ -436,7 +436,7 @@ describe('Command.parse()', () => {
       program.parse();
       assert.throws(() => {
         program.parse();
-      });
+      }, /Can not call parse again when storeOptionsAsProperties is true/);
     });
   });
 });

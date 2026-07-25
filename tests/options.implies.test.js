@@ -159,9 +159,12 @@ describe('Option.implies()', () => {
       .addOption(new Option('--binary').conflicts('unary'))
       .addOption(new Option('--one').implies({ unary: true }));
 
-    assert.throws(() => {
-      program.parse(['--binary', '--one'], { from: 'user' });
-    });
+    assert.throws(
+      () => {
+        program.parse(['--binary', '--one'], { from: 'user' });
+      },
+      { code: 'commander.conflictingOption' },
+    );
   });
 
   test('when requiredOption with implied value then not throw', () => {
@@ -191,7 +194,7 @@ describe('Option.implies()', () => {
       .addOption(new Option('--foo').implies({ bar: 'implied' }))
       .option('-b, --bar <value...>');
     program.parse(['--foo', '--foo'], { from: 'user' });
-    assert.deepEqual(program.opts().bar, 'implied');
+    assert.equal(program.opts().bar, 'implied');
   });
 
   test('when implied option has custom processing then custom processing not called', () => {

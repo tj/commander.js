@@ -19,9 +19,12 @@ describe('Option.choices()', () => {
     program.addOption(
       new commander.Option('--colour <shade>').choices(['red', 'blue']),
     );
-    assert.throws(() => {
-      program.parse(['--colour', 'orange'], { from: 'user' });
-    });
+    assert.throws(
+      () => {
+        program.parse(['--colour', 'orange'], { from: 'user' });
+      },
+      { code: 'commander.invalidArgument' },
+    );
   });
 
   describe('choices parameter is treated as readonly, per TypeScript declaration', () => {
@@ -41,16 +44,19 @@ describe('Option.choices()', () => {
       assert.deepEqual(param, original);
     });
 
-    test('when choices called and parameter changed the choices does not change', () => {
+    test('when choices called and parameter changed then accepted choices does not change', () => {
       const program = createTestCommand();
       const param = ['red', 'blue'];
       program.addOption(
         new commander.Option('--colour <shade>').choices(param),
       );
       param.push('orange');
-      assert.throws(() => {
-        program.parse(['--colour', 'orange'], { from: 'user' });
-      });
+      assert.throws(
+        () => {
+          program.parse(['--colour', 'orange'], { from: 'user' });
+        },
+        { code: 'commander.invalidArgument' },
+      );
     });
   });
 });

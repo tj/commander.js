@@ -98,7 +98,7 @@ describe('negative numbers', () => {
         );
       });
 
-      test(`when digit option defined and option-argument is %s then negative not consumed`, () => {
+      test(`when digit option defined and option-argument is ${value} then negative not consumed`, () => {
         const program = createTestCommand();
         program
           .option('-o, --optional [value]', 'optional option')
@@ -109,7 +109,7 @@ describe('negative numbers', () => {
         assert.equal(program.opts()['optional'], customConsume ? value : true);
       });
 
-      test(`when digit option defined and command-argument is %s then negative not consumed`, () => {
+      test(`when digit option defined and command-argument is ${value} then negative not consumed`, () => {
         const program = createTestCommand();
         program.argument('[value]').option('-9', 'register option using digit');
         const args = [value];
@@ -166,7 +166,9 @@ describe('negative numbers', () => {
         leafArgs = args;
       });
     const args = ['leaf', '-1'];
-    assert.throws(() => program.parse(args, { from: 'user' }));
+    assert.throws(() => program.parse(args, { from: 'user' }), {
+      code: 'commander.unknownOption',
+    });
   });
 
   test('when default command without digit option then negatives accepted', () => {
@@ -189,7 +191,9 @@ describe('negative numbers', () => {
       .option('-2')
       .argument('[value...]')
       .action(() => {});
-    assert.throws(() => program.parse(['-1'], { from: 'user' }));
+    assert.throws(() => program.parse(['-1'], { from: 'user' }), {
+      code: 'commander.unknownOption',
+    });
   });
 
   test('when program has subcommand and action handler then negative command-argument unsupported', () => {
@@ -198,6 +202,8 @@ describe('negative numbers', () => {
     const program = createTestCommand();
     program.argument('[value...]').action(() => {});
     program.command('leaf').action(() => {});
-    assert.throws(() => program.parse(['-1'], { from: 'user' }));
+    assert.throws(() => program.parse(['-1'], { from: 'user' }), {
+      code: 'commander.unknownOption',
+    });
   });
 });

@@ -86,7 +86,7 @@ describe('Command.storeOptionsAsProperties()', () => {
     program.option('--port <number>', 'port number', '80');
     assert.throws(() => {
       program.storeOptionsAsProperties();
-    });
+    }, /call \.storeOptionsAsProperties\(\) before adding options/);
   });
 
   test('when storeOptionsAsProperties() after setting option value then throw', () => {
@@ -94,6 +94,6 @@ describe('Command.storeOptionsAsProperties()', () => {
     program.setOptionValue('foo', 'bar');
     assert.throws(() => {
       program.storeOptionsAsProperties();
-    });
+    }, /call \.storeOptionsAsProperties\(\) before setting option values/);
   });
 });

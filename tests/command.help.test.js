@@ -90,7 +90,7 @@ Commands:
     const program = new commander.Command();
     assert.throws(() => {
       program.outputHelp((helpInformation) => 3);
-    });
+    }, /outputHelp callback must return a string or a Buffer/);
   });
 
   test('when command sets deprecated noHelp then not displayed in helpInformation', () => {

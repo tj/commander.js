@@ -72,5 +72,8 @@ export default defineConfig(
       'node-test': nodeTest,
     },
     extends: ['node-test/unopinionated'], // switch to recommended if like how unopinionated goes
+    rules: {
+      'node-test/no-constant-assertion': 'off', // getting false positives, opened issue, disable for now
+    },
   },
 );

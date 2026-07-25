@@ -39,9 +39,12 @@ describe('Command.configureOutput()', () => {
     const program = new commander.Command();
     program.exitOverride().version('1.2.3');
 
-    assert.throws(() => {
-      program.parse(['--version'], { from: 'user' });
-    });
+    assert.throws(
+      () => {
+        program.parse(['--version'], { from: 'user' });
+      },
+      { code: 'commander.version' },
+    );
 
     assert.equal(writeSpy.mock.callCount(), 1);
   });
@@ -55,9 +58,12 @@ describe('Command.configureOutput()', () => {
       .version('1.2.3')
       .configureOutput({ writeOut: customWrite });
 
-    assert.throws(() => {
-      program.parse(['--version'], { from: 'user' });
-    });
+    assert.throws(
+      () => {
+        program.parse(['--version'], { from: 'user' });
+      },
+      { code: 'commander.version' },
+    );
 
     assert.equal(writeSpy.mock.callCount(), 0);
     assert.equal(customWrite.mock.callCount(), 1);
@@ -284,9 +290,12 @@ describe('Command.configureOutput()', () => {
       outputError,
     });
 
-    assert.throws(() => {
-      program.parse(['--unknownOption'], { from: 'user' });
-    });
+    assert.throws(
+      () => {
+        program.parse(['--unknownOption'], { from: 'user' });
+      },
+      { code: 'commander.unknownOption' },
+    );
     assert.equal(
       outputError.mock.calls[0].arguments[0],
       "error: unknown option '--unknownOption'\n",
@@ -303,9 +312,12 @@ describe('Command.configureOutput()', () => {
     const program = new commander.Command();
     program.exitOverride().configureOutput({ writeErr, outputError });
 
-    assert.throws(() => {
-      program.parse(['--unknownOption'], { from: 'user' });
-    });
+    assert.throws(
+      () => {
+        program.parse(['--unknownOption'], { from: 'user' });
+      },
+      { code: 'commander.unknownOption' },
+    );
     assert.equal(
       outputError.mock.calls[0].arguments[0],
       "error: unknown option '--unknownOption'\n",

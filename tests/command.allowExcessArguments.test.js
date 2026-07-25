@@ -16,9 +16,12 @@ describe('Command.allowExcessArguments()', () => {
         const program = createTestCommand();
         configureCommand(program);
 
-        assert.throws(() => {
-          program.parse(['excess'], { from: 'user' });
-        });
+        assert.throws(
+          () => {
+            program.parse(['excess'], { from: 'user' });
+          },
+          { code: 'commander.excessArguments' },
+        );
       });
 
       test('when specify excess program argument and allowExcessArguments(false) then error', () => {
@@ -26,9 +29,12 @@ describe('Command.allowExcessArguments()', () => {
         configureCommand(program);
         program.allowExcessArguments(false);
 
-        assert.throws(() => {
-          program.parse(['excess'], { from: 'user' });
-        });
+        assert.throws(
+          () => {
+            program.parse(['excess'], { from: 'user' });
+          },
+          { code: 'commander.excessArguments' },
+        );
       });
 
       test('when specify excess program argument and allowExcessArguments() then no error', () => {
@@ -56,9 +62,12 @@ describe('Command.allowExcessArguments()', () => {
         const sub = program.command('sub');
         configureCommand(sub);
 
-        assert.throws(() => {
-          program.parse(['sub', 'excess'], { from: 'user' });
-        });
+        assert.throws(
+          () => {
+            program.parse(['sub', 'excess'], { from: 'user' });
+          },
+          { code: 'commander.excessArguments' },
+        );
       });
 
       test('when specify excess command argument and allowExcessArguments(false) then error', () => {
@@ -66,9 +75,12 @@ describe('Command.allowExcessArguments()', () => {
         const sub = program.command('sub').allowExcessArguments(false);
         configureCommand(sub);
 
-        assert.throws(() => {
-          program.parse(['sub', 'excess'], { from: 'user' });
-        });
+        assert.throws(
+          () => {
+            program.parse(['sub', 'excess'], { from: 'user' });
+          },
+          { code: 'commander.excessArguments' },
+        );
       });
 
       test('when specify expected arg and allowExcessArguments(false) then no error', () => {
@@ -86,9 +98,12 @@ describe('Command.allowExcessArguments()', () => {
         configureCommand(program);
         program.argument('<file>').allowExcessArguments(false);
 
-        assert.throws(() => {
-          program.parse(['file', 'excess'], { from: 'user' });
-        });
+        assert.throws(
+          () => {
+            program.parse(['file', 'excess'], { from: 'user' });
+          },
+          { code: 'commander.excessArguments' },
+        );
       });
 
       test('when specify excess after [arg] and allowExcessArguments(false) then error', () => {
@@ -96,9 +111,12 @@ describe('Command.allowExcessArguments()', () => {
         configureCommand(program);
         program.argument('[file]').allowExcessArguments(false);
 
-        assert.throws(() => {
-          program.parse(['file', 'excess'], { from: 'user' });
-        });
+        assert.throws(
+          () => {
+            program.parse(['file', 'excess'], { from: 'user' });
+          },
+          { code: 'commander.excessArguments' },
+        );
       });
 
       test('when specify args for [args...] and allowExcessArguments(false) then no error', () => {

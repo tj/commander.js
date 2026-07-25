@@ -5,9 +5,12 @@ import assert from 'node:assert/strict';
 describe('parsing unknown command', () => {
   test('when unknown argument in simple program then error', () => {
     const program = createTestCommand();
-    assert.throws(() => {
-      program.parse('node test.js unknown'.split(' '));
-    });
+    assert.throws(
+      () => {
+        program.parse('node test.js unknown'.split(' '));
+      },
+      { code: 'commander.excessArguments' },
+    );
   });
 
   test('when unknown command but action handler taking arg then no error', () => {
