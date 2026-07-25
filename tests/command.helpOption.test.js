@@ -73,7 +73,7 @@ describe('Command.helpOption()', () => {
     const program = new commander.Command();
     program.helpOption(false);
     const helpInformation = program.helpInformation();
-    assert(!helpInformation.includes('--help'));
+    assert.ok(!helpInformation.includes('--help'));
   });
 
   test('when helpOption(false) then --help is an unknown option', (t) => {
@@ -114,7 +114,7 @@ describe('Command.helpOption()', () => {
     program.helpOption(false);
     program.helpOption(true);
     const helpInformation = program.helpInformation();
-    assert(helpInformation.includes('--help'));
+    assert.ok(helpInformation.includes('--help'));
   });
 
   test('when helpOption(true) after customise then helpInformation still customised', () => {
@@ -122,6 +122,6 @@ describe('Command.helpOption()', () => {
     program.helpOption('--ASSIST');
     program.helpOption(true);
     const helpInformation = program.helpInformation();
-    assert(helpInformation.includes('--ASSIST'));
+    assert.ok(helpInformation.includes('--ASSIST'));
   });
 });

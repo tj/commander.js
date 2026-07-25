@@ -26,14 +26,14 @@ describe('parsing regression tests', () => {
   test('when specify subcommand and argument then program.args not empty', () => {
     const program = createProgram1032();
     program.parse(['node', 'test.js', 'doit', 'myid']);
-    assert(program.args.length > 0);
+    assert.ok(program.args.length > 0);
   });
 
   // https://github.com/tj/commander.js/issues/1032
   test('when specify subcommand and option and argument then program.args not empty', () => {
     const program = createProgram1032();
     program.parse(['node', 'test.js', 'doit', '--better', 'myid']);
-    assert(program.args.length > 0);
+    assert.ok(program.args.length > 0);
   });
 
   // https://github.com/tj/commander.js/issues/508
