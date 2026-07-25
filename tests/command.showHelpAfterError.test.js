@@ -121,8 +121,8 @@ describe('Command.showHelpAfterError(message)', () => {
   });
 });
 
-test('when Command.showHelpAfterError() and error and then shows full help', () => {
-  const writeMock = mock.fn();
+test('when Command.showHelpAfterError() and error and then shows full help', (t) => {
+  const writeMock = t.mock.fn();
   const program = new commander.Command();
   program
     .exitOverride()
