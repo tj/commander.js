@@ -71,9 +71,12 @@ export default defineConfig(
     plugins: {
       'node-test': nodeTest,
     },
-    extends: ['node-test/unopinionated'], // switch to recommended if like how unopinionated goes
+    extends: ['node-test/recommended'],
     rules: {
       'node-test/no-constant-assertion': 'off', // getting false positives, opened issue, disable for now
+      'node-test/prefer-test-context-assert': 'off', // use callback parameter t to access mock, but do not want to change assert
+      'node-test/no-useless-assertion': 'off', // use `assert.doesNotThrow()` as only assert in multiple tests (and get another error if no asserts)
+      'node-test/no-process-env-mutation': 'off', // going to revisit...
     },
   },
 );
