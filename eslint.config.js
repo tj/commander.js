@@ -74,9 +74,9 @@ export default defineConfig(
     extends: ['node-test/recommended'],
     rules: {
       'node-test/no-constant-assertion': 'off', // getting false positives, opened issue, disable for now
-      'node-test/prefer-test-context-assert': 'off', // use callback parameter t to access mock, but do not want to change assert
-      'node-test/no-useless-assertion': 'off', // use `assert.doesNotThrow()` as only assert in multiple tests (and get another error if no asserts)
-      'node-test/no-process-env-mutation': 'off', // going to revisit...
+      'node-test/prefer-test-context-assert': 'off', // we use callback parameter t to access mock, but do not want to change assert (as not automatically strict)
+      'node-test/no-useless-assertion': 'off', // we use `assert.doesNotThrow()` as only assert in multiple tests (and get another error if no asserts)
+      'node-test/no-process-env-mutation': 'off', // we do our own management which node-test does not recognise
     },
   },
 );
