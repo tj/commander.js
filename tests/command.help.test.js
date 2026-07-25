@@ -97,14 +97,14 @@ Commands:
     const program = new commander.Command();
     program.command('secret', 'secret description', { noHelp: true });
     const helpInformation = program.helpInformation();
-    assert(!helpInformation.includes('secret'));
+    assert.ok(!helpInformation.includes('secret'));
   });
 
   test('when command sets hidden then not displayed in helpInformation', () => {
     const program = new commander.Command();
     program.command('secret', 'secret description', { hidden: true });
     const helpInformation = program.helpInformation();
-    assert(!helpInformation.includes('secret'));
+    assert.ok(!helpInformation.includes('secret'));
   });
 
   test('when addCommand with hidden:true then not displayed in helpInformation', () => {
@@ -113,23 +113,23 @@ Commands:
     const program = new commander.Command();
     program.addCommand(secretCmd, { hidden: true });
     const helpInformation = program.helpInformation();
-    assert(!helpInformation.includes('secret'));
+    assert.ok(!helpInformation.includes('secret'));
   });
 
   test('when help short flag masked then not displayed in helpInformation', () => {
     const program = new commander.Command();
     program.option('-h, --host', 'select host');
     const helpInformation = program.helpInformation();
-    assert(helpInformation.includes(' -h, --host'));
-    assert(!helpInformation.includes(' -h, --help'));
-    assert(helpInformation.includes(' --help'));
+    assert.ok(helpInformation.includes(' -h, --host'));
+    assert.ok(!helpInformation.includes(' -h, --help'));
+    assert.ok(helpInformation.includes(' --help'));
   });
 
   test('when both help flags masked then not displayed in helpInformation', () => {
     const program = new commander.Command();
     program.option('-h, --help', 'custom');
     const helpInformation = program.helpInformation();
-    assert(!helpInformation.includes('display help'));
+    assert.ok(!helpInformation.includes('display help'));
   });
 
   test('when call .help then output on stdout', (t) => {
@@ -169,15 +169,15 @@ Commands:
     // No custom options, no version option, no help option
     program.helpOption(false);
     const helpInformation = program.helpInformation();
-    assert(!helpInformation.includes('Options'));
+    assert.ok(!helpInformation.includes('Options'));
   });
 
   test('when negated option then option included in helpInformation', () => {
     const program = new commander.Command();
     program.option('-C, --no-colour', 'colourless');
     const helpInformation = program.helpInformation();
-    assert(helpInformation.includes('--no-colour'));
-    assert(helpInformation.includes('colourless'));
+    assert.ok(helpInformation.includes('--no-colour'));
+    assert.ok(helpInformation.includes('colourless'));
   });
 
   test('when option.hideHelp() then option not included in helpInformation', () => {
@@ -186,7 +186,7 @@ Commands:
       new commander.Option('-s,--secret', 'secret option').hideHelp(),
     );
     const helpInformation = program.helpInformation();
-    assert(!helpInformation.includes('secret'));
+    assert.ok(!helpInformation.includes('secret'));
   });
 
   test('when option.hideHelp(true) then option not included in helpInformation', () => {
@@ -195,7 +195,7 @@ Commands:
       new commander.Option('-s,--secret', 'secret option').hideHelp(true),
     );
     const helpInformation = program.helpInformation();
-    assert(!helpInformation.includes('secret'));
+    assert.ok(!helpInformation.includes('secret'));
   });
 
   test('when option.hideHelp(false) then option included in helpInformation', () => {
@@ -204,14 +204,14 @@ Commands:
       new commander.Option('-s,--secret', 'secret option').hideHelp(false),
     );
     const helpInformation = program.helpInformation();
-    assert(helpInformation.includes('secret'));
+    assert.ok(helpInformation.includes('secret'));
   });
 
   test('when option has default value then default included in helpInformation', () => {
     const program = new commander.Command();
     program.option('-p, --port <portNumber>', 'port number', 80);
     const helpInformation = program.helpInformation();
-    assert(helpInformation.includes('(default: 80)'));
+    assert.ok(helpInformation.includes('(default: 80)'));
   });
 
   test('when option has default value description then default description included in helpInformation', () => {
@@ -223,7 +223,7 @@ Commands:
       ),
     );
     const helpInformation = program.helpInformation();
-    assert(helpInformation.includes('(default: home)'));
+    assert.ok(helpInformation.includes('(default: home)'));
   });
 
   test('when option has choices then choices included in helpInformation', () => {
@@ -232,7 +232,7 @@ Commands:
       new commander.Option('-c, --colour <colour>').choices(['red', 'blue']),
     );
     const helpInformation = program.helpInformation();
-    assert(helpInformation.includes('(choices: "red", "blue")'));
+    assert.ok(helpInformation.includes('(choices: "red", "blue")'));
   });
 
   test('when option has choices and default then both included in helpInformation', () => {
@@ -243,7 +243,7 @@ Commands:
         .default('red'),
     );
     const helpInformation = program.helpInformation();
-    assert(
+    assert.ok(
       helpInformation.includes('(choices: "red", "blue", default: "red")'),
     );
   });
@@ -252,7 +252,7 @@ Commands:
     const program = new commander.Command();
     program.name('foo').argument('<file>');
     const helpInformation = program.helpInformation();
-    assert(helpInformation.includes('Usage: foo [options] <file>'));
+    assert.ok(helpInformation.includes('Usage: foo [options] <file>'));
   });
 
   test('when argument described then included in helpInformation', () => {
@@ -301,7 +301,7 @@ Commands:
       ]),
     );
     const helpInformation = program.helpInformation();
-    assert(helpInformation.includes('(choices: "red", "blue")'));
+    assert.ok(helpInformation.includes('(choices: "red", "blue")'));
   });
 
   test('when argument has choices and default then both included in helpInformation', () => {
@@ -312,7 +312,7 @@ Commands:
         .default('red'),
     );
     const helpInformation = program.helpInformation();
-    assert(
+    assert.ok(
       helpInformation.includes('(choices: "red", "blue", default: "red")'),
     );
   });
