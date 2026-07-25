@@ -15,7 +15,7 @@ import assert from 'node:assert/strict';
 const testOrSkipOnWindows = process.platform === 'win32' ? test.skip : test;
 const pm = path.join(import.meta.dirname, './fixtures/pm');
 
-describe('executable subcommand lookup ', () => {
+describe('executable subcommand lookup', () => {
   test('when subcommand file missing then error', () => {
     return execFileAsync('node', [pm, 'list']).catch((err) => {
       if (process.platform === 'win32') {

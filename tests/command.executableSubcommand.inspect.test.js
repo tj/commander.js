@@ -15,7 +15,7 @@ const inspectCommand = path.join(
   'inspect.js',
 );
 
-describe('executable subcommand support for --inspect ', () => {
+describe('executable subcommand support for --inspect', () => {
   test('when execArgv empty then spawn execArgs empty', async () => {
     const { stdout } = await execFileAsync('node', [inspectCommand, 'sub']);
     assert.equal(stdout, '[]\n');
