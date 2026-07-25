@@ -4,10 +4,10 @@ import assert from 'node:assert/strict';
 
 describe('registering clashing subcommands', () => {
   test('when command name conflicts with existing name then throw', () => {
+    const program = new Command();
+    program.command('one');
     assert.throws(
       () => {
-        const program = new Command();
-        program.command('one');
         program.command('one');
       },
       { message: /cannot add command/ },
@@ -15,10 +15,10 @@ describe('registering clashing subcommands', () => {
   });
 
   test('when command name conflicts with existing alias then throw', () => {
+    const program = new Command();
+    program.command('one').alias('1');
     assert.throws(
       () => {
-        const program = new Command();
-        program.command('one').alias('1');
         program.command('1');
       },
       { message: /cannot add command/ },
@@ -26,10 +26,10 @@ describe('registering clashing subcommands', () => {
   });
 
   test('when command alias conflicts with existing name then throw', () => {
+    const program = new Command();
+    program.command('one');
     assert.throws(
       () => {
-        const program = new Command();
-        program.command('one');
         program.command('1').alias('one');
       },
       { message: /cannot add alias/ },
@@ -37,10 +37,10 @@ describe('registering clashing subcommands', () => {
   });
 
   test('when command alias conflicts with existing alias then throw', () => {
+    const program = new Command();
+    program.command('one').alias('1');
     assert.throws(
       () => {
-        const program = new Command();
-        program.command('one').alias('1');
         program.command('unity').alias('1');
       },
       { message: /cannot add alias/ },
@@ -48,10 +48,10 @@ describe('registering clashing subcommands', () => {
   });
 
   test('when .addCommand name conflicts with existing name then throw', () => {
+    const program = new Command();
+    program.command('one');
     assert.throws(
       () => {
-        const program = new Command();
-        program.command('one');
         program.addCommand(new Command('one'));
       },
       { message: /cannot add command/ },
@@ -59,10 +59,10 @@ describe('registering clashing subcommands', () => {
   });
 
   test('when .addCommand alias conflicts with existing name then throw', () => {
+    const program = new Command();
+    program.command('one');
     assert.throws(
       () => {
-        const program = new Command();
-        program.command('one');
         program.addCommand(new Command('unity').alias('one'));
       },
       { message: /cannot add command/ },
