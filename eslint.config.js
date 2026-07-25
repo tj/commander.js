@@ -73,10 +73,10 @@ export default defineConfig(
     },
     extends: ['node-test/recommended'],
     rules: {
-      'node-test/no-constant-assertion': 'off', // getting false positives, opened issue, disable for now
-      'node-test/prefer-test-context-assert': 'off', // we use callback parameter t to access mock, but do not want to change assert (as not automatically strict)
-      'node-test/no-useless-assertion': 'off', // we use `assert.doesNotThrow()` as only assert in multiple tests (and get another error if no asserts)
-      'node-test/no-process-env-mutation': 'off', // we do our own management which node-test does not recognise
+      'node-test/prefer-test-context-assert': 'off', // we use callback parameter t to generate mocks, but do not want to use t.assertX (as t.assertX not automatically strict)
+      'node-test/no-useless-assertion': 'off', // we use `assert.doesNotThrow()` as only assert in multiple tests (so removing that assert triggers a different lint error)
+      'node-test/no-process-env-mutation': 'off', // we manage env in ways node-test does not recognise
+      // 'node-test/require-top-level-describe': 'on',
     },
   },
 );
