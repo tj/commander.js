@@ -14,6 +14,7 @@ They are currently still available for backwards compatibility, but should not b
     - [InvalidOptionArgumentError](#invalidoptionargumenterror)
     - [cmd.\_args](#cmd_args)
     - [.addHelpCommand(string|boolean|undefined)](#addhelpcommandstringbooleanundefined)
+    - [.storeOptionsAsProperties()](#storeoptionsasproperties)
   - [Removed](#removed)
     - [Short option flag longer than a single character](#short-option-flag-longer-than-a-single-character)
     - [Default import of global Command object](#default-import-of-global-command-object)
@@ -207,6 +208,37 @@ program.addHelpCommand(new Command('assist').argument('[command]').description('
 
 - Removed from README in Commander v12.
 - Deprecated from Commander v12.
+
+### .storeOptionsAsProperties()
+
+Before Commander 7, the option values were stored as properties on the command,
+and the command was passed to the action handler after the command-arguments.
+You could revert to the old behaviour to run unmodified legacy code by using `.storeOptionsAsProperties()`.
+
+```js
+program.storeOptionsAsProperties();
+program.option('-d, --debug');
+program.parse();
+// Legacy code
+if (program.debug) showDiagnostics();
+```
+
+Since Commander 7, the properies are stored separately. The options are available
+from a command using `.opts()`. The action handler is passed the options after the command-arguments,
+followed by the command.
+
+```js
+// New code
+const options = program.opts();
+if (options.debug) showDiagnostics();
+```
+
+See more in the Migration Tips for Commander v7.0.0  in the [CHANGELOG](../CHANGELOG.md#700-2021-01-15)
+or online in the [Release Notes](https://github.com/tj/commander.js/releases/tag/v7.0.0).
+
+- Removed from README in Commander v15.
+- Deprecated from Commander v15.
+
 
 ## Removed
 

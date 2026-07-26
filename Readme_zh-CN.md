@@ -43,7 +43,6 @@
   - [零碎知识](#%e9%9b%b6%e7%a2%8e%e7%9f%a5%e8%af%86)
     - [.parse() 和 .parseAsync()](#parse-%e5%92%8c-parseasync)
     - [解析配置](#%E8%A7%A3%E6%9E%90%E9%85%8D%E7%BD%AE)
-    - [作为属性的遗留选项](#%E4%BD%9C%E4%B8%BA%E5%B1%9E%E6%80%A7%E7%9A%84%E9%81%97%E7%95%99%E9%80%89%E9%A1%B9)
     - [TypeScript](#typescript)
     - [createCommand()](#createCommand)
     - [Node 选项，如 --harmony](#node-%E9%80%89%E9%A1%B9%EF%BC%8C%E5%A6%82---harmony)
@@ -952,22 +951,6 @@ program arg --port=80
 默认情况下，使用未知选项会提示错误。如要将未知选项视作普通命令参数，并继续处理其他部分，可以使用`.allowUnknownOption()`。这样可以混用已知和未知的选项。
 
 默认情况下，传入过多的命令参数并不会报错。可以使用`.allowExcessArguments(false)`来启用这一检查。
-
-### 作为属性的遗留选项
-
-在 Commander 7 以前，选项的值是作为属性存储在命令对象上的。
-这种处理方式便于实现，但缺点在于，选项可能会与`Command`的已有属性相冲突。通过使用`.storeOptionsAsProperties()`，可以恢复到这种旧的处理方式，并可以不加改动地继续运行遗留代码。
-
-```js
-program
-  .storeOptionsAsProperties()
-  .option('-d, --debug')
-  .action((commandAndOptions) => {
-    if (commandAndOptions.debug) {
-      console.error(`Called ${commandAndOptions.name()}`);
-    }
-  });
-```
 
 ### TypeScript
 

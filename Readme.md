@@ -44,7 +44,6 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
   - [Bits and pieces](#bits-and-pieces)
     - [.parse() and .parseAsync()](#parse-and-parseasync)
     - [Parsing Configuration](#parsing-configuration)
-    - [Legacy options as properties](#legacy-options-as-properties)
     - [TypeScript](#typescript)
     - [createCommand()](#createcommand)
     - [Node options such as `--harmony`](#node-options-such-as---harmony)
@@ -1015,25 +1014,6 @@ By default, the option processing shows an error for an unknown option. To have 
 
 By default, the argument processing displays an error for more command-arguments than expected.
 To suppress the error for excess arguments, use `.allowExcessArguments()`.
-
-### Legacy options as properties
-
-Before Commander 7, the option values were stored as properties on the command.
-This was convenient to code, but the downside was possible clashes with
-existing properties of `Command`. 
-
-You can revert to the old behaviour to run unmodified legacy code by using `.storeOptionsAsProperties()`.
-
-```js
-program
-  .storeOptionsAsProperties()
-  .option('-d, --debug')
-  .action((commandAndOptions) => {
-    if (commandAndOptions.debug) {
-      console.error(`Called ${commandAndOptions.name()}`);
-    }
-  });
-```
 
 ### TypeScript
 
