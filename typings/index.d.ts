@@ -710,10 +710,13 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
+  /** @deprecated since v15 */
   storeOptionsAsProperties<T extends OptionValues>(): this & T;
+  /** @deprecated since v15 */
   storeOptionsAsProperties<T extends OptionValues>(
     storeAsProperties: true,
   ): this & T;
+  /** @deprecated since v15 */
   storeOptionsAsProperties(storeAsProperties?: boolean): this;
 
   /**
