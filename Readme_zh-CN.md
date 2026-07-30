@@ -52,7 +52,6 @@
     - [重写退出和输出](#%E9%87%8D%E5%86%99%E9%80%80%E5%87%BA%E5%92%8C%E8%BE%93%E5%87%BA)
     - [其他文档](#%E5%85%B6%E4%BB%96%E6%96%87%E6%A1%A3)
   - [支持](#%e6%94%af%e6%8c%81)
-    - [企业使用 Commander](#%e4%bc%81%e4%b8%9a%e4%bd%bf%e7%94%a8-commander)
 
 关于本文档中使用的术语，请见[术语表](./docs/zh-CN/%E6%9C%AF%E8%AF%AD%E8%A1%A8.md)
 
@@ -1064,9 +1063,3 @@ program
 （使用更低版本 Node.js 的用户建议安装更低版本的 Commander）
 
 社区支持请访问项目的 [Issues](https://github.com/tj/commander.js/issues)。
-
-### 企业使用 Commander
-
-作为 Tidelift 订阅的一部分。
-
-Commander 和很多其他包的维护者已与 Tidelift 合作，面向企业提供开源依赖的商业支持与维护。企业可以向相关依赖包的维护者支付一定的费用，帮助企业节省时间，降低风险，改进代码运行情况。[了解更多](https://tidelift.com/subscription/pkg/npm-commander?utm_source=npm-commander&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
