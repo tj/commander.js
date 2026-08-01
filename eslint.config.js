@@ -76,7 +76,7 @@ export default defineConfig(
       'node-test/prefer-test-context-assert': 'off', // we use callback parameter t to generate mocks, but do not want to use t.assertX (as t.assertX not automatically strict)
       'node-test/no-useless-assertion': 'off', // we use `assert.doesNotThrow()` as only assert in multiple tests (so removing that assert triggers a different lint error)
       'node-test/no-process-env-mutation': 'off', // we manage env in ways node-test does not recognise
-      'node-test/require-hook': 'error', // Temp, was using pattern for for-each on describe.
+      'node-test/require-hook': 'error', // Detect code, especially loops with embedded tests, at top level of describe as runs at file load time.
     },
   },
 );
