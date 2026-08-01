@@ -8,10 +8,10 @@ const pmPath = path.join(import.meta.dirname, 'fixtures', 'pm');
 // Disabling some tests on Windows as:
 // "Windows does not support sending signals"
 //  https://nodejs.org/api/process.html#process_signal_events
-const describeOrSkipOnWindows =
-  process.platform === 'win32' ? describe.skip : describe;
+const isWindows = process.platform === 'win32';
 
-describeOrSkipOnWindows('executable subcommand signals', () => {
+// eslint-disable-next-line node-test/no-skip-test
+describe('executable subcommand signals', { skip: isWindows }, () => {
   describe('signal forwarding tests', () => {
     const signals = ['SIGINT', 'SIGHUP', 'SIGTERM', 'SIGUSR1', 'SIGUSR2'];
     for (const signal of signals) {
