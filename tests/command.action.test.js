@@ -35,9 +35,9 @@ describe('Command.action()', () => {
     assert.deepEqual(program.args, ['info', 'my-file']);
   });
 
-  describe('when .action on program with required argument and argument supplied then action called', () => {
-    getTestCases('<file>').forEach(([methodName, program]) => {
-      test(`via ${methodName}`, (t) => {
+  test('when .action on program with required argument and argument supplied then action called', async (t) => {
+    for (const [methodName, program] of getTestCases('<file>')) {
+      await t.test(`via ${methodName}`, (t) => {
         const actionMock = t.mock.fn();
         program.action(actionMock);
         program.parse(['node', 'test', 'my-file']);
@@ -46,12 +46,12 @@ describe('Command.action()', () => {
         assert.equal(callArgs[1], program.opts());
         assert.equal(callArgs[2], program);
       });
-    });
+    }
   });
 
-  describe('when .action on program with required argument and argument not supplied then action not called', () => {
-    getTestCases('<file>').forEach(([methodName, program]) => {
-      test(`via ${methodName}`, (t) => {
+  test('when .action on program with required argument and argument not supplied then action not called', async (t) => {
+    for (const [methodName, program] of getTestCases('<file>')) {
+      await t.test(`via ${methodName}`, (t) => {
         const actionMock = t.mock.fn();
         program.action(actionMock);
         assert.throws(
@@ -62,7 +62,7 @@ describe('Command.action()', () => {
         );
         assert.equal(actionMock.mock.callCount(), 0);
       });
-    });
+    }
   });
 
   // Changes made in #729 to call program action handler
@@ -76,9 +76,9 @@ describe('Command.action()', () => {
     assert.equal(callArgs[1], program);
   });
 
-  describe('when .action on program with optional argument supplied then action called', () => {
-    getTestCases('[file]').forEach(([methodName, program]) => {
-      test(`via ${methodName}`, (t) => {
+  test('when .action on program with optional argument supplied then action called', async (t) => {
+    for (const [methodName, program] of getTestCases('[file]')) {
+      await t.test(`via ${methodName}`, (t) => {
         const actionMock = t.mock.fn();
         program.action(actionMock);
         program.parse(['node', 'test', 'my-file']);
@@ -87,12 +87,12 @@ describe('Command.action()', () => {
         assert.equal(callArgs[1], program.opts());
         assert.equal(callArgs[2], program);
       });
-    });
+    }
   });
 
-  describe('when .action on program without optional argument supplied then action called', () => {
-    getTestCases('[file]').forEach(([methodName, program]) => {
-      test(`via ${methodName}`, (t) => {
+  test('when .action on program without optional argument supplied then action called', async (t) => {
+    for (const [methodName, program] of getTestCases('[file]')) {
+      await t.test(`via ${methodName}`, (t) => {
         const actionMock = t.mock.fn();
         program.action(actionMock);
         program.parse(['node', 'test']);
@@ -101,12 +101,12 @@ describe('Command.action()', () => {
         assert.equal(callArgs[1], program.opts());
         assert.equal(callArgs[2], program);
       });
-    });
+    }
   });
 
-  describe('when .action on program with optional argument and subcommand and program argument then program action called', () => {
-    getTestCases('[file]').forEach(([methodName, program]) => {
-      test(`via ${methodName}`, (t) => {
+  test('when .action on program with optional argument and subcommand and program argument then program action called', async (t) => {
+    for (const [methodName, program] of getTestCases('[file]')) {
+      await t.test(`via ${methodName}`, (t) => {
         const actionMock = t.mock.fn();
         program.action(actionMock);
         program.command('subcommand');
@@ -118,13 +118,13 @@ describe('Command.action()', () => {
         assert.equal(callArgs[1], program.opts());
         assert.equal(callArgs[2], program);
       });
-    });
+    }
   });
 
   // Changes made in #1062 to allow this case
-  describe('when .action on program with optional argument and subcommand and no program argument then program action called', () => {
-    getTestCases('[file]').forEach(([methodName, program]) => {
-      test(`via ${methodName}`, (t) => {
+  test('when .action on program with optional argument and subcommand and no program argument then program action called', async (t) => {
+    for (const [methodName, program] of getTestCases('[file]')) {
+      await t.test(`via ${methodName}`, (t) => {
         const actionMock = t.mock.fn();
         program.action(actionMock);
         program.command('subcommand');
@@ -136,7 +136,7 @@ describe('Command.action()', () => {
         assert.equal(callArgs[1], program.opts());
         assert.equal(callArgs[2], program);
       });
-    });
+    }
   });
 
   test('when action is async then can await parseAsync', async () => {

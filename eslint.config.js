@@ -77,6 +77,7 @@ export default defineConfig(
       'node-test/no-useless-assertion': 'off', // we use `assert.doesNotThrow()` as only assert in multiple tests (so removing that assert triggers a different lint error)
       'node-test/no-process-env-mutation': 'off', // we manage env in ways node-test does not recognise
       'node-test/require-top-level-describe': 'error', // Enforce top-level describe for providing context in test output. Disable by hand on single test files.
+      'node-test/require-hook': 'error', // Temp, was using pattern for for-each on describe.
     },
   },
 );
