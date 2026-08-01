@@ -32,7 +32,7 @@ function getSuggestion(program, arg) {
 }
 
 describe('Command.showSuggestionAfterError()', () => {
-  describe('command suggestions', () => {
+  test('command suggestions', async (t) => {
     const commandSuggestionTable = [
       ['yyy', ['zzz'], null, 'none similar'],
       ['a', ['b'], null, 'one edit away but not similar'],
@@ -59,18 +59,24 @@ describe('Command.showSuggestionAfterError()', () => {
         'only closest of different edit distances',
       ],
     ];
-    commandSuggestionTable.forEach(
-      ([arg, commandNames, expected, description]) => {
-        test(`when cli of ${arg} and commands ${JSON.stringify(commandNames)} then suggest ${expected} because ${description}`, () => {
+    for (const [
+      arg,
+      commandNames,
+      expected,
+      description,
+    ] of commandSuggestionTable) {
+      await t.test(
+        `when cli of ${arg} and commands ${JSON.stringify(commandNames)} then suggest ${expected} because ${description}`,
+        () => {
           const program = new Command();
           commandNames.forEach((name) => {
             program.command(name);
           });
           const suggestion = getSuggestion(program, arg);
           assert.equal(suggestion, expected);
-        });
-      },
-    );
+        },
+      );
+    }
   });
 
   test('when similar alias then suggest alias', () => {
@@ -141,7 +147,7 @@ describe('Command.showSuggestionAfterError()', () => {
     assert.equal(suggestion, null);
   });
 
-  describe('option suggestions', () => {
+  test('option suggestions', async (t) => {
     const optionSuggestionTable = [
       ['--yyy', ['--zzz'], null, 'none similar'],
       ['--a', ['--b'], null, 'one edit away but not similar'],
@@ -174,18 +180,24 @@ describe('Command.showSuggestionAfterError()', () => {
       ],
     ];
 
-    optionSuggestionTable.forEach(
-      ([arg, commandNames, expected, description]) => {
-        test(`when cli of ${arg} and options ${JSON.stringify(commandNames)} then suggest ${expected} because ${description}`, () => {
+    for (const [
+      arg,
+      commandNames,
+      expected,
+      description,
+    ] of optionSuggestionTable) {
+      await t.test(
+        `when cli of ${arg} and options ${JSON.stringify(commandNames)} then suggest ${expected} because ${description}`,
+        () => {
           const program = new Command();
           commandNames.forEach((name) => {
             program.option(name);
           });
           const suggestion = getSuggestion(program, arg);
           assert.equal(suggestion, expected);
-        });
-      },
-    );
+        },
+      );
+    }
   });
 
   test('when no options then no suggestion', () => {
