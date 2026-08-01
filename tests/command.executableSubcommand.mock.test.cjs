@@ -16,13 +16,12 @@ function makeSystemError(code) {
   return err;
 }
 
-// Suppress false positive warnings due to use of testOrSkipOnWindows
-
-const testOrSkipOnWindows = process.platform === 'win32' ? test.skip : test;
+const isWindows = process.platform === 'win32';
 
 describe('executable subcommand missing file handling ', () => {
-  testOrSkipOnWindows(
+  test(
     'when subcommand executable missing (ENOENT) then throw custom message',
+    { skip: isWindows },
     (t) => {
       // If the command is not found, we show a custom error with an explanation and offer
       // some advice for possible fixes.
@@ -40,8 +39,9 @@ describe('executable subcommand missing file handling ', () => {
     },
   );
 
-  testOrSkipOnWindows(
+  test(
     'when subcommand executable not executable (EACCES) then throw custom message',
+    { skip: isWindows },
     (t) => {
       const mockProcess = new EventEmitter();
       t.mock.method(childProcess, 'spawn', () => {

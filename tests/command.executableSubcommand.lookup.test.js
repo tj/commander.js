@@ -10,9 +10,7 @@ import assert from 'node:assert/strict';
 // This file does end-to-end tests actually spawning program.
 // See also command.executableSubcommand.search.test.js
 
-// Suppress false positive warnings due to use of testOrSkipOnWindows
-
-const testOrSkipOnWindows = process.platform === 'win32' ? test.skip : test;
+const isWindows = process.platform === 'win32';
 const pm = path.join(import.meta.dirname, './fixtures/pm');
 
 describe('executable subcommand lookup', () => {
@@ -68,8 +66,10 @@ describe('executable subcommand lookup', () => {
     assert.equal(stdout, 'publish\n');
   });
 
-  testOrSkipOnWindows(
+  test(
     'when subcommand file is symlink then lookup succeeds',
+    // eslint-disable-next-line node-test/no-skip-test
+    { skip: isWindows },
     async () => {
       const pmlink = path.join(import.meta.dirname, 'fixtures', 'pmlink');
       const { stdout } = await execFileAsync('node', [pmlink, 'install']);
@@ -77,8 +77,10 @@ describe('executable subcommand lookup', () => {
     },
   );
 
-  testOrSkipOnWindows(
+  test(
     'when subcommand file is double symlink then lookup succeeds',
+    // eslint-disable-next-line node-test/no-skip-test
+    { skip: isWindows },
     async () => {
       const pmlink = path.join(
         import.meta.dirname,
