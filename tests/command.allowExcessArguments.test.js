@@ -4,7 +4,6 @@ import assert from 'node:assert/strict';
 
 // Not testing output, just testing whether an error is detected.
 
-// eslint-disable-next-line node-test/require-top-level-describe
 test('Command.allowExcessArguments()', async (t) => {
   const cases = [true, false];
   for (const hasActionHandler of cases) {

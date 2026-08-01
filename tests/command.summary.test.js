@@ -2,7 +2,6 @@ import * as commander from '../index.js';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-// eslint-disable-next-line node-test/require-top-level-describe
 test('Command.summary(): when set summary then get summary', () => {
   const program = new commander.Command();
   const summary = 'abcdef';

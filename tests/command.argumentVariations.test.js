@@ -5,7 +5,6 @@ import assert from 'node:assert/strict';
 // Do some low-level checks that the multiple ways of specifying command arguments produce same internal result,
 // and not exhaustively testing all methods elsewhere.
 
-// eslint-disable-next-line node-test/require-top-level-describe
 test('Command arguments added using different methods', async (t) => {
   await t.test('when add "<arg>" then argument required', async (t) => {
     for (const [methodName, cmd] of getSingleArgCases('<explicit-required>')) {
