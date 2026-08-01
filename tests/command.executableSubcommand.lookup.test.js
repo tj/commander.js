@@ -128,4 +128,30 @@ describe('executable subcommand lookup ', () => {
     const { stdout } = await execFileAsync('node', [pm, 'cache', 'clear']);
     assert.equal(stdout, 'cache-clear\n');
   });
+
+  test('when executable subcommand with -- then -- passed to subcommand', async () => {
+    const { stdout } = await execFileAsync('node', [
+      pm,
+      'echo',
+      '--',
+      '--not-an-option',
+    ]);
+    assert.equal(stdout, '["--","--not-an-option"]\n');
+  });
+
+  test('when executable subcommand with args before and after -- then -- passed to subcommand', async () => {
+    const { stdout } = await execFileAsync('node', [
+      pm,
+      'echo',
+      'before',
+      '--',
+      '--after',
+    ]);
+    assert.equal(stdout, '["before","--","--after"]\n');
+  });
+
+  test('when executable subcommand with bare -- then -- passed to subcommand', async () => {
+    const { stdout } = await execFileAsync('node', [pm, 'echo', '--']);
+    assert.equal(stdout, '["--"]\n');
+  });
 });

@@ -31,4 +31,39 @@ describe('end of options delimiter "--"', () => {
     program.parse(['node', 'test', '--', 'cmd', '--', '--arg']);
     assert.deepEqual(program.args, ['cmd', '--', '--arg']);
   });
+
+  test('when in-process subcommand has -- then option-like operand is treated as argument', () => {
+    const program = new commander.Command();
+    const sub = program.command('sub');
+    sub.argument('[input]').action((input) => {
+      assert.equal(input, '--not-an-option');
+    });
+    program.parse(['node', 'test', 'sub', '--', '--not-an-option']);
+  });
+
+  test('when nested in-process subcommand has -- then option-like operand is treated as argument', () => {
+    const program = new commander.Command();
+    const sub = program.command('sub');
+    const nested = sub.command('nested');
+    nested.argument('[input]').action((input) => {
+      assert.equal(input, '--not-an-option');
+    });
+    program.parse([
+      'node',
+      'test',
+      'sub',
+      'nested',
+      '--',
+      '--not-an-option',
+    ]);
+  });
+
+  test('when in-process subcommand has args before and after -- then all args passed correctly', () => {
+    const program = new commander.Command();
+    const sub = program.command('sub');
+    sub.argument('[args...]').action((args) => {
+      assert.deepEqual(args, ['before', '--after']);
+    });
+    program.parse(['node', 'test', 'sub', 'before', '--', '--after']);
+  });
 });
