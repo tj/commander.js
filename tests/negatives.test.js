@@ -3,8 +3,8 @@ import { createTestCommand } from './testHelpers.js';
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
 
-test('negative numbers', async (t) => {
-  await t.test('negative numbers in args', async (t) => {
+describe('negative numbers', () => {
+  test('negative numbers in args', async (t) => {
     // boolean is whether is a consumable argument when negative numbers allowed
     const negativeNumbers = [
       ['-.1', true],
@@ -152,102 +152,87 @@ test('negative numbers', async (t) => {
     }
   });
 
-  await t.test(
-    'when complex example with negative numbers then all consumed',
-    () => {
-      const program = new Command();
-      program
-        .option('-o [value]', 'optional')
-        .option('-m <value>', 'required option-argument')
-        .option('-O [value...]', 'optional')
-        .option('-M <value...>', 'required option-argument')
-        .argument('[value...]', 'argument');
-      const args = [
-        '-10',
-        '-O',
-        '-40',
-        '-41',
-        '-M',
-        '-50',
-        '-51',
-        '-o',
-        '-20',
-        '-m',
-        '-30',
-        '-11',
-      ];
-      program.parse(args, { from: 'user' });
-      assert.deepEqual(program.opts(), {
-        o: '-20',
-        m: '-30',
-        O: ['-40', '-41'],
-        M: ['-50', '-51'],
-      });
-      assert.deepEqual(program.args, ['-10', '-11']);
-    },
-  );
+  test('when complex example with negative numbers then all consumed', () => {
+    const program = new Command();
+    program
+      .option('-o [value]', 'optional')
+      .option('-m <value>', 'required option-argument')
+      .option('-O [value...]', 'optional')
+      .option('-M <value...>', 'required option-argument')
+      .argument('[value...]', 'argument');
+    const args = [
+      '-10',
+      '-O',
+      '-40',
+      '-41',
+      '-M',
+      '-50',
+      '-51',
+      '-o',
+      '-20',
+      '-m',
+      '-30',
+      '-11',
+    ];
+    program.parse(args, { from: 'user' });
+    assert.deepEqual(program.opts(), {
+      o: '-20',
+      m: '-30',
+      O: ['-40', '-41'],
+      M: ['-50', '-51'],
+    });
+    assert.deepEqual(program.args, ['-10', '-11']);
+  });
 
-  await t.test(
-    'when program has digit option then negatives not allowed in leaf command',
-    () => {
-      const program = createTestCommand();
-      program.option('-2', 'double option');
-      let leafArgs;
-      program
-        .command('leaf')
-        .argument('[value...]')
-        .action((args) => {
-          leafArgs = args;
-        });
-      const args = ['leaf', '-1'];
-      assert.throws(() => program.parse(args, { from: 'user' }), {
-        code: 'commander.unknownOption',
+  test('when program has digit option then negatives not allowed in leaf command', () => {
+    const program = createTestCommand();
+    program.option('-2', 'double option');
+    let leafArgs;
+    program
+      .command('leaf')
+      .argument('[value...]')
+      .action((args) => {
+        leafArgs = args;
       });
-    },
-  );
+    const args = ['leaf', '-1'];
+    assert.throws(() => program.parse(args, { from: 'user' }), {
+      code: 'commander.unknownOption',
+    });
+  });
 
-  await t.test(
-    'when default command without digit option then negatives accepted',
-    () => {
-      const program = new Command();
-      let leafArgs;
-      program
-        .command('leaf', { isDefault: true })
-        .argument('[value...]')
-        .action((args) => {
-          leafArgs = args;
-        });
-      program.parse(['-1'], { from: 'user' });
-      assert.deepEqual(leafArgs, ['-1']);
-    },
-  );
-
-  await t.test(
-    'when default command with digit option then negative throws',
-    () => {
-      const program = createTestCommand();
-      program
-        .command('leaf', { isDefault: true })
-        .option('-2')
-        .argument('[value...]')
-        .action(() => {});
-      assert.throws(() => program.parse(['-1'], { from: 'user' }), {
-        code: 'commander.unknownOption',
+  test('when default command without digit option then negatives accepted', () => {
+    const program = new Command();
+    let leafArgs;
+    program
+      .command('leaf', { isDefault: true })
+      .argument('[value...]')
+      .action((args) => {
+        leafArgs = args;
       });
-    },
-  );
+    program.parse(['-1'], { from: 'user' });
+    assert.deepEqual(leafArgs, ['-1']);
+  });
 
-  await t.test(
-    'when program has subcommand and action handler then negative command-argument unsupported',
-    () => {
-      // Known limitation in parsing. Only allowed negative command-arguments in leaf commands
-      // to minimise changes to parsing when added support for negative numbers.
-      const program = createTestCommand();
-      program.argument('[value...]').action(() => {});
-      program.command('leaf').action(() => {});
-      assert.throws(() => program.parse(['-1'], { from: 'user' }), {
-        code: 'commander.unknownOption',
-      });
-    },
-  );
+  test('when default command with digit option then negative throws', () => {
+    const program = createTestCommand();
+    program
+      .command('leaf', { isDefault: true })
+      .option('-2')
+      .argument('[value...]')
+      .action(() => {});
+    assert.throws(() => program.parse(['-1'], { from: 'user' }), {
+      code: 'commander.unknownOption',
+    });
+  });
+
+  test('when program has subcommand and action handler then negative command-argument unsupported', () => {
+    // Known limitation in parsing. Only allowed negative command-arguments in leaf commands
+    // to minimise changes to parsing when added support for negative numbers.
+    const program = createTestCommand();
+    program.argument('[value...]').action(() => {});
+    program.command('leaf').action(() => {});
+    assert.throws(() => program.parse(['-1'], { from: 'user' }), {
+      code: 'commander.unknownOption',
+    });
+  });
 });
