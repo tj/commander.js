@@ -52,6 +52,18 @@ describe('parsing regression tests', () => {
     ]);
     assert.equal(stdout, '["1","2","--dry-run","3","4","5","6"]\n');
   });
+
+  // https://github.com/tj/commander.js/issues/2530
+  test('when arguments to executable include end-of-options delimiter then delimiter preserved', async () => {
+    const pm = path.join(import.meta.dirname, 'fixtures/pm');
+    const { stdout } = await execFileAsync('node', [
+      pm,
+      'echo',
+      '--',
+      '--not-an-option',
+    ]);
+    assert.equal(stdout, '["--","--not-an-option"]\n');
+  });
 });
 
 describe('Command.parseOptions()', () => {
