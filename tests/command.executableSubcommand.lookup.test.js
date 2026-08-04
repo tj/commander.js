@@ -99,7 +99,7 @@ describe('executable subcommand lookup', () => {
     const binLinkTs = path.join(
       import.meta.dirname,
       'fixtures-extensions',
-      'pm.js',
+      'pm.mjs',
     );
     // childProcess.execFile('node', ['-r', 'ts-node/register', binLinkTs, 'install'], function(_error, stdout, stderr) {
     const { stdout } = await execFileAsync('node', [binLinkTs, 'try-ts']);
@@ -110,7 +110,7 @@ describe('executable subcommand lookup', () => {
     const binLinkTs = path.join(
       import.meta.dirname,
       'fixtures-extensions',
-      'pm.js',
+      'pm.mjs',
     );
     const { stdout } = await execFileAsync('node', [binLinkTs, 'try-cjs']);
     assert.equal(stdout, 'found .cjs\n');
@@ -120,7 +120,7 @@ describe('executable subcommand lookup', () => {
     const binLinkTs = path.join(
       import.meta.dirname,
       'fixtures-extensions',
-      'pm.js',
+      'pm.mjs',
     );
     const { stdout } = await execFileAsync('node', [binLinkTs, 'try-mjs']);
     assert.equal(stdout, 'found .mjs\n');
