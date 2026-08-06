@@ -127,7 +127,6 @@ describe('end of options delimiter "--"', () => {
         from: 'user',
       },
     );
-    console.error('AFTER');
     const opts = program.opts();
     assert.equal(opts.foo, true);
     assert.equal(opts.bar, undefined);
