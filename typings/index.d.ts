@@ -34,7 +34,11 @@ export class InvalidArgumentError extends CommanderError {
    */
   constructor(message: string);
 }
-export { InvalidArgumentError as InvalidOptionArgumentError }; // deprecated old name
+
+/** @deprecated use {@linkcode InvalidArgumentError} instead */
+export const InvalidOptionArgumentError: typeof InvalidArgumentError;
+/** @deprecated use {@linkcode InvalidArgumentError} instead */
+export type InvalidOptionArgumentError = InvalidArgumentError;
 
 export interface ErrorOptions {
   // optional parameter for error()
