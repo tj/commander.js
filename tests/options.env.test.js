@@ -369,3 +369,67 @@ describe('Option.env()', () => {
     });
   });
 });
+
+describe('parse option env', () => {
+  test('when env passed to parse then option from custom env', () => {
+    const program = new commander.Command();
+    program.addOption(new commander.Option('-f, --foo <value>').env('BAR'));
+    program.parse([], { from: 'user', env: { BAR: 'custom' } });
+    assert.equal(program.opts().foo, 'custom');
+    assert.equal(program.getOptionValueSource('foo'), 'env');
+  });
+
+  test('when env passed to parse then process.env not used', () => {
+    const program = new commander.Command();
+    process.env.BAR = 'process';
+    program.addOption(new commander.Option('-f, --foo <value>').env('BAR'));
+    program.parse([], { from: 'user', env: {} });
+    assert.equal(program.opts().foo, undefined);
+    delete process.env.BAR;
+  });
+
+  test('when env passed to parse and cli then option from cli', () => {
+    const program = new commander.Command();
+    program.addOption(new commander.Option('-f, --foo <value>').env('BAR'));
+    program.parse(['--foo', 'cli'], { from: 'user', env: { BAR: 'custom' } });
+    assert.equal(program.opts().foo, 'cli');
+  });
+
+  test('when env passed to parse for boolean option then option true', () => {
+    const program = new commander.Command();
+    program.addOption(new commander.Option('-f, --foo').env('BAR'));
+    program.parse([], { from: 'user', env: { BAR: 'anything' } });
+    assert.equal(program.opts().foo, true);
+  });
+
+  test('when env passed to parse then used for subcommand option', () => {
+    const program = new commander.Command();
+    let subOptions;
+    program
+      .command('sub')
+      .addOption(new commander.Option('-f, --foo <value>').env('BAR'))
+      .action((options) => {
+        subOptions = options;
+      });
+    program.parse(['sub'], { from: 'user', env: { BAR: 'custom' } });
+    assert.equal(subOptions.foo, 'custom');
+  });
+
+  test('when env passed to parseAsync then option from custom env', async () => {
+    const program = new commander.Command();
+    program.addOption(new commander.Option('-f, --foo <value>').env('BAR'));
+    await program.parseAsync([], { from: 'user', env: { BAR: 'custom' } });
+    assert.equal(program.opts().foo, 'custom');
+  });
+
+  test('when env not passed to subsequent parse then process.env used again', () => {
+    const program = new commander.Command();
+    process.env.BAR = 'process';
+    program.addOption(new commander.Option('-f, --foo <value>').env('BAR'));
+    program.parse([], { from: 'user', env: { BAR: 'custom' } });
+    assert.equal(program.opts().foo, 'custom');
+    program.parse([], { from: 'user' });
+    assert.equal(program.opts().foo, 'process');
+    delete process.env.BAR;
+  });
+});

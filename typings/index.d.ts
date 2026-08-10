@@ -340,6 +340,10 @@ export type HelpConfiguration = Partial<Help>;
 
 export interface ParseOptions {
   from: 'node' | 'electron' | 'user';
+  /**
+   * Environment variables to use for options with `env()`, instead of `process.env`.
+   */
+  env?: Record<string, string | undefined>;
 }
 export interface HelpContext {
   // optional parameter for .help() and .outputHelp()
