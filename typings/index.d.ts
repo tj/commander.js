@@ -35,9 +35,9 @@ export class InvalidArgumentError extends CommanderError {
   constructor(message: string);
 }
 
-/** @deprecated use {@linkcode InvalidArgumentError} instead */
+/** @deprecated since v8, instead use InvalidArgumentError */
 export const InvalidOptionArgumentError: typeof InvalidArgumentError;
-/** @deprecated use {@linkcode InvalidArgumentError} instead */
+/** @deprecated since v8, instead use InvalidArgumentError */
 export type InvalidOptionArgumentError = InvalidArgumentError;
 
 export interface ErrorOptions {
