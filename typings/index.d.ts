@@ -546,6 +546,11 @@ export class Command {
       actionCommand: Command,
     ) => void | Promise<void>,
   ): this;
+  /**
+   * Apply a function to this command, useful for batch configuration
+   * of multiple commands with shared settings.
+   */
+  apply(fn: (command: this) => unknown): this;
 
   /**
    * Register callback to use as replacement for calling process.exit.
