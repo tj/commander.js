@@ -981,7 +981,7 @@ const program = createCommand();
 
 一个可执行的子命令会作为单独的子进程执行。
 
-如果使用 node inspector 的`node -inspect`等命令来[调试](https://nodejs.org/en/docs/guides/debugging-getting-started/)可执行命令，对于生成的子命令，inspector 端口会递增 1。
+如果使用 node inspector 的`node --inspect`等命令来[调试](https://nodejs.org/en/docs/guides/debugging-getting-started/)可执行命令，对于生成的子命令，inspector 端口会递增 1。
 
 如果想使用 VSCode 调试，则需要在`launch.json`配置文件里设置`"autoAttachChildProcesses": true`。
 
