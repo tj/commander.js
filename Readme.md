@@ -1054,7 +1054,7 @@ You can enable `--harmony` option in two ways:
 
 An executable subcommand is launched as a separate child process.
 
-If you are using the node inspector for [debugging](https://nodejs.org/en/docs/guides/debugging-getting-started/) executable subcommands using `node --inspect` et al.,
+If you are using the node inspector for [debugging](https://nodejs.org/en/learn/getting-started/debugging) executable subcommands using `node --inspect` et al.,
 the inspector port is incremented by 1 for the spawned subcommand.
 
 If you are using VSCode to debug executable subcommands you need to set the `"autoAttachChildProcesses": true` flag in your `launch.json` configuration.
