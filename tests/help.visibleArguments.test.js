@@ -12,11 +12,29 @@ describe('Help.visibleArguments()', () => {
     assert.deepEqual(helper.visibleArguments(program), []);
   });
 
-  test('when argument but no argument description then empty array', () => {
+  test('when argument but no description and no default and no choices then empty array', () => {
     const program = new commander.Command();
     program.argument('<file>');
     const helper = new commander.Help();
     assert.deepEqual(helper.visibleArguments(program), []);
+  });
+
+  test('when argument has choices but no description then returned', () => {
+    const program = new commander.Command();
+    program.addArgument(program.createArgument('<color>').choices(['red', 'green', 'blue']));
+    const helper = new commander.Help();
+    const visibleArguments = helper.visibleArguments(program);
+    assert.equal(visibleArguments.length, 1);
+    assert.deepEqual(visibleArguments[0].argChoices, ['red', 'green', 'blue']);
+  });
+
+  test('when argument has default value but no description then returned', () => {
+    const program = new commander.Command();
+    program.addArgument(program.createArgument('[file]').default('fallback'));
+    const helper = new commander.Help();
+    const visibleArguments = helper.visibleArguments(program);
+    assert.equal(visibleArguments.length, 1);
+    assert.deepEqual(visibleArguments[0].defaultValue, 'fallback');
   });
 
   test('when argument and argument description then returned', () => {
