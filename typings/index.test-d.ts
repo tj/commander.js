@@ -351,7 +351,7 @@ expectType<commander.Command>(
   program.parse(['--option'], { from: 'user', env: { FOO: 'bar' } }),
 );
 expectType<commander.Command>(
-  program.parse(['--option'], { env: process.env }),
+  program.parse(['node', 'script.js', '--option'], { env: process.env }),
 );
 expectType<commander.Command>(program.parse(['node', 'script.js'] as const));
 
@@ -371,7 +371,7 @@ expectType<Promise<commander.Command>>(
   program.parseAsync(['--option'], { from: 'user', env: { FOO: 'bar' } }),
 );
 expectType<Promise<commander.Command>>(
-  program.parseAsync(['--option'], { env: process.env }),
+  program.parseAsync(['node', 'script.js', '--option'], { env: process.env }),
 );
 expectType<Promise<commander.Command>>(
   program.parseAsync(['node', 'script.js'] as const),
