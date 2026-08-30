@@ -918,6 +918,7 @@ program.on('option:verbose', function () {
 program.parse(process.argv); // 指明，按 node 约定
 program.parse(); // 默认，自动识别 electron
 program.parse(['-f', 'filename'], { from: 'user' });
+program.parse([], { from: 'user', env: { PORT: '80' } }); // 使用自定义环境变量替代 process.env
 ```
 
 ### 解析配置

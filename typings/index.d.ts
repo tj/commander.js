@@ -339,7 +339,8 @@ export class Help {
 export type HelpConfiguration = Partial<Help>;
 
 export interface ParseOptions {
-  from: 'node' | 'electron' | 'user';
+  from?: 'node' | 'electron' | 'user';
+  env?: Record<string, string | undefined>;
 }
 export interface HelpContext {
   // optional parameter for .help() and .outputHelp()

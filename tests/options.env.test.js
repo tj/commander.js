@@ -368,4 +368,77 @@ describe('Option.env()', () => {
       delete process.env.BAR;
     });
   });
+
+  describe('custom env in parseOptions', () => {
+    test('when custom env specified with option value then option from custom env', () => {
+      const program = new commander.Command();
+      program.addOption(new commander.Option('-f, --foo <value>').env('BAR'));
+      program.parse([], { from: 'user', env: { BAR: 'custom_env' } });
+      assert.equal(program.opts().foo, 'custom_env');
+    });
+
+    test('when custom env specified with boolean flag then option true', () => {
+      const program = new commander.Command();
+      program.addOption(new commander.Option('-f, --foo').env('BAR'));
+      program.parse([], { from: 'user', env: { BAR: '1' } });
+      assert.equal(program.opts().foo, true);
+    });
+
+    test('when custom env specified and process.env set then option from custom env', () => {
+      const program = new commander.Command();
+      process.env.BAR = 'process_env';
+      program.addOption(new commander.Option('-f, --foo <value>').env('BAR'));
+      program.parse([], { from: 'user', env: { BAR: 'custom_env' } });
+      assert.equal(program.opts().foo, 'custom_env');
+      delete process.env.BAR;
+    });
+
+    test('when custom env is empty object and process.env is set then option undefined', () => {
+      const program = new commander.Command();
+      process.env.BAR = 'process_env';
+      program.addOption(new commander.Option('-f, --foo <value>').env('BAR'));
+      program.parse([], { from: 'user', env: {} });
+      assert.equal(program.opts().foo, undefined);
+      delete process.env.BAR;
+    });
+
+    test('when custom env and cli defined then option from cli', () => {
+      const program = new commander.Command();
+      program.addOption(new commander.Option('-f, --foo <value>').env('BAR'));
+      program.parse(['--foo', 'cli'], {
+        from: 'user',
+        env: { BAR: 'custom_env' },
+      });
+      assert.equal(program.opts().foo, 'cli');
+    });
+
+    test('when custom env on parent command then subcommand inherits custom env', () => {
+      const program = new commander.Command();
+      const sub = program.command('sub');
+      sub.addOption(new commander.Option('-f, --foo <value>').env('BAR'));
+      program.parse(['sub'], { from: 'user', env: { BAR: 'sub_env' } });
+      assert.equal(sub.opts().foo, 'sub_env');
+    });
+
+    test('when custom env passed to parseAsync then option from custom env', async () => {
+      const program = new commander.Command();
+      program.addOption(new commander.Option('-f, --foo <value>').env('BAR'));
+      await program.parseAsync([], { from: 'user', env: { BAR: 'async_env' } });
+      assert.equal(program.opts().foo, 'async_env');
+    });
+
+    test('when custom env in first parse then subsequent parse without env uses process.env', () => {
+      const program = new commander.Command();
+      process.env.BAR = 'real_env';
+      program.addOption(new commander.Option('-f, --foo <value>').env('BAR'));
+
+      program.parse([], { from: 'user', env: { BAR: 'custom_env' } });
+      assert.equal(program.opts().foo, 'custom_env');
+
+      program.parse([], { from: 'user' });
+      assert.equal(program.opts().foo, 'real_env');
+
+      delete process.env.BAR;
+    });
+  });
 });

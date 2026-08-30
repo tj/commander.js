@@ -977,6 +977,12 @@ program.parse(process.argv); // assume argv[0] is app and argv[1] is script
 program.parse(['--port', '80'], { from: 'user' }); // just user supplied arguments, nothing special about argv[0]
 ```
 
+You can also pass `env` in the parse options to use custom environment variables instead of `process.env` (useful for testing):
+
+```js
+program.parse([], { from: 'user', env: { PORT: '80' } });
+```
+
 Use `.parseAsync()` instead of `.parse()` if any of your action handlers are async.
 
 ### Parsing Configuration
