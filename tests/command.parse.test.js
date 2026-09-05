@@ -33,6 +33,25 @@ describe('Command.parse()', () => {
       assert.deepEqual(program.args, ['user']);
     });
 
+    test('when no args and electron properties but ELECTRON_RUN_AS_NODE then use process.argv and app/script/args', () => {
+      const program = new commander.Command();
+      program.argument('[args...]');
+      const holdArgv = process.argv;
+      const holdRunAsNode = process.env.ELECTRON_RUN_AS_NODE;
+      process.versions.electron = '1.2.3';
+      process.env.ELECTRON_RUN_AS_NODE = '1';
+      process.argv = 'node script.js user'.split(' ');
+      program.parse();
+      delete process.versions.electron;
+      if (holdRunAsNode === undefined) {
+        delete process.env.ELECTRON_RUN_AS_NODE;
+      } else {
+        process.env.ELECTRON_RUN_AS_NODE = holdRunAsNode;
+      }
+      process.argv = holdArgv;
+      assert.deepEqual(program.args, ['user']);
+    });
+
     test('when args then app/script/args', () => {
       const program = new commander.Command();
       program.argument('[args...]');
