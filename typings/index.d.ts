@@ -647,7 +647,7 @@ export class Command {
   option(
     flags: string,
     description?: string,
-    defaultValue?: string | boolean | string[],
+    defaultValue?: string | boolean | string[] | number,
   ): this;
   option<T>(
     flags: string,
@@ -660,7 +660,7 @@ export class Command {
     flags: string,
     description: string,
     regexp: RegExp,
-    defaultValue?: string | boolean | string[],
+    defaultValue?: string | boolean | string[] | number,
   ): this;
 
   /**
