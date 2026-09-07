@@ -21,14 +21,90 @@ describe('Command.parse()', () => {
       assert.deepEqual(program.args, ['user']);
     });
 
-    test('when no args and electron properties and not default app then use process.argv and app/args', () => {
+    // https://github.com/tj/commander.js/issues/2603
+    test('when no args and electron main process and not default app then use process.argv and app/args', () => {
       const program = new commander.Command();
       program.argument('[args...]');
       const holdArgv = process.argv;
       process.versions.electron = '1.2.3';
-      process.argv = 'node user'.split(' ');
+      process.defaultApp = undefined;
+      process.type = 'browser';
+      process.argv = 'app user'.split(' ');
       program.parse();
       delete process.versions.electron;
+      delete process.defaultApp;
+      delete process.type;
+      process.argv = holdArgv;
+      assert.deepEqual(program.args, ['user']);
+    });
+
+    // https://github.com/tj/commander.js/issues/2603
+    test('when no args and electron main process and default app then use process.argv and app/script/args', () => {
+      const program = new commander.Command();
+      program.argument('[args...]');
+      const holdArgv = process.argv;
+      process.versions.electron = '1.2.3';
+      process.defaultApp = true;
+      process.type = 'browser';
+      process.argv = 'electron . user'.split(' ');
+      program.parse();
+      delete process.versions.electron;
+      delete process.defaultApp;
+      delete process.type;
+      process.argv = holdArgv;
+      assert.deepEqual(program.args, ['user']);
+    });
+
+    // https://github.com/tj/commander.js/issues/2603
+    test('when no args and electron child process and ELECTRON_RUN_AS_NODE then use process.argv and app/script/args', () => {
+      const program = new commander.Command();
+      program.argument('[args...]');
+      const holdArgv = process.argv;
+      const holdRunAsNode = process.env.ELECTRON_RUN_AS_NODE;
+      process.versions.electron = '1.2.3';
+      process.defaultApp = undefined;
+      process.type = undefined;
+      process.env.ELECTRON_RUN_AS_NODE = '1';
+      process.argv = 'electron script.js user'.split(' ');
+      program.parse();
+      delete process.versions.electron;
+      delete process.defaultApp;
+      delete process.type;
+      process.env.ELECTRON_RUN_AS_NODE = holdRunAsNode;
+      process.argv = holdArgv;
+      assert.deepEqual(program.args, ['user']);
+    });
+
+    // https://github.com/tj/commander.js/issues/2603
+    test('when no args and electron utility process then use process.argv and app/script/args', () => {
+      const program = new commander.Command();
+      program.argument('[args...]');
+      const holdArgv = process.argv;
+      process.versions.electron = '1.2.3';
+      process.defaultApp = undefined;
+      process.type = 'utility';
+      process.argv = 'electron script.js user'.split(' ');
+      program.parse();
+      delete process.versions.electron;
+      delete process.defaultApp;
+      delete process.type;
+      process.argv = holdArgv;
+      assert.deepEqual(program.args, ['user']);
+    });
+
+    // https://github.com/tj/commander.js/issues/2603
+    test('when no args and electron worker thread then use process.argv and app/script/args', () => {
+      const program = new commander.Command();
+      program.argument('[args...]');
+      const holdArgv = process.argv;
+      process.versions.electron = '1.2.3';
+      process.defaultApp = undefined;
+      process.type = undefined;
+      process.argv = 'electron script.js user'.split(' ');
+      program.parse();
+      delete process.versions.electron;
+      delete process.defaultApp;
+      delete process.type;
       process.argv = holdArgv;
       assert.deepEqual(program.args, ['user']);
     });
