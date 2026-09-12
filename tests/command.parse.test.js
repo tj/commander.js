@@ -109,6 +109,29 @@ describe('Command.parse()', () => {
       assert.deepEqual(program.args, ['user']);
     });
 
+    // https://github.com/tj/commander.js/issues/2603
+    test('when no args and electron renderer process then use process.argv and app/args', () => {
+      const program = new commander.Command();
+      program.argument('[args...]').allowUnknownOption();
+      const holdArgv = process.argv;
+      process.versions.electron = '1.2.3';
+      process.defaultApp = undefined;
+      process.type = 'renderer';
+      process.argv =
+        'electron --type=renderer --no-sandbox user /prefetch:1'.split(' ');
+      program.parse();
+      delete process.versions.electron;
+      delete process.defaultApp;
+      delete process.type;
+      process.argv = holdArgv;
+      assert.deepEqual(program.args, [
+        '--type=renderer',
+        '--no-sandbox',
+        'user',
+        '/prefetch:1',
+      ]);
+    });
+
     test('when args then app/script/args', () => {
       const program = new commander.Command();
       program.argument('[args...]');
@@ -123,24 +146,87 @@ describe('Command.parse()', () => {
       assert.deepEqual(program.args, ['user']);
     });
 
-    test('when args from "electron" and not default app then app/args', () => {
+    // https://github.com/tj/commander.js/issues/2603
+    test('when args from "electron" and main process and not default app then app/args', () => {
       const program = new commander.Command();
       program.argument('[args...]');
-      const hold = process.defaultApp;
       process.defaultApp = undefined;
+      process.type = 'browser';
       program.parse('customApp user'.split(' '), { from: 'electron' });
-      process.defaultApp = hold;
+      delete process.defaultApp;
+      delete process.type;
       assert.deepEqual(program.args, ['user']);
     });
 
-    test('when args from "electron" and default app then app/script/args', () => {
+    // https://github.com/tj/commander.js/issues/2603
+    test('when args from "electron" and main process and default app then app/script/args', () => {
       const program = new commander.Command();
       program.argument('[args...]');
-      const hold = process.defaultApp;
       process.defaultApp = true;
+      process.type = 'browser';
       program.parse('electron script user'.split(' '), { from: 'electron' });
-      process.defaultApp = hold;
+      delete process.defaultApp;
+      delete process.type;
       assert.deepEqual(program.args, ['user']);
+    });
+
+    // https://github.com/tj/commander.js/issues/2603
+    test('when args from "electron" and child process and ELECTRON_RUN_AS_NODE then app/script/args', () => {
+      const program = new commander.Command();
+      program.argument('[args...]');
+      const holdRunAsNode = process.env.ELECTRON_RUN_AS_NODE;
+      process.defaultApp = undefined;
+      process.type = undefined;
+      process.env.ELECTRON_RUN_AS_NODE = '1';
+      program.parse('electron script.js user'.split(' '), { from: 'electron' });
+      delete process.defaultApp;
+      delete process.type;
+      process.env.ELECTRON_RUN_AS_NODE = holdRunAsNode;
+      assert.deepEqual(program.args, ['user']);
+    });
+
+    // https://github.com/tj/commander.js/issues/2603
+    test('when args from "electron" and utility process then app/script/args', () => {
+      const program = new commander.Command();
+      program.argument('[args...]');
+      process.defaultApp = undefined;
+      process.type = 'utility';
+      program.parse('electron script.js user'.split(' '), { from: 'electron' });
+      delete process.defaultApp;
+      delete process.type;
+      assert.deepEqual(program.args, ['user']);
+    });
+
+    // https://github.com/tj/commander.js/issues/2603
+    test('when args from "electron" and worker thread then app/script/args', () => {
+      const program = new commander.Command();
+      program.argument('[args...]');
+      process.defaultApp = undefined;
+      process.type = undefined;
+      program.parse('electron script.js user'.split(' '), { from: 'electron' });
+      delete process.defaultApp;
+      delete process.type;
+      assert.deepEqual(program.args, ['user']);
+    });
+
+    // https://github.com/tj/commander.js/issues/2603
+    test('when args from "electron" and renderer process then app/args', () => {
+      const program = new commander.Command();
+      program.argument('[args...]').allowUnknownOption();
+      process.defaultApp = undefined;
+      process.type = 'renderer';
+      program.parse(
+        'electron --type=renderer --no-sandbox user /prefetch:1'.split(' '),
+        { from: 'electron' },
+      );
+      delete process.defaultApp;
+      delete process.type;
+      assert.deepEqual(program.args, [
+        '--type=renderer',
+        '--no-sandbox',
+        'user',
+        '/prefetch:1',
+      ]);
     });
 
     test('when args from "user" then args', () => {
