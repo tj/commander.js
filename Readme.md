@@ -26,6 +26,7 @@ Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
     - [Command-arguments](#command-arguments)
       - [More configuration](#more-configuration-1)
       - [Custom argument processing](#custom-argument-processing)
+    - [Configurable command sets](#configurable-command-sets)
     - [Action handler](#action-handler)
     - [Stand-alone executable (sub)commands](#stand-alone-executable-subcommands)
     - [Life cycle hooks](#life-cycle-hooks)
@@ -557,6 +558,37 @@ You can add alternative names for a command with `.alias()`. (Example file: [ali
 `.command()` automatically copies the inherited settings from the parent command to the newly created subcommand. This is only done during creation; any later setting changes to the parent are not inherited.
 
 For safety, `.addCommand()` does not automatically copy the inherited settings from the parent command. There is a helper routine `.copyInheritedSettings()` for copying the settings when they are wanted.
+
+### Configurable command sets
+
+A build system can configure which commands are available by conditionally adding the commands to the program. Keep each command definition separate, create the command, and add it only when its name is selected:
+
+```js
+const selectedCommands = new Set(['inspect', 'data', 'trace']);
+const commandCatalog = [
+  () => new Command('inspect').alias('i').action(runInspect),
+  () => new Command('data').action(runData),
+  () => new Command('trace').action(runTrace),
+];
+
+for (const createCommand of commandCatalog) {
+  const command = createCommand();
+  if (selectedCommands.has(command.name())) {
+    program.addCommand(command);
+  }
+}
+```
+
+The command definitions may include aliases and nested commands. Commands which are not added are absent from help and command suggestions, and invoking their names, aliases, or nested routes is reported as an unknown command. This is different from `hidden: true`, which only hides a command from help and leaves it callable.
+
+Example file: [configurable-commands.js](./examples/configurable-commands.js)
+
+```console
+$ COMMANDS=inspect,data,trace node configurable-commands.js --help
+$ COMMANDS=inspect,data,trace node configurable-commands.js trace span
+$ COMMANDS=inspect,data node configurable-commands.js chat send
+error: unknown command 'chat'
+```
 
 ### Command-arguments
 
