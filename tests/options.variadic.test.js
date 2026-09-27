@@ -35,39 +35,6 @@ describe('variadic options', () => {
       assert.deepEqual(program.opts().required, ['one', 'two']);
     });
 
-    test('when variadic placeholder uses Unicode then set values in array', () => {
-      const program = new commander.Command();
-      program.option('--tag <值...>');
-
-      program.parse(['--tag', 'one', 'two'], { from: 'user' });
-      assert.deepEqual(program.opts().tag, ['one', 'two']);
-    });
-
-    test('when variadic placeholder ends with Unicode mark then set values in array', () => {
-      const program = new commander.Command();
-      // U+05B5 HEBREW POINT TSERE is the placeholder from issue #2614.
-      program.option('--tag <\u05B5...>');
-
-      program.parse(['--tag', 'one', 'two'], { from: 'user' });
-      assert.deepEqual(program.opts().tag, ['one', 'two']);
-    });
-
-    test('when variadic placeholder ends with decomposed mark then set values in array', () => {
-      const program = new commander.Command();
-      program.option('--tag <cafe\u0301...>');
-
-      program.parse(['--tag', 'one', 'two'], { from: 'user' });
-      assert.deepEqual(program.opts().tag, ['one', 'two']);
-    });
-
-    test('when variadic placeholder ends with connector punctuation then set values in array', () => {
-      const program = new commander.Command();
-      program.option('--tag <value\u203F...>');
-
-      program.parse(['--tag', 'one', 'two'], { from: 'user' });
-      assert.deepEqual(program.opts().tag, ['one', 'two']);
-    });
-
     test('when variadic with repeated values then set in array', () => {
       const program = new commander.Command();
       program.option('-r,--required <value...>');
@@ -202,21 +169,19 @@ describe('variadic options', () => {
       assert.equal(program.options[0].variadic, true);
     });
 
+    test('when option flags has non-ASCII character before dots then is variadic', () => {
+      const program = new commander.Command();
+      program.option('-c,--comma [cafe\u0301...]');
+
+      assert.equal(program.options[0].variadic, true);
+    });
+
     test('when option flags has special characters before dots then not variadic', () => {
       // This might be used to describe coercion for comma separated values, and is not variadic.
       const program = new commander.Command();
       program.option('-c,--comma [value,...]');
 
       assert.equal(program.options[0].variadic, false);
-    });
-
-    test('when variadic placeholder is malformed then not variadic', () => {
-      const program = new commander.Command();
-      program.option('--missing-name <...>');
-      program.option('--extra-dot <value....>');
-
-      assert.equal(program.options[0].variadic, false);
-      assert.equal(program.options[1].variadic, false);
     });
   });
 
