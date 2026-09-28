@@ -6,9 +6,6 @@ import assert from 'node:assert/strict';
 // https://github.com/electron/electron/issues/4690#issuecomment-217435222
 // https://www.electronjs.org/docs/api/process#processdefaultapp-readonly
 
-// (If mutating process.argv and process.execArgv causes problems, could add utility
-// functions to get them and then mock the functions for tests.)
-
 describe('Command.parse()', () => {
   describe('.parse() explicit (from:) and autodetection of args format parsing', () => {
     test('when no args then use process.argv and app/script/args', () => {
@@ -21,109 +18,101 @@ describe('Command.parse()', () => {
       assert.deepEqual(program.args, ['user']);
     });
 
-    // https://github.com/tj/commander.js/issues/2603
+    function addElectronContext(context = {}) {
+      // The main Electron process may be run bundled or unbundled (changes defaultApp).
+      // Also Electron patches child_process.fork, adds own utilityProcess.fork, and some people
+      // parse parameters from these forked processes!
+      // Some context changes when ELECTRON_RUN_AS_NODE is set to "1" at process start.
+      // For research into runtime context the launch scenarios produce see: https://github.com/tj/commander.js/issues/2603
+      process.versions.electron = '1.2.3';
+      if (context.defaultApp) process.defaultApp = true; // defaultApp===true is Electron app bundled
+      if (context.type) process.type = context.type; // browser for main Electron app, utility for utilityProcess.fork, or renderer
+      if (context.runAsNode) process.env.ELECTRON_RUN_AS_NODE = '1'; // env not used in current implementation, but make no assumptions!
+    }
+
+    function removeElectronContext() {
+      delete process.versions.electron;
+      delete process.defaultApp;
+      delete process.type;
+      delete process.env.ELECTRON_RUN_AS_NODE;
+    }
+
     test('when no args and electron main process and not default app then use process.argv and app/args', () => {
       const program = new commander.Command();
       program.argument('[args...]');
       const holdArgv = process.argv;
-      process.versions.electron = '1.2.3';
-      process.defaultApp = undefined;
-      process.type = 'browser';
+      addElectronContext({ type: 'browser' });
       process.argv = 'app user'.split(' ');
       program.parse();
-      delete process.versions.electron;
-      delete process.defaultApp;
-      delete process.type;
+      removeElectronContext();
       process.argv = holdArgv;
+
       assert.deepEqual(program.args, ['user']);
     });
 
-    // https://github.com/tj/commander.js/issues/2603
     test('when no args and electron main process and default app then use process.argv and app/script/args', () => {
       const program = new commander.Command();
       program.argument('[args...]');
       const holdArgv = process.argv;
-      process.versions.electron = '1.2.3';
-      process.defaultApp = true;
-      process.type = 'browser';
+      addElectronContext({ type: 'browser', defaultApp: true });
       process.argv = 'electron . user'.split(' ');
       program.parse();
-      delete process.versions.electron;
-      delete process.defaultApp;
-      delete process.type;
+      removeElectronContext();
       process.argv = holdArgv;
+
       assert.deepEqual(program.args, ['user']);
     });
 
-    // https://github.com/tj/commander.js/issues/2603
-    test('when no args and electron child process and ELECTRON_RUN_AS_NODE then use process.argv and app/script/args', () => {
+    test('when no args and electron child process and ELECTRON_RUN_AS_NODE then use process.argv and node app/script/args', () => {
       const program = new commander.Command();
       program.argument('[args...]');
       const holdArgv = process.argv;
-      const holdRunAsNode = process.env.ELECTRON_RUN_AS_NODE;
-      process.versions.electron = '1.2.3';
-      process.defaultApp = undefined;
-      process.type = undefined;
-      process.env.ELECTRON_RUN_AS_NODE = '1';
+      addElectronContext({ runAsNode: true });
       process.argv = 'electron script.js user'.split(' ');
       program.parse();
-      delete process.versions.electron;
-      delete process.defaultApp;
-      delete process.type;
-      process.env.ELECTRON_RUN_AS_NODE = holdRunAsNode;
+      removeElectronContext();
       process.argv = holdArgv;
+
       assert.deepEqual(program.args, ['user']);
     });
 
-    // https://github.com/tj/commander.js/issues/2603
     test('when no args and electron utility process then use process.argv and app/script/args', () => {
       const program = new commander.Command();
       program.argument('[args...]');
       const holdArgv = process.argv;
-      process.versions.electron = '1.2.3';
-      process.defaultApp = undefined;
-      process.type = 'utility';
+      addElectronContext({ type: 'utility' });
       process.argv = 'electron script.js user'.split(' ');
       program.parse();
-      delete process.versions.electron;
-      delete process.defaultApp;
-      delete process.type;
+      removeElectronContext();
       process.argv = holdArgv;
+
       assert.deepEqual(program.args, ['user']);
     });
 
-    // https://github.com/tj/commander.js/issues/2603
     test('when no args and electron worker thread then use process.argv and app/script/args', () => {
       const program = new commander.Command();
       program.argument('[args...]');
       const holdArgv = process.argv;
-      process.versions.electron = '1.2.3';
-      process.defaultApp = undefined;
-      process.type = undefined;
+      addElectronContext();
       process.argv = 'electron script.js user'.split(' ');
       program.parse();
-      delete process.versions.electron;
-      delete process.defaultApp;
-      delete process.type;
+      removeElectronContext();
       process.argv = holdArgv;
+
       assert.deepEqual(program.args, ['user']);
     });
 
-    // https://github.com/tj/commander.js/issues/2603
     test('when no args and electron renderer process then use process.argv and app/args', () => {
       const program = new commander.Command();
       program.argument('[args...]').allowUnknownOption();
       const holdArgv = process.argv;
-      process.versions.electron = '1.2.3';
-      process.defaultApp = undefined;
-      process.type = 'renderer';
+      addElectronContext({ type: 'renderer' });
       process.argv =
         'electron --type=renderer --no-sandbox user /prefetch:1'.split(' ');
       program.parse();
-      delete process.versions.electron;
-      delete process.defaultApp;
-      delete process.type;
+      removeElectronContext();
       process.argv = holdArgv;
+
       assert.deepEqual(program.args, [
         '--type=renderer',
         '--no-sandbox',
@@ -146,81 +135,66 @@ describe('Command.parse()', () => {
       assert.deepEqual(program.args, ['user']);
     });
 
-    // https://github.com/tj/commander.js/issues/2603
     test('when args from "electron" and main process and not default app then app/args', () => {
       const program = new commander.Command();
       program.argument('[args...]');
-      process.defaultApp = undefined;
-      process.type = 'browser';
+      addElectronContext({ type: 'browser' });
       program.parse('customApp user'.split(' '), { from: 'electron' });
-      delete process.defaultApp;
-      delete process.type;
+      removeElectronContext();
+
       assert.deepEqual(program.args, ['user']);
     });
 
-    // https://github.com/tj/commander.js/issues/2603
     test('when args from "electron" and main process and default app then app/script/args', () => {
       const program = new commander.Command();
       program.argument('[args...]');
-      process.defaultApp = true;
-      process.type = 'browser';
+      addElectronContext({ type: 'browser', defaultApp: true });
       program.parse('electron script user'.split(' '), { from: 'electron' });
-      delete process.defaultApp;
-      delete process.type;
+      removeElectronContext();
+
       assert.deepEqual(program.args, ['user']);
     });
 
-    // https://github.com/tj/commander.js/issues/2603
-    test('when args from "electron" and child process and ELECTRON_RUN_AS_NODE then app/script/args', () => {
+    test('when args from "electron" and child process and ELECTRON_RUN_AS_NODE then node app/script/args', () => {
       const program = new commander.Command();
       program.argument('[args...]');
-      const holdRunAsNode = process.env.ELECTRON_RUN_AS_NODE;
-      process.defaultApp = undefined;
-      process.type = undefined;
-      process.env.ELECTRON_RUN_AS_NODE = '1';
+      addElectronContext({ runAsNode: true });
       program.parse('electron script.js user'.split(' '), { from: 'electron' });
-      delete process.defaultApp;
-      delete process.type;
-      process.env.ELECTRON_RUN_AS_NODE = holdRunAsNode;
+      removeElectronContext();
+
       assert.deepEqual(program.args, ['user']);
     });
 
-    // https://github.com/tj/commander.js/issues/2603
     test('when args from "electron" and utility process then app/script/args', () => {
       const program = new commander.Command();
       program.argument('[args...]');
-      process.defaultApp = undefined;
-      process.type = 'utility';
+      addElectronContext({ type: 'utility' });
       program.parse('electron script.js user'.split(' '), { from: 'electron' });
-      delete process.defaultApp;
-      delete process.type;
+      removeElectronContext();
+
       assert.deepEqual(program.args, ['user']);
     });
 
-    // https://github.com/tj/commander.js/issues/2603
     test('when args from "electron" and worker thread then app/script/args', () => {
       const program = new commander.Command();
       program.argument('[args...]');
-      process.defaultApp = undefined;
-      process.type = undefined;
+      addElectronContext();
       program.parse('electron script.js user'.split(' '), { from: 'electron' });
-      delete process.defaultApp;
-      delete process.type;
+      removeElectronContext();
+
       assert.deepEqual(program.args, ['user']);
     });
 
-    // https://github.com/tj/commander.js/issues/2603
     test('when args from "electron" and renderer process then app/args', () => {
       const program = new commander.Command();
       program.argument('[args...]').allowUnknownOption();
-      process.defaultApp = undefined;
-      process.type = 'renderer';
+      addElectronContext({ type: 'renderer' });
       program.parse(
         'electron --type=renderer --no-sandbox user /prefetch:1'.split(' '),
         { from: 'electron' },
       );
-      delete process.defaultApp;
-      delete process.type;
+      removeElectronContext();
+
       assert.deepEqual(program.args, [
         '--type=renderer',
         '--no-sandbox',

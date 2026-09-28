@@ -966,7 +966,7 @@ Call with no parameters to parse `process.argv`. Detects Electron and special no
 Or, call with an array of strings to parse, and optionally where the user arguments start by specifying where the arguments are `from`:
 
 - `'node'`: default, `argv[0]` is the application and `argv[1]` is the script being run, with user arguments after that
-- `'electron'`: `argv[0]` is the application and `argv[1]` varies depending on whether the electron application is packaged
+- `'electron'`: `argv[0]` is the application and `argv[1]` varies depending on whether the electron application is packaged and how process launched
 - `'user'`: just user arguments
 
 For example:
