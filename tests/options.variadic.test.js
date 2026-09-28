@@ -169,6 +169,13 @@ describe('variadic options', () => {
       assert.equal(program.options[0].variadic, true);
     });
 
+    test('when option flags has non-ASCII character before dots then is variadic', () => {
+      const program = new commander.Command();
+      program.option('-c,--comma [cafe\u0301...]');
+
+      assert.equal(program.options[0].variadic, true);
+    });
+
     test('when option flags has special characters before dots then not variadic', () => {
       // This might be used to describe coercion for comma separated values, and is not variadic.
       const program = new commander.Command();
