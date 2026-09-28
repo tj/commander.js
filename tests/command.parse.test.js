@@ -27,7 +27,9 @@ describe('Command.parse()', () => {
       process.versions.electron = '1.2.3';
       if (context.defaultApp) process.defaultApp = true; // defaultApp===true is Electron app bundled
       if (context.type) process.type = context.type; // browser for main Electron app, utility for utilityProcess.fork, or renderer
-      if (context.runAsNode) process.env.ELECTRON_RUN_AS_NODE = '1'; // env not used in current implementation, but make no assumptions!
+      // The environment variable may be set explcitly by user when using spawn, or is set implicitly by Electron when using child_process.fork.
+      // Note: it isn't actually being used in current implementation and the runtime is detected based on other context.
+      if (context.runAsNode) process.env.ELECTRON_RUN_AS_NODE = '1';
     }
 
     function removeElectronContext() {
@@ -63,10 +65,11 @@ describe('Command.parse()', () => {
       assert.deepEqual(program.args, ['user']);
     });
 
-    test('when no args and electron child process and ELECTRON_RUN_AS_NODE then use process.argv and node app/script/args', () => {
+    test('when no args and child_process.fork or child_process.spawn with ELECTRON_RUN_AS_NODE then use process.argv and node app/script/args', () => {
       const program = new commander.Command();
       program.argument('[args...]');
       const holdArgv = process.argv;
+      // runAsNode set explicitly with spawn or implicitly with fork
       addElectronContext({ runAsNode: true });
       process.argv = 'electron script.js user'.split(' ');
       program.parse();
@@ -155,9 +158,10 @@ describe('Command.parse()', () => {
       assert.deepEqual(program.args, ['user']);
     });
 
-    test('when args from "electron" and child process and ELECTRON_RUN_AS_NODE then node app/script/args', () => {
+    test('when args from "electron" and child_process.fork or child_process.spawn with ELECTRON_RUN_AS_NODE then node app/script/args', () => {
       const program = new commander.Command();
       program.argument('[args...]');
+      // runAsNode set explicitly with spawn or implicitly with fork
       addElectronContext({ runAsNode: true });
       program.parse('electron script.js user'.split(' '), { from: 'electron' });
       removeElectronContext();
