@@ -99,7 +99,34 @@ describe('end of options delimiter "--"', () => {
     assert.deepEqual(sub.args, ['--bar', '--unknown', 'ARG']);
   });
 
-  test('when arguments include -- and default command then options processing', () => {
+  test('when nested subs and arguments include -- before first sub then option processing stops', () => {
+    const program = new Command().exitOverride();
+    const sub2 = makeCmdWithOptions('sub2');
+    program.command('sub1').addCommand(sub2);
+    program.parse(['--', 'sub1', 'sub2', '--foo', 'ARG'], { from: 'user' });
+
+    assert.deepEqual(sub2.args, ['--foo', 'ARG']);
+  });
+
+  test('when nested subs and arguments include -- in between subs then option processing stops', () => {
+    const program = new Command().exitOverride();
+    const sub2 = makeCmdWithOptions('sub2');
+    program.command('sub1').addCommand(sub2);
+    program.parse(['sub1', '--', 'sub2', '--foo', 'ARG'], { from: 'user' });
+
+    assert.deepEqual(sub2.args, ['--foo', 'ARG']);
+  });
+
+  test('when nested subs and arguments include -- after last sub then option processing stops', () => {
+    const program = new Command().exitOverride();
+    const sub2 = makeCmdWithOptions('sub2');
+    program.command('sub1').addCommand(sub2);
+    program.parse(['sub1', 'sub2', '--', '--foo', 'ARG'], { from: 'user' });
+
+    assert.deepEqual(sub2.args, ['--foo', 'ARG']);
+  });
+
+  test('when arguments include -- and default command then options processing stops', () => {
     const program = new Command().exitOverride();
     const sub = makeCmdWithOptions('sub');
     program.addCommand(sub, { isDefault: true });
