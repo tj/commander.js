@@ -108,6 +108,42 @@ describe('increment node inspector port in executable subcommands', () => {
     assert.deepEqual(execArgs, ['--inspect-brk=1.2.3.4:101']);
   });
 
+  test('when --inspect-wait then bump port', (t) => {
+    const { spawnSpy } = makeSpies(t);
+    const program = makeProgram();
+    process.execArgv = ['--inspect-wait'];
+    program.parse(['node', 'test', 'cache']);
+    const execArgs = extractMockExecArgs(spawnSpy);
+    assert.deepEqual(execArgs, ['--inspect-wait=127.0.0.1:9230']);
+  });
+
+  test('when --inspect-wait=100 then bump port', (t) => {
+    const { spawnSpy } = makeSpies(t);
+    const program = makeProgram();
+    process.execArgv = ['--inspect-wait=100'];
+    program.parse(['node', 'test', 'cache']);
+    const execArgs = extractMockExecArgs(spawnSpy);
+    assert.deepEqual(execArgs, ['--inspect-wait=127.0.0.1:101']);
+  });
+
+  test('when --inspect-wait=1.2.3.4 then bump port', (t) => {
+    const { spawnSpy } = makeSpies(t);
+    const program = makeProgram();
+    process.execArgv = ['--inspect-wait=1.2.3.4'];
+    program.parse(['node', 'test', 'cache']);
+    const execArgs = extractMockExecArgs(spawnSpy);
+    assert.deepEqual(execArgs, ['--inspect-wait=1.2.3.4:9230']);
+  });
+
+  test('when --inspect-wait=1.2.3.4:100 then bump port', (t) => {
+    const { spawnSpy } = makeSpies(t);
+    const program = makeProgram();
+    process.execArgv = ['--inspect-wait=1.2.3.4:100'];
+    program.parse(['node', 'test', 'cache']);
+    const execArgs = extractMockExecArgs(spawnSpy);
+    assert.deepEqual(execArgs, ['--inspect-wait=1.2.3.4:101']);
+  });
+
   test('when --inspect-port=100 then bump port', (t) => {
     const { spawnSpy } = makeSpies(t);
     const program = makeProgram();
