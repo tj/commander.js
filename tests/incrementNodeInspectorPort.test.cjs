@@ -72,6 +72,24 @@ describe('increment node inspector port in executable subcommands', () => {
     assert.deepEqual(execArgs, ['--inspect=1.2.3.4:9230']);
   });
 
+  test('when --inspect=[::1] then bump port', (t) => {
+    const { spawnSpy } = makeSpies(t);
+    const program = makeProgram();
+    process.execArgv = ['--inspect=[::1]'];
+    program.parse(['node', 'test', 'cache']);
+    const execArgs = extractMockExecArgs(spawnSpy);
+    assert.deepEqual(execArgs, ['--inspect=[::1]:9230']);
+  });
+
+  test('when --inspect=[::1]:100 then bump port', (t) => {
+    const { spawnSpy } = makeSpies(t);
+    const program = makeProgram();
+    process.execArgv = ['--inspect=[::1]:100'];
+    program.parse(['node', 'test', 'cache']);
+    const execArgs = extractMockExecArgs(spawnSpy);
+    assert.deepEqual(execArgs, ['--inspect=[::1]:101']);
+  });
+
   test('when --inspect-brk then bump port', (t) => {
     const { spawnSpy } = makeSpies(t);
     const program = makeProgram();
