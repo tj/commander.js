@@ -668,7 +668,7 @@ Example file: [action-this.js](./examples/action-this.js)
 program
   .command('serve')
   .argument('<script>')
-  .option('-p, --port <number>', 'port number', 80)
+  .option('-p, --port <number>', 'port number', '80')
   .action(function() {
     console.error('Run script %s on port %s', this.args[0], this.opts().port);
   });
