@@ -115,6 +115,27 @@ describe('Command.optionsGroup', () => {
     assert.match(helpInfo, /Greek:\n *-h, --help/);
   });
 
+  test('when help short flag conflicts then help option keeps its group', () => {
+    const program = new Command();
+    program.option('-h, --host <host>');
+    program.addHelpOption(
+      new Option('-h, --help', 'display help').helpGroup('Information:'),
+    );
+
+    const helpInfo = program.helpInformation();
+    assert.match(helpInfo, /Information:\n *--help +display help/);
+  });
+
+  test('when help long flag conflicts then help option keeps its group', () => {
+    const program = new Command();
+    program.option('--help <topic>');
+    program.optionsGroup('Information:');
+    program.helpOption(true);
+
+    const helpInfo = program.helpInformation();
+    assert.match(helpInfo, /Information:\n *-h +display help/);
+  });
+
   test('when .version(str) then version option in group', () => {
     const program = new Command();
     program.optionsGroup('Greek:');
