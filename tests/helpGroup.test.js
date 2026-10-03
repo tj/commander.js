@@ -6,17 +6,6 @@ import { Command, Option } from '../index.js';
 // and for Command.optionsGroup() and Command.commandsGroup().
 
 describe('Option.helpGroup', () => {
-  test('when help short flag conflicts then help option keeps its group', () => {
-    const program = new Command();
-    program.option('-h, --host <host>');
-    program.addHelpOption(
-      new Option('-h, --help', 'display help').helpGroup('Information:'),
-    );
-
-    const helpInfo = program.helpInformation();
-    assert.match(helpInfo, /Information:\n *--help +display help/);
-  });
-
   test('when add one option with helpGroup then help contains group', () => {
     const program = new Command();
     program.addOption(new Option('--alpha').helpGroup('Greek:'));
@@ -124,6 +113,17 @@ describe('Command.optionsGroup', () => {
     program.helpOption(true);
     const helpInfo = program.helpInformation();
     assert.match(helpInfo, /Greek:\n *-h, --help/);
+  });
+
+  test('when help short flag conflicts then help option keeps its group', () => {
+    const program = new Command();
+    program.option('-h, --host <host>');
+    program.addHelpOption(
+      new Option('-h, --help', 'display help').helpGroup('Information:'),
+    );
+
+    const helpInfo = program.helpInformation();
+    assert.match(helpInfo, /Information:\n *--help +display help/);
   });
 
   test('when help long flag conflicts then help option keeps its group', () => {
