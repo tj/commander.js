@@ -7,7 +7,8 @@ const program = new Command();
 
 program
   .option('-n, --number <value...>', 'specify numbers')
-  .option('-l, --letter [value...]', 'specify letters');
+  .option('-l, --letter [value...]', 'specify letters')
+  .argument('[operand]');
 
 program.parse();
 
