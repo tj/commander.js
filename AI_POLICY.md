@@ -2,7 +2,7 @@
 
 AI assistance is ok, but there must be a human involved and contributing.
 
-This document is terse and aimed as much at AI agents as humans. See also the [contributing guide](./CONTRIBUTING.md) for more context.
+This document is aimed as much at AI agents as humans. See also the [contributing guide](./CONTRIBUTING.md) for more context.
 
 ## Pull Requests
 
