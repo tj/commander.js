@@ -189,3 +189,36 @@ describe('variadic options', () => {
     assert.deepEqual(program.opts().comma, ['CCC']);
   });
 });
+
+describe('unicode variadic placeholders (issue #2614)', () => {
+  test('when placeholder uses Chinese characters then recognised as variadic', () => {
+    const program = new commander.Command();
+    program.option('--tag <值...>');
+    assert.equal(program.options[0].variadic, true);
+  });
+
+  test('when placeholder uses Cyrillic characters then recognised as variadic', () => {
+    const program = new commander.Command();
+    program.option('--tag <файл...>');
+    assert.equal(program.options[0].variadic, true);
+  });
+
+  test('when optional placeholder uses Japanese characters then recognised as variadic', () => {
+    const program = new commander.Command();
+    program.option('--tag [値...]');
+    assert.equal(program.options[0].variadic, true);
+  });
+
+  test('when unicode variadic option used then values collected in array', () => {
+    const program = new commander.Command();
+    program.option('--tag <值...>');
+    program.parse(['--tag', 'a', 'b', 'c'], { from: 'user' });
+    assert.deepEqual(program.opts().tag, ['a', 'b', 'c']);
+  });
+
+  test('when comma separator used then not variadic (unchanged behaviour)', () => {
+    const program = new commander.Command();
+    program.option('--tag <value,...>');
+    assert.equal(program.options[0].variadic, false);
+  });
+});
