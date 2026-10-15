@@ -113,4 +113,33 @@ describe('getOptionValueSourceWithGlobals', () => {
     program.parse(['sub', '--common', 'value'], { from: 'user' });
     assert.equal(sub.getOptionValueSourceWithGlobals('common'), 'default');
   });
+
+  test('when same named option in sub and program set by setOptionValue then source is undefined like global', () => {
+    const program = new commander.Command();
+    program
+      .enablePositionalOptions()
+      .option('-c, --common <value>')
+      .setOptionValue('common', 'parent');
+    const sub = program
+      .command('sub')
+      .option('-c, --common <value>')
+      .action(() => {});
+
+    program.parse(['sub', '--common', 'child'], { from: 'user' });
+    assert.equal(sub.optsWithGlobals().common, 'parent');
+    assert.equal(sub.getOptionValueSourceWithGlobals('common'), undefined);
+  });
+
+  test('when same named option in sub and program but not set on program then source is from sub', () => {
+    const program = new commander.Command();
+    program.enablePositionalOptions().option('-c, --common <value>');
+    const sub = program
+      .command('sub')
+      .option('-c, --common <value>')
+      .action(() => {});
+
+    program.parse(['sub', '--common', 'child'], { from: 'user' });
+    assert.equal(sub.optsWithGlobals().common, 'child');
+    assert.equal(sub.getOptionValueSourceWithGlobals('common'), 'cli');
+  });
 });
