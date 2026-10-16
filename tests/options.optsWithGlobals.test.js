@@ -100,7 +100,7 @@ describe('getOptionValueSourceWithGlobals', () => {
     assert.equal(sub.getOptionValueSourceWithGlobals('local'), 'cli');
   });
 
-  test('when same named option in sub and program then source is defined by global', () => {
+  test('when same named option used in sub CLI and program default value then source is defined by global', () => {
     const program = new commander.Command();
     program
       .enablePositionalOptions()
@@ -112,5 +112,20 @@ describe('getOptionValueSourceWithGlobals', () => {
 
     program.parse(['sub', '--common', 'value'], { from: 'user' });
     assert.equal(sub.getOptionValueSourceWithGlobals('common'), 'default');
+  });
+
+  test('when same named option used in sub CLI and program set value then source is defined by global', () => {
+    const program = new commander.Command();
+    program
+      .enablePositionalOptions()
+      .option('-c, --common <value>', 'description')
+      .setOptionValueWithSource('common', 'from program'); // note: undefined source
+    const sub = program
+      .command('sub')
+      .option('-c, --common <value>')
+      .action(() => {});
+
+    program.parse(['sub', '--common', 'value'], { from: 'user' });
+    assert.equal(sub.getOptionValueSourceWithGlobals('common'), undefined);
   });
 });
