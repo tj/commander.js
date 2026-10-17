@@ -932,7 +932,7 @@ Alternatively, use `.addHelpCommand()` to add a command you construct yourself.
 
 ### Help Groups
 
-The help by default lists options under the the heading `Options:` and commands under `Commands:`. You can create your own groups
+The help by default lists options under the heading `Options:` and commands under `Commands:`. You can create your own groups
 with different headings. 
 
 - The high-level way is to set the desired group heading while adding the options and commands, using `.optionsGroup()` and `.commandsGroup()`. 
