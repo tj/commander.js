@@ -236,7 +236,7 @@ describe('executable subcommand search behaviour', () => {
       assert.deepEqual(extractMockSpawnArgs(spawnSpy), [localPath]);
     });
 
-    test('when script arg is link and and link-sub relative to link target then spawn local link-sub', (t) => {
+    test('when script arg is link and link-sub relative to link target then spawn local link-sub', (t) => {
       const program = new commander.Command();
       program.command('sub', 'executable description');
 
