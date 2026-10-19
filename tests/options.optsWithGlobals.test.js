@@ -113,4 +113,57 @@ describe('getOptionValueSourceWithGlobals', () => {
     program.parse(['sub', '--common', 'value'], { from: 'user' });
     assert.equal(sub.getOptionValueSourceWithGlobals('common'), 'default');
   });
+
+  test('when parent value is set without a source then it shadows child source', () => {
+    const program = new commander.Command()
+      .enablePositionalOptions()
+      .option('--common <value>')
+      .setOptionValue('common', 'parent');
+    const sub = program
+      .command('sub')
+      .option('--common <value>')
+      .action(() => {});
+
+    program.parse(['sub', '--common', 'child'], { from: 'user' });
+
+    assert.equal(sub.optsWithGlobals().common, 'parent');
+    assert.equal(sub.getOptionValueSourceWithGlobals('common'), undefined);
+  });
+
+  test('when parent value has an explicit source then it shadows child source', () => {
+    const program = new commander.Command()
+      .enablePositionalOptions()
+      .option('--common <value>')
+      .setOptionValueWithSource('common', 'parent', 'config');
+    const sub = program
+      .command('sub')
+      .option('--common <value>')
+      .action(() => {});
+
+    program.parse(['sub', '--common', 'child'], { from: 'user' });
+
+    assert.equal(sub.optsWithGlobals().common, 'parent');
+    assert.equal(sub.getOptionValueSourceWithGlobals('common'), 'config');
+  });
+
+  test('when an ancestor shadows a child then the nearest effective source wins', () => {
+    const program = new commander.Command()
+      .enablePositionalOptions()
+      .option('--common <value>')
+      .setOptionValueWithSource('common', 'grandparent', 'env');
+    const sub = program
+      .command('sub')
+      .option('--common <value>')
+      .setOptionValueWithSource('common', 'parent', 'config');
+    const nested = sub
+      .command('nested')
+      .option('--common <value>')
+      .action(() => {});
+
+    program.parse(['sub', 'nested', '--common', 'child'], { from: 'user' });
+
+    assert.equal(sub.optsWithGlobals().common, 'grandparent');
+    assert.equal(sub.getOptionValueSourceWithGlobals('common'), 'env');
+    assert.equal(nested.getOptionValueSourceWithGlobals('common'), 'env');
+  });
 });
