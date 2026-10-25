@@ -18,4 +18,4 @@ export const createArgument = (name, description) =>
 
 export { Command, Option, Argument, Help };
 export { CommanderError, InvalidArgumentError };
-export { InvalidArgumentError as InvalidOptionArgumentError }; // Deprecated
+export { InvalidArgumentError as InvalidOptionArgumentError };

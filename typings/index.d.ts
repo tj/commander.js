@@ -34,7 +34,7 @@ export class InvalidArgumentError extends CommanderError {
    */
   constructor(message: string);
 }
-export { InvalidArgumentError as InvalidOptionArgumentError }; // deprecated old name
+export { InvalidArgumentError as InvalidOptionArgumentError };
 
 export interface ErrorOptions {
   // optional parameter for error()

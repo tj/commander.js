@@ -52,7 +52,6 @@ describe('imports from .mjs', () => {
   });
 
   test('InvalidOptionArgumentError', () => {
-    // Deprecated
     checkClass(
       new InvalidOptionArgumentError('failed'),
       'InvalidArgumentError',
