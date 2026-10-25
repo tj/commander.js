@@ -4,23 +4,24 @@ These features are deprecated, which means they may go away in a future major ve
 They are currently still available for backwards compatibility, but should not be used in new code.
 
 - [Deprecated](#deprecated)
-    - [RegExp .option() parameter](#regexp-option-parameter)
+    - [RegExp cmd.option() parameter](#regexp-cmdoption-parameter)
     - [noHelp](#nohelp)
-    - [Callback to .help() and .outputHelp()](#callback-to-help-and-outputhelp)
-    - [.on('--help')](#on--help)
-    - [.on('command:\*')](#oncommand)
-    - [.command('\*')](#command)
+    - [Callback to cmd.help() and cmd.outputHelp()](#callback-to-cmdhelp-and-cmdoutputhelp)
+    - [cmd.on('--help')](#cmdon--help)
+    - [cmd.on('command:\*')](#cmdoncommand)
+    - [cmd.command('\*')](#cmdcommand)
     - [cmd.description(cmdDescription, argDescriptions)](#cmddescriptioncmddescription-argdescriptions)
     - [InvalidOptionArgumentError](#invalidoptionargumenterror)
     - [cmd.\_args](#cmd_args)
-    - [.addHelpCommand(string|boolean|undefined)](#addhelpcommandstringbooleanundefined)
-    - [.storeOptionsAsProperties()](#storeoptionsasproperties)
+    - [cmd.addHelpCommand(string|boolean|undefined)](#cmdaddhelpcommandstringbooleanundefined)
+    - [cmd.storeOptionsAsProperties()](#cmdstoreoptionsasproperties)
+    - [cmd.combineFlagAndOptionalValue(false)](#cmdcombineflagandoptionalvaluefalse)
   - [Removed](#removed)
     - [Short option flag longer than a single character](#short-option-flag-longer-than-a-single-character)
     - [Default import of global Command object](#default-import-of-global-command-object)
     - [Import from `commander/esm.mjs`](#import-from-commanderesmmjs)
 
-### RegExp .option() parameter
+### RegExp cmd.option() parameter
 
 The `.option()` method allowed a RegExp as the third parameter to restrict what values were accepted.
 
@@ -42,7 +43,7 @@ program.command('example', 'example command', { noHelp: true });
 
 The option was renamed `hidden` in Commander v5.1. Deprecated from Commander v7.
 
-### Callback to .help() and .outputHelp()
+### Callback to cmd.help() and cmd.outputHelp()
 
 These routines allowed a callback parameter to process the built-in help before display.
 
@@ -60,7 +61,7 @@ console.error(colors.red(program.helpInformation()));
 
 Deprecated from Commander v7.
 
-### .on('--help')
+### cmd.on('--help')
 
 This was the way to add custom help after the built-in help. From Commander v3.0.0 this used the custom long help option flags, if changed.
 
@@ -85,7 +86,7 @@ Examples:
 
 Deprecated from Commander v7.
 
-### .on('command:*')
+### cmd.on('command:*')
 
 This was emitted when the command argument did not match a known subcommand (as part of the implementation of `.command('*')`).
 
@@ -96,7 +97,7 @@ or for custom behaviour catch the `commander.unknownCommand` error.
 
 Deprecated from Commander v8.3.
 
-### .command('*')
+### cmd.command('*')
 
 This was used to add a default command to the program.
 
@@ -185,7 +186,7 @@ const registeredArguments = program.registeredArguments;
 
 Deprecated from Commander v11.
 
-### .addHelpCommand(string|boolean|undefined)
+### cmd.addHelpCommand(string|boolean|undefined)
 
 This was originally used with a variety of parameters, but not by passing a Command object despite the "add" name.
 
@@ -209,7 +210,7 @@ program.addHelpCommand(new Command('assist').argument('[command]').description('
 - Removed from README in Commander v12.
 - Deprecated from Commander v12.
 
-### .storeOptionsAsProperties()
+### cmd.storeOptionsAsProperties()
 
 Before Commander 7, the option values were stored as properties on the command,
 and the command was passed to the action handler after the command-arguments.
@@ -239,6 +240,11 @@ or online in the [Release Notes](https://github.com/tj/commander.js/releases/tag
 - Removed from README in Commander v15.
 - Deprecated from Commander v15.
 
+### cmd.combineFlagAndOptionalValue(false)
+
+This was added in Commander v6 to ease upgrade path from older versions of Commander.
+
+- Deprecated from Commander v15.
 
 ## Removed
 
@@ -289,4 +295,3 @@ import { Command } from 'commander';
 
 - README updated in Commander v9. Deprecated from Commander v9.
 - Deleted in Command v15.  Deprecated and gone!
-

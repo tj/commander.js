@@ -10,7 +10,6 @@ and subtle issues in depth.
     - [Alternative: Put options last](#alternative-put-options-last)
     - [Alternative: Use options instead of command-arguments](#alternative-use-options-instead-of-command-arguments)
 - [Combining short options, and options taking arguments](#combining-short-options-and-options-taking-arguments)
-  - [Combining short options as if boolean](#combining-short-options-as-if-boolean)
 
 ## Options taking varying numbers of option-arguments
 
@@ -151,7 +150,7 @@ Multiple boolean short options can be combined after a single `-`, like `ls -al`
 a single short option which might take a value, as any following characters will
 be taken as the value.
 
-This means that by default you can not combine short options which may take an argument.
+This means that you can not combine short options which may take an argument.
 
 ```js
 program
@@ -186,19 +185,4 @@ $ collect -o -v -l
 other servings: true
 vegan servings: true
 halal servings: true
-```
-
-### Combining short options as if boolean
-
-Before Commander v5, combining a short option and the value was not supported, and combined short flags were always expanded.
-So `-ovl` expanded to `-o -v -l`.
-
-If you want backwards compatible behaviour, or prefer combining short options as booleans to combining short option and value,
-you may change the behaviour.
-
-To modify the parsing of options taking an optional value:
-
-```js
-.combineFlagAndOptionalValue(true)  // `-v45` is treated like `--vegan=45`, this is the default behaviour
-.combineFlagAndOptionalValue(false) // `-vl` is treated like `-v -l`
 ```

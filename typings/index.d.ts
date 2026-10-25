@@ -760,6 +760,7 @@ export class Command {
    *
    * @returns `this` command for chaining
    */
+  /** @deprecated since v15 */
   combineFlagAndOptionalValue(combine?: boolean): this;
 
   /**
