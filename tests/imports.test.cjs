@@ -53,7 +53,6 @@ describe('named imports from .cjs', () => {
   });
 
   test('InvalidOptionArgumentError', () => {
-    // Deprecated
     checkClass(
       new InvalidOptionArgumentError('failed'),
       'InvalidArgumentError',
@@ -109,7 +108,6 @@ describe('unnamed imports from .cjs', () => {
   });
 
   test('InvalidOptionArgumentError', () => {
-    // Deprecated
     checkClass(
       new commander.InvalidOptionArgumentError('failed'),
       'InvalidArgumentError',
