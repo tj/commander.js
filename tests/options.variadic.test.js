@@ -189,3 +189,22 @@ describe('variadic options', () => {
     assert.deepEqual(program.opts().comma, ['CCC']);
   });
 });
+
+describe('variadic option with non-ASCII placeholder', () => {
+  test('placeholder ending in non-ASCII letter is variadic', () => {
+    const option = new commander.Option('--tag <值...>');
+    assert.strictEqual(option.variadic, true);
+  });
+
+  test('collects multiple values for non-ASCII placeholder', () => {
+    const program = new commander.Command();
+    program.option('-t,--tag <值...>');
+    program.parse(['-t', 'one', 'two'], { from: 'user' });
+    assert.deepStrictEqual(program.opts(), { tag: ['one', 'two'] });
+  });
+
+  test('non-ASCII placeholder without dots is not variadic', () => {
+    const option = new commander.Option('--tag <值>');
+    assert.strictEqual(option.variadic, false);
+  });
+});
