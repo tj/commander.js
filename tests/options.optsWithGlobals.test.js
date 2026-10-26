@@ -113,4 +113,24 @@ describe('getOptionValueSourceWithGlobals', () => {
     program.parse(['sub', '--common', 'value'], { from: 'user' });
     assert.equal(sub.getOptionValueSourceWithGlobals('common'), 'default');
   });
+
+  test('when global value set by setOptionValue then its cleared source is reported', () => {
+    const program = new commander.Command()
+      .enablePositionalOptions()
+      .option('--common <value>')
+      .setOptionValue('common', 'parent');
+    const sub = program
+      .command('sub')
+      .option('--common <value>')
+      .action(() => {});
+
+    program.parse(['sub', '--common', 'child'], { from: 'user' });
+
+    // The effective value comes from the program (globals overwrite locals),
+    // and setOptionValue cleared its source. The source of the shadowed
+    // child value must not be reported for it.
+    assert.equal(sub.optsWithGlobals().common, 'parent');
+    assert.equal(program.getOptionValueSource('common'), undefined);
+    assert.equal(sub.getOptionValueSourceWithGlobals('common'), undefined);
+  });
 });
