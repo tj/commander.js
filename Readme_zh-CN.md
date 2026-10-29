@@ -7,7 +7,7 @@
 
 完整的 [node.js](http://nodejs.org) 命令行解决方案。
 
-使用其他语言阅读：[English](./Readme.md) | 简体中文
+使用其他语言阅读：[English](./Readme.md) | 简体中文 | [繁體中文](./Readme_zh-TW.md)
 
 - [Commander.js](#commanderjs)
   - [安装](#%e5%ae%89%e8%a3%85)

@@ -7,7 +7,7 @@
 
 The complete solution for [node.js](http://nodejs.org) command-line interfaces.
 
-Read this in other languages: English | [简体中文](./Readme_zh-CN.md)
+Read this in other languages: English | [简体中文](./Readme_zh-CN.md) | [繁體中文](./Readme_zh-TW.md)
 
 - [Commander.js](#commanderjs)
   - [Installation](#installation)
