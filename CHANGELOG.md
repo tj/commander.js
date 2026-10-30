@@ -8,6 +8,27 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
+## [15.0.1] (2026-11-07)
+
+### Fixed
+
+- accept uppercase E exponent in negative number arguments ([#2544])
+- support Unicode variadic option placeholders ([#2615])
+- increment node inspector port for `--inspect-wait` when spawn an executable subcommand ([#2630])
+- increment node inspector port for IPv6 hosts when spawn an executable subcommand ([#2636])
+- preserve the help option's group when a conflicting flag is hidden ([#2637])
+- global option values with unknown source should mask local option value source in `cmd.getOptionValueSourceWithGlobals()` ([#2653])
+
+### Changed
+
+- limit Pull Requests to reduce volume and improve quality ([#2646])
+- undeprecate `InvalidOptionArgumentError` ([#2661])
+
+### Deprecated
+
+- `cmd.storeOptionsAsProperties()` ([#2561])
+- `cmd.combineFlagAndOptionalValue()` ([#2660])
+
 ## [15.0.0] (2026-05-29)
 
 Commander 15 is ESM only. This is expected to be seamless for ESM consumers, but some CommonJS consumers may hit issues with tooling requiring configuration for ESM-only dependencies. See Migration Tips below.
@@ -1500,6 +1521,16 @@ program
 [#2464]: https://github.com/tj/commander.js/pull/2464
 [#2465]: https://github.com/tj/commander.js/pull/2465
 [#2475]: https://github.com/tj/commander.js/pull/2475
+[#2544]: https://github.com/tj/commander.js/pull/2544
+[#2561]: https://github.com/tj/commander.js/pull/2561
+[#2615]: https://github.com/tj/commander.js/pull/2615
+[#2630]: https://github.com/tj/commander.js/pull/2630
+[#2636]: https://github.com/tj/commander.js/pull/2636
+[#2637]: https://github.com/tj/commander.js/pull/2637
+[#2646]: https://github.com/tj/commander.js/pull/2646
+[#2653]: https://github.com/tj/commander.js/pull/2653
+[#2660]: https://github.com/tj/commander.js/pull/2660
+[#2661]: https://github.com/tj/commander.js/pull/2661
 
 <!-- Referenced in 5.x -->
 [#1]: https://github.com/tj/commander.js/issues/1
@@ -1579,6 +1610,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
+[15.0.1]: https://github.com/tj/commander.js/compare/v15.0.1...v15.0.0
 [15.0.0]: https://github.com/tj/commander.js/compare/v15.0.0...v14.0.3
 [15.0.0-0]: https://github.com/tj/commander.js/compare/v14.0.3...v15.0.0-0
 [14.0.3]: https://github.com/tj/commander.js/compare/v14.0.2...v14.0.3
