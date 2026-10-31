@@ -91,9 +91,9 @@ console.log(program.args[0].split(options.separator, limit));
 ```
 
 ```console
-$ node split.js -s - --fits a-b-c
+$ node split.js -s -
 error: unknown option '--fits'
-(Did you mean --first?)
+(Did you mean?)
 $ node split.js -s - --first a-b-c
 [ 'a' ]
 ```
@@ -135,7 +135,7 @@ Arguments:
 
 Options:
   --first                 display just the first substring
-  -s, --separator <char>  separator character (default: ",")
+  -s,  separator character (default: ",")
   -h, --help              display help for command
 
 $ node string-util.js split --separator=- a-b-c
@@ -193,7 +193,7 @@ An option and its option-argument can be separated by a space, or combined into 
 ```sh
 serve -p 80
 serve -p80
-serve --port 80
+serve
 serve --port=80
 ```
 
@@ -295,11 +295,11 @@ console.log(`You ordered a pizza with ${sauceStr} and ${cheeseStr}`);
 ```console
 $ pizza-options
 You ordered a pizza with sauce and mozzarella cheese
-$ pizza-options --sauce
+$ pizza-options
 error: unknown option '--sauce'
 $ pizza-options --cheese=blue
 You ordered a pizza with sauce and blue cheese
-$ pizza-options --no-sauce --no-cheese
+$ pizza-options --no-cheese
 You ordered a pizza with no sauce and no cheese
 ```
 
@@ -376,7 +376,7 @@ console.log('Remaining arguments: ', program.args);
 ```
 
 ```console
-$ collect -n 1 2 3 --letter a b c
+$ collect -n 1 2 3 b c
 Options:  { number: [ '1', '2', '3' ], letter: [ 'a', 'b', 'c' ] }
 Remaining arguments:  []
 $ collect --letter=A -n80 operand
@@ -432,7 +432,7 @@ $ extra --help
 Usage: help [options]
 
 Options:
-  -t, --timeout <delay>  timeout in seconds (default: one minute)
+  -t,  timeout in seconds (default: one minute)
   -d, --drink <size>     drink cup size (choices: "small", "medium", "large")
   -p, --port <number>    port number (env: PORT)
   --donate [amount]      optional donation in dollars (preset: "20")
@@ -512,7 +512,7 @@ $ custom -v -v -v
 verbose: 3
 $ custom -c a -c b -c c
 [ 'a', 'b', 'c' ]
-$ custom --list x,y,z
+$ custom
 [ 'x', 'y', 'z' ]
 ```
 
@@ -835,7 +835,7 @@ program.showHelpAfterError('(add --help for additional information)');
 ```
 
 ```console
-$ pizza --unknown
+$ pizza
 error: unknown option '--unknown'
 (add --help for additional information)
 ```
@@ -848,7 +848,7 @@ program.showSuggestionAfterError(false);
 ```
 
 ```console
-$ pizza --hepl
+$ pizza
 error: unknown option '--hepl'
 (Did you mean --help?)
 ```
@@ -1170,3 +1170,27 @@ The main forum for free and community support is the project [Issues](https://gi
 Available as part of the Tidelift Subscription
 
 The maintainers of Commander and thousands of other packages are working with Tidelift to deliver commercial support and maintenance for the open source dependencies you use to build your applications. Save time, reduce risk, and improve code health, while paying the maintainers of the exact dependencies you use. [Learn more.](https://tidelift.com/subscription/pkg/npm-commander?utm_source=npm-commander&utm_medium=referral&utm_campaign=enterprise&utm_term=repo)
+
+## Environment Variables
+
+- `NO_COLOR=<no_color>` (read in `lib/command.js:2782`)
+- `FORCE_COLOR=<force_color>` (read in `lib/command.js:2783`)
+- `CLICOLOR_FORCE=process.env.CLICOLOR_FORCE` (read in `lib/command.js:2787`)
+
+## Usage
+
+- **Documented flag `--donate` no longer exists**: Remove `--donate` from the command or replace it with the current option.
+- **Documented flag `--disable-server` no longer exists**: Remove `--disable-server` from the command or replace it with the current option.
+- **Documented flag `--free-drink` no longer exists**: Remove `--free-drink` from the command or replace it with the current option.
+- `--pepper` (serve): add pepper
+- `--pt <TYPE>` (serve): type of pizza
+- `--tip <VALUE>` (serve): add tip to purchase cost
+- `--flag [value]` (serve)
+- `--profile` (lint): output profiling information
+- `--alpha` (exec)
+- `--string [value]` (exec): default string
+- `--boolean` (exec): default boolean
+
+## Documentation Updates
+
+- **Broken link: https://nodejs.org/en/docs/guides/debugging-getting-started/**: Update the URL or remove it.
