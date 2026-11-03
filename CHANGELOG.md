@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 <!-- markdownlint-disable MD024 -->
 <!-- markdownlint-disable MD004 -->
 
-## [15.0.1] (2026-11-07)
+## [15.1.0] (2026-11-07)
 
 ### Fixed
 
@@ -1610,7 +1610,7 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
-[15.0.1]: https://github.com/tj/commander.js/compare/v15.0.1...v15.0.0
+[15.1.0]: https://github.com/tj/commander.js/compare/v15.1.0...v15.0.0
 [15.0.0]: https://github.com/tj/commander.js/compare/v15.0.0...v14.0.3
 [15.0.0-0]: https://github.com/tj/commander.js/compare/v14.0.3...v15.0.0-0
 [14.0.3]: https://github.com/tj/commander.js/compare/v14.0.2...v14.0.3
