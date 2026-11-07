@@ -1610,8 +1610,8 @@ program
 [#1028]: https://github.com/tj/commander.js/pull/1028
 
 [Unreleased]: https://github.com/tj/commander.js/compare/master...develop
-[15.1.0]: https://github.com/tj/commander.js/compare/v15.1.0...v15.0.0
-[15.0.0]: https://github.com/tj/commander.js/compare/v15.0.0...v14.0.3
+[15.1.0]: https://github.com/tj/commander.js/compare/v15.0.0...v15.1.0
+[15.0.0]: https://github.com/tj/commander.js/compare/v14.0.3...v15.0.0
 [15.0.0-0]: https://github.com/tj/commander.js/compare/v14.0.3...v15.0.0-0
 [14.0.3]: https://github.com/tj/commander.js/compare/v14.0.2...v14.0.3
 [14.0.2]: https://github.com/tj/commander.js/compare/v14.0.1...v14.0.2
