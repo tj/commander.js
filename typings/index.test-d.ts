@@ -416,7 +416,7 @@ expectType<string>(program.summary());
 
 // alias
 expectType<commander.Command>(program.alias('my alias'));
-expectType<string>(program.alias());
+expectType<string | undefined>(program.alias());
 
 // aliases
 expectType<commander.Command>(program.aliases(['first-alias', 'second-alias']));

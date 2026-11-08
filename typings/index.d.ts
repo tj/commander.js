@@ -922,7 +922,7 @@ export class Command {
   /**
    * Get alias for the command.
    */
-  alias(): string;
+  alias(): string | undefined;
 
   /**
    * Set aliases for the command.
