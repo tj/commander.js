@@ -921,8 +921,10 @@ export class Command {
   alias(alias: string): this;
   /**
    * Get alias for the command.
+   *
+   * @returns the first alias, or `undefined` when the command has no aliases
    */
-  alias(): string;
+  alias(): string | undefined;
 
   /**
    * Set aliases for the command.

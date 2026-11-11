@@ -68,6 +68,11 @@ describe('Command aliases using .alias() and .aliases()', () => {
     assert.equal(program.alias(), alias);
   });
 
+  test('when no alias then get undefined', () => {
+    const program = new commander.Command();
+    assert.equal(program.alias(), undefined);
+  });
+
   test('when set aliases then can get aliases', () => {
     const program = new commander.Command();
     const aliases = ['a', 'b'];
