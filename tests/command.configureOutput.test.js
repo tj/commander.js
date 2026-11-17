@@ -345,7 +345,7 @@ describe('Command.configureOutput()', () => {
     const envvars = testCases.map(([envvar]) => envvar);
     let holdEnv;
     t.beforeEach(() => {
-      // Clear out enviroment variables, which may have been set by test runner.
+      // Clear out environment variables, which may have been set by test runner.
       holdEnv = {};
       for (const name of envvars) {
         holdEnv[name] = process.env[name];
