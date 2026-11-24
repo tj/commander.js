@@ -192,4 +192,32 @@ describe('variadic options', () => {
 
     assert.deepEqual(program.opts().comma, ['CCC']);
   });
+
+  test('when subcommand variadic is followed by parent option then parent option is not eaten (issue #2645)', () => {
+    const program = createTestCommand();
+    program.option('-o,--output <file>');
+    program.argument('[files...]');
+
+    let subArgs;
+    let subOpts;
+    let parentOpts;
+    program
+      .command('debug')
+      .option('-a,--animals <animal...>')
+      .argument('<files...>')
+      .action((files, opts) => {
+        subArgs = files;
+        subOpts = opts;
+        parentOpts = program.opts();
+      });
+
+    program.parse(
+      ['debug', '-a', 'cat', 'dog', '-o', '/output', 'file1', 'file2'],
+      { from: 'user' },
+    );
+
+    assert.deepEqual(subOpts.animals, ['cat']);
+    assert.deepEqual(subArgs, ['dog', 'file1', 'file2']);
+    assert.deepEqual(parentOpts, { output: '/output' });
+  });
 });
