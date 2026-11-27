@@ -70,100 +70,100 @@ describe('Command.parseOptions()', () => {
 
   test('when empty args then empty results', () => {
     const program = createProgram();
-    const result = program.parseOptions([]);
+    const result = program._parseOptions([]);
     assert.deepEqual(result, { operands: [], unknown: [] });
   });
 
   test('when only operands then results has all operands', () => {
     const program = createProgram();
-    const result = program.parseOptions('one two three'.split(' '));
+    const result = program._parseOptions('one two three'.split(' '));
     assert.deepEqual(result, {
       operands: ['one', 'two', 'three'],
       unknown: [],
     });
   });
 
-  test('when subcommand and operand then results has subcommand and operand', () => {
+  test('when subcommand and operand then results has subcommand and operand still unknown', () => {
     const program = createProgram();
-    const result = program.parseOptions('sub one'.split(' '));
-    assert.deepEqual(result, { operands: ['sub', 'one'], unknown: [] });
+    const result = program._parseOptions('sub one'.split(' '));
+    assert.deepEqual(result, { operands: ['sub'], unknown: ['one'] });
   });
 
   test('when program has flag then option removed', () => {
     const program = createProgram();
-    const result = program.parseOptions('--global-flag'.split(' '));
+    const result = program._parseOptions('--global-flag'.split(' '));
     assert.deepEqual(result, { operands: [], unknown: [] });
   });
 
   test('when program has option with value then option removed', () => {
     const program = createProgram();
-    const result = program.parseOptions('--global-value foo'.split(' '));
+    const result = program._parseOptions('--global-value foo'.split(' '));
     assert.deepEqual(result, { operands: [], unknown: [] });
   });
 
   test('when program has flag before operand then option removed', () => {
     const program = createProgram();
-    const result = program.parseOptions('--global-flag arg'.split(' '));
+    const result = program._parseOptions('--global-flag arg'.split(' '));
     assert.deepEqual(result, { operands: ['arg'], unknown: [] });
   });
 
   test('when program has flag after operand then option removed', () => {
     const program = createProgram();
-    const result = program.parseOptions('arg --global-flag'.split(' '));
+    const result = program._parseOptions('arg --global-flag'.split(' '));
     assert.deepEqual(result, { operands: ['arg'], unknown: [] });
   });
 
-  test('when program has flag after subcommand then option removed', () => {
+  test('when program has flag after subcommand then option not processed (yet)', () => {
     const program = createProgram();
-    const result = program.parseOptions('sub --global-flag'.split(' '));
-    assert.deepEqual(result, { operands: ['sub'], unknown: [] });
+    const result = program._parseOptions('sub --global-flag'.split(' '));
+    assert.deepEqual(result, { operands: ['sub'], unknown: ['--global-flag'] });
   });
 
   test('when program has unknown option then option returned in unknown', () => {
     const program = createProgram();
-    const result = program.parseOptions('--unknown'.split(' '));
+    const result = program._parseOptions('--unknown'.split(' '));
     assert.deepEqual(result, { operands: [], unknown: ['--unknown'] });
   });
 
   test('when program has unknown option before operands then all unknown in same order', () => {
     const program = createProgram();
-    const result = program.parseOptions('--unknown arg'.split(' '));
+    const result = program._parseOptions('--unknown arg'.split(' '));
     assert.deepEqual(result, { operands: [], unknown: ['--unknown', 'arg'] });
   });
 
   test('when program has unknown option after operand then option returned in unknown', () => {
     const program = createProgram();
-    const result = program.parseOptions('arg --unknown'.split(' '));
+    const result = program._parseOptions('arg --unknown'.split(' '));
     assert.deepEqual(result, { operands: ['arg'], unknown: ['--unknown'] });
   });
 
   test('when program has flag after unknown option then flag removed', () => {
     const program = createProgram();
-    const result = program.parseOptions('--unknown --global-flag'.split(' '));
+    const result = program._parseOptions('--unknown --global-flag'.split(' '));
     assert.deepEqual(result, { operands: [], unknown: ['--unknown'] });
   });
 
   test('when subcommand has flag then flag returned as unknown', () => {
     const program = createProgram();
-    const result = program.parseOptions('sub --sub-flag'.split(' '));
+    const result = program._parseOptions('sub --sub-flag'.split(' '));
     assert.deepEqual(result, { operands: ['sub'], unknown: ['--sub-flag'] });
   });
 
   test('when program has literal before known flag then option returned as operand', () => {
     const program = createProgram();
-    const result = program.parseOptions('-- --global-flag'.split(' '));
+    const result = program._parseOptions('-- --global-flag'.split(' '));
     assert.deepEqual(result, { operands: ['--global-flag'], unknown: [] });
   });
 
   test('when program has literal before unknown option then option returned as operand', () => {
     const program = createProgram();
-    const result = program.parseOptions('-- --unknown uuu'.split(' '));
+    const result = program._parseOptions('-- --unknown uuu'.split(' '));
     assert.deepEqual(result, { operands: ['--unknown', 'uuu'], unknown: [] });
   });
 
   test('when program has literal after unknown option then literal preserved too', () => {
     const program = createProgram();
-    const result = program.parseOptions('--unknown1 -- --unknown2'.split(' '));
+    const result = program._parseOptions('--unknown1 -- --unknown2'.split(' '));
     assert.deepEqual(result, {
       operands: [],
       unknown: ['--unknown1', '--', '--unknown2'],
@@ -195,7 +195,7 @@ describe('Command.args after parsing', () => {
     assert.deepEqual(program.args, ['aaa', 'bbb', '--unknown', 'ccc']);
   });
 
-  test('when subcommand has mixed arguments then program flags removed and rest returned in same order', () => {
+  test('when subcommand has mixed arguments then program flags removed before subcommand and rest returned in same order', () => {
     const program = new commander.Command();
     program
       .option('--global-flag')
@@ -207,7 +207,13 @@ describe('Command.args after parsing', () => {
         ' ',
       ),
     );
-    assert.deepEqual(program.args, ['sub', '--sub-flag', 'arg']);
+    assert.deepEqual(program.args, [
+      'sub',
+      '--sub-flag',
+      'arg',
+      '--global-value',
+      'value',
+    ]);
   });
 });
 
@@ -258,56 +264,56 @@ describe('Posix Utility Conventions', () => {
 
   test('when program has combo known boolean short flags then arg removed', () => {
     const program = createProgram();
-    const result = program.parseOptions(['-ab']);
+    const result = program._parseOptions(['-ab']);
     assert.deepEqual(result, { operands: [], unknown: [] });
     assert.deepEqual(program.opts(), { aaa: true, bbb: true });
   });
 
   test('when program has combo unknown short flags then arg preserved', () => {
     const program = createProgram();
-    const result = program.parseOptions(['-pq']);
+    const result = program._parseOptions(['-pq']);
     assert.deepEqual(result, { operands: [], unknown: ['-pq'] });
     assert.deepEqual(program.opts(), {});
   });
 
   test('when program has combo known short option and required value then arg removed', () => {
     const program = createProgram();
-    const result = program.parseOptions(['-cvalue']);
+    const result = program._parseOptions(['-cvalue']);
     assert.deepEqual(result, { operands: [], unknown: [] });
     assert.deepEqual(program.opts(), { ccc: 'value' });
   });
 
   test('when program has combo known short option and optional value then arg removed', () => {
     const program = createProgram();
-    const result = program.parseOptions(['-dvalue']);
+    const result = program._parseOptions(['-dvalue']);
     assert.deepEqual(result, { operands: [], unknown: [] });
     assert.deepEqual(program.opts(), { ddd: 'value' });
   });
 
   test('when program has known combo short boolean flags and required value then arg removed', () => {
     const program = createProgram();
-    const result = program.parseOptions(['-abcvalue']);
+    const result = program._parseOptions(['-abcvalue']);
     assert.deepEqual(result, { operands: [], unknown: [] });
     assert.deepEqual(program.opts(), { aaa: true, bbb: true, ccc: 'value' });
   });
 
   test('when program has known combo short boolean flags and optional value then arg removed', () => {
     const program = createProgram();
-    const result = program.parseOptions(['-abdvalue']);
+    const result = program._parseOptions(['-abdvalue']);
     assert.deepEqual(result, { operands: [], unknown: [] });
     assert.deepEqual(program.opts(), { aaa: true, bbb: true, ddd: 'value' });
   });
 
   test('when program has known long flag=value then arg removed', () => {
     const program = createProgram();
-    const result = program.parseOptions(['--ccc=value']);
+    const result = program._parseOptions(['--ccc=value']);
     assert.deepEqual(result, { operands: [], unknown: [] });
     assert.deepEqual(program.opts(), { ccc: 'value' });
   });
 
   test('when program has unknown long flag=value then arg preserved', () => {
     const program = createProgram();
-    const result = program.parseOptions(['--rrr=value']);
+    const result = program._parseOptions(['--rrr=value']);
     assert.deepEqual(result, { operands: [], unknown: ['--rrr=value'] });
     assert.deepEqual(program.opts(), {});
   });
@@ -315,21 +321,21 @@ describe('Posix Utility Conventions', () => {
   test('when program has combo optional and combineFlagAndOptionalValue() then treat as value', () => {
     const program = createProgram();
     program.combineFlagAndOptionalValue();
-    program.parseOptions(['-db']);
+    program._parseOptions(['-db']);
     assert.deepEqual(program.opts(), { ddd: 'b' });
   });
 
   test('when program has combo optional and combineFlagAndOptionalValue(true) then treat as value', () => {
     const program = createProgram();
     program.combineFlagAndOptionalValue(true);
-    program.parseOptions(['-db']);
+    program._parseOptions(['-db']);
     assert.deepEqual(program.opts(), { ddd: 'b' });
   });
 
   test('when program has combo optional and combineFlagAndOptionalValue(false) then treat as boolean', () => {
     const program = createProgram();
     program.combineFlagAndOptionalValue(false);
-    program.parseOptions(['-db']);
+    program._parseOptions(['-db']);
     assert.deepEqual(program.opts(), { ddd: true, bbb: true });
   });
 });

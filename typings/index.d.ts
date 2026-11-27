@@ -865,20 +865,6 @@ export class Command {
   restoreStateBeforeParse(): void;
 
   /**
-   * Parse options from `argv` removing known options,
-   * and return argv split into operands and unknown arguments.
-   *
-   * Side effects: modifies command by storing options. Does not reset state if called again.
-   *
-   *     argv => operands, unknown
-   *     --known kkk op => [op], []
-   *     op --known kkk => [op], []
-   *     sub --unknown uuu op => [sub], [--unknown uuu op]
-   *     sub -- --unknown uuu op => [sub --unknown uuu op], []
-   */
-  parseOptions(argv: string[]): ParseOptionsResult;
-
-  /**
    * Return an object containing local option values as key-value pairs
    */
   opts<T extends OptionValues>(): T;
