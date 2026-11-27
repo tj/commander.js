@@ -514,6 +514,7 @@ describe('positional options using Command.passThroughOptions() and Command.enab
       program.enablePositionalOptions();
       program.parse(['sub', '--debug'], { from: 'user' });
       assert.equal(sub.opts().debug, true);
+      assert.equal(program.opts().debug, undefined);
     });
 
     test('when enablePositionalOptions(true) then option parsed by subcommand', () => {
@@ -521,14 +522,15 @@ describe('positional options using Command.passThroughOptions() and Command.enab
       program.enablePositionalOptions(true);
       program.parse(['sub', '--debug'], { from: 'user' });
       assert.equal(sub.opts().debug, true);
+      assert.equal(program.opts().debug, undefined);
     });
 
-    test('when enablePositionalOptions(false) then option parsed by program', () => {
+    test('when enablePositionalOptions(false) then option parsed by subcommand, because leaf before global', () => {
       const { program, sub } = makeProgram();
       program.enablePositionalOptions(false);
       program.parse(['sub', '--debug'], { from: 'user' });
-      assert.equal(sub.opts().debug, undefined);
-      assert.equal(program.opts().debug, true);
+      assert.equal(sub.opts().debug, true);
+      assert.equal(program.opts().debug, undefined);
     });
   });
 });

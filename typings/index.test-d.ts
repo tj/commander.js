@@ -365,11 +365,6 @@ expectType<Promise<commander.Command>>(
   program.parseAsync(['node', 'script.js'] as const),
 );
 
-// parseOptions (and ParseOptionsResult)
-expectType<{ operands: string[]; unknown: string[] }>(
-  program.parseOptions(['node', 'script.js', 'hello']),
-);
-
 // save/restore state
 expectType<void>(program.saveStateBeforeParse());
 expectType<void>(program.restoreStateBeforeParse());
